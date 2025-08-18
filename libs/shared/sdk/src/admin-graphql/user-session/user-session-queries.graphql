@@ -1,0 +1,20 @@
+query AdminUserSession($userSessionId: String!) {
+  userSession(userSessionId: $userSessionId) {
+    ...AdminUserSessionDetails
+  }
+}
+
+query AdminUserSessions($input: ListUserSessionInput) {
+  userSessions(input: $input) {
+    ...AdminUserSessionList
+  }
+  counters: userSessionsCount(input: $input) {
+    ...CorePagingDetails
+  }
+}
+
+query AdminUserSessionPagination($input: ListUserSessionInput) {
+  counters: userSessionsCount(input: $input) {
+    ...CorePagingDetails
+  }
+}

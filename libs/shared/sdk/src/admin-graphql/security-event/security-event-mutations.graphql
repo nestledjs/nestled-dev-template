@@ -1,0 +1,17 @@
+mutation AdminCreateSecurityEvent($input: CreateSecurityEventInput!) {
+  createSecurityEvent(input: $input) {
+    ...AdminSecurityEventDetails
+  }
+}
+
+mutation AdminDeleteSecurityEvent($securityEventId: String!) {
+  deleteSecurityEvent(securityEventId: $securityEventId) {
+    id
+  }
+}
+
+mutation AdminUpdateSecurityEvent($securityEventId: String!, $input: UpdateSecurityEventInput!) {
+  updateSecurityEvent(securityEventId: $securityEventId, input: $input) {
+    ...AdminSecurityEventDetails
+  }
+}

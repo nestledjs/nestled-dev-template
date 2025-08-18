@@ -1,0 +1,20 @@
+query AdminAddress($addressId: String!) {
+  address(addressId: $addressId) {
+    ...AdminAddressDetails
+  }
+}
+
+query AdminAddresses($input: ListAddressInput) {
+  addresses(input: $input) {
+    ...AdminAddressList
+  }
+  counters: addressesCount(input: $input) {
+    ...CorePagingDetails
+  }
+}
+
+query AdminAddressPagination($input: ListAddressInput) {
+  counters: addressesCount(input: $input) {
+    ...CorePagingDetails
+  }
+}

@@ -1,0 +1,20 @@
+query AdminLink($linkId: String!) {
+  link(linkId: $linkId) {
+    ...AdminLinkDetails
+  }
+}
+
+query AdminLinks($input: ListLinkInput) {
+  links(input: $input) {
+    ...AdminLinkList
+  }
+  counters: linksCount(input: $input) {
+    ...CorePagingDetails
+  }
+}
+
+query AdminLinkPagination($input: ListLinkInput) {
+  counters: linksCount(input: $input) {
+    ...CorePagingDetails
+  }
+}

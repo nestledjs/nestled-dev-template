@@ -1,0 +1,17 @@
+mutation AdminCreateLink($input: CreateLinkInput!) {
+  createLink(input: $input) {
+    ...AdminLinkDetails
+  }
+}
+
+mutation AdminDeleteLink($linkId: String!) {
+  deleteLink(linkId: $linkId) {
+    id
+  }
+}
+
+mutation AdminUpdateLink($linkId: String!, $input: UpdateLinkInput!) {
+  updateLink(linkId: $linkId, input: $input) {
+    ...AdminLinkDetails
+  }
+}

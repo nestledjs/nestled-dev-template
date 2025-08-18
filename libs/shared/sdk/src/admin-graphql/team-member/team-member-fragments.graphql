@@ -1,0 +1,18 @@
+fragment AdminTeamMemberList on TeamMember {
+  id
+  createdAt
+  updatedAt
+  teamId
+  userId
+  role
+  team {
+    id
+  }
+  user {
+    id
+  }
+}
+
+fragment AdminTeamMemberDetails on TeamMember {
+  ...AdminTeamMemberList
+}

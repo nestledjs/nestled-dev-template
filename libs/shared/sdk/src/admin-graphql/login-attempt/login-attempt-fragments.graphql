@@ -1,0 +1,19 @@
+fragment AdminLoginAttemptList on LoginAttempt {
+  id
+  createdAt
+  updatedAt
+  userId
+  email
+  success
+  ipAddress
+  userAgent
+  location
+  reason
+  user {
+    id
+  }
+}
+
+fragment AdminLoginAttemptDetails on LoginAttempt {
+  ...AdminLoginAttemptList
+}

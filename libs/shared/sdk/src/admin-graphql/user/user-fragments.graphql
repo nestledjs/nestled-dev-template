@@ -1,0 +1,32 @@
+fragment AdminUserList on User {
+  id
+  createdAt
+  updatedAt
+  firstName
+  lastName
+  role
+  bio
+  displayName
+  password
+  passwordResetToken
+  passwordResetExpires
+  emailValidated
+  validateEmailToken
+  validateEmailTokenExpires
+  activeOrganizationId
+  twoFactorEnabled
+  twoFactorSecret
+  twoFactorMethod
+  lastSuccessfulLogin
+  lastFailedLogin
+  failedLoginCount
+  lockedUntil
+  isActive
+  deactivatedAt
+  termsAcceptedAt
+  privacyPolicyAcceptedAt
+}
+
+fragment AdminUserDetails on User {
+  ...AdminUserList
+}

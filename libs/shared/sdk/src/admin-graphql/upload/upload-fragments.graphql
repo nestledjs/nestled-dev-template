@@ -1,0 +1,29 @@
+fragment AdminUploadList on Upload {
+  id
+  createdAt
+  updatedAt
+  type
+  fileId
+  filePath
+  fileType
+  height
+  name
+  size
+  thumbnailUrl
+  orientation
+  url
+  versionInfo
+  width
+  userId
+  organizationId
+  user {
+    id
+  }
+  organization {
+    id
+  }
+}
+
+fragment AdminUploadDetails on Upload {
+  ...AdminUploadList
+}

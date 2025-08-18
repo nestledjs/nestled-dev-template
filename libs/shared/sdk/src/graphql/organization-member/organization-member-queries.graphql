@@ -1,0 +1,20 @@
+query OrganizationMember($organizationMemberId: String!) {
+  organizationMember(organizationMemberId: $organizationMemberId) {
+    ...OrganizationMemberDetails
+  }
+}
+
+query OrganizationMembers($input: ListOrganizationMemberInput) {
+  organizationMembers(input: $input) {
+    ...OrganizationMemberList
+  }
+  counters: organizationMembersCount(input: $input) {
+    ...CorePagingDetails
+  }
+}
+
+query OrganizationMemberPagination($input: ListOrganizationMemberInput) {
+  counters: organizationMembersCount(input: $input) {
+    ...CorePagingDetails
+  }
+}

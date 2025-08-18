@@ -1,0 +1,6 @@
+import { Request, Response } from 'express'
+
+export interface NestContextType {
+  req: Request
+  res: Response
+}

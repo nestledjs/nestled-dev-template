@@ -1,0 +1,526 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider      = "prisma-client-js"
+  output        = "../prisma-generated"
+  binaryTargets = ["native", "debian-openssl-3.0.x"]
+}
+
+model User {
+  id                     String               @id @default(cuid())
+  createdAt              DateTime             @default(now())
+  updatedAt              DateTime             @default(now()) @updatedAt
+  lastSeen               DateTime?
+  onlineStatus           UserOnlineStatus     @default(Offline)
+  status                 UserStatus           @default(Pending)
+  developer              Boolean              @default(false)
+  role                   Role
+  email                  String               @unique
+  emailConfirmed         Boolean              @default(false)
+  username               String?              @unique
+  firstName              String?
+  lastName               String?
+  password               String?
+  passwordResetToken     String?
+  passwordResetExpires   DateTime?
+  confirmEmailToken      String?
+  confirmEmailExpires    DateTime?
+  applicationDate        DateTime?
+  inactiveDate           DateTime?
+  inquiryDate            DateTime?
+  membershipDate         DateTime?
+  renewalDate            DateTime?
+  terminationDate        DateTime?
+  terminationNotes       String?
+  terminationRequestedBy String?
+  transferDate           DateTime?
+  location               String?
+  phone                  String?
+  bio                    String?
+  facebook               String?
+  twitter                String?
+  youtube                String?
+  linkedin               String?
+  instagram              String?
+  website                String?
+  industry               String?
+  timeInIndustry         String?
+  ssoUrl                 String?
+  address                String?
+  address2               String?
+  cell                   String?
+  chapterTitle           String?
+  city                   String?
+  comments               String?
+  company                String?
+  fax                    String?
+  hear                   String?
+  hearOther              String?
+  internalComments       String?
+  launchComplete         Boolean?
+  mentorName             String?
+  merchantCircle         String?
+  multipleBusinesses     Boolean?
+  multipleLocations      Boolean?
+  numberOfEmployees      Int?
+  organizer              Int?
+  otherBusinesses        String?
+  otherLocations         String?
+  postcode               String?
+  promoter               Int?
+  recognized             Int?
+  salesAgentName         String?
+  state                  String?
+  strategizer            Int?
+  substitute             Boolean?
+  tagline                String?
+  terminatedByName       String?
+  terminationComments    String?
+  terminationReason      String?
+  thinker                Int?
+  title                  String?
+  type                   String?
+  vet                    Boolean?
+  activeDuty             Boolean?
+  militaryBranch         String?
+  notifyByEmail          Boolean?
+  notifyBySMS            Boolean?
+  notifyByWeb            Boolean?
+  notifyByMobile         Boolean?
+  reminderSentBy         AttendanceReminder[] @relation("AttendanceReminder_HasOne_SentByUser")
+  reminderSentTo         AttendanceReminder[] @relation("AttendanceReminder_HasOne_SentToUser")
+  chapter                ChapterMember?       @relation("ChapterMember_BelongsTo_User")
+  presence               MeetingPresence[]    @relation("MeetingPressence_BelongsTo_User")
+  notificationsSent      Notification[]       @relation("Notification_HasOne_FromUser")
+  notificationsReceived  Notification[]       @relation("Notification_HasOne_ToUser")
+  powerHoursFrom         PowerHour[]          @relation("PowerHour_HasOne_FromUser")
+  powerHoursTo           PowerHour[]          @relation("PowerHour_HasOne_ToUser")
+  referralsFrom          Referral[]           @relation("Referral_HasOne_FromUser")
+  referralsSent          Referral[]           @relation("Referral_HasOne_SentByUser")
+  referralsTo            Referral[]           @relation("Referral_HasOne_ToUser")
+  regionsManaged         Region[]             @relation("Region_Has_Managers")
+  substitutesSentBy      Substitute[]         @relation("Substitute_BelongsTo_UserSentBy")
+  substituteAccepted     Substitute[]         @relation("Substitute_BelongsTo_User")
+  territoriesManaged     Territory[]          @relation("Territory_Has_Managers")
+  testimonialsFrom       Testimonial[]        @relation("Testimonial_HasOne_FromUser")
+  testimonialsTo         Testimonial[]        @relation("Testimonial_HasOne_ToUser")
+  transactions           Transaction[]        @relation("Transactions_BelongsTo_User")
+  avatar                 Upload?              @relation("Upload_BelongsTo_User")
+  backgroundImage        Upload?              @relation("Upload_BelongsTo_UserBg")
+  substituteInvited      Substitute[]         @relation("Substitute_HasMany_User")
+  awards                 Award[]              @relation("UserHasManyAwards")
+  // Blog relations
+  blogPostsAuthored      BlogPost[]           @relation("BlogPosts_Author")
+}
+
+/// @crudAuth: { "readOne": "public", "readMany": "public", "count": "public" }
+model Chapter {
+  id                  String               @id @default(cuid())
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @default(now()) @updatedAt
+  establishedDate     DateTime?            @default(now())
+  name                String
+  description         String?
+  address             String?
+  address2            String?
+  city                String?
+  state               String?
+  postCode            String?
+  latitude            String?
+  longitude           String?
+  facebook            String?
+  virtual             Boolean              @default(false)
+  meetingUrl          String?
+  meetingDay          DayOfWeek?
+  meetingTime         String?
+  meetingDetails      String?
+  status              ChapterStatus
+  substituteGroupId   String?
+  regionId            String?
+  attendanceReminders AttendanceReminder[] @relation("AttendanceReminder_BelongsTo_Chapter")
+  region              Region?              @relation("Chapter_BelongsTo_Region", fields: [regionId], references: [id])
+  substituteGroup     SubstituteGroup?     @relation("Chapter_BelongsTo_SubstituteGroup", fields: [substituteGroupId], references: [id])
+  members             ChapterMember[]      @relation("ChapterMember_BelongsTo_Chapter")
+  meetings            Meeting[]            @relation("Meeting_BelongsTo_Chapter")
+  referralsFrom       Referral[]           @relation("Referral_HasOne_FromChapter")
+  referralsTo         Referral[]           @relation("Referral_HasOne_ToChapter")
+  transactions        Transaction[]        @relation("Transactions_BelongsTo_Chapter")
+  backgroundImage     Upload?              @relation("Upload_BelongsTo_Chapter")
+}
+
+model Meeting {
+  id           String            @id @default(cuid())
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @default(now()) @updatedAt
+  date         DateTime          @default(now())
+  chapter      Chapter           @relation("Meeting_BelongsTo_Chapter", fields: [chapterId], references: [id])
+  chapterId    String
+  isVisitorDay Boolean           @default(false)
+  presence     MeetingPresence[] @relation("MeetingPressence_BelongsTo_Meeting")
+}
+
+/// @crudAuth: { "readOne": "user", "readMany": "user", "count": "user", "create": "leader", "update": "leader", "delete": "admin" }
+model MeetingPresence {
+  id         String            @id @default(cuid())
+  createdAt  DateTime          @default(now())
+  updatedAt  DateTime          @default(now()) @updatedAt
+  attendance MeetingAttendance
+  other      String?
+  meetingId  String
+  memberId   String
+  meeting    Meeting           @relation("MeetingPressence_BelongsTo_Meeting", fields: [meetingId], references: [id], onDelete: Cascade)
+  member     User              @relation("MeetingPressence_BelongsTo_User", fields: [memberId], references: [id])
+}
+
+/// @crudAuth: { "readOne": "user", "readMany": "user", "count": "user", "create": "user", "update": "user", "delete": "user" }
+model Substitute {
+  id           String   @id @default(cuid())
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @default(now()) @updatedAt
+  meetingDate  DateTime
+  sentById     String
+  substituteId String?
+  sentBy       User     @relation("Substitute_BelongsTo_UserSentBy", fields: [sentById], references: [id])
+  substitute   User?    @relation("Substitute_BelongsTo_User", fields: [substituteId], references: [id])
+  invited      User[]   @relation("Substitute_HasMany_User")
+}
+
+model AttendanceReminder {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+  chapterId String?
+  sentById  String
+  sentToId  String
+  chapter   Chapter? @relation("AttendanceReminder_BelongsTo_Chapter", fields: [chapterId], references: [id])
+  sentBy    User     @relation("AttendanceReminder_HasOne_SentByUser", fields: [sentById], references: [id])
+  sentTo    User     @relation("AttendanceReminder_HasOne_SentToUser", fields: [sentToId], references: [id])
+}
+
+/// @crudAuth: { "readOne": "public", "readMany": "public", "count": "public" }
+model AwardType {
+  id          String   @id @default(cuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now()) @updatedAt
+  name        String   @unique
+  description String?
+  awards      Award[]  @relation("AwardBelongsToType")
+}
+
+/// @crudAuth: { "readOne": "public", "readMany": "public", "count": "public" }
+model Award {
+  id          String    @id @default(cuid())
+  createdAt   DateTime  @default(now())
+  awardedDate DateTime
+  userId      String
+  awardTypeId String
+  user        User      @relation("UserHasManyAwards", fields: [userId], references: [id])
+  awardType   AwardType @relation("AwardBelongsToType", fields: [awardTypeId], references: [id])
+}
+
+model ChapterMember {
+  id        String            @unique @default(cuid())
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @default(now()) @updatedAt
+  role      ChapterMemberRole
+  chapterId String
+  memberId  String            @unique
+  chapter   Chapter           @relation("ChapterMember_BelongsTo_Chapter", fields: [chapterId], references: [id], onDelete: Cascade)
+  member    User              @relation("ChapterMember_BelongsTo_User", fields: [memberId], references: [id], onDelete: Cascade)
+
+  @@id([chapterId, memberId])
+}
+
+model Upload {
+  id               String   @id @default(cuid())
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @default(now()) @updatedAt
+  format           String?
+  originalFilename String
+  publicId         String
+  resourceType     String
+  secureUrl        String
+  signature        String
+  thumbnailUrl     String
+  url              String?
+  type             String?
+  userId           String?  @unique
+  userBgId         String?  @unique
+  chapterId        String?  @unique
+  chapter          Chapter? @relation("Upload_BelongsTo_Chapter", fields: [chapterId], references: [id])
+  user             User?    @relation("Upload_BelongsTo_User", fields: [userId], references: [id])
+  userBg           User?    @relation("Upload_BelongsTo_UserBg", fields: [userBgId], references: [id])
+}
+
+model SubstituteGroup {
+  id        String    @id @default(cuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @default(now()) @updatedAt
+  name      String
+  chapters  Chapter[] @relation("Chapter_BelongsTo_SubstituteGroup")
+}
+
+model Territory {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+  name      String?
+  regions   Region[] @relation("Region_BelongsTo_Territory")
+  managers  User[]   @relation("Territory_Has_Managers")
+}
+
+model Region {
+  id          String     @id @default(cuid())
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @default(now()) @updatedAt
+  name        String?
+  territoryId String?
+  chapters    Chapter[]  @relation("Chapter_BelongsTo_Region")
+  managers    User[]     @relation("Region_Has_Managers")
+  territory   Territory? @relation("Region_BelongsTo_Territory", fields: [territoryId], references: [id])
+}
+
+model Industry {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+  name      String
+}
+
+/// @crudAuth: { "readOne": "user", "readMany": "user", "count": "user", "create": "user", "update": "user", "delete": "user" }
+model Referral {
+  id            String         @id @default(cuid())
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @default(now()) @updatedAt
+  referralDate  DateTime?
+  rating        ReferralRating
+  firstName     String
+  lastName      String
+  email         String?
+  phone         String?
+  notes         String?
+  fromIndustry  String?
+  toIndustry    String?
+  sentById      String?
+  fromId        String?
+  toId          String?
+  fromChapterId String?
+  toChapterId   String?
+  fromChapter   Chapter?       @relation("Referral_HasOne_FromChapter", fields: [fromChapterId], references: [id])
+  from          User?          @relation("Referral_HasOne_FromUser", fields: [fromId], references: [id])
+  sentBy        User?          @relation("Referral_HasOne_SentByUser", fields: [sentById], references: [id])
+  toChapter     Chapter?       @relation("Referral_HasOne_ToChapter", fields: [toChapterId], references: [id])
+  to            User?          @relation("Referral_HasOne_ToUser", fields: [toId], references: [id])
+  transactions  Transaction[]  @relation("Transactions_BelongsTo_Referral")
+}
+
+model Notification {
+  id            String                     @id @default(cuid())
+  createdAt     DateTime                   @default(now())
+  updatedAt     DateTime                   @default(now()) @updatedAt
+  read          Boolean                    @default(false)
+  type          NotificationType
+  message       String?
+  referenceId   String?
+  referenceType NotificationReferenceType?
+  actorId       String?
+  toId          String
+  actor         User?                      @relation("Notification_HasOne_FromUser", fields: [actorId], references: [id])
+  to            User                       @relation("Notification_HasOne_ToUser", fields: [toId], references: [id])
+}
+
+/// @crudAuth: { "readOne": "user", "readMany": "user", "count": "user", "create": "user", "update": "user", "delete": "leader" }
+model Transaction {
+  id         String    @id @default(cuid())
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @default(now()) @updatedAt
+  date       DateTime
+  amount     Float
+  enteredBy  String?
+  enteredOn  String?
+  industry   String?
+  state      String?
+  chapterId  String?
+  userId     String?
+  referralId String?
+  chapter    Chapter?  @relation("Transactions_BelongsTo_Chapter", fields: [chapterId], references: [id])
+  referral   Referral? @relation("Transactions_BelongsTo_Referral", fields: [referralId], references: [id])
+  user       User?     @relation("Transactions_BelongsTo_User", fields: [userId], references: [id])
+}
+
+model Testimonial {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+  text      String
+  fromId    String
+  toId      String
+  from      User?    @relation("Testimonial_HasOne_FromUser", fields: [fromId], references: [id])
+  to        User?    @relation("Testimonial_HasOne_ToUser", fields: [toId], references: [id])
+}
+
+/// @crudAuth: { "readOne": "user", "readMany": "user", "count": "user", "create": "user", "update": "user", "delete": "user" }
+model PowerHour {
+  id        String          @id @default(cuid())
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @default(now()) @updatedAt
+  date      DateTime
+  time      String
+  details   String?
+  status    PowerHourStatus @default(Proposed)
+  fromId    String
+  toId      String
+  from      User?           @relation("PowerHour_HasOne_FromUser", fields: [fromId], references: [id])
+  to        User?           @relation("PowerHour_HasOne_ToUser", fields: [toId], references: [id])
+}
+
+enum Role {
+  Admin
+  Guest
+  User
+}
+
+enum UserStatus {
+  Active
+  Terminated
+  Inactive
+  Guest
+  Pending
+  PendingNotPaid
+  Withdrawn
+  Banned
+  Unknown
+}
+
+enum UserOnlineStatus {
+  Away
+  Offline
+  Online
+}
+
+enum ChapterStatus {
+  Active
+  NowForming
+  Shutdown
+  Inactive
+  Inquiry
+  PhaseOne
+}
+
+enum DayOfWeek {
+  Monday
+  Tuesday
+  Wednesday
+  Thursday
+  Friday
+  Saturday
+  Sunday
+  Unknown
+}
+
+enum MeetingAttendance {
+  Absent
+  Present
+  Substitute
+  ApprovedLOA
+  Other
+}
+
+enum ChapterMemberRole {
+  Chairperson
+  Member
+  Mentor
+  President
+  Trainer
+  VicePresident
+}
+
+enum ReferralRating {
+  Hot
+  Warm
+  Cold
+}
+
+enum NotificationType {
+  PowerHourAccepted
+  PowerHourCountered
+  PowerHourDeclined
+  PowerHourReceived
+  ReferralReceived
+  SubstituteAccepted
+  SubstituteRequested
+  TestimonialReceived
+  ContactInfoShared
+}
+
+enum NotificationReferenceType {
+  PowerHour
+  Referral
+  Substitute
+  Testimonial
+  SharedContact
+}
+
+enum PowerHourStatus {
+  Accepted
+  Countered
+  Declined
+  Proposed
+}
+
+/// @crudAuth: { "readOne": "public", "readMany": "public", "count": "public", "create": "admin", "update": "admin", "delete": "admin" }
+model BlogCategory {
+  id          String     @id @default(cuid())
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @default(now()) @updatedAt
+  name        String
+  slug        String
+  description String?
+  posts       BlogPost[]
+
+  @@unique([slug])
+  @@unique([name])
+  @@index([slug])
+}
+
+enum BlogPostStatus {
+  Draft
+  Published
+  Archived
+}
+
+/// @crudAuth: { "readOne": "public", "readMany": "public", "count": "public", "create": "admin", "update": "admin", "delete": "admin" }
+model BlogPost {
+  id              String         @id @default(cuid())
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @default(now()) @updatedAt
+  title           String
+  slug            String
+  excerpt         String?
+  image           String?
+  imageAlt        String?
+  content         String         @db.Text
+  status          BlogPostStatus @default(Draft)
+  publishedAt     DateTime?
+  featured        Boolean        @default(false)
+  readingTime     Int?
+  views           Int            @default(0)
+  canonicalUrl    String?
+  metaTitle       String?
+  metaDescription String?
+  previousSlugs   String[]       @default([])
+
+  // Author (optional)
+  authorId String?
+  author   User?   @relation("BlogPosts_Author", fields: [authorId], references: [id])
+
+  // Categories (many-to-many)
+  categories BlogCategory[]
+
+  @@unique([slug])
+  @@index([status, publishedAt])
+  @@index([publishedAt])
+}

@@ -1,0 +1,18 @@
+fragment AdminOrganizationMemberList on OrganizationMember {
+  id
+  createdAt
+  updatedAt
+  role
+  userId
+  organizationId
+  user {
+    id
+  }
+  organization {
+    id
+  }
+}
+
+fragment AdminOrganizationMemberDetails on OrganizationMember {
+  ...AdminOrganizationMemberList
+}

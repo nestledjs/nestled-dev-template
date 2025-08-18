@@ -1,0 +1,17 @@
+mutation AdminCreateUpload($input: CreateUploadInput!) {
+  createUpload(input: $input) {
+    ...AdminUploadDetails
+  }
+}
+
+mutation AdminDeleteUpload($uploadId: String!) {
+  deleteUpload(uploadId: $uploadId) {
+    id
+  }
+}
+
+mutation AdminUpdateUpload($uploadId: String!, $input: UpdateUploadInput!) {
+  updateUpload(uploadId: $uploadId, input: $input) {
+    ...AdminUploadDetails
+  }
+}
