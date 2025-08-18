@@ -1,0 +1,20 @@
+fragment AdminPhoneNumberList on PhoneNumber {
+  id
+  createdAt
+  updatedAt
+  phone
+  phoneType
+  userId
+  primary
+  organizationId
+  user {
+    id
+  }
+  organization {
+    id
+  }
+}
+
+fragment AdminPhoneNumberDetails on PhoneNumber {
+  ...AdminPhoneNumberList
+}

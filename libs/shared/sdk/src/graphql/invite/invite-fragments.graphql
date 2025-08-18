@@ -1,0 +1,15 @@
+fragment InviteList on Invite {
+  id
+  createdAt
+  updatedAt
+  expiresAt
+  email
+  token
+  accepted
+  used
+  issuedAt
+}
+
+fragment InviteDetails on Invite {
+  ...InviteList
+}

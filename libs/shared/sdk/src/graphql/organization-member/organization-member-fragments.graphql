@@ -1,0 +1,9 @@
+fragment OrganizationMemberList on OrganizationMember {
+  id
+  createdAt
+  updatedAt
+}
+
+fragment OrganizationMemberDetails on OrganizationMember {
+  ...OrganizationMemberList
+}

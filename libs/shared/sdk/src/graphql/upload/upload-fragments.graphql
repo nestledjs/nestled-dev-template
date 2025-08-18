@@ -1,0 +1,19 @@
+fragment UploadList on Upload {
+  id
+  createdAt
+  updatedAt
+  filePath
+  fileType
+  height
+  name
+  size
+  thumbnailUrl
+  orientation
+  url
+  versionInfo
+  width
+}
+
+fragment UploadDetails on Upload {
+  ...UploadList
+}

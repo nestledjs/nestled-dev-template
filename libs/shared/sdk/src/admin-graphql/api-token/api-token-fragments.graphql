@@ -1,0 +1,17 @@
+fragment AdminApiTokenList on ApiToken {
+  id
+  createdAt
+  updatedAt
+  userId
+  token
+  name
+  expiresAt
+  revoked
+  user {
+    id
+  }
+}
+
+fragment AdminApiTokenDetails on ApiToken {
+  ...AdminApiTokenList
+}

@@ -1,0 +1,13 @@
+fragment ApiTokenList on ApiToken {
+  id
+  createdAt
+  updatedAt
+  token
+  name
+  expiresAt
+  revoked
+}
+
+fragment ApiTokenDetails on ApiToken {
+  ...ApiTokenList
+}

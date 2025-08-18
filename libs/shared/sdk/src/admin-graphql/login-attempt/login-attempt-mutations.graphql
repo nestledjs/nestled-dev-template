@@ -1,0 +1,17 @@
+mutation AdminCreateLoginAttempt($input: CreateLoginAttemptInput!) {
+  createLoginAttempt(input: $input) {
+    ...AdminLoginAttemptDetails
+  }
+}
+
+mutation AdminDeleteLoginAttempt($loginAttemptId: String!) {
+  deleteLoginAttempt(loginAttemptId: $loginAttemptId) {
+    id
+  }
+}
+
+mutation AdminUpdateLoginAttempt($loginAttemptId: String!, $input: UpdateLoginAttemptInput!) {
+  updateLoginAttempt(loginAttemptId: $loginAttemptId, input: $input) {
+    ...AdminLoginAttemptDetails
+  }
+}

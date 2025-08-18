@@ -1,0 +1,19 @@
+fragment AdminAddressList on Address {
+  id
+  createdAt
+  updatedAt
+  address1
+  address2
+  city
+  region
+  postalCode
+  addressType
+  countryId
+  country {
+    id
+  }
+}
+
+fragment AdminAddressDetails on Address {
+  ...AdminAddressList
+}

@@ -1,0 +1,14 @@
+fragment AddressList on Address {
+  id
+  createdAt
+  updatedAt
+  address1
+  address2
+  city
+  region
+  postalCode
+}
+
+fragment AddressDetails on Address {
+  ...AddressList
+}

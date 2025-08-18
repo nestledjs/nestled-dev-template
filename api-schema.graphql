@@ -1,0 +1,2424 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+input AdminTerminateUserInput {
+  terminationComments: String
+  terminationDate: DateTime
+  terminationNotes: String
+  terminationReason: String
+  terminationRequestedBy: String
+}
+
+input AdminTopChaptersInput {
+  endDate: DateTime
+  limit: Float = 5
+  maxMembers: Float
+  minMembers: Float
+  startDate: DateTime
+}
+
+input AdminTopUsersInput {
+  endDate: DateTime
+  limit: Float = 5
+  maxMembers: Float
+  minMembers: Float
+  startDate: DateTime
+}
+
+type AttendanceReminder {
+  chapter: Chapter
+  chapterId: String
+  createdAt: DateTime!
+  id: String!
+  sentBy: User
+  sentById: String!
+  sentTo: User
+  sentToId: String!
+  updatedAt: DateTime!
+}
+
+type Award {
+  awardType: AwardType
+  awardTypeId: String!
+  awardedDate: DateTime!
+  createdAt: DateTime!
+  id: String!
+  user: User
+  userId: String!
+}
+
+type AwardType {
+  awards: [Award!]
+  createdAt: DateTime!
+  description: String
+  id: String!
+  name: String!
+  updatedAt: DateTime!
+}
+
+type BlogCategory {
+  createdAt: DateTime!
+  description: String
+  id: String!
+  name: String!
+  posts: [BlogPost!]
+  slug: String!
+  updatedAt: DateTime!
+}
+
+type BlogPost {
+  author: User
+  authorId: String
+  canonicalUrl: String
+  categories: [BlogCategory!]
+  content: String!
+  createdAt: DateTime!
+  excerpt: String
+  featured: Boolean!
+  id: String!
+  image: String
+  imageAlt: String
+  metaDescription: String
+  metaTitle: String
+  previousSlugs: [String!]!
+  publishedAt: DateTime
+  readingTime: Int
+  slug: String!
+  status: BlogPostStatus!
+  title: String!
+  updatedAt: DateTime!
+  views: Int!
+}
+
+enum BlogPostStatus {
+  Archived
+  Draft
+  Published
+}
+
+type Chapter {
+  address: String
+  address2: String
+  attendanceReminders: [AttendanceReminder!]
+  backgroundImage: Upload
+  backgroundImageUrl: String
+  city: String
+  createdAt: DateTime!
+  description: String
+  establishedDate: DateTime
+  facebook: String
+  id: String!
+  industries: [String!]
+  latitude: String
+  leaders: [ChapterMember!]
+  longitude: String
+  meetingDay: DayOfWeek
+  meetingDetails: String
+  meetingTime: String
+  meetingUrl: String
+  meetings: [Meeting!]
+  members: [ChapterMember!]
+  name: String!
+  nowFormingIndustries: [String!]
+  postCode: String
+  referralsFrom: [Referral!]
+  referralsTo: [Referral!]
+  region: Region
+  regionId: String
+  state: String
+  status: ChapterStatus!
+  substituteGroup: SubstituteGroup
+  substituteGroupId: String
+  transactions: [Transaction!]
+  updatedAt: DateTime!
+  virtual: Boolean!
+}
+
+type ChapterBizStats {
+  chapterId: String!
+  chapterName: String!
+  memberCount: Float!
+  totalBiz: Float!
+}
+
+input ChapterId {
+  label: String
+  value: String
+}
+
+type ChapterMember {
+  chapter: Chapter
+  chapterId: String!
+  createdAt: DateTime!
+  id: String!
+  member: User
+  memberId: String!
+  role: ChapterMemberRole!
+  updatedAt: DateTime!
+}
+
+enum ChapterMemberRole {
+  Chairperson
+  Member
+  Mentor
+  President
+  Trainer
+  VicePresident
+}
+
+type ChapterPowerHourStats {
+  avgPowerHoursPerMember: Float!
+  chapterId: String!
+  chapterName: String!
+  memberCount: Float!
+  totalPowerHours: Float!
+}
+
+type ChapterReferralStats {
+  chapterId: String!
+  chapterName: String!
+  memberCount: Float!
+  totalReferrals: Float!
+}
+
+enum ChapterStatus {
+  Active
+  Inactive
+  Inquiry
+  NowForming
+  PhaseOne
+  Shutdown
+}
+
+type CorePaging {
+  count: Float
+  page: Float
+  skip: Float
+  take: Float
+  total: Float
+}
+
+input CreateAttendanceReminderInput {
+  chapterId: String
+  createdAt: DateTime
+  id: String
+  sentById: String!
+  sentToId: String!
+  updatedAt: DateTime
+}
+
+input CreateAwardInput {
+  awardTypeId: String!
+  awardedDate: DateTime!
+  createdAt: DateTime
+  id: String
+  userId: String!
+}
+
+input CreateAwardTypeInput {
+  awardsIds: [String!]
+  createdAt: DateTime
+  description: String
+  id: String
+  name: String!
+  updatedAt: DateTime
+}
+
+input CreateBlogCategoryInput {
+  createdAt: DateTime
+  description: String
+  id: String
+  name: String!
+  postsIds: [String!]
+  slug: String!
+  updatedAt: DateTime
+}
+
+input CreateBlogPostInput {
+  authorId: String
+  canonicalUrl: String
+  categoriesIds: [String!]
+  content: String!
+  createdAt: DateTime
+  excerpt: String
+  featured: Boolean
+  id: String
+  image: String
+  imageAlt: String
+  metaDescription: String
+  metaTitle: String
+  previousSlugs: [String!]
+  publishedAt: DateTime
+  readingTime: Int
+  slug: String!
+  status: BlogPostStatus
+  title: String!
+  updatedAt: DateTime
+  views: Int
+}
+
+input CreateChapterInput {
+  address: String
+  address2: String
+  attendanceRemindersIds: [String!]
+  backgroundImageId: String
+  city: String
+  createdAt: DateTime
+  description: String
+  establishedDate: DateTime
+  facebook: String
+  id: String
+  latitude: String
+  longitude: String
+  meetingDay: DayOfWeek
+  meetingDetails: String
+  meetingTime: String
+  meetingUrl: String
+  meetingsIds: [String!]
+  membersIds: [String!]
+  name: String!
+  postCode: String
+  referralsFromIds: [String!]
+  referralsToIds: [String!]
+  regionId: String
+  state: String
+  status: ChapterStatus!
+  substituteGroupId: String
+  transactionsIds: [String!]
+  updatedAt: DateTime
+  virtual: Boolean
+}
+
+input CreateChapterMemberInput {
+  chapterId: String!
+  createdAt: DateTime
+  id: String
+  memberId: String!
+  role: ChapterMemberRole!
+  updatedAt: DateTime
+}
+
+input CreateIndustryInput {
+  createdAt: DateTime
+  id: String
+  name: String!
+  updatedAt: DateTime
+}
+
+input CreateMeetingInput {
+  chapterId: String!
+  createdAt: DateTime
+  date: DateTime
+  id: String
+  isVisitorDay: Boolean
+  presenceIds: [String!]
+  updatedAt: DateTime
+}
+
+input CreateMeetingPresenceInput {
+  attendance: MeetingAttendance!
+  createdAt: DateTime
+  id: String
+  meetingId: String!
+  memberId: String!
+  other: String
+  updatedAt: DateTime
+}
+
+input CreateNotificationInput {
+  actorId: String
+  createdAt: DateTime
+  id: String
+  message: String
+  read: Boolean
+  referenceId: String
+  referenceType: NotificationReferenceType
+  toId: String!
+  type: NotificationType!
+  updatedAt: DateTime
+}
+
+input CreatePowerHourInput {
+  createdAt: DateTime
+  date: DateTime!
+  details: String
+  fromId: String!
+  id: String
+  status: PowerHourStatus
+  time: String!
+  toId: String!
+  updatedAt: DateTime
+}
+
+input CreateReferralInput {
+  createdAt: DateTime
+  email: String
+  firstName: String!
+  fromChapterId: String
+  fromId: String
+  fromIndustry: String
+  id: String
+  lastName: String!
+  notes: String
+  phone: String
+  rating: ReferralRating!
+  referralDate: DateTime
+  sentById: String
+  toChapterId: String
+  toId: String
+  toIndustry: String
+  transactionsIds: [String!]
+  updatedAt: DateTime
+}
+
+input CreateRegionInput {
+  chaptersIds: [String!]
+  createdAt: DateTime
+  id: String
+  managersIds: [String!]
+  name: String
+  territoryId: String
+  updatedAt: DateTime
+}
+
+input CreateReplaceUploadInput {
+  chapterId: String
+  createdAt: DateTime
+  format: String
+  id: String
+  originalFilename: String!
+  publicId: String!
+  replacingCloudinaryPublicId: String
+  replacingUploadId: String
+  resourceType: String!
+  secureUrl: String!
+  signature: String!
+  thumbnailUrl: String!
+  type: String
+  updatedAt: DateTime
+  url: String
+  userBgId: String
+  userId: String
+}
+
+input CreateSubstituteGroupInput {
+  chaptersIds: [String!]
+  createdAt: DateTime
+  id: String
+  name: String!
+  updatedAt: DateTime
+}
+
+input CreateSubstituteInput {
+  createdAt: DateTime
+  id: String
+  invitedIds: [String!]
+  meetingDate: DateTime!
+  sentById: String!
+  substituteId: String
+  updatedAt: DateTime
+}
+
+input CreateTerritoryInput {
+  createdAt: DateTime
+  id: String
+  managersIds: [String!]
+  name: String
+  regionsIds: [String!]
+  updatedAt: DateTime
+}
+
+input CreateTestimonialInput {
+  createdAt: DateTime
+  fromId: String!
+  id: String
+  text: String!
+  toId: String!
+  updatedAt: DateTime
+}
+
+input CreateTransactionInput {
+  amount: Float!
+  chapterId: String
+  createdAt: DateTime
+  date: DateTime!
+  enteredBy: String
+  enteredOn: String
+  id: String
+  industry: String
+  referralId: String
+  state: String
+  updatedAt: DateTime
+  userId: String
+}
+
+input CreateUploadInput {
+  chapterId: String
+  createdAt: DateTime
+  format: String
+  id: String
+  originalFilename: String!
+  publicId: String!
+  resourceType: String!
+  secureUrl: String!
+  signature: String!
+  thumbnailUrl: String!
+  type: String
+  updatedAt: DateTime
+  url: String
+  userBgId: String
+  userId: String
+}
+
+input CreateUserInput {
+  activeDuty: Boolean
+  address: String
+  address2: String
+  applicationDate: DateTime
+  avatarId: String
+  awardsIds: [String!]
+  backgroundImageId: String
+  bio: String
+  blogPostsAuthoredIds: [String!]
+  cell: String
+  chapterId: String
+  chapterTitle: String
+  city: String
+  comments: String
+  company: String
+  confirmEmailExpires: DateTime
+  confirmEmailToken: String
+  createdAt: DateTime
+  developer: Boolean
+  email: String!
+  emailConfirmed: Boolean
+  facebook: String
+  fax: String
+  firstName: String
+  hear: String
+  hearOther: String
+  id: String
+  inactiveDate: DateTime
+  industry: String
+  inquiryDate: DateTime
+  instagram: String
+  internalComments: String
+  lastName: String
+  lastSeen: DateTime
+  launchComplete: Boolean
+  linkedin: String
+  location: String
+  membershipDate: DateTime
+  mentorName: String
+  merchantCircle: String
+  militaryBranch: String
+  multipleBusinesses: Boolean
+  multipleLocations: Boolean
+  notificationsReceivedIds: [String!]
+  notificationsSentIds: [String!]
+  notifyByEmail: Boolean
+  notifyByMobile: Boolean
+  notifyBySMS: Boolean
+  notifyByWeb: Boolean
+  numberOfEmployees: Int
+  onlineStatus: UserOnlineStatus
+  organizer: Int
+  otherBusinesses: String
+  otherLocations: String
+  password: String
+  passwordResetExpires: DateTime
+  passwordResetToken: String
+  phone: String
+  postcode: String
+  powerHoursFromIds: [String!]
+  powerHoursToIds: [String!]
+  presenceIds: [String!]
+  promoter: Int
+  recognized: Int
+  referralsFromIds: [String!]
+  referralsSentIds: [String!]
+  referralsToIds: [String!]
+  regionsManagedIds: [String!]
+  reminderSentByIds: [String!]
+  reminderSentToIds: [String!]
+  renewalDate: DateTime
+  role: Role!
+  salesAgentName: String
+  ssoUrl: String
+  state: String
+  status: UserStatus
+  strategizer: Int
+  substitute: Boolean
+  substituteAcceptedIds: [String!]
+  substituteInvitedIds: [String!]
+  substitutesSentByIds: [String!]
+  tagline: String
+  terminatedByName: String
+  terminationComments: String
+  terminationDate: DateTime
+  terminationNotes: String
+  terminationReason: String
+  terminationRequestedBy: String
+  territoriesManagedIds: [String!]
+  testimonialsFromIds: [String!]
+  testimonialsToIds: [String!]
+  thinker: Int
+  timeInIndustry: String
+  title: String
+  transactionsIds: [String!]
+  transferDate: DateTime
+  twitter: String
+  type: String
+  updatedAt: DateTime
+  username: String
+  vet: Boolean
+  website: String
+  youtube: String
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+enum DayOfWeek {
+  Friday
+  Monday
+  Saturday
+  Sunday
+  Thursday
+  Tuesday
+  Unknown
+  Wednesday
+}
+
+input EmulateUserInput {
+  userId: String!
+}
+
+input ForgotPasswordInput {
+  email: String!
+}
+
+type Industry {
+  createdAt: DateTime!
+  id: String!
+  name: String!
+  updatedAt: DateTime!
+}
+
+"""
+The `JSONObject` scalar type represents JSON objects as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSONObject
+
+input LeaderChapterPowerHoursReportInput {
+  chapterId: String
+  createdAt: DateTime
+  date: DateTime
+  details: String
+  endDate: DateTime
+  filters: JSONObject
+  fromId: String
+  id: String
+  orderBy: String
+  orderDirection: String
+  search: String
+  searchFields: [String!]
+  skip: Float = 0
+  startDate: DateTime
+  status: PowerHourStatus
+  take: Float = 20
+  time: String
+  toId: String
+  updatedAt: DateTime
+}
+
+"""Leader Chapter Power Hours Report Item"""
+type LeaderChapterPowerHoursReportResult {
+  _count: PowerHourCounts
+  firstName: String
+  id: String!
+  lastName: String
+  status: UserStatus
+}
+
+input LeaderChapterReferralsReportInput {
+  chapterId: String
+  endDate: DateTime
+  filters: JSONObject
+  fromId: String
+  orderBy: String
+  orderDirection: String
+  search: String
+  searchFields: [String!]
+  skip: Float = 0
+  startDate: DateTime
+  take: Float = 20
+  toId: String
+}
+
+type LeaderChapterReferralsReportResult {
+  _count: ReferralCounts!
+  firstName: String!
+  id: String!
+  lastName: String!
+  status: UserStatus!
+}
+
+type LeaderChapterTransactions {
+  memberName: String
+  memberStatus: UserStatus
+  totalTransactions: Float
+}
+
+input LeaderChapterTransactionsReportInput {
+  amount: Float
+  chapterId: String
+  createdAt: DateTime
+  date: DateTime
+  endDate: DateTime
+  enteredBy: String
+  enteredOn: String
+  filters: JSONObject
+  id: String
+  industry: String
+  orderBy: String
+  orderDirection: String
+  referralId: String
+  search: String
+  searchFields: [String!]
+  skip: Float = 0
+  startDate: DateTime
+  state: String
+  take: Float = 20
+  updatedAt: DateTime
+  userId: String
+}
+
+input LeaderMeetingPresencesInput {
+  attendance: MeetingAttendance
+  chapterId: String
+  createdAt: DateTime
+  endDate: DateTime
+  filters: JSONObject
+  id: String
+  meetingId: String
+  memberId: String
+  orderBy: String
+  orderDirection: String
+  other: String
+  search: String
+  searchFields: [String!]
+  skip: Float = 0
+  startDate: DateTime
+  take: Float = 20
+  updatedAt: DateTime
+}
+
+input LeaderMeetingsInput {
+  chapterId: String
+  createdAt: DateTime
+  date: DateTime
+  endDate: DateTime
+  filters: JSONObject
+  id: String
+  isVisitorDay: Boolean
+  orderBy: String
+  orderDirection: String
+  presenceIds: [String!]
+  search: String
+  searchFields: [String!]
+  skip: Float = 0
+  startDate: DateTime
+  take: Float = 20
+  updatedAt: DateTime
+}
+
+input LeaderUpdateMeetingPresenceItem {
+  attendance: MeetingAttendance!
+  presenceId: String!
+}
+
+input LeaderUpdateMeetingPresencesInput {
+  presences: [LeaderUpdateMeetingPresenceItem!]!
+}
+
+input LeaderUsersInput {
+  activeDuty: Boolean
+  address: String
+  address2: String
+  applicationDate: DateTime
+  avatarId: String
+  awardsIds: [String!]
+  backgroundImageId: String
+  bio: String
+  blogPostsAuthoredIds: [String!]
+  cell: String
+  chapterId: String
+  chapterTitle: String
+  city: String
+  comments: String
+  company: String
+  confirmEmailExpires: DateTime
+  confirmEmailToken: String
+  createdAt: DateTime
+  developer: Boolean
+  email: String
+  emailConfirmed: Boolean
+  facebook: String
+  fax: String
+  filters: JSONObject
+  firstName: String
+  hear: String
+  hearOther: String
+  id: String
+  inactiveDate: DateTime
+  industry: String
+  inquiryDate: DateTime
+  instagram: String
+  internalComments: String
+  lastName: String
+  lastSeen: DateTime
+  launchComplete: Boolean
+  linkedin: String
+  location: String
+  membershipDate: DateTime
+  mentorName: String
+  merchantCircle: String
+  militaryBranch: String
+  multipleBusinesses: Boolean
+  multipleLocations: Boolean
+  notificationsReceivedIds: [String!]
+  notificationsSentIds: [String!]
+  notifyByEmail: Boolean
+  notifyByMobile: Boolean
+  notifyBySMS: Boolean
+  notifyByWeb: Boolean
+  numberOfEmployees: Int
+  onlineStatus: UserOnlineStatus
+  orderBy: String
+  orderDirection: String
+  organizer: Int
+  otherBusinesses: String
+  otherLocations: String
+  password: String
+  passwordResetExpires: DateTime
+  passwordResetToken: String
+  phone: String
+  postcode: String
+  powerHoursFromIds: [String!]
+  powerHoursToIds: [String!]
+  presenceIds: [String!]
+  promoter: Int
+  recognized: Int
+  referralsFromIds: [String!]
+  referralsSentIds: [String!]
+  referralsToIds: [String!]
+  regionsManagedIds: [String!]
+  reminderSentByIds: [String!]
+  reminderSentToIds: [String!]
+  renewalDate: DateTime
+  role: Role
+  salesAgentName: String
+  search: String
+  searchFields: [String!]
+  skip: Float = 0
+  ssoUrl: String
+  state: String
+  status: UserStatus
+  strategizer: Int
+  substitute: Boolean
+  substituteAcceptedIds: [String!]
+  substituteInvitedIds: [String!]
+  substitutesSentByIds: [String!]
+  tagline: String
+  take: Float = 20
+  terminatedByName: String
+  terminationComments: String
+  terminationDate: DateTime
+  terminationNotes: String
+  terminationReason: String
+  terminationRequestedBy: String
+  territoriesManagedIds: [String!]
+  testimonialsFromIds: [String!]
+  testimonialsToIds: [String!]
+  thinker: Int
+  timeInIndustry: String
+  title: String
+  transactionsIds: [String!]
+  transferDate: DateTime
+  twitter: String
+  type: String
+  updatedAt: DateTime
+  username: String
+  vet: Boolean
+  website: String
+  youtube: String
+}
+
+input ListAttendanceReminderInput {
+  chapterId: String
+  createdAt: DateTime
+  filters: JSONObject
+  id: String
+  orderBy: String
+  orderDirection: String
+  search: String
+  searchFields: [String!]
+  sentById: String
+  sentToId: String
+  skip: Float = 0
+  take: Float = 20
+  updatedAt: DateTime
+}
+
+input ListAwardInput {
+  awardTypeId: String
+  awardedDate: DateTime
+  createdAt: DateTime
+  filters: JSONObject
+  id: String
+  orderBy: String
+  orderDirection: String
+  search: String
+  searchFields: [String!]
+  skip: Float = 0
+  take: Float = 20
+  userId: String
+}
+
+input ListAwardTypeInput {
+  awardsIds: [String!]
+  createdAt: DateTime
+  description: String
+  filters: JSONObject
+  id: String
+  name: String
+  orderBy: String
+  orderDirection: String
+  search: String
+  searchFields: [String!]
+  skip: Float = 0
+  take: Float = 20
+  updatedAt: DateTime
+}
+
+input ListBlogCategoryInput {
+  createdAt: DateTime
+  description: String
+  filters: JSONObject
+  id: String
+  name: String
+  orderBy: String
+  orderDirection: String
+  postsIds: [String!]
+  search: String
+  searchFields: [String!]
+  skip: Float = 0
+  slug: String
+  take: Float = 20
+  updatedAt: DateTime
+}
+
+input ListBlogPostInput {
+  authorId: String
+  canonicalUrl: String
+  categoriesIds: [String!]
+  content: String
+  createdAt: DateTime
+  excerpt: String
+  featured: Boolean
+  filters: JSONObject
+  id: String
+  image: String
+  imageAlt: String
+  metaDescription: String
+  metaTitle: String
+  orderBy: String
+  orderDirection: String
+  previousSlugs: [String!]
+  publishedAt: DateTime
+  readingTime: Int
+  search: String
+  searchFields: [String!]
+  skip: Float = 0
+  slug: String
+  status: BlogPostStatus
+  take: Float = 20
+  title: String
+  updatedAt: DateTime
+  views: Int
+}
+
+input ListChapterInput {
+  address: String
+  address2: String
+  attendanceRemindersIds: [String!]
+  backgroundImageId: String
+  city: String
+  createdAt: DateTime
+  description: String
+  establishedDate: DateTime
+  facebook: String
+  filters: JSONObject
+  id: String
+  latitude: String
+  longitude: String
+  meetingDay: DayOfWeek
+  meetingDetails: String
+  meetingTime: String
+  meetingUrl: String
+  meetingsIds: [String!]
+  membersIds: [String!]
+  name: String
+  orderBy: String
+  orderDirection: String
+  postCode: String
+  referralsFromIds: [String!]
+  referralsToIds: [String!]
+  regionId: String
+  search: String
+  searchFields: [String!]
+  skip: Float = 0
+  state: String
+  status: ChapterStatus
+  substituteGroupId: String
+  take: Float = 20
+  transactionsIds: [String!]
+  updatedAt: DateTime
+  virtual: Boolean
+}
+
+input ListChapterMemberInput {
+  chapterId: String
+  createdAt: DateTime
+  filters: JSONObject
+  id: String
+  memberId: String
+  orderBy: String
+  orderDirection: String
+  role: ChapterMemberRole
+  search: String
+  searchFields: [String!]
+  skip: Float = 0
+  take: Float = 20
+  updatedAt: DateTime
+}
+
+input ListIndustryInput {
+  createdAt: DateTime
+  filters: JSONObject
+  id: String
+  name: String
+  orderBy: String
+  orderDirection: String
+  search: String
+  searchFields: [String!]
+  skip: Float = 0
+  take: Float = 20
+  updatedAt: DateTime
+}
+
+input ListMeetingInput {
+  chapterId: String
+  createdAt: DateTime
+  date: DateTime
+  filters: JSONObject
+  id: String
+  isVisitorDay: Boolean
+  orderBy: String
+  orderDirection: String
+  presenceIds: [String!]
+  search: String
+  searchFields: [String!]
+  skip: Float = 0
+  take: Float = 20
+  updatedAt: DateTime
+}
+
+input ListMeetingPresenceInput {
+  attendance: MeetingAttendance
+  createdAt: DateTime
+  filters: JSONObject
+  id: String
+  meetingId: String
+  memberId: String
+  orderBy: String
+  orderDirection: String
+  other: String
+  search: String
+  searchFields: [String!]
+  skip: Float = 0
+  take: Float = 20
+  updatedAt: DateTime
+}
+
+input ListNotificationInput {
+  actorId: String
+  createdAt: DateTime
+  filters: JSONObject
+  id: String
+  message: String
+  orderBy: String
+  orderDirection: String
+  read: Boolean
+  referenceId: String
+  referenceType: NotificationReferenceType
+  search: String
+  searchFields: [String!]
+  skip: Float = 0
+  take: Float = 20
+  toId: String
+  type: NotificationType
+  updatedAt: DateTime
+}
+
+input ListPowerHourInput {
+  createdAt: DateTime
+  date: DateTime
+  details: String
+  filters: JSONObject
+  fromId: String
+  id: String
+  orderBy: String
+  orderDirection: String
+  search: String
+  searchFields: [String!]
+  skip: Float = 0
+  status: PowerHourStatus
+  take: Float = 20
+  time: String
+  toId: String
+  updatedAt: DateTime
+}
+
+input ListReferralInput {
+  createdAt: DateTime
+  email: String
+  filters: JSONObject
+  firstName: String
+  fromChapterId: String
+  fromId: String
+  fromIndustry: String
+  id: String
+  lastName: String
+  notes: String
+  orderBy: String
+  orderDirection: String
+  phone: String
+  rating: ReferralRating
+  referralDate: DateTime
+  search: String
+  searchFields: [String!]
+  sentById: String
+  skip: Float = 0
+  take: Float = 20
+  toChapterId: String
+  toId: String
+  toIndustry: String
+  transactionsIds: [String!]
+  updatedAt: DateTime
+}
+
+input ListRegionInput {
+  chaptersIds: [String!]
+  createdAt: DateTime
+  filters: JSONObject
+  id: String
+  managersIds: [String!]
+  name: String
+  orderBy: String
+  orderDirection: String
+  search: String
+  searchFields: [String!]
+  skip: Float = 0
+  take: Float = 20
+  territoryId: String
+  updatedAt: DateTime
+}
+
+input ListSubstituteGroupInput {
+  chaptersIds: [String!]
+  createdAt: DateTime
+  filters: JSONObject
+  id: String
+  name: String
+  orderBy: String
+  orderDirection: String
+  search: String
+  searchFields: [String!]
+  skip: Float = 0
+  take: Float = 20
+  updatedAt: DateTime
+}
+
+input ListSubstituteInput {
+  createdAt: DateTime
+  filters: JSONObject
+  id: String
+  invitedIds: [String!]
+  meetingDate: DateTime
+  orderBy: String
+  orderDirection: String
+  search: String
+  searchFields: [String!]
+  sentById: String
+  skip: Float = 0
+  substituteId: String
+  take: Float = 20
+  updatedAt: DateTime
+}
+
+input ListTerritoryInput {
+  createdAt: DateTime
+  filters: JSONObject
+  id: String
+  managersIds: [String!]
+  name: String
+  orderBy: String
+  orderDirection: String
+  regionsIds: [String!]
+  search: String
+  searchFields: [String!]
+  skip: Float = 0
+  take: Float = 20
+  updatedAt: DateTime
+}
+
+input ListTestimonialInput {
+  createdAt: DateTime
+  filters: JSONObject
+  fromId: String
+  id: String
+  orderBy: String
+  orderDirection: String
+  search: String
+  searchFields: [String!]
+  skip: Float = 0
+  take: Float = 20
+  text: String
+  toId: String
+  updatedAt: DateTime
+}
+
+input ListTransactionInput {
+  amount: Float
+  chapterId: String
+  createdAt: DateTime
+  date: DateTime
+  enteredBy: String
+  enteredOn: String
+  filters: JSONObject
+  id: String
+  industry: String
+  orderBy: String
+  orderDirection: String
+  referralId: String
+  search: String
+  searchFields: [String!]
+  skip: Float = 0
+  state: String
+  take: Float = 20
+  updatedAt: DateTime
+  userId: String
+}
+
+input ListUploadInput {
+  chapterId: String
+  createdAt: DateTime
+  filters: JSONObject
+  format: String
+  id: String
+  orderBy: String
+  orderDirection: String
+  originalFilename: String
+  publicId: String
+  resourceType: String
+  search: String
+  searchFields: [String!]
+  secureUrl: String
+  signature: String
+  skip: Float = 0
+  take: Float = 20
+  thumbnailUrl: String
+  type: String
+  updatedAt: DateTime
+  url: String
+  userBgId: String
+  userId: String
+}
+
+input ListUserInput {
+  activeDuty: Boolean
+  address: String
+  address2: String
+  applicationDate: DateTime
+  avatarId: String
+  awardsIds: [String!]
+  backgroundImageId: String
+  bio: String
+  blogPostsAuthoredIds: [String!]
+  cell: String
+  chapterId: String
+  chapterTitle: String
+  city: String
+  comments: String
+  company: String
+  confirmEmailExpires: DateTime
+  confirmEmailToken: String
+  createdAt: DateTime
+  developer: Boolean
+  email: String
+  emailConfirmed: Boolean
+  facebook: String
+  fax: String
+  filters: JSONObject
+  firstName: String
+  hear: String
+  hearOther: String
+  id: String
+  inactiveDate: DateTime
+  industry: String
+  inquiryDate: DateTime
+  instagram: String
+  internalComments: String
+  lastName: String
+  lastSeen: DateTime
+  launchComplete: Boolean
+  linkedin: String
+  location: String
+  membershipDate: DateTime
+  mentorName: String
+  merchantCircle: String
+  militaryBranch: String
+  multipleBusinesses: Boolean
+  multipleLocations: Boolean
+  notificationsReceivedIds: [String!]
+  notificationsSentIds: [String!]
+  notifyByEmail: Boolean
+  notifyByMobile: Boolean
+  notifyBySMS: Boolean
+  notifyByWeb: Boolean
+  numberOfEmployees: Int
+  onlineStatus: UserOnlineStatus
+  orderBy: String
+  orderDirection: String
+  organizer: Int
+  otherBusinesses: String
+  otherLocations: String
+  password: String
+  passwordResetExpires: DateTime
+  passwordResetToken: String
+  phone: String
+  postcode: String
+  powerHoursFromIds: [String!]
+  powerHoursToIds: [String!]
+  presenceIds: [String!]
+  promoter: Int
+  recognized: Int
+  referralsFromIds: [String!]
+  referralsSentIds: [String!]
+  referralsToIds: [String!]
+  regionsManagedIds: [String!]
+  reminderSentByIds: [String!]
+  reminderSentToIds: [String!]
+  renewalDate: DateTime
+  role: Role
+  salesAgentName: String
+  search: String
+  searchFields: [String!]
+  skip: Float = 0
+  ssoUrl: String
+  state: String
+  status: UserStatus
+  strategizer: Int
+  substitute: Boolean
+  substituteAcceptedIds: [String!]
+  substituteInvitedIds: [String!]
+  substitutesSentByIds: [String!]
+  tagline: String
+  take: Float = 20
+  terminatedByName: String
+  terminationComments: String
+  terminationDate: DateTime
+  terminationNotes: String
+  terminationReason: String
+  terminationRequestedBy: String
+  territoriesManagedIds: [String!]
+  testimonialsFromIds: [String!]
+  testimonialsToIds: [String!]
+  thinker: Int
+  timeInIndustry: String
+  title: String
+  transactionsIds: [String!]
+  transferDate: DateTime
+  twitter: String
+  type: String
+  updatedAt: DateTime
+  username: String
+  vet: Boolean
+  website: String
+  youtube: String
+}
+
+input LoginInput {
+  email: String!
+  password: String!
+  remember: Boolean
+}
+
+type MeCounts {
+  bizSum: Float
+  messagesCount: Float
+  myChapterMembersCount: Float
+  myMeetingsCount: Float
+  myReferralsCount: Float
+  powerHoursCount: Float
+  referralsSentCount: Float
+}
+
+type Meeting {
+  chapter: Chapter
+  chapterId: String!
+  createdAt: DateTime!
+  date: DateTime!
+  id: String!
+  isVisitorDay: Boolean!
+  presence: [MeetingPresence!]
+  updatedAt: DateTime!
+}
+
+enum MeetingAttendance {
+  Absent
+  ApprovedLOA
+  Other
+  Present
+  Substitute
+}
+
+type MeetingPresence {
+  attendance: MeetingAttendance!
+  createdAt: DateTime!
+  id: String!
+  meeting: Meeting
+  meetingId: String!
+  member: User
+  memberId: String!
+  other: String
+  updatedAt: DateTime!
+}
+
+type Mutation {
+  adminReceivePayment(amount: Float!, newMember: Boolean!, payment: String!, userId: String!): User!
+  adminTerminateUser(input: AdminTerminateUserInput!, terminatedByName: String!, userId: String!): User!
+  createAttendanceReminder(input: CreateAttendanceReminderInput!): AttendanceReminder
+  createAward(input: CreateAwardInput!): Award
+  createAwardType(input: CreateAwardTypeInput!): AwardType
+  createBlogCategory(input: CreateBlogCategoryInput!): BlogCategory
+  createBlogPost(input: CreateBlogPostInput!): BlogPost
+  createChapter(input: CreateChapterInput!): Chapter
+  createChapterMember(input: CreateChapterMemberInput!): ChapterMember
+  createIndustry(input: CreateIndustryInput!): Industry
+  createMeeting(input: CreateMeetingInput!): Meeting
+  createMeetingPresence(input: CreateMeetingPresenceInput!): MeetingPresence
+  createNotification(input: CreateNotificationInput!): Notification
+  createPowerHour(input: CreatePowerHourInput!): PowerHour
+  createReferral(input: CreateReferralInput!): Referral
+  createRegion(input: CreateRegionInput!): Region
+  createReplaceUpload(input: CreateReplaceUploadInput!): Upload
+  createSubstitute(input: CreateSubstituteInput!): Substitute
+  createSubstituteGroup(input: CreateSubstituteGroupInput!): SubstituteGroup
+  createTerritory(input: CreateTerritoryInput!): Territory
+  createTestimonial(input: CreateTestimonialInput!): Testimonial
+  createTransaction(input: CreateTransactionInput!): Transaction
+  createUpload(input: CreateUploadInput!): Upload
+  createUser(input: CreateUserInput!): User
+  deleteAttendanceReminder(attendanceReminderId: String!): AttendanceReminder
+  deleteAward(awardId: String!): Award
+  deleteAwardType(awardTypeId: String!): AwardType
+  deleteBlogCategory(blogCategoryId: String!): BlogCategory
+  deleteBlogPost(blogPostId: String!): BlogPost
+  deleteChapter(chapterId: String!): Chapter
+  deleteChapterMember(chapterMemberId: String!): ChapterMember
+  deleteIndustry(industryId: String!): Industry
+  deleteMeeting(meetingId: String!): Meeting
+  deleteMeetingPresence(meetingPresenceId: String!): MeetingPresence
+  deleteNotification(notificationId: String!): Notification
+  deletePowerHour(powerHourId: String!): PowerHour
+  deleteReferral(referralId: String!): Referral
+  deleteRegion(regionId: String!): Region
+  deleteSubstitute(substituteId: String!): Substitute
+  deleteSubstituteGroup(substituteGroupId: String!): SubstituteGroup
+  deleteTerritory(territoryId: String!): Territory
+  deleteTestimonial(testimonialId: String!): Testimonial
+  deleteTransaction(transactionId: String!): Transaction
+  deleteUpload(uploadId: String!): Upload
+  deleteUser(userId: String!): User
+  emulateUser(input: EmulateUserInput!): UserToken
+  forgotPassword(input: ForgotPasswordInput!): Boolean
+  leaderDeleteMeeting(meetingId: String!): Meeting!
+  leaderUpdateMeetingPresences(input: LeaderUpdateMeetingPresencesInput!): MutationResult!
+  login(input: LoginInput!): UserToken
+  logout: Boolean
+  markAllNotificationsRead: Int
+  markNotificationRead(notificationId: String!): Notification
+  markNotificationUnread(notificationId: String!): Notification
+  register(input: RegisterInput!): UserToken
+  resetPassword(input: ResetPasswordInput!): User
+  sendTestimonial(input: SendTestimonialInput!): Testimonial
+  shareMemberByEmail(input: ShareMemberByEmailInput!): User
+  shareMemberByPhone(input: ShareMemberByPhoneInput!): User
+  signUploadRequest(params: String!): String
+  submitApplication(input: PublicCreateApplicationInput!): User
+  submitForm(input: PublicSubmitFormInput!): User!
+  updateAttendanceReminder(attendanceReminderId: String!, input: UpdateAttendanceReminderInput!): AttendanceReminder
+  updateAward(awardId: String!, input: UpdateAwardInput!): Award
+  updateAwardType(awardTypeId: String!, input: UpdateAwardTypeInput!): AwardType
+  updateBlogCategory(blogCategoryId: String!, input: UpdateBlogCategoryInput!): BlogCategory
+  updateBlogPost(blogPostId: String!, input: UpdateBlogPostInput!): BlogPost
+  updateChapter(chapterId: String!, input: UpdateChapterInput!): Chapter
+  updateChapterMember(chapterMemberId: String!, input: UpdateChapterMemberInput!): ChapterMember
+  updateIndustry(industryId: String!, input: UpdateIndustryInput!): Industry
+  updateMeeting(input: UpdateMeetingInput!, meetingId: String!): Meeting
+  updateMeetingPresence(input: UpdateMeetingPresenceInput!, meetingPresenceId: String!): MeetingPresence
+  updateNotification(input: UpdateNotificationInput!, notificationId: String!): Notification
+  updatePowerHour(input: UpdatePowerHourInput!, powerHourId: String!): PowerHour
+  updateReferral(input: UpdateReferralInput!, referralId: String!): Referral
+  updateRegion(input: UpdateRegionInput!, regionId: String!): Region
+  updateSubstitute(input: UpdateSubstituteInput!, substituteId: String!): Substitute
+  updateSubstituteGroup(input: UpdateSubstituteGroupInput!, substituteGroupId: String!): SubstituteGroup
+  updateTerritory(input: UpdateTerritoryInput!, territoryId: String!): Territory
+  updateTestimonial(input: UpdateTestimonialInput!, testimonialId: String!): Testimonial
+  updateTransaction(input: UpdateTransactionInput!, transactionId: String!): Transaction
+  updateUpload(input: UpdateUploadInput!, uploadId: String!): Upload
+  updateUser(input: UpdateUserInput!, userId: String!): User
+  uploadChapterImage(chapterId: String!, input: CreateReplaceUploadInput!): Upload
+  uploadUserAvatar(input: CreateReplaceUploadInput!): Upload
+  uploadUserBackground(input: CreateReplaceUploadInput!): Upload
+  userAcceptSubstitute(substituteId: String!): Substitute
+  userCreateSubstitute(input: UserCreateSubstituteInput!): UserCreateSubstituteResult
+  userCreateTransaction(input: CreateTransactionInput!): Transaction
+  userDeleteUpload(publicId: String, uploadId: String!): Upload
+}
+
+type MutationResult {
+  message: String
+  success: Boolean!
+}
+
+type Notification {
+  actor: User
+  actorId: String
+  createdAt: DateTime!
+  id: String!
+  message: String
+  powerHour: PowerHour
+  read: Boolean!
+  referenceId: String
+  referenceType: NotificationReferenceType
+  referral: Referral
+  substitute: Substitute
+  testimonial: Testimonial
+  to: User
+  toId: String!
+  type: NotificationType!
+  updatedAt: DateTime!
+}
+
+enum NotificationReferenceType {
+  PowerHour
+  Referral
+  SharedContact
+  Substitute
+  Testimonial
+}
+
+enum NotificationType {
+  ContactInfoShared
+  PowerHourAccepted
+  PowerHourCountered
+  PowerHourDeclined
+  PowerHourReceived
+  ReferralReceived
+  SubstituteAccepted
+  SubstituteRequested
+  TestimonialReceived
+}
+
+type PowerHour {
+  createdAt: DateTime!
+  date: DateTime!
+  details: String
+  from: User
+  fromId: String!
+  id: String!
+  status: PowerHourStatus!
+  time: String!
+  to: User
+  toId: String!
+  updatedAt: DateTime!
+}
+
+type PowerHourCounts {
+  powerHoursFrom: Int
+  powerHoursTo: Int
+}
+
+enum PowerHourStatus {
+  Accepted
+  Countered
+  Declined
+  Proposed
+}
+
+input PublicCreateApplicationInput {
+  acceptedTerms: Boolean
+  address: String
+  applicationDate: DateTime
+  billingEmail: String
+  billingName: String
+  billingPhone: String
+  businessPhone: String
+  chapterId: ChapterId
+  city: String
+  communityConnections: Boolean
+  company: String
+  developCommunicationSkills: Boolean
+  developLeadershipSkills: Boolean
+  developPublicSpeakingSkills: Boolean
+  developSalesSkills: Boolean
+  email: String
+  emailAddress: String
+  emailConfirmation: String
+  firstName: String
+  giveMentorship: Boolean
+  growMyBusiness: Boolean
+  hasVisitedChapter: String
+  industry: String
+  invitedBy: String
+  lastName: String
+  leaderGroupEmail: String
+  memberType: String
+  mobilePhone: String
+  numberOfEmployees: String
+  other: Boolean
+  otherReason: String
+  ownerEmail: String
+  ownerName: String
+  ownerPhone: String
+  qualityReferrals: Boolean
+  questions: String
+  receiveMentorship: Boolean
+  role: String
+  secondaryIndustry: String
+  smsNotifications: Boolean
+  state: String
+  timeInBusiness: String
+  timeInIndustry: String
+  title: String
+  visitDate: DateTime
+  website: String
+  zip: String
+}
+
+input PublicSubmitFormInput {
+  chapterLocation: String
+  chapterName: String
+  email: String!
+  firstName: String!
+  lastName: String!
+  phone: String!
+  questions: String!
+}
+
+type Query {
+  activeChapters(input: ListChapterInput): [Chapter!]
+  activeChaptersCount(input: ListChapterInput): CorePaging
+  activeUsers(input: ListUserInput): [User!]
+  activeUsersCount(input: ListUserInput): CorePaging
+  adminTopChaptersByBiz(input: AdminTopChaptersInput!): [ChapterBizStats!]!
+  adminTopChaptersByPowerHours(input: AdminTopChaptersInput!): [ChapterPowerHourStats!]!
+  adminTopChaptersByReferrals(input: AdminTopChaptersInput!): [ChapterReferralStats!]!
+  adminTopUsersByPowerHours(input: AdminTopUsersInput!): [UserPowerHourStats!]!
+  adminTopUsersByReferrals(input: AdminTopUsersInput!): [UserReferralStats!]!
+  attendanceReminder(attendanceReminderId: String!): AttendanceReminder
+  attendanceReminders(input: ListAttendanceReminderInput): [AttendanceReminder!]
+  attendanceRemindersCount(input: ListAttendanceReminderInput): CorePaging
+  award(awardId: String!): Award
+  awardType(awardTypeId: String!): AwardType
+  awardTypes(input: ListAwardTypeInput): [AwardType!]
+  awardTypesCount(input: ListAwardTypeInput): CorePaging
+  awards(input: ListAwardInput): [Award!]
+  awardsCount(input: ListAwardInput): CorePaging
+  blogCategories(input: ListBlogCategoryInput): [BlogCategory!]
+  blogCategoriesCount(input: ListBlogCategoryInput): CorePaging
+  blogCategory(blogCategoryId: String!): BlogCategory
+  blogPost(blogPostId: String!): BlogPost
+  blogPosts(input: ListBlogPostInput): [BlogPost!]
+  blogPostsCount(input: ListBlogPostInput): CorePaging
+  chapter(chapterId: String!): Chapter
+  chapterMember(chapterMemberId: String!): ChapterMember
+  chapterMembers(input: ListChapterMemberInput): [ChapterMember!]
+  chapterMembersCount(input: ListChapterMemberInput): CorePaging
+  chapters(input: ListChapterInput): [Chapter!]
+  chaptersCount(input: ListChapterInput): CorePaging
+  countUnreadNotifications: Int
+  industries(input: ListIndustryInput): [Industry!]
+  industriesCount(input: ListIndustryInput): CorePaging
+  industry(industryId: String!): Industry
+  leaderChapterPowerHoursReport(input: LeaderChapterPowerHoursReportInput): [LeaderChapterPowerHoursReportResult!]!
+  leaderChapterReferralsReport(input: LeaderChapterReferralsReportInput): [LeaderChapterReferralsReportResult!]!
+  leaderChapterTransactionsReport(input: LeaderChapterTransactionsReportInput): [LeaderChapterTransactions!]!
+  leaderChapters: [Chapter!]
+  leaderCountMeetingPresences(input: LeaderMeetingPresencesInput): CorePaging!
+  leaderCountMeetings(input: LeaderMeetingsInput): CorePaging!
+  leaderMeeting(meetingId: String!): Meeting
+  leaderMeetingPresences(input: LeaderMeetingPresencesInput): [MeetingPresence!]!
+  leaderMeetings(input: LeaderMeetingsInput): [Meeting!]!
+  leaderUsers(input: LeaderUsersInput): [User!]!
+  me: User
+  meCounts: MeCounts
+  meeting(meetingId: String!): Meeting
+  meetingPresence(meetingPresenceId: String!): MeetingPresence
+  meetingPresences(input: ListMeetingPresenceInput): [MeetingPresence!]
+  meetingPresencesCount(input: ListMeetingPresenceInput): CorePaging
+  meetings(input: ListMeetingInput): [Meeting!]
+  meetingsCount(input: ListMeetingInput): CorePaging
+  membersInSubstituteGroup: [User!]
+  myPowerHours(input: ListPowerHourInput): [PowerHour!]
+  myPowerHoursCount(input: ListPowerHourInput): CorePaging
+  myReferrals(input: ListReferralInput): [Referral!]
+  myReferralsCount(input: ListReferralInput): CorePaging
+  mySubstitutes(input: ListSubstituteInput): [Substitute!]
+  mySubstitutesCount(input: ListSubstituteInput): CorePaging
+  notification(notificationId: String!): Notification
+  notifications(input: ListNotificationInput): [Notification!]
+  notificationsCount(input: ListNotificationInput): CorePaging
+  powerHour(powerHourId: String!): PowerHour
+  powerHours(input: ListPowerHourInput): [PowerHour!]
+  powerHoursCount(input: ListPowerHourInput): CorePaging
+  publicUser(userId: String!): User
+  publicUsers(input: ListUserInput): [User!]!
+  publicUsersCount(input: ListUserInput): CorePaging
+  referral(referralId: String!): Referral
+  referrals(input: ListReferralInput): [Referral!]
+  referralsCount(input: ListReferralInput): CorePaging
+  referralsTo(input: ListReferralInput): [Referral!]
+  referralsToCount(input: ListReferralInput): CorePaging
+  region(regionId: String!): Region
+  regions(input: ListRegionInput): [Region!]
+  regionsCount(input: ListRegionInput): CorePaging
+  substitute(substituteId: String!): Substitute
+  substituteGroup(substituteGroupId: String!): SubstituteGroup
+  substituteGroups(input: ListSubstituteGroupInput): [SubstituteGroup!]
+  substituteGroupsCount(input: ListSubstituteGroupInput): CorePaging
+  substitutes(input: ListSubstituteInput): [Substitute!]
+  substitutesCount(input: ListSubstituteInput): CorePaging
+  territories(input: ListTerritoryInput): [Territory!]
+  territoriesCount(input: ListTerritoryInput): CorePaging
+  territory(territoryId: String!): Territory
+  testimonial(testimonialId: String!): Testimonial
+  testimonials(input: ListTestimonialInput): [Testimonial!]
+  testimonialsCount(input: ListTestimonialInput): CorePaging
+  transaction(transactionId: String!): Transaction
+  transactions(input: ListTransactionInput): [Transaction!]
+  transactionsCount(input: ListTransactionInput): CorePaging
+  upload(uploadId: String!): Upload
+  uploads(input: ListUploadInput): [Upload!]
+  uploadsCount(input: ListUploadInput): CorePaging
+  uptime: Float
+  user(userId: String!): User
+  userChapterUsers(input: ListUserInput): [User!]
+  userCountTransactions(input: ListTransactionInput): CorePaging
+  userMeetingPresences(input: ListMeetingPresenceInput): [MeetingPresence!]
+  userNotifications(input: ListNotificationInput): [Notification!]
+  userTransactions(input: ListTransactionInput): [Transaction!]
+  userUser(userId: String!): User
+  users(input: ListUserInput): [User!]
+  usersCount(input: ListUserInput): CorePaging
+}
+
+type Referral {
+  createdAt: DateTime!
+  email: String
+  firstName: String!
+  from: User
+  fromChapter: Chapter
+  fromChapterId: String
+  fromId: String
+  fromIndustry: String
+  id: String!
+  lastName: String!
+  notes: String
+  phone: String
+  rating: ReferralRating!
+  referralDate: DateTime
+  sentBy: User
+  sentById: String
+  to: User
+  toChapter: Chapter
+  toChapterId: String
+  toId: String
+  toIndustry: String
+  transactions: [Transaction!]
+  updatedAt: DateTime!
+}
+
+type ReferralCounts {
+  referralsFrom: Float!
+  referralsTo: Float!
+}
+
+enum ReferralRating {
+  Cold
+  Hot
+  Warm
+}
+
+type Region {
+  chapters: [Chapter!]
+  createdAt: DateTime!
+  id: String!
+  managers: [User!]
+  name: String
+  territory: Territory
+  territoryId: String
+  updatedAt: DateTime!
+}
+
+input RegisterInput {
+  avatarUrl: String
+  email: String!
+  firstName: String
+  lastName: String
+  password: String!
+  phone: String
+  username: String
+}
+
+input ResetPasswordInput {
+  password: String!
+  token: String!
+}
+
+enum Role {
+  Admin
+  Guest
+  User
+}
+
+input SendTestimonialInput {
+  testimonial: String!
+  toMemberId: String!
+}
+
+input ShareMemberByEmailInput {
+  email: String!
+  memberId: String!
+}
+
+input ShareMemberByPhoneInput {
+  memberId: String!
+  phone: String!
+}
+
+type Substitute {
+  createdAt: DateTime!
+  id: String!
+  invited: [User!]
+  meetingDate: DateTime!
+  sentBy: User
+  sentById: String!
+  substitute: User
+  substituteId: String
+  updatedAt: DateTime!
+}
+
+type SubstituteGroup {
+  chapters: [Chapter!]
+  createdAt: DateTime!
+  id: String!
+  name: String!
+  updatedAt: DateTime!
+}
+
+type Territory {
+  createdAt: DateTime!
+  id: String!
+  managers: [User!]
+  name: String
+  regions: [Region!]
+  updatedAt: DateTime!
+}
+
+type Testimonial {
+  createdAt: DateTime!
+  from: User
+  fromId: String!
+  id: String!
+  text: String!
+  to: User
+  toId: String!
+  updatedAt: DateTime!
+}
+
+type Transaction {
+  amount: Float!
+  chapter: Chapter
+  chapterId: String
+  createdAt: DateTime!
+  date: DateTime!
+  enteredBy: String
+  enteredOn: String
+  id: String!
+  industry: String
+  referral: Referral
+  referralId: String
+  state: String
+  updatedAt: DateTime!
+  user: User
+  userId: String
+}
+
+input UpdateAttendanceReminderInput {
+  chapterId: String
+  createdAt: DateTime
+  id: String
+  sentById: String
+  sentToId: String
+  updatedAt: DateTime
+}
+
+input UpdateAwardInput {
+  awardTypeId: String
+  awardedDate: DateTime
+  createdAt: DateTime
+  id: String
+  userId: String
+}
+
+input UpdateAwardTypeInput {
+  awardsIds: [String!]
+  createdAt: DateTime
+  description: String
+  id: String
+  name: String
+  updatedAt: DateTime
+}
+
+input UpdateBlogCategoryInput {
+  createdAt: DateTime
+  description: String
+  id: String
+  name: String
+  postsIds: [String!]
+  slug: String
+  updatedAt: DateTime
+}
+
+input UpdateBlogPostInput {
+  authorId: String
+  canonicalUrl: String
+  categoriesIds: [String!]
+  content: String
+  createdAt: DateTime
+  excerpt: String
+  featured: Boolean
+  id: String
+  image: String
+  imageAlt: String
+  metaDescription: String
+  metaTitle: String
+  previousSlugs: [String!]
+  publishedAt: DateTime
+  readingTime: Int
+  slug: String
+  status: BlogPostStatus
+  title: String
+  updatedAt: DateTime
+  views: Int
+}
+
+input UpdateChapterInput {
+  address: String
+  address2: String
+  attendanceRemindersIds: [String!]
+  backgroundImageId: String
+  city: String
+  createdAt: DateTime
+  description: String
+  establishedDate: DateTime
+  facebook: String
+  id: String
+  latitude: String
+  longitude: String
+  meetingDay: DayOfWeek
+  meetingDetails: String
+  meetingTime: String
+  meetingUrl: String
+  meetingsIds: [String!]
+  membersIds: [String!]
+  name: String
+  postCode: String
+  referralsFromIds: [String!]
+  referralsToIds: [String!]
+  regionId: String
+  state: String
+  status: ChapterStatus
+  substituteGroupId: String
+  transactionsIds: [String!]
+  updatedAt: DateTime
+  virtual: Boolean
+}
+
+input UpdateChapterMemberInput {
+  chapterId: String
+  createdAt: DateTime
+  id: String
+  memberId: String
+  role: ChapterMemberRole
+  updatedAt: DateTime
+}
+
+input UpdateIndustryInput {
+  createdAt: DateTime
+  id: String
+  name: String
+  updatedAt: DateTime
+}
+
+input UpdateMeetingInput {
+  chapterId: String
+  createdAt: DateTime
+  date: DateTime
+  id: String
+  isVisitorDay: Boolean
+  presenceIds: [String!]
+  updatedAt: DateTime
+}
+
+input UpdateMeetingPresenceInput {
+  attendance: MeetingAttendance
+  createdAt: DateTime
+  id: String
+  meetingId: String
+  memberId: String
+  other: String
+  updatedAt: DateTime
+}
+
+input UpdateNotificationInput {
+  actorId: String
+  createdAt: DateTime
+  id: String
+  message: String
+  read: Boolean
+  referenceId: String
+  referenceType: NotificationReferenceType
+  toId: String
+  type: NotificationType
+  updatedAt: DateTime
+}
+
+input UpdatePowerHourInput {
+  createdAt: DateTime
+  date: DateTime
+  details: String
+  fromId: String
+  id: String
+  status: PowerHourStatus
+  time: String
+  toId: String
+  updatedAt: DateTime
+}
+
+input UpdateReferralInput {
+  createdAt: DateTime
+  email: String
+  firstName: String
+  fromChapterId: String
+  fromId: String
+  fromIndustry: String
+  id: String
+  lastName: String
+  notes: String
+  phone: String
+  rating: ReferralRating
+  referralDate: DateTime
+  sentById: String
+  toChapterId: String
+  toId: String
+  toIndustry: String
+  transactionsIds: [String!]
+  updatedAt: DateTime
+}
+
+input UpdateRegionInput {
+  chaptersIds: [String!]
+  createdAt: DateTime
+  id: String
+  managersIds: [String!]
+  name: String
+  territoryId: String
+  updatedAt: DateTime
+}
+
+input UpdateSubstituteGroupInput {
+  chaptersIds: [String!]
+  createdAt: DateTime
+  id: String
+  name: String
+  updatedAt: DateTime
+}
+
+input UpdateSubstituteInput {
+  createdAt: DateTime
+  id: String
+  invitedIds: [String!]
+  meetingDate: DateTime
+  sentById: String
+  substituteId: String
+  updatedAt: DateTime
+}
+
+input UpdateTerritoryInput {
+  createdAt: DateTime
+  id: String
+  managersIds: [String!]
+  name: String
+  regionsIds: [String!]
+  updatedAt: DateTime
+}
+
+input UpdateTestimonialInput {
+  createdAt: DateTime
+  fromId: String
+  id: String
+  text: String
+  toId: String
+  updatedAt: DateTime
+}
+
+input UpdateTransactionInput {
+  amount: Float
+  chapterId: String
+  createdAt: DateTime
+  date: DateTime
+  enteredBy: String
+  enteredOn: String
+  id: String
+  industry: String
+  referralId: String
+  state: String
+  updatedAt: DateTime
+  userId: String
+}
+
+input UpdateUploadInput {
+  chapterId: String
+  createdAt: DateTime
+  format: String
+  id: String
+  originalFilename: String
+  publicId: String
+  resourceType: String
+  secureUrl: String
+  signature: String
+  thumbnailUrl: String
+  type: String
+  updatedAt: DateTime
+  url: String
+  userBgId: String
+  userId: String
+}
+
+input UpdateUserInput {
+  activeDuty: Boolean
+  address: String
+  address2: String
+  applicationDate: DateTime
+  avatarId: String
+  awardsIds: [String!]
+  backgroundImageId: String
+  bio: String
+  blogPostsAuthoredIds: [String!]
+  cell: String
+  chapterId: String
+  chapterTitle: String
+  city: String
+  comments: String
+  company: String
+  confirmEmailExpires: DateTime
+  confirmEmailToken: String
+  createdAt: DateTime
+  developer: Boolean
+  email: String
+  emailConfirmed: Boolean
+  facebook: String
+  fax: String
+  firstName: String
+  hear: String
+  hearOther: String
+  id: String
+  inactiveDate: DateTime
+  industry: String
+  inquiryDate: DateTime
+  instagram: String
+  internalComments: String
+  lastName: String
+  lastSeen: DateTime
+  launchComplete: Boolean
+  linkedin: String
+  location: String
+  membershipDate: DateTime
+  mentorName: String
+  merchantCircle: String
+  militaryBranch: String
+  multipleBusinesses: Boolean
+  multipleLocations: Boolean
+  notificationsReceivedIds: [String!]
+  notificationsSentIds: [String!]
+  notifyByEmail: Boolean
+  notifyByMobile: Boolean
+  notifyBySMS: Boolean
+  notifyByWeb: Boolean
+  numberOfEmployees: Int
+  onlineStatus: UserOnlineStatus
+  organizer: Int
+  otherBusinesses: String
+  otherLocations: String
+  password: String
+  passwordResetExpires: DateTime
+  passwordResetToken: String
+  phone: String
+  postcode: String
+  powerHoursFromIds: [String!]
+  powerHoursToIds: [String!]
+  presenceIds: [String!]
+  promoter: Int
+  recognized: Int
+  referralsFromIds: [String!]
+  referralsSentIds: [String!]
+  referralsToIds: [String!]
+  regionsManagedIds: [String!]
+  reminderSentByIds: [String!]
+  reminderSentToIds: [String!]
+  renewalDate: DateTime
+  role: Role
+  salesAgentName: String
+  ssoUrl: String
+  state: String
+  status: UserStatus
+  strategizer: Int
+  substitute: Boolean
+  substituteAcceptedIds: [String!]
+  substituteInvitedIds: [String!]
+  substitutesSentByIds: [String!]
+  tagline: String
+  terminatedByName: String
+  terminationComments: String
+  terminationDate: DateTime
+  terminationNotes: String
+  terminationReason: String
+  terminationRequestedBy: String
+  territoriesManagedIds: [String!]
+  testimonialsFromIds: [String!]
+  testimonialsToIds: [String!]
+  thinker: Int
+  timeInIndustry: String
+  title: String
+  transactionsIds: [String!]
+  transferDate: DateTime
+  twitter: String
+  type: String
+  updatedAt: DateTime
+  username: String
+  vet: Boolean
+  website: String
+  youtube: String
+}
+
+type Upload {
+  chapter: Chapter
+  chapterId: String
+  createdAt: DateTime!
+  format: String
+  id: String!
+  originalFilename: String!
+  publicId: String!
+  resourceType: String!
+  secureUrl: String!
+  signature: String!
+  thumbnailUrl: String!
+  type: String
+  updatedAt: DateTime!
+  url: String
+  user: User
+  userBg: User
+  userBgId: String
+  userId: String
+}
+
+type User {
+  activeDuty: Boolean
+  address: String
+  address2: String
+  applicationDate: DateTime
+  avatar: Upload
+  avatarUrl: String
+  awards: [Award!]
+  backgroundImage: Upload
+  backgroundImageUrl: String
+  bio: String
+  blogPostsAuthored: [BlogPost!]
+  cell: String
+  chapter: ChapterMember
+  chapterTitle: String
+  city: String
+  comments: String
+  company: String
+  confirmEmailExpires: DateTime
+  confirmEmailToken: String
+  createdAt: DateTime!
+  developer: Boolean!
+  email: String!
+  emailConfirmed: Boolean!
+  facebook: String
+  fax: String
+  firstName: String
+  hear: String
+  hearOther: String
+  id: String!
+  inactiveDate: DateTime
+  industry: String
+  inquiryDate: DateTime
+  instagram: String
+  internalComments: String
+  isLeader: Boolean
+  lastName: String
+  lastSeen: DateTime
+  launchComplete: Boolean
+  linkedin: String
+  location: String
+  membershipDate: DateTime
+  mentorName: String
+  merchantCircle: String
+  militaryBranch: String
+  multipleBusinesses: Boolean
+  multipleLocations: Boolean
+  name: String
+  notificationsReceived: [Notification!]
+  notificationsSent: [Notification!]
+  notifyByEmail: Boolean
+  notifyByMobile: Boolean
+  notifyBySMS: Boolean
+  notifyByWeb: Boolean
+  numberOfEmployees: Int
+  onlineStatus: UserOnlineStatus!
+  organizer: Int
+  otherBusinesses: String
+  otherLocations: String
+  password: String
+  passwordResetExpires: DateTime
+  passwordResetToken: String
+  phone: String
+  postcode: String
+  powerHoursFrom: [PowerHour!]
+  powerHoursTo: [PowerHour!]
+  presence: [MeetingPresence!]
+  promoter: Int
+  recognized: Int
+  referralsFrom: [Referral!]
+  referralsSent: [Referral!]
+  referralsTo: [Referral!]
+  regionsManaged: [Region!]
+  reminderSentBy: [AttendanceReminder!]
+  reminderSentTo: [AttendanceReminder!]
+  renewalDate: DateTime
+  role: Role!
+  salesAgentName: String
+  ssoUrl: String
+  state: String
+  status: UserStatus!
+  strategizer: Int
+  substitute: Boolean
+  substituteAccepted: [Substitute!]
+  substituteInvited: [Substitute!]
+  substitutesSentBy: [Substitute!]
+  tagline: String
+  terminatedByName: String
+  terminationComments: String
+  terminationDate: DateTime
+  terminationNotes: String
+  terminationReason: String
+  terminationRequestedBy: String
+  territoriesManaged: [Territory!]
+  testimonialsFrom: [Testimonial!]
+  testimonialsTo: [Testimonial!]
+  thinker: Int
+  timeInIndustry: String
+  title: String
+  transactions: [Transaction!]
+  transferDate: DateTime
+  twitter: String
+  type: String
+  updatedAt: DateTime!
+  username: String
+  vet: Boolean
+  website: String
+  youtube: String
+}
+
+input UserCreateSubstituteInput {
+  invited: [String!]!
+  meetingDate: DateTime!
+}
+
+type UserCreateSubstituteResult {
+  skipped: [String!]!
+  subRequest: Substitute
+}
+
+enum UserOnlineStatus {
+  Away
+  Offline
+  Online
+}
+
+type UserPowerHourStats {
+  chapterMemberCount: Float
+  chapterName: String
+  firstName: String!
+  id: String!
+  lastName: String!
+  powerHourCount: Float!
+}
+
+type UserReferralStats {
+  chapterMemberCount: Float
+  chapterName: String
+  firstName: String!
+  id: String!
+  lastName: String!
+  referralCount: Float!
+}
+
+enum UserStatus {
+  Active
+  Banned
+  Guest
+  Inactive
+  Pending
+  PendingNotPaid
+  Terminated
+  Unknown
+  Withdrawn
+}
+
+type UserToken {
+  """JWT Bearer token"""
+  token: String
+  user: User
+}

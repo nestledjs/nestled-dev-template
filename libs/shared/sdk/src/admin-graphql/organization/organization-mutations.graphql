@@ -1,0 +1,17 @@
+mutation AdminCreateOrganization($input: CreateOrganizationInput!) {
+  createOrganization(input: $input) {
+    ...AdminOrganizationDetails
+  }
+}
+
+mutation AdminDeleteOrganization($organizationId: String!) {
+  deleteOrganization(organizationId: $organizationId) {
+    id
+  }
+}
+
+mutation AdminUpdateOrganization($organizationId: String!, $input: UpdateOrganizationInput!) {
+  updateOrganization(organizationId: $organizationId, input: $input) {
+    ...AdminOrganizationDetails
+  }
+}

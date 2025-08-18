@@ -1,0 +1,23 @@
+fragment AdminInviteList on Invite {
+  id
+  createdAt
+  updatedAt
+  expiresAt
+  email
+  token
+  inviterId
+  organizationId
+  accepted
+  used
+  issuedAt
+  inviter {
+    id
+  }
+  organization {
+    id
+  }
+}
+
+fragment AdminInviteDetails on Invite {
+  ...AdminInviteList
+}

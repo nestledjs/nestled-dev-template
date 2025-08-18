@@ -1,0 +1,18 @@
+fragment AdminUserSessionList on UserSession {
+  id
+  createdAt
+  updatedAt
+  lastActiveAt
+  userId
+  deviceInfo
+  ipAddress
+  isValid
+  twoFactorVerified
+  user {
+    id
+  }
+}
+
+fragment AdminUserSessionDetails on UserSession {
+  ...AdminUserSessionList
+}

@@ -1,0 +1,17 @@
+mutation createUpload($input: CreateUploadInput!) {
+  createUpload(input: $input) {
+    ...UploadDetails
+  }
+}
+
+mutation deleteUpload($uploadId: String!) {
+  deleteUpload(uploadId: $uploadId) {
+    id
+  }
+}
+
+mutation updateUpload($uploadId: String!, $input: UpdateUploadInput!) {
+  updateUpload(uploadId: $uploadId, input: $input) {
+    ...UploadDetails
+  }
+}

@@ -1,0 +1,10 @@
+fragment AdminOrganizationList on Organization {
+  id
+  createdAt
+  updatedAt
+  name
+}
+
+fragment AdminOrganizationDetails on Organization {
+  ...AdminOrganizationList
+}
