@@ -15,7 +15,7 @@ import type { QueryRef } from '@apollo/client'
 import { useApolloClient, useReadQuery } from '@apollo/client'
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const token = getCookie(request.headers, '__session_biz')
+  const token = getCookie(request.headers, '__session')
   return { token }
 }
 

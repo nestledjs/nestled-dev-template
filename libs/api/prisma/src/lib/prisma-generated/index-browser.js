@@ -20,12 +20,12 @@ exports.Prisma = Prisma
 exports.$Enums = {}
 
 /**
- * Prisma Client JS version: 6.11.0
- * Query Engine version: 9c30299f5a0ea26a96790e13f796dc6094db3173
+ * Prisma Client JS version: 6.14.0
+ * Query Engine version: 717184b7b35ea05dfa71a3236b7af656013e1e49
  */
 Prisma.prismaVersion = {
-  client: "6.11.0",
-  engine: "9c30299f5a0ea26a96790e13f796dc6094db3173"
+  client: "6.14.0",
+  engine: "717184b7b35ea05dfa71a3236b7af656013e1e49"
 }
 
 Prisma.PrismaClientKnownRequestError = () => {
@@ -120,326 +120,294 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
   Serializable: 'Serializable'
 });
 
-exports.Prisma.UserScalarFieldEnum = {
+exports.Prisma.AddressScalarFieldEnum = {
   id: 'id',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
-  lastSeen: 'lastSeen',
-  onlineStatus: 'onlineStatus',
-  status: 'status',
-  developer: 'developer',
-  role: 'role',
+  address1: 'address1',
+  address2: 'address2',
+  city: 'city',
+  region: 'region',
+  postalCode: 'postalCode',
+  addressType: 'addressType',
+  isPrimary: 'isPrimary',
+  countryId: 'countryId',
+  userId: 'userId',
+  organizationId: 'organizationId'
+};
+
+exports.Prisma.ApiTokenScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  userId: 'userId',
+  token: 'token',
+  name: 'name',
+  expiresAt: 'expiresAt',
+  revoked: 'revoked'
+};
+
+exports.Prisma.AuditLogScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  entityId: 'entityId',
+  entityType: 'entityType',
+  action: 'action',
+  userId: 'userId',
+  organizationId: 'organizationId',
+  changes: 'changes'
+};
+
+exports.Prisma.CountryScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  name: 'name',
+  alpha2: 'alpha2',
+  alpha3: 'alpha3',
+  countryCode: 'countryCode',
+  iso3166_2: 'iso3166_2',
+  region: 'region',
+  subRegion: 'subRegion',
+  intermediateRegion: 'intermediateRegion',
+  regionCode: 'regionCode',
+  subRegionCode: 'subRegionCode',
+  intermediateRegionCode: 'intermediateRegionCode'
+};
+
+exports.Prisma.EmailScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
   email: 'email',
-  emailConfirmed: 'emailConfirmed',
-  username: 'username',
-  firstName: 'firstName',
-  lastName: 'lastName',
-  password: 'password',
-  passwordResetToken: 'passwordResetToken',
-  passwordResetExpires: 'passwordResetExpires',
-  confirmEmailToken: 'confirmEmailToken',
-  confirmEmailExpires: 'confirmEmailExpires',
-  applicationDate: 'applicationDate',
-  inactiveDate: 'inactiveDate',
-  inquiryDate: 'inquiryDate',
-  membershipDate: 'membershipDate',
-  renewalDate: 'renewalDate',
-  terminationDate: 'terminationDate',
-  terminationNotes: 'terminationNotes',
-  terminationRequestedBy: 'terminationRequestedBy',
-  transferDate: 'transferDate',
-  location: 'location',
-  phone: 'phone',
-  bio: 'bio',
-  facebook: 'facebook',
-  twitter: 'twitter',
-  youtube: 'youtube',
-  linkedin: 'linkedin',
-  instagram: 'instagram',
-  website: 'website',
-  industry: 'industry',
-  timeInIndustry: 'timeInIndustry',
-  ssoUrl: 'ssoUrl',
-  address: 'address',
-  address2: 'address2',
-  cell: 'cell',
-  chapterTitle: 'chapterTitle',
-  city: 'city',
-  comments: 'comments',
-  company: 'company',
-  fax: 'fax',
-  hear: 'hear',
-  hearOther: 'hearOther',
-  internalComments: 'internalComments',
-  launchComplete: 'launchComplete',
-  mentorName: 'mentorName',
-  merchantCircle: 'merchantCircle',
-  multipleBusinesses: 'multipleBusinesses',
-  multipleLocations: 'multipleLocations',
-  numberOfEmployees: 'numberOfEmployees',
-  organizer: 'organizer',
-  otherBusinesses: 'otherBusinesses',
-  otherLocations: 'otherLocations',
-  postcode: 'postcode',
-  promoter: 'promoter',
-  recognized: 'recognized',
-  salesAgentName: 'salesAgentName',
-  state: 'state',
-  strategizer: 'strategizer',
-  substitute: 'substitute',
-  tagline: 'tagline',
-  terminatedByName: 'terminatedByName',
-  terminationComments: 'terminationComments',
-  terminationReason: 'terminationReason',
-  thinker: 'thinker',
-  title: 'title',
-  type: 'type',
-  vet: 'vet',
-  activeDuty: 'activeDuty',
-  militaryBranch: 'militaryBranch',
-  notifyByEmail: 'notifyByEmail',
-  notifyBySMS: 'notifyBySMS',
-  notifyByWeb: 'notifyByWeb',
-  notifyByMobile: 'notifyByMobile'
+  public: 'public',
+  primary: 'primary',
+  verified: 'verified',
+  verifyToken: 'verifyToken',
+  verifyExpires: 'verifyExpires',
+  userId: 'userId',
+  emailType: 'emailType',
+  organizationId: 'organizationId'
 };
 
-exports.Prisma.ChapterScalarFieldEnum = {
+exports.Prisma.InviteScalarFieldEnum = {
   id: 'id',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
-  establishedDate: 'establishedDate',
-  name: 'name',
-  description: 'description',
-  address: 'address',
-  address2: 'address2',
-  city: 'city',
-  state: 'state',
-  postCode: 'postCode',
-  latitude: 'latitude',
-  longitude: 'longitude',
-  facebook: 'facebook',
-  virtual: 'virtual',
-  meetingUrl: 'meetingUrl',
-  meetingDay: 'meetingDay',
-  meetingTime: 'meetingTime',
-  meetingDetails: 'meetingDetails',
+  expiresAt: 'expiresAt',
+  email: 'email',
+  token: 'token',
+  inviterId: 'inviterId',
+  organizationId: 'organizationId',
   status: 'status',
-  substituteGroupId: 'substituteGroupId',
-  regionId: 'regionId'
+  roleId: 'roleId'
 };
 
-exports.Prisma.MeetingScalarFieldEnum = {
-  id: 'id',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  date: 'date',
-  chapterId: 'chapterId',
-  isVisitorDay: 'isVisitorDay'
-};
-
-exports.Prisma.MeetingPresenceScalarFieldEnum = {
-  id: 'id',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  attendance: 'attendance',
-  other: 'other',
-  meetingId: 'meetingId',
-  memberId: 'memberId'
-};
-
-exports.Prisma.SubstituteScalarFieldEnum = {
-  id: 'id',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  meetingDate: 'meetingDate',
-  sentById: 'sentById',
-  substituteId: 'substituteId'
-};
-
-exports.Prisma.AttendanceReminderScalarFieldEnum = {
-  id: 'id',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  chapterId: 'chapterId',
-  sentById: 'sentById',
-  sentToId: 'sentToId'
-};
-
-exports.Prisma.AwardTypeScalarFieldEnum = {
+exports.Prisma.LinkScalarFieldEnum = {
   id: 'id',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   name: 'name',
+  url: 'url',
+  userId: 'userId',
+  organizationId: 'organizationId'
+};
+
+exports.Prisma.LoginAttemptScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  userId: 'userId',
+  email: 'email',
+  success: 'success',
+  ipAddress: 'ipAddress',
+  userAgent: 'userAgent',
+  location: 'location',
+  reason: 'reason'
+};
+
+exports.Prisma.OAuthAccountScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  provider: 'provider',
+  providerUserId: 'providerUserId',
+  userId: 'userId'
+};
+
+exports.Prisma.OrganizationScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  name: 'name'
+};
+
+exports.Prisma.OrganizationMemberScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  roleId: 'roleId',
+  userId: 'userId',
+  organizationId: 'organizationId'
+};
+
+exports.Prisma.PermissionScalarFieldEnum = {
+  id: 'id',
+  action: 'action',
+  subject: 'subject',
   description: 'description'
 };
 
-exports.Prisma.AwardScalarFieldEnum = {
-  id: 'id',
-  createdAt: 'createdAt',
-  awardedDate: 'awardedDate',
-  userId: 'userId',
-  awardTypeId: 'awardTypeId'
-};
-
-exports.Prisma.ChapterMemberScalarFieldEnum = {
+exports.Prisma.PhoneNumberScalarFieldEnum = {
   id: 'id',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
-  role: 'role',
-  chapterId: 'chapterId',
-  memberId: 'memberId'
+  phone: 'phone',
+  phoneType: 'phoneType',
+  userId: 'userId',
+  primary: 'primary',
+  organizationId: 'organizationId'
+};
+
+exports.Prisma.PlanScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  name: 'name',
+  price: 'price',
+  interval: 'interval',
+  features: 'features',
+  active: 'active'
+};
+
+exports.Prisma.RoleScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  description: 'description',
+  organizationId: 'organizationId'
+};
+
+exports.Prisma.SecurityEventScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  userId: 'userId',
+  eventType: 'eventType',
+  ipAddress: 'ipAddress',
+  userAgent: 'userAgent',
+  metadata: 'metadata'
+};
+
+exports.Prisma.SubscriptionScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  organizationId: 'organizationId',
+  planId: 'planId',
+  stripeCustomerId: 'stripeCustomerId',
+  stripeSubscriptionId: 'stripeSubscriptionId',
+  stripePriceId: 'stripePriceId',
+  stripeCurrentPeriodEnd: 'stripeCurrentPeriodEnd',
+  status: 'status'
+};
+
+exports.Prisma.TeamScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  name: 'name',
+  description: 'description',
+  organizationId: 'organizationId'
+};
+
+exports.Prisma.TeamMemberScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  teamId: 'teamId',
+  userId: 'userId',
+  roleId: 'roleId'
 };
 
 exports.Prisma.UploadScalarFieldEnum = {
   id: 'id',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
-  format: 'format',
-  originalFilename: 'originalFilename',
-  publicId: 'publicId',
-  resourceType: 'resourceType',
-  secureUrl: 'secureUrl',
-  signature: 'signature',
-  thumbnailUrl: 'thumbnailUrl',
-  url: 'url',
   type: 'type',
-  userId: 'userId',
-  userBgId: 'userBgId',
-  chapterId: 'chapterId'
-};
-
-exports.Prisma.SubstituteGroupScalarFieldEnum = {
-  id: 'id',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  name: 'name'
-};
-
-exports.Prisma.TerritoryScalarFieldEnum = {
-  id: 'id',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  name: 'name'
-};
-
-exports.Prisma.RegionScalarFieldEnum = {
-  id: 'id',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
+  fileId: 'fileId',
+  filePath: 'filePath',
+  fileType: 'fileType',
+  height: 'height',
   name: 'name',
-  territoryId: 'territoryId'
+  size: 'size',
+  thumbnailUrl: 'thumbnailUrl',
+  orientation: 'orientation',
+  url: 'url',
+  versionInfo: 'versionInfo',
+  width: 'width',
+  userId: 'userId',
+  organizationId: 'organizationId'
 };
 
-exports.Prisma.IndustryScalarFieldEnum = {
+exports.Prisma.UserScalarFieldEnum = {
   id: 'id',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
-  name: 'name'
-};
-
-exports.Prisma.ReferralScalarFieldEnum = {
-  id: 'id',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  referralDate: 'referralDate',
-  rating: 'rating',
   firstName: 'firstName',
   lastName: 'lastName',
-  email: 'email',
-  phone: 'phone',
-  notes: 'notes',
-  fromIndustry: 'fromIndustry',
-  toIndustry: 'toIndustry',
-  sentById: 'sentById',
-  fromId: 'fromId',
-  toId: 'toId',
-  fromChapterId: 'fromChapterId',
-  toChapterId: 'toChapterId'
+  role: 'role',
+  bio: 'bio',
+  displayName: 'displayName',
+  password: 'password',
+  passwordResetToken: 'passwordResetToken',
+  passwordResetExpires: 'passwordResetExpires',
+  emailValidated: 'emailValidated',
+  validateEmailToken: 'validateEmailToken',
+  validateEmailTokenExpires: 'validateEmailTokenExpires',
+  activeOrganizationId: 'activeOrganizationId',
+  twoFactorEnabled: 'twoFactorEnabled',
+  twoFactorSecret: 'twoFactorSecret',
+  twoFactorRecoveryCodes: 'twoFactorRecoveryCodes',
+  twoFactorMethod: 'twoFactorMethod',
+  lastSuccessfulLogin: 'lastSuccessfulLogin',
+  lastFailedLogin: 'lastFailedLogin',
+  failedLoginCount: 'failedLoginCount',
+  lockedUntil: 'lockedUntil',
+  isActive: 'isActive',
+  deactivatedAt: 'deactivatedAt',
+  termsAcceptedAt: 'termsAcceptedAt',
+  privacyPolicyAcceptedAt: 'privacyPolicyAcceptedAt'
 };
 
-exports.Prisma.NotificationScalarFieldEnum = {
+exports.Prisma.UserPreferenceScalarFieldEnum = {
   id: 'id',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
-  read: 'read',
-  type: 'type',
-  message: 'message',
-  referenceId: 'referenceId',
-  referenceType: 'referenceType',
-  actorId: 'actorId',
-  toId: 'toId'
-};
-
-exports.Prisma.TransactionScalarFieldEnum = {
-  id: 'id',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  date: 'date',
-  amount: 'amount',
-  enteredBy: 'enteredBy',
-  enteredOn: 'enteredOn',
-  industry: 'industry',
-  state: 'state',
-  chapterId: 'chapterId',
   userId: 'userId',
-  referralId: 'referralId'
+  key: 'key',
+  value: 'value'
 };
 
-exports.Prisma.TestimonialScalarFieldEnum = {
+exports.Prisma.UserSessionScalarFieldEnum = {
   id: 'id',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
-  text: 'text',
-  fromId: 'fromId',
-  toId: 'toId'
-};
-
-exports.Prisma.PowerHourScalarFieldEnum = {
-  id: 'id',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  date: 'date',
-  time: 'time',
-  details: 'details',
-  status: 'status',
-  fromId: 'fromId',
-  toId: 'toId'
-};
-
-exports.Prisma.BlogCategoryScalarFieldEnum = {
-  id: 'id',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  name: 'name',
-  slug: 'slug',
-  description: 'description'
-};
-
-exports.Prisma.BlogPostScalarFieldEnum = {
-  id: 'id',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  title: 'title',
-  slug: 'slug',
-  excerpt: 'excerpt',
-  image: 'image',
-  imageAlt: 'imageAlt',
-  content: 'content',
-  status: 'status',
-  publishedAt: 'publishedAt',
-  featured: 'featured',
-  readingTime: 'readingTime',
-  views: 'views',
-  canonicalUrl: 'canonicalUrl',
-  metaTitle: 'metaTitle',
-  metaDescription: 'metaDescription',
-  previousSlugs: 'previousSlugs',
-  authorId: 'authorId'
+  lastActiveAt: 'lastActiveAt',
+  userId: 'userId',
+  deviceInfo: 'deviceInfo',
+  ipAddress: 'ipAddress',
+  isValid: 'isValid',
+  twoFactorVerified: 'twoFactorVerified'
 };
 
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
+};
+
+exports.Prisma.NullableJsonNullValueInput = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull
 };
 
 exports.Prisma.QueryMode = {
@@ -451,128 +419,116 @@ exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
 };
-exports.UserOnlineStatus = exports.$Enums.UserOnlineStatus = {
-  Away: 'Away',
-  Offline: 'Offline',
-  Online: 'Online'
+
+exports.Prisma.JsonNullValueFilter = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull,
+  AnyNull: Prisma.AnyNull
+};
+exports.AddressType = exports.$Enums.AddressType = {
+  HOME: 'HOME',
+  WORK: 'WORK',
+  VENUE: 'VENUE',
+  EVENT: 'EVENT',
+  OTHER: 'OTHER'
 };
 
-exports.UserStatus = exports.$Enums.UserStatus = {
-  Active: 'Active',
-  Terminated: 'Terminated',
-  Inactive: 'Inactive',
-  Guest: 'Guest',
-  Pending: 'Pending',
-  PendingNotPaid: 'PendingNotPaid',
-  Withdrawn: 'Withdrawn',
-  Banned: 'Banned',
-  Unknown: 'Unknown'
+exports.EmailType = exports.$Enums.EmailType = {
+  PERSONAL: 'PERSONAL',
+  WORK: 'WORK',
+  OTHER: 'OTHER'
 };
 
-exports.Role = exports.$Enums.Role = {
-  Admin: 'Admin',
-  Guest: 'Guest',
-  User: 'User'
+exports.InviteStatus = exports.$Enums.InviteStatus = {
+  PENDING: 'PENDING',
+  ACCEPTED: 'ACCEPTED',
+  DECLINED: 'DECLINED',
+  EXPIRED: 'EXPIRED'
 };
 
-exports.DayOfWeek = exports.$Enums.DayOfWeek = {
-  Monday: 'Monday',
-  Tuesday: 'Tuesday',
-  Wednesday: 'Wednesday',
-  Thursday: 'Thursday',
-  Friday: 'Friday',
-  Saturday: 'Saturday',
-  Sunday: 'Sunday',
-  Unknown: 'Unknown'
+exports.FailureReason = exports.$Enums.FailureReason = {
+  INVALID_PASSWORD: 'INVALID_PASSWORD',
+  INVALID_EMAIL: 'INVALID_EMAIL',
+  ACCOUNT_LOCKED: 'ACCOUNT_LOCKED',
+  ACCOUNT_DISABLED: 'ACCOUNT_DISABLED',
+  INVALID_2FA: 'INVALID_2FA',
+  EXPIRED_TOKEN: 'EXPIRED_TOKEN',
+  TOO_MANY_ATTEMPTS: 'TOO_MANY_ATTEMPTS'
 };
 
-exports.ChapterStatus = exports.$Enums.ChapterStatus = {
-  Active: 'Active',
-  NowForming: 'NowForming',
-  Shutdown: 'Shutdown',
-  Inactive: 'Inactive',
-  Inquiry: 'Inquiry',
-  PhaseOne: 'PhaseOne'
+exports.PhoneType = exports.$Enums.PhoneType = {
+  HOME: 'HOME',
+  WORK: 'WORK',
+  MOBILE: 'MOBILE',
+  OTHER: 'OTHER'
 };
 
-exports.MeetingAttendance = exports.$Enums.MeetingAttendance = {
-  Absent: 'Absent',
-  Present: 'Present',
-  Substitute: 'Substitute',
-  ApprovedLOA: 'ApprovedLOA',
-  Other: 'Other'
+exports.SecurityEventType = exports.$Enums.SecurityEventType = {
+  PASSWORD_CHANGED: 'PASSWORD_CHANGED',
+  EMAIL_CHANGED: 'EMAIL_CHANGED',
+  TWO_FACTOR_ENABLED: 'TWO_FACTOR_ENABLED',
+  TWO_FACTOR_DISABLED: 'TWO_FACTOR_DISABLED',
+  RECOVERY_CODES_GENERATED: 'RECOVERY_CODES_GENERATED',
+  ACCOUNT_LOCKED: 'ACCOUNT_LOCKED',
+  ACCOUNT_UNLOCKED: 'ACCOUNT_UNLOCKED',
+  SUSPICIOUS_LOGIN_ATTEMPT: 'SUSPICIOUS_LOGIN_ATTEMPT',
+  PASSWORD_RESET_REQUESTED: 'PASSWORD_RESET_REQUESTED',
+  LOGIN_LOCATION_CHANGE: 'LOGIN_LOCATION_CHANGE'
 };
 
-exports.ChapterMemberRole = exports.$Enums.ChapterMemberRole = {
-  Chairperson: 'Chairperson',
-  Member: 'Member',
-  Mentor: 'Mentor',
-  President: 'President',
-  Trainer: 'Trainer',
-  VicePresident: 'VicePresident'
+exports.SubscriptionStatus = exports.$Enums.SubscriptionStatus = {
+  ACTIVE: 'ACTIVE',
+  CANCELED: 'CANCELED',
+  PAST_DUE: 'PAST_DUE',
+  INCOMPLETE: 'INCOMPLETE',
+  INCOMPLETE_EXPIRED: 'INCOMPLETE_EXPIRED',
+  TRIALING: 'TRIALING'
 };
 
-exports.ReferralRating = exports.$Enums.ReferralRating = {
-  Hot: 'Hot',
-  Warm: 'Warm',
-  Cold: 'Cold'
+exports.ImageType = exports.$Enums.ImageType = {
+  AVATAR: 'AVATAR',
+  BACKGROUND: 'BACKGROUND',
+  OTHER: 'OTHER'
 };
 
-exports.NotificationType = exports.$Enums.NotificationType = {
-  PowerHourAccepted: 'PowerHourAccepted',
-  PowerHourCountered: 'PowerHourCountered',
-  PowerHourDeclined: 'PowerHourDeclined',
-  PowerHourReceived: 'PowerHourReceived',
-  ReferralReceived: 'ReferralReceived',
-  SubstituteAccepted: 'SubstituteAccepted',
-  SubstituteRequested: 'SubstituteRequested',
-  TestimonialReceived: 'TestimonialReceived',
-  ContactInfoShared: 'ContactInfoShared'
+exports.UserRole = exports.$Enums.UserRole = {
+  DEVELOPER: 'DEVELOPER',
+  SUPER_ADMIN: 'SUPER_ADMIN',
+  ADMIN: 'ADMIN',
+  USER: 'USER'
 };
 
-exports.NotificationReferenceType = exports.$Enums.NotificationReferenceType = {
-  PowerHour: 'PowerHour',
-  Referral: 'Referral',
-  Substitute: 'Substitute',
-  Testimonial: 'Testimonial',
-  SharedContact: 'SharedContact'
-};
-
-exports.PowerHourStatus = exports.$Enums.PowerHourStatus = {
-  Accepted: 'Accepted',
-  Countered: 'Countered',
-  Declined: 'Declined',
-  Proposed: 'Proposed'
-};
-
-exports.BlogPostStatus = exports.$Enums.BlogPostStatus = {
-  Draft: 'Draft',
-  Published: 'Published',
-  Archived: 'Archived'
+exports.TwoFactorMethod = exports.$Enums.TwoFactorMethod = {
+  NONE: 'NONE',
+  AUTHENTICATOR: 'AUTHENTICATOR',
+  SMS: 'SMS',
+  EMAIL: 'EMAIL'
 };
 
 exports.Prisma.ModelName = {
-  User: 'User',
-  Chapter: 'Chapter',
-  Meeting: 'Meeting',
-  MeetingPresence: 'MeetingPresence',
-  Substitute: 'Substitute',
-  AttendanceReminder: 'AttendanceReminder',
-  AwardType: 'AwardType',
-  Award: 'Award',
-  ChapterMember: 'ChapterMember',
+  Address: 'Address',
+  ApiToken: 'ApiToken',
+  AuditLog: 'AuditLog',
+  Country: 'Country',
+  Email: 'Email',
+  Invite: 'Invite',
+  Link: 'Link',
+  LoginAttempt: 'LoginAttempt',
+  OAuthAccount: 'OAuthAccount',
+  Organization: 'Organization',
+  OrganizationMember: 'OrganizationMember',
+  Permission: 'Permission',
+  PhoneNumber: 'PhoneNumber',
+  Plan: 'Plan',
+  Role: 'Role',
+  SecurityEvent: 'SecurityEvent',
+  Subscription: 'Subscription',
+  Team: 'Team',
+  TeamMember: 'TeamMember',
   Upload: 'Upload',
-  SubstituteGroup: 'SubstituteGroup',
-  Territory: 'Territory',
-  Region: 'Region',
-  Industry: 'Industry',
-  Referral: 'Referral',
-  Notification: 'Notification',
-  Transaction: 'Transaction',
-  Testimonial: 'Testimonial',
-  PowerHour: 'PowerHour',
-  BlogCategory: 'BlogCategory',
-  BlogPost: 'BlogPost'
+  User: 'User',
+  UserPreference: 'UserPreference',
+  UserSession: 'UserSession'
 };
 
 /**

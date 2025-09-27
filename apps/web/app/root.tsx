@@ -1,6 +1,5 @@
 import { ApolloHydrationHelper } from '@apollo/client-integration-react-router'
 import '@nestled-template/shared/styles'
-import './styles/phone-styles.css'
 import { apolloLoader } from '@nestled-template/shared/apollo'
 import { MeDocument, MeQuery } from '@nestled-template/shared/sdk'
 import { getCookie, isJwtExpired, isNetworkError } from '@nestled-template/shared/utils'
@@ -35,11 +34,14 @@ export const links: LinksFunction = () => [
 
 export const loader = apolloLoader()(({ preloadQuery, request }) => {
   const url = new URL(request.url)
-  const token = getCookie(request.headers, '__session_biz')
+  const token = getCookie(request.headers, '__session')
   const isAuthenticated = token && !isJwtExpired(token)
 
   // Define private routes that require authentication
-  const isPrivateRoute = url.pathname.startsWith('/members') || url.pathname.startsWith('/admin') || url.pathname.startsWith('/leaders')
+  const isPrivateRoute =
+    url.pathname.startsWith('/members') ||
+    url.pathname.startsWith('/admin') ||
+    url.pathname.startsWith('/leaders')
 
   // If accessing a private route without authentication, redirect to login
   if (isPrivateRoute && !isAuthenticated) {
@@ -50,7 +52,7 @@ export const loader = apolloLoader()(({ preloadQuery, request }) => {
     return redirect(loginRedirect, {
       headers: {
         'Set-Cookie':
-          '__session_biz=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; SameSite=Lax',
+          '__session=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; SameSite=Lax',
       },
     })
   }
@@ -88,7 +90,7 @@ export const loader = apolloLoader()(({ preloadQuery, request }) => {
         return redirect(loginRedirect, {
           headers: {
             'Set-Cookie':
-              '__session_biz=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; SameSite=Lax',
+              '__session=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; SameSite=Lax',
           },
         })
       }
@@ -99,7 +101,18 @@ export const loader = apolloLoader()(({ preloadQuery, request }) => {
     }
   }
 
-  // For public routes (not private), just return empty object - no special handling needed
+  // For public routes, if authenticated preload Me so user is globally available
+  if (isAuthenticated) {
+    try {
+      const meQueryRef = preloadQuery<MeQuery>(MeDocument)
+      return { meQueryRef }
+    } catch (error) {
+      // On error for public pages, just continue without user
+      console.warn('[Root Loader] Failed to preload Me on public route:', error)
+      return {}
+    }
+  }
+  // Not authenticated and not private
   return {}
 })
 

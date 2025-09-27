@@ -2,9 +2,10 @@ import { LoaderFunctionArgs, Outlet, useLoaderData } from 'react-router'
 import React from 'react'
 import { WebUiFooter, WebUiHeader } from '@nestled-template/web-ui'
 import { getCookie } from '@nestled-template/shared/utils'
+import { useGlobalCtx } from '@nestled-template/web'
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const token = getCookie(request.headers, '__session_biz')
+  const token = getCookie(request.headers, '__session')
   if (token) {
     return { isAuthenticated: true }
   }
@@ -13,20 +14,21 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
 export default function PublicLayout() {
   const loaderData = useLoaderData<typeof loader>()
+  const { user } = useGlobalCtx()
+  const isAuthenticated = !!user || !!loaderData?.isAuthenticated
   return (
     <>
       <WebUiHeader
-        logo={'/nestled-templatenowlogo.png'}
-        icon={'/nestled-templatenowicon.png'}
-        siteName={'Biz to Biz Now'}
+        logo={'/logo.png'}
+        icon={'/icon.png'}
+        siteName={'Demo Site'}
         navigation={[
-          { name: 'About', href: '/about' },
-          { name: 'Chapters', href: '/directory/chapters' },
-          { name: 'Awards', href: '/award-winners' },
+          { name: 'Features', href: '/features' },
+          { name: 'Pricing', href: '/pricing' },
           { name: 'Blog', href: '/blog' },
-          { name: 'Contact', href: '/contact' },
+          { name: 'Sign Up', href: '/register' },
         ]}
-        isAuthenticated={loaderData?.isAuthenticated}
+        isAuthenticated={isAuthenticated}
       />
       <Outlet />
       <WebUiFooter />

@@ -55,10 +55,27 @@ export function isNetworkError(error: Error | unknown): boolean {
   const errorMessage = errorObj.message || ''
   const errorName = errorObj.name || ''
   const errorStack = errorObj.stack || ''
+  const anyErr = error as any
 
   // Exclude Vite cache errors from network errors
   if (isViteCacheError(error)) {
     return false
+  }
+
+  // If this looks like an ApolloError, prefer structured fields when available
+  // Treat explicit Unauthorized/UNAUTHENTICATED as NOT network errors
+  if (anyErr && (anyErr.graphQLErrors || anyErr.networkError)) {
+    if (anyErr.networkError) {
+      return true
+    }
+    if (Array.isArray(anyErr.graphQLErrors) && anyErr.graphQLErrors.length > 0) {
+      const hasAuthError = anyErr.graphQLErrors.some((g: any) => {
+        const msg = (g?.message || '').toString()
+        const code = g?.extensions?.code || ''
+        return msg.includes('Unauthorized') || msg.includes('UNAUTHORIZED') || code === 'UNAUTHENTICATED'
+      })
+      if (hasAuthError) return false
+    }
   }
 
   return (
@@ -72,22 +89,9 @@ export function isNetworkError(error: Error | unknown): boolean {
     errorMessage.includes('ENOTFOUND') ||
     errorName === 'TypeError' ||
     errorName === 'NetworkError' ||
-    
-    // Apollo errors
-    errorMessage.includes('ApolloError') ||
-    errorName === 'ApolloError' ||
-    errorMessage.includes('Error from event stream') ||
-    errorMessage.includes('Redacted for security concerns') ||
-    errorStack.includes('ApolloError') ||
-    errorStack.includes('@apollo/client') ||
-    
-    // GraphQL/API errors
-    errorMessage.includes('GraphQL') ||
-    errorMessage.includes('Query failed') ||
-    errorMessage.includes('Subscription failed') ||
+    // GraphQL/API explicit service down wording
     errorMessage.includes('service unavailable') ||
     errorMessage.includes('Service Unavailable') ||
-    
     // General connectivity issues
     errorMessage.includes('ERR_NETWORK') ||
     errorMessage.includes('ERR_CONNECTION') ||

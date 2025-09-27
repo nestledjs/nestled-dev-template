@@ -30,10 +30,8 @@ const dateReviver = (_key: unknown, value: string | Date): Date => {
   return new Date(value)
 }
 
-export const apiCorePubSub = REDIS_URL
-  ? new RedisPubSub({
-      publisher: new Redis(REDIS_URL, options),
-      subscriber: new Redis(REDIS_URL, options),
-      reviver: dateReviver,
-    })
-  : (undefined as unknown as RedisPubSub)
+export const apiCorePubSub = new RedisPubSub({
+  publisher: new Redis(REDIS_URL ?? 'redis://localhost:6379', options),
+  subscriber: new Redis(REDIS_URL ?? 'redis://localhost:6379', options),
+  reviver: dateReviver,
+})

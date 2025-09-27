@@ -2,9 +2,9 @@ import { Args, Mutation, Query, Resolver, Info } from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
 import type { GraphQLResolveInfo } from 'graphql'
 import { CorePaging } from '@nestled-template/api/core/data-access'
-import { ApiCrudDataAccessService } from '@nestled-template/api/generated-crud/data-access'
 import { Organization } from '@nestled-template/api/core/models'
 import {
+  ApiCrudDataAccessService,
   CreateOrganizationInput,
   ListOrganizationInput,
   UpdateOrganizationInput,

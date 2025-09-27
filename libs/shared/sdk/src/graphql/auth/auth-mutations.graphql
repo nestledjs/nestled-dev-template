@@ -1,0 +1,41 @@
+mutation Login($input: LoginInput!) {
+  login(input: $input) {
+    ...UserTokenDetails
+  }
+}
+
+mutation Register($input: RegisterInput!) {
+  register(input: $input) {
+    ...UserTokenDetails
+  }
+}
+
+mutation Logout {
+  logout
+}
+
+mutation ForgotPassword($input: ForgotPasswordInput!) {
+  forgotPassword(input: $input)
+}
+
+mutation ResetPassword($input: ResetPasswordInput!) {
+  resetPassword(input: $input) {
+    ...AuthUserDetails
+  }
+}
+
+mutation VerifyEmail($input: VerifyEmailInput!) {
+  verifyEmail(input: $input) {
+    ...AuthUserDetails
+  }
+}
+
+mutation ResendVerificationEmail($email: String!) {
+  resendVerificationEmail(email: $email)
+}
+
+mutation EmulateUser($input: EmulateUserInput!) {
+  emulateUser(input: $input) {
+    ...UserTokenDetails
+  }
+}

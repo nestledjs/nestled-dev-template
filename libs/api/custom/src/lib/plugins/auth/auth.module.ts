@@ -7,16 +7,14 @@ import { PassportModule } from '@nestjs/passport'
 import { AuthService } from './auth.service'
 import { JwtStrategy } from './strategies/jwt.strategy'
 import { AuthResolver } from './auth.resolver'
-import { SmtpMailerModule } from '@nestled-template/api/integrations'
-import { UserModule } from '../../default/user/user.module'
+import { EmailModule } from '@nestled-template/api/integrations'
 import { ConfigModule } from '@nestled-template/api/config'
 
 @Module({
   imports: [
     ApiCoreDataAccessModule,
     ApiCoreFeatureModule,
-    UserModule,
-    SmtpMailerModule,
+    EmailModule,
     ConfigModule,
     PassportModule.register({ defaultStrategy: 'jwt' }),
     HttpModule,

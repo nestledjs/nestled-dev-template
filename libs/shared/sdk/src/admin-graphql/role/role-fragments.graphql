@@ -1,0 +1,13 @@
+fragment AdminRoleList on Role {
+  id
+  name
+  description
+  organizationId
+  organization {
+    id
+  }
+}
+
+fragment AdminRoleDetails on Role {
+  ...AdminRoleList
+}

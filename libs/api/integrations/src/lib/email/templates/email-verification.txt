@@ -1,0 +1,20 @@
+{{appName}} - Email Verification
+
+Hi {{userName}},
+
+Thank you for signing up! To complete your account setup, please verify your email address by visiting the following link:
+
+{{verificationUrl}}
+
+{{#if expirationHours}}
+SECURITY NOTICE: This verification link will expire in {{expirationHours}} hours. If it expires, you can request a new one from the login page.
+{{/if}}
+
+If you didn't create an account with us, you can safely ignore this email.
+
+{{#if supportEmail}}
+If you have any questions, please contact us at {{supportEmail}}
+{{/if}}
+
+Best regards,
+{{#if companyName}}{{companyName}}{{else}}{{appName}}{{/if}} Team

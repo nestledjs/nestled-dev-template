@@ -71,7 +71,7 @@ function resolveAuthToken(request?: Request, options?: ClientOptions): string | 
 
     // 3. Check request cookies
     const cookieHeader = request.headers.get('cookie')
-    const cookieToken = getCookieFromHeader(cookieHeader, '__session_biz')
+    const cookieToken = getCookieFromHeader(cookieHeader, '__session')
     if (cookieToken) {
       return cookieToken
     }
@@ -79,7 +79,7 @@ function resolveAuthToken(request?: Request, options?: ClientOptions): string | 
 
   // 4. Check browser cookies (client-side only)
   if (typeof window !== 'undefined' && typeof document !== 'undefined') {
-    const browserToken = getCookieFromHeader(document.cookie, '__session_biz')
+    const browserToken = getCookieFromHeader(document.cookie, '__session')
     if (browserToken) {
       return browserToken
     }

@@ -1,14 +1,13 @@
 import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
 import { ApiCoreDataAccessService } from '@nestled-template/api/core/data-access'
-import { MeetingAttendance, Role, User, UserStatus } from '@nestled-template/api/core/models'
+import { EmailType, User, UserRole } from '@nestled-template/api/core/models'
 import { EmulateUserInput, LoginInput, RegisterInput, UserCreateInput } from './dto'
 import { ApiCoreFeatureService } from '@nestled-template/api/core/feature'
 import { Response } from 'express'
-import { passwordResetEmail } from './templates/password-reset-email.template'
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library'
 import { UserToken } from './models'
-import { SmtpMailerService } from '@nestled-template/api/integrations'
+import { EmailService } from '@nestled-template/api/integrations'
 import { generateExpireDate, generateToken, hashPassword, validatePassword } from './auth.helper'
 import { ConfigService } from '@nestjs/config'
 
@@ -18,7 +17,7 @@ export class AuthService {
     private readonly data: ApiCoreDataAccessService,
     private readonly core: ApiCoreFeatureService,
     private readonly jwtService: JwtService,
-    private readonly mailer: SmtpMailerService,
+    private readonly emailService: EmailService,
     private readonly config: ConfigService,
   ) {}
 
@@ -26,18 +25,23 @@ export class AuthService {
     const password = input.password
     const hashedPassword = hashPassword(password)
     const email = input?.email?.trim()?.toLowerCase()
-    const username = input?.username ?? email
+    // Username not part of the current schema; omit
 
     return this.data.user
       .create({
         data: {
           firstName: input.firstName,
           lastName: input.lastName,
-          email: email,
-          phone: input.phone,
-          username,
           password: hashedPassword,
-          role: Role.User,
+          role: UserRole.USER,
+          emails: {
+            create: {
+              email,
+              primary: true,
+              verified: false,
+              emailType: EmailType.WORK,
+            },
+          },
         },
       })
       .catch(e => {
@@ -55,6 +59,27 @@ export class AuthService {
     })
 
     if (user) {
+      const primaryEmail = payload.email?.trim()?.toLowerCase()
+      // Send verification email
+      const validateEmailToken = generateToken()
+      const validateEmailTokenExpires = generateExpireDate()
+      await this.data.user.update({
+        where: { id: user.id },
+        data: { validateEmailToken, validateEmailTokenExpires },
+      })
+      const appName = this.config.get('appName')
+      const siteUrl = this.config.get('siteUrl')
+      const verificationUrl = `${siteUrl}/verify-email?token=${validateEmailToken}`
+      
+      await this.emailService.sendTemplate(primaryEmail, {
+        templateId: 'email-verification',
+        variables: {
+          userName: user?.firstName || 'there',
+          verificationUrl,
+          appName,
+          expirationHours: 24
+        }
+      })
       return this.signUser(user)
     }
     return null
@@ -67,10 +92,6 @@ export class AuthService {
 
     if (!authUser) {
       throw new NotFoundException(`No user found for email: ${email}`)
-    }
-
-    if (authUser.status !== UserStatus.Active && authUser.status !== UserStatus.Pending) {
-      throw new BadRequestException('User is not active')
     }
 
     const user: User = authUser
@@ -87,93 +108,81 @@ export class AuthService {
     return this.signUser(user)
   }
 
+  async resendVerificationEmail(email: string): Promise<boolean> {
+    const user = await this.findUserByEmail(email)
+    if (!user) {
+      throw new NotFoundException(`No user found for email: ${email}`)
+    }
+    const validateEmailToken = generateToken()
+    const validateEmailTokenExpires = generateExpireDate()
+    await this.data.user.update({
+      where: { id: user.id },
+      data: { validateEmailToken, validateEmailTokenExpires },
+    })
+    const appName = this.config.get('appName')
+    const siteUrl = this.config.get('siteUrl')
+    const verificationUrl = `${siteUrl}/verify-email?token=${validateEmailToken}`
+    
+    await this.emailService.sendTemplate(email, {
+      templateId: 'email-verification',
+      variables: {
+        userName: user?.firstName || 'there',
+        verificationUrl,
+        appName,
+        expirationHours: 24
+      }
+    })
+    return true
+  }
+
+  async verifyEmail(token: string) {
+    const user = await this.data.user.findFirst({ where: { validateEmailToken: token } })
+    if (!user) {
+      throw new NotFoundException('Invalid or already used verification token')
+    }
+    if (!user.validateEmailTokenExpires) {
+      throw new BadRequestException('No email verification expiration found')
+    }
+    if (user.validateEmailTokenExpires.valueOf() < new Date(Date.now()).valueOf()) {
+      throw new BadRequestException('Your email verification token has expired')
+    }
+    
+    const updatedUser = await this.data.user.update({
+      where: { id: user.id },
+      data: {
+        emailValidated: true,
+        validateEmailToken: null,
+        validateEmailTokenExpires: null,
+      },
+    })
+
+    // Send welcome email after successful verification
+    const appName = this.config.get('appName')
+    const siteUrl = this.config.get('siteUrl')
+    const primaryEmail = await this.data.email.findFirst({
+      where: { userId: user.id, primary: true }
+    })
+    
+    if (primaryEmail?.email) {
+      await this.emailService.sendTemplate(primaryEmail.email, {
+        templateId: 'welcome',
+        variables: {
+          userName: user?.firstName || 'there',
+          appName,
+          dashboardUrl: `${siteUrl}/dashboard`
+        }
+      })
+    }
+
+    return updatedUser
+  }
+
   async emulateUser(input: EmulateUserInput) {
     const user = await this.data.user.findUnique({ where: { id: input?.userId } })
     if (!user) {
       throw new NotFoundException(`No emulateUser found for id: ${input?.userId}`)
     }
     return this.signUser(user)
-  }
-
-  async meCounts(userId: string) {
-    // Calculate the date 12 months before today
-    const date12MonthsAgo = new Date()
-    date12MonthsAgo.setFullYear(date12MonthsAgo.getFullYear() - 1)
-
-    const messagesCount =
-      (await this.data.notification.count({ where: { toId: userId, read: false } })) ?? 0
-    const myReferralsCount = (await this.data.referral.count({ where: { toId: userId } })) ?? 0
-    const referralsSentCount =
-      (await this.data.referral.count({ where: { from: { id: userId } } })) ?? 0
-    const powerHoursCount =
-      (await this.data.powerHour.count({
-        where: { OR: [{ fromId: userId }, { toId: userId }] },
-      })) ?? 0
-    // const meetingsTotalCount =
-    //   (await this.data.meetingPresence.count({
-    //     where: {
-    //       meeting: {
-    //         // Use greater than or equal to filter to get meetings from the last 12 months
-    //         date: {
-    //           gte: date12MonthsAgo.toISOString(), // Assuming the date is stored in ISO format
-    //         },
-    //       },
-    //       memberId: userId,
-    //     },
-    //   })) ?? 0
-    const meetingsAttendedCount =
-      (await this.data.meetingPresence.count({
-        where: {
-          memberId: userId,
-          meeting: {
-            // Use greater than or equal to filter to get meetings from the last 12 months
-            date: {
-              gte: date12MonthsAgo.toISOString(), // Assuming the date is stored in ISO format
-            },
-          },
-          attendance: { in: [MeetingAttendance.Present, MeetingAttendance.Substitute] },
-        },
-      })) ?? 0
-    const meetingsPersonallyAttendedCount =
-      (await this.data.meetingPresence.count({
-        where: {
-          memberId: userId,
-          meeting: {
-            // Use greater than or equal to filter to get meetings from the last 12 months
-            date: {
-              gte: date12MonthsAgo.toISOString(), // Assuming the date is stored in ISO format
-            },
-          },
-          attendance: { in: [MeetingAttendance.Present] },
-        },
-      })) ?? 0
-    const myMeetingsCount =
-      Math.round((meetingsPersonallyAttendedCount / meetingsAttendedCount) * 100) || 0
-    const bizSumNested = await this.data.transaction.aggregate({
-      _sum: { amount: true },
-      where: { user: { id: userId } },
-    })
-    const myChapter = await this.data.user
-      .findUnique({ where: { id: userId } })
-      .chapter()
-      .chapter({
-        select: {
-          id: true,
-          members: { where: { member: { status: UserStatus.Active } }, select: { id: true } },
-        },
-      })
-    const myChapterMembersCount = myChapter?.members?.length ?? 0
-    const bizSum = bizSumNested?._sum?.amount ?? 0
-
-    return {
-      messagesCount,
-      myReferralsCount,
-      referralsSentCount,
-      bizSum,
-      myChapterMembersCount,
-      powerHoursCount,
-      myMeetingsCount,
-    }
   }
 
   async forgotPassword(email: string): Promise<boolean> {
@@ -194,16 +203,17 @@ export class AuthService {
 
     const appName = this.config.get('appName')
     const siteUrl = this.config.get('siteUrl')
+    const resetUrl = `${siteUrl}/reset-password?token=${passwordResetToken}`
 
-    await this.mailer.send(
-      passwordResetEmail({
-        email: email,
-        firstName: user?.firstName,
-        passwordResetToken,
+    await this.emailService.sendTemplate(email, {
+      templateId: 'password-reset',
+      variables: {
+        userName: user?.firstName || 'there',
+        resetUrl,
         appName,
-        siteUrl,
-      }),
-    )
+        expirationMinutes: 30
+      }
+    })
     return true
   }
 
@@ -225,7 +235,7 @@ export class AuthService {
     }
 
     const hashedPassword = hashPassword(password)
-    return this.data.user.update({
+    const updatedUser = await this.data.user.update({
       where: { id: user.id },
       data: {
         passwordResetToken: null,
@@ -233,6 +243,25 @@ export class AuthService {
         password: hashedPassword,
       },
     })
+
+    // Send password changed notification
+    const appName = this.config.get('appName')
+    const primaryEmail = await this.data.email.findFirst({
+      where: { userId: user.id, primary: true }
+    })
+    
+    if (primaryEmail?.email) {
+      await this.emailService.sendTemplate(primaryEmail.email, {
+        templateId: 'password-changed',
+        variables: {
+          userName: user?.firstName || 'there',
+          appName,
+          changeTime: new Date()
+        }
+      })
+    }
+
+    return updatedUser
   }
 
   signUser(user: User): UserToken {
@@ -243,11 +272,6 @@ export class AuthService {
   validateUser(userId: string) {
     return this.data.user.findUnique({
       where: { id: userId },
-      include: {
-        chapter: {
-          include: { chapter: true },
-        },
-      },
     })
   }
 
@@ -255,11 +279,6 @@ export class AuthService {
     const userId = this.jwtService.decode(token)['userId']
     return this.data.user.findUnique({
       where: { id: userId },
-      include: {
-        chapter: {
-          include: { chapter: true },
-        },
-      },
     })
   }
 
@@ -267,15 +286,12 @@ export class AuthService {
     const cleanEmail = email?.trim()?.toLowerCase()
     return this.data.user.findFirst({
       where: {
-        email: {
-          equals: cleanEmail,
-          mode: 'insensitive',
-        },
-      },
-      include: {
-        chapter: {
-          include: {
-            chapter: true,
+        emails: {
+          some: {
+            email: {
+              equals: cleanEmail,
+              mode: 'insensitive',
+            },
           },
         },
       },

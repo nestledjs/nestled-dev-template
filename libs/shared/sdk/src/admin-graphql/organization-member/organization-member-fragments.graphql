@@ -2,9 +2,12 @@ fragment AdminOrganizationMemberList on OrganizationMember {
   id
   createdAt
   updatedAt
-  role
+  roleId
   userId
   organizationId
+  role {
+    id
+  }
   user {
     id
   }

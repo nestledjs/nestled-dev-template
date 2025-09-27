@@ -3,6 +3,66 @@ import { join } from 'path'
 import { execSync } from 'child_process'
 import { getDMMF } from '@prisma/internals'
 
+function extractQuotedStrings(input: string): string[] {
+  const values: string[] = []
+  const regex = /['"`]([^'"`]+)['"`]/g
+  let match: RegExpExecArray | null
+  while ((match = regex.exec(input)) !== null) {
+    values.push(match[1])
+  }
+  return values
+}
+
+// Helper to extract the argument string of path.join(), handling nested parentheses
+function extractPathJoinArgs(content: string): string | null {
+  const needle = 'path.join('
+  const pathJoinIndex = content.indexOf(needle)
+  if (pathJoinIndex === -1) return null
+  let start = content.indexOf('(', pathJoinIndex)
+  if (start === -1) return null
+  start++ // move past '('
+  let depth = 1
+  let end = start
+  while (end < content.length && depth > 0) {
+    const ch = content[end]
+    if (ch === '(') depth++
+    else if (ch === ')') depth--
+    end++
+  }
+  if (depth === 0) {
+    return content.slice(start, end - 1)
+  }
+  return null
+}
+
+// Parse `schema` from prisma.config.ts content
+function parseSchemaPathSettingFromConfigContent(content: string): string | null {
+  const joinArgs = extractPathJoinArgs(content)
+  if (joinArgs) {
+    const parts = extractQuotedStrings(joinArgs)
+    if (parts.length) return parts.join('/')
+  }
+  return content.match(/schema\s*:\s*['"`]([^'"`]+)['"`]/)?.[1] ?? null
+}
+
+// Resolve schema setting from prisma.config.ts or package.json
+function getSchemaPathSetting(projectRoot: string): string | null {
+  const configPath = join(projectRoot, 'prisma.config.ts')
+  if (existsSync(configPath)) {
+    const content = readFileSync(configPath, 'utf-8')
+    const fromConfig = parseSchemaPathSettingFromConfigContent(content)
+    if (fromConfig) return fromConfig
+  }
+
+  try {
+    const packageJsonPath = join(projectRoot, 'package.json')
+    const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf-8'))
+    return packageJson?.prisma?.schema ?? null
+  } catch {
+    return null
+  }
+}
+
 // Find project root and get schema path from package.json
 function findProjectRoot(startDir: string): string {
   try {
@@ -20,24 +80,18 @@ function findProjectRoot(startDir: string): string {
   }
 }
 
-// Determine the correct prisma import path based on package.json configuration
+// Determine the correct prisma import path based on configuration
 function getPrismaImportPath(): string {
   try {
     const projectRoot = findProjectRoot(__dirname)
-    const packageJsonPath = join(projectRoot, 'package.json')
-    const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf-8'))
+    const schemaPathSetting = getSchemaPathSetting(projectRoot) ?? ''
 
-    const schemaPathSetting = packageJson.prisma?.schema || ''
-
-    // Updated logic: if the schema path includes 'libs/api/prisma' (or similar new structure)
     if (
       schemaPathSetting.includes('libs/api/prisma') ||
       schemaPathSetting.includes('prisma/src/lib')
     ) {
       return '@nestled-template/api/prisma'
     }
-
-    // Fallback to the original path if not explicitly the new structure
     return '@nestled-template/api/core/data-access'
   } catch (error) {
     console.error('Error determining Prisma import path:', error)
@@ -46,20 +100,14 @@ function getPrismaImportPath(): string {
   }
 }
 
-// Get schema directory path from package.json
+// Get schema directory path from configuration
 function getPrismaSchemaDir(): string {
   // Renamed
   try {
     const projectRoot = findProjectRoot(__dirname)
-    const packageJsonPath = join(projectRoot, 'package.json')
-    const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf-8'))
-
-    if (!packageJson.prisma?.schema) {
-      throw new Error('prisma.schema path not found in package.json')
-    }
-
-    // Join the project root with the schema path (which should be a directory)
-    return join(projectRoot, packageJson.prisma.schema)
+    const setting = getSchemaPathSetting(projectRoot)
+    if (setting) return join(projectRoot, setting)
+    throw new Error('Prisma schema path not found in config or package.json')
   } catch (error) {
     console.error('Error getting Prisma schema directory path:', error)
     // Fallback to the old directory path for backward compatibility

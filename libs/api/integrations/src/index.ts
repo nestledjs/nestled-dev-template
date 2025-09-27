@@ -1,2 +1,2 @@
-export * from './lib/smtp-mailer'
+export * from './lib/email'
 export * from './lib/sms'

@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common'
 import { ContactMailerService } from './contact-mailer.service'
-import { SmtpMailerModule } from '@nestled-template/api/integrations'
+import { EmailModule } from '@nestled-template/api/integrations'
 
 @Module({
-  imports: [SmtpMailerModule],
+  imports: [EmailModule],
   providers: [ContactMailerService],
   exports: [ContactMailerService],
 })

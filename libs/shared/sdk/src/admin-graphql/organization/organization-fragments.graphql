@@ -3,6 +3,9 @@ fragment AdminOrganizationList on Organization {
   createdAt
   updatedAt
   name
+  subscription {
+    id
+  }
 }
 
 fragment AdminOrganizationDetails on Organization {

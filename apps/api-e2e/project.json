@@ -5,13 +5,27 @@
   "projectType": "application",
   "targets": {
     "e2e": {
-      "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/{e2eProjectRoot}"],
+      "executor": "@nx/vite:test",
+      "outputs": [
+        "{workspaceRoot}/coverage/{e2eProjectRoot}",
+        "{workspaceRoot}/test-results/{e2eProjectRoot}"
+      ],
       "options": {
-        "jestConfig": "apps/api-e2e/jest.config.ts",
+        "config": "apps/api-e2e/vitest.config.ts",
         "passWithNoTests": true
       },
       "dependsOn": ["api:build", "api:serve"]
+    },
+    "test": {
+      "executor": "@nx/vite:test",
+      "outputs": [
+        "{workspaceRoot}/coverage/{e2eProjectRoot}",
+        "{workspaceRoot}/test-results/{e2eProjectRoot}"
+      ],
+      "options": {
+        "config": "apps/api-e2e/vitest.config.ts",
+        "passWithNoTests": true
+      }
     }
   }
 }

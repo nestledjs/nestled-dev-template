@@ -1,0 +1,16 @@
+fragment UserTokenDetails on UserToken {
+  token
+  user {
+    ...AuthUserDetails
+  }
+}
+
+fragment AuthUserDetails on User {
+  id
+  firstName
+  lastName
+  role
+  emailValidated
+  createdAt
+  updatedAt
+}

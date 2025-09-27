@@ -11,8 +11,7 @@ export class ApiCoreDataAccessService
   constructor() {
     const config: Prisma.PrismaClientOptions = {
       datasources: {
-        // Use DATABASE_URL as-is; avoid appending connection limits here.
-        db: { url: process.env['DATABASE_URL'] },
+        db: { url: `${process.env['DATABASE_URL']}?connection_limit=30` },
       },
       log:
         process.env['LOG_PRISMA_QUERIES'] === 'true' ||
@@ -30,8 +29,7 @@ export class ApiCoreDataAccessService
         console.warn('Not Running Prisma Optimize - No API Key Set')
       }
 
-      // Extend the current client instead of creating a new PrismaClient instance
-      const extendedClient = this.$extends(withOptimize({ apiKey }))
+      const extendedClient = new PrismaClient(config).$extends(withOptimize({ apiKey }))
       Object.assign(this, extendedClient)
     }
   }
