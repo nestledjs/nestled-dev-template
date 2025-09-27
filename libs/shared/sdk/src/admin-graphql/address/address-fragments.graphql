@@ -8,8 +8,17 @@ fragment AdminAddressList on Address {
   region
   postalCode
   addressType
+  isPrimary
   countryId
+  userId
+  organizationId
   country {
+    id
+  }
+  user {
+    id
+  }
+  organization {
     id
   }
 }

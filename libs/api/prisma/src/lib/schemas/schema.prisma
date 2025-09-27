@@ -13,23 +13,52 @@ datasource db {
 // Models (Alphabetical Order)
 
 model Address {
-  id            String         @id @default(cuid())
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
-  address1      String?
-  address2      String?
-  city          String?
-  region        String?
-  postalCode    String?
-  addressType   AddressType    @default(WORK)
-  countryId     String?
-  country       Country?       @relation("Country_belongsTo_Address", fields: [countryId], references: [id])
-  users         User[]         @relation("Address_belongsTo_User")
-  organizations Organization[] @relation("Address_belongsTo_Organization")
+  id             String        @id @default(uuid())
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  address1       String?
+  address2       String?
+  city           String?
+  region         String?
+  postalCode     String?
+  addressType    AddressType   @default(WORK)
+  isPrimary      Boolean       @default(false)
+  countryId      String?
+  country        Country?      @relation(fields: [countryId], references: [id])
+  userId         String?
+  user           User?         @relation("Address_belongsTo_User", fields: [userId], references: [id])
+  organizationId String?
+  organization   Organization? @relation("Address_belongsTo_Organization", fields: [organizationId], references: [id])
+}
+
+model ApiToken {
+  id        String    @id @default(uuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  userId    String
+  user      User      @relation("User_hasMany_APITokens", fields: [userId], references: [id])
+  token     String    @unique
+  name      String?
+  expiresAt DateTime?
+  revoked   Boolean   @default(false)
+}
+
+model AuditLog {
+  id             String        @id @default(uuid())
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  entityId       String
+  entityType     String
+  action         String
+  userId         String
+  user           User          @relation(fields: [userId], references: [id])
+  organizationId String?
+  organization   Organization? @relation(fields: [organizationId], references: [id])
+  changes        Json?
 }
 
 model Country {
-  id                     String    @id @default(cuid())
+  id                     String    @id @default(uuid())
   createdAt              DateTime  @default(now())
   updatedAt              DateTime  @updatedAt
   name                   String
@@ -43,14 +72,14 @@ model Country {
   regionCode             String
   subRegionCode          String
   intermediateRegionCode String
-  addresses              Address[] @relation("Country_belongsTo_Address")
+  addresses              Address[]
 }
 
 model Email {
-  id             String        @id @default(cuid())
+  id             String        @id @default(uuid())
   createdAt      DateTime      @default(now())
-  updatedAt      DateTime      @default(now()) @updatedAt
-  email          String        @unique // enforce lowercase logic at app level
+  updatedAt      DateTime      @updatedAt
+  email          String        @unique
   public         Boolean       @default(false)
   primary        Boolean       @default(false)
   verified       Boolean       @default(false)
@@ -63,8 +92,24 @@ model Email {
   organization   Organization? @relation("Email_belongsTo_Organization", fields: [organizationId], references: [id])
 }
 
+model Invite {
+  id             String       @id @default(uuid())
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  expiresAt      DateTime
+  email          String
+  token          String       @unique
+  inviterId      String
+  inviter        User         @relation("Invite_sentBy_User", fields: [inviterId], references: [id])
+  organizationId String
+  organization   Organization @relation("Invite_belongsTo_Organization", fields: [organizationId], references: [id])
+  status         InviteStatus @default(PENDING)
+  roleId         String? // The ID of the role the user will be granted upon accepting
+  role           Role?        @relation(fields: [roleId], references: [id])
+}
+
 model Link {
-  id             String        @id @default(cuid())
+  id             String        @id @default(uuid())
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
   name           String
@@ -75,10 +120,76 @@ model Link {
   organization   Organization? @relation("Link_belongsTo_Organization", fields: [organizationId], references: [id])
 }
 
+model LoginAttempt {
+  id        String         @id @default(uuid())
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+  userId    String?
+  user      User?          @relation(fields: [userId], references: [id])
+  email     String
+  success   Boolean        @default(false)
+  ipAddress String?
+  userAgent String?
+  location  String?
+  reason    FailureReason?
+}
+
+model OAuthAccount {
+  id             String   @id @default(uuid())
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  provider       String
+  providerUserId String
+  userId         String
+  user           User     @relation("User_hasMany_OAuthAccounts", fields: [userId], references: [id])
+
+  @@unique([provider, providerUserId])
+}
+
+model Organization {
+  id           String               @id @default(uuid())
+  createdAt    DateTime             @default(now())
+  updatedAt    DateTime             @updatedAt
+  name         String
+  emails       Email[]              @relation("Email_belongsTo_Organization")
+  links        Link[]               @relation("Link_belongsTo_Organization")
+  phoneNumbers PhoneNumber[]        @relation("PhoneNumber_belongsTo_Organization")
+  images       Upload[]             @relation("Upload_belongsTo_Organization")
+  members      OrganizationMember[] @relation("OrganizationMember_belongsTo_Organization")
+  addresses    Address[]            @relation("Address_belongsTo_Organization")
+  invites      Invite[]             @relation("Invite_belongsTo_Organization")
+  AuditLog     AuditLog[]
+  Team         Team[]
+  subscription Subscription?
+  roles        Role[]
+}
+
+model OrganizationMember {
+  id             String       @id @default(uuid())
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  roleId         String
+  role           Role         @relation(fields: [roleId], references: [id])
+  userId         String
+  user           User         @relation("OrganizationMember_belongsTo_User", fields: [userId], references: [id])
+  organizationId String
+  organization   Organization @relation("OrganizationMember_belongsTo_Organization", fields: [organizationId], references: [id])
+}
+
+model Permission {
+  id          String  @id @default(uuid())
+  action      String
+  subject     String
+  description String?
+  roles       Role[]  @relation("RolePermissions")
+
+  @@unique([action, subject])
+}
+
 model PhoneNumber {
-  id             String        @id @default(cuid())
+  id             String        @id @default(uuid())
   createdAt      DateTime      @default(now())
-  updatedAt      DateTime      @default(now()) @updatedAt
+  updatedAt      DateTime      @updatedAt
   phone          String        @unique
   phoneType      PhoneType     @default(MOBILE)
   userId         String?
@@ -88,10 +199,85 @@ model PhoneNumber {
   organization   Organization? @relation("PhoneNumber_belongsTo_Organization", fields: [organizationId], references: [id])
 }
 
+model Plan {
+  id            String         @id @default(uuid())
+  createdAt     DateTime       @default(now())
+  name          String         @unique
+  price         Decimal
+  interval      String
+  features      Json?
+  active        Boolean        @default(true)
+  subscriptions Subscription[]
+}
+
+model Role {
+  id             String               @id @default(uuid())
+  name           String
+  description    String?
+  organizationId String?
+  organization   Organization?        @relation(fields: [organizationId], references: [id])
+  permissions    Permission[]         @relation("RolePermissions")
+  members        OrganizationMember[]
+  teamMembers    TeamMember[]
+  invites        Invite[]
+
+  @@unique([name, organizationId])
+}
+
+model SecurityEvent {
+  id        String            @id @default(uuid())
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+  userId    String
+  user      User              @relation(fields: [userId], references: [id])
+  eventType SecurityEventType
+  ipAddress String?
+  userAgent String?
+  metadata  Json?
+}
+
+model Subscription {
+  id                     String             @id @default(uuid())
+  createdAt              DateTime           @default(now())
+  updatedAt              DateTime           @updatedAt
+  organizationId         String             @unique
+  organization           Organization       @relation(fields: [organizationId], references: [id])
+  planId                 String
+  plan                   Plan               @relation(fields: [planId], references: [id])
+  stripeCustomerId       String?            @unique
+  stripeSubscriptionId   String?            @unique
+  stripePriceId          String?
+  stripeCurrentPeriodEnd DateTime?
+  status                 SubscriptionStatus @default(INCOMPLETE)
+}
+
+model Team {
+  id             String       @id @default(uuid())
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  name           String
+  description    String?
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  members        TeamMember[]
+}
+
+model TeamMember {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  teamId    String
+  team      Team     @relation(fields: [teamId], references: [id])
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  roleId    String
+  role      Role     @relation(fields: [roleId], references: [id])
+}
+
 model Upload {
-  id             String        @id @default(cuid())
+  id             String        @id @default(uuid())
   createdAt      DateTime      @default(now())
-  updatedAt      DateTime      @default(now()) @updatedAt
+  updatedAt      DateTime      @updatedAt
   type           ImageType?
   fileId         String?
   filePath       String?
@@ -111,9 +297,9 @@ model Upload {
 }
 
 model User {
-  id                        String               @id @default(cuid())
+  id                        String               @id @default(uuid())
   createdAt                 DateTime             @default(now())
-  updatedAt                 DateTime             @default(now()) @updatedAt
+  updatedAt                 DateTime             @updatedAt
   firstName                 String?
   lastName                  String?
   role                      UserRole
@@ -122,7 +308,7 @@ model User {
   password                  String?
   passwordResetToken        String?
   passwordResetExpires      DateTime?
-  emailValidated            Boolean              @default(value: false)
+  emailValidated            Boolean              @default(false)
   validateEmailToken        String?              @unique
   validateEmailTokenExpires DateTime?
   emails                    Email[]              @relation("Email_belongsTo_User")
@@ -133,112 +319,30 @@ model User {
   activeOrganizationId      String?
   addresses                 Address[]            @relation("Address_belongsTo_User")
   invitesSent               Invite[]             @relation("Invite_sentBy_User")
-
-  // 2FA fields
-  twoFactorEnabled       Boolean  @default(false)
-  twoFactorSecret        String? // Stores the TOTP secret
-  twoFactorRecoveryCodes String[] // Backup codes for 2FA recovery
-
-  // Optional: If you want to support multiple 2FA methods
-  twoFactorMethod TwoFactorMethod @default(NONE)
-
-  // If you want to track 2FA verification status per session
-  activeSessions      UserSession[]
-  loginAttempts       LoginAttempt[]
-  lastSuccessfulLogin DateTime?
-  lastFailedLogin     DateTime?
-  failedLoginCount    Int              @default(0)
-  lockedUntil         DateTime? // For temporary account lockouts
-  AuditLog            AuditLog[]
-  UserPreference      UserPreference[]
-  TeamMember          TeamMember[]
-  SecurityEvent       SecurityEvent[]
-
-  // Account lifecycle
-  isActive      Boolean   @default(true)
-  deactivatedAt DateTime?
-
-  // Legal compliance
-  termsAcceptedAt         DateTime?
-  privacyPolicyAcceptedAt DateTime?
-  apiTokens               ApiToken[]     @relation("User_hasMany_APITokens")
-  oAuthAccounts           OAuthAccount[] @relation("User_hasMany_OAuthAccounts")
-}
-
-model Organization {
-  id           String               @id @default(cuid())
-  createdAt    DateTime             @default(now())
-  updatedAt    DateTime             @updatedAt
-  name         String
-  emails       Email[]              @relation("Email_belongsTo_Organization")
-  links        Link[]               @relation("Link_belongsTo_Organization")
-  phoneNumbers PhoneNumber[]        @relation("PhoneNumber_belongsTo_Organization")
-  images       Upload[]             @relation("Upload_belongsTo_Organization")
-  members      OrganizationMember[] @relation("OrganizationMember_belongsTo_Organization")
-  addresses    Address[]            @relation("Address_belongsTo_Organization")
-  invites      Invite[]             @relation("Invite_belongsTo_Organization")
-  AuditLog     AuditLog[]
-  Team         Team[]
-}
-
-model Invite {
-  id             String       @id @default(cuid())
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt
-  expiresAt      DateTime
-  email          String
-  token          String       @unique
-  inviterId      String
-  inviter        User         @relation("Invite_sentBy_User", fields: [inviterId], references: [id])
-  organizationId String
-  organization   Organization @relation("Invite_belongsTo_Organization", fields: [organizationId], references: [id])
-  accepted       Boolean      @default(false)
-  used           Boolean      @default(false)
-  issuedAt       DateTime?
-}
-
-model OrganizationMember {
-  id             String           @id @default(cuid())
-  createdAt      DateTime         @default(now())
-  updatedAt      DateTime         @updatedAt
-  role           OrganizationRole @default(ORGANIZATION_MEMBER)
-  userId         String?
-  user           User?            @relation("OrganizationMember_belongsTo_User", fields: [userId], references: [id])
-  organizationId String?
-  organization   Organization?    @relation("OrganizationMember_belongsTo_Organization", fields: [organizationId], references: [id])
-}
-
-model UserSession {
-  id           String   @id @default(cuid())
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  lastActiveAt DateTime @default(now())
-  userId       String
-  user         User     @relation(fields: [userId], references: [id])
-  deviceInfo   String?
-  ipAddress    String?
-  isValid      Boolean  @default(true)
-
-  // Add this field to track 2FA verification status
-  twoFactorVerified Boolean @default(false)
-}
-
-model AuditLog {
-  id             String        @id @default(cuid())
-  createdAt      DateTime      @default(now())
-  updatedAt      DateTime      @updatedAt
-  entityId       String // ID of the entity being modified
-  entityType     String // Name of the model being modified
-  action         String // CREATE, UPDATE, DELETE
-  userId         String
-  user           User          @relation(fields: [userId], references: [id])
-  organizationId String?
-  organization   Organization? @relation(fields: [organizationId], references: [id])
-  changes        Json? // Store what was changed
+  twoFactorEnabled          Boolean              @default(false)
+  twoFactorSecret           String?
+  twoFactorRecoveryCodes    String[]
+  twoFactorMethod           TwoFactorMethod      @default(NONE)
+  activeSessions            UserSession[]
+  loginAttempts             LoginAttempt[]
+  lastSuccessfulLogin       DateTime?
+  lastFailedLogin           DateTime?
+  failedLoginCount          Int                  @default(0)
+  lockedUntil               DateTime?
+  AuditLog                  AuditLog[]
+  UserPreference            UserPreference[]
+  TeamMember                TeamMember[]
+  SecurityEvent             SecurityEvent[]
+  isActive                  Boolean              @default(true)
+  deactivatedAt             DateTime?
+  termsAcceptedAt           DateTime?
+  privacyPolicyAcceptedAt   DateTime?
+  apiTokens                 ApiToken[]           @relation("User_hasMany_APITokens")
+  oAuthAccounts             OAuthAccount[]       @relation("User_hasMany_OAuthAccounts")
 }
 
 model UserPreference {
-  id        String   @id @default(cuid())
+  id        String   @id @default(uuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   userId    String
@@ -249,27 +353,17 @@ model UserPreference {
   @@unique([userId, key])
 }
 
-// Optional if you need team functionality
-model Team {
-  id             String       @id @default(cuid())
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt
-  name           String
-  description    String?
-  organizationId String
-  organization   Organization @relation(fields: [organizationId], references: [id])
-  members        TeamMember[]
-}
-
-model TeamMember {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  teamId    String
-  team      Team     @relation(fields: [teamId], references: [id])
-  userId    String
-  user      User     @relation(fields: [userId], references: [id])
-  role      TeamRole @default(MEMBER)
+model UserSession {
+  id                String   @id @default(uuid())
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  lastActiveAt      DateTime @default(now())
+  userId            String
+  user              User     @relation(fields: [userId], references: [id])
+  deviceInfo        String?
+  ipAddress         String?
+  isValid           Boolean  @default(true)
+  twoFactorVerified Boolean  @default(false)
 }
 
 // Enums (Alphabetical Order)
@@ -288,58 +382,6 @@ enum EmailType {
   OTHER
 }
 
-enum ImageType {
-  AVATAR
-  BACKGROUND
-  OTHER
-}
-
-enum PhoneType {
-  HOME
-  WORK
-  MOBILE
-  OTHER
-}
-
-enum UserRole {
-  DEVELOPER
-  SUPER_ADMIN
-  ADMIN
-  USER
-}
-
-enum OrganizationRole {
-  ORGANIZATION_ADMIN
-  ORGANIZATION_MEMBER
-}
-
-enum TeamRole {
-  LEADER
-  MEMBER
-}
-
-// Add this enum
-enum TwoFactorMethod {
-  NONE
-  AUTHENTICATOR
-  SMS
-  EMAIL
-}
-
-model LoginAttempt {
-  id        String         @id @default(cuid())
-  createdAt DateTime       @default(now())
-  updatedAt DateTime       @updatedAt
-  userId    String? // Optional because login attempts might be for non-existent users
-  user      User?          @relation(fields: [userId], references: [id])
-  email     String // The email used in the attempt
-  success   Boolean        @default(false)
-  ipAddress String?
-  userAgent String? // Browser/client info
-  location  String? // Geo location if you want to track it
-  reason    FailureReason? // Why the login failed
-}
-
 enum FailureReason {
   INVALID_PASSWORD
   INVALID_EMAIL
@@ -350,16 +392,24 @@ enum FailureReason {
   TOO_MANY_ATTEMPTS
 }
 
-model SecurityEvent {
-  id        String            @id @default(cuid())
-  createdAt DateTime          @default(now())
-  updatedAt DateTime          @updatedAt
-  userId    String
-  user      User              @relation(fields: [userId], references: [id])
-  eventType SecurityEventType
-  ipAddress String?
-  userAgent String?
-  metadata  Json? // Additional event-specific data
+enum ImageType {
+  AVATAR
+  BACKGROUND
+  OTHER
+}
+
+enum InviteStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+  EXPIRED
+}
+
+enum PhoneType {
+  HOME
+  WORK
+  MOBILE
+  OTHER
 }
 
 enum SecurityEventType {
@@ -375,28 +425,25 @@ enum SecurityEventType {
   LOGIN_LOCATION_CHANGE
 }
 
-// Add ApiToken model for API token support
-model ApiToken {
-  id        String    @id @default(cuid())
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  userId    String
-  user      User      @relation("User_hasMany_APITokens", fields: [userId], references: [id])
-  token     String    @unique
-  name      String?
-  expiresAt DateTime?
-  revoked   Boolean   @default(false)
+enum SubscriptionStatus {
+  ACTIVE
+  CANCELED
+  PAST_DUE
+  INCOMPLETE
+  INCOMPLETE_EXPIRED
+  TRIALING
 }
 
-// Add OAuthAccount model for social login support
-model OAuthAccount {
-  id             String   @id @default(cuid())
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-  provider       String
-  providerUserId String
-  userId         String
-  user           User     @relation("User_hasMany_OAuthAccounts", fields: [userId], references: [id])
+enum TwoFactorMethod {
+  NONE
+  AUTHENTICATOR
+  SMS
+  EMAIL
+}
 
-  @@unique([provider, providerUserId])
+enum UserRole {
+  DEVELOPER
+  SUPER_ADMIN
+  ADMIN
+  USER
 }

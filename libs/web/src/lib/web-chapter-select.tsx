@@ -1,7 +1,10 @@
 import { useState } from 'react'
 import { CheckIcon, ChevronUpDownIcon, XMarkIcon } from '@heroicons/react/20/solid'
 import { Combobox } from '@headlessui/react'
-import { useChaptersQuery, Chapter } from '@nestled-template/shared/sdk'
+// Deprecated component; chapters no longer in schema. Remove usage and do not export.
+// Leaving file to avoid broken imports during cleanup.
+// import { useChaptersQuery, Chapter } from '@nestled-template/shared/sdk'
+type Chapter = any
 import { clsx } from 'clsx'
 
 interface WebChapterSelectProps {

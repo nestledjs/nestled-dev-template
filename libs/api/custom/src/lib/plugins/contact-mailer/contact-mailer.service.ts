@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common'
-import { SmtpMailerService } from '@nestled-template/api/integrations'
+import { EmailService } from '@nestled-template/api/integrations'
 
 export interface ContactFormData {
   firstName: string
@@ -23,7 +23,7 @@ export class ContactMailerService {
     'memberservices@nestled-templatenow.com',
   ]
 
-  constructor(private readonly smtpMailer: SmtpMailerService) {}
+  constructor(private readonly emailService: EmailService) {}
 
   async sendContactFormNotification(data: ContactFormData) {
     const { firstName, lastName, email, phone, questions, chapterName, chapterLocation } = data
@@ -60,7 +60,7 @@ export class ContactMailerService {
 
     // Send to all admin emails
     const emailPromises = this.adminEmails.map(adminEmail =>
-      this.smtpMailer.send({
+      this.emailService.send({
         to: adminEmail,
         subject,
         html,
@@ -116,7 +116,7 @@ export class ContactMailerService {
     `
 
     try {
-      await this.smtpMailer.send({
+      await this.emailService.send({
         to: email,
         subject,
         html,

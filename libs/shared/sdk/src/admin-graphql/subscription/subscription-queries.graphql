@@ -1,0 +1,20 @@
+query AdminSubscription($subscriptionId: String!) {
+  subscription(subscriptionId: $subscriptionId) {
+    ...AdminSubscriptionDetails
+  }
+}
+
+query AdminSubscriptions($input: ListSubscriptionInput) {
+  subscriptions(input: $input) {
+    ...AdminSubscriptionList
+  }
+  counters: subscriptionsCount(input: $input) {
+    ...CorePagingDetails
+  }
+}
+
+query AdminSubscriptionPagination($input: ListSubscriptionInput) {
+  counters: subscriptionsCount(input: $input) {
+    ...CorePagingDetails
+  }
+}

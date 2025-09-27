@@ -5,9 +5,6 @@ fragment InviteList on Invite {
   expiresAt
   email
   token
-  accepted
-  used
-  issuedAt
 }
 
 fragment InviteDetails on Invite {

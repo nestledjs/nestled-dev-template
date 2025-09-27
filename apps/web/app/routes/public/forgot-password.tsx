@@ -3,7 +3,7 @@ import { Link } from 'react-router'
 import { Form, FormFieldClass } from '@nestledjs/forms'
 import { WebUiContainer } from '@nestled-template/web-ui'
 import { ForgotPasswordInput, useForgotPasswordMutation } from '@nestled-template/shared/sdk'
-import { bizTheme } from '@nestled-template/shared/styles'
+import { formTheme } from '@nestled-template/shared/styles'
 
 export default function ForgotPassword() {
   const [formMessage, setFormMessage] = useState<{
@@ -68,7 +68,7 @@ export default function ForgotPassword() {
             </div>
           )}
           <Form
-            theme={bizTheme}
+            theme={formTheme}
             id="forgot-password-form"
             fields={fields}
             submit={handleForgotPassword}

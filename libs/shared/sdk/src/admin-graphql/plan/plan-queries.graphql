@@ -1,0 +1,20 @@
+query AdminPlan($planId: String!) {
+  plan(planId: $planId) {
+    ...AdminPlanDetails
+  }
+}
+
+query AdminPlans($input: ListPlanInput) {
+  plans(input: $input) {
+    ...AdminPlanList
+  }
+  counters: plansCount(input: $input) {
+    ...CorePagingDetails
+  }
+}
+
+query AdminPlanPagination($input: ListPlanInput) {
+  counters: plansCount(input: $input) {
+    ...CorePagingDetails
+  }
+}

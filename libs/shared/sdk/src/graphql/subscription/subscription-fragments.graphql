@@ -1,0 +1,10 @@
+fragment SubscriptionList on Subscription {
+  id
+  createdAt
+  updatedAt
+  stripeCurrentPeriodEnd
+}
+
+fragment SubscriptionDetails on Subscription {
+  ...SubscriptionList
+}

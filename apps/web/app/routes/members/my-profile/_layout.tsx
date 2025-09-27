@@ -22,7 +22,7 @@ export const handle = {
 }
 
 export const loader = apolloLoader()(({ preloadQuery, request }) => {
-  const token = getCookie(request.headers, '__session_biz')
+  const token = getCookie(request.headers, '__session')
   const meRef = preloadQuery<MeQuery>(MeDocument, {
     fetchPolicy: 'network-only',
     nextFetchPolicy: 'cache-first',

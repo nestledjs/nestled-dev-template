@@ -8,10 +8,8 @@ export const validationSchema = Joi.object({
   WEB_URL: Joi.string().default(
     `http://${process.env['HOST'] || 'localhost'}:${process.env['WEB_PORT']}`,
   ),
-  // Important: Do NOT default to 'localhost' — setting domain=localhost breaks cookies in browsers
-  // Leave empty by default so the cookie domain is omitted for local development
-  API_COOKIE_DOMAIN: Joi.string().allow('').default(''),
-  API_COOKIE_NAME: Joi.string().default('__session_biz'),
+  API_COOKIE_DOMAIN: Joi.string().default('localhost'),
+  API_COOKIE_NAME: Joi.string().default('__session'),
   API_URL: Joi.string().default(
     `http://${process.env['HOST'] || 'localhost'}:${process.env['PORT']}/api`,
   ),

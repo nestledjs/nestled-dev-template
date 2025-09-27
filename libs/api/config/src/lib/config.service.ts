@@ -56,10 +56,19 @@ export class ConfigService {
     return this.config.getOrThrow<string>('siteUrl')
   }
 
+  get emailProvider(): string {
+    return this.config.get<string>('email.provider') || 'smtp'
+  }
+
+  get frontendUrl(): string {
+    return this.config.getOrThrow<string>('frontend.url')
+  }
+
   get mailerConfig() {
     return {
       host: this.config.getOrThrow<string>('smtp.host'),
       port: this.config.getOrThrow<string>('smtp.port'),
+      secure: this.config.get<boolean>('smtp.secure') || false,
       auth: {
         user: this.config.getOrThrow<string>('smtp.user'),
         pass: this.config.getOrThrow<string>('smtp.pass'),

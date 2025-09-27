@@ -14,14 +14,8 @@ import { GraphQLResolveInfo } from 'graphql/type'
 import { CtxUser, GqlAuthGuard, NestContextType } from '@nestled-template/api/utils'
 import { UserToken } from './models'
 import { User } from '@nestled-template/api/core/models'
-import {
-  EmulateUserInput,
-  ForgotPasswordInput,
-  LoginInput,
-  RegisterInput,
-  ResetPasswordInput,
-} from './dto'
-import { MeCounts } from '../../default/user/models/me-counts.model'
+import { EmulateUserInput, ForgotPasswordInput, LoginInput, RegisterInput, ResetPasswordInput, VerifyEmailInput } from './dto'
+
 
 @Resolver(() => UserToken)
 export class AuthResolver {
@@ -33,12 +27,6 @@ export class AuthResolver {
   @UseGuards(GqlAuthGuard)
   async me(@CtxUser() user: User, @Info() info: GraphQLResolveInfo) {
     return this.service.validateUser(user.id)
-  }
-
-  @Query(() => MeCounts, { nullable: true })
-  @UseGuards(GqlAuthGuard)
-  async meCounts(@CtxUser() user: User) {
-    return this.service.meCounts(user.id)
   }
 
   @Mutation(() => UserToken, { nullable: true })
@@ -89,6 +77,16 @@ export class AuthResolver {
   @Mutation(() => User, { nullable: true })
   resetPassword(@Args('input') input: ResetPasswordInput): Promise<User> {
     return this.service.resetPassword(input.password, input.token)
+  }
+
+  @Mutation(() => Boolean)
+  resendVerificationEmail(@Args('email') email: string) {
+    return this.service.resendVerificationEmail(email)
+  }
+
+  @Mutation(() => User)
+  verifyEmail(@Args('input') input: VerifyEmailInput) {
+    return this.service.verifyEmail(input.token)
   }
 
   @Mutation(() => UserToken, { nullable: true })

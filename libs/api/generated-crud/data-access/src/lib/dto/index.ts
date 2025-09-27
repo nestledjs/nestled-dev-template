@@ -1,23 +1,21 @@
 import { Field, InputType, Int, Float } from '@nestjs/graphql'
 import {
-  UserOnlineStatus,
-  UserStatus,
-  Role,
-  DayOfWeek,
-  ChapterStatus,
-  MeetingAttendance,
-  ChapterMemberRole,
-  ReferralRating,
-  NotificationType,
-  NotificationReferenceType,
-  PowerHourStatus,
-  BlogPostStatus,
+  AddressType,
+  EmailType,
+  InviteStatus,
+  FailureReason,
+  PhoneType,
+  SecurityEventType,
+  SubscriptionStatus,
+  ImageType,
+  UserRole,
+  TwoFactorMethod,
 } from '@nestled-template/api/core/models'
-
+import { GraphQLJSON } from 'graphql-type-json'
 import { CorePagingInput } from '@nestled-template/api/core/data-access'
 
 @InputType()
-export class CreateUserInput {
+export class CreateAddressInput {
   @Field({ nullable: true })
   id?: string
 
@@ -27,953 +25,8 @@ export class CreateUserInput {
   @Field(() => Date, { nullable: true })
   updatedAt?: Date
 
-  @Field(() => Date, { nullable: true })
-  lastSeen?: Date
-
-  @Field(() => UserOnlineStatus, { nullable: true })
-  onlineStatus?: UserOnlineStatus
-
-  @Field(() => UserStatus, { nullable: true })
-  status?: UserStatus
-
   @Field({ nullable: true })
-  developer?: boolean
-
-  @Field(() => Role, { nullable: false })
-  role!: Role
-
-  @Field({ nullable: false })
-  email!: string
-
-  @Field({ nullable: true })
-  emailConfirmed?: boolean
-
-  @Field({ nullable: true })
-  username?: string
-
-  @Field({ nullable: true })
-  firstName?: string
-
-  @Field({ nullable: true })
-  lastName?: string
-
-  @Field({ nullable: true })
-  password?: string
-
-  @Field({ nullable: true })
-  passwordResetToken?: string
-
-  @Field(() => Date, { nullable: true })
-  passwordResetExpires?: Date
-
-  @Field({ nullable: true })
-  confirmEmailToken?: string
-
-  @Field(() => Date, { nullable: true })
-  confirmEmailExpires?: Date
-
-  @Field(() => Date, { nullable: true })
-  applicationDate?: Date
-
-  @Field(() => Date, { nullable: true })
-  inactiveDate?: Date
-
-  @Field(() => Date, { nullable: true })
-  inquiryDate?: Date
-
-  @Field(() => Date, { nullable: true })
-  membershipDate?: Date
-
-  @Field(() => Date, { nullable: true })
-  renewalDate?: Date
-
-  @Field(() => Date, { nullable: true })
-  terminationDate?: Date
-
-  @Field({ nullable: true })
-  terminationNotes?: string
-
-  @Field({ nullable: true })
-  terminationRequestedBy?: string
-
-  @Field(() => Date, { nullable: true })
-  transferDate?: Date
-
-  @Field({ nullable: true })
-  location?: string
-
-  @Field({ nullable: true })
-  phone?: string
-
-  @Field({ nullable: true })
-  bio?: string
-
-  @Field({ nullable: true })
-  facebook?: string
-
-  @Field({ nullable: true })
-  twitter?: string
-
-  @Field({ nullable: true })
-  youtube?: string
-
-  @Field({ nullable: true })
-  linkedin?: string
-
-  @Field({ nullable: true })
-  instagram?: string
-
-  @Field({ nullable: true })
-  website?: string
-
-  @Field({ nullable: true })
-  industry?: string
-
-  @Field({ nullable: true })
-  timeInIndustry?: string
-
-  @Field({ nullable: true })
-  ssoUrl?: string
-
-  @Field({ nullable: true })
-  address?: string
-
-  @Field({ nullable: true })
-  address2?: string
-
-  @Field({ nullable: true })
-  cell?: string
-
-  @Field({ nullable: true })
-  chapterTitle?: string
-
-  @Field({ nullable: true })
-  city?: string
-
-  @Field({ nullable: true })
-  comments?: string
-
-  @Field({ nullable: true })
-  company?: string
-
-  @Field({ nullable: true })
-  fax?: string
-
-  @Field({ nullable: true })
-  hear?: string
-
-  @Field({ nullable: true })
-  hearOther?: string
-
-  @Field({ nullable: true })
-  internalComments?: string
-
-  @Field({ nullable: true })
-  launchComplete?: boolean
-
-  @Field({ nullable: true })
-  mentorName?: string
-
-  @Field({ nullable: true })
-  merchantCircle?: string
-
-  @Field({ nullable: true })
-  multipleBusinesses?: boolean
-
-  @Field({ nullable: true })
-  multipleLocations?: boolean
-
-  @Field(() => Int, { nullable: true })
-  numberOfEmployees?: number
-
-  @Field(() => Int, { nullable: true })
-  organizer?: number
-
-  @Field({ nullable: true })
-  otherBusinesses?: string
-
-  @Field({ nullable: true })
-  otherLocations?: string
-
-  @Field({ nullable: true })
-  postcode?: string
-
-  @Field(() => Int, { nullable: true })
-  promoter?: number
-
-  @Field(() => Int, { nullable: true })
-  recognized?: number
-
-  @Field({ nullable: true })
-  salesAgentName?: string
-
-  @Field({ nullable: true })
-  state?: string
-
-  @Field(() => Int, { nullable: true })
-  strategizer?: number
-
-  @Field({ nullable: true })
-  substitute?: boolean
-
-  @Field({ nullable: true })
-  tagline?: string
-
-  @Field({ nullable: true })
-  terminatedByName?: string
-
-  @Field({ nullable: true })
-  terminationComments?: string
-
-  @Field({ nullable: true })
-  terminationReason?: string
-
-  @Field(() => Int, { nullable: true })
-  thinker?: number
-
-  @Field({ nullable: true })
-  title?: string
-
-  @Field({ nullable: true })
-  type?: string
-
-  @Field({ nullable: true })
-  vet?: boolean
-
-  @Field({ nullable: true })
-  activeDuty?: boolean
-
-  @Field({ nullable: true })
-  militaryBranch?: string
-
-  @Field({ nullable: true })
-  notifyByEmail?: boolean
-
-  @Field({ nullable: true })
-  notifyBySMS?: boolean
-
-  @Field({ nullable: true })
-  notifyByWeb?: boolean
-
-  @Field({ nullable: true })
-  notifyByMobile?: boolean
-
-  @Field(() => [String], { nullable: true })
-  reminderSentByIds?: string[]
-
-  @Field(() => [String], { nullable: true })
-  reminderSentToIds?: string[]
-
-  @Field({ nullable: true })
-  chapterId?: string
-
-  @Field(() => [String], { nullable: true })
-  presenceIds?: string[]
-
-  @Field(() => [String], { nullable: true })
-  notificationsSentIds?: string[]
-
-  @Field(() => [String], { nullable: true })
-  notificationsReceivedIds?: string[]
-
-  @Field(() => [String], { nullable: true })
-  powerHoursFromIds?: string[]
-
-  @Field(() => [String], { nullable: true })
-  powerHoursToIds?: string[]
-
-  @Field(() => [String], { nullable: true })
-  referralsFromIds?: string[]
-
-  @Field(() => [String], { nullable: true })
-  referralsSentIds?: string[]
-
-  @Field(() => [String], { nullable: true })
-  referralsToIds?: string[]
-
-  @Field(() => [String], { nullable: true })
-  regionsManagedIds?: string[]
-
-  @Field(() => [String], { nullable: true })
-  substitutesSentByIds?: string[]
-
-  @Field(() => [String], { nullable: true })
-  substituteAcceptedIds?: string[]
-
-  @Field(() => [String], { nullable: true })
-  territoriesManagedIds?: string[]
-
-  @Field(() => [String], { nullable: true })
-  testimonialsFromIds?: string[]
-
-  @Field(() => [String], { nullable: true })
-  testimonialsToIds?: string[]
-
-  @Field(() => [String], { nullable: true })
-  transactionsIds?: string[]
-
-  @Field({ nullable: true })
-  avatarId?: string
-
-  @Field({ nullable: true })
-  backgroundImageId?: string
-
-  @Field(() => [String], { nullable: true })
-  substituteInvitedIds?: string[]
-
-  @Field(() => [String], { nullable: true })
-  awardsIds?: string[]
-
-  @Field(() => [String], { nullable: true })
-  blogPostsAuthoredIds?: string[]
-}
-
-@InputType()
-export class UpdateUserInput {
-  @Field({ nullable: true })
-  id?: string
-
-  @Field(() => Date, { nullable: true })
-  createdAt?: Date
-
-  @Field(() => Date, { nullable: true })
-  updatedAt?: Date
-
-  @Field(() => Date, { nullable: true })
-  lastSeen?: Date
-
-  @Field(() => UserOnlineStatus, { nullable: true })
-  onlineStatus?: UserOnlineStatus
-
-  @Field(() => UserStatus, { nullable: true })
-  status?: UserStatus
-
-  @Field({ nullable: true })
-  developer?: boolean
-
-  @Field(() => Role, { nullable: true })
-  role?: Role
-
-  @Field({ nullable: true })
-  email?: string
-
-  @Field({ nullable: true })
-  emailConfirmed?: boolean
-
-  @Field({ nullable: true })
-  username?: string
-
-  @Field({ nullable: true })
-  firstName?: string
-
-  @Field({ nullable: true })
-  lastName?: string
-
-  @Field({ nullable: true })
-  password?: string
-
-  @Field({ nullable: true })
-  passwordResetToken?: string
-
-  @Field(() => Date, { nullable: true })
-  passwordResetExpires?: Date
-
-  @Field({ nullable: true })
-  confirmEmailToken?: string
-
-  @Field(() => Date, { nullable: true })
-  confirmEmailExpires?: Date
-
-  @Field(() => Date, { nullable: true })
-  applicationDate?: Date
-
-  @Field(() => Date, { nullable: true })
-  inactiveDate?: Date
-
-  @Field(() => Date, { nullable: true })
-  inquiryDate?: Date
-
-  @Field(() => Date, { nullable: true })
-  membershipDate?: Date
-
-  @Field(() => Date, { nullable: true })
-  renewalDate?: Date
-
-  @Field(() => Date, { nullable: true })
-  terminationDate?: Date
-
-  @Field({ nullable: true })
-  terminationNotes?: string
-
-  @Field({ nullable: true })
-  terminationRequestedBy?: string
-
-  @Field(() => Date, { nullable: true })
-  transferDate?: Date
-
-  @Field({ nullable: true })
-  location?: string
-
-  @Field({ nullable: true })
-  phone?: string
-
-  @Field({ nullable: true })
-  bio?: string
-
-  @Field({ nullable: true })
-  facebook?: string
-
-  @Field({ nullable: true })
-  twitter?: string
-
-  @Field({ nullable: true })
-  youtube?: string
-
-  @Field({ nullable: true })
-  linkedin?: string
-
-  @Field({ nullable: true })
-  instagram?: string
-
-  @Field({ nullable: true })
-  website?: string
-
-  @Field({ nullable: true })
-  industry?: string
-
-  @Field({ nullable: true })
-  timeInIndustry?: string
-
-  @Field({ nullable: true })
-  ssoUrl?: string
-
-  @Field({ nullable: true })
-  address?: string
-
-  @Field({ nullable: true })
-  address2?: string
-
-  @Field({ nullable: true })
-  cell?: string
-
-  @Field({ nullable: true })
-  chapterTitle?: string
-
-  @Field({ nullable: true })
-  city?: string
-
-  @Field({ nullable: true })
-  comments?: string
-
-  @Field({ nullable: true })
-  company?: string
-
-  @Field({ nullable: true })
-  fax?: string
-
-  @Field({ nullable: true })
-  hear?: string
-
-  @Field({ nullable: true })
-  hearOther?: string
-
-  @Field({ nullable: true })
-  internalComments?: string
-
-  @Field({ nullable: true })
-  launchComplete?: boolean
-
-  @Field({ nullable: true })
-  mentorName?: string
-
-  @Field({ nullable: true })
-  merchantCircle?: string
-
-  @Field({ nullable: true })
-  multipleBusinesses?: boolean
-
-  @Field({ nullable: true })
-  multipleLocations?: boolean
-
-  @Field(() => Int, { nullable: true })
-  numberOfEmployees?: number
-
-  @Field(() => Int, { nullable: true })
-  organizer?: number
-
-  @Field({ nullable: true })
-  otherBusinesses?: string
-
-  @Field({ nullable: true })
-  otherLocations?: string
-
-  @Field({ nullable: true })
-  postcode?: string
-
-  @Field(() => Int, { nullable: true })
-  promoter?: number
-
-  @Field(() => Int, { nullable: true })
-  recognized?: number
-
-  @Field({ nullable: true })
-  salesAgentName?: string
-
-  @Field({ nullable: true })
-  state?: string
-
-  @Field(() => Int, { nullable: true })
-  strategizer?: number
-
-  @Field({ nullable: true })
-  substitute?: boolean
-
-  @Field({ nullable: true })
-  tagline?: string
-
-  @Field({ nullable: true })
-  terminatedByName?: string
-
-  @Field({ nullable: true })
-  terminationComments?: string
-
-  @Field({ nullable: true })
-  terminationReason?: string
-
-  @Field(() => Int, { nullable: true })
-  thinker?: number
-
-  @Field({ nullable: true })
-  title?: string
-
-  @Field({ nullable: true })
-  type?: string
-
-  @Field({ nullable: true })
-  vet?: boolean
-
-  @Field({ nullable: true })
-  activeDuty?: boolean
-
-  @Field({ nullable: true })
-  militaryBranch?: string
-
-  @Field({ nullable: true })
-  notifyByEmail?: boolean
-
-  @Field({ nullable: true })
-  notifyBySMS?: boolean
-
-  @Field({ nullable: true })
-  notifyByWeb?: boolean
-
-  @Field({ nullable: true })
-  notifyByMobile?: boolean
-
-  @Field(() => [String], { nullable: true })
-  reminderSentByIds?: string[]
-
-  @Field(() => [String], { nullable: true })
-  reminderSentToIds?: string[]
-
-  @Field({ nullable: true })
-  chapterId?: string
-
-  @Field(() => [String], { nullable: true })
-  presenceIds?: string[]
-
-  @Field(() => [String], { nullable: true })
-  notificationsSentIds?: string[]
-
-  @Field(() => [String], { nullable: true })
-  notificationsReceivedIds?: string[]
-
-  @Field(() => [String], { nullable: true })
-  powerHoursFromIds?: string[]
-
-  @Field(() => [String], { nullable: true })
-  powerHoursToIds?: string[]
-
-  @Field(() => [String], { nullable: true })
-  referralsFromIds?: string[]
-
-  @Field(() => [String], { nullable: true })
-  referralsSentIds?: string[]
-
-  @Field(() => [String], { nullable: true })
-  referralsToIds?: string[]
-
-  @Field(() => [String], { nullable: true })
-  regionsManagedIds?: string[]
-
-  @Field(() => [String], { nullable: true })
-  substitutesSentByIds?: string[]
-
-  @Field(() => [String], { nullable: true })
-  substituteAcceptedIds?: string[]
-
-  @Field(() => [String], { nullable: true })
-  territoriesManagedIds?: string[]
-
-  @Field(() => [String], { nullable: true })
-  testimonialsFromIds?: string[]
-
-  @Field(() => [String], { nullable: true })
-  testimonialsToIds?: string[]
-
-  @Field(() => [String], { nullable: true })
-  transactionsIds?: string[]
-
-  @Field({ nullable: true })
-  avatarId?: string
-
-  @Field({ nullable: true })
-  backgroundImageId?: string
-
-  @Field(() => [String], { nullable: true })
-  substituteInvitedIds?: string[]
-
-  @Field(() => [String], { nullable: true })
-  awardsIds?: string[]
-
-  @Field(() => [String], { nullable: true })
-  blogPostsAuthoredIds?: string[]
-}
-
-@InputType()
-export class ListUserInput extends CorePagingInput {
-  @Field({ nullable: true })
-  id?: string
-
-  @Field(() => Date, { nullable: true })
-  createdAt?: Date
-
-  @Field(() => Date, { nullable: true })
-  updatedAt?: Date
-
-  @Field(() => Date, { nullable: true })
-  lastSeen?: Date
-
-  @Field(() => UserOnlineStatus, { nullable: true })
-  onlineStatus?: UserOnlineStatus
-
-  @Field(() => UserStatus, { nullable: true })
-  status?: UserStatus
-
-  @Field({ nullable: true })
-  developer?: boolean
-
-  @Field(() => Role, { nullable: true })
-  role?: Role
-
-  @Field({ nullable: true })
-  email?: string
-
-  @Field({ nullable: true })
-  emailConfirmed?: boolean
-
-  @Field({ nullable: true })
-  username?: string
-
-  @Field({ nullable: true })
-  firstName?: string
-
-  @Field({ nullable: true })
-  lastName?: string
-
-  @Field({ nullable: true })
-  password?: string
-
-  @Field({ nullable: true })
-  passwordResetToken?: string
-
-  @Field(() => Date, { nullable: true })
-  passwordResetExpires?: Date
-
-  @Field({ nullable: true })
-  confirmEmailToken?: string
-
-  @Field(() => Date, { nullable: true })
-  confirmEmailExpires?: Date
-
-  @Field(() => Date, { nullable: true })
-  applicationDate?: Date
-
-  @Field(() => Date, { nullable: true })
-  inactiveDate?: Date
-
-  @Field(() => Date, { nullable: true })
-  inquiryDate?: Date
-
-  @Field(() => Date, { nullable: true })
-  membershipDate?: Date
-
-  @Field(() => Date, { nullable: true })
-  renewalDate?: Date
-
-  @Field(() => Date, { nullable: true })
-  terminationDate?: Date
-
-  @Field({ nullable: true })
-  terminationNotes?: string
-
-  @Field({ nullable: true })
-  terminationRequestedBy?: string
-
-  @Field(() => Date, { nullable: true })
-  transferDate?: Date
-
-  @Field({ nullable: true })
-  location?: string
-
-  @Field({ nullable: true })
-  phone?: string
-
-  @Field({ nullable: true })
-  bio?: string
-
-  @Field({ nullable: true })
-  facebook?: string
-
-  @Field({ nullable: true })
-  twitter?: string
-
-  @Field({ nullable: true })
-  youtube?: string
-
-  @Field({ nullable: true })
-  linkedin?: string
-
-  @Field({ nullable: true })
-  instagram?: string
-
-  @Field({ nullable: true })
-  website?: string
-
-  @Field({ nullable: true })
-  industry?: string
-
-  @Field({ nullable: true })
-  timeInIndustry?: string
-
-  @Field({ nullable: true })
-  ssoUrl?: string
-
-  @Field({ nullable: true })
-  address?: string
-
-  @Field({ nullable: true })
-  address2?: string
-
-  @Field({ nullable: true })
-  cell?: string
-
-  @Field({ nullable: true })
-  chapterTitle?: string
-
-  @Field({ nullable: true })
-  city?: string
-
-  @Field({ nullable: true })
-  comments?: string
-
-  @Field({ nullable: true })
-  company?: string
-
-  @Field({ nullable: true })
-  fax?: string
-
-  @Field({ nullable: true })
-  hear?: string
-
-  @Field({ nullable: true })
-  hearOther?: string
-
-  @Field({ nullable: true })
-  internalComments?: string
-
-  @Field({ nullable: true })
-  launchComplete?: boolean
-
-  @Field({ nullable: true })
-  mentorName?: string
-
-  @Field({ nullable: true })
-  merchantCircle?: string
-
-  @Field({ nullable: true })
-  multipleBusinesses?: boolean
-
-  @Field({ nullable: true })
-  multipleLocations?: boolean
-
-  @Field(() => Int, { nullable: true })
-  numberOfEmployees?: number
-
-  @Field(() => Int, { nullable: true })
-  organizer?: number
-
-  @Field({ nullable: true })
-  otherBusinesses?: string
-
-  @Field({ nullable: true })
-  otherLocations?: string
-
-  @Field({ nullable: true })
-  postcode?: string
-
-  @Field(() => Int, { nullable: true })
-  promoter?: number
-
-  @Field(() => Int, { nullable: true })
-  recognized?: number
-
-  @Field({ nullable: true })
-  salesAgentName?: string
-
-  @Field({ nullable: true })
-  state?: string
-
-  @Field(() => Int, { nullable: true })
-  strategizer?: number
-
-  @Field({ nullable: true })
-  substitute?: boolean
-
-  @Field({ nullable: true })
-  tagline?: string
-
-  @Field({ nullable: true })
-  terminatedByName?: string
-
-  @Field({ nullable: true })
-  terminationComments?: string
-
-  @Field({ nullable: true })
-  terminationReason?: string
-
-  @Field(() => Int, { nullable: true })
-  thinker?: number
-
-  @Field({ nullable: true })
-  title?: string
-
-  @Field({ nullable: true })
-  type?: string
-
-  @Field({ nullable: true })
-  vet?: boolean
-
-  @Field({ nullable: true })
-  activeDuty?: boolean
-
-  @Field({ nullable: true })
-  militaryBranch?: string
-
-  @Field({ nullable: true })
-  notifyByEmail?: boolean
-
-  @Field({ nullable: true })
-  notifyBySMS?: boolean
-
-  @Field({ nullable: true })
-  notifyByWeb?: boolean
-
-  @Field({ nullable: true })
-  notifyByMobile?: boolean
-
-  @Field(() => [String], { nullable: true })
-  reminderSentByIds?: string[]
-
-  @Field(() => [String], { nullable: true })
-  reminderSentToIds?: string[]
-
-  @Field({ nullable: true })
-  chapterId?: string
-
-  @Field(() => [String], { nullable: true })
-  presenceIds?: string[]
-
-  @Field(() => [String], { nullable: true })
-  notificationsSentIds?: string[]
-
-  @Field(() => [String], { nullable: true })
-  notificationsReceivedIds?: string[]
-
-  @Field(() => [String], { nullable: true })
-  powerHoursFromIds?: string[]
-
-  @Field(() => [String], { nullable: true })
-  powerHoursToIds?: string[]
-
-  @Field(() => [String], { nullable: true })
-  referralsFromIds?: string[]
-
-  @Field(() => [String], { nullable: true })
-  referralsSentIds?: string[]
-
-  @Field(() => [String], { nullable: true })
-  referralsToIds?: string[]
-
-  @Field(() => [String], { nullable: true })
-  regionsManagedIds?: string[]
-
-  @Field(() => [String], { nullable: true })
-  substitutesSentByIds?: string[]
-
-  @Field(() => [String], { nullable: true })
-  substituteAcceptedIds?: string[]
-
-  @Field(() => [String], { nullable: true })
-  territoriesManagedIds?: string[]
-
-  @Field(() => [String], { nullable: true })
-  testimonialsFromIds?: string[]
-
-  @Field(() => [String], { nullable: true })
-  testimonialsToIds?: string[]
-
-  @Field(() => [String], { nullable: true })
-  transactionsIds?: string[]
-
-  @Field({ nullable: true })
-  avatarId?: string
-
-  @Field({ nullable: true })
-  backgroundImageId?: string
-
-  @Field(() => [String], { nullable: true })
-  substituteInvitedIds?: string[]
-
-  @Field(() => [String], { nullable: true })
-  awardsIds?: string[]
-
-  @Field(() => [String], { nullable: true })
-  blogPostsAuthoredIds?: string[]
-}
-
-@InputType()
-export class CreateChapterInput {
-  @Field({ nullable: true })
-  id?: string
-
-  @Field(() => Date, { nullable: true })
-  createdAt?: Date
-
-  @Field(() => Date, { nullable: true })
-  updatedAt?: Date
-
-  @Field(() => Date, { nullable: true })
-  establishedDate?: Date
-
-  @Field({ nullable: false })
-  name!: string
-
-  @Field({ nullable: true })
-  description?: string
-
-  @Field({ nullable: true })
-  address?: string
+  address1?: string
 
   @Field({ nullable: true })
   address2?: string
@@ -982,68 +35,29 @@ export class CreateChapterInput {
   city?: string
 
   @Field({ nullable: true })
-  state?: string
+  region?: string
 
   @Field({ nullable: true })
-  postCode?: string
+  postalCode?: string
+
+  @Field(() => AddressType, { nullable: true })
+  addressType?: AddressType
 
   @Field({ nullable: true })
-  latitude?: string
+  isPrimary?: boolean
 
   @Field({ nullable: true })
-  longitude?: string
+  countryId?: string
 
   @Field({ nullable: true })
-  facebook?: string
+  userId?: string
 
   @Field({ nullable: true })
-  virtual?: boolean
-
-  @Field({ nullable: true })
-  meetingUrl?: string
-
-  @Field(() => DayOfWeek, { nullable: true })
-  meetingDay?: DayOfWeek
-
-  @Field({ nullable: true })
-  meetingTime?: string
-
-  @Field({ nullable: true })
-  meetingDetails?: string
-
-  @Field(() => ChapterStatus, { nullable: false })
-  status!: ChapterStatus
-
-  @Field({ nullable: true })
-  substituteGroupId?: string
-
-  @Field({ nullable: true })
-  regionId?: string
-
-  @Field(() => [String], { nullable: true })
-  attendanceRemindersIds?: string[]
-
-  @Field(() => [String], { nullable: true })
-  membersIds?: string[]
-
-  @Field(() => [String], { nullable: true })
-  meetingsIds?: string[]
-
-  @Field(() => [String], { nullable: true })
-  referralsFromIds?: string[]
-
-  @Field(() => [String], { nullable: true })
-  referralsToIds?: string[]
-
-  @Field(() => [String], { nullable: true })
-  transactionsIds?: string[]
-
-  @Field({ nullable: true })
-  backgroundImageId?: string
+  organizationId?: string
 }
 
 @InputType()
-export class UpdateChapterInput {
+export class UpdateAddressInput {
   @Field({ nullable: true })
   id?: string
 
@@ -1053,17 +67,8 @@ export class UpdateChapterInput {
   @Field(() => Date, { nullable: true })
   updatedAt?: Date
 
-  @Field(() => Date, { nullable: true })
-  establishedDate?: Date
-
   @Field({ nullable: true })
-  name?: string
-
-  @Field({ nullable: true })
-  description?: string
-
-  @Field({ nullable: true })
-  address?: string
+  address1?: string
 
   @Field({ nullable: true })
   address2?: string
@@ -1072,68 +77,29 @@ export class UpdateChapterInput {
   city?: string
 
   @Field({ nullable: true })
-  state?: string
+  region?: string
 
   @Field({ nullable: true })
-  postCode?: string
+  postalCode?: string
+
+  @Field(() => AddressType, { nullable: true })
+  addressType?: AddressType
 
   @Field({ nullable: true })
-  latitude?: string
+  isPrimary?: boolean
 
   @Field({ nullable: true })
-  longitude?: string
+  countryId?: string
 
   @Field({ nullable: true })
-  facebook?: string
+  userId?: string
 
   @Field({ nullable: true })
-  virtual?: boolean
-
-  @Field({ nullable: true })
-  meetingUrl?: string
-
-  @Field(() => DayOfWeek, { nullable: true })
-  meetingDay?: DayOfWeek
-
-  @Field({ nullable: true })
-  meetingTime?: string
-
-  @Field({ nullable: true })
-  meetingDetails?: string
-
-  @Field(() => ChapterStatus, { nullable: true })
-  status?: ChapterStatus
-
-  @Field({ nullable: true })
-  substituteGroupId?: string
-
-  @Field({ nullable: true })
-  regionId?: string
-
-  @Field(() => [String], { nullable: true })
-  attendanceRemindersIds?: string[]
-
-  @Field(() => [String], { nullable: true })
-  membersIds?: string[]
-
-  @Field(() => [String], { nullable: true })
-  meetingsIds?: string[]
-
-  @Field(() => [String], { nullable: true })
-  referralsFromIds?: string[]
-
-  @Field(() => [String], { nullable: true })
-  referralsToIds?: string[]
-
-  @Field(() => [String], { nullable: true })
-  transactionsIds?: string[]
-
-  @Field({ nullable: true })
-  backgroundImageId?: string
+  organizationId?: string
 }
 
 @InputType()
-export class ListChapterInput extends CorePagingInput {
+export class ListAddressInput extends CorePagingInput {
   @Field({ nullable: true })
   id?: string
 
@@ -1143,17 +109,8 @@ export class ListChapterInput extends CorePagingInput {
   @Field(() => Date, { nullable: true })
   updatedAt?: Date
 
-  @Field(() => Date, { nullable: true })
-  establishedDate?: Date
-
   @Field({ nullable: true })
-  name?: string
-
-  @Field({ nullable: true })
-  description?: string
-
-  @Field({ nullable: true })
-  address?: string
+  address1?: string
 
   @Field({ nullable: true })
   address2?: string
@@ -1162,68 +119,29 @@ export class ListChapterInput extends CorePagingInput {
   city?: string
 
   @Field({ nullable: true })
-  state?: string
+  region?: string
 
   @Field({ nullable: true })
-  postCode?: string
+  postalCode?: string
+
+  @Field(() => AddressType, { nullable: true })
+  addressType?: AddressType
 
   @Field({ nullable: true })
-  latitude?: string
+  isPrimary?: boolean
 
   @Field({ nullable: true })
-  longitude?: string
+  countryId?: string
 
   @Field({ nullable: true })
-  facebook?: string
+  userId?: string
 
   @Field({ nullable: true })
-  virtual?: boolean
-
-  @Field({ nullable: true })
-  meetingUrl?: string
-
-  @Field(() => DayOfWeek, { nullable: true })
-  meetingDay?: DayOfWeek
-
-  @Field({ nullable: true })
-  meetingTime?: string
-
-  @Field({ nullable: true })
-  meetingDetails?: string
-
-  @Field(() => ChapterStatus, { nullable: true })
-  status?: ChapterStatus
-
-  @Field({ nullable: true })
-  substituteGroupId?: string
-
-  @Field({ nullable: true })
-  regionId?: string
-
-  @Field(() => [String], { nullable: true })
-  attendanceRemindersIds?: string[]
-
-  @Field(() => [String], { nullable: true })
-  membersIds?: string[]
-
-  @Field(() => [String], { nullable: true })
-  meetingsIds?: string[]
-
-  @Field(() => [String], { nullable: true })
-  referralsFromIds?: string[]
-
-  @Field(() => [String], { nullable: true })
-  referralsToIds?: string[]
-
-  @Field(() => [String], { nullable: true })
-  transactionsIds?: string[]
-
-  @Field({ nullable: true })
-  backgroundImageId?: string
+  organizationId?: string
 }
 
 @InputType()
-export class CreateMeetingInput {
+export class CreateApiTokenInput {
   @Field({ nullable: true })
   id?: string
 
@@ -1232,358 +150,25 @@ export class CreateMeetingInput {
 
   @Field(() => Date, { nullable: true })
   updatedAt?: Date
-
-  @Field(() => Date, { nullable: true })
-  date?: Date
-
-  @Field({ nullable: false })
-  chapterId!: string
-
-  @Field({ nullable: true })
-  isVisitorDay?: boolean
-
-  @Field(() => [String], { nullable: true })
-  presenceIds?: string[]
-}
-
-@InputType()
-export class UpdateMeetingInput {
-  @Field({ nullable: true })
-  id?: string
-
-  @Field(() => Date, { nullable: true })
-  createdAt?: Date
-
-  @Field(() => Date, { nullable: true })
-  updatedAt?: Date
-
-  @Field(() => Date, { nullable: true })
-  date?: Date
-
-  @Field({ nullable: true })
-  chapterId?: string
-
-  @Field({ nullable: true })
-  isVisitorDay?: boolean
-
-  @Field(() => [String], { nullable: true })
-  presenceIds?: string[]
-}
-
-@InputType()
-export class ListMeetingInput extends CorePagingInput {
-  @Field({ nullable: true })
-  id?: string
-
-  @Field(() => Date, { nullable: true })
-  createdAt?: Date
-
-  @Field(() => Date, { nullable: true })
-  updatedAt?: Date
-
-  @Field(() => Date, { nullable: true })
-  date?: Date
-
-  @Field({ nullable: true })
-  chapterId?: string
-
-  @Field({ nullable: true })
-  isVisitorDay?: boolean
-
-  @Field(() => [String], { nullable: true })
-  presenceIds?: string[]
-}
-
-@InputType()
-export class CreateMeetingPresenceInput {
-  @Field({ nullable: true })
-  id?: string
-
-  @Field(() => Date, { nullable: true })
-  createdAt?: Date
-
-  @Field(() => Date, { nullable: true })
-  updatedAt?: Date
-
-  @Field(() => MeetingAttendance, { nullable: false })
-  attendance!: MeetingAttendance
-
-  @Field({ nullable: true })
-  other?: string
-
-  @Field({ nullable: false })
-  meetingId!: string
-
-  @Field({ nullable: false })
-  memberId!: string
-}
-
-@InputType()
-export class UpdateMeetingPresenceInput {
-  @Field({ nullable: true })
-  id?: string
-
-  @Field(() => Date, { nullable: true })
-  createdAt?: Date
-
-  @Field(() => Date, { nullable: true })
-  updatedAt?: Date
-
-  @Field(() => MeetingAttendance, { nullable: true })
-  attendance?: MeetingAttendance
-
-  @Field({ nullable: true })
-  other?: string
-
-  @Field({ nullable: true })
-  meetingId?: string
-
-  @Field({ nullable: true })
-  memberId?: string
-}
-
-@InputType()
-export class ListMeetingPresenceInput extends CorePagingInput {
-  @Field({ nullable: true })
-  id?: string
-
-  @Field(() => Date, { nullable: true })
-  createdAt?: Date
-
-  @Field(() => Date, { nullable: true })
-  updatedAt?: Date
-
-  @Field(() => MeetingAttendance, { nullable: true })
-  attendance?: MeetingAttendance
-
-  @Field({ nullable: true })
-  other?: string
-
-  @Field({ nullable: true })
-  meetingId?: string
-
-  @Field({ nullable: true })
-  memberId?: string
-}
-
-@InputType()
-export class CreateSubstituteInput {
-  @Field({ nullable: true })
-  id?: string
-
-  @Field(() => Date, { nullable: true })
-  createdAt?: Date
-
-  @Field(() => Date, { nullable: true })
-  updatedAt?: Date
-
-  @Field(() => Date, { nullable: false })
-  meetingDate!: Date
-
-  @Field({ nullable: false })
-  sentById!: string
-
-  @Field({ nullable: true })
-  substituteId?: string
-
-  @Field(() => [String], { nullable: true })
-  invitedIds?: string[]
-}
-
-@InputType()
-export class UpdateSubstituteInput {
-  @Field({ nullable: true })
-  id?: string
-
-  @Field(() => Date, { nullable: true })
-  createdAt?: Date
-
-  @Field(() => Date, { nullable: true })
-  updatedAt?: Date
-
-  @Field(() => Date, { nullable: true })
-  meetingDate?: Date
-
-  @Field({ nullable: true })
-  sentById?: string
-
-  @Field({ nullable: true })
-  substituteId?: string
-
-  @Field(() => [String], { nullable: true })
-  invitedIds?: string[]
-}
-
-@InputType()
-export class ListSubstituteInput extends CorePagingInput {
-  @Field({ nullable: true })
-  id?: string
-
-  @Field(() => Date, { nullable: true })
-  createdAt?: Date
-
-  @Field(() => Date, { nullable: true })
-  updatedAt?: Date
-
-  @Field(() => Date, { nullable: true })
-  meetingDate?: Date
-
-  @Field({ nullable: true })
-  sentById?: string
-
-  @Field({ nullable: true })
-  substituteId?: string
-
-  @Field(() => [String], { nullable: true })
-  invitedIds?: string[]
-}
-
-@InputType()
-export class CreateAttendanceReminderInput {
-  @Field({ nullable: true })
-  id?: string
-
-  @Field(() => Date, { nullable: true })
-  createdAt?: Date
-
-  @Field(() => Date, { nullable: true })
-  updatedAt?: Date
-
-  @Field({ nullable: true })
-  chapterId?: string
-
-  @Field({ nullable: false })
-  sentById!: string
-
-  @Field({ nullable: false })
-  sentToId!: string
-}
-
-@InputType()
-export class UpdateAttendanceReminderInput {
-  @Field({ nullable: true })
-  id?: string
-
-  @Field(() => Date, { nullable: true })
-  createdAt?: Date
-
-  @Field(() => Date, { nullable: true })
-  updatedAt?: Date
-
-  @Field({ nullable: true })
-  chapterId?: string
-
-  @Field({ nullable: true })
-  sentById?: string
-
-  @Field({ nullable: true })
-  sentToId?: string
-}
-
-@InputType()
-export class ListAttendanceReminderInput extends CorePagingInput {
-  @Field({ nullable: true })
-  id?: string
-
-  @Field(() => Date, { nullable: true })
-  createdAt?: Date
-
-  @Field(() => Date, { nullable: true })
-  updatedAt?: Date
-
-  @Field({ nullable: true })
-  chapterId?: string
-
-  @Field({ nullable: true })
-  sentById?: string
-
-  @Field({ nullable: true })
-  sentToId?: string
-}
-
-@InputType()
-export class CreateAwardTypeInput {
-  @Field({ nullable: true })
-  id?: string
-
-  @Field(() => Date, { nullable: true })
-  createdAt?: Date
-
-  @Field(() => Date, { nullable: true })
-  updatedAt?: Date
-
-  @Field({ nullable: false })
-  name!: string
-
-  @Field({ nullable: true })
-  description?: string
-
-  @Field(() => [String], { nullable: true })
-  awardsIds?: string[]
-}
-
-@InputType()
-export class UpdateAwardTypeInput {
-  @Field({ nullable: true })
-  id?: string
-
-  @Field(() => Date, { nullable: true })
-  createdAt?: Date
-
-  @Field(() => Date, { nullable: true })
-  updatedAt?: Date
-
-  @Field({ nullable: true })
-  name?: string
-
-  @Field({ nullable: true })
-  description?: string
-
-  @Field(() => [String], { nullable: true })
-  awardsIds?: string[]
-}
-
-@InputType()
-export class ListAwardTypeInput extends CorePagingInput {
-  @Field({ nullable: true })
-  id?: string
-
-  @Field(() => Date, { nullable: true })
-  createdAt?: Date
-
-  @Field(() => Date, { nullable: true })
-  updatedAt?: Date
-
-  @Field({ nullable: true })
-  name?: string
-
-  @Field({ nullable: true })
-  description?: string
-
-  @Field(() => [String], { nullable: true })
-  awardsIds?: string[]
-}
-
-@InputType()
-export class CreateAwardInput {
-  @Field({ nullable: true })
-  id?: string
-
-  @Field(() => Date, { nullable: true })
-  createdAt?: Date
-
-  @Field(() => Date, { nullable: false })
-  awardedDate!: Date
 
   @Field({ nullable: false })
   userId!: string
 
   @Field({ nullable: false })
-  awardTypeId!: string
+  token!: string
+
+  @Field({ nullable: true })
+  name?: string
+
+  @Field(() => Date, { nullable: true })
+  expiresAt?: Date
+
+  @Field({ nullable: true })
+  revoked?: boolean
 }
 
 @InputType()
-export class UpdateAwardInput {
+export class UpdateApiTokenInput {
   @Field({ nullable: true })
   id?: string
 
@@ -1591,17 +176,26 @@ export class UpdateAwardInput {
   createdAt?: Date
 
   @Field(() => Date, { nullable: true })
-  awardedDate?: Date
+  updatedAt?: Date
 
   @Field({ nullable: true })
   userId?: string
 
   @Field({ nullable: true })
-  awardTypeId?: string
+  token?: string
+
+  @Field({ nullable: true })
+  name?: string
+
+  @Field(() => Date, { nullable: true })
+  expiresAt?: Date
+
+  @Field({ nullable: true })
+  revoked?: boolean
 }
 
 @InputType()
-export class ListAwardInput extends CorePagingInput {
+export class ListApiTokenInput extends CorePagingInput {
   @Field({ nullable: true })
   id?: string
 
@@ -1609,17 +203,26 @@ export class ListAwardInput extends CorePagingInput {
   createdAt?: Date
 
   @Field(() => Date, { nullable: true })
-  awardedDate?: Date
+  updatedAt?: Date
 
   @Field({ nullable: true })
   userId?: string
 
   @Field({ nullable: true })
-  awardTypeId?: string
+  token?: string
+
+  @Field({ nullable: true })
+  name?: string
+
+  @Field(() => Date, { nullable: true })
+  expiresAt?: Date
+
+  @Field({ nullable: true })
+  revoked?: boolean
 }
 
 @InputType()
-export class CreateChapterMemberInput {
+export class CreateAuditLogInput {
   @Field({ nullable: true })
   id?: string
 
@@ -1628,19 +231,28 @@ export class CreateChapterMemberInput {
 
   @Field(() => Date, { nullable: true })
   updatedAt?: Date
-
-  @Field(() => ChapterMemberRole, { nullable: false })
-  role!: ChapterMemberRole
 
   @Field({ nullable: false })
-  chapterId!: string
+  entityId!: string
 
   @Field({ nullable: false })
-  memberId!: string
+  entityType!: string
+
+  @Field({ nullable: false })
+  action!: string
+
+  @Field({ nullable: false })
+  userId!: string
+
+  @Field({ nullable: true })
+  organizationId?: string
+
+  @Field(() => GraphQLJSON, { nullable: true })
+  changes?: typeof GraphQLJSON
 }
 
 @InputType()
-export class UpdateChapterMemberInput {
+export class UpdateAuditLogInput {
   @Field({ nullable: true })
   id?: string
 
@@ -1650,18 +262,27 @@ export class UpdateChapterMemberInput {
   @Field(() => Date, { nullable: true })
   updatedAt?: Date
 
-  @Field(() => ChapterMemberRole, { nullable: true })
-  role?: ChapterMemberRole
+  @Field({ nullable: true })
+  entityId?: string
 
   @Field({ nullable: true })
-  chapterId?: string
+  entityType?: string
 
   @Field({ nullable: true })
-  memberId?: string
+  action?: string
+
+  @Field({ nullable: true })
+  userId?: string
+
+  @Field({ nullable: true })
+  organizationId?: string
+
+  @Field(() => GraphQLJSON, { nullable: true })
+  changes?: typeof GraphQLJSON
 }
 
 @InputType()
-export class ListChapterMemberInput extends CorePagingInput {
+export class ListAuditLogInput extends CorePagingInput {
   @Field({ nullable: true })
   id?: string
 
@@ -1671,14 +292,1436 @@ export class ListChapterMemberInput extends CorePagingInput {
   @Field(() => Date, { nullable: true })
   updatedAt?: Date
 
-  @Field(() => ChapterMemberRole, { nullable: true })
-  role?: ChapterMemberRole
+  @Field({ nullable: true })
+  entityId?: string
 
   @Field({ nullable: true })
-  chapterId?: string
+  entityType?: string
 
   @Field({ nullable: true })
-  memberId?: string
+  action?: string
+
+  @Field({ nullable: true })
+  userId?: string
+
+  @Field({ nullable: true })
+  organizationId?: string
+
+  @Field(() => GraphQLJSON, { nullable: true })
+  changes?: typeof GraphQLJSON
+}
+
+@InputType()
+export class CreateCountryInput {
+  @Field({ nullable: true })
+  id?: string
+
+  @Field(() => Date, { nullable: true })
+  createdAt?: Date
+
+  @Field(() => Date, { nullable: true })
+  updatedAt?: Date
+
+  @Field({ nullable: false })
+  name!: string
+
+  @Field({ nullable: false })
+  alpha2!: string
+
+  @Field({ nullable: false })
+  alpha3!: string
+
+  @Field({ nullable: false })
+  countryCode!: string
+
+  @Field({ nullable: false })
+  iso3166_2!: string
+
+  @Field({ nullable: false })
+  region!: string
+
+  @Field({ nullable: false })
+  subRegion!: string
+
+  @Field({ nullable: false })
+  intermediateRegion!: string
+
+  @Field({ nullable: false })
+  regionCode!: string
+
+  @Field({ nullable: false })
+  subRegionCode!: string
+
+  @Field({ nullable: false })
+  intermediateRegionCode!: string
+
+  @Field(() => [String], { nullable: true })
+  addressesIds?: string[]
+}
+
+@InputType()
+export class UpdateCountryInput {
+  @Field({ nullable: true })
+  id?: string
+
+  @Field(() => Date, { nullable: true })
+  createdAt?: Date
+
+  @Field(() => Date, { nullable: true })
+  updatedAt?: Date
+
+  @Field({ nullable: true })
+  name?: string
+
+  @Field({ nullable: true })
+  alpha2?: string
+
+  @Field({ nullable: true })
+  alpha3?: string
+
+  @Field({ nullable: true })
+  countryCode?: string
+
+  @Field({ nullable: true })
+  iso3166_2?: string
+
+  @Field({ nullable: true })
+  region?: string
+
+  @Field({ nullable: true })
+  subRegion?: string
+
+  @Field({ nullable: true })
+  intermediateRegion?: string
+
+  @Field({ nullable: true })
+  regionCode?: string
+
+  @Field({ nullable: true })
+  subRegionCode?: string
+
+  @Field({ nullable: true })
+  intermediateRegionCode?: string
+
+  @Field(() => [String], { nullable: true })
+  addressesIds?: string[]
+}
+
+@InputType()
+export class ListCountryInput extends CorePagingInput {
+  @Field({ nullable: true })
+  id?: string
+
+  @Field(() => Date, { nullable: true })
+  createdAt?: Date
+
+  @Field(() => Date, { nullable: true })
+  updatedAt?: Date
+
+  @Field({ nullable: true })
+  name?: string
+
+  @Field({ nullable: true })
+  alpha2?: string
+
+  @Field({ nullable: true })
+  alpha3?: string
+
+  @Field({ nullable: true })
+  countryCode?: string
+
+  @Field({ nullable: true })
+  iso3166_2?: string
+
+  @Field({ nullable: true })
+  region?: string
+
+  @Field({ nullable: true })
+  subRegion?: string
+
+  @Field({ nullable: true })
+  intermediateRegion?: string
+
+  @Field({ nullable: true })
+  regionCode?: string
+
+  @Field({ nullable: true })
+  subRegionCode?: string
+
+  @Field({ nullable: true })
+  intermediateRegionCode?: string
+
+  @Field(() => [String], { nullable: true })
+  addressesIds?: string[]
+}
+
+@InputType()
+export class CreateEmailInput {
+  @Field({ nullable: true })
+  id?: string
+
+  @Field(() => Date, { nullable: true })
+  createdAt?: Date
+
+  @Field(() => Date, { nullable: true })
+  updatedAt?: Date
+
+  @Field({ nullable: false })
+  email!: string
+
+  @Field({ nullable: true })
+  public?: boolean
+
+  @Field({ nullable: true })
+  primary?: boolean
+
+  @Field({ nullable: true })
+  verified?: boolean
+
+  @Field({ nullable: true })
+  verifyToken?: string
+
+  @Field(() => Date, { nullable: true })
+  verifyExpires?: Date
+
+  @Field({ nullable: true })
+  userId?: string
+
+  @Field(() => EmailType, { nullable: true })
+  emailType?: EmailType
+
+  @Field({ nullable: true })
+  organizationId?: string
+}
+
+@InputType()
+export class UpdateEmailInput {
+  @Field({ nullable: true })
+  id?: string
+
+  @Field(() => Date, { nullable: true })
+  createdAt?: Date
+
+  @Field(() => Date, { nullable: true })
+  updatedAt?: Date
+
+  @Field({ nullable: true })
+  email?: string
+
+  @Field({ nullable: true })
+  public?: boolean
+
+  @Field({ nullable: true })
+  primary?: boolean
+
+  @Field({ nullable: true })
+  verified?: boolean
+
+  @Field({ nullable: true })
+  verifyToken?: string
+
+  @Field(() => Date, { nullable: true })
+  verifyExpires?: Date
+
+  @Field({ nullable: true })
+  userId?: string
+
+  @Field(() => EmailType, { nullable: true })
+  emailType?: EmailType
+
+  @Field({ nullable: true })
+  organizationId?: string
+}
+
+@InputType()
+export class ListEmailInput extends CorePagingInput {
+  @Field({ nullable: true })
+  id?: string
+
+  @Field(() => Date, { nullable: true })
+  createdAt?: Date
+
+  @Field(() => Date, { nullable: true })
+  updatedAt?: Date
+
+  @Field({ nullable: true })
+  email?: string
+
+  @Field({ nullable: true })
+  public?: boolean
+
+  @Field({ nullable: true })
+  primary?: boolean
+
+  @Field({ nullable: true })
+  verified?: boolean
+
+  @Field({ nullable: true })
+  verifyToken?: string
+
+  @Field(() => Date, { nullable: true })
+  verifyExpires?: Date
+
+  @Field({ nullable: true })
+  userId?: string
+
+  @Field(() => EmailType, { nullable: true })
+  emailType?: EmailType
+
+  @Field({ nullable: true })
+  organizationId?: string
+}
+
+@InputType()
+export class CreateInviteInput {
+  @Field({ nullable: true })
+  id?: string
+
+  @Field(() => Date, { nullable: true })
+  createdAt?: Date
+
+  @Field(() => Date, { nullable: true })
+  updatedAt?: Date
+
+  @Field(() => Date, { nullable: false })
+  expiresAt!: Date
+
+  @Field({ nullable: false })
+  email!: string
+
+  @Field({ nullable: false })
+  token!: string
+
+  @Field({ nullable: false })
+  inviterId!: string
+
+  @Field({ nullable: false })
+  organizationId!: string
+
+  @Field(() => InviteStatus, { nullable: true })
+  status?: InviteStatus
+
+  @Field({ nullable: true })
+  roleId?: string
+}
+
+@InputType()
+export class UpdateInviteInput {
+  @Field({ nullable: true })
+  id?: string
+
+  @Field(() => Date, { nullable: true })
+  createdAt?: Date
+
+  @Field(() => Date, { nullable: true })
+  updatedAt?: Date
+
+  @Field(() => Date, { nullable: true })
+  expiresAt?: Date
+
+  @Field({ nullable: true })
+  email?: string
+
+  @Field({ nullable: true })
+  token?: string
+
+  @Field({ nullable: true })
+  inviterId?: string
+
+  @Field({ nullable: true })
+  organizationId?: string
+
+  @Field(() => InviteStatus, { nullable: true })
+  status?: InviteStatus
+
+  @Field({ nullable: true })
+  roleId?: string
+}
+
+@InputType()
+export class ListInviteInput extends CorePagingInput {
+  @Field({ nullable: true })
+  id?: string
+
+  @Field(() => Date, { nullable: true })
+  createdAt?: Date
+
+  @Field(() => Date, { nullable: true })
+  updatedAt?: Date
+
+  @Field(() => Date, { nullable: true })
+  expiresAt?: Date
+
+  @Field({ nullable: true })
+  email?: string
+
+  @Field({ nullable: true })
+  token?: string
+
+  @Field({ nullable: true })
+  inviterId?: string
+
+  @Field({ nullable: true })
+  organizationId?: string
+
+  @Field(() => InviteStatus, { nullable: true })
+  status?: InviteStatus
+
+  @Field({ nullable: true })
+  roleId?: string
+}
+
+@InputType()
+export class CreateLinkInput {
+  @Field({ nullable: true })
+  id?: string
+
+  @Field(() => Date, { nullable: true })
+  createdAt?: Date
+
+  @Field(() => Date, { nullable: true })
+  updatedAt?: Date
+
+  @Field({ nullable: false })
+  name!: string
+
+  @Field({ nullable: false })
+  url!: string
+
+  @Field({ nullable: true })
+  userId?: string
+
+  @Field({ nullable: true })
+  organizationId?: string
+}
+
+@InputType()
+export class UpdateLinkInput {
+  @Field({ nullable: true })
+  id?: string
+
+  @Field(() => Date, { nullable: true })
+  createdAt?: Date
+
+  @Field(() => Date, { nullable: true })
+  updatedAt?: Date
+
+  @Field({ nullable: true })
+  name?: string
+
+  @Field({ nullable: true })
+  url?: string
+
+  @Field({ nullable: true })
+  userId?: string
+
+  @Field({ nullable: true })
+  organizationId?: string
+}
+
+@InputType()
+export class ListLinkInput extends CorePagingInput {
+  @Field({ nullable: true })
+  id?: string
+
+  @Field(() => Date, { nullable: true })
+  createdAt?: Date
+
+  @Field(() => Date, { nullable: true })
+  updatedAt?: Date
+
+  @Field({ nullable: true })
+  name?: string
+
+  @Field({ nullable: true })
+  url?: string
+
+  @Field({ nullable: true })
+  userId?: string
+
+  @Field({ nullable: true })
+  organizationId?: string
+}
+
+@InputType()
+export class CreateLoginAttemptInput {
+  @Field({ nullable: true })
+  id?: string
+
+  @Field(() => Date, { nullable: true })
+  createdAt?: Date
+
+  @Field(() => Date, { nullable: true })
+  updatedAt?: Date
+
+  @Field({ nullable: true })
+  userId?: string
+
+  @Field({ nullable: false })
+  email!: string
+
+  @Field({ nullable: true })
+  success?: boolean
+
+  @Field({ nullable: true })
+  ipAddress?: string
+
+  @Field({ nullable: true })
+  userAgent?: string
+
+  @Field({ nullable: true })
+  location?: string
+
+  @Field(() => FailureReason, { nullable: true })
+  reason?: FailureReason
+}
+
+@InputType()
+export class UpdateLoginAttemptInput {
+  @Field({ nullable: true })
+  id?: string
+
+  @Field(() => Date, { nullable: true })
+  createdAt?: Date
+
+  @Field(() => Date, { nullable: true })
+  updatedAt?: Date
+
+  @Field({ nullable: true })
+  userId?: string
+
+  @Field({ nullable: true })
+  email?: string
+
+  @Field({ nullable: true })
+  success?: boolean
+
+  @Field({ nullable: true })
+  ipAddress?: string
+
+  @Field({ nullable: true })
+  userAgent?: string
+
+  @Field({ nullable: true })
+  location?: string
+
+  @Field(() => FailureReason, { nullable: true })
+  reason?: FailureReason
+}
+
+@InputType()
+export class ListLoginAttemptInput extends CorePagingInput {
+  @Field({ nullable: true })
+  id?: string
+
+  @Field(() => Date, { nullable: true })
+  createdAt?: Date
+
+  @Field(() => Date, { nullable: true })
+  updatedAt?: Date
+
+  @Field({ nullable: true })
+  userId?: string
+
+  @Field({ nullable: true })
+  email?: string
+
+  @Field({ nullable: true })
+  success?: boolean
+
+  @Field({ nullable: true })
+  ipAddress?: string
+
+  @Field({ nullable: true })
+  userAgent?: string
+
+  @Field({ nullable: true })
+  location?: string
+
+  @Field(() => FailureReason, { nullable: true })
+  reason?: FailureReason
+}
+
+@InputType()
+export class CreateOAuthAccountInput {
+  @Field({ nullable: true })
+  id?: string
+
+  @Field(() => Date, { nullable: true })
+  createdAt?: Date
+
+  @Field(() => Date, { nullable: true })
+  updatedAt?: Date
+
+  @Field({ nullable: false })
+  provider!: string
+
+  @Field({ nullable: false })
+  providerUserId!: string
+
+  @Field({ nullable: false })
+  userId!: string
+}
+
+@InputType()
+export class UpdateOAuthAccountInput {
+  @Field({ nullable: true })
+  id?: string
+
+  @Field(() => Date, { nullable: true })
+  createdAt?: Date
+
+  @Field(() => Date, { nullable: true })
+  updatedAt?: Date
+
+  @Field({ nullable: true })
+  provider?: string
+
+  @Field({ nullable: true })
+  providerUserId?: string
+
+  @Field({ nullable: true })
+  userId?: string
+}
+
+@InputType()
+export class ListOAuthAccountInput extends CorePagingInput {
+  @Field({ nullable: true })
+  id?: string
+
+  @Field(() => Date, { nullable: true })
+  createdAt?: Date
+
+  @Field(() => Date, { nullable: true })
+  updatedAt?: Date
+
+  @Field({ nullable: true })
+  provider?: string
+
+  @Field({ nullable: true })
+  providerUserId?: string
+
+  @Field({ nullable: true })
+  userId?: string
+}
+
+@InputType()
+export class CreateOrganizationInput {
+  @Field({ nullable: true })
+  id?: string
+
+  @Field(() => Date, { nullable: true })
+  createdAt?: Date
+
+  @Field(() => Date, { nullable: true })
+  updatedAt?: Date
+
+  @Field({ nullable: false })
+  name!: string
+
+  @Field(() => [String], { nullable: true })
+  emailsIds?: string[]
+
+  @Field(() => [String], { nullable: true })
+  linksIds?: string[]
+
+  @Field(() => [String], { nullable: true })
+  phoneNumbersIds?: string[]
+
+  @Field(() => [String], { nullable: true })
+  imagesIds?: string[]
+
+  @Field(() => [String], { nullable: true })
+  membersIds?: string[]
+
+  @Field(() => [String], { nullable: true })
+  addressesIds?: string[]
+
+  @Field(() => [String], { nullable: true })
+  invitesIds?: string[]
+
+  @Field(() => [String], { nullable: true })
+  AuditLogIds?: string[]
+
+  @Field(() => [String], { nullable: true })
+  TeamIds?: string[]
+
+  @Field({ nullable: true })
+  subscriptionId?: string
+
+  @Field(() => [String], { nullable: true })
+  rolesIds?: string[]
+}
+
+@InputType()
+export class UpdateOrganizationInput {
+  @Field({ nullable: true })
+  id?: string
+
+  @Field(() => Date, { nullable: true })
+  createdAt?: Date
+
+  @Field(() => Date, { nullable: true })
+  updatedAt?: Date
+
+  @Field({ nullable: true })
+  name?: string
+
+  @Field(() => [String], { nullable: true })
+  emailsIds?: string[]
+
+  @Field(() => [String], { nullable: true })
+  linksIds?: string[]
+
+  @Field(() => [String], { nullable: true })
+  phoneNumbersIds?: string[]
+
+  @Field(() => [String], { nullable: true })
+  imagesIds?: string[]
+
+  @Field(() => [String], { nullable: true })
+  membersIds?: string[]
+
+  @Field(() => [String], { nullable: true })
+  addressesIds?: string[]
+
+  @Field(() => [String], { nullable: true })
+  invitesIds?: string[]
+
+  @Field(() => [String], { nullable: true })
+  AuditLogIds?: string[]
+
+  @Field(() => [String], { nullable: true })
+  TeamIds?: string[]
+
+  @Field({ nullable: true })
+  subscriptionId?: string
+
+  @Field(() => [String], { nullable: true })
+  rolesIds?: string[]
+}
+
+@InputType()
+export class ListOrganizationInput extends CorePagingInput {
+  @Field({ nullable: true })
+  id?: string
+
+  @Field(() => Date, { nullable: true })
+  createdAt?: Date
+
+  @Field(() => Date, { nullable: true })
+  updatedAt?: Date
+
+  @Field({ nullable: true })
+  name?: string
+
+  @Field(() => [String], { nullable: true })
+  emailsIds?: string[]
+
+  @Field(() => [String], { nullable: true })
+  linksIds?: string[]
+
+  @Field(() => [String], { nullable: true })
+  phoneNumbersIds?: string[]
+
+  @Field(() => [String], { nullable: true })
+  imagesIds?: string[]
+
+  @Field(() => [String], { nullable: true })
+  membersIds?: string[]
+
+  @Field(() => [String], { nullable: true })
+  addressesIds?: string[]
+
+  @Field(() => [String], { nullable: true })
+  invitesIds?: string[]
+
+  @Field(() => [String], { nullable: true })
+  AuditLogIds?: string[]
+
+  @Field(() => [String], { nullable: true })
+  TeamIds?: string[]
+
+  @Field({ nullable: true })
+  subscriptionId?: string
+
+  @Field(() => [String], { nullable: true })
+  rolesIds?: string[]
+}
+
+@InputType()
+export class CreateOrganizationMemberInput {
+  @Field({ nullable: true })
+  id?: string
+
+  @Field(() => Date, { nullable: true })
+  createdAt?: Date
+
+  @Field(() => Date, { nullable: true })
+  updatedAt?: Date
+
+  @Field({ nullable: false })
+  roleId!: string
+
+  @Field({ nullable: false })
+  userId!: string
+
+  @Field({ nullable: false })
+  organizationId!: string
+}
+
+@InputType()
+export class UpdateOrganizationMemberInput {
+  @Field({ nullable: true })
+  id?: string
+
+  @Field(() => Date, { nullable: true })
+  createdAt?: Date
+
+  @Field(() => Date, { nullable: true })
+  updatedAt?: Date
+
+  @Field({ nullable: true })
+  roleId?: string
+
+  @Field({ nullable: true })
+  userId?: string
+
+  @Field({ nullable: true })
+  organizationId?: string
+}
+
+@InputType()
+export class ListOrganizationMemberInput extends CorePagingInput {
+  @Field({ nullable: true })
+  id?: string
+
+  @Field(() => Date, { nullable: true })
+  createdAt?: Date
+
+  @Field(() => Date, { nullable: true })
+  updatedAt?: Date
+
+  @Field({ nullable: true })
+  roleId?: string
+
+  @Field({ nullable: true })
+  userId?: string
+
+  @Field({ nullable: true })
+  organizationId?: string
+}
+
+@InputType()
+export class CreatePermissionInput {
+  @Field({ nullable: true })
+  id?: string
+
+  @Field({ nullable: false })
+  action!: string
+
+  @Field({ nullable: false })
+  subject!: string
+
+  @Field({ nullable: true })
+  description?: string
+
+  @Field(() => [String], { nullable: true })
+  rolesIds?: string[]
+}
+
+@InputType()
+export class UpdatePermissionInput {
+  @Field({ nullable: true })
+  id?: string
+
+  @Field({ nullable: true })
+  action?: string
+
+  @Field({ nullable: true })
+  subject?: string
+
+  @Field({ nullable: true })
+  description?: string
+
+  @Field(() => [String], { nullable: true })
+  rolesIds?: string[]
+}
+
+@InputType()
+export class ListPermissionInput extends CorePagingInput {
+  @Field({ nullable: true })
+  id?: string
+
+  @Field({ nullable: true })
+  action?: string
+
+  @Field({ nullable: true })
+  subject?: string
+
+  @Field({ nullable: true })
+  description?: string
+
+  @Field(() => [String], { nullable: true })
+  rolesIds?: string[]
+}
+
+@InputType()
+export class CreatePhoneNumberInput {
+  @Field({ nullable: true })
+  id?: string
+
+  @Field(() => Date, { nullable: true })
+  createdAt?: Date
+
+  @Field(() => Date, { nullable: true })
+  updatedAt?: Date
+
+  @Field({ nullable: false })
+  phone!: string
+
+  @Field(() => PhoneType, { nullable: true })
+  phoneType?: PhoneType
+
+  @Field({ nullable: true })
+  userId?: string
+
+  @Field({ nullable: true })
+  primary?: boolean
+
+  @Field({ nullable: true })
+  organizationId?: string
+}
+
+@InputType()
+export class UpdatePhoneNumberInput {
+  @Field({ nullable: true })
+  id?: string
+
+  @Field(() => Date, { nullable: true })
+  createdAt?: Date
+
+  @Field(() => Date, { nullable: true })
+  updatedAt?: Date
+
+  @Field({ nullable: true })
+  phone?: string
+
+  @Field(() => PhoneType, { nullable: true })
+  phoneType?: PhoneType
+
+  @Field({ nullable: true })
+  userId?: string
+
+  @Field({ nullable: true })
+  primary?: boolean
+
+  @Field({ nullable: true })
+  organizationId?: string
+}
+
+@InputType()
+export class ListPhoneNumberInput extends CorePagingInput {
+  @Field({ nullable: true })
+  id?: string
+
+  @Field(() => Date, { nullable: true })
+  createdAt?: Date
+
+  @Field(() => Date, { nullable: true })
+  updatedAt?: Date
+
+  @Field({ nullable: true })
+  phone?: string
+
+  @Field(() => PhoneType, { nullable: true })
+  phoneType?: PhoneType
+
+  @Field({ nullable: true })
+  userId?: string
+
+  @Field({ nullable: true })
+  primary?: boolean
+
+  @Field({ nullable: true })
+  organizationId?: string
+}
+
+@InputType()
+export class CreatePlanInput {
+  @Field({ nullable: true })
+  id?: string
+
+  @Field(() => Date, { nullable: true })
+  createdAt?: Date
+
+  @Field({ nullable: false })
+  name!: string
+
+  @Field(() => Float, { nullable: false })
+  price!: number
+
+  @Field({ nullable: false })
+  interval!: string
+
+  @Field(() => GraphQLJSON, { nullable: true })
+  features?: typeof GraphQLJSON
+
+  @Field({ nullable: true })
+  active?: boolean
+
+  @Field(() => [String], { nullable: true })
+  subscriptionsIds?: string[]
+}
+
+@InputType()
+export class UpdatePlanInput {
+  @Field({ nullable: true })
+  id?: string
+
+  @Field(() => Date, { nullable: true })
+  createdAt?: Date
+
+  @Field({ nullable: true })
+  name?: string
+
+  @Field(() => Float, { nullable: true })
+  price?: number
+
+  @Field({ nullable: true })
+  interval?: string
+
+  @Field(() => GraphQLJSON, { nullable: true })
+  features?: typeof GraphQLJSON
+
+  @Field({ nullable: true })
+  active?: boolean
+
+  @Field(() => [String], { nullable: true })
+  subscriptionsIds?: string[]
+}
+
+@InputType()
+export class ListPlanInput extends CorePagingInput {
+  @Field({ nullable: true })
+  id?: string
+
+  @Field(() => Date, { nullable: true })
+  createdAt?: Date
+
+  @Field({ nullable: true })
+  name?: string
+
+  @Field(() => Float, { nullable: true })
+  price?: number
+
+  @Field({ nullable: true })
+  interval?: string
+
+  @Field(() => GraphQLJSON, { nullable: true })
+  features?: typeof GraphQLJSON
+
+  @Field({ nullable: true })
+  active?: boolean
+
+  @Field(() => [String], { nullable: true })
+  subscriptionsIds?: string[]
+}
+
+@InputType()
+export class CreateRoleInput {
+  @Field({ nullable: true })
+  id?: string
+
+  @Field({ nullable: false })
+  name!: string
+
+  @Field({ nullable: true })
+  description?: string
+
+  @Field({ nullable: true })
+  organizationId?: string
+
+  @Field(() => [String], { nullable: true })
+  permissionsIds?: string[]
+
+  @Field(() => [String], { nullable: true })
+  membersIds?: string[]
+
+  @Field(() => [String], { nullable: true })
+  teamMembersIds?: string[]
+
+  @Field(() => [String], { nullable: true })
+  invitesIds?: string[]
+}
+
+@InputType()
+export class UpdateRoleInput {
+  @Field({ nullable: true })
+  id?: string
+
+  @Field({ nullable: true })
+  name?: string
+
+  @Field({ nullable: true })
+  description?: string
+
+  @Field({ nullable: true })
+  organizationId?: string
+
+  @Field(() => [String], { nullable: true })
+  permissionsIds?: string[]
+
+  @Field(() => [String], { nullable: true })
+  membersIds?: string[]
+
+  @Field(() => [String], { nullable: true })
+  teamMembersIds?: string[]
+
+  @Field(() => [String], { nullable: true })
+  invitesIds?: string[]
+}
+
+@InputType()
+export class ListRoleInput extends CorePagingInput {
+  @Field({ nullable: true })
+  id?: string
+
+  @Field({ nullable: true })
+  name?: string
+
+  @Field({ nullable: true })
+  description?: string
+
+  @Field({ nullable: true })
+  organizationId?: string
+
+  @Field(() => [String], { nullable: true })
+  permissionsIds?: string[]
+
+  @Field(() => [String], { nullable: true })
+  membersIds?: string[]
+
+  @Field(() => [String], { nullable: true })
+  teamMembersIds?: string[]
+
+  @Field(() => [String], { nullable: true })
+  invitesIds?: string[]
+}
+
+@InputType()
+export class CreateSecurityEventInput {
+  @Field({ nullable: true })
+  id?: string
+
+  @Field(() => Date, { nullable: true })
+  createdAt?: Date
+
+  @Field(() => Date, { nullable: true })
+  updatedAt?: Date
+
+  @Field({ nullable: false })
+  userId!: string
+
+  @Field(() => SecurityEventType, { nullable: false })
+  eventType!: SecurityEventType
+
+  @Field({ nullable: true })
+  ipAddress?: string
+
+  @Field({ nullable: true })
+  userAgent?: string
+
+  @Field(() => GraphQLJSON, { nullable: true })
+  metadata?: typeof GraphQLJSON
+}
+
+@InputType()
+export class UpdateSecurityEventInput {
+  @Field({ nullable: true })
+  id?: string
+
+  @Field(() => Date, { nullable: true })
+  createdAt?: Date
+
+  @Field(() => Date, { nullable: true })
+  updatedAt?: Date
+
+  @Field({ nullable: true })
+  userId?: string
+
+  @Field(() => SecurityEventType, { nullable: true })
+  eventType?: SecurityEventType
+
+  @Field({ nullable: true })
+  ipAddress?: string
+
+  @Field({ nullable: true })
+  userAgent?: string
+
+  @Field(() => GraphQLJSON, { nullable: true })
+  metadata?: typeof GraphQLJSON
+}
+
+@InputType()
+export class ListSecurityEventInput extends CorePagingInput {
+  @Field({ nullable: true })
+  id?: string
+
+  @Field(() => Date, { nullable: true })
+  createdAt?: Date
+
+  @Field(() => Date, { nullable: true })
+  updatedAt?: Date
+
+  @Field({ nullable: true })
+  userId?: string
+
+  @Field(() => SecurityEventType, { nullable: true })
+  eventType?: SecurityEventType
+
+  @Field({ nullable: true })
+  ipAddress?: string
+
+  @Field({ nullable: true })
+  userAgent?: string
+
+  @Field(() => GraphQLJSON, { nullable: true })
+  metadata?: typeof GraphQLJSON
+}
+
+@InputType()
+export class CreateSubscriptionInput {
+  @Field({ nullable: true })
+  id?: string
+
+  @Field(() => Date, { nullable: true })
+  createdAt?: Date
+
+  @Field(() => Date, { nullable: true })
+  updatedAt?: Date
+
+  @Field({ nullable: false })
+  organizationId!: string
+
+  @Field({ nullable: false })
+  planId!: string
+
+  @Field({ nullable: true })
+  stripeCustomerId?: string
+
+  @Field({ nullable: true })
+  stripeSubscriptionId?: string
+
+  @Field({ nullable: true })
+  stripePriceId?: string
+
+  @Field(() => Date, { nullable: true })
+  stripeCurrentPeriodEnd?: Date
+
+  @Field(() => SubscriptionStatus, { nullable: true })
+  status?: SubscriptionStatus
+}
+
+@InputType()
+export class UpdateSubscriptionInput {
+  @Field({ nullable: true })
+  id?: string
+
+  @Field(() => Date, { nullable: true })
+  createdAt?: Date
+
+  @Field(() => Date, { nullable: true })
+  updatedAt?: Date
+
+  @Field({ nullable: true })
+  organizationId?: string
+
+  @Field({ nullable: true })
+  planId?: string
+
+  @Field({ nullable: true })
+  stripeCustomerId?: string
+
+  @Field({ nullable: true })
+  stripeSubscriptionId?: string
+
+  @Field({ nullable: true })
+  stripePriceId?: string
+
+  @Field(() => Date, { nullable: true })
+  stripeCurrentPeriodEnd?: Date
+
+  @Field(() => SubscriptionStatus, { nullable: true })
+  status?: SubscriptionStatus
+}
+
+@InputType()
+export class ListSubscriptionInput extends CorePagingInput {
+  @Field({ nullable: true })
+  id?: string
+
+  @Field(() => Date, { nullable: true })
+  createdAt?: Date
+
+  @Field(() => Date, { nullable: true })
+  updatedAt?: Date
+
+  @Field({ nullable: true })
+  organizationId?: string
+
+  @Field({ nullable: true })
+  planId?: string
+
+  @Field({ nullable: true })
+  stripeCustomerId?: string
+
+  @Field({ nullable: true })
+  stripeSubscriptionId?: string
+
+  @Field({ nullable: true })
+  stripePriceId?: string
+
+  @Field(() => Date, { nullable: true })
+  stripeCurrentPeriodEnd?: Date
+
+  @Field(() => SubscriptionStatus, { nullable: true })
+  status?: SubscriptionStatus
+}
+
+@InputType()
+export class CreateTeamInput {
+  @Field({ nullable: true })
+  id?: string
+
+  @Field(() => Date, { nullable: true })
+  createdAt?: Date
+
+  @Field(() => Date, { nullable: true })
+  updatedAt?: Date
+
+  @Field({ nullable: false })
+  name!: string
+
+  @Field({ nullable: true })
+  description?: string
+
+  @Field({ nullable: false })
+  organizationId!: string
+
+  @Field(() => [String], { nullable: true })
+  membersIds?: string[]
+}
+
+@InputType()
+export class UpdateTeamInput {
+  @Field({ nullable: true })
+  id?: string
+
+  @Field(() => Date, { nullable: true })
+  createdAt?: Date
+
+  @Field(() => Date, { nullable: true })
+  updatedAt?: Date
+
+  @Field({ nullable: true })
+  name?: string
+
+  @Field({ nullable: true })
+  description?: string
+
+  @Field({ nullable: true })
+  organizationId?: string
+
+  @Field(() => [String], { nullable: true })
+  membersIds?: string[]
+}
+
+@InputType()
+export class ListTeamInput extends CorePagingInput {
+  @Field({ nullable: true })
+  id?: string
+
+  @Field(() => Date, { nullable: true })
+  createdAt?: Date
+
+  @Field(() => Date, { nullable: true })
+  updatedAt?: Date
+
+  @Field({ nullable: true })
+  name?: string
+
+  @Field({ nullable: true })
+  description?: string
+
+  @Field({ nullable: true })
+  organizationId?: string
+
+  @Field(() => [String], { nullable: true })
+  membersIds?: string[]
+}
+
+@InputType()
+export class CreateTeamMemberInput {
+  @Field({ nullable: true })
+  id?: string
+
+  @Field(() => Date, { nullable: true })
+  createdAt?: Date
+
+  @Field(() => Date, { nullable: true })
+  updatedAt?: Date
+
+  @Field({ nullable: false })
+  teamId!: string
+
+  @Field({ nullable: false })
+  userId!: string
+
+  @Field({ nullable: false })
+  roleId!: string
+}
+
+@InputType()
+export class UpdateTeamMemberInput {
+  @Field({ nullable: true })
+  id?: string
+
+  @Field(() => Date, { nullable: true })
+  createdAt?: Date
+
+  @Field(() => Date, { nullable: true })
+  updatedAt?: Date
+
+  @Field({ nullable: true })
+  teamId?: string
+
+  @Field({ nullable: true })
+  userId?: string
+
+  @Field({ nullable: true })
+  roleId?: string
+}
+
+@InputType()
+export class ListTeamMemberInput extends CorePagingInput {
+  @Field({ nullable: true })
+  id?: string
+
+  @Field(() => Date, { nullable: true })
+  createdAt?: Date
+
+  @Field(() => Date, { nullable: true })
+  updatedAt?: Date
+
+  @Field({ nullable: true })
+  teamId?: string
+
+  @Field({ nullable: true })
+  userId?: string
+
+  @Field({ nullable: true })
+  roleId?: string
 }
 
 @InputType()
@@ -1692,41 +1735,47 @@ export class CreateUploadInput {
   @Field(() => Date, { nullable: true })
   updatedAt?: Date
 
+  @Field(() => ImageType, { nullable: true })
+  type?: ImageType
+
   @Field({ nullable: true })
-  format?: string
+  fileId?: string
 
-  @Field({ nullable: false })
-  originalFilename!: string
+  @Field({ nullable: true })
+  filePath?: string
 
-  @Field({ nullable: false })
-  publicId!: string
+  @Field({ nullable: true })
+  fileType?: string
 
-  @Field({ nullable: false })
-  resourceType!: string
+  @Field(() => Int, { nullable: true })
+  height?: number
 
-  @Field({ nullable: false })
-  secureUrl!: string
+  @Field({ nullable: true })
+  name?: string
 
-  @Field({ nullable: false })
-  signature!: string
+  @Field(() => Int, { nullable: true })
+  size?: number
 
-  @Field({ nullable: false })
-  thumbnailUrl!: string
+  @Field({ nullable: true })
+  thumbnailUrl?: string
+
+  @Field(() => Int, { nullable: true })
+  orientation?: number
 
   @Field({ nullable: true })
   url?: string
 
-  @Field({ nullable: true })
-  type?: string
+  @Field(() => GraphQLJSON, { nullable: true })
+  versionInfo?: typeof GraphQLJSON
+
+  @Field(() => Int, { nullable: true })
+  width?: number
 
   @Field({ nullable: true })
   userId?: string
 
   @Field({ nullable: true })
-  userBgId?: string
-
-  @Field({ nullable: true })
-  chapterId?: string
+  organizationId?: string
 }
 
 @InputType()
@@ -1740,41 +1789,47 @@ export class UpdateUploadInput {
   @Field(() => Date, { nullable: true })
   updatedAt?: Date
 
-  @Field({ nullable: true })
-  format?: string
+  @Field(() => ImageType, { nullable: true })
+  type?: ImageType
 
   @Field({ nullable: true })
-  originalFilename?: string
+  fileId?: string
 
   @Field({ nullable: true })
-  publicId?: string
+  filePath?: string
 
   @Field({ nullable: true })
-  resourceType?: string
+  fileType?: string
+
+  @Field(() => Int, { nullable: true })
+  height?: number
 
   @Field({ nullable: true })
-  secureUrl?: string
+  name?: string
 
-  @Field({ nullable: true })
-  signature?: string
+  @Field(() => Int, { nullable: true })
+  size?: number
 
   @Field({ nullable: true })
   thumbnailUrl?: string
 
+  @Field(() => Int, { nullable: true })
+  orientation?: number
+
   @Field({ nullable: true })
   url?: string
 
-  @Field({ nullable: true })
-  type?: string
+  @Field(() => GraphQLJSON, { nullable: true })
+  versionInfo?: typeof GraphQLJSON
+
+  @Field(() => Int, { nullable: true })
+  width?: number
 
   @Field({ nullable: true })
   userId?: string
 
   @Field({ nullable: true })
-  userBgId?: string
-
-  @Field({ nullable: true })
-  chapterId?: string
+  organizationId?: string
 }
 
 @InputType()
@@ -1788,45 +1843,51 @@ export class ListUploadInput extends CorePagingInput {
   @Field(() => Date, { nullable: true })
   updatedAt?: Date
 
-  @Field({ nullable: true })
-  format?: string
+  @Field(() => ImageType, { nullable: true })
+  type?: ImageType
 
   @Field({ nullable: true })
-  originalFilename?: string
+  fileId?: string
 
   @Field({ nullable: true })
-  publicId?: string
+  filePath?: string
 
   @Field({ nullable: true })
-  resourceType?: string
+  fileType?: string
+
+  @Field(() => Int, { nullable: true })
+  height?: number
 
   @Field({ nullable: true })
-  secureUrl?: string
+  name?: string
 
-  @Field({ nullable: true })
-  signature?: string
+  @Field(() => Int, { nullable: true })
+  size?: number
 
   @Field({ nullable: true })
   thumbnailUrl?: string
 
+  @Field(() => Int, { nullable: true })
+  orientation?: number
+
   @Field({ nullable: true })
   url?: string
 
-  @Field({ nullable: true })
-  type?: string
+  @Field(() => GraphQLJSON, { nullable: true })
+  versionInfo?: typeof GraphQLJSON
+
+  @Field(() => Int, { nullable: true })
+  width?: number
 
   @Field({ nullable: true })
   userId?: string
 
   @Field({ nullable: true })
-  userBgId?: string
-
-  @Field({ nullable: true })
-  chapterId?: string
+  organizationId?: string
 }
 
 @InputType()
-export class CreateSubstituteGroupInput {
+export class CreateUserInput {
   @Field({ nullable: true })
   id?: string
 
@@ -1835,303 +1896,6 @@ export class CreateSubstituteGroupInput {
 
   @Field(() => Date, { nullable: true })
   updatedAt?: Date
-
-  @Field({ nullable: false })
-  name!: string
-
-  @Field(() => [String], { nullable: true })
-  chaptersIds?: string[]
-}
-
-@InputType()
-export class UpdateSubstituteGroupInput {
-  @Field({ nullable: true })
-  id?: string
-
-  @Field(() => Date, { nullable: true })
-  createdAt?: Date
-
-  @Field(() => Date, { nullable: true })
-  updatedAt?: Date
-
-  @Field({ nullable: true })
-  name?: string
-
-  @Field(() => [String], { nullable: true })
-  chaptersIds?: string[]
-}
-
-@InputType()
-export class ListSubstituteGroupInput extends CorePagingInput {
-  @Field({ nullable: true })
-  id?: string
-
-  @Field(() => Date, { nullable: true })
-  createdAt?: Date
-
-  @Field(() => Date, { nullable: true })
-  updatedAt?: Date
-
-  @Field({ nullable: true })
-  name?: string
-
-  @Field(() => [String], { nullable: true })
-  chaptersIds?: string[]
-}
-
-@InputType()
-export class CreateTerritoryInput {
-  @Field({ nullable: true })
-  id?: string
-
-  @Field(() => Date, { nullable: true })
-  createdAt?: Date
-
-  @Field(() => Date, { nullable: true })
-  updatedAt?: Date
-
-  @Field({ nullable: true })
-  name?: string
-
-  @Field(() => [String], { nullable: true })
-  regionsIds?: string[]
-
-  @Field(() => [String], { nullable: true })
-  managersIds?: string[]
-}
-
-@InputType()
-export class UpdateTerritoryInput {
-  @Field({ nullable: true })
-  id?: string
-
-  @Field(() => Date, { nullable: true })
-  createdAt?: Date
-
-  @Field(() => Date, { nullable: true })
-  updatedAt?: Date
-
-  @Field({ nullable: true })
-  name?: string
-
-  @Field(() => [String], { nullable: true })
-  regionsIds?: string[]
-
-  @Field(() => [String], { nullable: true })
-  managersIds?: string[]
-}
-
-@InputType()
-export class ListTerritoryInput extends CorePagingInput {
-  @Field({ nullable: true })
-  id?: string
-
-  @Field(() => Date, { nullable: true })
-  createdAt?: Date
-
-  @Field(() => Date, { nullable: true })
-  updatedAt?: Date
-
-  @Field({ nullable: true })
-  name?: string
-
-  @Field(() => [String], { nullable: true })
-  regionsIds?: string[]
-
-  @Field(() => [String], { nullable: true })
-  managersIds?: string[]
-}
-
-@InputType()
-export class CreateRegionInput {
-  @Field({ nullable: true })
-  id?: string
-
-  @Field(() => Date, { nullable: true })
-  createdAt?: Date
-
-  @Field(() => Date, { nullable: true })
-  updatedAt?: Date
-
-  @Field({ nullable: true })
-  name?: string
-
-  @Field({ nullable: true })
-  territoryId?: string
-
-  @Field(() => [String], { nullable: true })
-  chaptersIds?: string[]
-
-  @Field(() => [String], { nullable: true })
-  managersIds?: string[]
-}
-
-@InputType()
-export class UpdateRegionInput {
-  @Field({ nullable: true })
-  id?: string
-
-  @Field(() => Date, { nullable: true })
-  createdAt?: Date
-
-  @Field(() => Date, { nullable: true })
-  updatedAt?: Date
-
-  @Field({ nullable: true })
-  name?: string
-
-  @Field({ nullable: true })
-  territoryId?: string
-
-  @Field(() => [String], { nullable: true })
-  chaptersIds?: string[]
-
-  @Field(() => [String], { nullable: true })
-  managersIds?: string[]
-}
-
-@InputType()
-export class ListRegionInput extends CorePagingInput {
-  @Field({ nullable: true })
-  id?: string
-
-  @Field(() => Date, { nullable: true })
-  createdAt?: Date
-
-  @Field(() => Date, { nullable: true })
-  updatedAt?: Date
-
-  @Field({ nullable: true })
-  name?: string
-
-  @Field({ nullable: true })
-  territoryId?: string
-
-  @Field(() => [String], { nullable: true })
-  chaptersIds?: string[]
-
-  @Field(() => [String], { nullable: true })
-  managersIds?: string[]
-}
-
-@InputType()
-export class CreateIndustryInput {
-  @Field({ nullable: true })
-  id?: string
-
-  @Field(() => Date, { nullable: true })
-  createdAt?: Date
-
-  @Field(() => Date, { nullable: true })
-  updatedAt?: Date
-
-  @Field({ nullable: false })
-  name!: string
-}
-
-@InputType()
-export class UpdateIndustryInput {
-  @Field({ nullable: true })
-  id?: string
-
-  @Field(() => Date, { nullable: true })
-  createdAt?: Date
-
-  @Field(() => Date, { nullable: true })
-  updatedAt?: Date
-
-  @Field({ nullable: true })
-  name?: string
-}
-
-@InputType()
-export class ListIndustryInput extends CorePagingInput {
-  @Field({ nullable: true })
-  id?: string
-
-  @Field(() => Date, { nullable: true })
-  createdAt?: Date
-
-  @Field(() => Date, { nullable: true })
-  updatedAt?: Date
-
-  @Field({ nullable: true })
-  name?: string
-}
-
-@InputType()
-export class CreateReferralInput {
-  @Field({ nullable: true })
-  id?: string
-
-  @Field(() => Date, { nullable: true })
-  createdAt?: Date
-
-  @Field(() => Date, { nullable: true })
-  updatedAt?: Date
-
-  @Field(() => Date, { nullable: true })
-  referralDate?: Date
-
-  @Field(() => ReferralRating, { nullable: false })
-  rating!: ReferralRating
-
-  @Field({ nullable: false })
-  firstName!: string
-
-  @Field({ nullable: false })
-  lastName!: string
-
-  @Field({ nullable: true })
-  email?: string
-
-  @Field({ nullable: true })
-  phone?: string
-
-  @Field({ nullable: true })
-  notes?: string
-
-  @Field({ nullable: true })
-  fromIndustry?: string
-
-  @Field({ nullable: true })
-  toIndustry?: string
-
-  @Field({ nullable: true })
-  sentById?: string
-
-  @Field({ nullable: true })
-  fromId?: string
-
-  @Field({ nullable: true })
-  toId?: string
-
-  @Field({ nullable: true })
-  fromChapterId?: string
-
-  @Field({ nullable: true })
-  toChapterId?: string
-
-  @Field(() => [String], { nullable: true })
-  transactionsIds?: string[]
-}
-
-@InputType()
-export class UpdateReferralInput {
-  @Field({ nullable: true })
-  id?: string
-
-  @Field(() => Date, { nullable: true })
-  createdAt?: Date
-
-  @Field(() => Date, { nullable: true })
-  updatedAt?: Date
-
-  @Field(() => Date, { nullable: true })
-  referralDate?: Date
-
-  @Field(() => ReferralRating, { nullable: true })
-  rating?: ReferralRating
 
   @Field({ nullable: true })
   firstName?: string
@@ -2139,42 +1903,120 @@ export class UpdateReferralInput {
   @Field({ nullable: true })
   lastName?: string
 
-  @Field({ nullable: true })
-  email?: string
+  @Field(() => UserRole, { nullable: false })
+  role!: UserRole
 
   @Field({ nullable: true })
-  phone?: string
+  bio?: string
 
   @Field({ nullable: true })
-  notes?: string
+  displayName?: string
 
   @Field({ nullable: true })
-  fromIndustry?: string
+  password?: string
 
   @Field({ nullable: true })
-  toIndustry?: string
+  passwordResetToken?: string
+
+  @Field(() => Date, { nullable: true })
+  passwordResetExpires?: Date
 
   @Field({ nullable: true })
-  sentById?: string
+  emailValidated?: boolean
 
   @Field({ nullable: true })
-  fromId?: string
+  validateEmailToken?: string
+
+  @Field(() => Date, { nullable: true })
+  validateEmailTokenExpires?: Date
 
   @Field({ nullable: true })
-  toId?: string
+  activeOrganizationId?: string
 
   @Field({ nullable: true })
-  fromChapterId?: string
+  twoFactorEnabled?: boolean
 
   @Field({ nullable: true })
-  toChapterId?: string
+  twoFactorSecret?: string
+
+  @Field(() => [String], { nullable: false })
+  twoFactorRecoveryCodes!: string[]
+
+  @Field(() => TwoFactorMethod, { nullable: true })
+  twoFactorMethod?: TwoFactorMethod
+
+  @Field(() => Date, { nullable: true })
+  lastSuccessfulLogin?: Date
+
+  @Field(() => Date, { nullable: true })
+  lastFailedLogin?: Date
+
+  @Field(() => Int, { nullable: true })
+  failedLoginCount?: number
+
+  @Field(() => Date, { nullable: true })
+  lockedUntil?: Date
+
+  @Field({ nullable: true })
+  isActive?: boolean
+
+  @Field(() => Date, { nullable: true })
+  deactivatedAt?: Date
+
+  @Field(() => Date, { nullable: true })
+  termsAcceptedAt?: Date
+
+  @Field(() => Date, { nullable: true })
+  privacyPolicyAcceptedAt?: Date
 
   @Field(() => [String], { nullable: true })
-  transactionsIds?: string[]
+  emailsIds?: string[]
+
+  @Field(() => [String], { nullable: true })
+  linksIds?: string[]
+
+  @Field(() => [String], { nullable: true })
+  phoneNumbersIds?: string[]
+
+  @Field(() => [String], { nullable: true })
+  imagesIds?: string[]
+
+  @Field(() => [String], { nullable: true })
+  organizationsIds?: string[]
+
+  @Field(() => [String], { nullable: true })
+  addressesIds?: string[]
+
+  @Field(() => [String], { nullable: true })
+  invitesSentIds?: string[]
+
+  @Field(() => [String], { nullable: true })
+  activeSessionsIds?: string[]
+
+  @Field(() => [String], { nullable: true })
+  loginAttemptsIds?: string[]
+
+  @Field(() => [String], { nullable: true })
+  AuditLogIds?: string[]
+
+  @Field(() => [String], { nullable: true })
+  UserPreferenceIds?: string[]
+
+  @Field(() => [String], { nullable: true })
+  TeamMemberIds?: string[]
+
+  @Field(() => [String], { nullable: true })
+  SecurityEventIds?: string[]
+
+  @Field(() => [String], { nullable: true })
+  apiTokensIds?: string[]
+
+  @Field(() => [String], { nullable: true })
+  oAuthAccountsIds?: string[]
 }
 
 @InputType()
-export class ListReferralInput extends CorePagingInput {
+export class UpdateUserInput {
   @Field({ nullable: true })
   id?: string
 
@@ -2183,12 +2025,6 @@ export class ListReferralInput extends CorePagingInput {
 
   @Field(() => Date, { nullable: true })
   updatedAt?: Date
-
-  @Field(() => Date, { nullable: true })
-  referralDate?: Date
-
-  @Field(() => ReferralRating, { nullable: true })
-  rating?: ReferralRating
 
   @Field({ nullable: true })
   firstName?: string
@@ -2196,42 +2032,120 @@ export class ListReferralInput extends CorePagingInput {
   @Field({ nullable: true })
   lastName?: string
 
-  @Field({ nullable: true })
-  email?: string
+  @Field(() => UserRole, { nullable: true })
+  role?: UserRole
 
   @Field({ nullable: true })
-  phone?: string
+  bio?: string
 
   @Field({ nullable: true })
-  notes?: string
+  displayName?: string
 
   @Field({ nullable: true })
-  fromIndustry?: string
+  password?: string
 
   @Field({ nullable: true })
-  toIndustry?: string
+  passwordResetToken?: string
+
+  @Field(() => Date, { nullable: true })
+  passwordResetExpires?: Date
 
   @Field({ nullable: true })
-  sentById?: string
+  emailValidated?: boolean
 
   @Field({ nullable: true })
-  fromId?: string
+  validateEmailToken?: string
+
+  @Field(() => Date, { nullable: true })
+  validateEmailTokenExpires?: Date
 
   @Field({ nullable: true })
-  toId?: string
+  activeOrganizationId?: string
 
   @Field({ nullable: true })
-  fromChapterId?: string
+  twoFactorEnabled?: boolean
 
   @Field({ nullable: true })
-  toChapterId?: string
+  twoFactorSecret?: string
 
   @Field(() => [String], { nullable: true })
-  transactionsIds?: string[]
+  twoFactorRecoveryCodes?: string[]
+
+  @Field(() => TwoFactorMethod, { nullable: true })
+  twoFactorMethod?: TwoFactorMethod
+
+  @Field(() => Date, { nullable: true })
+  lastSuccessfulLogin?: Date
+
+  @Field(() => Date, { nullable: true })
+  lastFailedLogin?: Date
+
+  @Field(() => Int, { nullable: true })
+  failedLoginCount?: number
+
+  @Field(() => Date, { nullable: true })
+  lockedUntil?: Date
+
+  @Field({ nullable: true })
+  isActive?: boolean
+
+  @Field(() => Date, { nullable: true })
+  deactivatedAt?: Date
+
+  @Field(() => Date, { nullable: true })
+  termsAcceptedAt?: Date
+
+  @Field(() => Date, { nullable: true })
+  privacyPolicyAcceptedAt?: Date
+
+  @Field(() => [String], { nullable: true })
+  emailsIds?: string[]
+
+  @Field(() => [String], { nullable: true })
+  linksIds?: string[]
+
+  @Field(() => [String], { nullable: true })
+  phoneNumbersIds?: string[]
+
+  @Field(() => [String], { nullable: true })
+  imagesIds?: string[]
+
+  @Field(() => [String], { nullable: true })
+  organizationsIds?: string[]
+
+  @Field(() => [String], { nullable: true })
+  addressesIds?: string[]
+
+  @Field(() => [String], { nullable: true })
+  invitesSentIds?: string[]
+
+  @Field(() => [String], { nullable: true })
+  activeSessionsIds?: string[]
+
+  @Field(() => [String], { nullable: true })
+  loginAttemptsIds?: string[]
+
+  @Field(() => [String], { nullable: true })
+  AuditLogIds?: string[]
+
+  @Field(() => [String], { nullable: true })
+  UserPreferenceIds?: string[]
+
+  @Field(() => [String], { nullable: true })
+  TeamMemberIds?: string[]
+
+  @Field(() => [String], { nullable: true })
+  SecurityEventIds?: string[]
+
+  @Field(() => [String], { nullable: true })
+  apiTokensIds?: string[]
+
+  @Field(() => [String], { nullable: true })
+  oAuthAccountsIds?: string[]
 }
 
 @InputType()
-export class CreateNotificationInput {
+export class ListUserInput extends CorePagingInput {
   @Field({ nullable: true })
   id?: string
 
@@ -2242,29 +2156,146 @@ export class CreateNotificationInput {
   updatedAt?: Date
 
   @Field({ nullable: true })
-  read?: boolean
-
-  @Field(() => NotificationType, { nullable: false })
-  type!: NotificationType
+  firstName?: string
 
   @Field({ nullable: true })
-  message?: string
+  lastName?: string
+
+  @Field(() => UserRole, { nullable: true })
+  role?: UserRole
 
   @Field({ nullable: true })
-  referenceId?: string
-
-  @Field(() => NotificationReferenceType, { nullable: true })
-  referenceType?: NotificationReferenceType
+  bio?: string
 
   @Field({ nullable: true })
-  actorId?: string
+  displayName?: string
+
+  @Field({ nullable: true })
+  password?: string
+
+  @Field({ nullable: true })
+  passwordResetToken?: string
+
+  @Field(() => Date, { nullable: true })
+  passwordResetExpires?: Date
+
+  @Field({ nullable: true })
+  emailValidated?: boolean
+
+  @Field({ nullable: true })
+  validateEmailToken?: string
+
+  @Field(() => Date, { nullable: true })
+  validateEmailTokenExpires?: Date
+
+  @Field({ nullable: true })
+  activeOrganizationId?: string
+
+  @Field({ nullable: true })
+  twoFactorEnabled?: boolean
+
+  @Field({ nullable: true })
+  twoFactorSecret?: string
+
+  @Field(() => [String], { nullable: true })
+  twoFactorRecoveryCodes?: string[]
+
+  @Field(() => TwoFactorMethod, { nullable: true })
+  twoFactorMethod?: TwoFactorMethod
+
+  @Field(() => Date, { nullable: true })
+  lastSuccessfulLogin?: Date
+
+  @Field(() => Date, { nullable: true })
+  lastFailedLogin?: Date
+
+  @Field(() => Int, { nullable: true })
+  failedLoginCount?: number
+
+  @Field(() => Date, { nullable: true })
+  lockedUntil?: Date
+
+  @Field({ nullable: true })
+  isActive?: boolean
+
+  @Field(() => Date, { nullable: true })
+  deactivatedAt?: Date
+
+  @Field(() => Date, { nullable: true })
+  termsAcceptedAt?: Date
+
+  @Field(() => Date, { nullable: true })
+  privacyPolicyAcceptedAt?: Date
+
+  @Field(() => [String], { nullable: true })
+  emailsIds?: string[]
+
+  @Field(() => [String], { nullable: true })
+  linksIds?: string[]
+
+  @Field(() => [String], { nullable: true })
+  phoneNumbersIds?: string[]
+
+  @Field(() => [String], { nullable: true })
+  imagesIds?: string[]
+
+  @Field(() => [String], { nullable: true })
+  organizationsIds?: string[]
+
+  @Field(() => [String], { nullable: true })
+  addressesIds?: string[]
+
+  @Field(() => [String], { nullable: true })
+  invitesSentIds?: string[]
+
+  @Field(() => [String], { nullable: true })
+  activeSessionsIds?: string[]
+
+  @Field(() => [String], { nullable: true })
+  loginAttemptsIds?: string[]
+
+  @Field(() => [String], { nullable: true })
+  AuditLogIds?: string[]
+
+  @Field(() => [String], { nullable: true })
+  UserPreferenceIds?: string[]
+
+  @Field(() => [String], { nullable: true })
+  TeamMemberIds?: string[]
+
+  @Field(() => [String], { nullable: true })
+  SecurityEventIds?: string[]
+
+  @Field(() => [String], { nullable: true })
+  apiTokensIds?: string[]
+
+  @Field(() => [String], { nullable: true })
+  oAuthAccountsIds?: string[]
+}
+
+@InputType()
+export class CreateUserPreferenceInput {
+  @Field({ nullable: true })
+  id?: string
+
+  @Field(() => Date, { nullable: true })
+  createdAt?: Date
+
+  @Field(() => Date, { nullable: true })
+  updatedAt?: Date
 
   @Field({ nullable: false })
-  toId!: string
+  userId!: string
+
+  @Field({ nullable: false })
+  key!: string
+
+  @Field({ nullable: false })
+  value!: string
 }
 
 @InputType()
-export class UpdateNotificationInput {
+export class UpdateUserPreferenceInput {
   @Field({ nullable: true })
   id?: string
 
@@ -2273,103 +2304,19 @@ export class UpdateNotificationInput {
 
   @Field(() => Date, { nullable: true })
   updatedAt?: Date
-
-  @Field({ nullable: true })
-  read?: boolean
-
-  @Field(() => NotificationType, { nullable: true })
-  type?: NotificationType
-
-  @Field({ nullable: true })
-  message?: string
-
-  @Field({ nullable: true })
-  referenceId?: string
-
-  @Field(() => NotificationReferenceType, { nullable: true })
-  referenceType?: NotificationReferenceType
-
-  @Field({ nullable: true })
-  actorId?: string
-
-  @Field({ nullable: true })
-  toId?: string
-}
-
-@InputType()
-export class ListNotificationInput extends CorePagingInput {
-  @Field({ nullable: true })
-  id?: string
-
-  @Field(() => Date, { nullable: true })
-  createdAt?: Date
-
-  @Field(() => Date, { nullable: true })
-  updatedAt?: Date
-
-  @Field({ nullable: true })
-  read?: boolean
-
-  @Field(() => NotificationType, { nullable: true })
-  type?: NotificationType
-
-  @Field({ nullable: true })
-  message?: string
-
-  @Field({ nullable: true })
-  referenceId?: string
-
-  @Field(() => NotificationReferenceType, { nullable: true })
-  referenceType?: NotificationReferenceType
-
-  @Field({ nullable: true })
-  actorId?: string
-
-  @Field({ nullable: true })
-  toId?: string
-}
-
-@InputType()
-export class CreateTransactionInput {
-  @Field({ nullable: true })
-  id?: string
-
-  @Field(() => Date, { nullable: true })
-  createdAt?: Date
-
-  @Field(() => Date, { nullable: true })
-  updatedAt?: Date
-
-  @Field(() => Date, { nullable: false })
-  date!: Date
-
-  @Field(() => Float, { nullable: false })
-  amount!: number
-
-  @Field({ nullable: true })
-  enteredBy?: string
-
-  @Field({ nullable: true })
-  enteredOn?: string
-
-  @Field({ nullable: true })
-  industry?: string
-
-  @Field({ nullable: true })
-  state?: string
-
-  @Field({ nullable: true })
-  chapterId?: string
 
   @Field({ nullable: true })
   userId?: string
 
   @Field({ nullable: true })
-  referralId?: string
+  key?: string
+
+  @Field({ nullable: true })
+  value?: string
 }
 
 @InputType()
-export class UpdateTransactionInput {
+export class ListUserPreferenceInput extends CorePagingInput {
   @Field({ nullable: true })
   id?: string
 
@@ -2378,37 +2325,19 @@ export class UpdateTransactionInput {
 
   @Field(() => Date, { nullable: true })
   updatedAt?: Date
-
-  @Field(() => Date, { nullable: true })
-  date?: Date
-
-  @Field(() => Float, { nullable: true })
-  amount?: number
-
-  @Field({ nullable: true })
-  enteredBy?: string
-
-  @Field({ nullable: true })
-  enteredOn?: string
-
-  @Field({ nullable: true })
-  industry?: string
-
-  @Field({ nullable: true })
-  state?: string
-
-  @Field({ nullable: true })
-  chapterId?: string
 
   @Field({ nullable: true })
   userId?: string
 
   @Field({ nullable: true })
-  referralId?: string
+  key?: string
+
+  @Field({ nullable: true })
+  value?: string
 }
 
 @InputType()
-export class ListTransactionInput extends CorePagingInput {
+export class CreateUserSessionInput {
   @Field({ nullable: true })
   id?: string
 
@@ -2419,128 +2348,56 @@ export class ListTransactionInput extends CorePagingInput {
   updatedAt?: Date
 
   @Field(() => Date, { nullable: true })
-  date?: Date
+  lastActiveAt?: Date
 
-  @Field(() => Float, { nullable: true })
-  amount?: number
-
-  @Field({ nullable: true })
-  enteredBy?: string
+  @Field({ nullable: false })
+  userId!: string
 
   @Field({ nullable: true })
-  enteredOn?: string
+  deviceInfo?: string
 
   @Field({ nullable: true })
-  industry?: string
+  ipAddress?: string
 
   @Field({ nullable: true })
-  state?: string
+  isValid?: boolean
 
   @Field({ nullable: true })
-  chapterId?: string
+  twoFactorVerified?: boolean
+}
+
+@InputType()
+export class UpdateUserSessionInput {
+  @Field({ nullable: true })
+  id?: string
+
+  @Field(() => Date, { nullable: true })
+  createdAt?: Date
+
+  @Field(() => Date, { nullable: true })
+  updatedAt?: Date
+
+  @Field(() => Date, { nullable: true })
+  lastActiveAt?: Date
 
   @Field({ nullable: true })
   userId?: string
 
   @Field({ nullable: true })
-  referralId?: string
+  deviceInfo?: string
+
+  @Field({ nullable: true })
+  ipAddress?: string
+
+  @Field({ nullable: true })
+  isValid?: boolean
+
+  @Field({ nullable: true })
+  twoFactorVerified?: boolean
 }
 
 @InputType()
-export class CreateTestimonialInput {
-  @Field({ nullable: true })
-  id?: string
-
-  @Field(() => Date, { nullable: true })
-  createdAt?: Date
-
-  @Field(() => Date, { nullable: true })
-  updatedAt?: Date
-
-  @Field({ nullable: false })
-  text!: string
-
-  @Field({ nullable: false })
-  fromId!: string
-
-  @Field({ nullable: false })
-  toId!: string
-}
-
-@InputType()
-export class UpdateTestimonialInput {
-  @Field({ nullable: true })
-  id?: string
-
-  @Field(() => Date, { nullable: true })
-  createdAt?: Date
-
-  @Field(() => Date, { nullable: true })
-  updatedAt?: Date
-
-  @Field({ nullable: true })
-  text?: string
-
-  @Field({ nullable: true })
-  fromId?: string
-
-  @Field({ nullable: true })
-  toId?: string
-}
-
-@InputType()
-export class ListTestimonialInput extends CorePagingInput {
-  @Field({ nullable: true })
-  id?: string
-
-  @Field(() => Date, { nullable: true })
-  createdAt?: Date
-
-  @Field(() => Date, { nullable: true })
-  updatedAt?: Date
-
-  @Field({ nullable: true })
-  text?: string
-
-  @Field({ nullable: true })
-  fromId?: string
-
-  @Field({ nullable: true })
-  toId?: string
-}
-
-@InputType()
-export class CreatePowerHourInput {
-  @Field({ nullable: true })
-  id?: string
-
-  @Field(() => Date, { nullable: true })
-  createdAt?: Date
-
-  @Field(() => Date, { nullable: true })
-  updatedAt?: Date
-
-  @Field(() => Date, { nullable: false })
-  date!: Date
-
-  @Field({ nullable: false })
-  time!: string
-
-  @Field({ nullable: true })
-  details?: string
-
-  @Field(() => PowerHourStatus, { nullable: true })
-  status?: PowerHourStatus
-
-  @Field({ nullable: false })
-  fromId!: string
-
-  @Field({ nullable: false })
-  toId!: string
-}
-
-@InputType()
-export class UpdatePowerHourInput {
+export class ListUserSessionInput extends CorePagingInput {
   @Field({ nullable: true })
   id?: string
 
@@ -2551,311 +2408,20 @@ export class UpdatePowerHourInput {
   updatedAt?: Date
 
   @Field(() => Date, { nullable: true })
-  date?: Date
+  lastActiveAt?: Date
 
   @Field({ nullable: true })
-  time?: string
+  userId?: string
 
   @Field({ nullable: true })
-  details?: string
-
-  @Field(() => PowerHourStatus, { nullable: true })
-  status?: PowerHourStatus
+  deviceInfo?: string
 
   @Field({ nullable: true })
-  fromId?: string
+  ipAddress?: string
 
   @Field({ nullable: true })
-  toId?: string
-}
-
-@InputType()
-export class ListPowerHourInput extends CorePagingInput {
-  @Field({ nullable: true })
-  id?: string
-
-  @Field(() => Date, { nullable: true })
-  createdAt?: Date
-
-  @Field(() => Date, { nullable: true })
-  updatedAt?: Date
-
-  @Field(() => Date, { nullable: true })
-  date?: Date
+  isValid?: boolean
 
   @Field({ nullable: true })
-  time?: string
-
-  @Field({ nullable: true })
-  details?: string
-
-  @Field(() => PowerHourStatus, { nullable: true })
-  status?: PowerHourStatus
-
-  @Field({ nullable: true })
-  fromId?: string
-
-  @Field({ nullable: true })
-  toId?: string
-}
-
-@InputType()
-export class CreateBlogCategoryInput {
-  @Field({ nullable: true })
-  id?: string
-
-  @Field(() => Date, { nullable: true })
-  createdAt?: Date
-
-  @Field(() => Date, { nullable: true })
-  updatedAt?: Date
-
-  @Field({ nullable: false })
-  name!: string
-
-  @Field({ nullable: false })
-  slug!: string
-
-  @Field({ nullable: true })
-  description?: string
-
-  @Field(() => [String], { nullable: true })
-  postsIds?: string[]
-}
-
-@InputType()
-export class UpdateBlogCategoryInput {
-  @Field({ nullable: true })
-  id?: string
-
-  @Field(() => Date, { nullable: true })
-  createdAt?: Date
-
-  @Field(() => Date, { nullable: true })
-  updatedAt?: Date
-
-  @Field({ nullable: true })
-  name?: string
-
-  @Field({ nullable: true })
-  slug?: string
-
-  @Field({ nullable: true })
-  description?: string
-
-  @Field(() => [String], { nullable: true })
-  postsIds?: string[]
-}
-
-@InputType()
-export class ListBlogCategoryInput extends CorePagingInput {
-  @Field({ nullable: true })
-  id?: string
-
-  @Field(() => Date, { nullable: true })
-  createdAt?: Date
-
-  @Field(() => Date, { nullable: true })
-  updatedAt?: Date
-
-  @Field({ nullable: true })
-  name?: string
-
-  @Field({ nullable: true })
-  slug?: string
-
-  @Field({ nullable: true })
-  description?: string
-
-  @Field(() => [String], { nullable: true })
-  postsIds?: string[]
-}
-
-@InputType()
-export class CreateBlogPostInput {
-  @Field({ nullable: true })
-  id?: string
-
-  @Field(() => Date, { nullable: true })
-  createdAt?: Date
-
-  @Field(() => Date, { nullable: true })
-  updatedAt?: Date
-
-  @Field({ nullable: false })
-  title!: string
-
-  @Field({ nullable: false })
-  slug!: string
-
-  @Field({ nullable: true })
-  excerpt?: string
-
-  @Field({ nullable: true })
-  image?: string
-
-  @Field({ nullable: true })
-  imageAlt?: string
-
-  @Field({ nullable: false })
-  content!: string
-
-  @Field(() => BlogPostStatus, { nullable: true })
-  status?: BlogPostStatus
-
-  @Field(() => Date, { nullable: true })
-  publishedAt?: Date
-
-  @Field({ nullable: true })
-  featured?: boolean
-
-  @Field(() => Int, { nullable: true })
-  readingTime?: number
-
-  @Field(() => Int, { nullable: true })
-  views?: number
-
-  @Field({ nullable: true })
-  canonicalUrl?: string
-
-  @Field({ nullable: true })
-  metaTitle?: string
-
-  @Field({ nullable: true })
-  metaDescription?: string
-
-  @Field(() => [String], { nullable: true })
-  previousSlugs?: string[]
-
-  @Field({ nullable: true })
-  authorId?: string
-
-  @Field(() => [String], { nullable: true })
-  categoriesIds?: string[]
-}
-
-@InputType()
-export class UpdateBlogPostInput {
-  @Field({ nullable: true })
-  id?: string
-
-  @Field(() => Date, { nullable: true })
-  createdAt?: Date
-
-  @Field(() => Date, { nullable: true })
-  updatedAt?: Date
-
-  @Field({ nullable: true })
-  title?: string
-
-  @Field({ nullable: true })
-  slug?: string
-
-  @Field({ nullable: true })
-  excerpt?: string
-
-  @Field({ nullable: true })
-  image?: string
-
-  @Field({ nullable: true })
-  imageAlt?: string
-
-  @Field({ nullable: true })
-  content?: string
-
-  @Field(() => BlogPostStatus, { nullable: true })
-  status?: BlogPostStatus
-
-  @Field(() => Date, { nullable: true })
-  publishedAt?: Date
-
-  @Field({ nullable: true })
-  featured?: boolean
-
-  @Field(() => Int, { nullable: true })
-  readingTime?: number
-
-  @Field(() => Int, { nullable: true })
-  views?: number
-
-  @Field({ nullable: true })
-  canonicalUrl?: string
-
-  @Field({ nullable: true })
-  metaTitle?: string
-
-  @Field({ nullable: true })
-  metaDescription?: string
-
-  @Field(() => [String], { nullable: true })
-  previousSlugs?: string[]
-
-  @Field({ nullable: true })
-  authorId?: string
-
-  @Field(() => [String], { nullable: true })
-  categoriesIds?: string[]
-}
-
-@InputType()
-export class ListBlogPostInput extends CorePagingInput {
-  @Field({ nullable: true })
-  id?: string
-
-  @Field(() => Date, { nullable: true })
-  createdAt?: Date
-
-  @Field(() => Date, { nullable: true })
-  updatedAt?: Date
-
-  @Field({ nullable: true })
-  title?: string
-
-  @Field({ nullable: true })
-  slug?: string
-
-  @Field({ nullable: true })
-  excerpt?: string
-
-  @Field({ nullable: true })
-  image?: string
-
-  @Field({ nullable: true })
-  imageAlt?: string
-
-  @Field({ nullable: true })
-  content?: string
-
-  @Field(() => BlogPostStatus, { nullable: true })
-  status?: BlogPostStatus
-
-  @Field(() => Date, { nullable: true })
-  publishedAt?: Date
-
-  @Field({ nullable: true })
-  featured?: boolean
-
-  @Field(() => Int, { nullable: true })
-  readingTime?: number
-
-  @Field(() => Int, { nullable: true })
-  views?: number
-
-  @Field({ nullable: true })
-  canonicalUrl?: string
-
-  @Field({ nullable: true })
-  metaTitle?: string
-
-  @Field({ nullable: true })
-  metaDescription?: string
-
-  @Field(() => [String], { nullable: true })
-  previousSlugs?: string[]
-
-  @Field({ nullable: true })
-  authorId?: string
-
-  @Field(() => [String], { nullable: true })
-  categoriesIds?: string[]
+  twoFactorVerified?: boolean
 }

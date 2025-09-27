@@ -1,0 +1,33 @@
+🎉 Welcome to {{appName}}!
+
+Hi {{userName}},
+
+We're thrilled to have you join the {{appName}} community! Your email has been verified and your account is fully set up.
+
+WHAT'S NEXT?
+
+- Explore your dashboard and familiarize yourself with the interface
+- Complete your profile setup to get the most out of your experience  
+- Check out our getting started guide for tips and best practices
+{{#if documentationUrl}}- Browse our documentation to learn about all available features{{/if}}
+
+{{#if dashboardUrl}}
+Go to your dashboard: {{dashboardUrl}}
+{{/if}}
+
+{{#if gettingStartedUrl}}
+Getting Started Guide: {{gettingStartedUrl}}
+{{/if}}
+
+{{#if documentationUrl}}
+Documentation: {{documentationUrl}}
+{{/if}}
+
+We're here to help you succeed! If you have any questions or need assistance getting started, don't hesitate to reach out.
+
+{{#if supportEmail}}
+Contact us at {{supportEmail}} - we typically respond within 24 hours.
+{{/if}}
+
+Welcome to the team!
+{{#if companyName}}{{companyName}}{{else}}{{appName}}{{/if}} Team

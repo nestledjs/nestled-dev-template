@@ -18,7 +18,7 @@ function headerAndCookieExtractor(req: Request): string | null {
 }
 
 function cookieExtractor(req: Request): string | undefined {
-  const name = process.env['API_COOKIE_NAME'] || '__session_biz'
+  const name = process.env['API_COOKIE_NAME'] || '__session'
   return req?.cookies?.[name] ? req.cookies[name] : undefined
 }
 

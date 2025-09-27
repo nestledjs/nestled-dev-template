@@ -2,21 +2,27 @@ import { WebUiContainer } from './web-ui-container'
 import { Link } from 'react-router'
 
 export function WebUiFooter() {
+  const year = new Date().getFullYear()
   return (
-    <WebUiContainer center>
-      <div className={'flex flex-col items-center justify-center sm:flex-row'}>
-        <span className={'text-sm'}>
-          © {new Date().getFullYear()} Biz to Biz Now. All rights reserved.
-        </span>
-
-        <Link className={'text-sm sm:ml-2 text-sky-600'} to="/privacy-policy">
-          Privacy Policy
-        </Link>
-
-        {/*<Link className={'text-sm sm:ml-2 text-sky-600'} to="/privacy-policy">*/}
-        {/*  Terms & Conditions*/}
-        {/*</Link>*/}
-      </div>
-    </WebUiContainer>
+    <footer className="border-t border-zinc-200 bg-white/80 backdrop-blur dark:border-white/10 dark:bg-zinc-950/60">
+      <WebUiContainer center>
+        <div className="flex w-full flex-col items-center justify-between gap-3 py-6 text-center sm:flex-row sm:text-left">
+          <p className="text-sm text-zinc-600 dark:text-zinc-400">
+            © {year} <span className="font-semibold text-zinc-800 dark:text-zinc-100">Your Company</span>. All rights reserved.
+          </p>
+          <nav className="flex items-center gap-4">
+            <Link className="text-sm text-zinc-700 hover:text-zinc-900 dark:text-zinc-300 dark:hover:text-white" to="/privacy-policy">
+              Privacy Policy
+            </Link>
+            <Link className="text-sm text-zinc-700 hover:text-zinc-900 dark:text-zinc-300 dark:hover:text-white" to="/public/about">
+              About
+            </Link>
+            <a className="text-sm text-zinc-700 hover:text-zinc-900 dark:text-zinc-300 dark:hover:text-white" href="mailto:hello@example.com">
+              Contact
+            </a>
+          </nav>
+        </div>
+      </WebUiContainer>
+    </footer>
   )
 }

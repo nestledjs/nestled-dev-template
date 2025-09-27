@@ -29,12 +29,13 @@ import clsx from 'clsx'
 import { ArrowLeftCircleIcon, ArrowRightCircleIcon } from '@heroicons/react/24/solid'
 import { Link, Outlet, useMatches } from 'react-router'
 import { useApolloClient } from '@apollo/client'
-import { useEmulateUserMutation, User, UsersDocument, useUnreadNotificationCountQuery, } from '@nestled-template/shared/sdk'
+import { useEmulateUserMutation, User, UsersDocument } from '@nestled-template/shared/sdk'
 import Cookies from 'js-cookie'
 import { useAtom } from 'jotai/index'
 import { leaderSelectedChapterAtom } from './global-storage'
-import { WebUserSelect } from './web-user-select'
 import { getMobileSidebarHeaderText } from './mobile-sidebar-header'
+import { Form, FormFieldClass } from '@nestledjs/forms'
+import { formTheme } from '@nestled-template/shared/styles'
 
 export interface NavigationItem {
   name: string
@@ -315,7 +316,7 @@ export function WebSidebar(props: Readonly<WebUiSidebarProps>) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [sidebarExpanded, setSidebarExpanded] = useState(false)
   const [isClient, setIsClient] = useState(false)
-  const { data } = useUnreadNotificationCountQuery({ pollInterval: 60000 })
+  const notificationCount = 0
   const matches = useMatches()
   const path = matches.slice(-1)[0].pathname
   const [emulateUserMutation] = useEmulateUserMutation()
@@ -491,7 +492,7 @@ export function WebSidebar(props: Readonly<WebUiSidebarProps>) {
   const navItems = navigation(
     path,
     props?.role ?? 'Member',
-    data?.countUnreadNotifications ?? 0,
+    notificationCount,
     props?.isLeader ?? false,
   )
 
@@ -730,25 +731,37 @@ function EmulateUserDialog({
                     <DialogTitle as="h3" className="text-lg font-medium leading-6 text-gray-900">
                       Choose a User to Emulate
                     </DialogTitle>
-                    <div className="mt-2">
-                      <WebUserSelect
-                        document={UsersDocument}
-                        selectedPerson={selectedPerson}
-                        setSelectedPerson={setSelectedPerson}
-                        label="Choose a User to Emulate"
+                    <div className="mt-4 text-left">
+                      <Form
+                        theme={formTheme}
+                        id="emulate-user-form"
+                        fields={[
+                          FormFieldClass.searchSelectApollo('userId', {
+                            label: 'Choose a User to Emulate',
+                            dataType: 'users',
+                            document: UsersDocument,
+                            searchFields: ['firstName', 'lastName'],
+                            selectOptionsFunction: (items: any[]) =>
+                              items.map((u: any) => ({
+                                value: u.id,
+                                label: `${u.firstName ?? ''} ${u.lastName ?? ''}`.trim() || u.id,
+                              })),
+                            required: true,
+                          }),
+                          FormFieldClass.button('submit', { text: 'Emulate User', fullWidth: true }),
+                        ]}
+                        submit={(val: any) => {
+                          if (!val?.userId) {
+                            alert('Please select a user to emulate.')
+                            return
+                          }
+                          emulateUser(val.userId)
+                        }}
                       />
                     </div>
                   </div>
                 </div>
-                <div className="mt-5 sm:mt-6">
-                  <button
-                    type="button"
-                    className="inline-flex w-full justify-center rounded-md border border-transparent bg-orange-500 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 sm:text-sm"
-                    onClick={handleEmulateClick}
-                  >
-                    Emulate User
-                  </button>
-                </div>
+                <div className="mt-5 sm:mt-6" />
               </DialogPanel>
             </TransitionChild>
           </div>

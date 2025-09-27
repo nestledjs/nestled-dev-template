@@ -1,0 +1,16 @@
+{
+  "id": "email-verification",
+  "name": "Email Verification",
+  "description": "Email sent to users to verify their email address",
+  "subject": "Verify your email address - {{appName}}",
+  "requiredVariables": [
+    "userName",
+    "verificationUrl",
+    "appName"
+  ],
+  "optionalVariables": [
+    "companyName",
+    "supportEmail",
+    "expirationHours"
+  ]
+}

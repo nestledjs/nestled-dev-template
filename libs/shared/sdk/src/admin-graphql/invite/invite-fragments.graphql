@@ -7,13 +7,15 @@ fragment AdminInviteList on Invite {
   token
   inviterId
   organizationId
-  accepted
-  used
-  issuedAt
+  status
+  roleId
   inviter {
     id
   }
   organization {
+    id
+  }
+  role {
     id
   }
 }

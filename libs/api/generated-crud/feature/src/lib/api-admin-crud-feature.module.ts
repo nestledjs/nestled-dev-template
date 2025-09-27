@@ -1,51 +1,55 @@
 import { Module } from '@nestjs/common'
 import { ApiCrudDataAccessModule } from '@nestled-template/api/generated-crud/data-access'
-import { GeneratedUserResolver } from './user.resolver'
-import { GeneratedChapterResolver } from './chapter.resolver'
-import { GeneratedMeetingResolver } from './meeting.resolver'
-import { GeneratedMeetingPresenceResolver } from './meeting-presence.resolver'
-import { GeneratedSubstituteResolver } from './substitute.resolver'
-import { GeneratedAttendanceReminderResolver } from './attendance-reminder.resolver'
-import { GeneratedAwardTypeResolver } from './award-type.resolver'
-import { GeneratedAwardResolver } from './award.resolver'
-import { GeneratedChapterMemberResolver } from './chapter-member.resolver'
+import { GeneratedAddressResolver } from './address.resolver'
+import { GeneratedApiTokenResolver } from './api-token.resolver'
+import { GeneratedAuditLogResolver } from './audit-log.resolver'
+import { GeneratedCountryResolver } from './country.resolver'
+import { GeneratedEmailResolver } from './email.resolver'
+import { GeneratedInviteResolver } from './invite.resolver'
+import { GeneratedLinkResolver } from './link.resolver'
+import { GeneratedLoginAttemptResolver } from './login-attempt.resolver'
+import { GeneratedOAuthAccountResolver } from './oauth-account.resolver'
+import { GeneratedOrganizationResolver } from './organization.resolver'
+import { GeneratedOrganizationMemberResolver } from './organization-member.resolver'
+import { GeneratedPermissionResolver } from './permission.resolver'
+import { GeneratedPhoneNumberResolver } from './phone-number.resolver'
+import { GeneratedPlanResolver } from './plan.resolver'
+import { GeneratedRoleResolver } from './role.resolver'
+import { GeneratedSecurityEventResolver } from './security-event.resolver'
+import { GeneratedSubscriptionResolver } from './subscription.resolver'
+import { GeneratedTeamResolver } from './team.resolver'
+import { GeneratedTeamMemberResolver } from './team-member.resolver'
 import { GeneratedUploadResolver } from './upload.resolver'
-import { GeneratedSubstituteGroupResolver } from './substitute-group.resolver'
-import { GeneratedTerritoryResolver } from './territory.resolver'
-import { GeneratedRegionResolver } from './region.resolver'
-import { GeneratedIndustryResolver } from './industry.resolver'
-import { GeneratedReferralResolver } from './referral.resolver'
-import { GeneratedNotificationResolver } from './notification.resolver'
-import { GeneratedTransactionResolver } from './transaction.resolver'
-import { GeneratedTestimonialResolver } from './testimonial.resolver'
-import { GeneratedPowerHourResolver } from './power-hour.resolver'
-import { GeneratedBlogCategoryResolver } from './blog-category.resolver'
-import { GeneratedBlogPostResolver } from './blog-post.resolver'
+import { GeneratedUserResolver } from './user.resolver'
+import { GeneratedUserPreferenceResolver } from './user-preference.resolver'
+import { GeneratedUserSessionResolver } from './user-session.resolver'
 
 @Module({
   imports: [ApiCrudDataAccessModule],
   providers: [
-    GeneratedUserResolver,
-    GeneratedChapterResolver,
-    GeneratedMeetingResolver,
-    GeneratedMeetingPresenceResolver,
-    GeneratedSubstituteResolver,
-    GeneratedAttendanceReminderResolver,
-    GeneratedAwardTypeResolver,
-    GeneratedAwardResolver,
-    GeneratedChapterMemberResolver,
+    GeneratedAddressResolver,
+    GeneratedApiTokenResolver,
+    GeneratedAuditLogResolver,
+    GeneratedCountryResolver,
+    GeneratedEmailResolver,
+    GeneratedInviteResolver,
+    GeneratedLinkResolver,
+    GeneratedLoginAttemptResolver,
+    GeneratedOAuthAccountResolver,
+    GeneratedOrganizationResolver,
+    GeneratedOrganizationMemberResolver,
+    GeneratedPermissionResolver,
+    GeneratedPhoneNumberResolver,
+    GeneratedPlanResolver,
+    GeneratedRoleResolver,
+    GeneratedSecurityEventResolver,
+    GeneratedSubscriptionResolver,
+    GeneratedTeamResolver,
+    GeneratedTeamMemberResolver,
     GeneratedUploadResolver,
-    GeneratedSubstituteGroupResolver,
-    GeneratedTerritoryResolver,
-    GeneratedRegionResolver,
-    GeneratedIndustryResolver,
-    GeneratedReferralResolver,
-    GeneratedNotificationResolver,
-    GeneratedTransactionResolver,
-    GeneratedTestimonialResolver,
-    GeneratedPowerHourResolver,
-    GeneratedBlogCategoryResolver,
-    GeneratedBlogPostResolver,
+    GeneratedUserResolver,
+    GeneratedUserPreferenceResolver,
+    GeneratedUserSessionResolver,
   ],
 })
 export class ApiGeneratedCrudFeatureModule {}

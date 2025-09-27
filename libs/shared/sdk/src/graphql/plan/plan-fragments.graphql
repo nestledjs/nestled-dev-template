@@ -1,0 +1,13 @@
+fragment PlanList on Plan {
+  id
+  createdAt
+  name
+  price
+  interval
+  features
+  active
+}
+
+fragment PlanDetails on Plan {
+  ...PlanList
+}

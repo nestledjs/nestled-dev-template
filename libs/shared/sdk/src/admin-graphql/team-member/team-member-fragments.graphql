@@ -4,11 +4,14 @@ fragment AdminTeamMemberList on TeamMember {
   updatedAt
   teamId
   userId
-  role
+  roleId
   team {
     id
   }
   user {
+    id
+  }
+  role {
     id
   }
 }

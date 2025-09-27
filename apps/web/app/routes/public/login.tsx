@@ -4,10 +4,10 @@ import { Form, FormFieldClass } from '@nestledjs/forms'
 import { WebUiContainer } from '@nestled-template/web-ui'
 import { getCookie, getJsonCookie } from '@nestled-template/shared/utils'
 import { LoginInput, useLoginMutation } from '@nestled-template/shared/sdk'
-import { bizTheme } from '@nestled-template/shared/styles'
+import { formTheme } from '@nestled-template/shared/styles'
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const token = getCookie(request.headers, '__session_biz')
+  const token = getCookie(request.headers, '__session')
   if (token) {
     throw redirect('/members/dashboard')
   }
@@ -39,7 +39,7 @@ export default function Login() {
       const { data } = await loginMutation({ variables: { input } })
       const loginInfo = data?.login
       if (loginInfo?.user?.id) {
-        // The backend already sets the __session_biz cookie via the GraphQL mutation
+        // The backend already sets the __session cookie via the GraphQL mutation
         // We should not set our own cookies here, just navigate
         navigate('/members/dashboard')
       } else {
@@ -85,7 +85,7 @@ export default function Login() {
               {formError}
             </div>
           )}
-          <Form id="login-form" theme={bizTheme} fields={fields} submit={processLogin} />
+          <Form id="login-form" theme={formTheme} fields={fields} submit={processLogin} />
         </div>
       </div>
     </WebUiContainer>

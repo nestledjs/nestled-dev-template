@@ -1,31 +1,27 @@
 // Generated from Prisma schema
 
 import { registerEnumType } from '@nestjs/graphql';
-import { Role, UserStatus, UserOnlineStatus, ChapterStatus, DayOfWeek, MeetingAttendance, ChapterMemberRole, ReferralRating, NotificationType, NotificationReferenceType, PowerHourStatus, BlogPostStatus } from '@nestled-template/api/prisma';
+import { AddressType, EmailType, FailureReason, ImageType, InviteStatus, PhoneType, SecurityEventType, SubscriptionStatus, TwoFactorMethod, UserRole } from '@nestled-template/api/prisma';
 
-export { Role, UserStatus, UserOnlineStatus, ChapterStatus, DayOfWeek, MeetingAttendance, ChapterMemberRole, ReferralRating, NotificationType, NotificationReferenceType, PowerHourStatus, BlogPostStatus };
+export { AddressType, EmailType, FailureReason, ImageType, InviteStatus, PhoneType, SecurityEventType, SubscriptionStatus, TwoFactorMethod, UserRole };
 
-registerEnumType(Role, { name: 'Role' });
+registerEnumType(AddressType, { name: 'AddressType' });
 
-registerEnumType(UserStatus, { name: 'UserStatus' });
+registerEnumType(EmailType, { name: 'EmailType' });
 
-registerEnumType(UserOnlineStatus, { name: 'UserOnlineStatus' });
+registerEnumType(FailureReason, { name: 'FailureReason' });
 
-registerEnumType(ChapterStatus, { name: 'ChapterStatus' });
+registerEnumType(ImageType, { name: 'ImageType' });
 
-registerEnumType(DayOfWeek, { name: 'DayOfWeek' });
+registerEnumType(InviteStatus, { name: 'InviteStatus' });
 
-registerEnumType(MeetingAttendance, { name: 'MeetingAttendance' });
+registerEnumType(PhoneType, { name: 'PhoneType' });
 
-registerEnumType(ChapterMemberRole, { name: 'ChapterMemberRole' });
+registerEnumType(SecurityEventType, { name: 'SecurityEventType' });
 
-registerEnumType(ReferralRating, { name: 'ReferralRating' });
+registerEnumType(SubscriptionStatus, { name: 'SubscriptionStatus' });
 
-registerEnumType(NotificationType, { name: 'NotificationType' });
+registerEnumType(TwoFactorMethod, { name: 'TwoFactorMethod' });
 
-registerEnumType(NotificationReferenceType, { name: 'NotificationReferenceType' });
-
-registerEnumType(PowerHourStatus, { name: 'PowerHourStatus' });
-
-registerEnumType(BlogPostStatus, { name: 'BlogPostStatus' });
+registerEnumType(UserRole, { name: 'UserRole' });
 

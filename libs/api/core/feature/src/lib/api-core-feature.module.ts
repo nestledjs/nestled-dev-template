@@ -1,11 +1,9 @@
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo'
 import { Module } from '@nestjs/common'
-import { ConfigModule } from '@nestjs/config'
 import { GraphQLModule } from '@nestjs/graphql'
 import { join } from 'path'
 import { Request, Response } from 'express'
 import { apiCorePubSub } from '@nestled-template/api/core/data-access'
-import { configuration, validationSchema } from '@nestled-template/api/config'
 import { Context } from 'graphql-ws'
 import { ApiCoreFeatureController } from './api-core-feature.controller'
 import { ApiCoreFeatureResolver } from './api-core-feature.resolver'
@@ -18,16 +16,11 @@ interface ConnectionParameters {
 
 const redisPubSubProvider = {
   provide: 'REDIS_PUB_SUB',
-  useFactory: () => apiCorePubSub,
+  useValue: apiCorePubSub,
 }
 
 @Module({
   imports: [
-    ConfigModule.forRoot({
-      isGlobal: true,
-      load: [configuration],
-      validationSchema,
-    }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'api-schema.graphql'),
@@ -51,7 +44,7 @@ const redisPubSubProvider = {
                     const cookies = rawHeaders[i + 1].split(';')
                     for (const cookie of cookies) {
                       const [name, value] = cookie.trim().split('=')
-                      if (name === '__session_biz') {
+                      if (name === '__session') {
                         token = value
                         break
                       }

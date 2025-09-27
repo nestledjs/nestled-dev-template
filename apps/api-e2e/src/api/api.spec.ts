@@ -1,10 +1,11 @@
 import axios from 'axios'
 
 describe('GET /api', () => {
-  it('should return a message', async () => {
-    const res = await axios.get(`/api`)
+  it('should return uptime information', async () => {
+    const res = await axios.get(`/api/uptime`)
 
     expect(res.status).toBe(200)
-    expect(res.data).toEqual({ message: 'Hello API' })
+    expect(typeof res.data).toBe('number')
+    expect(res.data).toBeGreaterThan(0)
   })
 })

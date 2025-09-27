@@ -1,0 +1,17 @@
+{
+  "id": "welcome",
+  "name": "Welcome Email",
+  "description": "Welcome email sent to users after successful account verification",
+  "subject": "Welcome to {{appName}}!",
+  "requiredVariables": [
+    "userName",
+    "appName"
+  ],
+  "optionalVariables": [
+    "companyName",
+    "supportEmail",
+    "dashboardUrl",
+    "gettingStartedUrl",
+    "documentationUrl"
+  ]
+}
