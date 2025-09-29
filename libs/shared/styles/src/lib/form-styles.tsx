@@ -3,14 +3,14 @@ import { createCustomTheme } from '@nestledjs/forms'
 export const formTheme = createCustomTheme({
   global: {
     input:
-      'border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-sky-300 focus:border-sky-300',
+      'border border-gray-300 dark:border-zinc-700 rounded-md shadow-sm bg-white dark:bg-zinc-900 text-gray-900 dark:text-zinc-100 placeholder-gray-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-sky-300 focus:border-sky-300',
     error: '!border-red-600 !focus:border-red-600',
     disabled: 'opacity-50 cursor-not-allowed bg-gray-100',
     readOnly: 'min-h-[2.5rem] flex items-center px-3 text-gray-700',
   },
   button: {
     base: 'inline-flex items-center justify-center rounded-md px-3 py-2 text-sm font-semibold shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 transition-colors',
-    primary: 'bg-sky-600 text-white hover:bg-sky-500 focus-visible:outline-sky-600',
+    primary: 'bg-emerald-500 text-zinc-950 hover:bg-emerald-400 focus-visible:outline-emerald-500',
     secondary: 'bg-white text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50',
     danger: 'bg-red-600 text-white hover:bg-red-500 focus-visible:outline-red-600',
     disabled: 'opacity-50 cursor-not-allowed',
@@ -18,11 +18,11 @@ export const formTheme = createCustomTheme({
     fullWidth: 'w-full',
   },
   label: {
-    base: 'block text-sm font-medium text-gray-700 mb-1',
+    base: 'block text-sm font-medium text-zinc-300 mb-1',
     requiredIndicator: 'text-red-500 ml-1',
   },
   textField: {
-    input: 'block w-full px-3 py-2 sm:text-sm min-h-[2.5rem]',
+    input: 'block w-full px-3 py-2 sm:text-sm min-h-[2.5rem] text-gray-900 dark:text-zinc-100',
     error: '!outline-red-600 !focus:outline-red-600',
     disabled: 'opacity-50 cursor-not-allowed bg-gray-100',
     readOnly: 'min-h-[2.5rem] flex items-center px-3 text-gray-700',
@@ -38,7 +38,7 @@ export const formTheme = createCustomTheme({
     error: '!border-red-600 !focus:border-red-600',
     disabled: 'opacity-50 cursor-not-allowed',
     readOnly: 'text-gray-700 font-medium',
-    label: 'ml-2 text-base text-gray-900 cursor-pointer',
+    label: 'ml-2 text-base text-zinc-300 cursor-pointer',
     fullWidthLabel: 'w-full break-words whitespace-normal',
     helpText: 'text-xs text-gray-500',
     errorText: 'text-xs text-red-600',
@@ -67,7 +67,7 @@ export const formTheme = createCustomTheme({
     error: '!border-red-600',
     disabled: 'opacity-50 cursor-not-allowed',
     readOnly: 'text-gray-700 font-medium',
-    label: 'cursor-pointer select-none text-base text-gray-900',
+    label: 'cursor-pointer select-none text-base text-zinc-300',
     fullWidthLabel: 'w-full break-words whitespace-normal',
     helpText: 'text-xs text-gray-500',
     errorText: 'text-xs text-red-600',
@@ -120,7 +120,7 @@ export const formTheme = createCustomTheme({
   },
   emailField: {
     wrapper: '',
-    input: 'block w-full px-3 py-2 sm:text-sm min-h-[2.5rem]',
+    input: 'block w-full px-3 py-2 sm:text-sm min-h-[2.5rem] text-gray-900 dark:text-zinc-100',
     focus: 'focus:ring-2 focus:ring-sky-300 focus:border-sky-300',
     error: '!border-red-600 !focus:border-red-600 !focus:ring-red-600',
     disabled: 'opacity-50 cursor-not-allowed bg-gray-100',
@@ -181,7 +181,7 @@ export const formTheme = createCustomTheme({
     readOnlyValue: 'min-h-[2.5rem] flex items-center px-3 text-gray-700',
   },
   passwordField: {
-    input: 'block w-full px-3 py-2 sm:text-sm min-h-[2.5rem]',
+    input: 'block w-full px-3 py-2 sm:text-sm min-h-[2.5rem] text-gray-900 dark:text-zinc-100',
     focus: 'focus:ring-2 focus:ring-sky-300 focus:border-sky-300',
     error: '!border-red-600 !focus:border-red-600 !focus:ring-red-600',
     disabled: 'opacity-50 cursor-not-allowed bg-gray-100',

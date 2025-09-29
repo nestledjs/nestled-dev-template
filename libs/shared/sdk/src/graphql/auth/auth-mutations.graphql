@@ -39,3 +39,17 @@ mutation EmulateUser($input: EmulateUserInput!) {
     ...UserTokenDetails
   }
 }
+
+mutation ChangeEmail($input: ChangeEmailInput!) {
+  changeEmail(input: $input)
+}
+
+mutation VerifyEmailChange($token: String!) {
+  verifyEmailChange(token: $token) {
+    ...AuthUserDetails
+  }
+}
+
+mutation ChangePassword($input: ChangePasswordInput!) {
+  changePassword(input: $input)
+}

@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router'
 import { Form, FormFieldClass } from '@nestledjs/forms'
-import { WebUiContainer } from '@nestled-template/web-ui'
+import { AuthLayout } from '@nestled-template/web'
 import { RegisterInput, useRegisterMutation } from '@nestled-template/shared/sdk'
 import { formTheme } from '@nestled-template/shared/styles'
 
@@ -34,26 +34,22 @@ export default function Register() {
   ]
 
   return (
-    <WebUiContainer>
-      <div className="flex mt-16 ">
-        <div className="bg-white rounded shadow-lg p-8 w-full max-w-md mx-auto">
-          <h1 className="serif text-3xl text-center mb-2">Create your account</h1>
-          <p className="text-center text-zinc-600 mb-8">Get started in minutes.</p>
-          <p className="mt-2 text-center text-sm text-zinc-600 mb-6">
-            Already have an account?{' '}
-            <Link to="/login" className="font-medium text-orange-600 hover:text-orange-500">
-              Log in
-            </Link>
-          </p>
-          {formError && (
-            <div className="mb-4 text-center text-orange-700 bg-orange-100 border border-orange-300 rounded p-2">
-              {formError}
-            </div>
-          )}
-          <Form id="register-form" theme={formTheme} fields={fields} submit={processRegister} />
-        </div>
+    <AuthLayout title="Create your account" subtitle="Get started in minutes">
+      <div className="space-y-6">
+        <p className="text-center text-sm text-zinc-400">
+          Already have an account?{' '}
+          <Link to="/login" className="font-semibold text-emerald-400 hover:text-emerald-300">
+            Log in
+          </Link>
+        </p>
+        {formError && (
+          <div className="text-center text-rose-300 bg-rose-500/10 border border-rose-500/20 rounded-lg p-3 text-sm">
+            {formError}
+          </div>
+        )}
+        <Form id="register-form" theme={formTheme} fields={fields} submit={processRegister} />
       </div>
-    </WebUiContainer>
+    </AuthLayout>
   )
 }
 

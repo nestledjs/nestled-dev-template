@@ -3,7 +3,7 @@ import { GraphQLJSONObject } from 'graphql-type-json';
 import { Decimal } from '@prisma/client/runtime/library';
 import { GraphQLDecimal } from 'prisma-graphql-type-decimal';
 import { Prisma } from '@nestled-template/api/prisma';
-import { AddressType, EmailType, FailureReason, ImageType, InviteStatus, PhoneType, SecurityEventType, SubscriptionStatus, TwoFactorMethod, UserRole } from './enums';
+import { AddressType, EmailType, FailureReason, ImageType, InviteStatus, PhoneType, SecurityEventType, SubscriptionStatus, TwoFactorMethod } from './enums';
 
 @ObjectType({ description: undefined })
 export class Address {
@@ -756,8 +756,8 @@ export class User {
   @Field(() => String, { nullable: true })
   lastName?: string | null;
 
-  @Field(() => UserRole)
-  role!: UserRole;
+  @Field(() => Boolean)
+  isSuperAdmin!: boolean;
 
   @Field(() => String, { nullable: true })
   bio?: string | null;

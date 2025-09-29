@@ -8,7 +8,6 @@ import {
   SecurityEventType,
   SubscriptionStatus,
   ImageType,
-  UserRole,
   TwoFactorMethod,
 } from '@nestled-template/api/core/models'
 import { GraphQLJSON } from 'graphql-type-json'
@@ -1903,8 +1902,8 @@ export class CreateUserInput {
   @Field({ nullable: true })
   lastName?: string
 
-  @Field(() => UserRole, { nullable: false })
-  role!: UserRole
+  @Field(() => Boolean, { nullable: false })
+  isSuperAdmin!: boolean
 
   @Field({ nullable: true })
   bio?: string
@@ -2032,8 +2031,8 @@ export class UpdateUserInput {
   @Field({ nullable: true })
   lastName?: string
 
-  @Field(() => UserRole, { nullable: true })
-  role?: UserRole
+  @Field(() => Boolean, { nullable: true })
+  isSuperAdmin?: boolean
 
   @Field({ nullable: true })
   bio?: string
@@ -2161,8 +2160,8 @@ export class ListUserInput extends CorePagingInput {
   @Field({ nullable: true })
   lastName?: string
 
-  @Field(() => UserRole, { nullable: true })
-  role?: UserRole
+  @Field(() => Boolean, { nullable: true })
+  isSuperAdmin?: boolean
 
   @Field({ nullable: true })
   bio?: string

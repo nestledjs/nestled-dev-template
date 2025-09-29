@@ -9,8 +9,21 @@ fragment AuthUserDetails on User {
   id
   firstName
   lastName
-  role
+  displayName
+  bio
+  isSuperAdmin
   emailValidated
   createdAt
   updatedAt
+  emails {
+    id
+    email
+    primary
+    verified
+  }
+  phoneNumbers {
+    id
+    phone
+    primary
+  }
 }

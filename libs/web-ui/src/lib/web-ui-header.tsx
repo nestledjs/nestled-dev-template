@@ -30,19 +30,21 @@ export function WebUiHeader(props: Readonly<WebUiHeaderProps>) {
     } else {
       root.classList.remove('dark')
     }
+    // Save to localStorage for persistence
     window.localStorage.setItem('theme', theme)
+    // Save to cookie for SSR
+    document.cookie = `theme=${theme}; path=/; max-age=31536000; SameSite=Lax`
   }, [theme])
 
   const siteName = props.siteName || 'Nova Kit'
-  const navigation = (
-    props.navigation && props.navigation.length
+  const navigation = props?.navigation?.length
       ? props.navigation
       : [
           { name: 'Features', href: '/features' },
           { name: 'Pricing', href: '/pricing' },
           { name: 'Blog', href: '/public/blog' },
         ]
-  ) as WebUiHeaderNavProps[]
+
 
   return (
     <header className="bg-white dark:bg-zinc-950">
@@ -75,11 +77,11 @@ export function WebUiHeader(props: Readonly<WebUiHeaderProps>) {
         <div className="flex flex-1 items-center justify-end gap-x-3 lg:gap-x-6">
           <button
             type="button"
-            aria-label="Toggle theme"
+            aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
             onClick={() => setTheme(t => (t === 'dark' ? 'light' : 'dark'))}
             className="hidden lg:inline-flex items-center justify-center rounded-md border border-white/15 bg-white/50 px-3 py-2 text-sm text-zinc-700 shadow-sm backdrop-blur transition hover:bg-white/80 dark:border-white/10 dark:bg-white/5 dark:text-zinc-200 dark:hover:bg-white/10"
           >
-            {theme === 'dark' ? <span>☀️</span> : <span>🌙</span>}
+            {theme === 'dark' ? <span aria-hidden="true">☀️</span> : <span aria-hidden="true">🌙</span>}
           </button>
           {props?.isAuthenticated ? (
             <Link
@@ -179,7 +181,7 @@ export function WebUiHeader(props: Readonly<WebUiHeaderProps>) {
                   onClick={() => setTheme(t => (t === 'dark' ? 'light' : 'dark'))}
                   className="mt-4 -mx-3 block rounded-lg px-3 py-2.5 text-left text-base text-zinc-700 hover:bg-gray-50 dark:text-zinc-300 dark:hover:bg-white/5"
                 >
-                  Toggle {theme === 'dark' ? 'Light' : 'Dark'} Mode
+                  Switch to {theme === 'dark' ? 'Light' : 'Dark'} Mode
                 </button>
               </div>
             </div>

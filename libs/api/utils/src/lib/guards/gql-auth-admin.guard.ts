@@ -5,8 +5,6 @@ import { User } from '@nestled-template/api/core/models'
 
 @Injectable()
 export class GqlAuthAdminGuard extends AuthGuard('jwt') {
-  private readonly _roles: string[] = ['Admin']
-
   override getRequest(context: ExecutionContext) {
     const ctx = GqlExecutionContext.create(context)
 
@@ -28,12 +26,13 @@ export class GqlAuthAdminGuard extends AuthGuard('jwt') {
     const hasAccess = this.hasAccess(req.user)
 
     if (!hasAccess) {
-      throw new ForbiddenException(`You need to have Admin access`)
+      throw new ForbiddenException(`You need to have Super Admin access`)
     }
     return req && req.user && this.hasAccess(req.user)
   }
 
   private hasAccess(user: User): boolean {
-    return !!(user.role && this._roles.includes(user.role))
+    // Only super admins can access admin-protected routes
+    return !!user.isSuperAdmin
   }
 }

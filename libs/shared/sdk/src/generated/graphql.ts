@@ -85,6 +85,15 @@ export type AuditLog = {
   userId: Scalars['String']['output']
 }
 
+export type ChangeEmailInput = {
+  newEmail: Scalars['String']['input']
+}
+
+export type ChangePasswordInput = {
+  currentPassword: Scalars['String']['input']
+  newPassword: Scalars['String']['input']
+}
+
 export type CorePaging = {
   __typename?: 'CorePaging'
   count?: Maybe<Scalars['Float']['output']>
@@ -386,6 +395,7 @@ export type CreateUserInput = {
   imagesIds?: InputMaybe<Array<Scalars['String']['input']>>
   invitesSentIds?: InputMaybe<Array<Scalars['String']['input']>>
   isActive?: InputMaybe<Scalars['Boolean']['input']>
+  isSuperAdmin: Scalars['Boolean']['input']
   lastFailedLogin?: InputMaybe<Scalars['DateTime']['input']>
   lastName?: InputMaybe<Scalars['String']['input']>
   lastSuccessfulLogin?: InputMaybe<Scalars['DateTime']['input']>
@@ -399,7 +409,6 @@ export type CreateUserInput = {
   passwordResetToken?: InputMaybe<Scalars['String']['input']>
   phoneNumbersIds?: InputMaybe<Array<Scalars['String']['input']>>
   privacyPolicyAcceptedAt?: InputMaybe<Scalars['DateTime']['input']>
-  role: UserRole
   termsAcceptedAt?: InputMaybe<Scalars['DateTime']['input']>
   twoFactorEnabled?: InputMaybe<Scalars['Boolean']['input']>
   twoFactorMethod?: InputMaybe<TwoFactorMethod>
@@ -926,6 +935,7 @@ export type ListUserInput = {
   imagesIds?: InputMaybe<Array<Scalars['String']['input']>>
   invitesSentIds?: InputMaybe<Array<Scalars['String']['input']>>
   isActive?: InputMaybe<Scalars['Boolean']['input']>
+  isSuperAdmin?: InputMaybe<Scalars['Boolean']['input']>
   lastFailedLogin?: InputMaybe<Scalars['DateTime']['input']>
   lastName?: InputMaybe<Scalars['String']['input']>
   lastSuccessfulLogin?: InputMaybe<Scalars['DateTime']['input']>
@@ -941,7 +951,6 @@ export type ListUserInput = {
   passwordResetToken?: InputMaybe<Scalars['String']['input']>
   phoneNumbersIds?: InputMaybe<Array<Scalars['String']['input']>>
   privacyPolicyAcceptedAt?: InputMaybe<Scalars['DateTime']['input']>
-  role?: InputMaybe<UserRole>
   search?: InputMaybe<Scalars['String']['input']>
   searchFields?: InputMaybe<Array<Scalars['String']['input']>>
   skip?: InputMaybe<Scalars['Float']['input']>
@@ -1014,6 +1023,8 @@ export type LoginInput = {
 
 export type Mutation = {
   __typename?: 'Mutation'
+  changeEmail: Scalars['Boolean']['output']
+  changePassword: Scalars['Boolean']['output']
   createAddress?: Maybe<Address>
   createApiToken?: Maybe<ApiToken>
   createAuditLog?: Maybe<AuditLog>
@@ -1091,6 +1102,15 @@ export type Mutation = {
   updateUserPreference?: Maybe<UserPreference>
   updateUserSession?: Maybe<UserSession>
   verifyEmail: User
+  verifyEmailChange: User
+}
+
+export type MutationChangeEmailArgs = {
+  input: ChangeEmailInput
+}
+
+export type MutationChangePasswordArgs = {
+  input: ChangePasswordInput
 }
 
 export type MutationCreateAddressArgs = {
@@ -1418,6 +1438,10 @@ export type MutationUpdateUserSessionArgs = {
 
 export type MutationVerifyEmailArgs = {
   input: VerifyEmailInput
+}
+
+export type MutationVerifyEmailChangeArgs = {
+  token: Scalars['String']['input']
 }
 
 export type OAuthAccount = {
@@ -2236,6 +2260,7 @@ export type UpdateUserInput = {
   imagesIds?: InputMaybe<Array<Scalars['String']['input']>>
   invitesSentIds?: InputMaybe<Array<Scalars['String']['input']>>
   isActive?: InputMaybe<Scalars['Boolean']['input']>
+  isSuperAdmin?: InputMaybe<Scalars['Boolean']['input']>
   lastFailedLogin?: InputMaybe<Scalars['DateTime']['input']>
   lastName?: InputMaybe<Scalars['String']['input']>
   lastSuccessfulLogin?: InputMaybe<Scalars['DateTime']['input']>
@@ -2249,7 +2274,6 @@ export type UpdateUserInput = {
   passwordResetToken?: InputMaybe<Scalars['String']['input']>
   phoneNumbersIds?: InputMaybe<Array<Scalars['String']['input']>>
   privacyPolicyAcceptedAt?: InputMaybe<Scalars['DateTime']['input']>
-  role?: InputMaybe<UserRole>
   termsAcceptedAt?: InputMaybe<Scalars['DateTime']['input']>
   twoFactorEnabled?: InputMaybe<Scalars['Boolean']['input']>
   twoFactorMethod?: InputMaybe<TwoFactorMethod>
@@ -2326,6 +2350,7 @@ export type User = {
   images?: Maybe<Array<Upload>>
   invitesSent?: Maybe<Array<Invite>>
   isActive: Scalars['Boolean']['output']
+  isSuperAdmin: Scalars['Boolean']['output']
   lastFailedLogin?: Maybe<Scalars['DateTime']['output']>
   lastName?: Maybe<Scalars['String']['output']>
   lastSuccessfulLogin?: Maybe<Scalars['DateTime']['output']>
@@ -2339,7 +2364,6 @@ export type User = {
   passwordResetToken?: Maybe<Scalars['String']['output']>
   phoneNumbers?: Maybe<Array<PhoneNumber>>
   privacyPolicyAcceptedAt?: Maybe<Scalars['DateTime']['output']>
-  role: UserRole
   termsAcceptedAt?: Maybe<Scalars['DateTime']['output']>
   twoFactorEnabled: Scalars['Boolean']['output']
   twoFactorMethod: TwoFactorMethod
@@ -2359,13 +2383,6 @@ export type UserPreference = {
   user?: Maybe<User>
   userId: Scalars['String']['output']
   value: Scalars['String']['output']
-}
-
-export enum UserRole {
-  Admin = 'ADMIN',
-  Developer = 'DEVELOPER',
-  SuperAdmin = 'SUPER_ADMIN',
-  User = 'USER',
 }
 
 export type UserSession = {
@@ -5770,7 +5787,7 @@ export type AdminUserListFragment = {
   updatedAt: any
   firstName?: string | null
   lastName?: string | null
-  role: UserRole
+  isSuperAdmin: boolean
   bio?: string | null
   displayName?: string | null
   password?: string | null
@@ -5800,7 +5817,7 @@ export type AdminUserDetailsFragment = {
   updatedAt: any
   firstName?: string | null
   lastName?: string | null
-  role: UserRole
+  isSuperAdmin: boolean
   bio?: string | null
   displayName?: string | null
   password?: string | null
@@ -5836,7 +5853,7 @@ export type AdminCreateUserMutation = {
     updatedAt: any
     firstName?: string | null
     lastName?: string | null
-    role: UserRole
+    isSuperAdmin: boolean
     bio?: string | null
     displayName?: string | null
     password?: string | null
@@ -5883,7 +5900,7 @@ export type AdminUpdateUserMutation = {
     updatedAt: any
     firstName?: string | null
     lastName?: string | null
-    role: UserRole
+    isSuperAdmin: boolean
     bio?: string | null
     displayName?: string | null
     password?: string | null
@@ -5920,7 +5937,7 @@ export type AdminUserQuery = {
     updatedAt: any
     firstName?: string | null
     lastName?: string | null
-    role: UserRole
+    isSuperAdmin: boolean
     bio?: string | null
     displayName?: string | null
     password?: string | null
@@ -5957,7 +5974,7 @@ export type AdminUsersQuery = {
     updatedAt: any
     firstName?: string | null
     lastName?: string | null
-    role: UserRole
+    isSuperAdmin: boolean
     bio?: string | null
     displayName?: string | null
     password?: string | null
@@ -6435,10 +6452,25 @@ export type UserTokenDetailsFragment = {
     id: string
     firstName?: string | null
     lastName?: string | null
-    role: UserRole
+    displayName?: string | null
+    bio?: string | null
+    isSuperAdmin: boolean
     emailValidated: boolean
     createdAt: any
     updatedAt: any
+    emails?: Array<{
+      __typename?: 'Email'
+      id: string
+      email: string
+      primary: boolean
+      verified: boolean
+    }> | null
+    phoneNumbers?: Array<{
+      __typename?: 'PhoneNumber'
+      id: string
+      phone: string
+      primary: boolean
+    }> | null
   } | null
 }
 
@@ -6447,10 +6479,25 @@ export type AuthUserDetailsFragment = {
   id: string
   firstName?: string | null
   lastName?: string | null
-  role: UserRole
+  displayName?: string | null
+  bio?: string | null
+  isSuperAdmin: boolean
   emailValidated: boolean
   createdAt: any
   updatedAt: any
+  emails?: Array<{
+    __typename?: 'Email'
+    id: string
+    email: string
+    primary: boolean
+    verified: boolean
+  }> | null
+  phoneNumbers?: Array<{
+    __typename?: 'PhoneNumber'
+    id: string
+    phone: string
+    primary: boolean
+  }> | null
 }
 
 export type LoginMutationVariables = Exact<{
@@ -6467,10 +6514,25 @@ export type LoginMutation = {
       id: string
       firstName?: string | null
       lastName?: string | null
-      role: UserRole
+      displayName?: string | null
+      bio?: string | null
+      isSuperAdmin: boolean
       emailValidated: boolean
       createdAt: any
       updatedAt: any
+      emails?: Array<{
+        __typename?: 'Email'
+        id: string
+        email: string
+        primary: boolean
+        verified: boolean
+      }> | null
+      phoneNumbers?: Array<{
+        __typename?: 'PhoneNumber'
+        id: string
+        phone: string
+        primary: boolean
+      }> | null
     } | null
   } | null
 }
@@ -6489,10 +6551,25 @@ export type RegisterMutation = {
       id: string
       firstName?: string | null
       lastName?: string | null
-      role: UserRole
+      displayName?: string | null
+      bio?: string | null
+      isSuperAdmin: boolean
       emailValidated: boolean
       createdAt: any
       updatedAt: any
+      emails?: Array<{
+        __typename?: 'Email'
+        id: string
+        email: string
+        primary: boolean
+        verified: boolean
+      }> | null
+      phoneNumbers?: Array<{
+        __typename?: 'PhoneNumber'
+        id: string
+        phone: string
+        primary: boolean
+      }> | null
     } | null
   } | null
 }
@@ -6518,10 +6595,25 @@ export type ResetPasswordMutation = {
     id: string
     firstName?: string | null
     lastName?: string | null
-    role: UserRole
+    displayName?: string | null
+    bio?: string | null
+    isSuperAdmin: boolean
     emailValidated: boolean
     createdAt: any
     updatedAt: any
+    emails?: Array<{
+      __typename?: 'Email'
+      id: string
+      email: string
+      primary: boolean
+      verified: boolean
+    }> | null
+    phoneNumbers?: Array<{
+      __typename?: 'PhoneNumber'
+      id: string
+      phone: string
+      primary: boolean
+    }> | null
   } | null
 }
 
@@ -6536,10 +6628,25 @@ export type VerifyEmailMutation = {
     id: string
     firstName?: string | null
     lastName?: string | null
-    role: UserRole
+    displayName?: string | null
+    bio?: string | null
+    isSuperAdmin: boolean
     emailValidated: boolean
     createdAt: any
     updatedAt: any
+    emails?: Array<{
+      __typename?: 'Email'
+      id: string
+      email: string
+      primary: boolean
+      verified: boolean
+    }> | null
+    phoneNumbers?: Array<{
+      __typename?: 'PhoneNumber'
+      id: string
+      phone: string
+      primary: boolean
+    }> | null
   }
 }
 
@@ -6566,13 +6673,73 @@ export type EmulateUserMutation = {
       id: string
       firstName?: string | null
       lastName?: string | null
-      role: UserRole
+      displayName?: string | null
+      bio?: string | null
+      isSuperAdmin: boolean
       emailValidated: boolean
       createdAt: any
       updatedAt: any
+      emails?: Array<{
+        __typename?: 'Email'
+        id: string
+        email: string
+        primary: boolean
+        verified: boolean
+      }> | null
+      phoneNumbers?: Array<{
+        __typename?: 'PhoneNumber'
+        id: string
+        phone: string
+        primary: boolean
+      }> | null
     } | null
   } | null
 }
+
+export type ChangeEmailMutationVariables = Exact<{
+  input: ChangeEmailInput
+}>
+
+export type ChangeEmailMutation = { __typename?: 'Mutation'; changeEmail: boolean }
+
+export type VerifyEmailChangeMutationVariables = Exact<{
+  token: Scalars['String']['input']
+}>
+
+export type VerifyEmailChangeMutation = {
+  __typename?: 'Mutation'
+  verifyEmailChange: {
+    __typename?: 'User'
+    id: string
+    firstName?: string | null
+    lastName?: string | null
+    displayName?: string | null
+    bio?: string | null
+    isSuperAdmin: boolean
+    emailValidated: boolean
+    createdAt: any
+    updatedAt: any
+    emails?: Array<{
+      __typename?: 'Email'
+      id: string
+      email: string
+      primary: boolean
+      verified: boolean
+    }> | null
+    phoneNumbers?: Array<{
+      __typename?: 'PhoneNumber'
+      id: string
+      phone: string
+      primary: boolean
+    }> | null
+  }
+}
+
+export type ChangePasswordMutationVariables = Exact<{
+  input: ChangePasswordInput
+}>
+
+export type ChangePasswordMutation = { __typename?: 'Mutation'; changePassword: boolean }
 
 export type MeQueryVariables = Exact<{ [key: string]: never }>
 
@@ -6583,10 +6750,25 @@ export type MeQuery = {
     id: string
     firstName?: string | null
     lastName?: string | null
-    role: UserRole
+    displayName?: string | null
+    bio?: string | null
+    isSuperAdmin: boolean
     emailValidated: boolean
     createdAt: any
     updatedAt: any
+    emails?: Array<{
+      __typename?: 'Email'
+      id: string
+      email: string
+      primary: boolean
+      verified: boolean
+    }> | null
+    phoneNumbers?: Array<{
+      __typename?: 'PhoneNumber'
+      id: string
+      phone: string
+      primary: boolean
+    }> | null
   } | null
 }
 
@@ -9811,7 +9993,7 @@ export const AdminUserListFragmentDoc = gql`
     updatedAt
     firstName
     lastName
-    role
+    isSuperAdmin
     bio
     displayName
     password
@@ -9897,10 +10079,23 @@ export const AuthUserDetailsFragmentDoc = gql`
     id
     firstName
     lastName
-    role
+    displayName
+    bio
+    isSuperAdmin
     emailValidated
     createdAt
     updatedAt
+    emails {
+      id
+      email
+      primary
+      verified
+    }
+    phoneNumbers {
+      id
+      phone
+      primary
+    }
   }
 `
 export const UserTokenDetailsFragmentDoc = gql`
@@ -19702,6 +19897,138 @@ export type EmulateUserMutationResult = Apollo.MutationResult<EmulateUserMutatio
 export type EmulateUserMutationOptions = Apollo.BaseMutationOptions<
   EmulateUserMutation,
   EmulateUserMutationVariables
+>
+export const ChangeEmailDocument = gql`
+  mutation ChangeEmail($input: ChangeEmailInput!) {
+    changeEmail(input: $input)
+  }
+`
+export type ChangeEmailMutationFn = Apollo.MutationFunction<
+  ChangeEmailMutation,
+  ChangeEmailMutationVariables
+>
+
+/**
+ * __useChangeEmailMutation__
+ *
+ * To run a mutation, you first call `useChangeEmailMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useChangeEmailMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [changeEmailMutation, { data, loading, error }] = useChangeEmailMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useChangeEmailMutation(
+  baseOptions?: Apollo.MutationHookOptions<ChangeEmailMutation, ChangeEmailMutationVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<ChangeEmailMutation, ChangeEmailMutationVariables>(
+    ChangeEmailDocument,
+    options,
+  )
+}
+export type ChangeEmailMutationHookResult = ReturnType<typeof useChangeEmailMutation>
+export type ChangeEmailMutationResult = Apollo.MutationResult<ChangeEmailMutation>
+export type ChangeEmailMutationOptions = Apollo.BaseMutationOptions<
+  ChangeEmailMutation,
+  ChangeEmailMutationVariables
+>
+export const VerifyEmailChangeDocument = gql`
+  mutation VerifyEmailChange($token: String!) {
+    verifyEmailChange(token: $token) {
+      ...AuthUserDetails
+    }
+  }
+  ${AuthUserDetailsFragmentDoc}
+`
+export type VerifyEmailChangeMutationFn = Apollo.MutationFunction<
+  VerifyEmailChangeMutation,
+  VerifyEmailChangeMutationVariables
+>
+
+/**
+ * __useVerifyEmailChangeMutation__
+ *
+ * To run a mutation, you first call `useVerifyEmailChangeMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useVerifyEmailChangeMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [verifyEmailChangeMutation, { data, loading, error }] = useVerifyEmailChangeMutation({
+ *   variables: {
+ *      token: // value for 'token'
+ *   },
+ * });
+ */
+export function useVerifyEmailChangeMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    VerifyEmailChangeMutation,
+    VerifyEmailChangeMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<VerifyEmailChangeMutation, VerifyEmailChangeMutationVariables>(
+    VerifyEmailChangeDocument,
+    options,
+  )
+}
+export type VerifyEmailChangeMutationHookResult = ReturnType<typeof useVerifyEmailChangeMutation>
+export type VerifyEmailChangeMutationResult = Apollo.MutationResult<VerifyEmailChangeMutation>
+export type VerifyEmailChangeMutationOptions = Apollo.BaseMutationOptions<
+  VerifyEmailChangeMutation,
+  VerifyEmailChangeMutationVariables
+>
+export const ChangePasswordDocument = gql`
+  mutation ChangePassword($input: ChangePasswordInput!) {
+    changePassword(input: $input)
+  }
+`
+export type ChangePasswordMutationFn = Apollo.MutationFunction<
+  ChangePasswordMutation,
+  ChangePasswordMutationVariables
+>
+
+/**
+ * __useChangePasswordMutation__
+ *
+ * To run a mutation, you first call `useChangePasswordMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useChangePasswordMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [changePasswordMutation, { data, loading, error }] = useChangePasswordMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useChangePasswordMutation(
+  baseOptions?: Apollo.MutationHookOptions<ChangePasswordMutation, ChangePasswordMutationVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<ChangePasswordMutation, ChangePasswordMutationVariables>(
+    ChangePasswordDocument,
+    options,
+  )
+}
+export type ChangePasswordMutationHookResult = ReturnType<typeof useChangePasswordMutation>
+export type ChangePasswordMutationResult = Apollo.MutationResult<ChangePasswordMutation>
+export type ChangePasswordMutationOptions = Apollo.BaseMutationOptions<
+  ChangePasswordMutation,
+  ChangePasswordMutationVariables
 >
 export const MeDocument = gql`
   query Me {

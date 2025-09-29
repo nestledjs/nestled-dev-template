@@ -1,331 +1,318 @@
-import { MeDocument, MeQuery, Role, useUpdateUserMutation } from '@nestled-template/shared/sdk'
-import React, { useEffect, useState } from 'react'
-import { cleanDatabaseOutput, cleanFormInput, usaStates } from '@nestled-template/shared/utils'
-import toast from 'react-hot-toast'
-import { WebUiContainer, WebUiLoading } from '@nestled-template/web-ui'
-import { ExclamationTriangleIcon } from '@heroicons/react/24/outline'
+import React, { useState } from 'react'
+import { Link, useLoaderData, useNavigate } from 'react-router'
+import { useUpdateUserMutation, useChangeEmailMutation, useResendVerificationEmailMutation, useChangePasswordMutation, MeDocument, MeQuery } from '@nestled-template/shared/sdk'
+import { QueryRef, useReadQuery, useApolloClient } from '@apollo/client'
 import { Form, FormFieldClass } from '@nestledjs/forms'
-import { bizTheme } from '@nestled-template/shared/styles'
-import type { QueryRef } from '@apollo/client'
-import { useApolloClient, useReadQuery } from '@apollo/client'
-import { useMatches, useRevalidator } from 'react-router'
+import { formTheme } from '@nestled-template/shared/styles'
+import { apolloLoader } from '@nestled-template/shared/apollo'
 
-export default function EditMyProfile() {
-  const [loading, setLoading] = useState(false)
-  // Read from cache seeded by parent layout loader
-  const matches = useMatches()
+export const loader = apolloLoader()(({ preloadQuery }) => {
+  // Ensure we have fresh user data for this route
+  const meQueryRef = preloadQuery<MeQuery>(MeDocument)
+  return { meQueryRef }
+})
+
+export default function EditProfile() {
+  const loaderData = useLoaderData() as { meQueryRef: QueryRef<MeQuery> }
+  const { meQueryRef } = loaderData
+  const { data } = useReadQuery(meQueryRef)
+  const user = data?.me
   const client = useApolloClient()
-  const revalidator = useRevalidator()
-  const meRef = (matches.find(m => (m.data as any)?.meRef)?.data as any)?.meRef as QueryRef<MeQuery>
-  const { data } = useReadQuery<MeQuery>(meRef)
+  const navigate = useNavigate()
   const [updateUser] = useUpdateUserMutation()
-  const [isOtherSelected, setIsOtherSelected] = useState(false)
+  const [changeEmail] = useChangeEmailMutation()
+  const [resendVerificationEmail] = useResendVerificationEmailMutation()
+  const [changePassword] = useChangePasswordMutation()
 
-  const [currentEmail, setCurrentEmail] = useState('')
-  const [currentPhone, setCurrentPhone] = useState('')
-  const [currentCell, setCurrentCell] = useState('')
-  const [currentAddress, setCurrentAddress] = useState('')
-  const [currentAddress2, setCurrentAddress2] = useState('')
-  const [currentCity, setCurrentCity] = useState('')
-  const [currentState, setCurrentState] = useState('')
-  const [currentZip, setCurrentZip] = useState('')
-  const [showMessage, setShowMessage] = useState(false)
-  const [addressChanges, setAddressChanges] = useState(false)
-  const [vet, setVet] = useState(false)
-  const [initialized, setInitialized] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
+  const [verificationMessage, setVerificationMessage] = useState<string | null>(null)
 
-  useEffect(() => {
-    setVet((data?.me as any)?.vet ?? false)
-  }, [data?.me])
-
-  useEffect(() => {
-    if (!initialized) return
-    if (
-      isEquivalent((data?.me as any)?.phone, currentPhone) &&
-      isEquivalent(data?.me?.email, currentEmail) &&
-      isEquivalent((data?.me as any)?.cell, currentCell) &&
-      isEquivalent((data?.me as any)?.address, currentAddress) &&
-      isEquivalent((data?.me as any)?.address2, currentAddress2) &&
-      isEquivalent((data?.me as any)?.city, currentCity) &&
-      isEquivalent((data?.me as any)?.state, currentState) &&
-      isEquivalent((data?.me as any)?.postcode, currentZip)
-    ) {
-      setAddressChanges(false)
-    } else {
-      setAddressChanges(true)
-    }
-  }, [
-    data?.me,
-    currentAddress,
-    currentAddress2,
-    currentCell,
-    currentEmail,
-    currentPhone,
-    currentZip,
-    currentCity,
-    currentState,
-    vet,
-    initialized,
-  ])
-
-  const me = data?.me
-  const isAdmin = (me as any)?.role === Role.Admin
-
-  // Create form fields using FormFieldClass
-  const updateAccountFields = [
-    // Section: Personal Details
-    FormFieldClass.content('hdrPersonal', {
-      content: <h3 className="text-lg font-semibold mt-6 mb-2">Personal Details</h3>,
-    }),
-    // Personal Details
-    FormFieldClass.text('firstName', { label: 'First name', disabled: !isAdmin }),
-    FormFieldClass.text('lastName', { label: 'Last name', disabled: !isAdmin }),
-    FormFieldClass.email('email', { label: 'Email', required: true }),
-    FormFieldClass.textArea('bio', { label: 'Short Bio' }),
-    FormFieldClass.phone('phone', { label: 'Phone' }),
-    FormFieldClass.phone('cell', { label: 'Cell' }),
-    FormFieldClass.text('address', { label: 'Address' }),
-    FormFieldClass.text('address2', { label: 'Address 2' }),
-    FormFieldClass.text('city', { label: 'City' }),
-    FormFieldClass.text('postcode', { label: 'Postcode' }),
-    FormFieldClass.select('state', {
-      label: 'State / Province',
-      required: true,
-      options: usaStates,
-    }),
-
-    // Section: Military Status
-    FormFieldClass.content('hdrMilitary', {
-      content: <h3 className="text-lg font-semibold mt-6 mb-2">Military Status</h3>,
-    }),
-    FormFieldClass.checkbox('vet', { label: 'Have you ever served in the military?' }),
-    FormFieldClass.checkbox('activeDuty', {
-      label: 'Active Duty?',
-      showWhen: values => values.vet === true,
-    }),
-    FormFieldClass.text('militaryBranch', {
-      label: 'Military Branch Served',
-      showWhen: values => values.vet === true,
-    }),
-
-    // Section: Social Media
-    FormFieldClass.content('hdrSocial', {
-      content: <h3 className="text-lg font-semibold mt-6 mb-2">Social Media</h3>,
-    }),
-    FormFieldClass.text('facebook', { label: 'Facebook' }),
-    FormFieldClass.text('twitter', { label: 'Twitter' }),
-    FormFieldClass.text('instagram', { label: 'Instagram' }),
-    FormFieldClass.text('linkedin', { label: 'LinkedIn' }),
-    FormFieldClass.text('youtube', { label: 'YouTube' }),
-    FormFieldClass.text('website', { label: 'Website' }),
-
-    // Section: Business
-    FormFieldClass.content('hdrBusiness', {
-      content: <h3 className="text-lg font-semibold mt-6 mb-2">Business</h3>,
-    }),
-    FormFieldClass.text('company', { label: 'Company', disabled: !isAdmin }),
-    FormFieldClass.text('industry', { label: 'Industry', disabled: !isAdmin }),
-
-    // Section: Notification Preferences
-    FormFieldClass.content('hdrNotifications', {
-      content: <h3 className="text-lg font-semibold mt-6 mb-2">Notification Preferences</h3>,
-    }),
-    FormFieldClass.checkbox('notifyByEmail', { label: 'I want to receive email notifications' }),
-    FormFieldClass.checkbox('notifyBySMS', {
-      label: 'I want to receive text message notifications',
-    }),
-    FormFieldClass.checkbox('substitute', { label: 'I am available as a substitute' }),
-
-    // Contact Change Reason (conditional)
-    ...(addressChanges
-      ? [
-          FormFieldClass.select('contactChangeReason', {
-            label: 'Reason for change',
-            required: addressChanges,
-            options: [
-              { label: 'Choose a reason', value: '' },
-              {
-                label: 'New company representative attending chapter meetings',
-                value: 'new-company-representative-attending-chapter-meetings',
-              },
-              { label: "Attending member's name changed", value: 'attending-members-name-changed' },
-              { label: "Company's name changed", value: 'companys-name-changed' },
-              { label: 'Moved', value: 'moved' },
-              { label: 'Basic data update', value: 'basic-data-update' },
-              { label: 'Other', value: 'other' },
-            ],
-          }),
-          FormFieldClass.textArea('contactChangeOther', {
-            label: 'Other Reason:',
-            hidden: !isOtherSelected,
-            required: isOtherSelected,
-          }),
-        ]
-      : []),
-
-    // Submit button
-    FormFieldClass.button('submit', { text: 'Update Profile', loading: loading, type: 'submit' }),
-  ]
-
-  useEffect(() => {
-    setCurrentEmail(data?.me?.email ?? '')
-    setCurrentPhone((data?.me as any)?.phone ?? '')
-    setCurrentCell((data?.me as any)?.cell ?? '')
-    setCurrentAddress((data?.me as any)?.address ?? '')
-    setCurrentAddress2((data?.me as any)?.address2 ?? '')
-    setCurrentCity((data?.me as any)?.city ?? '')
-    setCurrentState((data?.me as any)?.state ?? '')
-    setCurrentZip((data?.me as any)?.postcode ?? '')
-    setIsOtherSelected(false)
-    setInitialized(Boolean(data?.me))
-  }, [data?.me])
-
-  function isEquivalent(
-    value1: string | null | undefined,
-    value2: string | null | undefined,
-  ): boolean {
-    const normalizedValue1 = value1 === null || value1 === undefined ? '' : value1
-    const normalizedValue2 = value2 === null || value2 === undefined ? '' : value2
-
-    return normalizedValue1 === normalizedValue2
+  // Handle loading state after hooks
+  if (!user) {
+    return (
+      <div className="flex-1 bg-gradient-to-b from-zinc-50 to-zinc-100 dark:from-zinc-900 dark:to-zinc-950 flex items-center justify-center">
+        <p className="text-zinc-600 dark:text-zinc-400">Loading...</p>
+      </div>
+    )
   }
 
-  function defaultValues() {
-    if (data?.me) {
-      const cleaned = cleanDatabaseOutput(data.me, updateAccountFields, [
-        'avatarUrl',
-        'name',
-        'chapter',
-        'isLeader',
-        'testimonialsFrom',
-        'testimonialsTo',
-      ])
-      // Ensure the state matches select option values. If the state is a label, map to its value code.
-      const stateVal = cleaned.state
-      if (typeof stateVal === 'string') {
-        let norm = stateVal.trim()
-        // Handle values like "US-AL" → "AL"
-        if (norm.includes('-')) {
-          const parts = norm.split('-')
-          norm = parts[parts.length - 1]
-        }
-        const upper = norm.toUpperCase()
-        const byValue = usaStates.find(s => s.value === upper)
-        if (byValue) {
-          cleaned.state = byValue.value
-        } else {
-          const byLabel = usaStates.find(s => s.label.toLowerCase() === norm.toLowerCase())
-          if (byLabel) cleaned.state = byLabel.value
-        }
-      }
-      // Explicitly set checkbox defaults so they always appear in defaultValues
-      const rawVet = (data.me as any)?.vet
-      cleaned.vet =
-        typeof rawVet === 'boolean'
-          ? rawVet
-          : typeof rawVet === 'string'
-            ? ['true', '1', 'yes', 'y'].includes(rawVet.toLowerCase())
-            : typeof rawVet === 'number'
-              ? rawVet === 1
-              : false
+  const primaryEmail = user.emails?.find(e => e.primary)
 
-      return cleaned
+  const editProfileFields = [
+    FormFieldClass.content('headerPersonal', {
+      content: <h2 className="text-lg font-semibold text-zinc-900 dark:text-white">Personal Information</h2>,
+    }),
+    FormFieldClass.text('firstName', {
+      label: 'First Name',
+      required: false,
+    }),
+    FormFieldClass.text('lastName', {
+      label: 'Last Name',
+      required: false,
+    }),
+    FormFieldClass.text('displayName', {
+      label: 'Username',
+      required: false,
+      description: 'Your unique username (lowercase, alphanumeric only)',
+    }),
+    FormFieldClass.email('email', {
+      label: 'Email',
+      required: true,
+    }),
+    FormFieldClass.content('emailVerificationStatus', {
+      content: (
+        <>
+          {primaryEmail && !user.emailValidated && (
+            <div className="-mt-2 mb-4">
+              <p className="text-sm text-amber-600 dark:text-amber-400">
+                <span aria-hidden="true">⚠️</span> Email not verified
+              </p>
+              <button
+                type="button"
+                onClick={async () => {
+                  try {
+                    await resendVerificationEmail({
+                      variables: { email: primaryEmail.email }
+                    })
+                    setVerificationMessage('Verification email sent! Please check your inbox.')
+                    setTimeout(() => setVerificationMessage(null), 5000)
+                  } catch (error) {
+                    setVerificationMessage('Failed to send verification email. Please try again.')
+                    setTimeout(() => setVerificationMessage(null), 5000)
+                  }
+                }}
+                className="text-sm text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 underline mt-1"
+              >
+                Click here to resend verification email
+              </button>
+              {verificationMessage && (
+                <p className="text-sm mt-1 text-zinc-600 dark:text-zinc-400">
+                  {verificationMessage}
+                </p>
+              )}
+            </div>
+          )}
+        </>
+      ),
+    }),
+    FormFieldClass.content('headerPassword', {
+      content: (
+        <div className="border-t border-zinc-200 dark:border-white/10 pt-6">
+          <h2 className="text-lg font-semibold text-zinc-900 dark:text-white mb-2">Change Password</h2>
+          <p className="text-sm text-zinc-600 dark:text-zinc-400">Leave blank to keep your current password</p>
+        </div>
+      ),
+    }),
+    FormFieldClass.password('currentPassword', {
+      label: 'Current Password',
+      required: false,
+    }),
+    FormFieldClass.content('forgotPasswordLink', {
+      content: (
+        <div className="-mt-2 mb-2">
+          <Link
+            to="/forgot-password"
+            className="text-sm text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 underline"
+          >
+            Forgot your current password?
+          </Link>
+        </div>
+      ),
+    }),
+    FormFieldClass.password('newPassword', {
+      label: 'New Password',
+      required: false,
+    }),
+    FormFieldClass.password('confirmPassword', {
+      label: 'Confirm New Password',
+      required: false,
+    }),
+    FormFieldClass.content('buttons', {
+      content: (
+        <div className="flex gap-4 pt-6">
+          <button
+            type="submit"
+            disabled={loading}
+            className="inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-semibold shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 transition-colors bg-emerald-500 text-zinc-950 hover:bg-emerald-400 focus-visible:outline-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {loading ? 'Saving...' : 'Save Changes'}
+          </button>
+          <button
+            type="button"
+            onClick={() => navigate('/members/my-profile')}
+            className="inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-semibold shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 transition-colors bg-white text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 dark:bg-zinc-800 dark:text-zinc-100 dark:ring-zinc-700 dark:hover:bg-zinc-700"
+          >
+            Cancel
+          </button>
+        </div>
+      ),
+    }),
+  ]
+
+  function defaultValues() {
+    return {
+      firstName: user?.firstName || '',
+      lastName: user?.lastName || '',
+      displayName: user?.displayName || '',
+      email: primaryEmail?.email || '',
+      currentPassword: '',
+      newPassword: '',
+      confirmPassword: '',
     }
-    return undefined
   }
 
   async function handleSubmit(values: any) {
-    if (!data?.me?.id) {
-      toast.error('User not found')
-      return
-    }
-
     setLoading(true)
-    setShowMessage(false)
-
-    const cleanedValues = cleanFormInput(values, updateAccountFields)
-
-    if (addressChanges) {
-      setShowMessage(true)
-    }
+    setMessage(null)
 
     try {
-      await updateUser({
-        variables: {
-          userId: data.me.id,
-          input: {
-            ...cleanedValues,
+      // Validate password fields
+      if (values.newPassword || values.currentPassword) {
+        if (!values.currentPassword) {
+          setMessage({ type: 'error', text: 'Current password is required to change your password' })
+          setLoading(false)
+          return
+        }
+        if (!values.newPassword) {
+          setMessage({ type: 'error', text: 'New password is required' })
+          setLoading(false)
+          return
+        }
+        if (values.newPassword !== values.confirmPassword) {
+          setMessage({ type: 'error', text: 'New passwords do not match' })
+          setLoading(false)
+          return
+        }
+        if (values.newPassword.length < 8) {
+          setMessage({ type: 'error', text: 'New password must be at least 8 characters' })
+          setLoading(false)
+          return
+        }
+      }
+
+      let emailChanged = false
+
+      // Validate and sanitize displayName if changed
+      if (values.displayName && values.displayName !== user?.displayName) {
+        const cleanedUsername = values.displayName.toLowerCase().replace(/[^a-z0-9.]/g, '')
+        if (cleanedUsername !== values.displayName) {
+          setMessage({ type: 'error', text: 'Username can only contain lowercase letters, numbers, and periods' })
+          setLoading(false)
+          return
+        }
+        if (cleanedUsername.length < 3) {
+          setMessage({ type: 'error', text: 'Username must be at least 3 characters' })
+          setLoading(false)
+          return
+        }
+      }
+
+      // Update user fields if changed (excluding password)
+      const updates: any = {}
+      if (values.firstName !== user?.firstName) updates.firstName = values.firstName
+      if (values.lastName !== user?.lastName) updates.lastName = values.lastName
+      if (values.displayName && values.displayName !== user?.displayName) {
+        updates.displayName = values.displayName.toLowerCase().replace(/[^a-z0-9.]/g, '')
+      }
+
+      if (Object.keys(updates).length > 0 && user?.id) {
+        await updateUser({
+          variables: {
+            userId: user.id,
+            input: updates,
           },
-        },
-      })
-      // Keep SSR/client in sync
+        })
+      }
+
+      // Handle password change separately with current password verification
+      if (values.newPassword && values.currentPassword) {
+        await changePassword({
+          variables: {
+            input: {
+              currentPassword: values.currentPassword,
+              newPassword: values.newPassword,
+            },
+          },
+        })
+      }
+
+      // Handle email change with verification
+      if (values.email !== primaryEmail?.email) {
+        await changeEmail({
+          variables: {
+            input: {
+              newEmail: values.email,
+            },
+          },
+        })
+        emailChanged = true
+      }
+
       await client.refetchQueries({ include: [MeDocument] })
-      revalidator.revalidate()
-      window.scrollTo(0, 0)
-      toast.success('Account updated')
-      setLoading(false)
-    } catch (err: unknown) {
-      console.error('UpdateUser error:', err)
-      toast.error(`There was an error. Please report this issue.`)
+
+      if (emailChanged) {
+        setMessage({
+          type: 'success',
+          text: 'Profile updated! A verification email has been sent to your new address. Please verify to complete the email change.',
+        })
+      } else {
+        setMessage({ type: 'success', text: 'Profile updated successfully!' })
+        setTimeout(() => {
+          navigate('/members/my-profile')
+        }, 1500)
+      }
+    } catch (error: any) {
+      console.error('Profile update error:', error)
+      // Handle specific error cases
+      if (error.message?.includes('Template email send failed')) {
+        setMessage({
+          type: 'error',
+          text: 'Email service is not configured. Profile updates saved but verification email could not be sent.'
+        })
+      } else if (error.message?.includes('Template') && error.message?.includes('not found')) {
+        setMessage({
+          type: 'error',
+          text: 'Email templates are not properly configured. Please contact support.'
+        })
+      } else if (error.message?.includes('Unique constraint') || error.message?.includes('displayName')) {
+        setMessage({ type: 'error', text: 'This username is already taken. Please choose another.' })
+      } else {
+        setMessage({ type: 'error', text: error.message || 'Failed to update profile' })
+      }
+    } finally {
       setLoading(false)
     }
   }
 
-  return loading ? (
-    <WebUiLoading />
-  ) : (
-    <WebUiContainer>
-      {/* Email change notice */}
-      {!isEquivalent(data?.me?.email, currentEmail) && currentEmail && (
-        <div className="rounded-md bg-blue-50 p-4 my-4">
-          <div className="flex">
-            <div className="flex-shrink-0">
-              <ExclamationTriangleIcon className="h-5 w-5 text-blue-400" aria-hidden="true" />
-            </div>
-            <div className="ml-3">
-              <p className={'text-sm font-bold text-sky-700'}>
-                Please remember that changing your email will also change your login credentials
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
+  return (
+    <div className="flex-1 bg-gradient-to-b from-zinc-50 to-zinc-100 dark:from-zinc-900 dark:to-zinc-950">
+      <div className="mx-auto max-w-2xl px-4 py-12 sm:px-6 lg:px-8">
+        <div className="rounded-xl border border-zinc-200 dark:border-white/10 bg-white dark:bg-white/5 p-8 backdrop-blur">
+          <h1 className="text-2xl font-bold text-zinc-900 dark:text-white mb-6">Edit Profile</h1>
 
-      {/* Address change notice */}
-      {showMessage && (
-        <div className="rounded-md bg-yellow-50 p-4 my-4">
-          <div className="flex">
-            <div className="flex-shrink-0">
-              <ExclamationTriangleIcon className="h-5 w-5 text-yellow-400" aria-hidden="true" />
+          {message && (
+            <div
+              className={`mb-6 rounded-lg p-4 ${
+                message.type === 'success'
+                  ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/20'
+                  : 'bg-rose-50 dark:bg-rose-500/10 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-500/20'
+              }`}
+            >
+              {message.text}
             </div>
-            <div className="ml-3">
-              <h3 className="text-sm font-medium text-yellow-800">
-                Your changes have been updated!
-              </h3>
-              <div className="mt-2 text-sm text-yellow-700">
-                <p className={'text-sm'}>
-                  <strong>Please note:</strong> If this update is due to a new company
-                  representative attending chapter meetings, the attending member's name changed, or
-                  the company's name changed, a member update form is required. A member of the Biz
-                  A-Team will email the form to the address in your member profile via Adobe Sign
-                  within the next 1 - 2 business days. This form must be completed to update the
-                  additional legal information for your membership including; member name, company
-                  name and industry.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+          )}
 
-      <Form
-        theme={bizTheme}
-        id="edit-profile-form"
-        fields={updateAccountFields}
-        submit={handleSubmit}
-        defaultValues={defaultValues()}
-        key={data?.me?.id ?? 'loading'}
-      />
-    </WebUiContainer>
+          <Form
+            theme={formTheme}
+            id="edit-profile-form"
+            fields={editProfileFields}
+            submit={handleSubmit}
+            defaultValues={defaultValues()}
+            key={user.id}
+          />
+        </div>
+      </div>
+    </div>
   )
 }

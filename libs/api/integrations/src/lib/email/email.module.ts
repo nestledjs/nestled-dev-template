@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common'
 import { EmailService } from './email.service'
 import { ConfigModule } from '@nestled-template/api/config'
-import { HandlebarsTemplateManager } from './template-manager'
+import { SimpleTemplateManager } from './template-manager-simple'
 
 @Module({
   imports: [ConfigModule],
-  providers: [EmailService, HandlebarsTemplateManager],
-  exports: [EmailService, HandlebarsTemplateManager],
+  providers: [EmailService, SimpleTemplateManager],
+  exports: [EmailService, SimpleTemplateManager],
 })
 export class EmailModule {}

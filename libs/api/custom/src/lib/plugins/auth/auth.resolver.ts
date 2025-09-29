@@ -14,7 +14,7 @@ import { GraphQLResolveInfo } from 'graphql/type'
 import { CtxUser, GqlAuthGuard, NestContextType } from '@nestled-template/api/utils'
 import { UserToken } from './models'
 import { User } from '@nestled-template/api/core/models'
-import { EmulateUserInput, ForgotPasswordInput, LoginInput, RegisterInput, ResetPasswordInput, VerifyEmailInput } from './dto'
+import { ChangeEmailInput, ChangePasswordInput, EmulateUserInput, ForgotPasswordInput, LoginInput, RegisterInput, ResetPasswordInput, VerifyEmailInput } from './dto'
 
 
 @Resolver(() => UserToken)
@@ -45,7 +45,7 @@ export class AuthResolver {
 
     console.log('[Login] Set JWT cookie for user:', {
       userId: userToken.user?.id,
-      userRole: userToken.user?.role,
+      isSuperAdmin: userToken.user?.isSuperAdmin,
       tokenLength: userToken.token?.length
     })
 
@@ -100,6 +100,23 @@ export class AuthResolver {
     }
     this.service.setCookie(context.res, userToken?.token)
     return userToken
+  }
+
+  @Mutation(() => Boolean)
+  @UseGuards(GqlAuthGuard)
+  async changeEmail(@CtxUser() user: User, @Args('input') input: ChangeEmailInput): Promise<boolean> {
+    return this.service.changeEmail(user.id, input.newEmail)
+  }
+
+  @Mutation(() => User)
+  async verifyEmailChange(@Args('token') token: string): Promise<User> {
+    return this.service.verifyEmailChange(token)
+  }
+
+  @Mutation(() => Boolean)
+  @UseGuards(GqlAuthGuard)
+  async changePassword(@CtxUser() user: User, @Args('input') input: ChangePasswordInput): Promise<boolean> {
+    return this.service.changePassword(user.id, input)
   }
 
   @ResolveField('user')
