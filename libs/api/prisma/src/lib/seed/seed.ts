@@ -1,10 +1,13 @@
 import { PrismaClient } from '../prisma-generated'
 import { countries } from './seed-data/iso-3166-countries'
 import { seedUsers } from './seed-data/seed-users'
+import { defaultPermissions, defaultRoles } from './seed-data/seed-roles-permissions'
 import { hashSync } from 'bcryptjs'
 
 const prisma = new PrismaClient()
 async function main() {
+  // Seed countries
+  console.log('Seeding countries...')
   for (const country of countries) {
     await prisma.country.upsert({
       where: { alpha2: country['alpha-2'] },
@@ -24,6 +27,24 @@ async function main() {
       },
     })
   }
+  console.log('✓ Countries seeded')
+
+  // Seed global permissions (no organizationId = available to all organizations)
+  console.log('Seeding permissions...')
+  for (const permission of defaultPermissions) {
+    await prisma.permission.upsert({
+      where: { action_subject: { action: permission.action, subject: permission.subject } },
+      update: {},
+      create: permission,
+    })
+  }
+  console.log(`✓ ${defaultPermissions.length} permissions seeded`)
+
+  // Note: Roles are organization-specific and will be created when organizations are created
+  // See the auth service register function for automatic role creation
+
+  // Seed users (without role field - using isSuperAdmin instead)
+  console.log('Seeding users...')
   for (const user of seedUsers) {
     try {
       await prisma.user.upsert({
@@ -40,19 +61,22 @@ async function main() {
             },
           },
           password: hashSync(user.password, 10),
-          role: user.role,
+          isSuperAdmin: user.email === 'admin@example.com', // Make default admin a super admin
         },
       })
-      console.log(`User ${user.displayName} seeded.`)
+      console.log(`✓ User ${user.displayName} seeded`)
     } catch (e) {
       if ((e as any).code === 'P2002' && (e as any).meta?.target?.includes('displayName')) {
-        console.log(`User with displayName \"${user.displayName}\" already exists. Skipping.`)
+        console.log(`  User with displayName \"${user.displayName}\" already exists. Skipping.`)
       } else {
         throw e
       }
     }
   }
 }
+
+// Export for use in other modules
+export { defaultRoles, defaultPermissions }
 main()
   .then(async () => {
     await prisma.$disconnect()

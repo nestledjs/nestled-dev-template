@@ -2,7 +2,7 @@ import { Logger } from '@nestjs/common'
 import { createTransport, Transporter } from 'nodemailer'
 import { ConfigService } from '@nestled-template/api/config'
 import { EmailOptions, EmailProvider, EmailResult, EmailTemplate, TemplateManager } from '../email.interface'
-import { HandlebarsTemplateManager } from '../template-manager'
+import { SimpleTemplateManager } from '../template-manager-simple'
 
 export class SmtpEmailProvider implements EmailProvider {
   private readonly logger = new Logger(SmtpEmailProvider.name)
@@ -10,7 +10,7 @@ export class SmtpEmailProvider implements EmailProvider {
   private readonly templateManager: TemplateManager
 
   constructor(private readonly config: ConfigService) {
-    this.templateManager = new HandlebarsTemplateManager()
+    this.templateManager = new SimpleTemplateManager()
     this.transporter = createTransport({
       host: this.config.mailerConfig.host,
       port: parseInt(this.config.mailerConfig.port.toString()),

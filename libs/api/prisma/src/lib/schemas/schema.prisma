@@ -302,7 +302,7 @@ model User {
   updatedAt                 DateTime             @updatedAt
   firstName                 String?
   lastName                  String?
-  role                      UserRole
+  isSuperAdmin              Boolean              @default(false)
   bio                       String?
   displayName               String?              @unique
   password                  String?
@@ -439,11 +439,4 @@ enum TwoFactorMethod {
   AUTHENTICATOR
   SMS
   EMAIL
-}
-
-enum UserRole {
-  DEVELOPER
-  SUPER_ADMIN
-  ADMIN
-  USER
 }

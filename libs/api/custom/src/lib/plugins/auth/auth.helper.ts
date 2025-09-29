@@ -32,3 +32,21 @@ export function generateExpireDate(days = 1) {
 export function randomId(length = 8): string {
   return new Date().getTime().toString().substr(0, length)
 }
+
+/**
+ * Generate a username slug from first and last name
+ * Format: firstname.lastname (lowercase, alphanumeric only)
+ */
+export function generateUsernameSlug(firstName: string, lastName: string): string {
+  const cleanFirst = firstName.toLowerCase().replace(/[^a-z0-9]/g, '')
+  const cleanLast = lastName.toLowerCase().replace(/[^a-z0-9]/g, '')
+  return `${cleanFirst}.${cleanLast}`
+}
+
+/**
+ * Generate a unique username with a random suffix
+ */
+export function generateUsernameWithSuffix(baseUsername: string): string {
+  const randomSuffix = Math.floor(Math.random() * 9999) + 1
+  return `${baseUsername}${randomSuffix}`
+}

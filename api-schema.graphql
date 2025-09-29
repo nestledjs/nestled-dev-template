@@ -55,6 +55,15 @@ type AuditLog {
   userId: String!
 }
 
+input ChangeEmailInput {
+  newEmail: String!
+}
+
+input ChangePasswordInput {
+  currentPassword: String!
+  newPassword: String!
+}
+
 type CorePaging {
   count: Float
   filteredTotal: Float
@@ -354,6 +363,7 @@ input CreateUserInput {
   imagesIds: [String!]
   invitesSentIds: [String!]
   isActive: Boolean
+  isSuperAdmin: Boolean!
   lastFailedLogin: DateTime
   lastName: String
   lastSuccessfulLogin: DateTime
@@ -367,7 +377,6 @@ input CreateUserInput {
   passwordResetToken: String
   phoneNumbersIds: [String!]
   privacyPolicyAcceptedAt: DateTime
-  role: UserRole!
   termsAcceptedAt: DateTime
   twoFactorEnabled: Boolean
   twoFactorMethod: TwoFactorMethod
@@ -909,6 +918,7 @@ input ListUserInput {
   imagesIds: [String!]
   invitesSentIds: [String!]
   isActive: Boolean
+  isSuperAdmin: Boolean
   lastFailedLogin: DateTime
   lastName: String
   lastSuccessfulLogin: DateTime
@@ -924,7 +934,6 @@ input ListUserInput {
   passwordResetToken: String
   phoneNumbersIds: [String!]
   privacyPolicyAcceptedAt: DateTime
-  role: UserRole
   search: String
   searchFields: [String!]
   skip: Float = 0
@@ -995,6 +1004,8 @@ input LoginInput {
 }
 
 type Mutation {
+  changeEmail(input: ChangeEmailInput!): Boolean!
+  changePassword(input: ChangePasswordInput!): Boolean!
   createAddress(input: CreateAddressInput!): Address
   createApiToken(input: CreateApiTokenInput!): ApiToken
   createAuditLog(input: CreateAuditLogInput!): AuditLog
@@ -1072,6 +1083,7 @@ type Mutation {
   updateUserPreference(input: UpdateUserPreferenceInput!, userPreferenceId: String!): UserPreference
   updateUserSession(input: UpdateUserSessionInput!, userSessionId: String!): UserSession
   verifyEmail(input: VerifyEmailInput!): User!
+  verifyEmailChange(token: String!): User!
 }
 
 type OAuthAccount {
@@ -1602,6 +1614,7 @@ input UpdateUserInput {
   imagesIds: [String!]
   invitesSentIds: [String!]
   isActive: Boolean
+  isSuperAdmin: Boolean
   lastFailedLogin: DateTime
   lastName: String
   lastSuccessfulLogin: DateTime
@@ -1615,7 +1628,6 @@ input UpdateUserInput {
   passwordResetToken: String
   phoneNumbersIds: [String!]
   privacyPolicyAcceptedAt: DateTime
-  role: UserRole
   termsAcceptedAt: DateTime
   twoFactorEnabled: Boolean
   twoFactorMethod: TwoFactorMethod
@@ -1690,6 +1702,7 @@ type User {
   images: [Upload!]
   invitesSent: [Invite!]
   isActive: Boolean!
+  isSuperAdmin: Boolean!
   lastFailedLogin: DateTime
   lastName: String
   lastSuccessfulLogin: DateTime
@@ -1703,7 +1716,6 @@ type User {
   passwordResetToken: String
   phoneNumbers: [PhoneNumber!]
   privacyPolicyAcceptedAt: DateTime
-  role: UserRole!
   termsAcceptedAt: DateTime
   twoFactorEnabled: Boolean!
   twoFactorMethod: TwoFactorMethod!
@@ -1722,13 +1734,6 @@ type UserPreference {
   user: User
   userId: String!
   value: String!
-}
-
-enum UserRole {
-  ADMIN
-  DEVELOPER
-  SUPER_ADMIN
-  USER
 }
 
 type UserSession {

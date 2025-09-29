@@ -17,7 +17,7 @@ export default function PublicLayout() {
   const { user } = useGlobalCtx()
   const isAuthenticated = !!user || !!loaderData?.isAuthenticated
   return (
-    <>
+    <div className="flex flex-col min-h-screen">
       <WebUiHeader
         logo={'/logo.png'}
         icon={'/icon.png'}
@@ -30,8 +30,10 @@ export default function PublicLayout() {
         ]}
         isAuthenticated={isAuthenticated}
       />
-      <Outlet />
+      <main className="flex-1 flex flex-col">
+        <Outlet />
+      </main>
       <WebUiFooter />
-    </>
+    </div>
   )
 }

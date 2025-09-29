@@ -8,7 +8,10 @@ export default [
       index('./routes/public/_index.tsx'),
       // route('about', './routes/public/about.tsx'),
       route('login', './routes/public/login.tsx'),
+      route('register', './routes/public/register.tsx'),
       route('forgot-password', './routes/public/forgot-password.tsx'),
+      route('reset-password', './routes/public/reset-password.tsx'),
+      route('verify-email', './routes/public/verify-email.tsx'),
       // route('blog', './routes/public/blog.tsx'),
       // route('contact', './routes/public/contact.tsx'),
       // route('privacy-policy', './routes/public/privacy-policy.tsx'),
@@ -50,6 +53,8 @@ export default [
 
     // Members area - separated out since _auth_layout.tsx doesn't exist
     route('members', './routes/members/_layout.tsx', [
+      index('./routes/members/_index.tsx'),
+      route('dashboard', './routes/members/dashboard.tsx'),
       route('my-profile', './routes/members/my-profile/_layout.tsx', [
         index('./routes/members/my-profile/_index.tsx'),
         route('edit', './routes/members/my-profile/edit.tsx'),

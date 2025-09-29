@@ -4,7 +4,7 @@ fragment AdminUserList on User {
   updatedAt
   firstName
   lastName
-  role
+  isSuperAdmin
   bio
   displayName
   password

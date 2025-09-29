@@ -1,9 +1,9 @@
 // Generated from Prisma schema
 
 import { registerEnumType } from '@nestjs/graphql';
-import { AddressType, EmailType, FailureReason, ImageType, InviteStatus, PhoneType, SecurityEventType, SubscriptionStatus, TwoFactorMethod, UserRole } from '@nestled-template/api/prisma';
+import { AddressType, EmailType, FailureReason, ImageType, InviteStatus, PhoneType, SecurityEventType, SubscriptionStatus, TwoFactorMethod } from '@nestled-template/api/prisma';
 
-export { AddressType, EmailType, FailureReason, ImageType, InviteStatus, PhoneType, SecurityEventType, SubscriptionStatus, TwoFactorMethod, UserRole };
+export { AddressType, EmailType, FailureReason, ImageType, InviteStatus, PhoneType, SecurityEventType, SubscriptionStatus, TwoFactorMethod };
 
 registerEnumType(AddressType, { name: 'AddressType' });
 
@@ -22,6 +22,4 @@ registerEnumType(SecurityEventType, { name: 'SecurityEventType' });
 registerEnumType(SubscriptionStatus, { name: 'SubscriptionStatus' });
 
 registerEnumType(TwoFactorMethod, { name: 'TwoFactorMethod' });
-
-registerEnumType(UserRole, { name: 'UserRole' });
 

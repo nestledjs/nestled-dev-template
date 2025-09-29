@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Link, LoaderFunctionArgs, redirect, useLoaderData, useNavigate } from 'react-router'
 import { Form, FormFieldClass } from '@nestledjs/forms'
-import { WebUiContainer } from '@nestled-template/web-ui'
+import { AuthLayout } from '@nestled-template/web'
 import { getCookie, getJsonCookie } from '@nestled-template/shared/utils'
 import { LoginInput, useLoginMutation } from '@nestled-template/shared/sdk'
 import { formTheme } from '@nestled-template/shared/styles'
@@ -11,7 +11,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   if (token) {
     throw redirect('/members/dashboard')
   }
-  const isRemembered = getJsonCookie<{ email: string }>(request.headers, '_biz_remember')
+  const isRemembered = getJsonCookie<{ email: string }>(request.headers, '_nestled_remember')
   return isRemembered ?? {}
 }
 
@@ -19,7 +19,7 @@ export const ForgotPasswordWrapper = (children: React.ReactNode) => (
   <div key={'remember'} className="flex items-center justify-between">
     {children}
     <div className="text-sm">
-      <Link to="/forgot-password" className="font-medium text-orange-600 hover:text-orange-500">
+      <Link to="/forgot-password" className="font-medium text-emerald-400 hover:text-emerald-300">
         Forgot your password?
       </Link>
     </div>
@@ -66,28 +66,21 @@ export default function Login() {
   ]
 
   return (
-    <WebUiContainer>
-      <div className="flex mt-16 ">
-        <div className="bg-white rounded shadow-lg p-8 w-full max-w-md mx-auto">
-          <h1 className="serif text-3xl text-center mb-2">Biz Member Center</h1>
-          <p className="text-center text-zinc-600 mb-8">Sign In to Your Account</p>
-          <p className="mt-2 text-center text-sm text-zinc-600 mb-6">
-            Not a Member?{'    '}
-            <Link
-              to="/directory/chapters"
-              className="font-medium text-orange-600 hover:text-orange-500"
-            >
-              Find a Chapter
-            </Link>
-          </p>
-          {formError && (
-            <div className="mb-4 text-center text-orange-700 bg-orange-100 border border-orange-300 rounded p-2">
-              {formError}
-            </div>
-          )}
-          <Form id="login-form" theme={formTheme} fields={fields} submit={processLogin} />
-        </div>
+    <AuthLayout title="Welcome Back" subtitle="Sign in to your account">
+      <div className="space-y-6">
+        <p className="text-center text-sm text-zinc-400">
+          Don't have an account?{' '}
+          <Link to="/register" className="font-semibold text-emerald-400 hover:text-emerald-300">
+            Sign up
+          </Link>
+        </p>
+        {formError && (
+          <div className="text-center text-rose-300 bg-rose-500/10 border border-rose-500/20 rounded-lg p-3 text-sm">
+            {formError}
+          </div>
+        )}
+        <Form id="login-form" theme={formTheme} fields={fields} submit={processLogin} />
       </div>
-    </WebUiContainer>
+    </AuthLayout>
   )
 }

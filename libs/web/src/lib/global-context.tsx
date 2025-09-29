@@ -12,7 +12,6 @@ const GlobalContext = React.createContext<GlobalProviderContextValue | undefined
 
 export function useGlobalCtx() {
   const context = React.useContext(GlobalContext)
-  console.debug('[global-context.tsx useGlobalCtx] context', context)
   if (!context) {
     throw new Error('useGlobalCtx must be used within a GlobalContextProvider')
   }
@@ -28,8 +27,6 @@ export function GlobalContextProvider({
   children,
   user = null,
 }: Readonly<GlobalContextProviderProps>) {
-  console.debug('[global-context.tsx GlobalContextProvider] user', user)
   const value = React.useMemo(() => ({ user }), [user])
-  console.debug('[global-context.tsx GlobalContextProvider] value', value)
   return <GlobalContext.Provider value={value}>{children}</GlobalContext.Provider>
 }

@@ -355,7 +355,7 @@ exports.Prisma.UserScalarFieldEnum = {
   updatedAt: 'updatedAt',
   firstName: 'firstName',
   lastName: 'lastName',
-  role: 'role',
+  isSuperAdmin: 'isSuperAdmin',
   bio: 'bio',
   displayName: 'displayName',
   password: 'password',
@@ -489,13 +489,6 @@ exports.ImageType = exports.$Enums.ImageType = {
   AVATAR: 'AVATAR',
   BACKGROUND: 'BACKGROUND',
   OTHER: 'OTHER'
-};
-
-exports.UserRole = exports.$Enums.UserRole = {
-  DEVELOPER: 'DEVELOPER',
-  SUPER_ADMIN: 'SUPER_ADMIN',
-  ADMIN: 'ADMIN',
-  USER: 'USER'
 };
 
 exports.TwoFactorMethod = exports.$Enums.TwoFactorMethod = {

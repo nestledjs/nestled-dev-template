@@ -232,16 +232,6 @@ export const TwoFactorMethod: {
 
 export type TwoFactorMethod = (typeof TwoFactorMethod)[keyof typeof TwoFactorMethod]
 
-
-export const UserRole: {
-  DEVELOPER: 'DEVELOPER',
-  SUPER_ADMIN: 'SUPER_ADMIN',
-  ADMIN: 'ADMIN',
-  USER: 'USER'
-};
-
-export type UserRole = (typeof UserRole)[keyof typeof UserRole]
-
 }
 
 export type AddressType = $Enums.AddressType
@@ -279,10 +269,6 @@ export const SubscriptionStatus: typeof $Enums.SubscriptionStatus
 export type TwoFactorMethod = $Enums.TwoFactorMethod
 
 export const TwoFactorMethod: typeof $Enums.TwoFactorMethod
-
-export type UserRole = $Enums.UserRole
-
-export const UserRole: typeof $Enums.UserRole
 
 /**
  * ##  Prisma Client ʲˢ
@@ -26474,7 +26460,7 @@ export namespace Prisma {
     updatedAt: Date | null
     firstName: string | null
     lastName: string | null
-    role: $Enums.UserRole | null
+    isSuperAdmin: boolean | null
     bio: string | null
     displayName: string | null
     password: string | null
@@ -26503,7 +26489,7 @@ export namespace Prisma {
     updatedAt: Date | null
     firstName: string | null
     lastName: string | null
-    role: $Enums.UserRole | null
+    isSuperAdmin: boolean | null
     bio: string | null
     displayName: string | null
     password: string | null
@@ -26532,7 +26518,7 @@ export namespace Prisma {
     updatedAt: number
     firstName: number
     lastName: number
-    role: number
+    isSuperAdmin: number
     bio: number
     displayName: number
     password: number
@@ -26572,7 +26558,7 @@ export namespace Prisma {
     updatedAt?: true
     firstName?: true
     lastName?: true
-    role?: true
+    isSuperAdmin?: true
     bio?: true
     displayName?: true
     password?: true
@@ -26601,7 +26587,7 @@ export namespace Prisma {
     updatedAt?: true
     firstName?: true
     lastName?: true
-    role?: true
+    isSuperAdmin?: true
     bio?: true
     displayName?: true
     password?: true
@@ -26630,7 +26616,7 @@ export namespace Prisma {
     updatedAt?: true
     firstName?: true
     lastName?: true
-    role?: true
+    isSuperAdmin?: true
     bio?: true
     displayName?: true
     password?: true
@@ -26747,7 +26733,7 @@ export namespace Prisma {
     updatedAt: Date
     firstName: string | null
     lastName: string | null
-    role: $Enums.UserRole
+    isSuperAdmin: boolean
     bio: string | null
     displayName: string | null
     password: string | null
@@ -26796,7 +26782,7 @@ export namespace Prisma {
     updatedAt?: boolean
     firstName?: boolean
     lastName?: boolean
-    role?: boolean
+    isSuperAdmin?: boolean
     bio?: boolean
     displayName?: boolean
     password?: boolean
@@ -26842,7 +26828,7 @@ export namespace Prisma {
     updatedAt?: boolean
     firstName?: boolean
     lastName?: boolean
-    role?: boolean
+    isSuperAdmin?: boolean
     bio?: boolean
     displayName?: boolean
     password?: boolean
@@ -26872,7 +26858,7 @@ export namespace Prisma {
     updatedAt?: boolean
     firstName?: boolean
     lastName?: boolean
-    role?: boolean
+    isSuperAdmin?: boolean
     bio?: boolean
     displayName?: boolean
     password?: boolean
@@ -26902,7 +26888,7 @@ export namespace Prisma {
     updatedAt?: boolean
     firstName?: boolean
     lastName?: boolean
-    role?: boolean
+    isSuperAdmin?: boolean
     bio?: boolean
     displayName?: boolean
     password?: boolean
@@ -26926,7 +26912,7 @@ export namespace Prisma {
     privacyPolicyAcceptedAt?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "createdAt" | "updatedAt" | "firstName" | "lastName" | "role" | "bio" | "displayName" | "password" | "passwordResetToken" | "passwordResetExpires" | "emailValidated" | "validateEmailToken" | "validateEmailTokenExpires" | "activeOrganizationId" | "twoFactorEnabled" | "twoFactorSecret" | "twoFactorRecoveryCodes" | "twoFactorMethod" | "lastSuccessfulLogin" | "lastFailedLogin" | "failedLoginCount" | "lockedUntil" | "isActive" | "deactivatedAt" | "termsAcceptedAt" | "privacyPolicyAcceptedAt", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "createdAt" | "updatedAt" | "firstName" | "lastName" | "isSuperAdmin" | "bio" | "displayName" | "password" | "passwordResetToken" | "passwordResetExpires" | "emailValidated" | "validateEmailToken" | "validateEmailTokenExpires" | "activeOrganizationId" | "twoFactorEnabled" | "twoFactorSecret" | "twoFactorRecoveryCodes" | "twoFactorMethod" | "lastSuccessfulLogin" | "lastFailedLogin" | "failedLoginCount" | "lockedUntil" | "isActive" | "deactivatedAt" | "termsAcceptedAt" | "privacyPolicyAcceptedAt", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     emails?: boolean | User$emailsArgs<ExtArgs>
     links?: boolean | User$linksArgs<ExtArgs>
@@ -26973,7 +26959,7 @@ export namespace Prisma {
       updatedAt: Date
       firstName: string | null
       lastName: string | null
-      role: $Enums.UserRole
+      isSuperAdmin: boolean
       bio: string | null
       displayName: string | null
       password: string | null
@@ -27438,7 +27424,7 @@ export namespace Prisma {
     readonly updatedAt: FieldRef<"User", 'DateTime'>
     readonly firstName: FieldRef<"User", 'String'>
     readonly lastName: FieldRef<"User", 'String'>
-    readonly role: FieldRef<"User", 'UserRole'>
+    readonly isSuperAdmin: FieldRef<"User", 'Boolean'>
     readonly bio: FieldRef<"User", 'String'>
     readonly displayName: FieldRef<"User", 'String'>
     readonly password: FieldRef<"User", 'String'>
@@ -30716,7 +30702,7 @@ export namespace Prisma {
     updatedAt: 'updatedAt',
     firstName: 'firstName',
     lastName: 'lastName',
-    role: 'role',
+    isSuperAdmin: 'isSuperAdmin',
     bio: 'bio',
     displayName: 'displayName',
     password: 'password',
@@ -31002,20 +30988,6 @@ export namespace Prisma {
    * Reference to a field of type 'Int[]'
    */
   export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
-    
-
-
-  /**
-   * Reference to a field of type 'UserRole'
-   */
-  export type EnumUserRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'UserRole'>
-    
-
-
-  /**
-   * Reference to a field of type 'UserRole[]'
-   */
-  export type ListEnumUserRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'UserRole[]'>
     
 
 
@@ -32598,7 +32570,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"User"> | Date | string
     firstName?: StringNullableFilter<"User"> | string | null
     lastName?: StringNullableFilter<"User"> | string | null
-    role?: EnumUserRoleFilter<"User"> | $Enums.UserRole
+    isSuperAdmin?: BoolFilter<"User"> | boolean
     bio?: StringNullableFilter<"User"> | string | null
     displayName?: StringNullableFilter<"User"> | string | null
     password?: StringNullableFilter<"User"> | string | null
@@ -32643,7 +32615,7 @@ export namespace Prisma {
     updatedAt?: SortOrder
     firstName?: SortOrderInput | SortOrder
     lastName?: SortOrderInput | SortOrder
-    role?: SortOrder
+    isSuperAdmin?: SortOrder
     bio?: SortOrderInput | SortOrder
     displayName?: SortOrderInput | SortOrder
     password?: SortOrderInput | SortOrder
@@ -32693,7 +32665,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"User"> | Date | string
     firstName?: StringNullableFilter<"User"> | string | null
     lastName?: StringNullableFilter<"User"> | string | null
-    role?: EnumUserRoleFilter<"User"> | $Enums.UserRole
+    isSuperAdmin?: BoolFilter<"User"> | boolean
     bio?: StringNullableFilter<"User"> | string | null
     password?: StringNullableFilter<"User"> | string | null
     passwordResetToken?: StringNullableFilter<"User"> | string | null
@@ -32736,7 +32708,7 @@ export namespace Prisma {
     updatedAt?: SortOrder
     firstName?: SortOrderInput | SortOrder
     lastName?: SortOrderInput | SortOrder
-    role?: SortOrder
+    isSuperAdmin?: SortOrder
     bio?: SortOrderInput | SortOrder
     displayName?: SortOrderInput | SortOrder
     password?: SortOrderInput | SortOrder
@@ -32774,7 +32746,7 @@ export namespace Prisma {
     updatedAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
     firstName?: StringNullableWithAggregatesFilter<"User"> | string | null
     lastName?: StringNullableWithAggregatesFilter<"User"> | string | null
-    role?: EnumUserRoleWithAggregatesFilter<"User"> | $Enums.UserRole
+    isSuperAdmin?: BoolWithAggregatesFilter<"User"> | boolean
     bio?: StringNullableWithAggregatesFilter<"User"> | string | null
     displayName?: StringNullableWithAggregatesFilter<"User"> | string | null
     password?: StringNullableWithAggregatesFilter<"User"> | string | null
@@ -34589,7 +34561,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     firstName?: string | null
     lastName?: string | null
-    role: $Enums.UserRole
+    isSuperAdmin?: boolean
     bio?: string | null
     displayName?: string | null
     password?: string | null
@@ -34634,7 +34606,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     firstName?: string | null
     lastName?: string | null
-    role: $Enums.UserRole
+    isSuperAdmin?: boolean
     bio?: string | null
     displayName?: string | null
     password?: string | null
@@ -34679,7 +34651,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     firstName?: NullableStringFieldUpdateOperationsInput | string | null
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    isSuperAdmin?: BoolFieldUpdateOperationsInput | boolean
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
@@ -34724,7 +34696,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     firstName?: NullableStringFieldUpdateOperationsInput | string | null
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    isSuperAdmin?: BoolFieldUpdateOperationsInput | boolean
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
@@ -34769,7 +34741,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     firstName?: string | null
     lastName?: string | null
-    role: $Enums.UserRole
+    isSuperAdmin?: boolean
     bio?: string | null
     displayName?: string | null
     password?: string | null
@@ -34799,7 +34771,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     firstName?: NullableStringFieldUpdateOperationsInput | string | null
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    isSuperAdmin?: BoolFieldUpdateOperationsInput | boolean
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
@@ -34829,7 +34801,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     firstName?: NullableStringFieldUpdateOperationsInput | string | null
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    isSuperAdmin?: BoolFieldUpdateOperationsInput | boolean
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
@@ -36267,13 +36239,6 @@ export namespace Prisma {
     _max?: NestedIntNullableFilter<$PrismaModel>
   }
 
-  export type EnumUserRoleFilter<$PrismaModel = never> = {
-    equals?: $Enums.UserRole | EnumUserRoleFieldRefInput<$PrismaModel>
-    in?: $Enums.UserRole[] | ListEnumUserRoleFieldRefInput<$PrismaModel>
-    notIn?: $Enums.UserRole[] | ListEnumUserRoleFieldRefInput<$PrismaModel>
-    not?: NestedEnumUserRoleFilter<$PrismaModel> | $Enums.UserRole
-  }
-
   export type StringNullableListFilter<$PrismaModel = never> = {
     equals?: string[] | ListStringFieldRefInput<$PrismaModel> | null
     has?: string | StringFieldRefInput<$PrismaModel> | null
@@ -36366,7 +36331,7 @@ export namespace Prisma {
     updatedAt?: SortOrder
     firstName?: SortOrder
     lastName?: SortOrder
-    role?: SortOrder
+    isSuperAdmin?: SortOrder
     bio?: SortOrder
     displayName?: SortOrder
     password?: SortOrder
@@ -36400,7 +36365,7 @@ export namespace Prisma {
     updatedAt?: SortOrder
     firstName?: SortOrder
     lastName?: SortOrder
-    role?: SortOrder
+    isSuperAdmin?: SortOrder
     bio?: SortOrder
     displayName?: SortOrder
     password?: SortOrder
@@ -36429,7 +36394,7 @@ export namespace Prisma {
     updatedAt?: SortOrder
     firstName?: SortOrder
     lastName?: SortOrder
-    role?: SortOrder
+    isSuperAdmin?: SortOrder
     bio?: SortOrder
     displayName?: SortOrder
     password?: SortOrder
@@ -36454,16 +36419,6 @@ export namespace Prisma {
 
   export type UserSumOrderByAggregateInput = {
     failedLoginCount?: SortOrder
-  }
-
-  export type EnumUserRoleWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.UserRole | EnumUserRoleFieldRefInput<$PrismaModel>
-    in?: $Enums.UserRole[] | ListEnumUserRoleFieldRefInput<$PrismaModel>
-    notIn?: $Enums.UserRole[] | ListEnumUserRoleFieldRefInput<$PrismaModel>
-    not?: NestedEnumUserRoleWithAggregatesFilter<$PrismaModel> | $Enums.UserRole
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumUserRoleFilter<$PrismaModel>
-    _max?: NestedEnumUserRoleFilter<$PrismaModel>
   }
 
   export type EnumTwoFactorMethodWithAggregatesFilter<$PrismaModel = never> = {
@@ -38072,10 +38027,6 @@ export namespace Prisma {
     connect?: OAuthAccountWhereUniqueInput | OAuthAccountWhereUniqueInput[]
   }
 
-  export type EnumUserRoleFieldUpdateOperationsInput = {
-    set?: $Enums.UserRole
-  }
-
   export type UserUpdatetwoFactorRecoveryCodesInput = {
     set?: string[]
     push?: string | string[]
@@ -38901,28 +38852,11 @@ export namespace Prisma {
     not?: NestedFloatNullableFilter<$PrismaModel> | number | null
   }
 
-  export type NestedEnumUserRoleFilter<$PrismaModel = never> = {
-    equals?: $Enums.UserRole | EnumUserRoleFieldRefInput<$PrismaModel>
-    in?: $Enums.UserRole[] | ListEnumUserRoleFieldRefInput<$PrismaModel>
-    notIn?: $Enums.UserRole[] | ListEnumUserRoleFieldRefInput<$PrismaModel>
-    not?: NestedEnumUserRoleFilter<$PrismaModel> | $Enums.UserRole
-  }
-
   export type NestedEnumTwoFactorMethodFilter<$PrismaModel = never> = {
     equals?: $Enums.TwoFactorMethod | EnumTwoFactorMethodFieldRefInput<$PrismaModel>
     in?: $Enums.TwoFactorMethod[] | ListEnumTwoFactorMethodFieldRefInput<$PrismaModel>
     notIn?: $Enums.TwoFactorMethod[] | ListEnumTwoFactorMethodFieldRefInput<$PrismaModel>
     not?: NestedEnumTwoFactorMethodFilter<$PrismaModel> | $Enums.TwoFactorMethod
-  }
-
-  export type NestedEnumUserRoleWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.UserRole | EnumUserRoleFieldRefInput<$PrismaModel>
-    in?: $Enums.UserRole[] | ListEnumUserRoleFieldRefInput<$PrismaModel>
-    notIn?: $Enums.UserRole[] | ListEnumUserRoleFieldRefInput<$PrismaModel>
-    not?: NestedEnumUserRoleWithAggregatesFilter<$PrismaModel> | $Enums.UserRole
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumUserRoleFilter<$PrismaModel>
-    _max?: NestedEnumUserRoleFilter<$PrismaModel>
   }
 
   export type NestedEnumTwoFactorMethodWithAggregatesFilter<$PrismaModel = never> = {
@@ -39007,7 +38941,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     firstName?: string | null
     lastName?: string | null
-    role: $Enums.UserRole
+    isSuperAdmin?: boolean
     bio?: string | null
     displayName?: string | null
     password?: string | null
@@ -39051,7 +38985,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     firstName?: string | null
     lastName?: string | null
-    role: $Enums.UserRole
+    isSuperAdmin?: boolean
     bio?: string | null
     displayName?: string | null
     password?: string | null
@@ -39195,7 +39129,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     firstName?: NullableStringFieldUpdateOperationsInput | string | null
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    isSuperAdmin?: BoolFieldUpdateOperationsInput | boolean
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
@@ -39239,7 +39173,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     firstName?: NullableStringFieldUpdateOperationsInput | string | null
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    isSuperAdmin?: BoolFieldUpdateOperationsInput | boolean
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
@@ -39328,7 +39262,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     firstName?: string | null
     lastName?: string | null
-    role: $Enums.UserRole
+    isSuperAdmin?: boolean
     bio?: string | null
     displayName?: string | null
     password?: string | null
@@ -39372,7 +39306,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     firstName?: string | null
     lastName?: string | null
-    role: $Enums.UserRole
+    isSuperAdmin?: boolean
     bio?: string | null
     displayName?: string | null
     password?: string | null
@@ -39432,7 +39366,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     firstName?: NullableStringFieldUpdateOperationsInput | string | null
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    isSuperAdmin?: BoolFieldUpdateOperationsInput | boolean
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
@@ -39476,7 +39410,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     firstName?: NullableStringFieldUpdateOperationsInput | string | null
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    isSuperAdmin?: BoolFieldUpdateOperationsInput | boolean
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
@@ -39520,7 +39454,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     firstName?: string | null
     lastName?: string | null
-    role: $Enums.UserRole
+    isSuperAdmin?: boolean
     bio?: string | null
     displayName?: string | null
     password?: string | null
@@ -39564,7 +39498,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     firstName?: string | null
     lastName?: string | null
-    role: $Enums.UserRole
+    isSuperAdmin?: boolean
     bio?: string | null
     displayName?: string | null
     password?: string | null
@@ -39663,7 +39597,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     firstName?: NullableStringFieldUpdateOperationsInput | string | null
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    isSuperAdmin?: BoolFieldUpdateOperationsInput | boolean
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
@@ -39707,7 +39641,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     firstName?: NullableStringFieldUpdateOperationsInput | string | null
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    isSuperAdmin?: BoolFieldUpdateOperationsInput | boolean
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
@@ -39871,7 +39805,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     firstName?: string | null
     lastName?: string | null
-    role: $Enums.UserRole
+    isSuperAdmin?: boolean
     bio?: string | null
     displayName?: string | null
     password?: string | null
@@ -39915,7 +39849,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     firstName?: string | null
     lastName?: string | null
-    role: $Enums.UserRole
+    isSuperAdmin?: boolean
     bio?: string | null
     displayName?: string | null
     password?: string | null
@@ -40014,7 +39948,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     firstName?: NullableStringFieldUpdateOperationsInput | string | null
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    isSuperAdmin?: BoolFieldUpdateOperationsInput | boolean
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
@@ -40058,7 +39992,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     firstName?: NullableStringFieldUpdateOperationsInput | string | null
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    isSuperAdmin?: BoolFieldUpdateOperationsInput | boolean
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
@@ -40147,7 +40081,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     firstName?: string | null
     lastName?: string | null
-    role: $Enums.UserRole
+    isSuperAdmin?: boolean
     bio?: string | null
     displayName?: string | null
     password?: string | null
@@ -40191,7 +40125,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     firstName?: string | null
     lastName?: string | null
-    role: $Enums.UserRole
+    isSuperAdmin?: boolean
     bio?: string | null
     displayName?: string | null
     password?: string | null
@@ -40315,7 +40249,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     firstName?: NullableStringFieldUpdateOperationsInput | string | null
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    isSuperAdmin?: BoolFieldUpdateOperationsInput | boolean
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
@@ -40359,7 +40293,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     firstName?: NullableStringFieldUpdateOperationsInput | string | null
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    isSuperAdmin?: BoolFieldUpdateOperationsInput | boolean
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
@@ -40479,7 +40413,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     firstName?: string | null
     lastName?: string | null
-    role: $Enums.UserRole
+    isSuperAdmin?: boolean
     bio?: string | null
     displayName?: string | null
     password?: string | null
@@ -40523,7 +40457,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     firstName?: string | null
     lastName?: string | null
-    role: $Enums.UserRole
+    isSuperAdmin?: boolean
     bio?: string | null
     displayName?: string | null
     password?: string | null
@@ -40622,7 +40556,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     firstName?: NullableStringFieldUpdateOperationsInput | string | null
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    isSuperAdmin?: BoolFieldUpdateOperationsInput | boolean
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
@@ -40666,7 +40600,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     firstName?: NullableStringFieldUpdateOperationsInput | string | null
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    isSuperAdmin?: BoolFieldUpdateOperationsInput | boolean
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
@@ -40755,7 +40689,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     firstName?: string | null
     lastName?: string | null
-    role: $Enums.UserRole
+    isSuperAdmin?: boolean
     bio?: string | null
     displayName?: string | null
     password?: string | null
@@ -40799,7 +40733,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     firstName?: string | null
     lastName?: string | null
-    role: $Enums.UserRole
+    isSuperAdmin?: boolean
     bio?: string | null
     displayName?: string | null
     password?: string | null
@@ -40859,7 +40793,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     firstName?: NullableStringFieldUpdateOperationsInput | string | null
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    isSuperAdmin?: BoolFieldUpdateOperationsInput | boolean
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
@@ -40903,7 +40837,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     firstName?: NullableStringFieldUpdateOperationsInput | string | null
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    isSuperAdmin?: BoolFieldUpdateOperationsInput | boolean
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
@@ -40947,7 +40881,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     firstName?: string | null
     lastName?: string | null
-    role: $Enums.UserRole
+    isSuperAdmin?: boolean
     bio?: string | null
     displayName?: string | null
     password?: string | null
@@ -40991,7 +40925,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     firstName?: string | null
     lastName?: string | null
-    role: $Enums.UserRole
+    isSuperAdmin?: boolean
     bio?: string | null
     displayName?: string | null
     password?: string | null
@@ -41051,7 +40985,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     firstName?: NullableStringFieldUpdateOperationsInput | string | null
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    isSuperAdmin?: BoolFieldUpdateOperationsInput | boolean
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
@@ -41095,7 +41029,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     firstName?: NullableStringFieldUpdateOperationsInput | string | null
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    isSuperAdmin?: BoolFieldUpdateOperationsInput | boolean
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
@@ -41855,7 +41789,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     firstName?: string | null
     lastName?: string | null
-    role: $Enums.UserRole
+    isSuperAdmin?: boolean
     bio?: string | null
     displayName?: string | null
     password?: string | null
@@ -41899,7 +41833,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     firstName?: string | null
     lastName?: string | null
-    role: $Enums.UserRole
+    isSuperAdmin?: boolean
     bio?: string | null
     displayName?: string | null
     password?: string | null
@@ -42029,7 +41963,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     firstName?: NullableStringFieldUpdateOperationsInput | string | null
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    isSuperAdmin?: BoolFieldUpdateOperationsInput | boolean
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
@@ -42073,7 +42007,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     firstName?: NullableStringFieldUpdateOperationsInput | string | null
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    isSuperAdmin?: BoolFieldUpdateOperationsInput | boolean
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
@@ -42203,7 +42137,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     firstName?: string | null
     lastName?: string | null
-    role: $Enums.UserRole
+    isSuperAdmin?: boolean
     bio?: string | null
     displayName?: string | null
     password?: string | null
@@ -42247,7 +42181,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     firstName?: string | null
     lastName?: string | null
-    role: $Enums.UserRole
+    isSuperAdmin?: boolean
     bio?: string | null
     displayName?: string | null
     password?: string | null
@@ -42346,7 +42280,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     firstName?: NullableStringFieldUpdateOperationsInput | string | null
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    isSuperAdmin?: BoolFieldUpdateOperationsInput | boolean
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
@@ -42390,7 +42324,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     firstName?: NullableStringFieldUpdateOperationsInput | string | null
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    isSuperAdmin?: BoolFieldUpdateOperationsInput | boolean
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
@@ -42820,7 +42754,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     firstName?: string | null
     lastName?: string | null
-    role: $Enums.UserRole
+    isSuperAdmin?: boolean
     bio?: string | null
     displayName?: string | null
     password?: string | null
@@ -42864,7 +42798,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     firstName?: string | null
     lastName?: string | null
-    role: $Enums.UserRole
+    isSuperAdmin?: boolean
     bio?: string | null
     displayName?: string | null
     password?: string | null
@@ -42924,7 +42858,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     firstName?: NullableStringFieldUpdateOperationsInput | string | null
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    isSuperAdmin?: BoolFieldUpdateOperationsInput | boolean
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
@@ -42968,7 +42902,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     firstName?: NullableStringFieldUpdateOperationsInput | string | null
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    isSuperAdmin?: BoolFieldUpdateOperationsInput | boolean
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
@@ -43301,7 +43235,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     firstName?: string | null
     lastName?: string | null
-    role: $Enums.UserRole
+    isSuperAdmin?: boolean
     bio?: string | null
     displayName?: string | null
     password?: string | null
@@ -43345,7 +43279,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     firstName?: string | null
     lastName?: string | null
-    role: $Enums.UserRole
+    isSuperAdmin?: boolean
     bio?: string | null
     displayName?: string | null
     password?: string | null
@@ -43459,7 +43393,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     firstName?: NullableStringFieldUpdateOperationsInput | string | null
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    isSuperAdmin?: BoolFieldUpdateOperationsInput | boolean
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
@@ -43503,7 +43437,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     firstName?: NullableStringFieldUpdateOperationsInput | string | null
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    isSuperAdmin?: BoolFieldUpdateOperationsInput | boolean
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
@@ -43578,7 +43512,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     firstName?: string | null
     lastName?: string | null
-    role: $Enums.UserRole
+    isSuperAdmin?: boolean
     bio?: string | null
     displayName?: string | null
     password?: string | null
@@ -43622,7 +43556,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     firstName?: string | null
     lastName?: string | null
-    role: $Enums.UserRole
+    isSuperAdmin?: boolean
     bio?: string | null
     displayName?: string | null
     password?: string | null
@@ -43721,7 +43655,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     firstName?: NullableStringFieldUpdateOperationsInput | string | null
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    isSuperAdmin?: BoolFieldUpdateOperationsInput | boolean
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
@@ -43765,7 +43699,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     firstName?: NullableStringFieldUpdateOperationsInput | string | null
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    isSuperAdmin?: BoolFieldUpdateOperationsInput | boolean
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
@@ -44657,7 +44591,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     firstName?: string | null
     lastName?: string | null
-    role: $Enums.UserRole
+    isSuperAdmin?: boolean
     bio?: string | null
     displayName?: string | null
     password?: string | null
@@ -44701,7 +44635,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     firstName?: string | null
     lastName?: string | null
-    role: $Enums.UserRole
+    isSuperAdmin?: boolean
     bio?: string | null
     displayName?: string | null
     password?: string | null
@@ -44761,7 +44695,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     firstName?: NullableStringFieldUpdateOperationsInput | string | null
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    isSuperAdmin?: BoolFieldUpdateOperationsInput | boolean
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
@@ -44805,7 +44739,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     firstName?: NullableStringFieldUpdateOperationsInput | string | null
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    isSuperAdmin?: BoolFieldUpdateOperationsInput | boolean
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
@@ -44849,7 +44783,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     firstName?: string | null
     lastName?: string | null
-    role: $Enums.UserRole
+    isSuperAdmin?: boolean
     bio?: string | null
     displayName?: string | null
     password?: string | null
@@ -44893,7 +44827,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     firstName?: string | null
     lastName?: string | null
-    role: $Enums.UserRole
+    isSuperAdmin?: boolean
     bio?: string | null
     displayName?: string | null
     password?: string | null
@@ -44953,7 +44887,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     firstName?: NullableStringFieldUpdateOperationsInput | string | null
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    isSuperAdmin?: BoolFieldUpdateOperationsInput | boolean
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
@@ -44997,7 +44931,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     firstName?: NullableStringFieldUpdateOperationsInput | string | null
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    isSuperAdmin?: BoolFieldUpdateOperationsInput | boolean
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null

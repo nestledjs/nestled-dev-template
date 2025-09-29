@@ -1,31 +1,14 @@
-import { UserRole } from '../../prisma-generated'
-
+/**
+ * Seed users for development/testing
+ * Note: In production, the first user to register becomes super admin automatically
+ */
 export const seedUsers = [
   {
     id: '1',
-    firstName: 'SuperAdmin',
-    lastName: 'User',
-    email: 'superadmin@example.com',
-    displayName: 'Super Admin',
-    role: UserRole.SUPER_ADMIN,
-    password: 'password123',
-  },
-  {
-    id: '2',
-    firstName: 'Admin',
-    lastName: 'User',
+    firstName: 'Test',
+    lastName: 'Admin',
     email: 'admin@example.com',
-    displayName: 'Admin User',
-    role: UserRole.ADMIN,
-    password: 'password123',
-  },
-  {
-    id: '3',
-    firstName: 'User',
-    lastName: 'User',
-    email: 'user@example.com',
-    displayName: 'Regular User',
-    role: UserRole.USER,
+    displayName: 'Test Admin',
     password: 'password123',
   },
 ]

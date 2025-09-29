@@ -13,6 +13,7 @@ import {
   redirect,
   Scripts,
   ScrollRestoration,
+  useLoaderData,
 } from 'react-router'
 import { GTMNoScript, GTMScript } from './gtm'
 import App from './app'
@@ -36,6 +37,9 @@ export const loader = apolloLoader()(({ preloadQuery, request }) => {
   const url = new URL(request.url)
   const token = getCookie(request.headers, '__session')
   const isAuthenticated = token && !isJwtExpired(token)
+
+  // Get theme preference from cookie, default to 'dark' if not set
+  const theme = getCookie(request.headers, 'theme') || 'dark'
 
   // Define private routes that require authentication
   const isPrivateRoute =
@@ -61,7 +65,7 @@ export const loader = apolloLoader()(({ preloadQuery, request }) => {
   if (isPrivateRoute && isAuthenticated) {
     try {
       const meQueryRef = preloadQuery<MeQuery>(MeDocument)
-      return { meQueryRef }
+      return { meQueryRef, theme }
     } catch (error) {
       console.error('[Root Loader] Error during Me query preload:', error)
       const errorMessage = (error as Error)?.message || ''
@@ -82,7 +86,7 @@ export const loader = apolloLoader()(({ preloadQuery, request }) => {
       // Check for network/connection errors using utility function
       if (isNetworkError(error)) {
         console.log('[Root Loader] Network error detected, returning serviceUnavailable')
-        return { serviceUnavailable: true }
+        return { serviceUnavailable: true, theme }
       }
 
       if (errorMessage.includes('Unauthorized') || errorMessage.includes('401')) {
@@ -97,7 +101,7 @@ export const loader = apolloLoader()(({ preloadQuery, request }) => {
 
       // For any other errors, assume service unavailable
       console.log('[Root Loader] Unknown error, returning serviceUnavailable as fallback')
-      return { serviceUnavailable: true }
+      return { serviceUnavailable: true, theme }
     }
   }
 
@@ -105,28 +109,54 @@ export const loader = apolloLoader()(({ preloadQuery, request }) => {
   if (isAuthenticated) {
     try {
       const meQueryRef = preloadQuery<MeQuery>(MeDocument)
-      return { meQueryRef }
+      return { meQueryRef, theme }
     } catch (error) {
       // On error for public pages, just continue without user
       console.warn('[Root Loader] Failed to preload Me on public route:', error)
-      return {}
+      return { theme }
     }
   }
   // Not authenticated and not private
-  return {}
+  return { theme }
 })
 
 export function Layout({ children }: Readonly<{ children: ReactNode }>) {
   const gtmTrackingId = import.meta.env.VITE_GTM_TRACKING_ID
+  const data = useLoaderData() as { theme?: string }
+  const theme = data?.theme || 'dark'
 
   return (
-    <html lang="en">
+    <html lang="en" className={theme === 'dark' ? 'dark' : ''}>
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>Biz to Biz Now</title>
         <Meta />
         <Links />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  // Get theme from localStorage
+                  var localTheme = localStorage.getItem('theme');
+
+                  // If localStorage has a theme, update the class if needed
+                  if (localTheme === 'light' && document.documentElement.classList.contains('dark')) {
+                    document.documentElement.classList.remove('dark');
+                  } else if (localTheme === 'dark' && !document.documentElement.classList.contains('dark')) {
+                    document.documentElement.classList.add('dark');
+                  }
+
+                  // Save preference to cookie for SSR
+                  if (localTheme) {
+                    document.cookie = 'theme=' + localTheme + '; path=/; max-age=31536000; SameSite=Lax';
+                  }
+                } catch (e) {}
+              })();
+            `,
+          }}
+        />
         <GTMScript gtmId={gtmTrackingId} />
       </head>
       <body>
@@ -142,12 +172,37 @@ export function Layout({ children }: Readonly<{ children: ReactNode }>) {
 export default App
 
 export function ErrorBoundary({ error }: Readonly<{ error: Error }>) {
+  // Default to dark theme for error boundary since loader data isn't available
   return (
-    <html lang="en">
+    <html lang="en" className="dark">
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>Biz to Biz Now - Error</title>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  // Get theme from localStorage
+                  var localTheme = localStorage.getItem('theme');
+
+                  // If localStorage has a theme, update the class if needed
+                  if (localTheme === 'light' && document.documentElement.classList.contains('dark')) {
+                    document.documentElement.classList.remove('dark');
+                  } else if (localTheme === 'dark' && !document.documentElement.classList.contains('dark')) {
+                    document.documentElement.classList.add('dark');
+                  }
+
+                  // Save preference to cookie for SSR
+                  if (localTheme) {
+                    document.cookie = 'theme=' + localTheme + '; path=/; max-age=31536000; SameSite=Lax';
+                  }
+                } catch (e) {}
+              })();
+            `,
+          }}
+        />
       </head>
       <body>
         <WebUiErrorBoundary error={error} autoRefresh={true} autoRefreshDelay={3000} />
