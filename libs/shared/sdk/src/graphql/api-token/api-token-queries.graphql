@@ -13,6 +13,12 @@ query ApiTokens($input: ListApiTokenInput) {
   }
 }
 
+query ListApiTokens {
+  listApiTokens {
+    ...ApiTokenList
+  }
+}
+
 query ApiTokenPagination($input: ListApiTokenInput) {
   counters: apiTokensCount(input: $input) {
     ...CorePagingDetails

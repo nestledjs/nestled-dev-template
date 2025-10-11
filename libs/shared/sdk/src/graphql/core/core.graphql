@@ -13,6 +13,3 @@ fragment CorePagingDetails on CorePaging {
   hasNext
   hasPrev
 }
-
-# Import auth fragments
-#import "../auth/auth-fragments.graphql"

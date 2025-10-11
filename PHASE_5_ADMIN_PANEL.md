@@ -195,24 +195,47 @@ Build a comprehensive super admin control panel for platform management, user su
 ### Advanced Security Event Analysis
 - [ ] **Create `/admin/security-events` page**
   - [ ] Real-time security event monitoring dashboard
-  - [ ] Filter by event type, user, organization, severity
+  - [ ] Filter by event type (PASSWORD_CHANGED, EMAIL_CHANGED, TWO_FACTOR_ENABLED, etc.)
+  - [ ] Filter by user, organization, date range
   - [ ] Geographic visualization of login attempts
   - [ ] Timeline view of security incidents
-  - [ ] Automated threat detection alerts
+  - [ ] Export security events to CSV
+  - [ ] Search by IP address, user agent
+  - [ ] View metadata/context for each event
 
-- [ ] **Create security incident management**
-  - [ ] Security incident creation and tracking
-  - [ ] Incident severity levels and escalation
-  - [ ] Automated incident response workflows
-  - [ ] Security incident reporting and documentation
-  - [ ] Integration with external security tools
+- [ ] **Create login attempts monitoring**
+  - [ ] View all login attempts (success/failure)
+  - [ ] Filter by email, IP address, reason
+  - [ ] Account lockout status and history
+  - [ ] Failed attempt pattern detection
+  - [ ] Brute force attack identification
+  - [ ] Geographic anomaly detection
+
+- [ ] **Create 2FA administration tools**
+  - [ ] View users with 2FA enabled/disabled
+  - [ ] 2FA adoption rate metrics
+  - [ ] Backup code usage statistics
+  - [ ] Force disable 2FA for locked users
+  - [ ] View 2FA setup/disable history
+  - [ ] Track backup code remaining counts
+
+- [ ] **Create account security overview**
+  - [ ] Locked accounts dashboard
+  - [ ] Manual unlock interface (already built - needs UI)
+  - [ ] View failed login count per user
+  - [ ] Last successful/failed login timestamps
+  - [ ] Session management (active sessions per user)
+  - [ ] Suspicious account activity alerts
 
 - [ ] **Create security analytics dashboard**
-  - [ ] Failed login attempt trends
-  - [ ] Suspicious activity patterns
+  - [ ] Failed login attempt trends over time
+  - [ ] Account lockout rate metrics
+  - [ ] 2FA adoption and usage trends
+  - [ ] Password reset request patterns
+  - [ ] Email verification status distribution
+  - [ ] Security event type breakdown
+  - [ ] Most common failure reasons
   - [ ] Geographic risk analysis
-  - [ ] Account compromise indicators
-  - [ ] Security event correlation analysis
 
 ### Security Monitoring & Response
 - [ ] **Create automated security response system**

@@ -75,13 +75,16 @@ export class ApiToken {
   user?: Partial<User> | null;
 
   @Field(() => String)
-  token!: string;
+  tokenHash!: string;
 
-  @Field(() => String, { nullable: true })
-  name?: string | null;
+  @Field(() => String)
+  name!: string;
 
   @Field(() => Date, { nullable: true })
   expiresAt?: Date | null;
+
+  @Field(() => Date, { nullable: true })
+  lastUsedAt?: Date | null;
 
   @Field(() => Boolean)
   revoked!: boolean;

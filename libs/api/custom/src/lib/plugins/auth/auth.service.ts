@@ -11,6 +11,18 @@ import { EmailService } from '@nestled-template/api/integrations'
 import { generateExpireDate, generateToken, generateUsernameSlug, generateUsernameWithSuffix, hashPassword, validatePassword } from './auth.helper'
 import { ConfigService } from '@nestjs/config'
 import { defaultRoles } from '@nestled-template/api/prisma'
+import { SecurityEventsService } from '../security'
+import { SessionService, SessionInfo } from './session.service'
+import {
+  generate2FASecret,
+  verify2FACode,
+  generateQRCode,
+  generateBackupCodes,
+  encryptSecret,
+  decryptSecret,
+  hashBackupCode,
+} from './twofa.helper'
+import { Disable2FAInput, Enable2FAOutput, Setup2FAOutput } from './dto'
 
 @Injectable()
 export class AuthService {
@@ -20,6 +32,8 @@ export class AuthService {
     private readonly jwtService: JwtService,
     private readonly emailService: EmailService,
     private readonly config: ConfigService,
+    private readonly securityEvents: SecurityEventsService,
+    private readonly sessionService: SessionService,
   ) {}
 
   /**
@@ -128,7 +142,7 @@ export class AuthService {
     }
   }
 
-  async register(payload: RegisterInput) {
+  async register(payload: RegisterInput, sessionInfo?: SessionInfo) {
     const user = await this.createUser({
       ...payload,
     })
@@ -195,32 +209,136 @@ export class AuthService {
 
       Logger.log(`✓ User registered: ${primaryEmail} (SuperAdmin: ${user.isSuperAdmin}, Org: ${organization.name})`)
 
-      return this.signUser(user)
+      return this.signUser(user, false, undefined, sessionInfo)
     }
     return null
   }
 
-  async login(input: LoginInput) {
+  async login(input: LoginInput, sessionInfo?: SessionInfo) {
     const email = input?.email?.trim()?.toLowerCase()
     const password = input.password?.trim()
     const authUser = await this.findUserByEmail(email)
 
+    // Use generic error message to prevent email enumeration
+    const genericError = 'Invalid email or password'
+
     if (!authUser) {
-      throw new NotFoundException(`No user found for email: ${email}`)
+      // Log failed attempt even though user doesn't exist (helps detect attacks)
+      await this.data.loginAttempt.create({
+        data: {
+          email,
+          success: false,
+          reason: 'INVALID_EMAIL',
+        },
+      })
+      throw new BadRequestException(genericError)
     }
 
     const user: User = authUser
 
-    if (!user?.password) {
-      throw new Error('No password received')
+    // Check if account is locked
+    if (user.lockedUntil && user.lockedUntil > new Date()) {
+      const minutesLeft = Math.ceil((user.lockedUntil.getTime() - Date.now()) / 60000)
+      await this.data.loginAttempt.create({
+        data: {
+          userId: user.id,
+          email,
+          success: false,
+          reason: 'ACCOUNT_LOCKED',
+        },
+      })
+      throw new BadRequestException(`Account is locked. Please try again in ${minutesLeft} minutes.`)
     }
+
+    // Check if account is disabled
+    if (!user.isActive) {
+      await this.data.loginAttempt.create({
+        data: {
+          userId: user.id,
+          email,
+          success: false,
+          reason: 'ACCOUNT_DISABLED',
+        },
+      })
+      throw new BadRequestException('Account has been disabled. Please contact support.')
+    }
+
+    if (!user?.password) {
+      await this.data.loginAttempt.create({
+        data: {
+          userId: user.id,
+          email,
+          success: false,
+          reason: 'INVALID_PASSWORD',
+        },
+      })
+      throw new BadRequestException(genericError)
+    }
+
     const passwordValid = validatePassword(password, user.password)
 
     if (!passwordValid) {
-      throw new BadRequestException('Invalid password')
+      // Increment failed login count
+      const updatedUser = await this.data.user.update({
+        where: { id: user.id },
+        data: {
+          failedLoginCount: { increment: 1 },
+          lastFailedLogin: new Date(),
+        },
+      })
+
+      // Log failed attempt
+      await this.data.loginAttempt.create({
+        data: {
+          userId: user.id,
+          email,
+          success: false,
+          reason: 'INVALID_PASSWORD',
+        },
+      })
+
+      // Check if we should lock the account (5 failed attempts)
+      if (updatedUser.failedLoginCount >= 5) {
+        const lockUntil = new Date(Date.now() + 15 * 60 * 1000) // Lock for 15 minutes
+        await this.data.user.update({
+          where: { id: user.id },
+          data: {
+            lockedUntil: lockUntil,
+            failedLoginCount: 0, // Reset counter
+          },
+        })
+
+        // Log account locked event
+        await this.securityEvents.logAccountLocked(user.id, 'Too many failed login attempts')
+
+        throw new BadRequestException(
+          'Too many failed login attempts. Account locked for 15 minutes.'
+        )
+      }
+
+      throw new BadRequestException(genericError)
     }
 
-    return this.signUser(user)
+    // Successful login - reset counters and update timestamps
+    await this.data.user.update({
+      where: { id: user.id },
+      data: {
+        failedLoginCount: 0,
+        lastSuccessfulLogin: new Date(),
+        lockedUntil: null, // Clear any existing lock
+      },
+    })
+
+    // Log successful attempt
+    await this.data.loginAttempt.create({
+      data: {
+        userId: user.id,
+        email,
+        success: true,
+      },
+    })
+
+    return this.signUser(user, input.remember, undefined, sessionInfo)
   }
 
   async resendVerificationEmail(email: string): Promise<boolean> {
@@ -341,6 +459,9 @@ export class AuthService {
       data: { emailValidated: false }
     })
 
+    // Log security event
+    await this.securityEvents.logEmailChanged(userId, primaryEmail.email, cleanEmail)
+
     // Send verification email to new address
     const appName = this.config.get('app.name')
     const siteUrl = this.config.get('siteUrl')
@@ -426,6 +547,9 @@ export class AuthService {
       data: { password: hashedNewPassword }
     })
 
+    // Log security event
+    await this.securityEvents.logPasswordChanged(userId)
+
     // Send password changed notification
     const appName = this.config.get('app.name')
     const primaryEmail = await this.data.email.findFirst({
@@ -448,12 +572,71 @@ export class AuthService {
     return true
   }
 
-  async emulateUser(input: EmulateUserInput) {
-    const user = await this.data.user.findUnique({ where: { id: input?.userId } })
+  async emulateUser(input: EmulateUserInput, adminId: string) {
+    const user = await this.data.user.findUnique({
+      where: { id: input?.userId },
+      include: { emails: true }
+    })
     if (!user) {
-      throw new NotFoundException(`No emulateUser found for id: ${input?.userId}`)
+      throw new NotFoundException(`No user found for id: ${input?.userId}`)
     }
-    return this.signUser(user)
+
+    // Log emulation start to AuditLog
+    await this.data.auditLog.create({
+      data: {
+        entityId: user.id,
+        entityType: 'User',
+        action: 'EMULATION_STARTED',
+        userId: adminId,
+        changes: {
+          adminId,
+          emulatedUserId: user.id,
+          emulatedUserEmail: user.emails?.find(e => e.primary)?.email,
+        },
+      },
+    })
+
+    Logger.log(`Admin ${adminId} started emulating user ${user.id}`)
+
+    // Sign user with emulation flag
+    return this.signUser(user, false, adminId)
+  }
+
+  async endEmulation(token: string): Promise<UserToken> {
+    // Decode the current token to get emulation data
+    const decoded = this.jwtService.decode(token) as any
+
+    if (!decoded?.isEmulating || !decoded?.originalAdminId) {
+      throw new BadRequestException('Not currently emulating a user')
+    }
+
+    const emulatedUserId = decoded.userId
+    const adminId = decoded.originalAdminId
+
+    // Get the admin user
+    const admin = await this.data.user.findUnique({ where: { id: adminId } })
+    if (!admin) {
+      throw new NotFoundException('Original admin user not found')
+    }
+
+    // Log emulation end to AuditLog
+    await this.data.auditLog.create({
+      data: {
+        entityId: emulatedUserId,
+        entityType: 'User',
+        action: 'EMULATION_ENDED',
+        userId: adminId,
+        changes: {
+          adminId,
+          emulatedUserId,
+        },
+      },
+    })
+
+    Logger.log(`Admin ${adminId} ended emulation of user ${emulatedUserId}`)
+
+    // Return admin to their own session (no emulation)
+    return this.signUser(admin)
   }
 
   async forgotPassword(email: string): Promise<boolean> {
@@ -471,6 +654,9 @@ export class AuthService {
       where: { id: user.id },
       data: { passwordResetToken, passwordResetExpires },
     })
+
+    // Log security event
+    await this.securityEvents.logPasswordResetRequested(user.id)
 
     const appName = this.config.get('app.name')
     const siteUrl = this.config.get('siteUrl')
@@ -515,12 +701,15 @@ export class AuthService {
       },
     })
 
+    // Log security event
+    await this.securityEvents.logPasswordChanged(user.id)
+
     // Send password changed notification
     const appName = this.config.get('app.name')
     const primaryEmail = await this.data.email.findFirst({
       where: { userId: user.id, primary: true }
     })
-    
+
     if (primaryEmail?.email) {
       await this.emailService.sendTemplate(primaryEmail.email, {
         templateId: 'password-changed',
@@ -535,8 +724,34 @@ export class AuthService {
     return updatedUser
   }
 
-  signUser(user: User): UserToken {
-    const token = this.jwtService.sign({ userId: user?.id })
+  async signUser(
+    user: User,
+    rememberMe: boolean = false,
+    emulatingAdminId?: string,
+    sessionInfo?: SessionInfo
+  ): Promise<UserToken> {
+    // Remember Me: 30 days, otherwise: 7 days
+    const expiresIn = rememberMe ? '30d' : '7d'
+
+    const payload: any = { userId: user?.id }
+
+    // If emulating, add emulation data to JWT
+    if (emulatingAdminId) {
+      payload.isEmulating = true
+      payload.originalAdminId = emulatingAdminId
+    }
+
+    // Create session if session info is provided
+    if (sessionInfo) {
+      const sessionId = await this.sessionService.createSession(
+        user.id,
+        sessionInfo,
+        false // 2FA verification status - will be updated later if needed
+      )
+      payload.sessionId = sessionId
+    }
+
+    const token = this.jwtService.sign(payload, { expiresIn })
     return { token, user }
   }
 
@@ -590,5 +805,283 @@ export class AuthService {
 
   public clearCookie(res: Response): Response {
     return res.clearCookie(this.core.cookie.name, this.core.cookie.options)
+  }
+
+  public getCookieName(): string {
+    return this.core.cookie.name
+  }
+
+  /**
+   * Unlock a locked user account (admin function)
+   */
+  async unlockAccount(userId: string): Promise<User> {
+    const user = await this.data.user.findUnique({ where: { id: userId } })
+
+    if (!user) {
+      throw new NotFoundException('User not found')
+    }
+
+    const updatedUser = await this.data.user.update({
+      where: { id: userId },
+      data: {
+        lockedUntil: null,
+        failedLoginCount: 0,
+      },
+    })
+
+    // Log security event
+    await this.securityEvents.logAccountUnlocked(userId)
+
+    Logger.log(`Account unlocked for user ${userId}`)
+
+    return updatedUser
+  }
+
+  /**
+   * Setup 2FA - Generate secret and QR code
+   */
+  async setup2FA(userId: string): Promise<Setup2FAOutput> {
+    const user = await this.data.user.findUnique({
+      where: { id: userId },
+      include: { emails: { where: { primary: true } } },
+    })
+
+    if (!user) {
+      throw new NotFoundException('User not found')
+    }
+
+    if (user.twoFactorEnabled) {
+      throw new BadRequestException('2FA is already enabled for this account')
+    }
+
+    const primaryEmail = user.emails[0]?.email || user.id
+    const issuer = this.config.get('twoFactor.issuer')
+
+    const { secret, otpauthUrl } = generate2FASecret(issuer, primaryEmail)
+    const qrCode = await generateQRCode(otpauthUrl)
+
+    // Store secret temporarily (encrypted) - user must verify before it's fully enabled
+    const encryptionKey = this.config.get('twoFactor.encryptionKey')
+    const encryptedSecret = encryptSecret(secret, encryptionKey)
+
+    await this.data.user.update({
+      where: { id: userId },
+      data: {
+        twoFactorSecret: encryptedSecret,
+        twoFactorEnabled: false, // Not enabled until verified
+      },
+    })
+
+    Logger.log(`2FA setup initiated for user ${userId}`)
+
+    return {
+      secret,
+      qrCode,
+      otpauthUrl,
+    }
+  }
+
+  /**
+   * Verify 2FA code and enable 2FA
+   */
+  async enable2FA(userId: string, code: string): Promise<Enable2FAOutput> {
+    const user = await this.data.user.findUnique({
+      where: { id: userId },
+      include: { emails: true }
+    })
+
+    if (!user) {
+      throw new NotFoundException('User not found')
+    }
+
+    if (!user.twoFactorSecret) {
+      throw new BadRequestException('2FA setup not initiated. Please call setup2FA first.')
+    }
+
+    if (user.twoFactorEnabled) {
+      throw new BadRequestException('2FA is already enabled')
+    }
+
+    // Decrypt and verify the code
+    const encryptionKey = this.config.get('twoFactor.encryptionKey')
+    const secret = decryptSecret(user.twoFactorSecret, encryptionKey)
+    const window = this.config.get('twoFactor.window')
+
+    const isValid = verify2FACode(secret, code, window)
+
+    if (!isValid) {
+      throw new BadRequestException('Invalid 2FA code')
+    }
+
+    // Generate backup codes
+    const backupCodes = generateBackupCodes(10)
+    const hashedBackupCodes = backupCodes.map(hashBackupCode)
+
+    // Enable 2FA and store backup codes
+    await this.data.user.update({
+      where: { id: userId },
+      data: {
+        twoFactorEnabled: true,
+        twoFactorMethod: 'AUTHENTICATOR',
+        twoFactorRecoveryCodes: hashedBackupCodes,
+      },
+    })
+
+    // Log security event
+    await this.securityEvents.log2FAEnabled(userId)
+
+    // Send 2FA enabled notification email
+    const primaryEmail = user.emails?.find(e => e.primary)?.email
+    if (primaryEmail) {
+      const appName = this.config.get('app.name')
+      const siteUrl = this.config.get('siteUrl')
+      const securityUrl = `${siteUrl}/members/my-profile/edit`
+
+      await this.emailService.sendTemplate(primaryEmail, {
+        templateId: 'twofa-enabled',
+        variables: {
+          userName: user.firstName || 'there',
+          appName,
+          securityUrl,
+          backupCodesCount: backupCodes.length,
+        }
+      })
+    }
+
+    Logger.log(`2FA enabled for user ${userId}`)
+
+    return {
+      success: true,
+      backupCodes, // Return plain codes once - user must save them
+    }
+  }
+
+  /**
+   * Disable 2FA
+   */
+  async disable2FA(userId: string, input: Disable2FAInput): Promise<boolean> {
+    const user = await this.data.user.findUnique({ where: { id: userId } })
+
+    if (!user) {
+      throw new NotFoundException('User not found')
+    }
+
+    if (!user.twoFactorEnabled) {
+      throw new BadRequestException('2FA is not enabled')
+    }
+
+    // Verify password before disabling 2FA
+    if (!user.password || !validatePassword(input.password, user.password)) {
+      throw new BadRequestException('Invalid password')
+    }
+
+    // Disable 2FA and clear secrets
+    await this.data.user.update({
+      where: { id: userId },
+      data: {
+        twoFactorEnabled: false,
+        twoFactorSecret: null,
+        twoFactorRecoveryCodes: [],
+        twoFactorMethod: 'NONE',
+      },
+    })
+
+    // Log security event
+    await this.securityEvents.log2FADisabled(userId)
+
+    Logger.log(`2FA disabled for user ${userId}`)
+
+    return true
+  }
+
+  /**
+   * Verify 2FA code during login
+   */
+  async verify2FALogin(userId: string, code: string): Promise<boolean> {
+    const user = await this.data.user.findUnique({ where: { id: userId } })
+
+    if (!user) {
+      throw new NotFoundException('User not found')
+    }
+
+    if (!user.twoFactorEnabled || !user.twoFactorSecret) {
+      throw new BadRequestException('2FA is not enabled for this account')
+    }
+
+    // Decrypt secret and verify code
+    const encryptionKey = this.config.get('twoFactor.encryptionKey')
+    const secret = decryptSecret(user.twoFactorSecret, encryptionKey)
+    const window = this.config.get('twoFactor.window')
+
+    const isValid = verify2FACode(secret, code, window)
+
+    if (isValid) {
+      return true
+    }
+
+    // Check if it's a backup code
+    const hashedCode = hashBackupCode(code)
+    const backupCodeIndex = user.twoFactorRecoveryCodes.indexOf(hashedCode)
+
+    if (backupCodeIndex !== -1) {
+      // Remove used backup code
+      const updatedCodes = [...user.twoFactorRecoveryCodes]
+      updatedCodes.splice(backupCodeIndex, 1)
+
+      await this.data.user.update({
+        where: { id: userId },
+        data: {
+          twoFactorRecoveryCodes: updatedCodes,
+        },
+      })
+
+      Logger.log(`Backup code used for 2FA login by user ${userId}`)
+      return true
+    }
+
+    return false
+  }
+
+  /**
+   * Get all active sessions for current user
+   */
+  async getUserSessions(userId: string, currentSessionId?: string) {
+    const sessions = await this.sessionService.getUserActiveSessions(userId)
+
+    // Map to output format and mark current session
+    return sessions.map(session => ({
+      ...session,
+      isCurrent: session.id === currentSessionId
+    }))
+  }
+
+  /**
+   * Invalidate a specific session
+   */
+  async invalidateSession(userId: string, sessionId: string): Promise<boolean> {
+    // Verify the session belongs to the user
+    const session = await this.data.userSession.findFirst({
+      where: {
+        id: sessionId,
+        userId
+      }
+    })
+
+    if (!session) {
+      throw new NotFoundException('Session not found or does not belong to this user')
+    }
+
+    await this.sessionService.invalidateSession(sessionId)
+    Logger.log(`Session ${sessionId} invalidated by user ${userId}`)
+    return true
+  }
+
+  /**
+   * Invalidate all sessions except the current one
+   */
+  async invalidateAllSessions(userId: string, exceptSessionId?: string): Promise<number> {
+    const count = await this.sessionService.invalidateAllUserSessions(userId, exceptSessionId)
+    Logger.log(`User ${userId} invalidated ${count} sessions` + (exceptSessionId ? ` (kept current session)` : ''))
+    return count
   }
 }

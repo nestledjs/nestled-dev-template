@@ -24,6 +24,8 @@ import {
   PlanModule,
   RoleModule,
   SubscriptionModule,
+  SecurityEventsModule,
+  ApiTokensModule,
 } from '@nestled-template/api/custom'
 import { ApiCoreFeatureModule } from '@nestled-template/api/core/feature'
 import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common'
@@ -68,6 +70,8 @@ export const pluginModules = [
   // Manually maintained plugin modules (never overwritten by generator)
   AuthModule,
   ContactMailerModule,
+  SecurityEventsModule,
+  ApiTokensModule,
 ]
 // Combined modules used in the app
 export const appModules = [...coreModules, ...defaultModules, ...pluginModules]
