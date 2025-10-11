@@ -205,7 +205,10 @@ export const SecurityEventType: {
   ACCOUNT_UNLOCKED: 'ACCOUNT_UNLOCKED',
   SUSPICIOUS_LOGIN_ATTEMPT: 'SUSPICIOUS_LOGIN_ATTEMPT',
   PASSWORD_RESET_REQUESTED: 'PASSWORD_RESET_REQUESTED',
-  LOGIN_LOCATION_CHANGE: 'LOGIN_LOCATION_CHANGE'
+  LOGIN_LOCATION_CHANGE: 'LOGIN_LOCATION_CHANGE',
+  API_TOKEN_CREATED: 'API_TOKEN_CREATED',
+  API_TOKEN_REVOKED: 'API_TOKEN_REVOKED',
+  API_TOKEN_ROTATED: 'API_TOKEN_ROTATED'
 };
 
 export type SecurityEventType = (typeof SecurityEventType)[keyof typeof SecurityEventType]
@@ -4699,9 +4702,10 @@ export namespace Prisma {
     createdAt: Date | null
     updatedAt: Date | null
     userId: string | null
-    token: string | null
+    tokenHash: string | null
     name: string | null
     expiresAt: Date | null
+    lastUsedAt: Date | null
     revoked: boolean | null
   }
 
@@ -4710,9 +4714,10 @@ export namespace Prisma {
     createdAt: Date | null
     updatedAt: Date | null
     userId: string | null
-    token: string | null
+    tokenHash: string | null
     name: string | null
     expiresAt: Date | null
+    lastUsedAt: Date | null
     revoked: boolean | null
   }
 
@@ -4721,9 +4726,10 @@ export namespace Prisma {
     createdAt: number
     updatedAt: number
     userId: number
-    token: number
+    tokenHash: number
     name: number
     expiresAt: number
+    lastUsedAt: number
     revoked: number
     _all: number
   }
@@ -4734,9 +4740,10 @@ export namespace Prisma {
     createdAt?: true
     updatedAt?: true
     userId?: true
-    token?: true
+    tokenHash?: true
     name?: true
     expiresAt?: true
+    lastUsedAt?: true
     revoked?: true
   }
 
@@ -4745,9 +4752,10 @@ export namespace Prisma {
     createdAt?: true
     updatedAt?: true
     userId?: true
-    token?: true
+    tokenHash?: true
     name?: true
     expiresAt?: true
+    lastUsedAt?: true
     revoked?: true
   }
 
@@ -4756,9 +4764,10 @@ export namespace Prisma {
     createdAt?: true
     updatedAt?: true
     userId?: true
-    token?: true
+    tokenHash?: true
     name?: true
     expiresAt?: true
+    lastUsedAt?: true
     revoked?: true
     _all?: true
   }
@@ -4840,9 +4849,10 @@ export namespace Prisma {
     createdAt: Date
     updatedAt: Date
     userId: string
-    token: string
-    name: string | null
+    tokenHash: string
+    name: string
     expiresAt: Date | null
+    lastUsedAt: Date | null
     revoked: boolean
     _count: ApiTokenCountAggregateOutputType | null
     _min: ApiTokenMinAggregateOutputType | null
@@ -4868,9 +4878,10 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     userId?: boolean
-    token?: boolean
+    tokenHash?: boolean
     name?: boolean
     expiresAt?: boolean
+    lastUsedAt?: boolean
     revoked?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["apiToken"]>
@@ -4880,9 +4891,10 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     userId?: boolean
-    token?: boolean
+    tokenHash?: boolean
     name?: boolean
     expiresAt?: boolean
+    lastUsedAt?: boolean
     revoked?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["apiToken"]>
@@ -4892,9 +4904,10 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     userId?: boolean
-    token?: boolean
+    tokenHash?: boolean
     name?: boolean
     expiresAt?: boolean
+    lastUsedAt?: boolean
     revoked?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["apiToken"]>
@@ -4904,13 +4917,14 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     userId?: boolean
-    token?: boolean
+    tokenHash?: boolean
     name?: boolean
     expiresAt?: boolean
+    lastUsedAt?: boolean
     revoked?: boolean
   }
 
-  export type ApiTokenOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "createdAt" | "updatedAt" | "userId" | "token" | "name" | "expiresAt" | "revoked", ExtArgs["result"]["apiToken"]>
+  export type ApiTokenOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "createdAt" | "updatedAt" | "userId" | "tokenHash" | "name" | "expiresAt" | "lastUsedAt" | "revoked", ExtArgs["result"]["apiToken"]>
   export type ApiTokenInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
   }
@@ -4931,9 +4945,10 @@ export namespace Prisma {
       createdAt: Date
       updatedAt: Date
       userId: string
-      token: string
-      name: string | null
+      tokenHash: string
+      name: string
       expiresAt: Date | null
+      lastUsedAt: Date | null
       revoked: boolean
     }, ExtArgs["result"]["apiToken"]>
     composites: {}
@@ -5363,9 +5378,10 @@ export namespace Prisma {
     readonly createdAt: FieldRef<"ApiToken", 'DateTime'>
     readonly updatedAt: FieldRef<"ApiToken", 'DateTime'>
     readonly userId: FieldRef<"ApiToken", 'String'>
-    readonly token: FieldRef<"ApiToken", 'String'>
+    readonly tokenHash: FieldRef<"ApiToken", 'String'>
     readonly name: FieldRef<"ApiToken", 'String'>
     readonly expiresAt: FieldRef<"ApiToken", 'DateTime'>
+    readonly lastUsedAt: FieldRef<"ApiToken", 'DateTime'>
     readonly revoked: FieldRef<"ApiToken", 'Boolean'>
   }
     
@@ -30431,9 +30447,10 @@ export namespace Prisma {
     createdAt: 'createdAt',
     updatedAt: 'updatedAt',
     userId: 'userId',
-    token: 'token',
+    tokenHash: 'tokenHash',
     name: 'name',
     expiresAt: 'expiresAt',
+    lastUsedAt: 'lastUsedAt',
     revoked: 'revoked'
   };
 
@@ -31131,9 +31148,10 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"ApiToken"> | Date | string
     updatedAt?: DateTimeFilter<"ApiToken"> | Date | string
     userId?: StringFilter<"ApiToken"> | string
-    token?: StringFilter<"ApiToken"> | string
-    name?: StringNullableFilter<"ApiToken"> | string | null
+    tokenHash?: StringFilter<"ApiToken"> | string
+    name?: StringFilter<"ApiToken"> | string
     expiresAt?: DateTimeNullableFilter<"ApiToken"> | Date | string | null
+    lastUsedAt?: DateTimeNullableFilter<"ApiToken"> | Date | string | null
     revoked?: BoolFilter<"ApiToken"> | boolean
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }
@@ -31143,36 +31161,39 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     userId?: SortOrder
-    token?: SortOrder
-    name?: SortOrderInput | SortOrder
+    tokenHash?: SortOrder
+    name?: SortOrder
     expiresAt?: SortOrderInput | SortOrder
+    lastUsedAt?: SortOrderInput | SortOrder
     revoked?: SortOrder
     user?: UserOrderByWithRelationInput
   }
 
   export type ApiTokenWhereUniqueInput = Prisma.AtLeast<{
     id?: string
-    token?: string
+    tokenHash?: string
     AND?: ApiTokenWhereInput | ApiTokenWhereInput[]
     OR?: ApiTokenWhereInput[]
     NOT?: ApiTokenWhereInput | ApiTokenWhereInput[]
     createdAt?: DateTimeFilter<"ApiToken"> | Date | string
     updatedAt?: DateTimeFilter<"ApiToken"> | Date | string
     userId?: StringFilter<"ApiToken"> | string
-    name?: StringNullableFilter<"ApiToken"> | string | null
+    name?: StringFilter<"ApiToken"> | string
     expiresAt?: DateTimeNullableFilter<"ApiToken"> | Date | string | null
+    lastUsedAt?: DateTimeNullableFilter<"ApiToken"> | Date | string | null
     revoked?: BoolFilter<"ApiToken"> | boolean
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
-  }, "id" | "token">
+  }, "id" | "tokenHash">
 
   export type ApiTokenOrderByWithAggregationInput = {
     id?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     userId?: SortOrder
-    token?: SortOrder
-    name?: SortOrderInput | SortOrder
+    tokenHash?: SortOrder
+    name?: SortOrder
     expiresAt?: SortOrderInput | SortOrder
+    lastUsedAt?: SortOrderInput | SortOrder
     revoked?: SortOrder
     _count?: ApiTokenCountOrderByAggregateInput
     _max?: ApiTokenMaxOrderByAggregateInput
@@ -31187,9 +31208,10 @@ export namespace Prisma {
     createdAt?: DateTimeWithAggregatesFilter<"ApiToken"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"ApiToken"> | Date | string
     userId?: StringWithAggregatesFilter<"ApiToken"> | string
-    token?: StringWithAggregatesFilter<"ApiToken"> | string
-    name?: StringNullableWithAggregatesFilter<"ApiToken"> | string | null
+    tokenHash?: StringWithAggregatesFilter<"ApiToken"> | string
+    name?: StringWithAggregatesFilter<"ApiToken"> | string
     expiresAt?: DateTimeNullableWithAggregatesFilter<"ApiToken"> | Date | string | null
+    lastUsedAt?: DateTimeNullableWithAggregatesFilter<"ApiToken"> | Date | string | null
     revoked?: BoolWithAggregatesFilter<"ApiToken"> | boolean
   }
 
@@ -33019,9 +33041,10 @@ export namespace Prisma {
     id?: string
     createdAt?: Date | string
     updatedAt?: Date | string
-    token: string
-    name?: string | null
+    tokenHash: string
+    name: string
     expiresAt?: Date | string | null
+    lastUsedAt?: Date | string | null
     revoked?: boolean
     user: UserCreateNestedOneWithoutApiTokensInput
   }
@@ -33031,9 +33054,10 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     userId: string
-    token: string
-    name?: string | null
+    tokenHash: string
+    name: string
     expiresAt?: Date | string | null
+    lastUsedAt?: Date | string | null
     revoked?: boolean
   }
 
@@ -33041,9 +33065,10 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    token?: StringFieldUpdateOperationsInput | string
-    name?: NullableStringFieldUpdateOperationsInput | string | null
+    tokenHash?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
     expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastUsedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     revoked?: BoolFieldUpdateOperationsInput | boolean
     user?: UserUpdateOneRequiredWithoutApiTokensNestedInput
   }
@@ -33053,9 +33078,10 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     userId?: StringFieldUpdateOperationsInput | string
-    token?: StringFieldUpdateOperationsInput | string
-    name?: NullableStringFieldUpdateOperationsInput | string | null
+    tokenHash?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
     expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastUsedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     revoked?: BoolFieldUpdateOperationsInput | boolean
   }
 
@@ -33064,9 +33090,10 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     userId: string
-    token: string
-    name?: string | null
+    tokenHash: string
+    name: string
     expiresAt?: Date | string | null
+    lastUsedAt?: Date | string | null
     revoked?: boolean
   }
 
@@ -33074,9 +33101,10 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    token?: StringFieldUpdateOperationsInput | string
-    name?: NullableStringFieldUpdateOperationsInput | string | null
+    tokenHash?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
     expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastUsedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     revoked?: BoolFieldUpdateOperationsInput | boolean
   }
 
@@ -33085,9 +33113,10 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     userId?: StringFieldUpdateOperationsInput | string
-    token?: StringFieldUpdateOperationsInput | string
-    name?: NullableStringFieldUpdateOperationsInput | string | null
+    tokenHash?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
     expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastUsedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     revoked?: BoolFieldUpdateOperationsInput | boolean
   }
 
@@ -35180,9 +35209,10 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     userId?: SortOrder
-    token?: SortOrder
+    tokenHash?: SortOrder
     name?: SortOrder
     expiresAt?: SortOrder
+    lastUsedAt?: SortOrder
     revoked?: SortOrder
   }
 
@@ -35191,9 +35221,10 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     userId?: SortOrder
-    token?: SortOrder
+    tokenHash?: SortOrder
     name?: SortOrder
     expiresAt?: SortOrder
+    lastUsedAt?: SortOrder
     revoked?: SortOrder
   }
 
@@ -35202,9 +35233,10 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     userId?: SortOrder
-    token?: SortOrder
+    tokenHash?: SortOrder
     name?: SortOrder
     expiresAt?: SortOrder
+    lastUsedAt?: SortOrder
     revoked?: SortOrder
   }
 
@@ -44210,9 +44242,10 @@ export namespace Prisma {
     id?: string
     createdAt?: Date | string
     updatedAt?: Date | string
-    token: string
-    name?: string | null
+    tokenHash: string
+    name: string
     expiresAt?: Date | string | null
+    lastUsedAt?: Date | string | null
     revoked?: boolean
   }
 
@@ -44220,9 +44253,10 @@ export namespace Prisma {
     id?: string
     createdAt?: Date | string
     updatedAt?: Date | string
-    token: string
-    name?: string | null
+    tokenHash: string
+    name: string
     expiresAt?: Date | string | null
+    lastUsedAt?: Date | string | null
     revoked?: boolean
   }
 
@@ -44551,9 +44585,10 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"ApiToken"> | Date | string
     updatedAt?: DateTimeFilter<"ApiToken"> | Date | string
     userId?: StringFilter<"ApiToken"> | string
-    token?: StringFilter<"ApiToken"> | string
-    name?: StringNullableFilter<"ApiToken"> | string | null
+    tokenHash?: StringFilter<"ApiToken"> | string
+    name?: StringFilter<"ApiToken"> | string
     expiresAt?: DateTimeNullableFilter<"ApiToken"> | Date | string | null
+    lastUsedAt?: DateTimeNullableFilter<"ApiToken"> | Date | string | null
     revoked?: BoolFilter<"ApiToken"> | boolean
   }
 
@@ -45878,9 +45913,10 @@ export namespace Prisma {
     id?: string
     createdAt?: Date | string
     updatedAt?: Date | string
-    token: string
-    name?: string | null
+    tokenHash: string
+    name: string
     expiresAt?: Date | string | null
+    lastUsedAt?: Date | string | null
     revoked?: boolean
   }
 
@@ -46337,9 +46373,10 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    token?: StringFieldUpdateOperationsInput | string
-    name?: NullableStringFieldUpdateOperationsInput | string | null
+    tokenHash?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
     expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastUsedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     revoked?: BoolFieldUpdateOperationsInput | boolean
   }
 
@@ -46347,9 +46384,10 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    token?: StringFieldUpdateOperationsInput | string
-    name?: NullableStringFieldUpdateOperationsInput | string | null
+    tokenHash?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
     expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastUsedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     revoked?: BoolFieldUpdateOperationsInput | boolean
   }
 
@@ -46357,9 +46395,10 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    token?: StringFieldUpdateOperationsInput | string
-    name?: NullableStringFieldUpdateOperationsInput | string | null
+    tokenHash?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
     expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastUsedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     revoked?: BoolFieldUpdateOperationsInput | boolean
   }
 

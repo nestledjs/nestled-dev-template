@@ -33,9 +33,10 @@ type ApiToken {
   createdAt: DateTime!
   expiresAt: DateTime
   id: String!
-  name: String
+  lastUsedAt: DateTime
+  name: String!
   revoked: Boolean!
-  token: String!
+  tokenHash: String!
   updatedAt: DateTime!
   user: User
   userId: String!
@@ -114,9 +115,10 @@ input CreateApiTokenInput {
   createdAt: DateTime
   expiresAt: DateTime
   id: String
-  name: String
+  lastUsedAt: DateTime
+  name: String!
   revoked: Boolean
-  token: String!
+  tokenHash: String!
   updatedAt: DateTime
   userId: String!
 }
@@ -363,7 +365,7 @@ input CreateUserInput {
   imagesIds: [String!]
   invitesSentIds: [String!]
   isActive: Boolean
-  isSuperAdmin: Boolean!
+  isSuperAdmin: Boolean
   lastFailedLogin: DateTime
   lastName: String
   lastSuccessfulLogin: DateTime
@@ -416,6 +418,10 @@ scalar DateTime
 """An arbitrary-precision Decimal type"""
 scalar Decimal
 
+input Disable2FAInput {
+  password: String!
+}
+
 type Email {
   createdAt: DateTime!
   email: String!
@@ -443,6 +449,11 @@ input EmulateUserInput {
   userId: String!
 }
 
+type Enable2FAOutput {
+  backupCodes: [String!]!
+  success: Boolean!
+}
+
 enum FailureReason {
   ACCOUNT_DISABLED
   ACCOUNT_LOCKED
@@ -455,6 +466,16 @@ enum FailureReason {
 
 input ForgotPasswordInput {
   email: String!
+}
+
+input GenerateApiTokenInput {
+  expiresAt: DateTime
+  name: String!
+}
+
+type GenerateApiTokenOutput {
+  apiToken: ApiToken!
+  token: String!
 }
 
 enum ImageType {
@@ -508,6 +529,13 @@ type Link {
   userId: String
 }
 
+input LinkOAuthInput {
+  provider: OAuthProvider!
+
+  """OAuth access token or authorization code"""
+  token: String!
+}
+
 input ListAddressInput {
   address1: String
   address2: String
@@ -536,6 +564,7 @@ input ListApiTokenInput {
   expiresAt: DateTime
   filters: JSONObject
   id: String
+  lastUsedAt: DateTime
   name: String
   orderBy: String
   orderDirection: String
@@ -544,7 +573,7 @@ input ListApiTokenInput {
   searchFields: [String!]
   skip: Float = 0
   take: Float = 20
-  token: String
+  tokenHash: String
   updatedAt: DateTime
   userId: String
 }
@@ -1052,13 +1081,23 @@ type Mutation {
   deleteUser(userId: String!): User
   deleteUserPreference(userPreferenceId: String!): UserPreference
   deleteUserSession(userSessionId: String!): UserSession
+  disable2FA(input: Disable2FAInput!): Boolean!
   emulateUser(input: EmulateUserInput!): UserToken
+  enable2FA(input: Verify2FAInput!): Enable2FAOutput!
+  endEmulation: UserToken
   forgotPassword(input: ForgotPasswordInput!): Boolean
+  generateApiToken(input: GenerateApiTokenInput!): GenerateApiTokenOutput!
+  linkOAuthAccount(input: LinkOAuthInput!): Boolean!
   login(input: LoginInput!): UserToken
   logout: Boolean
   register(input: RegisterInput!): UserToken
   resendVerificationEmail(email: String!): Boolean!
   resetPassword(input: ResetPasswordInput!): User
+  revokeApiToken(tokenId: String!): ApiToken!
+  rotateApiToken(input: RotateApiTokenInput!): GenerateApiTokenOutput!
+  setup2FA: Setup2FAOutput!
+  unlinkOAuthAccount(input: UnlinkOAuthInput!): Boolean!
+  unlockAccount(userId: String!): User!
   updateAddress(addressId: String!, input: UpdateAddressInput!): Address
   updateApiToken(apiTokenId: String!, input: UpdateApiTokenInput!): ApiToken
   updateAuditLog(auditLogId: String!, input: UpdateAuditLogInput!): AuditLog
@@ -1082,6 +1121,7 @@ type Mutation {
   updateUser(input: UpdateUserInput!, userId: String!): User
   updateUserPreference(input: UpdateUserPreferenceInput!, userPreferenceId: String!): UserPreference
   updateUserSession(input: UpdateUserSessionInput!, userSessionId: String!): UserSession
+  verify2FACode(input: Verify2FAInput!): Boolean!
   verifyEmail(input: VerifyEmailInput!): User!
   verifyEmailChange(token: String!): User!
 }
@@ -1094,6 +1134,18 @@ type OAuthAccount {
   updatedAt: DateTime!
   user: User
   userId: String!
+}
+
+"""OAuth provider types"""
+enum OAuthProvider {
+  GITHUB
+  GOOGLE
+}
+
+type OAuthProviderInfo {
+  enabled: Boolean!
+  name: String!
+  provider: OAuthProvider!
 }
 
 type Organization {
@@ -1175,6 +1227,7 @@ type Query {
   auditLog(auditLogId: String!): AuditLog
   auditLogs(input: ListAuditLogInput): [AuditLog!]
   auditLogsCount(input: ListAuditLogInput): CorePaging
+  availableOAuthProviders: [OAuthProviderInfo!]!
   countries(input: ListCountryInput): [Country!]
   countriesCount(input: ListCountryInput): CorePaging
   country(countryId: String!): Country
@@ -1187,6 +1240,7 @@ type Query {
   link(linkId: String!): Link
   links(input: ListLinkInput): [Link!]
   linksCount(input: ListLinkInput): CorePaging
+  listApiTokens: [ApiToken!]!
   loginAttempt(loginAttemptId: String!): LoginAttempt
   loginAttempts(input: ListLoginAttemptInput): [LoginAttempt!]
   loginAttemptsCount(input: ListLoginAttemptInput): CorePaging
@@ -1214,7 +1268,9 @@ type Query {
   rolesCount(input: ListRoleInput): CorePaging
   securityEvent(securityEventId: String!): SecurityEvent
   securityEvents(input: ListSecurityEventInput): [SecurityEvent!]
+  securityEventsByType(eventType: SecurityEventType!, limit: Float): [SecurityEvent!]!
   securityEventsCount(input: ListSecurityEventInput): CorePaging
+  securitySummary: SecuritySummary!
   subscription(subscriptionId: String!): Subscription
   subscriptions(input: ListSubscriptionInput): [Subscription!]
   subscriptionsCount(input: ListSubscriptionInput): CorePaging
@@ -1232,6 +1288,7 @@ type Query {
   userPreference(userPreferenceId: String!): UserPreference
   userPreferences(input: ListUserPreferenceInput): [UserPreference!]
   userPreferencesCount(input: ListUserPreferenceInput): CorePaging
+  userSecurityEvents(limit: Float): [SecurityEvent!]!
   userSession(userSessionId: String!): UserSession
   userSessions(input: ListUserSessionInput): [UserSession!]
   userSessionsCount(input: ListUserSessionInput): CorePaging
@@ -1266,6 +1323,11 @@ type Role {
   teamMembers: [TeamMember!]
 }
 
+input RotateApiTokenInput {
+  keepOldTokenActive: Boolean = false
+  tokenId: String!
+}
+
 type SecurityEvent {
   createdAt: DateTime!
   eventType: SecurityEventType!
@@ -1281,6 +1343,9 @@ type SecurityEvent {
 enum SecurityEventType {
   ACCOUNT_LOCKED
   ACCOUNT_UNLOCKED
+  API_TOKEN_CREATED
+  API_TOKEN_REVOKED
+  API_TOKEN_ROTATED
   EMAIL_CHANGED
   LOGIN_LOCATION_CHANGE
   PASSWORD_CHANGED
@@ -1289,6 +1354,18 @@ enum SecurityEventType {
   SUSPICIOUS_LOGIN_ATTEMPT
   TWO_FACTOR_DISABLED
   TWO_FACTOR_ENABLED
+}
+
+type SecuritySummary {
+  lastPasswordChange: DateTime
+  recentEventsCount: Int!
+  suspiciousAttemptsLast30Days: Int!
+}
+
+type Setup2FAOutput {
+  otpauthUrl: String!
+  qrCode: String!
+  secret: String!
 }
 
 type Subscription {
@@ -1345,6 +1422,10 @@ enum TwoFactorMethod {
   SMS
 }
 
+input UnlinkOAuthInput {
+  provider: OAuthProvider!
+}
+
 input UpdateAddressInput {
   address1: String
   address2: String
@@ -1365,9 +1446,10 @@ input UpdateApiTokenInput {
   createdAt: DateTime
   expiresAt: DateTime
   id: String
+  lastUsedAt: DateTime
   name: String
   revoked: Boolean
-  token: String
+  tokenHash: String
   updatedAt: DateTime
   userId: String
 }
@@ -1753,6 +1835,10 @@ type UserToken {
   """JWT Bearer token"""
   token: String
   user: User
+}
+
+input Verify2FAInput {
+  code: String!
 }
 
 input VerifyEmailInput {

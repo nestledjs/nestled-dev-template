@@ -141,9 +141,10 @@ exports.Prisma.ApiTokenScalarFieldEnum = {
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   userId: 'userId',
-  token: 'token',
+  tokenHash: 'tokenHash',
   name: 'name',
   expiresAt: 'expiresAt',
+  lastUsedAt: 'lastUsedAt',
   revoked: 'revoked'
 };
 
@@ -473,7 +474,10 @@ exports.SecurityEventType = exports.$Enums.SecurityEventType = {
   ACCOUNT_UNLOCKED: 'ACCOUNT_UNLOCKED',
   SUSPICIOUS_LOGIN_ATTEMPT: 'SUSPICIOUS_LOGIN_ATTEMPT',
   PASSWORD_RESET_REQUESTED: 'PASSWORD_RESET_REQUESTED',
-  LOGIN_LOCATION_CHANGE: 'LOGIN_LOCATION_CHANGE'
+  LOGIN_LOCATION_CHANGE: 'LOGIN_LOCATION_CHANGE',
+  API_TOKEN_CREATED: 'API_TOKEN_CREATED',
+  API_TOKEN_REVOKED: 'API_TOKEN_REVOKED',
+  API_TOKEN_ROTATED: 'API_TOKEN_ROTATED'
 };
 
 exports.SubscriptionStatus = exports.$Enums.SubscriptionStatus = {

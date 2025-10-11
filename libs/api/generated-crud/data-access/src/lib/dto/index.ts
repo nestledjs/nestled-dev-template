@@ -154,13 +154,16 @@ export class CreateApiTokenInput {
   userId!: string
 
   @Field({ nullable: false })
-  token!: string
+  tokenHash!: string
 
-  @Field({ nullable: true })
-  name?: string
+  @Field({ nullable: false })
+  name!: string
 
   @Field(() => Date, { nullable: true })
   expiresAt?: Date
+
+  @Field(() => Date, { nullable: true })
+  lastUsedAt?: Date
 
   @Field({ nullable: true })
   revoked?: boolean
@@ -181,13 +184,16 @@ export class UpdateApiTokenInput {
   userId?: string
 
   @Field({ nullable: true })
-  token?: string
+  tokenHash?: string
 
   @Field({ nullable: true })
   name?: string
 
   @Field(() => Date, { nullable: true })
   expiresAt?: Date
+
+  @Field(() => Date, { nullable: true })
+  lastUsedAt?: Date
 
   @Field({ nullable: true })
   revoked?: boolean
@@ -208,13 +214,16 @@ export class ListApiTokenInput extends CorePagingInput {
   userId?: string
 
   @Field({ nullable: true })
-  token?: string
+  tokenHash?: string
 
   @Field({ nullable: true })
   name?: string
 
   @Field(() => Date, { nullable: true })
   expiresAt?: Date
+
+  @Field(() => Date, { nullable: true })
+  lastUsedAt?: Date
 
   @Field({ nullable: true })
   revoked?: boolean
@@ -1902,8 +1911,8 @@ export class CreateUserInput {
   @Field({ nullable: true })
   lastName?: string
 
-  @Field(() => Boolean, { nullable: false })
-  isSuperAdmin!: boolean
+  @Field({ nullable: true })
+  isSuperAdmin?: boolean
 
   @Field({ nullable: true })
   bio?: string
@@ -2031,7 +2040,7 @@ export class UpdateUserInput {
   @Field({ nullable: true })
   lastName?: string
 
-  @Field(() => Boolean, { nullable: true })
+  @Field({ nullable: true })
   isSuperAdmin?: boolean
 
   @Field({ nullable: true })
@@ -2160,7 +2169,7 @@ export class ListUserInput extends CorePagingInput {
   @Field({ nullable: true })
   lastName?: string
 
-  @Field(() => Boolean, { nullable: true })
+  @Field({ nullable: true })
   isSuperAdmin?: boolean
 
   @Field({ nullable: true })

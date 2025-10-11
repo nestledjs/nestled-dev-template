@@ -62,9 +62,10 @@ export type ApiToken = {
   createdAt: Scalars['DateTime']['output']
   expiresAt?: Maybe<Scalars['DateTime']['output']>
   id: Scalars['String']['output']
-  name?: Maybe<Scalars['String']['output']>
+  lastUsedAt?: Maybe<Scalars['DateTime']['output']>
+  name: Scalars['String']['output']
   revoked: Scalars['Boolean']['output']
-  token: Scalars['String']['output']
+  tokenHash: Scalars['String']['output']
   updatedAt: Scalars['DateTime']['output']
   user?: Maybe<User>
   userId: Scalars['String']['output']
@@ -146,9 +147,10 @@ export type CreateApiTokenInput = {
   createdAt?: InputMaybe<Scalars['DateTime']['input']>
   expiresAt?: InputMaybe<Scalars['DateTime']['input']>
   id?: InputMaybe<Scalars['String']['input']>
-  name?: InputMaybe<Scalars['String']['input']>
+  lastUsedAt?: InputMaybe<Scalars['DateTime']['input']>
+  name: Scalars['String']['input']
   revoked?: InputMaybe<Scalars['Boolean']['input']>
-  token: Scalars['String']['input']
+  tokenHash: Scalars['String']['input']
   updatedAt?: InputMaybe<Scalars['DateTime']['input']>
   userId: Scalars['String']['input']
 }
@@ -395,7 +397,7 @@ export type CreateUserInput = {
   imagesIds?: InputMaybe<Array<Scalars['String']['input']>>
   invitesSentIds?: InputMaybe<Array<Scalars['String']['input']>>
   isActive?: InputMaybe<Scalars['Boolean']['input']>
-  isSuperAdmin: Scalars['Boolean']['input']
+  isSuperAdmin?: InputMaybe<Scalars['Boolean']['input']>
   lastFailedLogin?: InputMaybe<Scalars['DateTime']['input']>
   lastName?: InputMaybe<Scalars['String']['input']>
   lastSuccessfulLogin?: InputMaybe<Scalars['DateTime']['input']>
@@ -440,6 +442,10 @@ export type CreateUserSessionInput = {
   userId: Scalars['String']['input']
 }
 
+export type Disable2FaInput = {
+  password: Scalars['String']['input']
+}
+
 export type Email = {
   __typename?: 'Email'
   createdAt: Scalars['DateTime']['output']
@@ -468,6 +474,12 @@ export type EmulateUserInput = {
   userId: Scalars['String']['input']
 }
 
+export type Enable2FaOutput = {
+  __typename?: 'Enable2FAOutput'
+  backupCodes: Array<Scalars['String']['output']>
+  success: Scalars['Boolean']['output']
+}
+
 export enum FailureReason {
   AccountDisabled = 'ACCOUNT_DISABLED',
   AccountLocked = 'ACCOUNT_LOCKED',
@@ -480,6 +492,17 @@ export enum FailureReason {
 
 export type ForgotPasswordInput = {
   email: Scalars['String']['input']
+}
+
+export type GenerateApiTokenInput = {
+  expiresAt?: InputMaybe<Scalars['DateTime']['input']>
+  name: Scalars['String']['input']
+}
+
+export type GenerateApiTokenOutput = {
+  __typename?: 'GenerateApiTokenOutput'
+  apiToken: ApiToken
+  token: Scalars['String']['output']
 }
 
 export enum ImageType {
@@ -525,6 +548,12 @@ export type Link = {
   userId?: Maybe<Scalars['String']['output']>
 }
 
+export type LinkOAuthInput = {
+  provider: OAuthProvider
+  /** OAuth access token or authorization code */
+  token: Scalars['String']['input']
+}
+
 export type ListAddressInput = {
   address1?: InputMaybe<Scalars['String']['input']>
   address2?: InputMaybe<Scalars['String']['input']>
@@ -553,6 +582,7 @@ export type ListApiTokenInput = {
   expiresAt?: InputMaybe<Scalars['DateTime']['input']>
   filters?: InputMaybe<Scalars['JSONObject']['input']>
   id?: InputMaybe<Scalars['String']['input']>
+  lastUsedAt?: InputMaybe<Scalars['DateTime']['input']>
   name?: InputMaybe<Scalars['String']['input']>
   orderBy?: InputMaybe<Scalars['String']['input']>
   orderDirection?: InputMaybe<Scalars['String']['input']>
@@ -561,7 +591,7 @@ export type ListApiTokenInput = {
   searchFields?: InputMaybe<Array<Scalars['String']['input']>>
   skip?: InputMaybe<Scalars['Float']['input']>
   take?: InputMaybe<Scalars['Float']['input']>
-  token?: InputMaybe<Scalars['String']['input']>
+  tokenHash?: InputMaybe<Scalars['String']['input']>
   updatedAt?: InputMaybe<Scalars['DateTime']['input']>
   userId?: InputMaybe<Scalars['String']['input']>
 }
@@ -1071,13 +1101,23 @@ export type Mutation = {
   deleteUser?: Maybe<User>
   deleteUserPreference?: Maybe<UserPreference>
   deleteUserSession?: Maybe<UserSession>
+  disable2FA: Scalars['Boolean']['output']
   emulateUser?: Maybe<UserToken>
+  enable2FA: Enable2FaOutput
+  endEmulation?: Maybe<UserToken>
   forgotPassword?: Maybe<Scalars['Boolean']['output']>
+  generateApiToken: GenerateApiTokenOutput
+  linkOAuthAccount: Scalars['Boolean']['output']
   login?: Maybe<UserToken>
   logout?: Maybe<Scalars['Boolean']['output']>
   register?: Maybe<UserToken>
   resendVerificationEmail: Scalars['Boolean']['output']
   resetPassword?: Maybe<User>
+  revokeApiToken: ApiToken
+  rotateApiToken: GenerateApiTokenOutput
+  setup2FA: Setup2FaOutput
+  unlinkOAuthAccount: Scalars['Boolean']['output']
+  unlockAccount: User
   updateAddress?: Maybe<Address>
   updateApiToken?: Maybe<ApiToken>
   updateAuditLog?: Maybe<AuditLog>
@@ -1101,6 +1141,7 @@ export type Mutation = {
   updateUser?: Maybe<User>
   updateUserPreference?: Maybe<UserPreference>
   updateUserSession?: Maybe<UserSession>
+  verify2FACode: Scalars['Boolean']['output']
   verifyEmail: User
   verifyEmailChange: User
 }
@@ -1297,12 +1338,28 @@ export type MutationDeleteUserSessionArgs = {
   userSessionId: Scalars['String']['input']
 }
 
+export type MutationDisable2FaArgs = {
+  input: Disable2FaInput
+}
+
 export type MutationEmulateUserArgs = {
   input: EmulateUserInput
 }
 
+export type MutationEnable2FaArgs = {
+  input: Verify2FaInput
+}
+
 export type MutationForgotPasswordArgs = {
   input: ForgotPasswordInput
+}
+
+export type MutationGenerateApiTokenArgs = {
+  input: GenerateApiTokenInput
+}
+
+export type MutationLinkOAuthAccountArgs = {
+  input: LinkOAuthInput
 }
 
 export type MutationLoginArgs = {
@@ -1319,6 +1376,22 @@ export type MutationResendVerificationEmailArgs = {
 
 export type MutationResetPasswordArgs = {
   input: ResetPasswordInput
+}
+
+export type MutationRevokeApiTokenArgs = {
+  tokenId: Scalars['String']['input']
+}
+
+export type MutationRotateApiTokenArgs = {
+  input: RotateApiTokenInput
+}
+
+export type MutationUnlinkOAuthAccountArgs = {
+  input: UnlinkOAuthInput
+}
+
+export type MutationUnlockAccountArgs = {
+  userId: Scalars['String']['input']
 }
 
 export type MutationUpdateAddressArgs = {
@@ -1436,6 +1509,10 @@ export type MutationUpdateUserSessionArgs = {
   userSessionId: Scalars['String']['input']
 }
 
+export type MutationVerify2FaCodeArgs = {
+  input: Verify2FaInput
+}
+
 export type MutationVerifyEmailArgs = {
   input: VerifyEmailInput
 }
@@ -1453,6 +1530,19 @@ export type OAuthAccount = {
   updatedAt: Scalars['DateTime']['output']
   user?: Maybe<User>
   userId: Scalars['String']['output']
+}
+
+/** OAuth provider types */
+export enum OAuthProvider {
+  Github = 'GITHUB',
+  Google = 'GOOGLE',
+}
+
+export type OAuthProviderInfo = {
+  __typename?: 'OAuthProviderInfo'
+  enabled: Scalars['Boolean']['output']
+  name: Scalars['String']['output']
+  provider: OAuthProvider
 }
 
 export type Organization = {
@@ -1540,6 +1630,7 @@ export type Query = {
   auditLog?: Maybe<AuditLog>
   auditLogs?: Maybe<Array<AuditLog>>
   auditLogsCount?: Maybe<CorePaging>
+  availableOAuthProviders: Array<OAuthProviderInfo>
   countries?: Maybe<Array<Country>>
   countriesCount?: Maybe<CorePaging>
   country?: Maybe<Country>
@@ -1552,6 +1643,7 @@ export type Query = {
   link?: Maybe<Link>
   links?: Maybe<Array<Link>>
   linksCount?: Maybe<CorePaging>
+  listApiTokens: Array<ApiToken>
   loginAttempt?: Maybe<LoginAttempt>
   loginAttempts?: Maybe<Array<LoginAttempt>>
   loginAttemptsCount?: Maybe<CorePaging>
@@ -1579,7 +1671,9 @@ export type Query = {
   rolesCount?: Maybe<CorePaging>
   securityEvent?: Maybe<SecurityEvent>
   securityEvents?: Maybe<Array<SecurityEvent>>
+  securityEventsByType: Array<SecurityEvent>
   securityEventsCount?: Maybe<CorePaging>
+  securitySummary: SecuritySummary
   subscription?: Maybe<Subscription>
   subscriptions?: Maybe<Array<Subscription>>
   subscriptionsCount?: Maybe<CorePaging>
@@ -1597,6 +1691,7 @@ export type Query = {
   userPreference?: Maybe<UserPreference>
   userPreferences?: Maybe<Array<UserPreference>>
   userPreferencesCount?: Maybe<CorePaging>
+  userSecurityEvents: Array<SecurityEvent>
   userSession?: Maybe<UserSession>
   userSessions?: Maybe<Array<UserSession>>
   userSessionsCount?: Maybe<CorePaging>
@@ -1792,6 +1887,11 @@ export type QuerySecurityEventsArgs = {
   input?: InputMaybe<ListSecurityEventInput>
 }
 
+export type QuerySecurityEventsByTypeArgs = {
+  eventType: SecurityEventType
+  limit?: InputMaybe<Scalars['Float']['input']>
+}
+
 export type QuerySecurityEventsCountArgs = {
   input?: InputMaybe<ListSecurityEventInput>
 }
@@ -1860,6 +1960,10 @@ export type QueryUserPreferencesCountArgs = {
   input?: InputMaybe<ListUserPreferenceInput>
 }
 
+export type QueryUserSecurityEventsArgs = {
+  limit?: InputMaybe<Scalars['Float']['input']>
+}
+
 export type QueryUserSessionArgs = {
   userSessionId: Scalars['String']['input']
 }
@@ -1908,6 +2012,11 @@ export type Role = {
   teamMembers?: Maybe<Array<TeamMember>>
 }
 
+export type RotateApiTokenInput = {
+  keepOldTokenActive?: InputMaybe<Scalars['Boolean']['input']>
+  tokenId: Scalars['String']['input']
+}
+
 export type SecurityEvent = {
   __typename?: 'SecurityEvent'
   createdAt: Scalars['DateTime']['output']
@@ -1924,6 +2033,9 @@ export type SecurityEvent = {
 export enum SecurityEventType {
   AccountLocked = 'ACCOUNT_LOCKED',
   AccountUnlocked = 'ACCOUNT_UNLOCKED',
+  ApiTokenCreated = 'API_TOKEN_CREATED',
+  ApiTokenRevoked = 'API_TOKEN_REVOKED',
+  ApiTokenRotated = 'API_TOKEN_ROTATED',
   EmailChanged = 'EMAIL_CHANGED',
   LoginLocationChange = 'LOGIN_LOCATION_CHANGE',
   PasswordChanged = 'PASSWORD_CHANGED',
@@ -1932,6 +2044,20 @@ export enum SecurityEventType {
   SuspiciousLoginAttempt = 'SUSPICIOUS_LOGIN_ATTEMPT',
   TwoFactorDisabled = 'TWO_FACTOR_DISABLED',
   TwoFactorEnabled = 'TWO_FACTOR_ENABLED',
+}
+
+export type SecuritySummary = {
+  __typename?: 'SecuritySummary'
+  lastPasswordChange?: Maybe<Scalars['DateTime']['output']>
+  recentEventsCount: Scalars['Int']['output']
+  suspiciousAttemptsLast30Days: Scalars['Int']['output']
+}
+
+export type Setup2FaOutput = {
+  __typename?: 'Setup2FAOutput'
+  otpauthUrl: Scalars['String']['output']
+  qrCode: Scalars['String']['output']
+  secret: Scalars['String']['output']
 }
 
 export type Subscription = {
@@ -1991,6 +2117,10 @@ export enum TwoFactorMethod {
   Sms = 'SMS',
 }
 
+export type UnlinkOAuthInput = {
+  provider: OAuthProvider
+}
+
 export type UpdateAddressInput = {
   address1?: InputMaybe<Scalars['String']['input']>
   address2?: InputMaybe<Scalars['String']['input']>
@@ -2011,9 +2141,10 @@ export type UpdateApiTokenInput = {
   createdAt?: InputMaybe<Scalars['DateTime']['input']>
   expiresAt?: InputMaybe<Scalars['DateTime']['input']>
   id?: InputMaybe<Scalars['String']['input']>
+  lastUsedAt?: InputMaybe<Scalars['DateTime']['input']>
   name?: InputMaybe<Scalars['String']['input']>
   revoked?: InputMaybe<Scalars['Boolean']['input']>
-  token?: InputMaybe<Scalars['String']['input']>
+  tokenHash?: InputMaybe<Scalars['String']['input']>
   updatedAt?: InputMaybe<Scalars['DateTime']['input']>
   userId?: InputMaybe<Scalars['String']['input']>
 }
@@ -2406,6 +2537,10 @@ export type UserToken = {
   user?: Maybe<User>
 }
 
+export type Verify2FaInput = {
+  code: Scalars['String']['input']
+}
+
 export type VerifyEmailInput = {
   token: Scalars['String']['input']
 }
@@ -2606,9 +2741,10 @@ export type AdminApiTokenListFragment = {
   createdAt: any
   updatedAt: any
   userId: string
-  token: string
-  name?: string | null
+  tokenHash: string
+  name: string
   expiresAt?: any | null
+  lastUsedAt?: any | null
   revoked: boolean
   user?: { __typename?: 'User'; id: string } | null
 }
@@ -2619,9 +2755,10 @@ export type AdminApiTokenDetailsFragment = {
   createdAt: any
   updatedAt: any
   userId: string
-  token: string
-  name?: string | null
+  tokenHash: string
+  name: string
   expiresAt?: any | null
+  lastUsedAt?: any | null
   revoked: boolean
   user?: { __typename?: 'User'; id: string } | null
 }
@@ -2638,9 +2775,10 @@ export type AdminCreateApiTokenMutation = {
     createdAt: any
     updatedAt: any
     userId: string
-    token: string
-    name?: string | null
+    tokenHash: string
+    name: string
     expiresAt?: any | null
+    lastUsedAt?: any | null
     revoked: boolean
     user?: { __typename?: 'User'; id: string } | null
   } | null
@@ -2668,9 +2806,10 @@ export type AdminUpdateApiTokenMutation = {
     createdAt: any
     updatedAt: any
     userId: string
-    token: string
-    name?: string | null
+    tokenHash: string
+    name: string
     expiresAt?: any | null
+    lastUsedAt?: any | null
     revoked: boolean
     user?: { __typename?: 'User'; id: string } | null
   } | null
@@ -2688,9 +2827,10 @@ export type AdminApiTokenQuery = {
     createdAt: any
     updatedAt: any
     userId: string
-    token: string
-    name?: string | null
+    tokenHash: string
+    name: string
     expiresAt?: any | null
+    lastUsedAt?: any | null
     revoked: boolean
     user?: { __typename?: 'User'; id: string } | null
   } | null
@@ -2708,9 +2848,10 @@ export type AdminApiTokensQuery = {
     createdAt: any
     updatedAt: any
     userId: string
-    token: string
-    name?: string | null
+    tokenHash: string
+    name: string
     expiresAt?: any | null
+    lastUsedAt?: any | null
     revoked: boolean
     user?: { __typename?: 'User'; id: string } | null
   }> | null
@@ -6183,9 +6324,9 @@ export type ApiTokenListFragment = {
   id: string
   createdAt: any
   updatedAt: any
-  token: string
-  name?: string | null
+  name: string
   expiresAt?: any | null
+  lastUsedAt?: any | null
   revoked: boolean
 }
 
@@ -6194,56 +6335,87 @@ export type ApiTokenDetailsFragment = {
   id: string
   createdAt: any
   updatedAt: any
-  token: string
-  name?: string | null
+  name: string
   expiresAt?: any | null
+  lastUsedAt?: any | null
   revoked: boolean
 }
 
-export type CreateApiTokenMutationVariables = Exact<{
-  input: CreateApiTokenInput
-}>
-
-export type CreateApiTokenMutation = {
-  __typename?: 'Mutation'
-  createApiToken?: {
+export type GeneratedApiTokenFragment = {
+  __typename?: 'GenerateApiTokenOutput'
+  token: string
+  apiToken: {
     __typename?: 'ApiToken'
     id: string
     createdAt: any
     updatedAt: any
-    token: string
-    name?: string | null
+    name: string
     expiresAt?: any | null
+    lastUsedAt?: any | null
     revoked: boolean
-  } | null
+  }
 }
 
-export type DeleteApiTokenMutationVariables = Exact<{
-  apiTokenId: Scalars['String']['input']
+export type GenerateApiTokenMutationVariables = Exact<{
+  input: GenerateApiTokenInput
 }>
 
-export type DeleteApiTokenMutation = {
+export type GenerateApiTokenMutation = {
   __typename?: 'Mutation'
-  deleteApiToken?: { __typename?: 'ApiToken'; id: string } | null
+  generateApiToken: {
+    __typename?: 'GenerateApiTokenOutput'
+    token: string
+    apiToken: {
+      __typename?: 'ApiToken'
+      id: string
+      createdAt: any
+      updatedAt: any
+      name: string
+      expiresAt?: any | null
+      lastUsedAt?: any | null
+      revoked: boolean
+    }
+  }
 }
 
-export type UpdateApiTokenMutationVariables = Exact<{
-  apiTokenId: Scalars['String']['input']
-  input: UpdateApiTokenInput
+export type RotateApiTokenMutationVariables = Exact<{
+  input: RotateApiTokenInput
 }>
 
-export type UpdateApiTokenMutation = {
+export type RotateApiTokenMutation = {
   __typename?: 'Mutation'
-  updateApiToken?: {
+  rotateApiToken: {
+    __typename?: 'GenerateApiTokenOutput'
+    token: string
+    apiToken: {
+      __typename?: 'ApiToken'
+      id: string
+      createdAt: any
+      updatedAt: any
+      name: string
+      expiresAt?: any | null
+      lastUsedAt?: any | null
+      revoked: boolean
+    }
+  }
+}
+
+export type RevokeApiTokenMutationVariables = Exact<{
+  tokenId: Scalars['String']['input']
+}>
+
+export type RevokeApiTokenMutation = {
+  __typename?: 'Mutation'
+  revokeApiToken: {
     __typename?: 'ApiToken'
     id: string
     createdAt: any
     updatedAt: any
-    token: string
-    name?: string | null
+    name: string
     expiresAt?: any | null
+    lastUsedAt?: any | null
     revoked: boolean
-  } | null
+  }
 }
 
 export type ApiTokenQueryVariables = Exact<{
@@ -6257,9 +6429,9 @@ export type ApiTokenQuery = {
     id: string
     createdAt: any
     updatedAt: any
-    token: string
-    name?: string | null
+    name: string
     expiresAt?: any | null
+    lastUsedAt?: any | null
     revoked: boolean
   } | null
 }
@@ -6275,9 +6447,9 @@ export type ApiTokensQuery = {
     id: string
     createdAt: any
     updatedAt: any
-    token: string
-    name?: string | null
+    name: string
     expiresAt?: any | null
+    lastUsedAt?: any | null
     revoked: boolean
   }> | null
   counters?: {
@@ -6292,6 +6464,22 @@ export type ApiTokensQuery = {
     hasNext?: boolean | null
     hasPrev?: boolean | null
   } | null
+}
+
+export type ListApiTokensQueryVariables = Exact<{ [key: string]: never }>
+
+export type ListApiTokensQuery = {
+  __typename?: 'Query'
+  listApiTokens: Array<{
+    __typename?: 'ApiToken'
+    id: string
+    createdAt: any
+    updatedAt: any
+    name: string
+    expiresAt?: any | null
+    lastUsedAt?: any | null
+    revoked: boolean
+  }>
 }
 
 export type ApiTokenPaginationQueryVariables = Exact<{
@@ -6741,6 +6929,18 @@ export type ChangePasswordMutationVariables = Exact<{
 
 export type ChangePasswordMutation = { __typename?: 'Mutation'; changePassword: boolean }
 
+export type LinkOAuthAccountMutationVariables = Exact<{
+  input: LinkOAuthInput
+}>
+
+export type LinkOAuthAccountMutation = { __typename?: 'Mutation'; linkOAuthAccount: boolean }
+
+export type UnlinkOAuthAccountMutationVariables = Exact<{
+  input: UnlinkOAuthInput
+}>
+
+export type UnlinkOAuthAccountMutation = { __typename?: 'Mutation'; unlinkOAuthAccount: boolean }
+
 export type MeQueryVariables = Exact<{ [key: string]: never }>
 
 export type MeQuery = {
@@ -6770,6 +6970,18 @@ export type MeQuery = {
       primary: boolean
     }> | null
   } | null
+}
+
+export type AvailableOAuthProvidersQueryVariables = Exact<{ [key: string]: never }>
+
+export type AvailableOAuthProvidersQuery = {
+  __typename?: 'Query'
+  availableOAuthProviders: Array<{
+    __typename?: 'OAuthProviderInfo'
+    provider: OAuthProvider
+    enabled: boolean
+    name: string
+  }>
 }
 
 export type UptimeQueryVariables = Exact<{ [key: string]: never }>
@@ -9521,9 +9733,10 @@ export const AdminApiTokenListFragmentDoc = gql`
     createdAt
     updatedAt
     userId
-    token
+    tokenHash
     name
     expiresAt
+    lastUsedAt
     revoked
     user {
       id
@@ -10046,9 +10259,9 @@ export const ApiTokenListFragmentDoc = gql`
     id
     createdAt
     updatedAt
-    token
     name
     expiresAt
+    lastUsedAt
     revoked
   }
 `
@@ -10057,6 +10270,15 @@ export const ApiTokenDetailsFragmentDoc = gql`
     ...ApiTokenList
   }
   ${ApiTokenListFragmentDoc}
+`
+export const GeneratedApiTokenFragmentDoc = gql`
+  fragment GeneratedApiToken on GenerateApiTokenOutput {
+    token
+    apiToken {
+      ...ApiTokenDetails
+    }
+  }
+  ${ApiTokenDetailsFragmentDoc}
 `
 export const AuditLogListFragmentDoc = gql`
   fragment AuditLogList on AuditLog {
@@ -18936,140 +19158,143 @@ export type AddressPaginationQueryResult = Apollo.QueryResult<
   AddressPaginationQuery,
   AddressPaginationQueryVariables
 >
-export const CreateApiTokenDocument = gql`
-  mutation createApiToken($input: CreateApiTokenInput!) {
-    createApiToken(input: $input) {
-      ...ApiTokenDetails
+export const GenerateApiTokenDocument = gql`
+  mutation GenerateApiToken($input: GenerateApiTokenInput!) {
+    generateApiToken(input: $input) {
+      ...GeneratedApiToken
     }
   }
-  ${ApiTokenDetailsFragmentDoc}
+  ${GeneratedApiTokenFragmentDoc}
 `
-export type CreateApiTokenMutationFn = Apollo.MutationFunction<
-  CreateApiTokenMutation,
-  CreateApiTokenMutationVariables
+export type GenerateApiTokenMutationFn = Apollo.MutationFunction<
+  GenerateApiTokenMutation,
+  GenerateApiTokenMutationVariables
 >
 
 /**
- * __useCreateApiTokenMutation__
+ * __useGenerateApiTokenMutation__
  *
- * To run a mutation, you first call `useCreateApiTokenMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateApiTokenMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useGenerateApiTokenMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useGenerateApiTokenMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [createApiTokenMutation, { data, loading, error }] = useCreateApiTokenMutation({
+ * const [generateApiTokenMutation, { data, loading, error }] = useGenerateApiTokenMutation({
  *   variables: {
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useCreateApiTokenMutation(
-  baseOptions?: Apollo.MutationHookOptions<CreateApiTokenMutation, CreateApiTokenMutationVariables>,
+export function useGenerateApiTokenMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    GenerateApiTokenMutation,
+    GenerateApiTokenMutationVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<CreateApiTokenMutation, CreateApiTokenMutationVariables>(
-    CreateApiTokenDocument,
+  return Apollo.useMutation<GenerateApiTokenMutation, GenerateApiTokenMutationVariables>(
+    GenerateApiTokenDocument,
     options,
   )
 }
-export type CreateApiTokenMutationHookResult = ReturnType<typeof useCreateApiTokenMutation>
-export type CreateApiTokenMutationResult = Apollo.MutationResult<CreateApiTokenMutation>
-export type CreateApiTokenMutationOptions = Apollo.BaseMutationOptions<
-  CreateApiTokenMutation,
-  CreateApiTokenMutationVariables
+export type GenerateApiTokenMutationHookResult = ReturnType<typeof useGenerateApiTokenMutation>
+export type GenerateApiTokenMutationResult = Apollo.MutationResult<GenerateApiTokenMutation>
+export type GenerateApiTokenMutationOptions = Apollo.BaseMutationOptions<
+  GenerateApiTokenMutation,
+  GenerateApiTokenMutationVariables
 >
-export const DeleteApiTokenDocument = gql`
-  mutation deleteApiToken($apiTokenId: String!) {
-    deleteApiToken(apiTokenId: $apiTokenId) {
-      id
+export const RotateApiTokenDocument = gql`
+  mutation RotateApiToken($input: RotateApiTokenInput!) {
+    rotateApiToken(input: $input) {
+      ...GeneratedApiToken
     }
   }
+  ${GeneratedApiTokenFragmentDoc}
 `
-export type DeleteApiTokenMutationFn = Apollo.MutationFunction<
-  DeleteApiTokenMutation,
-  DeleteApiTokenMutationVariables
+export type RotateApiTokenMutationFn = Apollo.MutationFunction<
+  RotateApiTokenMutation,
+  RotateApiTokenMutationVariables
 >
 
 /**
- * __useDeleteApiTokenMutation__
+ * __useRotateApiTokenMutation__
  *
- * To run a mutation, you first call `useDeleteApiTokenMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useDeleteApiTokenMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useRotateApiTokenMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRotateApiTokenMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [deleteApiTokenMutation, { data, loading, error }] = useDeleteApiTokenMutation({
+ * const [rotateApiTokenMutation, { data, loading, error }] = useRotateApiTokenMutation({
  *   variables: {
- *      apiTokenId: // value for 'apiTokenId'
+ *      input: // value for 'input'
  *   },
  * });
  */
-export function useDeleteApiTokenMutation(
-  baseOptions?: Apollo.MutationHookOptions<DeleteApiTokenMutation, DeleteApiTokenMutationVariables>,
+export function useRotateApiTokenMutation(
+  baseOptions?: Apollo.MutationHookOptions<RotateApiTokenMutation, RotateApiTokenMutationVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<DeleteApiTokenMutation, DeleteApiTokenMutationVariables>(
-    DeleteApiTokenDocument,
+  return Apollo.useMutation<RotateApiTokenMutation, RotateApiTokenMutationVariables>(
+    RotateApiTokenDocument,
     options,
   )
 }
-export type DeleteApiTokenMutationHookResult = ReturnType<typeof useDeleteApiTokenMutation>
-export type DeleteApiTokenMutationResult = Apollo.MutationResult<DeleteApiTokenMutation>
-export type DeleteApiTokenMutationOptions = Apollo.BaseMutationOptions<
-  DeleteApiTokenMutation,
-  DeleteApiTokenMutationVariables
+export type RotateApiTokenMutationHookResult = ReturnType<typeof useRotateApiTokenMutation>
+export type RotateApiTokenMutationResult = Apollo.MutationResult<RotateApiTokenMutation>
+export type RotateApiTokenMutationOptions = Apollo.BaseMutationOptions<
+  RotateApiTokenMutation,
+  RotateApiTokenMutationVariables
 >
-export const UpdateApiTokenDocument = gql`
-  mutation updateApiToken($apiTokenId: String!, $input: UpdateApiTokenInput!) {
-    updateApiToken(apiTokenId: $apiTokenId, input: $input) {
+export const RevokeApiTokenDocument = gql`
+  mutation RevokeApiToken($tokenId: String!) {
+    revokeApiToken(tokenId: $tokenId) {
       ...ApiTokenDetails
     }
   }
   ${ApiTokenDetailsFragmentDoc}
 `
-export type UpdateApiTokenMutationFn = Apollo.MutationFunction<
-  UpdateApiTokenMutation,
-  UpdateApiTokenMutationVariables
+export type RevokeApiTokenMutationFn = Apollo.MutationFunction<
+  RevokeApiTokenMutation,
+  RevokeApiTokenMutationVariables
 >
 
 /**
- * __useUpdateApiTokenMutation__
+ * __useRevokeApiTokenMutation__
  *
- * To run a mutation, you first call `useUpdateApiTokenMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateApiTokenMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useRevokeApiTokenMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRevokeApiTokenMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [updateApiTokenMutation, { data, loading, error }] = useUpdateApiTokenMutation({
+ * const [revokeApiTokenMutation, { data, loading, error }] = useRevokeApiTokenMutation({
  *   variables: {
- *      apiTokenId: // value for 'apiTokenId'
- *      input: // value for 'input'
+ *      tokenId: // value for 'tokenId'
  *   },
  * });
  */
-export function useUpdateApiTokenMutation(
-  baseOptions?: Apollo.MutationHookOptions<UpdateApiTokenMutation, UpdateApiTokenMutationVariables>,
+export function useRevokeApiTokenMutation(
+  baseOptions?: Apollo.MutationHookOptions<RevokeApiTokenMutation, RevokeApiTokenMutationVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<UpdateApiTokenMutation, UpdateApiTokenMutationVariables>(
-    UpdateApiTokenDocument,
+  return Apollo.useMutation<RevokeApiTokenMutation, RevokeApiTokenMutationVariables>(
+    RevokeApiTokenDocument,
     options,
   )
 }
-export type UpdateApiTokenMutationHookResult = ReturnType<typeof useUpdateApiTokenMutation>
-export type UpdateApiTokenMutationResult = Apollo.MutationResult<UpdateApiTokenMutation>
-export type UpdateApiTokenMutationOptions = Apollo.BaseMutationOptions<
-  UpdateApiTokenMutation,
-  UpdateApiTokenMutationVariables
+export type RevokeApiTokenMutationHookResult = ReturnType<typeof useRevokeApiTokenMutation>
+export type RevokeApiTokenMutationResult = Apollo.MutationResult<RevokeApiTokenMutation>
+export type RevokeApiTokenMutationOptions = Apollo.BaseMutationOptions<
+  RevokeApiTokenMutation,
+  RevokeApiTokenMutationVariables
 >
 export const ApiTokenDocument = gql`
   query ApiToken($apiTokenId: String!) {
@@ -19179,6 +19404,67 @@ export type ApiTokensQueryHookResult = ReturnType<typeof useApiTokensQuery>
 export type ApiTokensLazyQueryHookResult = ReturnType<typeof useApiTokensLazyQuery>
 export type ApiTokensSuspenseQueryHookResult = ReturnType<typeof useApiTokensSuspenseQuery>
 export type ApiTokensQueryResult = Apollo.QueryResult<ApiTokensQuery, ApiTokensQueryVariables>
+export const ListApiTokensDocument = gql`
+  query ListApiTokens {
+    listApiTokens {
+      ...ApiTokenList
+    }
+  }
+  ${ApiTokenListFragmentDoc}
+`
+
+/**
+ * __useListApiTokensQuery__
+ *
+ * To run a query within a React component, call `useListApiTokensQuery` and pass it any options that fit your needs.
+ * When your component renders, `useListApiTokensQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useListApiTokensQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useListApiTokensQuery(
+  baseOptions?: Apollo.QueryHookOptions<ListApiTokensQuery, ListApiTokensQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<ListApiTokensQuery, ListApiTokensQueryVariables>(
+    ListApiTokensDocument,
+    options,
+  )
+}
+export function useListApiTokensLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<ListApiTokensQuery, ListApiTokensQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<ListApiTokensQuery, ListApiTokensQueryVariables>(
+    ListApiTokensDocument,
+    options,
+  )
+}
+export function useListApiTokensSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<ListApiTokensQuery, ListApiTokensQueryVariables>,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<ListApiTokensQuery, ListApiTokensQueryVariables>(
+    ListApiTokensDocument,
+    options,
+  )
+}
+export type ListApiTokensQueryHookResult = ReturnType<typeof useListApiTokensQuery>
+export type ListApiTokensLazyQueryHookResult = ReturnType<typeof useListApiTokensLazyQuery>
+export type ListApiTokensSuspenseQueryHookResult = ReturnType<typeof useListApiTokensSuspenseQuery>
+export type ListApiTokensQueryResult = Apollo.QueryResult<
+  ListApiTokensQuery,
+  ListApiTokensQueryVariables
+>
 export const ApiTokenPaginationDocument = gql`
   query ApiTokenPagination($input: ListApiTokenInput) {
     counters: apiTokensCount(input: $input) {
@@ -20030,6 +20316,96 @@ export type ChangePasswordMutationOptions = Apollo.BaseMutationOptions<
   ChangePasswordMutation,
   ChangePasswordMutationVariables
 >
+export const LinkOAuthAccountDocument = gql`
+  mutation LinkOAuthAccount($input: LinkOAuthInput!) {
+    linkOAuthAccount(input: $input)
+  }
+`
+export type LinkOAuthAccountMutationFn = Apollo.MutationFunction<
+  LinkOAuthAccountMutation,
+  LinkOAuthAccountMutationVariables
+>
+
+/**
+ * __useLinkOAuthAccountMutation__
+ *
+ * To run a mutation, you first call `useLinkOAuthAccountMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useLinkOAuthAccountMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [linkOAuthAccountMutation, { data, loading, error }] = useLinkOAuthAccountMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useLinkOAuthAccountMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    LinkOAuthAccountMutation,
+    LinkOAuthAccountMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<LinkOAuthAccountMutation, LinkOAuthAccountMutationVariables>(
+    LinkOAuthAccountDocument,
+    options,
+  )
+}
+export type LinkOAuthAccountMutationHookResult = ReturnType<typeof useLinkOAuthAccountMutation>
+export type LinkOAuthAccountMutationResult = Apollo.MutationResult<LinkOAuthAccountMutation>
+export type LinkOAuthAccountMutationOptions = Apollo.BaseMutationOptions<
+  LinkOAuthAccountMutation,
+  LinkOAuthAccountMutationVariables
+>
+export const UnlinkOAuthAccountDocument = gql`
+  mutation UnlinkOAuthAccount($input: UnlinkOAuthInput!) {
+    unlinkOAuthAccount(input: $input)
+  }
+`
+export type UnlinkOAuthAccountMutationFn = Apollo.MutationFunction<
+  UnlinkOAuthAccountMutation,
+  UnlinkOAuthAccountMutationVariables
+>
+
+/**
+ * __useUnlinkOAuthAccountMutation__
+ *
+ * To run a mutation, you first call `useUnlinkOAuthAccountMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUnlinkOAuthAccountMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [unlinkOAuthAccountMutation, { data, loading, error }] = useUnlinkOAuthAccountMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useUnlinkOAuthAccountMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    UnlinkOAuthAccountMutation,
+    UnlinkOAuthAccountMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<UnlinkOAuthAccountMutation, UnlinkOAuthAccountMutationVariables>(
+    UnlinkOAuthAccountDocument,
+    options,
+  )
+}
+export type UnlinkOAuthAccountMutationHookResult = ReturnType<typeof useUnlinkOAuthAccountMutation>
+export type UnlinkOAuthAccountMutationResult = Apollo.MutationResult<UnlinkOAuthAccountMutation>
+export type UnlinkOAuthAccountMutationOptions = Apollo.BaseMutationOptions<
+  UnlinkOAuthAccountMutation,
+  UnlinkOAuthAccountMutationVariables
+>
 export const MeDocument = gql`
   query Me {
     me {
@@ -20075,6 +20451,83 @@ export type MeQueryHookResult = ReturnType<typeof useMeQuery>
 export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>
 export type MeSuspenseQueryHookResult = ReturnType<typeof useMeSuspenseQuery>
 export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>
+export const AvailableOAuthProvidersDocument = gql`
+  query AvailableOAuthProviders {
+    availableOAuthProviders {
+      provider
+      enabled
+      name
+    }
+  }
+`
+
+/**
+ * __useAvailableOAuthProvidersQuery__
+ *
+ * To run a query within a React component, call `useAvailableOAuthProvidersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAvailableOAuthProvidersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAvailableOAuthProvidersQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useAvailableOAuthProvidersQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    AvailableOAuthProvidersQuery,
+    AvailableOAuthProvidersQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<AvailableOAuthProvidersQuery, AvailableOAuthProvidersQueryVariables>(
+    AvailableOAuthProvidersDocument,
+    options,
+  )
+}
+export function useAvailableOAuthProvidersLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    AvailableOAuthProvidersQuery,
+    AvailableOAuthProvidersQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<AvailableOAuthProvidersQuery, AvailableOAuthProvidersQueryVariables>(
+    AvailableOAuthProvidersDocument,
+    options,
+  )
+}
+export function useAvailableOAuthProvidersSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<
+        AvailableOAuthProvidersQuery,
+        AvailableOAuthProvidersQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<
+    AvailableOAuthProvidersQuery,
+    AvailableOAuthProvidersQueryVariables
+  >(AvailableOAuthProvidersDocument, options)
+}
+export type AvailableOAuthProvidersQueryHookResult = ReturnType<
+  typeof useAvailableOAuthProvidersQuery
+>
+export type AvailableOAuthProvidersLazyQueryHookResult = ReturnType<
+  typeof useAvailableOAuthProvidersLazyQuery
+>
+export type AvailableOAuthProvidersSuspenseQueryHookResult = ReturnType<
+  typeof useAvailableOAuthProvidersSuspenseQuery
+>
+export type AvailableOAuthProvidersQueryResult = Apollo.QueryResult<
+  AvailableOAuthProvidersQuery,
+  AvailableOAuthProvidersQueryVariables
+>
 export const UptimeDocument = gql`
   query Uptime {
     uptime

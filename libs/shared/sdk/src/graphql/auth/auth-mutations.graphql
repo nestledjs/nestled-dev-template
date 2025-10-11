@@ -53,3 +53,11 @@ mutation VerifyEmailChange($token: String!) {
 mutation ChangePassword($input: ChangePasswordInput!) {
   changePassword(input: $input)
 }
+
+mutation LinkOAuthAccount($input: LinkOAuthInput!) {
+  linkOAuthAccount(input: $input)
+}
+
+mutation UnlinkOAuthAccount($input: UnlinkOAuthInput!) {
+  unlinkOAuthAccount(input: $input)
+}

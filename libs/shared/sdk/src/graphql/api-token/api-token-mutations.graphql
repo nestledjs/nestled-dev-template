@@ -1,17 +1,17 @@
-mutation createApiToken($input: CreateApiTokenInput!) {
-  createApiToken(input: $input) {
-    ...ApiTokenDetails
+mutation GenerateApiToken($input: GenerateApiTokenInput!) {
+  generateApiToken(input: $input) {
+    ...GeneratedApiToken
   }
 }
 
-mutation deleteApiToken($apiTokenId: String!) {
-  deleteApiToken(apiTokenId: $apiTokenId) {
-    id
+mutation RotateApiToken($input: RotateApiTokenInput!) {
+  rotateApiToken(input: $input) {
+    ...GeneratedApiToken
   }
 }
 
-mutation updateApiToken($apiTokenId: String!, $input: UpdateApiTokenInput!) {
-  updateApiToken(apiTokenId: $apiTokenId, input: $input) {
+mutation RevokeApiToken($tokenId: String!) {
+  revokeApiToken(tokenId: $tokenId) {
     ...ApiTokenDetails
   }
 }

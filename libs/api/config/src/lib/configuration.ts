@@ -40,4 +40,24 @@ export const configuration = () => ({
     user: process.env['SMTP_USER'],
     pass: process.env['SMTP_PASS'],
   },
+  twoFactor: {
+    // Issuer name shown in authenticator apps
+    issuer: process.env['TWO_FACTOR_ISSUER'] ?? process.env['APP_NAME'] ?? 'MyApp',
+    // Window for time drift (in 30-second increments, 2 = 60 seconds tolerance)
+    window: parseInt(process.env['TWO_FACTOR_WINDOW'] ?? '2', 10),
+    // Encryption key for storing secrets (should be 32 characters)
+    encryptionKey: process.env['TWO_FACTOR_ENCRYPTION_KEY'] ?? process.env['JWT_SECRET'],
+  },
+  oauth: {
+    google: {
+      clientId: process.env['GOOGLE_OAUTH_CLIENT_ID'],
+      clientSecret: process.env['GOOGLE_OAUTH_CLIENT_SECRET'],
+      enabled: !!(process.env['GOOGLE_OAUTH_CLIENT_ID'] && process.env['GOOGLE_OAUTH_CLIENT_SECRET']),
+    },
+    github: {
+      clientId: process.env['GITHUB_OAUTH_CLIENT_ID'],
+      clientSecret: process.env['GITHUB_OAUTH_CLIENT_SECRET'],
+      enabled: !!(process.env['GITHUB_OAUTH_CLIENT_ID'] && process.env['GITHUB_OAUTH_CLIENT_SECRET']),
+    },
+  },
 })

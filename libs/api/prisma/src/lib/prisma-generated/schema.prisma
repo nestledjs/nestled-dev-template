@@ -32,15 +32,16 @@ model Address {
 }
 
 model ApiToken {
-  id        String    @id @default(uuid())
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  userId    String
-  user      User      @relation("User_hasMany_APITokens", fields: [userId], references: [id])
-  token     String    @unique
-  name      String?
-  expiresAt DateTime?
-  revoked   Boolean   @default(false)
+  id         String    @id @default(uuid())
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  userId     String
+  user       User      @relation("User_hasMany_APITokens", fields: [userId], references: [id])
+  tokenHash  String    @unique
+  name       String
+  expiresAt  DateTime?
+  lastUsedAt DateTime?
+  revoked    Boolean   @default(false)
 }
 
 model AuditLog {
@@ -423,6 +424,9 @@ enum SecurityEventType {
   SUSPICIOUS_LOGIN_ATTEMPT
   PASSWORD_RESET_REQUESTED
   LOGIN_LOCATION_CHANGE
+  API_TOKEN_CREATED
+  API_TOKEN_REVOKED
+  API_TOKEN_ROTATED
 }
 
 enum SubscriptionStatus {

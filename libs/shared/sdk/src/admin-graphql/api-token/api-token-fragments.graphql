@@ -3,9 +3,10 @@ fragment AdminApiTokenList on ApiToken {
   createdAt
   updatedAt
   userId
-  token
+  tokenHash
   name
   expiresAt
+  lastUsedAt
   revoked
   user {
     id

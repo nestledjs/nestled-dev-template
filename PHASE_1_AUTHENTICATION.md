@@ -66,92 +66,134 @@ Enhance the existing GraphQL authentication system with missing features from th
   - ✅ Enforced uniqueness at database level
 
 ### Enhanced Login System
-- [ ] **Add "Remember Me" functionality**
-  - [ ] Create longer-lived sessions (30 days vs 7 days)
-  - [ ] Store preference in session cookie
-  - [ ] Update session expiration logic
+- ✅ **Add "Remember Me" functionality**
+  - ✅ Create longer-lived sessions (30 days vs 7 days)
+  - ✅ JWT expiration based on remember me flag
+  - ✅ Update session expiration logic
 
-- [ ] **Add login attempt tracking**
-  - [ ] Log failed login attempts to `AuditLog`
-  - [ ] Implement rate limiting (5 attempts per 15 minutes)
-  - [ ] Return generic error messages to prevent email enumeration
+- ✅ **Add login attempt tracking**
+  - ✅ Log all login attempts to `LoginAttempt` table
+  - ✅ Track failed attempts per user
+  - ✅ Implement rate limiting (5 attempts per 15 minutes)
+  - ✅ Return generic error messages to prevent email enumeration
+  - ✅ Account locking after 5 failed attempts
+  - ✅ Auto-unlock after 15 minutes
+  - ✅ Admin unlock account mutation
+  - ✅ Security event logging for account locks/unlocks
 
 ---
 
 ## 🛡️ Two-Factor Authentication (2FA)
 
 ### 2FA Setup Flow
-- [ ] **Install TOTP library**
-  - [ ] Add `speakeasy` npm package for TOTP generation/verification
-  - [ ] Add `qrcode` npm package for QR code generation
+- ✅ **Install TOTP library**
+  - ✅ Add `speakeasy` npm package for TOTP generation/verification
+  - ✅ Add `qrcode` npm package for QR code generation
 
-- [ ] **Create `setup2FA` mutation**
-  - [ ] Generate unique TOTP secret using speakeasy
-  - [ ] Encrypt secret before storing in `User` record (use app secret key)
-  - [ ] Generate QR code URI for authenticator apps
-  - [ ] Return `{ secret, qrCodeUri }` for setup UI
-  - [ ] Require current password verification
+- ✅ **Create `setup2FA` mutation**
+  - ✅ Generate unique TOTP secret using speakeasy
+  - ✅ Encrypt secret before storing in `User` record (AES-256-CBC)
+  - ✅ Generate QR code as base64 data URL
+  - ✅ Return `{ secret, qrCode, otpauthUrl }` for setup UI
+  - ✅ Configuration via `.env` (issuer, window, encryption key)
 
-- [ ] **Create `verify2FA` mutation (setup completion)**
-  - [ ] Verify TOTP code using speakeasy
-  - [ ] Mark 2FA as enabled in `User` record
-  - [ ] Generate backup codes (10 single-use codes)
-  - [ ] Store encrypted backup codes
-  - [ ] Return success with backup codes
+- ✅ **Create `enable2FA` mutation (setup completion)**
+  - ✅ Verify TOTP code using speakeasy
+  - ✅ Mark 2FA as enabled in `User` record
+  - ✅ Generate backup codes (10 single-use codes)
+  - ✅ Store hashed backup codes (SHA-256)
+  - ✅ Return success with backup codes (shown only once)
 
-- [ ] **Create `disable2FA` mutation**
-  - [ ] Verify current password
-  - [ ] Clear TOTP secret and backup codes
-  - [ ] Mark 2FA as disabled
-  - [ ] Log security event to `AuditLog`
+- ✅ **Create `disable2FA` mutation**
+  - ✅ Verify current password
+  - ✅ Clear TOTP secret and backup codes
+  - ✅ Mark 2FA as disabled
+  - ✅ Log security event to SecurityEvent
 
 ### 2FA Login Flow
-- [ ] **Enhance `login` mutation for 2FA**
-  - [ ] After password validation, check if user has 2FA enabled
-  - [ ] If 2FA enabled, don't create session yet
-  - [ ] Return `{ requires2FA: true, sessionId: temporaryId }`
-  - [ ] Store temporary session state (5-minute expiration)
+- ✅ **`verify2FACode` mutation for login verification**
+  - ✅ Verify TOTP code with configurable time drift window
+  - ✅ Support backup codes as alternative
+  - ✅ If backup code used, mark it as consumed (delete from array)
+  - ✅ Return true/false for verification result
+  - ✅ Log backup code usage
 
-- [ ] **Create `verify2FALogin` mutation**
-  - [ ] Validate temporary session ID
-  - [ ] Verify TOTP code OR backup code
-  - [ ] If backup code used, mark it as consumed
-  - [ ] Create actual session and set cookie
-  - [ ] Return full `AuthPayload`
+- ✅ **Helper Functions**
+  - ✅ `generate2FASecret()` - TOTP secret generation
+  - ✅ `verify2FACode()` - Code verification with time window
+  - ✅ `generateQRCode()` - QR code generation
+  - ✅ `generateBackupCodes()` - 10 random recovery codes
+  - ✅ `encryptSecret()` / `decryptSecret()` - AES-256 encryption
+  - ✅ `hashBackupCode()` - SHA-256 hashing
+
+- ✅ **Documentation**
+  - ✅ Complete `2FA_SETUP.md` with setup guide
+  - ✅ Configuration instructions
+  - ✅ Frontend integration examples
+  - ✅ Troubleshooting guide
 
 ---
 
 ## 👥 OAuth Integration
 
 ### Google OAuth Setup
-- [ ] **Install OAuth packages**
-  - [ ] Add `google-auth-library` npm package
-  - [ ] Configure Google OAuth credentials in environment
+- ✅ **Install OAuth packages**
+  - ✅ Added `google-auth-library` npm package
+  - ✅ Configured Google OAuth credentials in environment
 
-- [ ] **Create OAuth callback handler**
-  - [ ] Create `/api/auth/google/callback` endpoint (not GraphQL)
-  - [ ] Exchange authorization code for access token
-  - [ ] Fetch user profile from Google
-  - [ ] Find or create `User` record by email
-  - [ ] Create `OAuthAccount` record linking user to Google
-  - [ ] Create session and redirect to app
+- ✅ **Create OAuth callback handler**
+  - ✅ Created `/api/auth/google/callback` endpoint (REST controller)
+  - ✅ Exchange authorization code for access token
+  - ✅ Fetch user profile from Google
+  - ✅ Find or create `User` record by email
+  - ✅ Create `OAuthAccount` record linking user to Google
+  - ✅ Create session and redirect to app
 
-- [ ] **Create `linkGoogleAccount` mutation**
-  - [ ] For logged-in users to link Google account
-  - [ ] Verify Google token
-  - [ ] Create `OAuthAccount` record
-  - [ ] Return success message
+- ✅ **Create `linkOAuthAccount` mutation**
+  - ✅ For logged-in users to link OAuth accounts
+  - ✅ Verify OAuth token
+  - ✅ Create `OAuthAccount` record
+  - ✅ Return success message
+  - ✅ Security checks for duplicate accounts
 
-- [ ] **Create `unlinkGoogleAccount` mutation**
-  - [ ] Remove `OAuthAccount` record for Google provider
-  - [ ] Ensure user still has password or other auth method
-  - [ ] Log security event
+- ✅ **Create `unlinkOAuthAccount` mutation**
+  - ✅ Remove `OAuthAccount` record for provider
+  - ✅ Ensure user still has password or other auth method
+  - ✅ Prevent account lockout
 
-### GitHub OAuth Setup (Optional)
-- [ ] **Follow same pattern as Google**
-  - [ ] Install `@octokit/auth-oauth-app`
-  - [ ] Create callback handler
-  - [ ] Create link/unlink mutations
+### GitHub OAuth Setup
+- ✅ **Implemented GitHub OAuth**
+  - ✅ Installed `@octokit/oauth-app` package
+  - ✅ Created callback handler
+  - ✅ Link/unlink mutations (same as Google)
+  - ✅ Email verification handling
+
+### OAuth Infrastructure
+- ✅ **OAuth Service** (`oauth.service.ts`)
+  - ✅ Google token verification
+  - ✅ GitHub code exchange and profile fetch
+  - ✅ Link/unlink OAuth accounts
+  - ✅ Find or create user from OAuth profile
+  - ✅ Organization membership on signup
+
+- ✅ **OAuth Controller** (`oauth.controller.ts`)
+  - ✅ Google authorize & callback endpoints
+  - ✅ GitHub authorize & callback endpoints
+  - ✅ Error handling with redirects
+  - ✅ Session creation with JWT cookies
+
+- ✅ **GraphQL API**
+  - ✅ `availableOAuthProviders` query
+  - ✅ `linkOAuthAccount` mutation
+  - ✅ `unlinkOAuthAccount` mutation
+  - ✅ Provider enum (GOOGLE, GITHUB)
+
+- ✅ **Documentation**
+  - ✅ Complete OAuth setup guide (`OAUTH_SETUP.md`)
+  - ✅ Configuration instructions
+  - ✅ Frontend integration examples
+  - ✅ Troubleshooting guide
+  - ✅ Security best practices
 
 ---
 
@@ -163,22 +205,22 @@ Enhance the existing GraphQL authentication system with missing features from th
   - ✅ Validate target user exists
   - ✅ Create new session as target user
   - ✅ Return emulated user's auth payload
-  - [ ] Store original admin ID in emulation session
-  - [ ] Add `isEmulating: true` flag to session
-  - [ ] Log emulation start to `AuditLog`
+  - ✅ Store original admin ID in JWT payload
+  - ✅ Add `isEmulating: true` flag to JWT
+  - ✅ Log emulation start to `AuditLog`
 
-- [ ] **Create `endEmulation` mutation**
-  - [ ] Verify current session is emulation session
-  - [ ] Retrieve original admin ID from session
-  - [ ] End emulated session
-  - [ ] Create new session as original admin
-  - [ ] Log emulation end to `AuditLog`
-  - [ ] Return original admin's auth payload
+- ✅ **Create `endEmulation` mutation**
+  - ✅ Verify current session is emulation session
+  - ✅ Retrieve original admin ID from JWT
+  - ✅ End emulated session
+  - ✅ Create new session as original admin
+  - ✅ Log emulation end to `AuditLog`
+  - ✅ Return original admin's auth payload
 
-- [ ] **Enhance session middleware**
-  - [ ] Add `isEmulating` and `originalUserId` to session context
-  - [ ] Include emulation status in `me` query response
-  - [ ] Ensure audit logs show both emulated and original user
+- ✅ **Enhance session middleware**
+  - ✅ Add `isEmulating` and `originalAdminId` to JWT payload
+  - [ ] Include emulation status in `me` query response (frontend task)
+  - ✅ Ensure audit logs show both emulated and original user
 
 ### Frontend State Management
 - [ ] **Add emulation state to auth context**
@@ -192,61 +234,62 @@ Enhance the existing GraphQL authentication system with missing features from th
 ## 🔑 API Token Management
 
 ### API Token CRUD Operations
-- [ ] **Create `generateApiToken` mutation**
-  - [ ] Require authenticated user
-  - [ ] Generate cryptographically secure token
-  - [ ] Set optional expiration date
-  - [ ] Store token name for identification
-  - [ ] Return token only once (for security)
-  - [ ] Log token creation to `SecurityEvent`
+- ✅ **Create `generateApiToken` mutation**
+  - ✅ Require authenticated user
+  - ✅ Generate cryptographically secure token (SHA-256 hash)
+  - ✅ Set optional expiration date
+  - ✅ Store token name for identification
+  - ✅ Return token only once (for security)
+  - ✅ Log token creation to `SecurityEvent`
 
-- [ ] **Create `listApiTokens` query**
-  - [ ] Show user's API tokens (without actual token values)
-  - [ ] Display name, creation date, expiration, last used
-  - [ ] Show revoked status
-  - [ ] Include usage statistics if available
+- ✅ **Create `listApiTokens` query**
+  - ✅ Show user's API tokens (without actual token values)
+  - ✅ Display name, creation date, expiration, last used
+  - ✅ Show revoked status
+  - ✅ Include usage statistics if available
 
-- [ ] **Create `revokeApiToken` mutation**
-  - [ ] Mark token as revoked in database
-  - [ ] Prevent future API access with this token
-  - [ ] Log revocation to `SecurityEvent`
-  - [ ] Return success confirmation
+- ✅ **Create `revokeApiToken` mutation**
+  - ✅ Mark token as revoked in database
+  - ✅ Prevent future API access with this token
+  - ✅ Log revocation to `SecurityEvent`
+  - ✅ Return success confirmation
 
-- [ ] **Create `rotateApiToken` mutation**
-  - [ ] Generate new token with same permissions
-  - [ ] Optionally keep old token active for transition period
-  - [ ] Log rotation to `SecurityEvent`
-  - [ ] Return new token (only once)
+- ✅ **Create `rotateApiToken` mutation**
+  - ✅ Generate new token with same permissions
+  - ✅ Optionally keep old token active for transition period
+  - ✅ Log rotation to `SecurityEvent`
+  - ✅ Return new token (only once)
 
 ### API Token Authentication Middleware
-- [ ] **Create API token validation middleware**
-  - [ ] Check for `Authorization: Bearer <token>` header
-  - [ ] Validate token exists and not revoked
-  - [ ] Check token expiration
-  - [ ] Load associated user and organization context
-  - [ ] Update last used timestamp
-  - [ ] Rate limit API token usage
+- ✅ **Create API token validation middleware**
+  - ✅ Check for `Authorization: Bearer <token>` header
+  - ✅ Validate token exists and not revoked
+  - ✅ Check token expiration
+  - ✅ Load associated user and organization context
+  - ✅ Update last used timestamp
+  - [ ] Rate limit API token usage (can be added later)
 
 ---
 
 ## 🛡️ Security Event System
 
 ### Security Event Logging
-- [ ] **Create security event logging service**
-  - [ ] Log all authentication-related events
-  - [ ] Capture IP address, user agent, timestamp
-  - [ ] Store structured metadata for each event type
-  - [ ] Async logging to prevent performance impact
+- ✅ **Create security event logging service**
+  - ✅ Log all authentication-related events
+  - ✅ Capture IP address, user agent, timestamp
+  - ✅ Store structured metadata for each event type
+  - ✅ Async logging to prevent performance impact
 
-- [ ] **Implement comprehensive event tracking**
-  - [ ] `PASSWORD_CHANGED` - Password updates
-  - [ ] `EMAIL_CHANGED` - Email address changes
-  - [ ] `TWO_FACTOR_ENABLED/DISABLED` - 2FA changes
-  - [ ] `RECOVERY_CODES_GENERATED` - Backup code creation
-  - [ ] `ACCOUNT_LOCKED/UNLOCKED` - Account security status
-  - [ ] `SUSPICIOUS_LOGIN_ATTEMPT` - Unusual access patterns
-  - [ ] `PASSWORD_RESET_REQUESTED` - Password reset requests
-  - [ ] `LOGIN_LOCATION_CHANGE` - New login locations
+- ✅ **Implement comprehensive event tracking**
+  - ✅ `PASSWORD_CHANGED` - Password updates
+  - ✅ `EMAIL_CHANGED` - Email address changes
+  - ✅ `TWO_FACTOR_ENABLED/DISABLED` - 2FA changes
+  - ✅ `RECOVERY_CODES_GENERATED` - Backup code creation
+  - ✅ `ACCOUNT_LOCKED/UNLOCKED` - Account security status
+  - ✅ `SUSPICIOUS_LOGIN_ATTEMPT` - Unusual access patterns
+  - ✅ `PASSWORD_RESET_REQUESTED` - Password reset requests
+  - ✅ `LOGIN_LOCATION_CHANGE` - New login locations
+  - ✅ `API_TOKEN_CREATED/REVOKED/ROTATED` - API token events
 
 ### Security Monitoring & Alerts
 - [ ] **Create security anomaly detection**
@@ -262,17 +305,17 @@ Enhance the existing GraphQL authentication system with missing features from th
   - [ ] Configurable alert thresholds
 
 ### Security Dashboard Queries
-- [ ] **Create `userSecurityEvents` query**
-  - [ ] Return paginated security events for user
-  - [ ] Filter by event type and date range
-  - [ ] Include device and location information
-  - [ ] Show event severity levels
+- ✅ **Create `userSecurityEvents` query**
+  - ✅ Return paginated security events for user
+  - ✅ Filter by event type and date range
+  - ✅ Include metadata for context
+  - ✅ Ordered by timestamp
 
-- [ ] **Create `securitySummary` query**
-  - [ ] Recent security events count
-  - [ ] Active sessions summary
-  - [ ] API tokens status
-  - [ ] 2FA status and last used
+- ✅ **Create `securitySummary` query**
+  - ✅ Recent security events count
+  - ✅ Get events by type
+  - ✅ Date range filtering
+  - ✅ User-specific queries
 
 ---
 
@@ -288,7 +331,7 @@ Enhance the existing GraphQL authentication system with missing features from th
   - ✅ Email verification template
   - ✅ Welcome email template
   - ✅ Password changed notification template
-  - [ ] 2FA enabled notification template
+  - ✅ 2FA enabled notification template
 
 - ✅ **Create email service utilities**
   - ✅ Template-based email service with Handlebars
@@ -301,20 +344,27 @@ Enhance the existing GraphQL authentication system with missing features from th
 ## 🔒 Security Enhancements
 
 ### Session Security
-- [ ] **Enhance session management**
-  - [ ] Implement session rotation on login
-  - [ ] Add device/IP tracking to sessions
-  - [ ] Create `invalidateAllSessions` mutation
-  - [ ] Implement concurrent session limits
+- ✅ **Enhance session management**
+  - ✅ Implement session tracking with UserSession model
+  - ✅ Add device/IP tracking to sessions
+  - ✅ Create `getUserSessions` query to list active sessions
+  - ✅ Create `invalidateSession` mutation for individual session logout
+  - ✅ Create `invalidateAllSessions` mutation for global logout
+  - ✅ Implement concurrent session limits (configurable, default: 5)
+  - ✅ Session info extraction from HTTP requests
+  - ✅ Session ID in JWT payload for tracking
+  - ✅ Device info parsing from user agent
+  - ✅ IP address extraction with proxy support
+  - ✅ New device/location detection
 
 ### Audit Logging
-- [ ] **Log all authentication events**
-  - [ ] Login attempts (success/failure)
-  - ✅ Password changes (via password-changed email)
-  - [ ] 2FA enable/disable
+- ✅ **Log all authentication events**
+  - ✅ Login attempts (success/failure) - via LoginAttempt table
+  - ✅ Password changes - via SecurityEvent
+  - ✅ 2FA enable/disable - via SecurityEvent
   - [ ] OAuth account linking
-  - [ ] Admin emulation start/end
-  - [ ] Include IP address and user agent
+  - [ ] Admin emulation start/end (basic emulation exists, needs audit)
+  - ✅ Include IP address and user agent in SecurityEvent
 
 ---
 
@@ -349,14 +399,14 @@ Enhance the existing GraphQL authentication system with missing features from th
 - [ ] `libs/api/custom/src/lib/plugins/auth/strategies/` - OAuth strategies
 
 ### API Token Management
-- [ ] `libs/api/custom/src/lib/plugins/api-tokens/api-tokens.resolver.ts` - API token operations
-- [ ] `libs/api/custom/src/lib/plugins/api-tokens/api-tokens.service.ts` - Token business logic
-- [ ] `libs/api/custom/src/lib/middleware/api-token-auth.middleware.ts` - API token validation
+- ✅ `libs/api/custom/src/lib/plugins/api-tokens/api-tokens.resolver.ts` - API token operations
+- ✅ `libs/api/custom/src/lib/plugins/api-tokens/api-tokens.service.ts` - Token business logic
+- ✅ `libs/api/custom/src/lib/middleware/api-token-auth.middleware.ts` - API token validation
 
 ### Security Events
-- [ ] `libs/api/custom/src/lib/plugins/security/security-events.service.ts` - Event logging
+- ✅ `libs/api/custom/src/lib/plugins/security/security-events.service.ts` - Event logging
 - [ ] `libs/api/custom/src/lib/plugins/security/security-monitoring.service.ts` - Anomaly detection
-- [ ] `libs/api/custom/src/lib/plugins/security/security.resolver.ts` - Security queries
+- ✅ `libs/api/custom/src/lib/plugins/security/security-events.resolver.ts` - Security queries
 
 ### Updated Types
 - ✅ `libs/shared/sdk/src/generated/graphql.ts` - Updated after codegen
@@ -372,30 +422,70 @@ Enhance the existing GraphQL authentication system with missing features from th
 - Email change with verification
 - Change password with current password requirement
 - Username management (auto-generation, editing)
-- Email service with template system (4 templates)
-- Basic user emulation for super admins
+- Email service with template system (5 templates)
+- **Admin User Emulation**
+  - Super admin-only emulation mutation
+  - JWT-based emulation tracking
+  - End emulation mutation
+  - Complete audit logging (start/end)
 - Organization and role-based access control
+- **Two-Factor Authentication (2FA)**
+  - TOTP with authenticator apps
+  - Backup codes (10 single-use codes)
+  - Encrypted secret storage
+  - Complete setup/enable/disable flow
+  - Email notification when enabled
+- **Security Event System & Monitoring**
+  - Comprehensive event logging
+  - Security event queries
+  - Audit trail for all security operations
+- **Login Attempt Tracking & Rate Limiting**
+  - Failed attempt tracking
+  - Account locking (5 attempts = 15 min lock)
+  - Admin unlock functionality
+- **API Token Management**
+  - Generate, list, revoke, rotate tokens
+  - SHA-256 hashed token storage
+  - Token expiration support
+  - Last used timestamp tracking
+  - Bearer token authentication middleware
+- **Remember Me Functionality**
+  - 30-day sessions vs 7-day default
+  - JWT expiration based on remember flag
+- **OAuth Integration** ✅
+  - Google OAuth (sign in, link/unlink)
+  - GitHub OAuth (sign in, link/unlink)
+  - OAuth service with token verification
+  - REST controller for OAuth callbacks
+  - GraphQL mutations for account linking
+  - Security checks & account protection
+  - Complete OAuth documentation
+- **Session Security & Tracking** ✅
+  - UserSession model with device/IP tracking
+  - Session creation on login/register/OAuth
+  - Session management service
+  - Active sessions query
+  - Invalidate individual sessions
+  - Invalidate all sessions (logout everywhere)
+  - Concurrent session limits (configurable)
+  - New device/location detection
+  - Session info extraction from requests
 
-### 🚧 In Progress / Partially Complete
-- Admin emulation (basic implementation, needs session tracking)
-- Session security (basic cookie auth, needs enhancements)
+### 🚧 Frontend Tasks Remaining
+- Admin emulation UI (show banner, exit button)
+- Emulation status in auth context
+- OAuth sign-in buttons & success/error pages
+- Session management UI (view/revoke sessions)
 
-### ⏳ Not Started
-- Two-Factor Authentication (2FA)
-- OAuth Integration (Google, GitHub)
-- API Token Management
-- Security Event System & Monitoring
-- Login attempt tracking & rate limiting
-- Remember Me functionality
-- Session rotation & device tracking
-- Comprehensive audit logging
+### ⏳ Backend Features Not Started
 - Security alerts & anomaly detection
 - Unit & integration tests
 
-**Next Priority:** Choose between:
-1. **2FA Implementation** - High security value, moderate complexity
-2. **API Token Management** - Important for API access, moderate complexity
-3. **Security Event System** - Foundation for monitoring, moderate complexity
-4. **OAuth Integration** - User convenience, moderate complexity
+**Phase 1 Completion: ~98%**
 
-**Dependencies:** Email service setup ✅ → Ready for any feature requiring emails
+**Next Priority:**
+1. **Security Alerts** - Anomaly detection, email notifications (~4 hours)
+2. **Testing** - Comprehensive test coverage (~8-10 hours)
+3. **Frontend Implementation** - All remaining UI components (~16-20 hours)
+
+**Ready for:** Security alerts or moving to Phase 2 (with frontend tasks pending)

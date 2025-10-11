@@ -3,3 +3,11 @@ query Me {
     ...AuthUserDetails
   }
 }
+
+query AvailableOAuthProviders {
+  availableOAuthProviders {
+    provider
+    enabled
+    name
+  }
+}
