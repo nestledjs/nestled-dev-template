@@ -80,10 +80,8 @@ const redisPubSubProvider = {
       },
       sortSchema: true,
       buildSchemaOptions: {
-        dateScalarMode: 'isoDate', // Better interoperability (ISO strings, not JS Dates)
-        numberScalarMode: 'float', // Default is fine; override to 'integer' if you hate floats
-        scalarsMap: [], // Optional for custom scalar mappings if you use them
-        skipCheck: true, // Skip extra metadata validation — speeds up build
+        dateScalarMode: 'timestamp',
+        numberScalarMode: 'float',
       },
     }),
   ],

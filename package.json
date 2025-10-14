@@ -53,6 +53,8 @@
     "prisma:seed": "ts-node --project libs/api/prisma/tsconfig.lib.json libs/api/prisma/src/lib/seed/seed.ts",
     "prisma:studio": "pnpm nx prisma:studio api",
     "prisma:reset": "pnpm prisma migrate reset && pnpm prisma:seed",
+    "migrate:add-orgs": "tsx scripts/migrate-users-to-orgs.ts",
+    "user:delete": "tsx scripts/delete-user.ts",
     "sdk": "graphql-codegen --config libs/shared/sdk/src/codegen.yml",
     "sdk:watch": "pnpm sdk --watch",
     "dev:web": "nx serve web",

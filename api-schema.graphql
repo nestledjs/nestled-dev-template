@@ -2,6 +2,16 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+input AcceptInvitationInput {
+  token: String!
+}
+
+input AddOrganizationMemberInput {
+  organizationId: String!
+  roleId: String!
+  userId: String!
+}
+
 type Address {
   address1: String
   address2: String
@@ -9,14 +19,14 @@ type Address {
   city: String
   country: Country
   countryId: String
-  createdAt: DateTime!
+  createdAt: Timestamp!
   id: String!
   isPrimary: Boolean!
   organization: Organization
   organizationId: String
   postalCode: String
   region: String
-  updatedAt: DateTime!
+  updatedAt: Timestamp!
   user: User
   userId: String
 }
@@ -30,14 +40,14 @@ enum AddressType {
 }
 
 type ApiToken {
-  createdAt: DateTime!
-  expiresAt: DateTime
+  createdAt: Timestamp!
+  expiresAt: Timestamp
   id: String!
-  lastUsedAt: DateTime
+  lastUsedAt: Timestamp
   name: String!
   revoked: Boolean!
   tokenHash: String!
-  updatedAt: DateTime!
+  updatedAt: Timestamp!
   user: User
   userId: String!
 }
@@ -45,13 +55,13 @@ type ApiToken {
 type AuditLog {
   action: String!
   changes: JSONObject
-  createdAt: DateTime!
+  createdAt: Timestamp!
   entityId: String!
   entityType: String!
   id: String!
   organization: Organization
   organizationId: String
-  updatedAt: DateTime!
+  updatedAt: Timestamp!
   user: User
   userId: String!
 }
@@ -82,7 +92,7 @@ type Country {
   alpha2: String!
   alpha3: String!
   countryCode: String!
-  createdAt: DateTime!
+  createdAt: Timestamp!
   id: String!
   intermediateRegion: String!
   intermediateRegionCode: String!
@@ -92,7 +102,7 @@ type Country {
   regionCode: String!
   subRegion: String!
   subRegionCode: String!
-  updatedAt: DateTime!
+  updatedAt: Timestamp!
 }
 
 input CreateAddressInput {
@@ -101,37 +111,37 @@ input CreateAddressInput {
   addressType: AddressType
   city: String
   countryId: String
-  createdAt: DateTime
+  createdAt: Timestamp
   id: String
   isPrimary: Boolean
   organizationId: String
   postalCode: String
   region: String
-  updatedAt: DateTime
+  updatedAt: Timestamp
   userId: String
 }
 
 input CreateApiTokenInput {
-  createdAt: DateTime
-  expiresAt: DateTime
+  createdAt: Timestamp
+  expiresAt: Timestamp
   id: String
-  lastUsedAt: DateTime
+  lastUsedAt: Timestamp
   name: String!
   revoked: Boolean
   tokenHash: String!
-  updatedAt: DateTime
+  updatedAt: Timestamp
   userId: String!
 }
 
 input CreateAuditLogInput {
   action: String!
   changes: JSON
-  createdAt: DateTime
+  createdAt: Timestamp
   entityId: String!
   entityType: String!
   id: String
   organizationId: String
-  updatedAt: DateTime
+  updatedAt: Timestamp
   userId: String!
 }
 
@@ -140,7 +150,7 @@ input CreateCountryInput {
   alpha2: String!
   alpha3: String!
   countryCode: String!
-  createdAt: DateTime
+  createdAt: Timestamp
   id: String
   intermediateRegion: String!
   intermediateRegionCode: String!
@@ -150,93 +160,85 @@ input CreateCountryInput {
   regionCode: String!
   subRegion: String!
   subRegionCode: String!
-  updatedAt: DateTime
+  updatedAt: Timestamp
 }
 
 input CreateEmailInput {
-  createdAt: DateTime
+  createdAt: Timestamp
   email: String!
   emailType: EmailType
   id: String
   organizationId: String
   primary: Boolean
   public: Boolean
-  updatedAt: DateTime
+  updatedAt: Timestamp
   userId: String
   verified: Boolean
-  verifyExpires: DateTime
+  verifyExpires: Timestamp
   verifyToken: String
 }
 
-input CreateInviteInput {
-  createdAt: DateTime
+input CreateInvitationInput {
   email: String!
-  expiresAt: DateTime!
+  organizationId: String!
+  roleId: String!
+}
+
+input CreateInviteInput {
+  createdAt: Timestamp
+  email: String!
+  expiresAt: Timestamp!
   id: String
   inviterId: String!
   organizationId: String!
   roleId: String
   status: InviteStatus
   token: String!
-  updatedAt: DateTime
+  updatedAt: Timestamp
 }
 
 input CreateLinkInput {
-  createdAt: DateTime
+  createdAt: Timestamp
   id: String
   name: String!
   organizationId: String
-  updatedAt: DateTime
+  updatedAt: Timestamp
   url: String!
   userId: String
 }
 
 input CreateLoginAttemptInput {
-  createdAt: DateTime
+  createdAt: Timestamp
   email: String!
   id: String
   ipAddress: String
   location: String
   reason: FailureReason
   success: Boolean
-  updatedAt: DateTime
+  updatedAt: Timestamp
   userAgent: String
   userId: String
 }
 
 input CreateOAuthAccountInput {
-  createdAt: DateTime
+  createdAt: Timestamp
   id: String
   provider: String!
   providerUserId: String!
-  updatedAt: DateTime
+  updatedAt: Timestamp
   userId: String!
 }
 
 input CreateOrganizationInput {
-  AuditLogIds: [String!]
-  TeamIds: [String!]
-  addressesIds: [String!]
-  createdAt: DateTime
-  emailsIds: [String!]
-  id: String
-  imagesIds: [String!]
-  invitesIds: [String!]
-  linksIds: [String!]
-  membersIds: [String!]
   name: String!
-  phoneNumbersIds: [String!]
-  rolesIds: [String!]
-  subscriptionId: String
-  updatedAt: DateTime
 }
 
 input CreateOrganizationMemberInput {
-  createdAt: DateTime
+  createdAt: Timestamp
   id: String
   organizationId: String!
   roleId: String!
-  updatedAt: DateTime
+  updatedAt: Timestamp
   userId: String!
 }
 
@@ -249,19 +251,19 @@ input CreatePermissionInput {
 }
 
 input CreatePhoneNumberInput {
-  createdAt: DateTime
+  createdAt: Timestamp
   id: String
   organizationId: String
   phone: String!
   phoneType: PhoneType
   primary: Boolean
-  updatedAt: DateTime
+  updatedAt: Timestamp
   userId: String
 }
 
 input CreatePlanInput {
   active: Boolean
-  createdAt: DateTime
+  createdAt: Timestamp
   features: JSON
   id: String
   interval: String!
@@ -282,50 +284,50 @@ input CreateRoleInput {
 }
 
 input CreateSecurityEventInput {
-  createdAt: DateTime
+  createdAt: Timestamp
   eventType: SecurityEventType!
   id: String
   ipAddress: String
   metadata: JSON
-  updatedAt: DateTime
+  updatedAt: Timestamp
   userAgent: String
   userId: String!
 }
 
 input CreateSubscriptionInput {
-  createdAt: DateTime
+  createdAt: Timestamp
   id: String
   organizationId: String!
   planId: String!
   status: SubscriptionStatus
-  stripeCurrentPeriodEnd: DateTime
+  stripeCurrentPeriodEnd: Timestamp
   stripeCustomerId: String
   stripePriceId: String
   stripeSubscriptionId: String
-  updatedAt: DateTime
+  updatedAt: Timestamp
 }
 
 input CreateTeamInput {
-  createdAt: DateTime
+  createdAt: Timestamp
   description: String
   id: String
   membersIds: [String!]
   name: String!
   organizationId: String!
-  updatedAt: DateTime
+  updatedAt: Timestamp
 }
 
 input CreateTeamMemberInput {
-  createdAt: DateTime
+  createdAt: Timestamp
   id: String
   roleId: String!
   teamId: String!
-  updatedAt: DateTime
+  updatedAt: Timestamp
   userId: String!
 }
 
 input CreateUploadInput {
-  createdAt: DateTime
+  createdAt: Timestamp
   fileId: String
   filePath: String
   fileType: String
@@ -337,7 +339,7 @@ input CreateUploadInput {
   size: Int
   thumbnailUrl: String
   type: ImageType
-  updatedAt: DateTime
+  updatedAt: Timestamp
   url: String
   userId: String
   versionInfo: JSON
@@ -354,8 +356,8 @@ input CreateUserInput {
   addressesIds: [String!]
   apiTokensIds: [String!]
   bio: String
-  createdAt: DateTime
-  deactivatedAt: DateTime
+  createdAt: Timestamp
+  deactivatedAt: Timestamp
   displayName: String
   emailValidated: Boolean
   emailsIds: [String!]
@@ -366,52 +368,52 @@ input CreateUserInput {
   invitesSentIds: [String!]
   isActive: Boolean
   isSuperAdmin: Boolean
-  lastFailedLogin: DateTime
+  lastFailedLogin: Timestamp
   lastName: String
-  lastSuccessfulLogin: DateTime
+  lastSuccessfulLogin: Timestamp
   linksIds: [String!]
-  lockedUntil: DateTime
+  lockedUntil: Timestamp
   loginAttemptsIds: [String!]
   oAuthAccountsIds: [String!]
   organizationsIds: [String!]
   password: String
-  passwordResetExpires: DateTime
+  passwordResetExpires: Timestamp
   passwordResetToken: String
   phoneNumbersIds: [String!]
-  privacyPolicyAcceptedAt: DateTime
-  termsAcceptedAt: DateTime
+  privacyPolicyAcceptedAt: Timestamp
+  termsAcceptedAt: Timestamp
   twoFactorEnabled: Boolean
   twoFactorMethod: TwoFactorMethod
   twoFactorRecoveryCodes: [String!]!
   twoFactorSecret: String
-  updatedAt: DateTime
+  updatedAt: Timestamp
   validateEmailToken: String
-  validateEmailTokenExpires: DateTime
+  validateEmailTokenExpires: Timestamp
 }
 
 input CreateUserPreferenceInput {
-  createdAt: DateTime
+  createdAt: Timestamp
   id: String
   key: String!
-  updatedAt: DateTime
+  updatedAt: Timestamp
   userId: String!
   value: String!
 }
 
 input CreateUserSessionInput {
-  createdAt: DateTime
+  createdAt: Timestamp
   deviceInfo: String
   id: String
   ipAddress: String
   isValid: Boolean
-  lastActiveAt: DateTime
+  lastActiveAt: Timestamp
   twoFactorVerified: Boolean
-  updatedAt: DateTime
+  updatedAt: Timestamp
   userId: String!
 }
 
 """
-A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
 """
 scalar DateTime
 
@@ -423,7 +425,7 @@ input Disable2FAInput {
 }
 
 type Email {
-  createdAt: DateTime!
+  createdAt: Timestamp!
   email: String!
   emailType: EmailType!
   id: String!
@@ -431,11 +433,11 @@ type Email {
   organizationId: String
   primary: Boolean!
   public: Boolean!
-  updatedAt: DateTime!
+  updatedAt: Timestamp!
   user: User
   userId: String
   verified: Boolean!
-  verifyExpires: DateTime
+  verifyExpires: Timestamp
   verifyToken: String
 }
 
@@ -469,7 +471,7 @@ input ForgotPasswordInput {
 }
 
 input GenerateApiTokenInput {
-  expiresAt: DateTime
+  expiresAt: Timestamp
   name: String!
 }
 
@@ -485,9 +487,9 @@ enum ImageType {
 }
 
 type Invite {
-  createdAt: DateTime!
+  createdAt: Timestamp!
   email: String!
-  expiresAt: DateTime!
+  expiresAt: Timestamp!
   id: String!
   inviter: User
   inviterId: String!
@@ -497,7 +499,7 @@ type Invite {
   roleId: String
   status: InviteStatus!
   token: String!
-  updatedAt: DateTime!
+  updatedAt: Timestamp!
 }
 
 enum InviteStatus {
@@ -518,12 +520,12 @@ The `JSONObject` scalar type represents JSON objects as specified by [ECMA-404](
 scalar JSONObject
 
 type Link {
-  createdAt: DateTime!
+  createdAt: Timestamp!
   id: String!
   name: String!
   organization: Organization
   organizationId: String
-  updatedAt: DateTime!
+  updatedAt: Timestamp!
   url: String!
   user: User
   userId: String
@@ -542,7 +544,7 @@ input ListAddressInput {
   addressType: AddressType
   city: String
   countryId: String
-  createdAt: DateTime
+  createdAt: Timestamp
   filters: JSONObject
   id: String
   isPrimary: Boolean
@@ -555,16 +557,16 @@ input ListAddressInput {
   searchFields: [String!]
   skip: Float = 0
   take: Float = 20
-  updatedAt: DateTime
+  updatedAt: Timestamp
   userId: String
 }
 
 input ListApiTokenInput {
-  createdAt: DateTime
-  expiresAt: DateTime
+  createdAt: Timestamp
+  expiresAt: Timestamp
   filters: JSONObject
   id: String
-  lastUsedAt: DateTime
+  lastUsedAt: Timestamp
   name: String
   orderBy: String
   orderDirection: String
@@ -574,14 +576,14 @@ input ListApiTokenInput {
   skip: Float = 0
   take: Float = 20
   tokenHash: String
-  updatedAt: DateTime
+  updatedAt: Timestamp
   userId: String
 }
 
 input ListAuditLogInput {
   action: String
   changes: JSON
-  createdAt: DateTime
+  createdAt: Timestamp
   entityId: String
   entityType: String
   filters: JSONObject
@@ -593,7 +595,7 @@ input ListAuditLogInput {
   searchFields: [String!]
   skip: Float = 0
   take: Float = 20
-  updatedAt: DateTime
+  updatedAt: Timestamp
   userId: String
 }
 
@@ -602,7 +604,7 @@ input ListCountryInput {
   alpha2: String
   alpha3: String
   countryCode: String
-  createdAt: DateTime
+  createdAt: Timestamp
   filters: JSONObject
   id: String
   intermediateRegion: String
@@ -619,11 +621,11 @@ input ListCountryInput {
   subRegion: String
   subRegionCode: String
   take: Float = 20
-  updatedAt: DateTime
+  updatedAt: Timestamp
 }
 
 input ListEmailInput {
-  createdAt: DateTime
+  createdAt: Timestamp
   email: String
   emailType: EmailType
   filters: JSONObject
@@ -637,17 +639,17 @@ input ListEmailInput {
   searchFields: [String!]
   skip: Float = 0
   take: Float = 20
-  updatedAt: DateTime
+  updatedAt: Timestamp
   userId: String
   verified: Boolean
-  verifyExpires: DateTime
+  verifyExpires: Timestamp
   verifyToken: String
 }
 
 input ListInviteInput {
-  createdAt: DateTime
+  createdAt: Timestamp
   email: String
-  expiresAt: DateTime
+  expiresAt: Timestamp
   filters: JSONObject
   id: String
   inviterId: String
@@ -661,11 +663,11 @@ input ListInviteInput {
   status: InviteStatus
   take: Float = 20
   token: String
-  updatedAt: DateTime
+  updatedAt: Timestamp
 }
 
 input ListLinkInput {
-  createdAt: DateTime
+  createdAt: Timestamp
   filters: JSONObject
   id: String
   name: String
@@ -676,13 +678,13 @@ input ListLinkInput {
   searchFields: [String!]
   skip: Float = 0
   take: Float = 20
-  updatedAt: DateTime
+  updatedAt: Timestamp
   url: String
   userId: String
 }
 
 input ListLoginAttemptInput {
-  createdAt: DateTime
+  createdAt: Timestamp
   email: String
   filters: JSONObject
   id: String
@@ -696,13 +698,13 @@ input ListLoginAttemptInput {
   skip: Float = 0
   success: Boolean
   take: Float = 20
-  updatedAt: DateTime
+  updatedAt: Timestamp
   userAgent: String
   userId: String
 }
 
 input ListOAuthAccountInput {
-  createdAt: DateTime
+  createdAt: Timestamp
   filters: JSONObject
   id: String
   orderBy: String
@@ -713,37 +715,12 @@ input ListOAuthAccountInput {
   searchFields: [String!]
   skip: Float = 0
   take: Float = 20
-  updatedAt: DateTime
+  updatedAt: Timestamp
   userId: String
 }
 
-input ListOrganizationInput {
-  AuditLogIds: [String!]
-  TeamIds: [String!]
-  addressesIds: [String!]
-  createdAt: DateTime
-  emailsIds: [String!]
-  filters: JSONObject
-  id: String
-  imagesIds: [String!]
-  invitesIds: [String!]
-  linksIds: [String!]
-  membersIds: [String!]
-  name: String
-  orderBy: String
-  orderDirection: String
-  phoneNumbersIds: [String!]
-  rolesIds: [String!]
-  search: String
-  searchFields: [String!]
-  skip: Float = 0
-  subscriptionId: String
-  take: Float = 20
-  updatedAt: DateTime
-}
-
 input ListOrganizationMemberInput {
-  createdAt: DateTime
+  createdAt: Timestamp
   filters: JSONObject
   id: String
   orderBy: String
@@ -754,7 +731,7 @@ input ListOrganizationMemberInput {
   searchFields: [String!]
   skip: Float = 0
   take: Float = 20
-  updatedAt: DateTime
+  updatedAt: Timestamp
   userId: String
 }
 
@@ -774,7 +751,7 @@ input ListPermissionInput {
 }
 
 input ListPhoneNumberInput {
-  createdAt: DateTime
+  createdAt: Timestamp
   filters: JSONObject
   id: String
   orderBy: String
@@ -787,13 +764,13 @@ input ListPhoneNumberInput {
   searchFields: [String!]
   skip: Float = 0
   take: Float = 20
-  updatedAt: DateTime
+  updatedAt: Timestamp
   userId: String
 }
 
 input ListPlanInput {
   active: Boolean
-  createdAt: DateTime
+  createdAt: Timestamp
   features: JSON
   filters: JSONObject
   id: String
@@ -828,7 +805,7 @@ input ListRoleInput {
 }
 
 input ListSecurityEventInput {
-  createdAt: DateTime
+  createdAt: Timestamp
   eventType: SecurityEventType
   filters: JSONObject
   id: String
@@ -840,13 +817,13 @@ input ListSecurityEventInput {
   searchFields: [String!]
   skip: Float = 0
   take: Float = 20
-  updatedAt: DateTime
+  updatedAt: Timestamp
   userAgent: String
   userId: String
 }
 
 input ListSubscriptionInput {
-  createdAt: DateTime
+  createdAt: Timestamp
   filters: JSONObject
   id: String
   orderBy: String
@@ -857,16 +834,16 @@ input ListSubscriptionInput {
   searchFields: [String!]
   skip: Float = 0
   status: SubscriptionStatus
-  stripeCurrentPeriodEnd: DateTime
+  stripeCurrentPeriodEnd: Timestamp
   stripeCustomerId: String
   stripePriceId: String
   stripeSubscriptionId: String
   take: Float = 20
-  updatedAt: DateTime
+  updatedAt: Timestamp
 }
 
 input ListTeamInput {
-  createdAt: DateTime
+  createdAt: Timestamp
   description: String
   filters: JSONObject
   id: String
@@ -879,11 +856,11 @@ input ListTeamInput {
   searchFields: [String!]
   skip: Float = 0
   take: Float = 20
-  updatedAt: DateTime
+  updatedAt: Timestamp
 }
 
 input ListTeamMemberInput {
-  createdAt: DateTime
+  createdAt: Timestamp
   filters: JSONObject
   id: String
   orderBy: String
@@ -894,12 +871,12 @@ input ListTeamMemberInput {
   skip: Float = 0
   take: Float = 20
   teamId: String
-  updatedAt: DateTime
+  updatedAt: Timestamp
   userId: String
 }
 
 input ListUploadInput {
-  createdAt: DateTime
+  createdAt: Timestamp
   fileId: String
   filePath: String
   fileType: String
@@ -918,7 +895,7 @@ input ListUploadInput {
   take: Float = 20
   thumbnailUrl: String
   type: ImageType
-  updatedAt: DateTime
+  updatedAt: Timestamp
   url: String
   userId: String
   versionInfo: JSON
@@ -935,8 +912,8 @@ input ListUserInput {
   addressesIds: [String!]
   apiTokensIds: [String!]
   bio: String
-  createdAt: DateTime
-  deactivatedAt: DateTime
+  createdAt: Timestamp
+  deactivatedAt: Timestamp
   displayName: String
   emailValidated: Boolean
   emailsIds: [String!]
@@ -948,37 +925,37 @@ input ListUserInput {
   invitesSentIds: [String!]
   isActive: Boolean
   isSuperAdmin: Boolean
-  lastFailedLogin: DateTime
+  lastFailedLogin: Timestamp
   lastName: String
-  lastSuccessfulLogin: DateTime
+  lastSuccessfulLogin: Timestamp
   linksIds: [String!]
-  lockedUntil: DateTime
+  lockedUntil: Timestamp
   loginAttemptsIds: [String!]
   oAuthAccountsIds: [String!]
   orderBy: String
   orderDirection: String
   organizationsIds: [String!]
   password: String
-  passwordResetExpires: DateTime
+  passwordResetExpires: Timestamp
   passwordResetToken: String
   phoneNumbersIds: [String!]
-  privacyPolicyAcceptedAt: DateTime
+  privacyPolicyAcceptedAt: Timestamp
   search: String
   searchFields: [String!]
   skip: Float = 0
   take: Float = 20
-  termsAcceptedAt: DateTime
+  termsAcceptedAt: Timestamp
   twoFactorEnabled: Boolean
   twoFactorMethod: TwoFactorMethod
   twoFactorRecoveryCodes: [String!]
   twoFactorSecret: String
-  updatedAt: DateTime
+  updatedAt: Timestamp
   validateEmailToken: String
-  validateEmailTokenExpires: DateTime
+  validateEmailTokenExpires: Timestamp
 }
 
 input ListUserPreferenceInput {
-  createdAt: DateTime
+  createdAt: Timestamp
   filters: JSONObject
   id: String
   key: String
@@ -988,19 +965,19 @@ input ListUserPreferenceInput {
   searchFields: [String!]
   skip: Float = 0
   take: Float = 20
-  updatedAt: DateTime
+  updatedAt: Timestamp
   userId: String
   value: String
 }
 
 input ListUserSessionInput {
-  createdAt: DateTime
+  createdAt: Timestamp
   deviceInfo: String
   filters: JSONObject
   id: String
   ipAddress: String
   isValid: Boolean
-  lastActiveAt: DateTime
+  lastActiveAt: Timestamp
   orderBy: String
   orderDirection: String
   search: String
@@ -1008,19 +985,19 @@ input ListUserSessionInput {
   skip: Float = 0
   take: Float = 20
   twoFactorVerified: Boolean
-  updatedAt: DateTime
+  updatedAt: Timestamp
   userId: String
 }
 
 type LoginAttempt {
-  createdAt: DateTime!
+  createdAt: Timestamp!
   email: String!
   id: String!
   ipAddress: String
   location: String
   reason: FailureReason
   success: Boolean!
-  updatedAt: DateTime!
+  updatedAt: Timestamp!
   user: User
   userAgent: String
   userId: String
@@ -1033,6 +1010,8 @@ input LoginInput {
 }
 
 type Mutation {
+  acceptOrganizationInvitation(input: AcceptInvitationInput!): Organization!
+  addOrganizationMember(input: AddOrganizationMemberInput!): Boolean!
   changeEmail(input: ChangeEmailInput!): Boolean!
   changePassword(input: ChangePasswordInput!): Boolean!
   createAddress(input: CreateAddressInput!): Address
@@ -1044,7 +1023,7 @@ type Mutation {
   createLink(input: CreateLinkInput!): Link
   createLoginAttempt(input: CreateLoginAttemptInput!): LoginAttempt
   createOAuthAccount(input: CreateOAuthAccountInput!): OAuthAccount
-  createOrganization(input: CreateOrganizationInput!): Organization
+  createOrganizationInvitation(input: CreateInvitationInput!): String!
   createOrganizationMember(input: CreateOrganizationMemberInput!): OrganizationMember
   createPermission(input: CreatePermissionInput!): Permission
   createPhoneNumber(input: CreatePhoneNumberInput!): PhoneNumber
@@ -1067,7 +1046,6 @@ type Mutation {
   deleteLink(linkId: String!): Link
   deleteLoginAttempt(loginAttemptId: String!): LoginAttempt
   deleteOAuthAccount(oAuthAccountId: String!): OAuthAccount
-  deleteOrganization(organizationId: String!): Organization
   deleteOrganizationMember(organizationMemberId: String!): OrganizationMember
   deletePermission(permissionId: String!): Permission
   deletePhoneNumber(phoneNumberId: String!): PhoneNumber
@@ -1087,15 +1065,20 @@ type Mutation {
   endEmulation: UserToken
   forgotPassword(input: ForgotPasswordInput!): Boolean
   generateApiToken(input: GenerateApiTokenInput!): GenerateApiTokenOutput!
+  invalidateAllSessions: Float!
+  invalidateSession(sessionId: String!): Boolean!
   linkOAuthAccount(input: LinkOAuthInput!): Boolean!
   login(input: LoginInput!): UserToken
   logout: Boolean
   register(input: RegisterInput!): UserToken
+  rejectOrganizationInvitation(input: RejectInvitationInput!): Boolean!
+  removeOrganizationMember(input: RemoveOrganizationMemberInput!): Boolean!
   resendVerificationEmail(email: String!): Boolean!
   resetPassword(input: ResetPasswordInput!): User
   revokeApiToken(tokenId: String!): ApiToken!
   rotateApiToken(input: RotateApiTokenInput!): GenerateApiTokenOutput!
   setup2FA: Setup2FAOutput!
+  switchActiveOrganization(input: SwitchOrganizationInput!): User!
   unlinkOAuthAccount(input: UnlinkOAuthInput!): Boolean!
   unlockAccount(userId: String!): User!
   updateAddress(addressId: String!, input: UpdateAddressInput!): Address
@@ -1107,8 +1090,8 @@ type Mutation {
   updateLink(input: UpdateLinkInput!, linkId: String!): Link
   updateLoginAttempt(input: UpdateLoginAttemptInput!, loginAttemptId: String!): LoginAttempt
   updateOAuthAccount(input: UpdateOAuthAccountInput!, oAuthAccountId: String!): OAuthAccount
-  updateOrganization(input: UpdateOrganizationInput!, organizationId: String!): Organization
   updateOrganizationMember(input: UpdateOrganizationMemberInput!, organizationMemberId: String!): OrganizationMember
+  updateOrganizationMemberRole(input: UpdateMemberRoleInput!): Boolean!
   updatePermission(input: UpdatePermissionInput!, permissionId: String!): Permission
   updatePhoneNumber(input: UpdatePhoneNumberInput!, phoneNumberId: String!): PhoneNumber
   updatePlan(input: UpdatePlanInput!, planId: String!): Plan
@@ -1121,17 +1104,20 @@ type Mutation {
   updateUser(input: UpdateUserInput!, userId: String!): User
   updateUserPreference(input: UpdateUserPreferenceInput!, userPreferenceId: String!): UserPreference
   updateUserSession(input: UpdateUserSessionInput!, userSessionId: String!): UserSession
+  userCreateOrganization(input: CreateOrganizationInput!): Organization!
+  userDeleteOrganization(organizationId: String!): Boolean!
+  userUpdateOrganization(input: UpdateOrganizationInput!): Organization!
   verify2FACode(input: Verify2FAInput!): Boolean!
   verifyEmail(input: VerifyEmailInput!): User!
   verifyEmailChange(token: String!): User!
 }
 
 type OAuthAccount {
-  createdAt: DateTime!
+  createdAt: Timestamp!
   id: String!
   provider: String!
   providerUserId: String!
-  updatedAt: DateTime!
+  updatedAt: Timestamp!
   user: User
   userId: String!
 }
@@ -1152,7 +1138,7 @@ type Organization {
   AuditLog: [AuditLog!]
   Team: [Team!]
   addresses: [Address!]
-  createdAt: DateTime!
+  createdAt: Timestamp!
   emails: [Email!]
   id: String!
   images: [Upload!]
@@ -1163,17 +1149,17 @@ type Organization {
   phoneNumbers: [PhoneNumber!]
   roles: [Role!]
   subscription: Subscription
-  updatedAt: DateTime!
+  updatedAt: Timestamp!
 }
 
 type OrganizationMember {
-  createdAt: DateTime!
+  createdAt: Timestamp!
   id: String!
   organization: Organization
   organizationId: String!
   role: Role
   roleId: String!
-  updatedAt: DateTime!
+  updatedAt: Timestamp!
   user: User
   userId: String!
 }
@@ -1187,14 +1173,14 @@ type Permission {
 }
 
 type PhoneNumber {
-  createdAt: DateTime!
+  createdAt: Timestamp!
   id: String!
   organization: Organization
   organizationId: String
   phone: String!
   phoneType: PhoneType!
   primary: Boolean!
-  updatedAt: DateTime!
+  updatedAt: Timestamp!
   user: User
   userId: String
 }
@@ -1208,7 +1194,7 @@ enum PhoneType {
 
 type Plan {
   active: Boolean!
-  createdAt: DateTime!
+  createdAt: Timestamp!
   features: JSONObject
   id: String!
   interval: String!
@@ -1234,6 +1220,7 @@ type Query {
   email(emailId: String!): Email
   emails(input: ListEmailInput): [Email!]
   emailsCount(input: ListEmailInput): CorePaging
+  getUserSessions: [UserSessionOutput!]!
   invite(inviteId: String!): Invite
   invites(input: ListInviteInput): [Invite!]
   invitesCount(input: ListInviteInput): CorePaging
@@ -1245,15 +1232,15 @@ type Query {
   loginAttempts(input: ListLoginAttemptInput): [LoginAttempt!]
   loginAttemptsCount(input: ListLoginAttemptInput): CorePaging
   me: User
+  myOrganizations: [Organization!]!
   oAuthAccount(oAuthAccountId: String!): OAuthAccount
   oAuthAccounts(input: ListOAuthAccountInput): [OAuthAccount!]
   oAuthAccountsCount(input: ListOAuthAccountInput): CorePaging
-  organization(organizationId: String!): Organization
+  organizationInvitations(organizationId: String!): [Invite!]!
   organizationMember(organizationMemberId: String!): OrganizationMember
-  organizationMembers(input: ListOrganizationMemberInput): [OrganizationMember!]
+  organizationMembers(organizationId: String!): [OrganizationMember!]!
   organizationMembersCount(input: ListOrganizationMemberInput): CorePaging
-  organizations(input: ListOrganizationInput): [Organization!]
-  organizationsCount(input: ListOrganizationInput): CorePaging
+  organizationRoles(organizationId: String!): [Role!]!
   permission(permissionId: String!): Permission
   permissions(input: ListPermissionInput): [Permission!]
   permissionsCount(input: ListPermissionInput): CorePaging
@@ -1301,9 +1288,19 @@ input RegisterInput {
   email: String!
   firstName: String
   lastName: String
+  organizationName: String
   password: String!
   phone: String
   username: String
+}
+
+input RejectInvitationInput {
+  token: String!
+}
+
+input RemoveOrganizationMemberInput {
+  organizationId: String!
+  userId: String!
 }
 
 input ResetPasswordInput {
@@ -1329,12 +1326,12 @@ input RotateApiTokenInput {
 }
 
 type SecurityEvent {
-  createdAt: DateTime!
+  createdAt: Timestamp!
   eventType: SecurityEventType!
   id: String!
   ipAddress: String
   metadata: JSONObject
-  updatedAt: DateTime!
+  updatedAt: Timestamp!
   user: User
   userAgent: String
   userId: String!
@@ -1357,7 +1354,7 @@ enum SecurityEventType {
 }
 
 type SecuritySummary {
-  lastPasswordChange: DateTime
+  lastPasswordChange: Timestamp
   recentEventsCount: Int!
   suspiciousAttemptsLast30Days: Int!
 }
@@ -1369,18 +1366,18 @@ type Setup2FAOutput {
 }
 
 type Subscription {
-  createdAt: DateTime!
+  createdAt: Timestamp!
   id: String!
   organization: Organization
   organizationId: String!
   plan: Plan
   planId: String!
   status: SubscriptionStatus!
-  stripeCurrentPeriodEnd: DateTime
+  stripeCurrentPeriodEnd: Timestamp
   stripeCustomerId: String
   stripePriceId: String
   stripeSubscriptionId: String
-  updatedAt: DateTime!
+  updatedAt: Timestamp!
 }
 
 enum SubscriptionStatus {
@@ -1392,28 +1389,37 @@ enum SubscriptionStatus {
   TRIALING
 }
 
+input SwitchOrganizationInput {
+  organizationId: String!
+}
+
 type Team {
-  createdAt: DateTime!
+  createdAt: Timestamp!
   description: String
   id: String!
   members: [TeamMember!]
   name: String!
   organization: Organization
   organizationId: String!
-  updatedAt: DateTime!
+  updatedAt: Timestamp!
 }
 
 type TeamMember {
-  createdAt: DateTime!
+  createdAt: Timestamp!
   id: String!
   role: Role
   roleId: String!
   team: Team
   teamId: String!
-  updatedAt: DateTime!
+  updatedAt: Timestamp!
   user: User
   userId: String!
 }
+
+"""
+`Date` type as integer. Type represents date and time as number of milliseconds from start of UNIX epoch.
+"""
+scalar Timestamp
 
 enum TwoFactorMethod {
   AUTHENTICATOR
@@ -1432,37 +1438,37 @@ input UpdateAddressInput {
   addressType: AddressType
   city: String
   countryId: String
-  createdAt: DateTime
+  createdAt: Timestamp
   id: String
   isPrimary: Boolean
   organizationId: String
   postalCode: String
   region: String
-  updatedAt: DateTime
+  updatedAt: Timestamp
   userId: String
 }
 
 input UpdateApiTokenInput {
-  createdAt: DateTime
-  expiresAt: DateTime
+  createdAt: Timestamp
+  expiresAt: Timestamp
   id: String
-  lastUsedAt: DateTime
+  lastUsedAt: Timestamp
   name: String
   revoked: Boolean
   tokenHash: String
-  updatedAt: DateTime
+  updatedAt: Timestamp
   userId: String
 }
 
 input UpdateAuditLogInput {
   action: String
   changes: JSON
-  createdAt: DateTime
+  createdAt: Timestamp
   entityId: String
   entityType: String
   id: String
   organizationId: String
-  updatedAt: DateTime
+  updatedAt: Timestamp
   userId: String
 }
 
@@ -1471,7 +1477,7 @@ input UpdateCountryInput {
   alpha2: String
   alpha3: String
   countryCode: String
-  createdAt: DateTime
+  createdAt: Timestamp
   id: String
   intermediateRegion: String
   intermediateRegionCode: String
@@ -1481,93 +1487,86 @@ input UpdateCountryInput {
   regionCode: String
   subRegion: String
   subRegionCode: String
-  updatedAt: DateTime
+  updatedAt: Timestamp
 }
 
 input UpdateEmailInput {
-  createdAt: DateTime
+  createdAt: Timestamp
   email: String
   emailType: EmailType
   id: String
   organizationId: String
   primary: Boolean
   public: Boolean
-  updatedAt: DateTime
+  updatedAt: Timestamp
   userId: String
   verified: Boolean
-  verifyExpires: DateTime
+  verifyExpires: Timestamp
   verifyToken: String
 }
 
 input UpdateInviteInput {
-  createdAt: DateTime
+  createdAt: Timestamp
   email: String
-  expiresAt: DateTime
+  expiresAt: Timestamp
   id: String
   inviterId: String
   organizationId: String
   roleId: String
   status: InviteStatus
   token: String
-  updatedAt: DateTime
+  updatedAt: Timestamp
 }
 
 input UpdateLinkInput {
-  createdAt: DateTime
+  createdAt: Timestamp
   id: String
   name: String
   organizationId: String
-  updatedAt: DateTime
+  updatedAt: Timestamp
   url: String
   userId: String
 }
 
 input UpdateLoginAttemptInput {
-  createdAt: DateTime
+  createdAt: Timestamp
   email: String
   id: String
   ipAddress: String
   location: String
   reason: FailureReason
   success: Boolean
-  updatedAt: DateTime
+  updatedAt: Timestamp
   userAgent: String
   userId: String
 }
 
+input UpdateMemberRoleInput {
+  organizationId: String!
+  roleId: String!
+  userId: String!
+}
+
 input UpdateOAuthAccountInput {
-  createdAt: DateTime
+  createdAt: Timestamp
   id: String
   provider: String
   providerUserId: String
-  updatedAt: DateTime
+  updatedAt: Timestamp
   userId: String
 }
 
 input UpdateOrganizationInput {
-  AuditLogIds: [String!]
-  TeamIds: [String!]
-  addressesIds: [String!]
-  createdAt: DateTime
-  emailsIds: [String!]
-  id: String
-  imagesIds: [String!]
-  invitesIds: [String!]
-  linksIds: [String!]
-  membersIds: [String!]
   name: String
-  phoneNumbersIds: [String!]
-  rolesIds: [String!]
-  subscriptionId: String
-  updatedAt: DateTime
+  organizationId: String!
 }
 
 input UpdateOrganizationMemberInput {
-  createdAt: DateTime
+  createdAt: Timestamp
   id: String
   organizationId: String
   roleId: String
-  updatedAt: DateTime
+  updatedAt: Timestamp
   userId: String
 }
 
@@ -1580,19 +1579,19 @@ input UpdatePermissionInput {
 }
 
 input UpdatePhoneNumberInput {
-  createdAt: DateTime
+  createdAt: Timestamp
   id: String
   organizationId: String
   phone: String
   phoneType: PhoneType
   primary: Boolean
-  updatedAt: DateTime
+  updatedAt: Timestamp
   userId: String
 }
 
 input UpdatePlanInput {
   active: Boolean
-  createdAt: DateTime
+  createdAt: Timestamp
   features: JSON
   id: String
   interval: String
@@ -1613,50 +1612,50 @@ input UpdateRoleInput {
 }
 
 input UpdateSecurityEventInput {
-  createdAt: DateTime
+  createdAt: Timestamp
   eventType: SecurityEventType
   id: String
   ipAddress: String
   metadata: JSON
-  updatedAt: DateTime
+  updatedAt: Timestamp
   userAgent: String
   userId: String
 }
 
 input UpdateSubscriptionInput {
-  createdAt: DateTime
+  createdAt: Timestamp
   id: String
   organizationId: String
   planId: String
   status: SubscriptionStatus
-  stripeCurrentPeriodEnd: DateTime
+  stripeCurrentPeriodEnd: Timestamp
   stripeCustomerId: String
   stripePriceId: String
   stripeSubscriptionId: String
-  updatedAt: DateTime
+  updatedAt: Timestamp
 }
 
 input UpdateTeamInput {
-  createdAt: DateTime
+  createdAt: Timestamp
   description: String
   id: String
   membersIds: [String!]
   name: String
   organizationId: String
-  updatedAt: DateTime
+  updatedAt: Timestamp
 }
 
 input UpdateTeamMemberInput {
-  createdAt: DateTime
+  createdAt: Timestamp
   id: String
   roleId: String
   teamId: String
-  updatedAt: DateTime
+  updatedAt: Timestamp
   userId: String
 }
 
 input UpdateUploadInput {
-  createdAt: DateTime
+  createdAt: Timestamp
   fileId: String
   filePath: String
   fileType: String
@@ -1668,7 +1667,7 @@ input UpdateUploadInput {
   size: Int
   thumbnailUrl: String
   type: ImageType
-  updatedAt: DateTime
+  updatedAt: Timestamp
   url: String
   userId: String
   versionInfo: JSON
@@ -1685,8 +1684,8 @@ input UpdateUserInput {
   addressesIds: [String!]
   apiTokensIds: [String!]
   bio: String
-  createdAt: DateTime
-  deactivatedAt: DateTime
+  createdAt: Timestamp
+  deactivatedAt: Timestamp
   displayName: String
   emailValidated: Boolean
   emailsIds: [String!]
@@ -1697,52 +1696,52 @@ input UpdateUserInput {
   invitesSentIds: [String!]
   isActive: Boolean
   isSuperAdmin: Boolean
-  lastFailedLogin: DateTime
+  lastFailedLogin: Timestamp
   lastName: String
-  lastSuccessfulLogin: DateTime
+  lastSuccessfulLogin: Timestamp
   linksIds: [String!]
-  lockedUntil: DateTime
+  lockedUntil: Timestamp
   loginAttemptsIds: [String!]
   oAuthAccountsIds: [String!]
   organizationsIds: [String!]
   password: String
-  passwordResetExpires: DateTime
+  passwordResetExpires: Timestamp
   passwordResetToken: String
   phoneNumbersIds: [String!]
-  privacyPolicyAcceptedAt: DateTime
-  termsAcceptedAt: DateTime
+  privacyPolicyAcceptedAt: Timestamp
+  termsAcceptedAt: Timestamp
   twoFactorEnabled: Boolean
   twoFactorMethod: TwoFactorMethod
   twoFactorRecoveryCodes: [String!]
   twoFactorSecret: String
-  updatedAt: DateTime
+  updatedAt: Timestamp
   validateEmailToken: String
-  validateEmailTokenExpires: DateTime
+  validateEmailTokenExpires: Timestamp
 }
 
 input UpdateUserPreferenceInput {
-  createdAt: DateTime
+  createdAt: Timestamp
   id: String
   key: String
-  updatedAt: DateTime
+  updatedAt: Timestamp
   userId: String
   value: String
 }
 
 input UpdateUserSessionInput {
-  createdAt: DateTime
+  createdAt: Timestamp
   deviceInfo: String
   id: String
   ipAddress: String
   isValid: Boolean
-  lastActiveAt: DateTime
+  lastActiveAt: Timestamp
   twoFactorVerified: Boolean
-  updatedAt: DateTime
+  updatedAt: Timestamp
   userId: String
 }
 
 type Upload {
-  createdAt: DateTime!
+  createdAt: Timestamp!
   fileId: String
   filePath: String
   fileType: String
@@ -1755,7 +1754,7 @@ type Upload {
   size: Int
   thumbnailUrl: String
   type: ImageType
-  updatedAt: DateTime!
+  updatedAt: Timestamp!
   url: String
   user: User
   userId: String
@@ -1773,8 +1772,8 @@ type User {
   addresses: [Address!]
   apiTokens: [ApiToken!]
   bio: String
-  createdAt: DateTime!
-  deactivatedAt: DateTime
+  createdAt: Timestamp!
+  deactivatedAt: Timestamp
   displayName: String
   emailValidated: Boolean!
   emails: [Email!]
@@ -1785,50 +1784,61 @@ type User {
   invitesSent: [Invite!]
   isActive: Boolean!
   isSuperAdmin: Boolean!
-  lastFailedLogin: DateTime
+  lastFailedLogin: Timestamp
   lastName: String
-  lastSuccessfulLogin: DateTime
+  lastSuccessfulLogin: Timestamp
   links: [Link!]
-  lockedUntil: DateTime
+  lockedUntil: Timestamp
   loginAttempts: [LoginAttempt!]
   oAuthAccounts: [OAuthAccount!]
   organizations: [OrganizationMember!]
   password: String
-  passwordResetExpires: DateTime
+  passwordResetExpires: Timestamp
   passwordResetToken: String
   phoneNumbers: [PhoneNumber!]
-  privacyPolicyAcceptedAt: DateTime
-  termsAcceptedAt: DateTime
+  privacyPolicyAcceptedAt: Timestamp
+  termsAcceptedAt: Timestamp
   twoFactorEnabled: Boolean!
   twoFactorMethod: TwoFactorMethod!
   twoFactorRecoveryCodes: [String!]!
   twoFactorSecret: String
-  updatedAt: DateTime!
+  updatedAt: Timestamp!
   validateEmailToken: String
-  validateEmailTokenExpires: DateTime
+  validateEmailTokenExpires: Timestamp
 }
 
 type UserPreference {
-  createdAt: DateTime!
+  createdAt: Timestamp!
   id: String!
   key: String!
-  updatedAt: DateTime!
+  updatedAt: Timestamp!
   user: User
   userId: String!
   value: String!
 }
 
 type UserSession {
-  createdAt: DateTime!
+  createdAt: Timestamp!
   deviceInfo: String
   id: String!
   ipAddress: String
   isValid: Boolean!
-  lastActiveAt: DateTime!
+  lastActiveAt: Timestamp!
   twoFactorVerified: Boolean!
-  updatedAt: DateTime!
+  updatedAt: Timestamp!
   user: User
   userId: String!
+}
+
+type UserSessionOutput {
+  createdAt: DateTime!
+  deviceInfo: String
+  id: String!
+  ipAddress: String
+  isCurrent: Boolean!
+  isValid: Boolean!
+  lastActiveAt: DateTime!
+  twoFactorVerified: Boolean!
 }
 
 type UserToken {

@@ -5,7 +5,7 @@ import { onError } from '@apollo/client/link/error'
 import { GraphQLWsLink } from '@apollo/client/link/subscriptions'
 import { getMainDefinition } from '@apollo/client/utilities'
 import { createClient } from 'graphql-ws'
-import { cache } from './cache-config'
+import { createCache } from './cache-config'
 
 export type ClientOptions = {
   token?: string
@@ -238,7 +238,7 @@ export function makeClient(request?: Request, options?: ClientOptions) {
 
   return new ApolloClient({
     link,
-    cache,
+    cache: createCache(), // Create a fresh cache for each client to avoid SSR cache pollution
     ssrMode: typeof window === 'undefined',
     assumeImmutableResults: true, // This can help with fragment handling
     defaultOptions: { watchQuery: { fetchPolicy: 'cache-and-network' } },

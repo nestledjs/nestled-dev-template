@@ -1,20 +1,36 @@
-query Organization($organizationId: String!) {
-  organization(organizationId: $organizationId) {
-    ...OrganizationDetails
-  }
-}
-
-query Organizations($input: ListOrganizationInput) {
-  organizations(input: $input) {
+query myOrganizations {
+  myOrganizations {
     ...OrganizationList
   }
-  counters: organizationsCount(input: $input) {
-    ...CorePagingDetails
+}
+
+query organizationRoles($organizationId: String!) {
+  organizationRoles(organizationId: $organizationId) {
+    id
+    name
+    description
+    permissions {
+      id
+      action
+      subject
+    }
   }
 }
 
-query OrganizationPagination($input: ListOrganizationInput) {
-  counters: organizationsCount(input: $input) {
-    ...CorePagingDetails
+query organizationInvitations($organizationId: String!) {
+  organizationInvitations(organizationId: $organizationId) {
+    id
+    email
+    status
+    expiresAt
+    role {
+      id
+      name
+    }
+    inviter {
+      id
+      firstName
+      lastName
+    }
   }
 }

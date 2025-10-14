@@ -19,7 +19,7 @@ export type Scalars = {
   Boolean: { input: boolean; output: boolean }
   Int: { input: number; output: number }
   Float: { input: number; output: number }
-  /** A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format. */
+  /** A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar. */
   DateTime: { input: any; output: any }
   /** An arbitrary-precision Decimal type */
   Decimal: { input: any; output: any }
@@ -27,6 +27,18 @@ export type Scalars = {
   JSON: { input: any; output: any }
   /** The `JSONObject` scalar type represents JSON objects as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf). */
   JSONObject: { input: any; output: any }
+  /** `Date` type as integer. Type represents date and time as number of milliseconds from start of UNIX epoch. */
+  Timestamp: { input: any; output: any }
+}
+
+export type AcceptInvitationInput = {
+  token: Scalars['String']['input']
+}
+
+export type AddOrganizationMemberInput = {
+  organizationId: Scalars['String']['input']
+  roleId: Scalars['String']['input']
+  userId: Scalars['String']['input']
 }
 
 export type Address = {
@@ -37,14 +49,14 @@ export type Address = {
   city?: Maybe<Scalars['String']['output']>
   country?: Maybe<Country>
   countryId?: Maybe<Scalars['String']['output']>
-  createdAt: Scalars['DateTime']['output']
+  createdAt: Scalars['Timestamp']['output']
   id: Scalars['String']['output']
   isPrimary: Scalars['Boolean']['output']
   organization?: Maybe<Organization>
   organizationId?: Maybe<Scalars['String']['output']>
   postalCode?: Maybe<Scalars['String']['output']>
   region?: Maybe<Scalars['String']['output']>
-  updatedAt: Scalars['DateTime']['output']
+  updatedAt: Scalars['Timestamp']['output']
   user?: Maybe<User>
   userId?: Maybe<Scalars['String']['output']>
 }
@@ -59,14 +71,14 @@ export enum AddressType {
 
 export type ApiToken = {
   __typename?: 'ApiToken'
-  createdAt: Scalars['DateTime']['output']
-  expiresAt?: Maybe<Scalars['DateTime']['output']>
+  createdAt: Scalars['Timestamp']['output']
+  expiresAt?: Maybe<Scalars['Timestamp']['output']>
   id: Scalars['String']['output']
-  lastUsedAt?: Maybe<Scalars['DateTime']['output']>
+  lastUsedAt?: Maybe<Scalars['Timestamp']['output']>
   name: Scalars['String']['output']
   revoked: Scalars['Boolean']['output']
   tokenHash: Scalars['String']['output']
-  updatedAt: Scalars['DateTime']['output']
+  updatedAt: Scalars['Timestamp']['output']
   user?: Maybe<User>
   userId: Scalars['String']['output']
 }
@@ -75,13 +87,13 @@ export type AuditLog = {
   __typename?: 'AuditLog'
   action: Scalars['String']['output']
   changes?: Maybe<Scalars['JSONObject']['output']>
-  createdAt: Scalars['DateTime']['output']
+  createdAt: Scalars['Timestamp']['output']
   entityId: Scalars['String']['output']
   entityType: Scalars['String']['output']
   id: Scalars['String']['output']
   organization?: Maybe<Organization>
   organizationId?: Maybe<Scalars['String']['output']>
-  updatedAt: Scalars['DateTime']['output']
+  updatedAt: Scalars['Timestamp']['output']
   user?: Maybe<User>
   userId: Scalars['String']['output']
 }
@@ -114,7 +126,7 @@ export type Country = {
   alpha2: Scalars['String']['output']
   alpha3: Scalars['String']['output']
   countryCode: Scalars['String']['output']
-  createdAt: Scalars['DateTime']['output']
+  createdAt: Scalars['Timestamp']['output']
   id: Scalars['String']['output']
   intermediateRegion: Scalars['String']['output']
   intermediateRegionCode: Scalars['String']['output']
@@ -124,7 +136,7 @@ export type Country = {
   regionCode: Scalars['String']['output']
   subRegion: Scalars['String']['output']
   subRegionCode: Scalars['String']['output']
-  updatedAt: Scalars['DateTime']['output']
+  updatedAt: Scalars['Timestamp']['output']
 }
 
 export type CreateAddressInput = {
@@ -133,37 +145,37 @@ export type CreateAddressInput = {
   addressType?: InputMaybe<AddressType>
   city?: InputMaybe<Scalars['String']['input']>
   countryId?: InputMaybe<Scalars['String']['input']>
-  createdAt?: InputMaybe<Scalars['DateTime']['input']>
+  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
   id?: InputMaybe<Scalars['String']['input']>
   isPrimary?: InputMaybe<Scalars['Boolean']['input']>
   organizationId?: InputMaybe<Scalars['String']['input']>
   postalCode?: InputMaybe<Scalars['String']['input']>
   region?: InputMaybe<Scalars['String']['input']>
-  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
+  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
   userId?: InputMaybe<Scalars['String']['input']>
 }
 
 export type CreateApiTokenInput = {
-  createdAt?: InputMaybe<Scalars['DateTime']['input']>
-  expiresAt?: InputMaybe<Scalars['DateTime']['input']>
+  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
+  expiresAt?: InputMaybe<Scalars['Timestamp']['input']>
   id?: InputMaybe<Scalars['String']['input']>
-  lastUsedAt?: InputMaybe<Scalars['DateTime']['input']>
+  lastUsedAt?: InputMaybe<Scalars['Timestamp']['input']>
   name: Scalars['String']['input']
   revoked?: InputMaybe<Scalars['Boolean']['input']>
   tokenHash: Scalars['String']['input']
-  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
+  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
   userId: Scalars['String']['input']
 }
 
 export type CreateAuditLogInput = {
   action: Scalars['String']['input']
   changes?: InputMaybe<Scalars['JSON']['input']>
-  createdAt?: InputMaybe<Scalars['DateTime']['input']>
+  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
   entityId: Scalars['String']['input']
   entityType: Scalars['String']['input']
   id?: InputMaybe<Scalars['String']['input']>
   organizationId?: InputMaybe<Scalars['String']['input']>
-  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
+  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
   userId: Scalars['String']['input']
 }
 
@@ -172,7 +184,7 @@ export type CreateCountryInput = {
   alpha2: Scalars['String']['input']
   alpha3: Scalars['String']['input']
   countryCode: Scalars['String']['input']
-  createdAt?: InputMaybe<Scalars['DateTime']['input']>
+  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
   id?: InputMaybe<Scalars['String']['input']>
   intermediateRegion: Scalars['String']['input']
   intermediateRegionCode: Scalars['String']['input']
@@ -182,93 +194,85 @@ export type CreateCountryInput = {
   regionCode: Scalars['String']['input']
   subRegion: Scalars['String']['input']
   subRegionCode: Scalars['String']['input']
-  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
+  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
 }
 
 export type CreateEmailInput = {
-  createdAt?: InputMaybe<Scalars['DateTime']['input']>
+  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
   email: Scalars['String']['input']
   emailType?: InputMaybe<EmailType>
   id?: InputMaybe<Scalars['String']['input']>
   organizationId?: InputMaybe<Scalars['String']['input']>
   primary?: InputMaybe<Scalars['Boolean']['input']>
   public?: InputMaybe<Scalars['Boolean']['input']>
-  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
+  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
   userId?: InputMaybe<Scalars['String']['input']>
   verified?: InputMaybe<Scalars['Boolean']['input']>
-  verifyExpires?: InputMaybe<Scalars['DateTime']['input']>
+  verifyExpires?: InputMaybe<Scalars['Timestamp']['input']>
   verifyToken?: InputMaybe<Scalars['String']['input']>
 }
 
-export type CreateInviteInput = {
-  createdAt?: InputMaybe<Scalars['DateTime']['input']>
+export type CreateInvitationInput = {
   email: Scalars['String']['input']
-  expiresAt: Scalars['DateTime']['input']
+  organizationId: Scalars['String']['input']
+  roleId: Scalars['String']['input']
+}
+
+export type CreateInviteInput = {
+  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
+  email: Scalars['String']['input']
+  expiresAt: Scalars['Timestamp']['input']
   id?: InputMaybe<Scalars['String']['input']>
   inviterId: Scalars['String']['input']
   organizationId: Scalars['String']['input']
   roleId?: InputMaybe<Scalars['String']['input']>
   status?: InputMaybe<InviteStatus>
   token: Scalars['String']['input']
-  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
+  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
 }
 
 export type CreateLinkInput = {
-  createdAt?: InputMaybe<Scalars['DateTime']['input']>
+  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
   id?: InputMaybe<Scalars['String']['input']>
   name: Scalars['String']['input']
   organizationId?: InputMaybe<Scalars['String']['input']>
-  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
+  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
   url: Scalars['String']['input']
   userId?: InputMaybe<Scalars['String']['input']>
 }
 
 export type CreateLoginAttemptInput = {
-  createdAt?: InputMaybe<Scalars['DateTime']['input']>
+  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
   email: Scalars['String']['input']
   id?: InputMaybe<Scalars['String']['input']>
   ipAddress?: InputMaybe<Scalars['String']['input']>
   location?: InputMaybe<Scalars['String']['input']>
   reason?: InputMaybe<FailureReason>
   success?: InputMaybe<Scalars['Boolean']['input']>
-  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
+  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
   userAgent?: InputMaybe<Scalars['String']['input']>
   userId?: InputMaybe<Scalars['String']['input']>
 }
 
 export type CreateOAuthAccountInput = {
-  createdAt?: InputMaybe<Scalars['DateTime']['input']>
+  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
   id?: InputMaybe<Scalars['String']['input']>
   provider: Scalars['String']['input']
   providerUserId: Scalars['String']['input']
-  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
+  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
   userId: Scalars['String']['input']
 }
 
 export type CreateOrganizationInput = {
-  AuditLogIds?: InputMaybe<Array<Scalars['String']['input']>>
-  TeamIds?: InputMaybe<Array<Scalars['String']['input']>>
-  addressesIds?: InputMaybe<Array<Scalars['String']['input']>>
-  createdAt?: InputMaybe<Scalars['DateTime']['input']>
-  emailsIds?: InputMaybe<Array<Scalars['String']['input']>>
-  id?: InputMaybe<Scalars['String']['input']>
-  imagesIds?: InputMaybe<Array<Scalars['String']['input']>>
-  invitesIds?: InputMaybe<Array<Scalars['String']['input']>>
-  linksIds?: InputMaybe<Array<Scalars['String']['input']>>
-  membersIds?: InputMaybe<Array<Scalars['String']['input']>>
   name: Scalars['String']['input']
-  phoneNumbersIds?: InputMaybe<Array<Scalars['String']['input']>>
-  rolesIds?: InputMaybe<Array<Scalars['String']['input']>>
-  subscriptionId?: InputMaybe<Scalars['String']['input']>
-  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
 }
 
 export type CreateOrganizationMemberInput = {
-  createdAt?: InputMaybe<Scalars['DateTime']['input']>
+  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
   id?: InputMaybe<Scalars['String']['input']>
   organizationId: Scalars['String']['input']
   roleId: Scalars['String']['input']
-  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
+  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
   userId: Scalars['String']['input']
 }
 
@@ -281,19 +285,19 @@ export type CreatePermissionInput = {
 }
 
 export type CreatePhoneNumberInput = {
-  createdAt?: InputMaybe<Scalars['DateTime']['input']>
+  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
   id?: InputMaybe<Scalars['String']['input']>
   organizationId?: InputMaybe<Scalars['String']['input']>
   phone: Scalars['String']['input']
   phoneType?: InputMaybe<PhoneType>
   primary?: InputMaybe<Scalars['Boolean']['input']>
-  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
+  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
   userId?: InputMaybe<Scalars['String']['input']>
 }
 
 export type CreatePlanInput = {
   active?: InputMaybe<Scalars['Boolean']['input']>
-  createdAt?: InputMaybe<Scalars['DateTime']['input']>
+  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
   features?: InputMaybe<Scalars['JSON']['input']>
   id?: InputMaybe<Scalars['String']['input']>
   interval: Scalars['String']['input']
@@ -314,50 +318,50 @@ export type CreateRoleInput = {
 }
 
 export type CreateSecurityEventInput = {
-  createdAt?: InputMaybe<Scalars['DateTime']['input']>
+  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
   eventType: SecurityEventType
   id?: InputMaybe<Scalars['String']['input']>
   ipAddress?: InputMaybe<Scalars['String']['input']>
   metadata?: InputMaybe<Scalars['JSON']['input']>
-  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
+  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
   userAgent?: InputMaybe<Scalars['String']['input']>
   userId: Scalars['String']['input']
 }
 
 export type CreateSubscriptionInput = {
-  createdAt?: InputMaybe<Scalars['DateTime']['input']>
+  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
   id?: InputMaybe<Scalars['String']['input']>
   organizationId: Scalars['String']['input']
   planId: Scalars['String']['input']
   status?: InputMaybe<SubscriptionStatus>
-  stripeCurrentPeriodEnd?: InputMaybe<Scalars['DateTime']['input']>
+  stripeCurrentPeriodEnd?: InputMaybe<Scalars['Timestamp']['input']>
   stripeCustomerId?: InputMaybe<Scalars['String']['input']>
   stripePriceId?: InputMaybe<Scalars['String']['input']>
   stripeSubscriptionId?: InputMaybe<Scalars['String']['input']>
-  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
+  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
 }
 
 export type CreateTeamInput = {
-  createdAt?: InputMaybe<Scalars['DateTime']['input']>
+  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
   description?: InputMaybe<Scalars['String']['input']>
   id?: InputMaybe<Scalars['String']['input']>
   membersIds?: InputMaybe<Array<Scalars['String']['input']>>
   name: Scalars['String']['input']
   organizationId: Scalars['String']['input']
-  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
+  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
 }
 
 export type CreateTeamMemberInput = {
-  createdAt?: InputMaybe<Scalars['DateTime']['input']>
+  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
   id?: InputMaybe<Scalars['String']['input']>
   roleId: Scalars['String']['input']
   teamId: Scalars['String']['input']
-  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
+  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
   userId: Scalars['String']['input']
 }
 
 export type CreateUploadInput = {
-  createdAt?: InputMaybe<Scalars['DateTime']['input']>
+  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
   fileId?: InputMaybe<Scalars['String']['input']>
   filePath?: InputMaybe<Scalars['String']['input']>
   fileType?: InputMaybe<Scalars['String']['input']>
@@ -369,7 +373,7 @@ export type CreateUploadInput = {
   size?: InputMaybe<Scalars['Int']['input']>
   thumbnailUrl?: InputMaybe<Scalars['String']['input']>
   type?: InputMaybe<ImageType>
-  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
+  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
   url?: InputMaybe<Scalars['String']['input']>
   userId?: InputMaybe<Scalars['String']['input']>
   versionInfo?: InputMaybe<Scalars['JSON']['input']>
@@ -386,8 +390,8 @@ export type CreateUserInput = {
   addressesIds?: InputMaybe<Array<Scalars['String']['input']>>
   apiTokensIds?: InputMaybe<Array<Scalars['String']['input']>>
   bio?: InputMaybe<Scalars['String']['input']>
-  createdAt?: InputMaybe<Scalars['DateTime']['input']>
-  deactivatedAt?: InputMaybe<Scalars['DateTime']['input']>
+  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
+  deactivatedAt?: InputMaybe<Scalars['Timestamp']['input']>
   displayName?: InputMaybe<Scalars['String']['input']>
   emailValidated?: InputMaybe<Scalars['Boolean']['input']>
   emailsIds?: InputMaybe<Array<Scalars['String']['input']>>
@@ -398,47 +402,47 @@ export type CreateUserInput = {
   invitesSentIds?: InputMaybe<Array<Scalars['String']['input']>>
   isActive?: InputMaybe<Scalars['Boolean']['input']>
   isSuperAdmin?: InputMaybe<Scalars['Boolean']['input']>
-  lastFailedLogin?: InputMaybe<Scalars['DateTime']['input']>
+  lastFailedLogin?: InputMaybe<Scalars['Timestamp']['input']>
   lastName?: InputMaybe<Scalars['String']['input']>
-  lastSuccessfulLogin?: InputMaybe<Scalars['DateTime']['input']>
+  lastSuccessfulLogin?: InputMaybe<Scalars['Timestamp']['input']>
   linksIds?: InputMaybe<Array<Scalars['String']['input']>>
-  lockedUntil?: InputMaybe<Scalars['DateTime']['input']>
+  lockedUntil?: InputMaybe<Scalars['Timestamp']['input']>
   loginAttemptsIds?: InputMaybe<Array<Scalars['String']['input']>>
   oAuthAccountsIds?: InputMaybe<Array<Scalars['String']['input']>>
   organizationsIds?: InputMaybe<Array<Scalars['String']['input']>>
   password?: InputMaybe<Scalars['String']['input']>
-  passwordResetExpires?: InputMaybe<Scalars['DateTime']['input']>
+  passwordResetExpires?: InputMaybe<Scalars['Timestamp']['input']>
   passwordResetToken?: InputMaybe<Scalars['String']['input']>
   phoneNumbersIds?: InputMaybe<Array<Scalars['String']['input']>>
-  privacyPolicyAcceptedAt?: InputMaybe<Scalars['DateTime']['input']>
-  termsAcceptedAt?: InputMaybe<Scalars['DateTime']['input']>
+  privacyPolicyAcceptedAt?: InputMaybe<Scalars['Timestamp']['input']>
+  termsAcceptedAt?: InputMaybe<Scalars['Timestamp']['input']>
   twoFactorEnabled?: InputMaybe<Scalars['Boolean']['input']>
   twoFactorMethod?: InputMaybe<TwoFactorMethod>
   twoFactorRecoveryCodes: Array<Scalars['String']['input']>
   twoFactorSecret?: InputMaybe<Scalars['String']['input']>
-  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
+  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
   validateEmailToken?: InputMaybe<Scalars['String']['input']>
-  validateEmailTokenExpires?: InputMaybe<Scalars['DateTime']['input']>
+  validateEmailTokenExpires?: InputMaybe<Scalars['Timestamp']['input']>
 }
 
 export type CreateUserPreferenceInput = {
-  createdAt?: InputMaybe<Scalars['DateTime']['input']>
+  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
   id?: InputMaybe<Scalars['String']['input']>
   key: Scalars['String']['input']
-  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
+  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
   userId: Scalars['String']['input']
   value: Scalars['String']['input']
 }
 
 export type CreateUserSessionInput = {
-  createdAt?: InputMaybe<Scalars['DateTime']['input']>
+  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
   deviceInfo?: InputMaybe<Scalars['String']['input']>
   id?: InputMaybe<Scalars['String']['input']>
   ipAddress?: InputMaybe<Scalars['String']['input']>
   isValid?: InputMaybe<Scalars['Boolean']['input']>
-  lastActiveAt?: InputMaybe<Scalars['DateTime']['input']>
+  lastActiveAt?: InputMaybe<Scalars['Timestamp']['input']>
   twoFactorVerified?: InputMaybe<Scalars['Boolean']['input']>
-  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
+  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
   userId: Scalars['String']['input']
 }
 
@@ -448,7 +452,7 @@ export type Disable2FaInput = {
 
 export type Email = {
   __typename?: 'Email'
-  createdAt: Scalars['DateTime']['output']
+  createdAt: Scalars['Timestamp']['output']
   email: Scalars['String']['output']
   emailType: EmailType
   id: Scalars['String']['output']
@@ -456,11 +460,11 @@ export type Email = {
   organizationId?: Maybe<Scalars['String']['output']>
   primary: Scalars['Boolean']['output']
   public: Scalars['Boolean']['output']
-  updatedAt: Scalars['DateTime']['output']
+  updatedAt: Scalars['Timestamp']['output']
   user?: Maybe<User>
   userId?: Maybe<Scalars['String']['output']>
   verified: Scalars['Boolean']['output']
-  verifyExpires?: Maybe<Scalars['DateTime']['output']>
+  verifyExpires?: Maybe<Scalars['Timestamp']['output']>
   verifyToken?: Maybe<Scalars['String']['output']>
 }
 
@@ -495,7 +499,7 @@ export type ForgotPasswordInput = {
 }
 
 export type GenerateApiTokenInput = {
-  expiresAt?: InputMaybe<Scalars['DateTime']['input']>
+  expiresAt?: InputMaybe<Scalars['Timestamp']['input']>
   name: Scalars['String']['input']
 }
 
@@ -513,9 +517,9 @@ export enum ImageType {
 
 export type Invite = {
   __typename?: 'Invite'
-  createdAt: Scalars['DateTime']['output']
+  createdAt: Scalars['Timestamp']['output']
   email: Scalars['String']['output']
-  expiresAt: Scalars['DateTime']['output']
+  expiresAt: Scalars['Timestamp']['output']
   id: Scalars['String']['output']
   inviter?: Maybe<User>
   inviterId: Scalars['String']['output']
@@ -525,7 +529,7 @@ export type Invite = {
   roleId?: Maybe<Scalars['String']['output']>
   status: InviteStatus
   token: Scalars['String']['output']
-  updatedAt: Scalars['DateTime']['output']
+  updatedAt: Scalars['Timestamp']['output']
 }
 
 export enum InviteStatus {
@@ -537,12 +541,12 @@ export enum InviteStatus {
 
 export type Link = {
   __typename?: 'Link'
-  createdAt: Scalars['DateTime']['output']
+  createdAt: Scalars['Timestamp']['output']
   id: Scalars['String']['output']
   name: Scalars['String']['output']
   organization?: Maybe<Organization>
   organizationId?: Maybe<Scalars['String']['output']>
-  updatedAt: Scalars['DateTime']['output']
+  updatedAt: Scalars['Timestamp']['output']
   url: Scalars['String']['output']
   user?: Maybe<User>
   userId?: Maybe<Scalars['String']['output']>
@@ -560,7 +564,7 @@ export type ListAddressInput = {
   addressType?: InputMaybe<AddressType>
   city?: InputMaybe<Scalars['String']['input']>
   countryId?: InputMaybe<Scalars['String']['input']>
-  createdAt?: InputMaybe<Scalars['DateTime']['input']>
+  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
   filters?: InputMaybe<Scalars['JSONObject']['input']>
   id?: InputMaybe<Scalars['String']['input']>
   isPrimary?: InputMaybe<Scalars['Boolean']['input']>
@@ -573,16 +577,16 @@ export type ListAddressInput = {
   searchFields?: InputMaybe<Array<Scalars['String']['input']>>
   skip?: InputMaybe<Scalars['Float']['input']>
   take?: InputMaybe<Scalars['Float']['input']>
-  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
+  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
   userId?: InputMaybe<Scalars['String']['input']>
 }
 
 export type ListApiTokenInput = {
-  createdAt?: InputMaybe<Scalars['DateTime']['input']>
-  expiresAt?: InputMaybe<Scalars['DateTime']['input']>
+  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
+  expiresAt?: InputMaybe<Scalars['Timestamp']['input']>
   filters?: InputMaybe<Scalars['JSONObject']['input']>
   id?: InputMaybe<Scalars['String']['input']>
-  lastUsedAt?: InputMaybe<Scalars['DateTime']['input']>
+  lastUsedAt?: InputMaybe<Scalars['Timestamp']['input']>
   name?: InputMaybe<Scalars['String']['input']>
   orderBy?: InputMaybe<Scalars['String']['input']>
   orderDirection?: InputMaybe<Scalars['String']['input']>
@@ -592,14 +596,14 @@ export type ListApiTokenInput = {
   skip?: InputMaybe<Scalars['Float']['input']>
   take?: InputMaybe<Scalars['Float']['input']>
   tokenHash?: InputMaybe<Scalars['String']['input']>
-  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
+  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
   userId?: InputMaybe<Scalars['String']['input']>
 }
 
 export type ListAuditLogInput = {
   action?: InputMaybe<Scalars['String']['input']>
   changes?: InputMaybe<Scalars['JSON']['input']>
-  createdAt?: InputMaybe<Scalars['DateTime']['input']>
+  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
   entityId?: InputMaybe<Scalars['String']['input']>
   entityType?: InputMaybe<Scalars['String']['input']>
   filters?: InputMaybe<Scalars['JSONObject']['input']>
@@ -611,7 +615,7 @@ export type ListAuditLogInput = {
   searchFields?: InputMaybe<Array<Scalars['String']['input']>>
   skip?: InputMaybe<Scalars['Float']['input']>
   take?: InputMaybe<Scalars['Float']['input']>
-  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
+  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
   userId?: InputMaybe<Scalars['String']['input']>
 }
 
@@ -620,7 +624,7 @@ export type ListCountryInput = {
   alpha2?: InputMaybe<Scalars['String']['input']>
   alpha3?: InputMaybe<Scalars['String']['input']>
   countryCode?: InputMaybe<Scalars['String']['input']>
-  createdAt?: InputMaybe<Scalars['DateTime']['input']>
+  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
   filters?: InputMaybe<Scalars['JSONObject']['input']>
   id?: InputMaybe<Scalars['String']['input']>
   intermediateRegion?: InputMaybe<Scalars['String']['input']>
@@ -637,11 +641,11 @@ export type ListCountryInput = {
   subRegion?: InputMaybe<Scalars['String']['input']>
   subRegionCode?: InputMaybe<Scalars['String']['input']>
   take?: InputMaybe<Scalars['Float']['input']>
-  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
+  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
 }
 
 export type ListEmailInput = {
-  createdAt?: InputMaybe<Scalars['DateTime']['input']>
+  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
   email?: InputMaybe<Scalars['String']['input']>
   emailType?: InputMaybe<EmailType>
   filters?: InputMaybe<Scalars['JSONObject']['input']>
@@ -655,17 +659,17 @@ export type ListEmailInput = {
   searchFields?: InputMaybe<Array<Scalars['String']['input']>>
   skip?: InputMaybe<Scalars['Float']['input']>
   take?: InputMaybe<Scalars['Float']['input']>
-  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
+  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
   userId?: InputMaybe<Scalars['String']['input']>
   verified?: InputMaybe<Scalars['Boolean']['input']>
-  verifyExpires?: InputMaybe<Scalars['DateTime']['input']>
+  verifyExpires?: InputMaybe<Scalars['Timestamp']['input']>
   verifyToken?: InputMaybe<Scalars['String']['input']>
 }
 
 export type ListInviteInput = {
-  createdAt?: InputMaybe<Scalars['DateTime']['input']>
+  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
   email?: InputMaybe<Scalars['String']['input']>
-  expiresAt?: InputMaybe<Scalars['DateTime']['input']>
+  expiresAt?: InputMaybe<Scalars['Timestamp']['input']>
   filters?: InputMaybe<Scalars['JSONObject']['input']>
   id?: InputMaybe<Scalars['String']['input']>
   inviterId?: InputMaybe<Scalars['String']['input']>
@@ -679,11 +683,11 @@ export type ListInviteInput = {
   status?: InputMaybe<InviteStatus>
   take?: InputMaybe<Scalars['Float']['input']>
   token?: InputMaybe<Scalars['String']['input']>
-  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
+  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
 }
 
 export type ListLinkInput = {
-  createdAt?: InputMaybe<Scalars['DateTime']['input']>
+  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
   filters?: InputMaybe<Scalars['JSONObject']['input']>
   id?: InputMaybe<Scalars['String']['input']>
   name?: InputMaybe<Scalars['String']['input']>
@@ -694,13 +698,13 @@ export type ListLinkInput = {
   searchFields?: InputMaybe<Array<Scalars['String']['input']>>
   skip?: InputMaybe<Scalars['Float']['input']>
   take?: InputMaybe<Scalars['Float']['input']>
-  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
+  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
   url?: InputMaybe<Scalars['String']['input']>
   userId?: InputMaybe<Scalars['String']['input']>
 }
 
 export type ListLoginAttemptInput = {
-  createdAt?: InputMaybe<Scalars['DateTime']['input']>
+  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
   email?: InputMaybe<Scalars['String']['input']>
   filters?: InputMaybe<Scalars['JSONObject']['input']>
   id?: InputMaybe<Scalars['String']['input']>
@@ -714,13 +718,13 @@ export type ListLoginAttemptInput = {
   skip?: InputMaybe<Scalars['Float']['input']>
   success?: InputMaybe<Scalars['Boolean']['input']>
   take?: InputMaybe<Scalars['Float']['input']>
-  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
+  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
   userAgent?: InputMaybe<Scalars['String']['input']>
   userId?: InputMaybe<Scalars['String']['input']>
 }
 
 export type ListOAuthAccountInput = {
-  createdAt?: InputMaybe<Scalars['DateTime']['input']>
+  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
   filters?: InputMaybe<Scalars['JSONObject']['input']>
   id?: InputMaybe<Scalars['String']['input']>
   orderBy?: InputMaybe<Scalars['String']['input']>
@@ -731,37 +735,12 @@ export type ListOAuthAccountInput = {
   searchFields?: InputMaybe<Array<Scalars['String']['input']>>
   skip?: InputMaybe<Scalars['Float']['input']>
   take?: InputMaybe<Scalars['Float']['input']>
-  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
+  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
   userId?: InputMaybe<Scalars['String']['input']>
 }
 
-export type ListOrganizationInput = {
-  AuditLogIds?: InputMaybe<Array<Scalars['String']['input']>>
-  TeamIds?: InputMaybe<Array<Scalars['String']['input']>>
-  addressesIds?: InputMaybe<Array<Scalars['String']['input']>>
-  createdAt?: InputMaybe<Scalars['DateTime']['input']>
-  emailsIds?: InputMaybe<Array<Scalars['String']['input']>>
-  filters?: InputMaybe<Scalars['JSONObject']['input']>
-  id?: InputMaybe<Scalars['String']['input']>
-  imagesIds?: InputMaybe<Array<Scalars['String']['input']>>
-  invitesIds?: InputMaybe<Array<Scalars['String']['input']>>
-  linksIds?: InputMaybe<Array<Scalars['String']['input']>>
-  membersIds?: InputMaybe<Array<Scalars['String']['input']>>
-  name?: InputMaybe<Scalars['String']['input']>
-  orderBy?: InputMaybe<Scalars['String']['input']>
-  orderDirection?: InputMaybe<Scalars['String']['input']>
-  phoneNumbersIds?: InputMaybe<Array<Scalars['String']['input']>>
-  rolesIds?: InputMaybe<Array<Scalars['String']['input']>>
-  search?: InputMaybe<Scalars['String']['input']>
-  searchFields?: InputMaybe<Array<Scalars['String']['input']>>
-  skip?: InputMaybe<Scalars['Float']['input']>
-  subscriptionId?: InputMaybe<Scalars['String']['input']>
-  take?: InputMaybe<Scalars['Float']['input']>
-  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
-}
-
 export type ListOrganizationMemberInput = {
-  createdAt?: InputMaybe<Scalars['DateTime']['input']>
+  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
   filters?: InputMaybe<Scalars['JSONObject']['input']>
   id?: InputMaybe<Scalars['String']['input']>
   orderBy?: InputMaybe<Scalars['String']['input']>
@@ -772,7 +751,7 @@ export type ListOrganizationMemberInput = {
   searchFields?: InputMaybe<Array<Scalars['String']['input']>>
   skip?: InputMaybe<Scalars['Float']['input']>
   take?: InputMaybe<Scalars['Float']['input']>
-  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
+  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
   userId?: InputMaybe<Scalars['String']['input']>
 }
 
@@ -792,7 +771,7 @@ export type ListPermissionInput = {
 }
 
 export type ListPhoneNumberInput = {
-  createdAt?: InputMaybe<Scalars['DateTime']['input']>
+  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
   filters?: InputMaybe<Scalars['JSONObject']['input']>
   id?: InputMaybe<Scalars['String']['input']>
   orderBy?: InputMaybe<Scalars['String']['input']>
@@ -805,13 +784,13 @@ export type ListPhoneNumberInput = {
   searchFields?: InputMaybe<Array<Scalars['String']['input']>>
   skip?: InputMaybe<Scalars['Float']['input']>
   take?: InputMaybe<Scalars['Float']['input']>
-  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
+  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
   userId?: InputMaybe<Scalars['String']['input']>
 }
 
 export type ListPlanInput = {
   active?: InputMaybe<Scalars['Boolean']['input']>
-  createdAt?: InputMaybe<Scalars['DateTime']['input']>
+  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
   features?: InputMaybe<Scalars['JSON']['input']>
   filters?: InputMaybe<Scalars['JSONObject']['input']>
   id?: InputMaybe<Scalars['String']['input']>
@@ -846,7 +825,7 @@ export type ListRoleInput = {
 }
 
 export type ListSecurityEventInput = {
-  createdAt?: InputMaybe<Scalars['DateTime']['input']>
+  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
   eventType?: InputMaybe<SecurityEventType>
   filters?: InputMaybe<Scalars['JSONObject']['input']>
   id?: InputMaybe<Scalars['String']['input']>
@@ -858,13 +837,13 @@ export type ListSecurityEventInput = {
   searchFields?: InputMaybe<Array<Scalars['String']['input']>>
   skip?: InputMaybe<Scalars['Float']['input']>
   take?: InputMaybe<Scalars['Float']['input']>
-  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
+  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
   userAgent?: InputMaybe<Scalars['String']['input']>
   userId?: InputMaybe<Scalars['String']['input']>
 }
 
 export type ListSubscriptionInput = {
-  createdAt?: InputMaybe<Scalars['DateTime']['input']>
+  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
   filters?: InputMaybe<Scalars['JSONObject']['input']>
   id?: InputMaybe<Scalars['String']['input']>
   orderBy?: InputMaybe<Scalars['String']['input']>
@@ -875,16 +854,16 @@ export type ListSubscriptionInput = {
   searchFields?: InputMaybe<Array<Scalars['String']['input']>>
   skip?: InputMaybe<Scalars['Float']['input']>
   status?: InputMaybe<SubscriptionStatus>
-  stripeCurrentPeriodEnd?: InputMaybe<Scalars['DateTime']['input']>
+  stripeCurrentPeriodEnd?: InputMaybe<Scalars['Timestamp']['input']>
   stripeCustomerId?: InputMaybe<Scalars['String']['input']>
   stripePriceId?: InputMaybe<Scalars['String']['input']>
   stripeSubscriptionId?: InputMaybe<Scalars['String']['input']>
   take?: InputMaybe<Scalars['Float']['input']>
-  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
+  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
 }
 
 export type ListTeamInput = {
-  createdAt?: InputMaybe<Scalars['DateTime']['input']>
+  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
   description?: InputMaybe<Scalars['String']['input']>
   filters?: InputMaybe<Scalars['JSONObject']['input']>
   id?: InputMaybe<Scalars['String']['input']>
@@ -897,11 +876,11 @@ export type ListTeamInput = {
   searchFields?: InputMaybe<Array<Scalars['String']['input']>>
   skip?: InputMaybe<Scalars['Float']['input']>
   take?: InputMaybe<Scalars['Float']['input']>
-  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
+  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
 }
 
 export type ListTeamMemberInput = {
-  createdAt?: InputMaybe<Scalars['DateTime']['input']>
+  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
   filters?: InputMaybe<Scalars['JSONObject']['input']>
   id?: InputMaybe<Scalars['String']['input']>
   orderBy?: InputMaybe<Scalars['String']['input']>
@@ -912,12 +891,12 @@ export type ListTeamMemberInput = {
   skip?: InputMaybe<Scalars['Float']['input']>
   take?: InputMaybe<Scalars['Float']['input']>
   teamId?: InputMaybe<Scalars['String']['input']>
-  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
+  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
   userId?: InputMaybe<Scalars['String']['input']>
 }
 
 export type ListUploadInput = {
-  createdAt?: InputMaybe<Scalars['DateTime']['input']>
+  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
   fileId?: InputMaybe<Scalars['String']['input']>
   filePath?: InputMaybe<Scalars['String']['input']>
   fileType?: InputMaybe<Scalars['String']['input']>
@@ -936,7 +915,7 @@ export type ListUploadInput = {
   take?: InputMaybe<Scalars['Float']['input']>
   thumbnailUrl?: InputMaybe<Scalars['String']['input']>
   type?: InputMaybe<ImageType>
-  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
+  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
   url?: InputMaybe<Scalars['String']['input']>
   userId?: InputMaybe<Scalars['String']['input']>
   versionInfo?: InputMaybe<Scalars['JSON']['input']>
@@ -953,8 +932,8 @@ export type ListUserInput = {
   addressesIds?: InputMaybe<Array<Scalars['String']['input']>>
   apiTokensIds?: InputMaybe<Array<Scalars['String']['input']>>
   bio?: InputMaybe<Scalars['String']['input']>
-  createdAt?: InputMaybe<Scalars['DateTime']['input']>
-  deactivatedAt?: InputMaybe<Scalars['DateTime']['input']>
+  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
+  deactivatedAt?: InputMaybe<Scalars['Timestamp']['input']>
   displayName?: InputMaybe<Scalars['String']['input']>
   emailValidated?: InputMaybe<Scalars['Boolean']['input']>
   emailsIds?: InputMaybe<Array<Scalars['String']['input']>>
@@ -966,37 +945,37 @@ export type ListUserInput = {
   invitesSentIds?: InputMaybe<Array<Scalars['String']['input']>>
   isActive?: InputMaybe<Scalars['Boolean']['input']>
   isSuperAdmin?: InputMaybe<Scalars['Boolean']['input']>
-  lastFailedLogin?: InputMaybe<Scalars['DateTime']['input']>
+  lastFailedLogin?: InputMaybe<Scalars['Timestamp']['input']>
   lastName?: InputMaybe<Scalars['String']['input']>
-  lastSuccessfulLogin?: InputMaybe<Scalars['DateTime']['input']>
+  lastSuccessfulLogin?: InputMaybe<Scalars['Timestamp']['input']>
   linksIds?: InputMaybe<Array<Scalars['String']['input']>>
-  lockedUntil?: InputMaybe<Scalars['DateTime']['input']>
+  lockedUntil?: InputMaybe<Scalars['Timestamp']['input']>
   loginAttemptsIds?: InputMaybe<Array<Scalars['String']['input']>>
   oAuthAccountsIds?: InputMaybe<Array<Scalars['String']['input']>>
   orderBy?: InputMaybe<Scalars['String']['input']>
   orderDirection?: InputMaybe<Scalars['String']['input']>
   organizationsIds?: InputMaybe<Array<Scalars['String']['input']>>
   password?: InputMaybe<Scalars['String']['input']>
-  passwordResetExpires?: InputMaybe<Scalars['DateTime']['input']>
+  passwordResetExpires?: InputMaybe<Scalars['Timestamp']['input']>
   passwordResetToken?: InputMaybe<Scalars['String']['input']>
   phoneNumbersIds?: InputMaybe<Array<Scalars['String']['input']>>
-  privacyPolicyAcceptedAt?: InputMaybe<Scalars['DateTime']['input']>
+  privacyPolicyAcceptedAt?: InputMaybe<Scalars['Timestamp']['input']>
   search?: InputMaybe<Scalars['String']['input']>
   searchFields?: InputMaybe<Array<Scalars['String']['input']>>
   skip?: InputMaybe<Scalars['Float']['input']>
   take?: InputMaybe<Scalars['Float']['input']>
-  termsAcceptedAt?: InputMaybe<Scalars['DateTime']['input']>
+  termsAcceptedAt?: InputMaybe<Scalars['Timestamp']['input']>
   twoFactorEnabled?: InputMaybe<Scalars['Boolean']['input']>
   twoFactorMethod?: InputMaybe<TwoFactorMethod>
   twoFactorRecoveryCodes?: InputMaybe<Array<Scalars['String']['input']>>
   twoFactorSecret?: InputMaybe<Scalars['String']['input']>
-  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
+  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
   validateEmailToken?: InputMaybe<Scalars['String']['input']>
-  validateEmailTokenExpires?: InputMaybe<Scalars['DateTime']['input']>
+  validateEmailTokenExpires?: InputMaybe<Scalars['Timestamp']['input']>
 }
 
 export type ListUserPreferenceInput = {
-  createdAt?: InputMaybe<Scalars['DateTime']['input']>
+  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
   filters?: InputMaybe<Scalars['JSONObject']['input']>
   id?: InputMaybe<Scalars['String']['input']>
   key?: InputMaybe<Scalars['String']['input']>
@@ -1006,19 +985,19 @@ export type ListUserPreferenceInput = {
   searchFields?: InputMaybe<Array<Scalars['String']['input']>>
   skip?: InputMaybe<Scalars['Float']['input']>
   take?: InputMaybe<Scalars['Float']['input']>
-  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
+  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
   userId?: InputMaybe<Scalars['String']['input']>
   value?: InputMaybe<Scalars['String']['input']>
 }
 
 export type ListUserSessionInput = {
-  createdAt?: InputMaybe<Scalars['DateTime']['input']>
+  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
   deviceInfo?: InputMaybe<Scalars['String']['input']>
   filters?: InputMaybe<Scalars['JSONObject']['input']>
   id?: InputMaybe<Scalars['String']['input']>
   ipAddress?: InputMaybe<Scalars['String']['input']>
   isValid?: InputMaybe<Scalars['Boolean']['input']>
-  lastActiveAt?: InputMaybe<Scalars['DateTime']['input']>
+  lastActiveAt?: InputMaybe<Scalars['Timestamp']['input']>
   orderBy?: InputMaybe<Scalars['String']['input']>
   orderDirection?: InputMaybe<Scalars['String']['input']>
   search?: InputMaybe<Scalars['String']['input']>
@@ -1026,20 +1005,20 @@ export type ListUserSessionInput = {
   skip?: InputMaybe<Scalars['Float']['input']>
   take?: InputMaybe<Scalars['Float']['input']>
   twoFactorVerified?: InputMaybe<Scalars['Boolean']['input']>
-  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
+  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
   userId?: InputMaybe<Scalars['String']['input']>
 }
 
 export type LoginAttempt = {
   __typename?: 'LoginAttempt'
-  createdAt: Scalars['DateTime']['output']
+  createdAt: Scalars['Timestamp']['output']
   email: Scalars['String']['output']
   id: Scalars['String']['output']
   ipAddress?: Maybe<Scalars['String']['output']>
   location?: Maybe<Scalars['String']['output']>
   reason?: Maybe<FailureReason>
   success: Scalars['Boolean']['output']
-  updatedAt: Scalars['DateTime']['output']
+  updatedAt: Scalars['Timestamp']['output']
   user?: Maybe<User>
   userAgent?: Maybe<Scalars['String']['output']>
   userId?: Maybe<Scalars['String']['output']>
@@ -1053,6 +1032,8 @@ export type LoginInput = {
 
 export type Mutation = {
   __typename?: 'Mutation'
+  acceptOrganizationInvitation: Organization
+  addOrganizationMember: Scalars['Boolean']['output']
   changeEmail: Scalars['Boolean']['output']
   changePassword: Scalars['Boolean']['output']
   createAddress?: Maybe<Address>
@@ -1064,7 +1045,7 @@ export type Mutation = {
   createLink?: Maybe<Link>
   createLoginAttempt?: Maybe<LoginAttempt>
   createOAuthAccount?: Maybe<OAuthAccount>
-  createOrganization?: Maybe<Organization>
+  createOrganizationInvitation: Scalars['String']['output']
   createOrganizationMember?: Maybe<OrganizationMember>
   createPermission?: Maybe<Permission>
   createPhoneNumber?: Maybe<PhoneNumber>
@@ -1087,7 +1068,6 @@ export type Mutation = {
   deleteLink?: Maybe<Link>
   deleteLoginAttempt?: Maybe<LoginAttempt>
   deleteOAuthAccount?: Maybe<OAuthAccount>
-  deleteOrganization?: Maybe<Organization>
   deleteOrganizationMember?: Maybe<OrganizationMember>
   deletePermission?: Maybe<Permission>
   deletePhoneNumber?: Maybe<PhoneNumber>
@@ -1107,15 +1087,20 @@ export type Mutation = {
   endEmulation?: Maybe<UserToken>
   forgotPassword?: Maybe<Scalars['Boolean']['output']>
   generateApiToken: GenerateApiTokenOutput
+  invalidateAllSessions: Scalars['Float']['output']
+  invalidateSession: Scalars['Boolean']['output']
   linkOAuthAccount: Scalars['Boolean']['output']
   login?: Maybe<UserToken>
   logout?: Maybe<Scalars['Boolean']['output']>
   register?: Maybe<UserToken>
+  rejectOrganizationInvitation: Scalars['Boolean']['output']
+  removeOrganizationMember: Scalars['Boolean']['output']
   resendVerificationEmail: Scalars['Boolean']['output']
   resetPassword?: Maybe<User>
   revokeApiToken: ApiToken
   rotateApiToken: GenerateApiTokenOutput
   setup2FA: Setup2FaOutput
+  switchActiveOrganization: User
   unlinkOAuthAccount: Scalars['Boolean']['output']
   unlockAccount: User
   updateAddress?: Maybe<Address>
@@ -1127,8 +1112,8 @@ export type Mutation = {
   updateLink?: Maybe<Link>
   updateLoginAttempt?: Maybe<LoginAttempt>
   updateOAuthAccount?: Maybe<OAuthAccount>
-  updateOrganization?: Maybe<Organization>
   updateOrganizationMember?: Maybe<OrganizationMember>
+  updateOrganizationMemberRole: Scalars['Boolean']['output']
   updatePermission?: Maybe<Permission>
   updatePhoneNumber?: Maybe<PhoneNumber>
   updatePlan?: Maybe<Plan>
@@ -1141,9 +1126,20 @@ export type Mutation = {
   updateUser?: Maybe<User>
   updateUserPreference?: Maybe<UserPreference>
   updateUserSession?: Maybe<UserSession>
+  userCreateOrganization: Organization
+  userDeleteOrganization: Scalars['Boolean']['output']
+  userUpdateOrganization: Organization
   verify2FACode: Scalars['Boolean']['output']
   verifyEmail: User
   verifyEmailChange: User
+}
+
+export type MutationAcceptOrganizationInvitationArgs = {
+  input: AcceptInvitationInput
+}
+
+export type MutationAddOrganizationMemberArgs = {
+  input: AddOrganizationMemberInput
 }
 
 export type MutationChangeEmailArgs = {
@@ -1190,8 +1186,8 @@ export type MutationCreateOAuthAccountArgs = {
   input: CreateOAuthAccountInput
 }
 
-export type MutationCreateOrganizationArgs = {
-  input: CreateOrganizationInput
+export type MutationCreateOrganizationInvitationArgs = {
+  input: CreateInvitationInput
 }
 
 export type MutationCreateOrganizationMemberArgs = {
@@ -1282,10 +1278,6 @@ export type MutationDeleteOAuthAccountArgs = {
   oAuthAccountId: Scalars['String']['input']
 }
 
-export type MutationDeleteOrganizationArgs = {
-  organizationId: Scalars['String']['input']
-}
-
 export type MutationDeleteOrganizationMemberArgs = {
   organizationMemberId: Scalars['String']['input']
 }
@@ -1358,6 +1350,10 @@ export type MutationGenerateApiTokenArgs = {
   input: GenerateApiTokenInput
 }
 
+export type MutationInvalidateSessionArgs = {
+  sessionId: Scalars['String']['input']
+}
+
 export type MutationLinkOAuthAccountArgs = {
   input: LinkOAuthInput
 }
@@ -1368,6 +1364,14 @@ export type MutationLoginArgs = {
 
 export type MutationRegisterArgs = {
   input: RegisterInput
+}
+
+export type MutationRejectOrganizationInvitationArgs = {
+  input: RejectInvitationInput
+}
+
+export type MutationRemoveOrganizationMemberArgs = {
+  input: RemoveOrganizationMemberInput
 }
 
 export type MutationResendVerificationEmailArgs = {
@@ -1384,6 +1388,10 @@ export type MutationRevokeApiTokenArgs = {
 
 export type MutationRotateApiTokenArgs = {
   input: RotateApiTokenInput
+}
+
+export type MutationSwitchActiveOrganizationArgs = {
+  input: SwitchOrganizationInput
 }
 
 export type MutationUnlinkOAuthAccountArgs = {
@@ -1439,14 +1447,13 @@ export type MutationUpdateOAuthAccountArgs = {
   oAuthAccountId: Scalars['String']['input']
 }
 
-export type MutationUpdateOrganizationArgs = {
-  input: UpdateOrganizationInput
-  organizationId: Scalars['String']['input']
-}
-
 export type MutationUpdateOrganizationMemberArgs = {
   input: UpdateOrganizationMemberInput
   organizationMemberId: Scalars['String']['input']
+}
+
+export type MutationUpdateOrganizationMemberRoleArgs = {
+  input: UpdateMemberRoleInput
 }
 
 export type MutationUpdatePermissionArgs = {
@@ -1509,6 +1516,18 @@ export type MutationUpdateUserSessionArgs = {
   userSessionId: Scalars['String']['input']
 }
 
+export type MutationUserCreateOrganizationArgs = {
+  input: CreateOrganizationInput
+}
+
+export type MutationUserDeleteOrganizationArgs = {
+  organizationId: Scalars['String']['input']
+}
+
+export type MutationUserUpdateOrganizationArgs = {
+  input: UpdateOrganizationInput
+}
+
 export type MutationVerify2FaCodeArgs = {
   input: Verify2FaInput
 }
@@ -1523,11 +1542,11 @@ export type MutationVerifyEmailChangeArgs = {
 
 export type OAuthAccount = {
   __typename?: 'OAuthAccount'
-  createdAt: Scalars['DateTime']['output']
+  createdAt: Scalars['Timestamp']['output']
   id: Scalars['String']['output']
   provider: Scalars['String']['output']
   providerUserId: Scalars['String']['output']
-  updatedAt: Scalars['DateTime']['output']
+  updatedAt: Scalars['Timestamp']['output']
   user?: Maybe<User>
   userId: Scalars['String']['output']
 }
@@ -1550,7 +1569,7 @@ export type Organization = {
   AuditLog?: Maybe<Array<AuditLog>>
   Team?: Maybe<Array<Team>>
   addresses?: Maybe<Array<Address>>
-  createdAt: Scalars['DateTime']['output']
+  createdAt: Scalars['Timestamp']['output']
   emails?: Maybe<Array<Email>>
   id: Scalars['String']['output']
   images?: Maybe<Array<Upload>>
@@ -1561,18 +1580,18 @@ export type Organization = {
   phoneNumbers?: Maybe<Array<PhoneNumber>>
   roles?: Maybe<Array<Role>>
   subscription?: Maybe<Subscription>
-  updatedAt: Scalars['DateTime']['output']
+  updatedAt: Scalars['Timestamp']['output']
 }
 
 export type OrganizationMember = {
   __typename?: 'OrganizationMember'
-  createdAt: Scalars['DateTime']['output']
+  createdAt: Scalars['Timestamp']['output']
   id: Scalars['String']['output']
   organization?: Maybe<Organization>
   organizationId: Scalars['String']['output']
   role?: Maybe<Role>
   roleId: Scalars['String']['output']
-  updatedAt: Scalars['DateTime']['output']
+  updatedAt: Scalars['Timestamp']['output']
   user?: Maybe<User>
   userId: Scalars['String']['output']
 }
@@ -1588,14 +1607,14 @@ export type Permission = {
 
 export type PhoneNumber = {
   __typename?: 'PhoneNumber'
-  createdAt: Scalars['DateTime']['output']
+  createdAt: Scalars['Timestamp']['output']
   id: Scalars['String']['output']
   organization?: Maybe<Organization>
   organizationId?: Maybe<Scalars['String']['output']>
   phone: Scalars['String']['output']
   phoneType: PhoneType
   primary: Scalars['Boolean']['output']
-  updatedAt: Scalars['DateTime']['output']
+  updatedAt: Scalars['Timestamp']['output']
   user?: Maybe<User>
   userId?: Maybe<Scalars['String']['output']>
 }
@@ -1610,7 +1629,7 @@ export enum PhoneType {
 export type Plan = {
   __typename?: 'Plan'
   active: Scalars['Boolean']['output']
-  createdAt: Scalars['DateTime']['output']
+  createdAt: Scalars['Timestamp']['output']
   features?: Maybe<Scalars['JSONObject']['output']>
   id: Scalars['String']['output']
   interval: Scalars['String']['output']
@@ -1637,6 +1656,7 @@ export type Query = {
   email?: Maybe<Email>
   emails?: Maybe<Array<Email>>
   emailsCount?: Maybe<CorePaging>
+  getUserSessions: Array<UserSessionOutput>
   invite?: Maybe<Invite>
   invites?: Maybe<Array<Invite>>
   invitesCount?: Maybe<CorePaging>
@@ -1648,15 +1668,15 @@ export type Query = {
   loginAttempts?: Maybe<Array<LoginAttempt>>
   loginAttemptsCount?: Maybe<CorePaging>
   me?: Maybe<User>
+  myOrganizations: Array<Organization>
   oAuthAccount?: Maybe<OAuthAccount>
   oAuthAccounts?: Maybe<Array<OAuthAccount>>
   oAuthAccountsCount?: Maybe<CorePaging>
-  organization?: Maybe<Organization>
+  organizationInvitations: Array<Invite>
   organizationMember?: Maybe<OrganizationMember>
-  organizationMembers?: Maybe<Array<OrganizationMember>>
+  organizationMembers: Array<OrganizationMember>
   organizationMembersCount?: Maybe<CorePaging>
-  organizations?: Maybe<Array<Organization>>
-  organizationsCount?: Maybe<CorePaging>
+  organizationRoles: Array<Role>
   permission?: Maybe<Permission>
   permissions?: Maybe<Array<Permission>>
   permissionsCount?: Maybe<CorePaging>
@@ -1807,7 +1827,7 @@ export type QueryOAuthAccountsCountArgs = {
   input?: InputMaybe<ListOAuthAccountInput>
 }
 
-export type QueryOrganizationArgs = {
+export type QueryOrganizationInvitationsArgs = {
   organizationId: Scalars['String']['input']
 }
 
@@ -1816,19 +1836,15 @@ export type QueryOrganizationMemberArgs = {
 }
 
 export type QueryOrganizationMembersArgs = {
-  input?: InputMaybe<ListOrganizationMemberInput>
+  organizationId: Scalars['String']['input']
 }
 
 export type QueryOrganizationMembersCountArgs = {
   input?: InputMaybe<ListOrganizationMemberInput>
 }
 
-export type QueryOrganizationsArgs = {
-  input?: InputMaybe<ListOrganizationInput>
-}
-
-export type QueryOrganizationsCountArgs = {
-  input?: InputMaybe<ListOrganizationInput>
+export type QueryOrganizationRolesArgs = {
+  organizationId: Scalars['String']['input']
 }
 
 export type QueryPermissionArgs = {
@@ -1989,9 +2005,19 @@ export type RegisterInput = {
   email: Scalars['String']['input']
   firstName?: InputMaybe<Scalars['String']['input']>
   lastName?: InputMaybe<Scalars['String']['input']>
+  organizationName?: InputMaybe<Scalars['String']['input']>
   password: Scalars['String']['input']
   phone?: InputMaybe<Scalars['String']['input']>
   username?: InputMaybe<Scalars['String']['input']>
+}
+
+export type RejectInvitationInput = {
+  token: Scalars['String']['input']
+}
+
+export type RemoveOrganizationMemberInput = {
+  organizationId: Scalars['String']['input']
+  userId: Scalars['String']['input']
 }
 
 export type ResetPasswordInput = {
@@ -2019,12 +2045,12 @@ export type RotateApiTokenInput = {
 
 export type SecurityEvent = {
   __typename?: 'SecurityEvent'
-  createdAt: Scalars['DateTime']['output']
+  createdAt: Scalars['Timestamp']['output']
   eventType: SecurityEventType
   id: Scalars['String']['output']
   ipAddress?: Maybe<Scalars['String']['output']>
   metadata?: Maybe<Scalars['JSONObject']['output']>
-  updatedAt: Scalars['DateTime']['output']
+  updatedAt: Scalars['Timestamp']['output']
   user?: Maybe<User>
   userAgent?: Maybe<Scalars['String']['output']>
   userId: Scalars['String']['output']
@@ -2048,7 +2074,7 @@ export enum SecurityEventType {
 
 export type SecuritySummary = {
   __typename?: 'SecuritySummary'
-  lastPasswordChange?: Maybe<Scalars['DateTime']['output']>
+  lastPasswordChange?: Maybe<Scalars['Timestamp']['output']>
   recentEventsCount: Scalars['Int']['output']
   suspiciousAttemptsLast30Days: Scalars['Int']['output']
 }
@@ -2062,18 +2088,18 @@ export type Setup2FaOutput = {
 
 export type Subscription = {
   __typename?: 'Subscription'
-  createdAt: Scalars['DateTime']['output']
+  createdAt: Scalars['Timestamp']['output']
   id: Scalars['String']['output']
   organization?: Maybe<Organization>
   organizationId: Scalars['String']['output']
   plan?: Maybe<Plan>
   planId: Scalars['String']['output']
   status: SubscriptionStatus
-  stripeCurrentPeriodEnd?: Maybe<Scalars['DateTime']['output']>
+  stripeCurrentPeriodEnd?: Maybe<Scalars['Timestamp']['output']>
   stripeCustomerId?: Maybe<Scalars['String']['output']>
   stripePriceId?: Maybe<Scalars['String']['output']>
   stripeSubscriptionId?: Maybe<Scalars['String']['output']>
-  updatedAt: Scalars['DateTime']['output']
+  updatedAt: Scalars['Timestamp']['output']
 }
 
 export enum SubscriptionStatus {
@@ -2085,27 +2111,31 @@ export enum SubscriptionStatus {
   Trialing = 'TRIALING',
 }
 
+export type SwitchOrganizationInput = {
+  organizationId: Scalars['String']['input']
+}
+
 export type Team = {
   __typename?: 'Team'
-  createdAt: Scalars['DateTime']['output']
+  createdAt: Scalars['Timestamp']['output']
   description?: Maybe<Scalars['String']['output']>
   id: Scalars['String']['output']
   members?: Maybe<Array<TeamMember>>
   name: Scalars['String']['output']
   organization?: Maybe<Organization>
   organizationId: Scalars['String']['output']
-  updatedAt: Scalars['DateTime']['output']
+  updatedAt: Scalars['Timestamp']['output']
 }
 
 export type TeamMember = {
   __typename?: 'TeamMember'
-  createdAt: Scalars['DateTime']['output']
+  createdAt: Scalars['Timestamp']['output']
   id: Scalars['String']['output']
   role?: Maybe<Role>
   roleId: Scalars['String']['output']
   team?: Maybe<Team>
   teamId: Scalars['String']['output']
-  updatedAt: Scalars['DateTime']['output']
+  updatedAt: Scalars['Timestamp']['output']
   user?: Maybe<User>
   userId: Scalars['String']['output']
 }
@@ -2127,37 +2157,37 @@ export type UpdateAddressInput = {
   addressType?: InputMaybe<AddressType>
   city?: InputMaybe<Scalars['String']['input']>
   countryId?: InputMaybe<Scalars['String']['input']>
-  createdAt?: InputMaybe<Scalars['DateTime']['input']>
+  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
   id?: InputMaybe<Scalars['String']['input']>
   isPrimary?: InputMaybe<Scalars['Boolean']['input']>
   organizationId?: InputMaybe<Scalars['String']['input']>
   postalCode?: InputMaybe<Scalars['String']['input']>
   region?: InputMaybe<Scalars['String']['input']>
-  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
+  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
   userId?: InputMaybe<Scalars['String']['input']>
 }
 
 export type UpdateApiTokenInput = {
-  createdAt?: InputMaybe<Scalars['DateTime']['input']>
-  expiresAt?: InputMaybe<Scalars['DateTime']['input']>
+  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
+  expiresAt?: InputMaybe<Scalars['Timestamp']['input']>
   id?: InputMaybe<Scalars['String']['input']>
-  lastUsedAt?: InputMaybe<Scalars['DateTime']['input']>
+  lastUsedAt?: InputMaybe<Scalars['Timestamp']['input']>
   name?: InputMaybe<Scalars['String']['input']>
   revoked?: InputMaybe<Scalars['Boolean']['input']>
   tokenHash?: InputMaybe<Scalars['String']['input']>
-  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
+  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
   userId?: InputMaybe<Scalars['String']['input']>
 }
 
 export type UpdateAuditLogInput = {
   action?: InputMaybe<Scalars['String']['input']>
   changes?: InputMaybe<Scalars['JSON']['input']>
-  createdAt?: InputMaybe<Scalars['DateTime']['input']>
+  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
   entityId?: InputMaybe<Scalars['String']['input']>
   entityType?: InputMaybe<Scalars['String']['input']>
   id?: InputMaybe<Scalars['String']['input']>
   organizationId?: InputMaybe<Scalars['String']['input']>
-  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
+  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
   userId?: InputMaybe<Scalars['String']['input']>
 }
 
@@ -2166,7 +2196,7 @@ export type UpdateCountryInput = {
   alpha2?: InputMaybe<Scalars['String']['input']>
   alpha3?: InputMaybe<Scalars['String']['input']>
   countryCode?: InputMaybe<Scalars['String']['input']>
-  createdAt?: InputMaybe<Scalars['DateTime']['input']>
+  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
   id?: InputMaybe<Scalars['String']['input']>
   intermediateRegion?: InputMaybe<Scalars['String']['input']>
   intermediateRegionCode?: InputMaybe<Scalars['String']['input']>
@@ -2176,93 +2206,86 @@ export type UpdateCountryInput = {
   regionCode?: InputMaybe<Scalars['String']['input']>
   subRegion?: InputMaybe<Scalars['String']['input']>
   subRegionCode?: InputMaybe<Scalars['String']['input']>
-  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
+  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
 }
 
 export type UpdateEmailInput = {
-  createdAt?: InputMaybe<Scalars['DateTime']['input']>
+  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
   email?: InputMaybe<Scalars['String']['input']>
   emailType?: InputMaybe<EmailType>
   id?: InputMaybe<Scalars['String']['input']>
   organizationId?: InputMaybe<Scalars['String']['input']>
   primary?: InputMaybe<Scalars['Boolean']['input']>
   public?: InputMaybe<Scalars['Boolean']['input']>
-  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
+  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
   userId?: InputMaybe<Scalars['String']['input']>
   verified?: InputMaybe<Scalars['Boolean']['input']>
-  verifyExpires?: InputMaybe<Scalars['DateTime']['input']>
+  verifyExpires?: InputMaybe<Scalars['Timestamp']['input']>
   verifyToken?: InputMaybe<Scalars['String']['input']>
 }
 
 export type UpdateInviteInput = {
-  createdAt?: InputMaybe<Scalars['DateTime']['input']>
+  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
   email?: InputMaybe<Scalars['String']['input']>
-  expiresAt?: InputMaybe<Scalars['DateTime']['input']>
+  expiresAt?: InputMaybe<Scalars['Timestamp']['input']>
   id?: InputMaybe<Scalars['String']['input']>
   inviterId?: InputMaybe<Scalars['String']['input']>
   organizationId?: InputMaybe<Scalars['String']['input']>
   roleId?: InputMaybe<Scalars['String']['input']>
   status?: InputMaybe<InviteStatus>
   token?: InputMaybe<Scalars['String']['input']>
-  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
+  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
 }
 
 export type UpdateLinkInput = {
-  createdAt?: InputMaybe<Scalars['DateTime']['input']>
+  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
   id?: InputMaybe<Scalars['String']['input']>
   name?: InputMaybe<Scalars['String']['input']>
   organizationId?: InputMaybe<Scalars['String']['input']>
-  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
+  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
   url?: InputMaybe<Scalars['String']['input']>
   userId?: InputMaybe<Scalars['String']['input']>
 }
 
 export type UpdateLoginAttemptInput = {
-  createdAt?: InputMaybe<Scalars['DateTime']['input']>
+  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
   email?: InputMaybe<Scalars['String']['input']>
   id?: InputMaybe<Scalars['String']['input']>
   ipAddress?: InputMaybe<Scalars['String']['input']>
   location?: InputMaybe<Scalars['String']['input']>
   reason?: InputMaybe<FailureReason>
   success?: InputMaybe<Scalars['Boolean']['input']>
-  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
+  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
   userAgent?: InputMaybe<Scalars['String']['input']>
   userId?: InputMaybe<Scalars['String']['input']>
 }
 
+export type UpdateMemberRoleInput = {
+  organizationId: Scalars['String']['input']
+  roleId: Scalars['String']['input']
+  userId: Scalars['String']['input']
+}
+
 export type UpdateOAuthAccountInput = {
-  createdAt?: InputMaybe<Scalars['DateTime']['input']>
+  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
   id?: InputMaybe<Scalars['String']['input']>
   provider?: InputMaybe<Scalars['String']['input']>
   providerUserId?: InputMaybe<Scalars['String']['input']>
-  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
+  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
   userId?: InputMaybe<Scalars['String']['input']>
 }
 
 export type UpdateOrganizationInput = {
-  AuditLogIds?: InputMaybe<Array<Scalars['String']['input']>>
-  TeamIds?: InputMaybe<Array<Scalars['String']['input']>>
-  addressesIds?: InputMaybe<Array<Scalars['String']['input']>>
-  createdAt?: InputMaybe<Scalars['DateTime']['input']>
-  emailsIds?: InputMaybe<Array<Scalars['String']['input']>>
-  id?: InputMaybe<Scalars['String']['input']>
-  imagesIds?: InputMaybe<Array<Scalars['String']['input']>>
-  invitesIds?: InputMaybe<Array<Scalars['String']['input']>>
-  linksIds?: InputMaybe<Array<Scalars['String']['input']>>
-  membersIds?: InputMaybe<Array<Scalars['String']['input']>>
   name?: InputMaybe<Scalars['String']['input']>
-  phoneNumbersIds?: InputMaybe<Array<Scalars['String']['input']>>
-  rolesIds?: InputMaybe<Array<Scalars['String']['input']>>
-  subscriptionId?: InputMaybe<Scalars['String']['input']>
-  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
+  organizationId: Scalars['String']['input']
 }
 
 export type UpdateOrganizationMemberInput = {
-  createdAt?: InputMaybe<Scalars['DateTime']['input']>
+  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
   id?: InputMaybe<Scalars['String']['input']>
   organizationId?: InputMaybe<Scalars['String']['input']>
   roleId?: InputMaybe<Scalars['String']['input']>
-  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
+  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
   userId?: InputMaybe<Scalars['String']['input']>
 }
 
@@ -2275,19 +2298,19 @@ export type UpdatePermissionInput = {
 }
 
 export type UpdatePhoneNumberInput = {
-  createdAt?: InputMaybe<Scalars['DateTime']['input']>
+  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
   id?: InputMaybe<Scalars['String']['input']>
   organizationId?: InputMaybe<Scalars['String']['input']>
   phone?: InputMaybe<Scalars['String']['input']>
   phoneType?: InputMaybe<PhoneType>
   primary?: InputMaybe<Scalars['Boolean']['input']>
-  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
+  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
   userId?: InputMaybe<Scalars['String']['input']>
 }
 
 export type UpdatePlanInput = {
   active?: InputMaybe<Scalars['Boolean']['input']>
-  createdAt?: InputMaybe<Scalars['DateTime']['input']>
+  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
   features?: InputMaybe<Scalars['JSON']['input']>
   id?: InputMaybe<Scalars['String']['input']>
   interval?: InputMaybe<Scalars['String']['input']>
@@ -2308,50 +2331,50 @@ export type UpdateRoleInput = {
 }
 
 export type UpdateSecurityEventInput = {
-  createdAt?: InputMaybe<Scalars['DateTime']['input']>
+  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
   eventType?: InputMaybe<SecurityEventType>
   id?: InputMaybe<Scalars['String']['input']>
   ipAddress?: InputMaybe<Scalars['String']['input']>
   metadata?: InputMaybe<Scalars['JSON']['input']>
-  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
+  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
   userAgent?: InputMaybe<Scalars['String']['input']>
   userId?: InputMaybe<Scalars['String']['input']>
 }
 
 export type UpdateSubscriptionInput = {
-  createdAt?: InputMaybe<Scalars['DateTime']['input']>
+  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
   id?: InputMaybe<Scalars['String']['input']>
   organizationId?: InputMaybe<Scalars['String']['input']>
   planId?: InputMaybe<Scalars['String']['input']>
   status?: InputMaybe<SubscriptionStatus>
-  stripeCurrentPeriodEnd?: InputMaybe<Scalars['DateTime']['input']>
+  stripeCurrentPeriodEnd?: InputMaybe<Scalars['Timestamp']['input']>
   stripeCustomerId?: InputMaybe<Scalars['String']['input']>
   stripePriceId?: InputMaybe<Scalars['String']['input']>
   stripeSubscriptionId?: InputMaybe<Scalars['String']['input']>
-  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
+  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
 }
 
 export type UpdateTeamInput = {
-  createdAt?: InputMaybe<Scalars['DateTime']['input']>
+  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
   description?: InputMaybe<Scalars['String']['input']>
   id?: InputMaybe<Scalars['String']['input']>
   membersIds?: InputMaybe<Array<Scalars['String']['input']>>
   name?: InputMaybe<Scalars['String']['input']>
   organizationId?: InputMaybe<Scalars['String']['input']>
-  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
+  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
 }
 
 export type UpdateTeamMemberInput = {
-  createdAt?: InputMaybe<Scalars['DateTime']['input']>
+  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
   id?: InputMaybe<Scalars['String']['input']>
   roleId?: InputMaybe<Scalars['String']['input']>
   teamId?: InputMaybe<Scalars['String']['input']>
-  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
+  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
   userId?: InputMaybe<Scalars['String']['input']>
 }
 
 export type UpdateUploadInput = {
-  createdAt?: InputMaybe<Scalars['DateTime']['input']>
+  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
   fileId?: InputMaybe<Scalars['String']['input']>
   filePath?: InputMaybe<Scalars['String']['input']>
   fileType?: InputMaybe<Scalars['String']['input']>
@@ -2363,7 +2386,7 @@ export type UpdateUploadInput = {
   size?: InputMaybe<Scalars['Int']['input']>
   thumbnailUrl?: InputMaybe<Scalars['String']['input']>
   type?: InputMaybe<ImageType>
-  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
+  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
   url?: InputMaybe<Scalars['String']['input']>
   userId?: InputMaybe<Scalars['String']['input']>
   versionInfo?: InputMaybe<Scalars['JSON']['input']>
@@ -2380,8 +2403,8 @@ export type UpdateUserInput = {
   addressesIds?: InputMaybe<Array<Scalars['String']['input']>>
   apiTokensIds?: InputMaybe<Array<Scalars['String']['input']>>
   bio?: InputMaybe<Scalars['String']['input']>
-  createdAt?: InputMaybe<Scalars['DateTime']['input']>
-  deactivatedAt?: InputMaybe<Scalars['DateTime']['input']>
+  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
+  deactivatedAt?: InputMaybe<Scalars['Timestamp']['input']>
   displayName?: InputMaybe<Scalars['String']['input']>
   emailValidated?: InputMaybe<Scalars['Boolean']['input']>
   emailsIds?: InputMaybe<Array<Scalars['String']['input']>>
@@ -2392,53 +2415,53 @@ export type UpdateUserInput = {
   invitesSentIds?: InputMaybe<Array<Scalars['String']['input']>>
   isActive?: InputMaybe<Scalars['Boolean']['input']>
   isSuperAdmin?: InputMaybe<Scalars['Boolean']['input']>
-  lastFailedLogin?: InputMaybe<Scalars['DateTime']['input']>
+  lastFailedLogin?: InputMaybe<Scalars['Timestamp']['input']>
   lastName?: InputMaybe<Scalars['String']['input']>
-  lastSuccessfulLogin?: InputMaybe<Scalars['DateTime']['input']>
+  lastSuccessfulLogin?: InputMaybe<Scalars['Timestamp']['input']>
   linksIds?: InputMaybe<Array<Scalars['String']['input']>>
-  lockedUntil?: InputMaybe<Scalars['DateTime']['input']>
+  lockedUntil?: InputMaybe<Scalars['Timestamp']['input']>
   loginAttemptsIds?: InputMaybe<Array<Scalars['String']['input']>>
   oAuthAccountsIds?: InputMaybe<Array<Scalars['String']['input']>>
   organizationsIds?: InputMaybe<Array<Scalars['String']['input']>>
   password?: InputMaybe<Scalars['String']['input']>
-  passwordResetExpires?: InputMaybe<Scalars['DateTime']['input']>
+  passwordResetExpires?: InputMaybe<Scalars['Timestamp']['input']>
   passwordResetToken?: InputMaybe<Scalars['String']['input']>
   phoneNumbersIds?: InputMaybe<Array<Scalars['String']['input']>>
-  privacyPolicyAcceptedAt?: InputMaybe<Scalars['DateTime']['input']>
-  termsAcceptedAt?: InputMaybe<Scalars['DateTime']['input']>
+  privacyPolicyAcceptedAt?: InputMaybe<Scalars['Timestamp']['input']>
+  termsAcceptedAt?: InputMaybe<Scalars['Timestamp']['input']>
   twoFactorEnabled?: InputMaybe<Scalars['Boolean']['input']>
   twoFactorMethod?: InputMaybe<TwoFactorMethod>
   twoFactorRecoveryCodes?: InputMaybe<Array<Scalars['String']['input']>>
   twoFactorSecret?: InputMaybe<Scalars['String']['input']>
-  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
+  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
   validateEmailToken?: InputMaybe<Scalars['String']['input']>
-  validateEmailTokenExpires?: InputMaybe<Scalars['DateTime']['input']>
+  validateEmailTokenExpires?: InputMaybe<Scalars['Timestamp']['input']>
 }
 
 export type UpdateUserPreferenceInput = {
-  createdAt?: InputMaybe<Scalars['DateTime']['input']>
+  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
   id?: InputMaybe<Scalars['String']['input']>
   key?: InputMaybe<Scalars['String']['input']>
-  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
+  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
   userId?: InputMaybe<Scalars['String']['input']>
   value?: InputMaybe<Scalars['String']['input']>
 }
 
 export type UpdateUserSessionInput = {
-  createdAt?: InputMaybe<Scalars['DateTime']['input']>
+  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
   deviceInfo?: InputMaybe<Scalars['String']['input']>
   id?: InputMaybe<Scalars['String']['input']>
   ipAddress?: InputMaybe<Scalars['String']['input']>
   isValid?: InputMaybe<Scalars['Boolean']['input']>
-  lastActiveAt?: InputMaybe<Scalars['DateTime']['input']>
+  lastActiveAt?: InputMaybe<Scalars['Timestamp']['input']>
   twoFactorVerified?: InputMaybe<Scalars['Boolean']['input']>
-  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
+  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
   userId?: InputMaybe<Scalars['String']['input']>
 }
 
 export type Upload = {
   __typename?: 'Upload'
-  createdAt: Scalars['DateTime']['output']
+  createdAt: Scalars['Timestamp']['output']
   fileId?: Maybe<Scalars['String']['output']>
   filePath?: Maybe<Scalars['String']['output']>
   fileType?: Maybe<Scalars['String']['output']>
@@ -2451,7 +2474,7 @@ export type Upload = {
   size?: Maybe<Scalars['Int']['output']>
   thumbnailUrl?: Maybe<Scalars['String']['output']>
   type?: Maybe<ImageType>
-  updatedAt: Scalars['DateTime']['output']
+  updatedAt: Scalars['Timestamp']['output']
   url?: Maybe<Scalars['String']['output']>
   user?: Maybe<User>
   userId?: Maybe<Scalars['String']['output']>
@@ -2470,8 +2493,8 @@ export type User = {
   addresses?: Maybe<Array<Address>>
   apiTokens?: Maybe<Array<ApiToken>>
   bio?: Maybe<Scalars['String']['output']>
-  createdAt: Scalars['DateTime']['output']
-  deactivatedAt?: Maybe<Scalars['DateTime']['output']>
+  createdAt: Scalars['Timestamp']['output']
+  deactivatedAt?: Maybe<Scalars['Timestamp']['output']>
   displayName?: Maybe<Scalars['String']['output']>
   emailValidated: Scalars['Boolean']['output']
   emails?: Maybe<Array<Email>>
@@ -2482,35 +2505,35 @@ export type User = {
   invitesSent?: Maybe<Array<Invite>>
   isActive: Scalars['Boolean']['output']
   isSuperAdmin: Scalars['Boolean']['output']
-  lastFailedLogin?: Maybe<Scalars['DateTime']['output']>
+  lastFailedLogin?: Maybe<Scalars['Timestamp']['output']>
   lastName?: Maybe<Scalars['String']['output']>
-  lastSuccessfulLogin?: Maybe<Scalars['DateTime']['output']>
+  lastSuccessfulLogin?: Maybe<Scalars['Timestamp']['output']>
   links?: Maybe<Array<Link>>
-  lockedUntil?: Maybe<Scalars['DateTime']['output']>
+  lockedUntil?: Maybe<Scalars['Timestamp']['output']>
   loginAttempts?: Maybe<Array<LoginAttempt>>
   oAuthAccounts?: Maybe<Array<OAuthAccount>>
   organizations?: Maybe<Array<OrganizationMember>>
   password?: Maybe<Scalars['String']['output']>
-  passwordResetExpires?: Maybe<Scalars['DateTime']['output']>
+  passwordResetExpires?: Maybe<Scalars['Timestamp']['output']>
   passwordResetToken?: Maybe<Scalars['String']['output']>
   phoneNumbers?: Maybe<Array<PhoneNumber>>
-  privacyPolicyAcceptedAt?: Maybe<Scalars['DateTime']['output']>
-  termsAcceptedAt?: Maybe<Scalars['DateTime']['output']>
+  privacyPolicyAcceptedAt?: Maybe<Scalars['Timestamp']['output']>
+  termsAcceptedAt?: Maybe<Scalars['Timestamp']['output']>
   twoFactorEnabled: Scalars['Boolean']['output']
   twoFactorMethod: TwoFactorMethod
   twoFactorRecoveryCodes: Array<Scalars['String']['output']>
   twoFactorSecret?: Maybe<Scalars['String']['output']>
-  updatedAt: Scalars['DateTime']['output']
+  updatedAt: Scalars['Timestamp']['output']
   validateEmailToken?: Maybe<Scalars['String']['output']>
-  validateEmailTokenExpires?: Maybe<Scalars['DateTime']['output']>
+  validateEmailTokenExpires?: Maybe<Scalars['Timestamp']['output']>
 }
 
 export type UserPreference = {
   __typename?: 'UserPreference'
-  createdAt: Scalars['DateTime']['output']
+  createdAt: Scalars['Timestamp']['output']
   id: Scalars['String']['output']
   key: Scalars['String']['output']
-  updatedAt: Scalars['DateTime']['output']
+  updatedAt: Scalars['Timestamp']['output']
   user?: Maybe<User>
   userId: Scalars['String']['output']
   value: Scalars['String']['output']
@@ -2518,16 +2541,28 @@ export type UserPreference = {
 
 export type UserSession = {
   __typename?: 'UserSession'
-  createdAt: Scalars['DateTime']['output']
+  createdAt: Scalars['Timestamp']['output']
   deviceInfo?: Maybe<Scalars['String']['output']>
   id: Scalars['String']['output']
   ipAddress?: Maybe<Scalars['String']['output']>
   isValid: Scalars['Boolean']['output']
-  lastActiveAt: Scalars['DateTime']['output']
+  lastActiveAt: Scalars['Timestamp']['output']
   twoFactorVerified: Scalars['Boolean']['output']
-  updatedAt: Scalars['DateTime']['output']
+  updatedAt: Scalars['Timestamp']['output']
   user?: Maybe<User>
   userId: Scalars['String']['output']
+}
+
+export type UserSessionOutput = {
+  __typename?: 'UserSessionOutput'
+  createdAt: Scalars['DateTime']['output']
+  deviceInfo?: Maybe<Scalars['String']['output']>
+  id: Scalars['String']['output']
+  ipAddress?: Maybe<Scalars['String']['output']>
+  isCurrent: Scalars['Boolean']['output']
+  isValid: Scalars['Boolean']['output']
+  lastActiveAt: Scalars['DateTime']['output']
+  twoFactorVerified: Scalars['Boolean']['output']
 }
 
 export type UserToken = {
@@ -4118,12 +4153,12 @@ export type AdminOrganizationMemberQuery = {
 }
 
 export type AdminOrganizationMembersQueryVariables = Exact<{
-  input?: InputMaybe<ListOrganizationMemberInput>
+  organizationId: Scalars['String']['input']
 }>
 
 export type AdminOrganizationMembersQuery = {
   __typename?: 'Query'
-  organizationMembers?: Array<{
+  organizationMembers: Array<{
     __typename?: 'OrganizationMember'
     id: string
     createdAt: any
@@ -4134,26 +4169,14 @@ export type AdminOrganizationMembersQuery = {
     role?: { __typename?: 'Role'; id: string } | null
     user?: { __typename?: 'User'; id: string } | null
     organization?: { __typename?: 'Organization'; id: string } | null
-  }> | null
-  counters?: {
-    __typename?: 'CorePaging'
-    count?: number | null
-    take?: number | null
-    page?: number | null
-    skip?: number | null
-    total?: number | null
-    filteredTotal?: number | null
-    pages?: number | null
-    hasNext?: boolean | null
-    hasPrev?: boolean | null
-  } | null
+  }>
 }
 
-export type AdminOrganizationMemberPaginationQueryVariables = Exact<{
+export type AdminOrganizationMembersCountQueryVariables = Exact<{
   input?: InputMaybe<ListOrganizationMemberInput>
 }>
 
-export type AdminOrganizationMemberPaginationQuery = {
+export type AdminOrganizationMembersCountQuery = {
   __typename?: 'Query'
   counters?: {
     __typename?: 'CorePaging'
@@ -4193,14 +4216,14 @@ export type AdminCreateOrganizationMutationVariables = Exact<{
 
 export type AdminCreateOrganizationMutation = {
   __typename?: 'Mutation'
-  createOrganization?: {
+  userCreateOrganization: {
     __typename?: 'Organization'
     id: string
     createdAt: any
     updatedAt: any
     name: string
     subscription?: { __typename?: 'Subscription'; id: string } | null
-  } | null
+  }
 }
 
 export type AdminDeleteOrganizationMutationVariables = Exact<{
@@ -4209,88 +4232,73 @@ export type AdminDeleteOrganizationMutationVariables = Exact<{
 
 export type AdminDeleteOrganizationMutation = {
   __typename?: 'Mutation'
-  deleteOrganization?: { __typename?: 'Organization'; id: string } | null
+  userDeleteOrganization: boolean
 }
 
 export type AdminUpdateOrganizationMutationVariables = Exact<{
-  organizationId: Scalars['String']['input']
   input: UpdateOrganizationInput
 }>
 
 export type AdminUpdateOrganizationMutation = {
   __typename?: 'Mutation'
-  updateOrganization?: {
+  userUpdateOrganization: {
     __typename?: 'Organization'
     id: string
     createdAt: any
     updatedAt: any
     name: string
     subscription?: { __typename?: 'Subscription'; id: string } | null
-  } | null
+  }
 }
 
-export type AdminOrganizationQueryVariables = Exact<{
+export type AdminMyOrganizationsQueryVariables = Exact<{ [key: string]: never }>
+
+export type AdminMyOrganizationsQuery = {
+  __typename?: 'Query'
+  myOrganizations: Array<{
+    __typename?: 'Organization'
+    id: string
+    createdAt: any
+    updatedAt: any
+    name: string
+    subscription?: { __typename?: 'Subscription'; id: string } | null
+  }>
+}
+
+export type AdminOrganizationRolesQueryVariables = Exact<{
   organizationId: Scalars['String']['input']
 }>
 
-export type AdminOrganizationQuery = {
+export type AdminOrganizationRolesQuery = {
   __typename?: 'Query'
-  organization?: {
-    __typename?: 'Organization'
+  organizationRoles: Array<{
+    __typename?: 'Role'
     id: string
-    createdAt: any
-    updatedAt: any
     name: string
-    subscription?: { __typename?: 'Subscription'; id: string } | null
-  } | null
+    description?: string | null
+    permissions?: Array<{
+      __typename?: 'Permission'
+      id: string
+      action: string
+      subject: string
+    }> | null
+  }>
 }
 
-export type AdminOrganizationsQueryVariables = Exact<{
-  input?: InputMaybe<ListOrganizationInput>
+export type AdminOrganizationInvitationsQueryVariables = Exact<{
+  organizationId: Scalars['String']['input']
 }>
 
-export type AdminOrganizationsQuery = {
+export type AdminOrganizationInvitationsQuery = {
   __typename?: 'Query'
-  organizations?: Array<{
-    __typename?: 'Organization'
+  organizationInvitations: Array<{
+    __typename?: 'Invite'
     id: string
-    createdAt: any
-    updatedAt: any
-    name: string
-    subscription?: { __typename?: 'Subscription'; id: string } | null
-  }> | null
-  counters?: {
-    __typename?: 'CorePaging'
-    count?: number | null
-    take?: number | null
-    page?: number | null
-    skip?: number | null
-    total?: number | null
-    filteredTotal?: number | null
-    pages?: number | null
-    hasNext?: boolean | null
-    hasPrev?: boolean | null
-  } | null
-}
-
-export type AdminOrganizationPaginationQueryVariables = Exact<{
-  input?: InputMaybe<ListOrganizationInput>
-}>
-
-export type AdminOrganizationPaginationQuery = {
-  __typename?: 'Query'
-  counters?: {
-    __typename?: 'CorePaging'
-    count?: number | null
-    take?: number | null
-    page?: number | null
-    skip?: number | null
-    total?: number | null
-    filteredTotal?: number | null
-    pages?: number | null
-    hasNext?: boolean | null
-    hasPrev?: boolean | null
-  } | null
+    email: string
+    status: InviteStatus
+    expiresAt: any
+    role?: { __typename?: 'Role'; id: string; name: string } | null
+  }>
 }
 
 export type AdminPermissionListFragment = {
@@ -7908,36 +7916,24 @@ export type OrganizationMemberQuery = {
 }
 
 export type OrganizationMembersQueryVariables = Exact<{
-  input?: InputMaybe<ListOrganizationMemberInput>
+  organizationId: Scalars['String']['input']
 }>
 
 export type OrganizationMembersQuery = {
   __typename?: 'Query'
-  organizationMembers?: Array<{
+  organizationMembers: Array<{
     __typename?: 'OrganizationMember'
     id: string
     createdAt: any
     updatedAt: any
-  }> | null
-  counters?: {
-    __typename?: 'CorePaging'
-    count?: number | null
-    take?: number | null
-    page?: number | null
-    skip?: number | null
-    total?: number | null
-    filteredTotal?: number | null
-    pages?: number | null
-    hasNext?: boolean | null
-    hasPrev?: boolean | null
-  } | null
+  }>
 }
 
-export type OrganizationMemberPaginationQueryVariables = Exact<{
+export type OrganizationMembersCountQueryVariables = Exact<{
   input?: InputMaybe<ListOrganizationMemberInput>
 }>
 
-export type OrganizationMemberPaginationQuery = {
+export type OrganizationMembersCountQuery = {
   __typename?: 'Query'
   counters?: {
     __typename?: 'CorePaging'
@@ -7967,108 +7963,249 @@ export type OrganizationDetailsFragment = {
   createdAt: any
   updatedAt: any
   name: string
+  members?: Array<{
+    __typename?: 'OrganizationMember'
+    id: string
+    userId: string
+    roleId: string
+    user?: {
+      __typename?: 'User'
+      id: string
+      firstName?: string | null
+      lastName?: string | null
+    } | null
+    role?: { __typename?: 'Role'; id: string; name: string } | null
+  }> | null
+  roles?: Array<{
+    __typename?: 'Role'
+    id: string
+    name: string
+    description?: string | null
+  }> | null
 }
 
-export type CreateOrganizationMutationVariables = Exact<{
+export type UserCreateOrganizationMutationVariables = Exact<{
   input: CreateOrganizationInput
 }>
 
-export type CreateOrganizationMutation = {
+export type UserCreateOrganizationMutation = {
   __typename?: 'Mutation'
-  createOrganization?: {
+  userCreateOrganization: {
     __typename?: 'Organization'
     id: string
     createdAt: any
     updatedAt: any
     name: string
-  } | null
+    members?: Array<{
+      __typename?: 'OrganizationMember'
+      id: string
+      userId: string
+      roleId: string
+      user?: {
+        __typename?: 'User'
+        id: string
+        firstName?: string | null
+        lastName?: string | null
+      } | null
+      role?: { __typename?: 'Role'; id: string; name: string } | null
+    }> | null
+    roles?: Array<{
+      __typename?: 'Role'
+      id: string
+      name: string
+      description?: string | null
+    }> | null
+  }
 }
 
-export type DeleteOrganizationMutationVariables = Exact<{
+export type UserDeleteOrganizationMutationVariables = Exact<{
   organizationId: Scalars['String']['input']
 }>
 
-export type DeleteOrganizationMutation = {
+export type UserDeleteOrganizationMutation = {
   __typename?: 'Mutation'
-  deleteOrganization?: { __typename?: 'Organization'; id: string } | null
+  userDeleteOrganization: boolean
 }
 
-export type UpdateOrganizationMutationVariables = Exact<{
-  organizationId: Scalars['String']['input']
+export type UserUpdateOrganizationMutationVariables = Exact<{
   input: UpdateOrganizationInput
 }>
 
-export type UpdateOrganizationMutation = {
+export type UserUpdateOrganizationMutation = {
   __typename?: 'Mutation'
-  updateOrganization?: {
+  userUpdateOrganization: {
     __typename?: 'Organization'
     id: string
     createdAt: any
     updatedAt: any
     name: string
-  } | null
+    members?: Array<{
+      __typename?: 'OrganizationMember'
+      id: string
+      userId: string
+      roleId: string
+      user?: {
+        __typename?: 'User'
+        id: string
+        firstName?: string | null
+        lastName?: string | null
+      } | null
+      role?: { __typename?: 'Role'; id: string; name: string } | null
+    }> | null
+    roles?: Array<{
+      __typename?: 'Role'
+      id: string
+      name: string
+      description?: string | null
+    }> | null
+  }
 }
 
-export type OrganizationQueryVariables = Exact<{
+export type CreateOrganizationInvitationMutationVariables = Exact<{
+  input: CreateInvitationInput
+}>
+
+export type CreateOrganizationInvitationMutation = {
+  __typename?: 'Mutation'
+  createOrganizationInvitation: string
+}
+
+export type AcceptOrganizationInvitationMutationVariables = Exact<{
+  input: AcceptInvitationInput
+}>
+
+export type AcceptOrganizationInvitationMutation = {
+  __typename?: 'Mutation'
+  acceptOrganizationInvitation: {
+    __typename?: 'Organization'
+    id: string
+    createdAt: any
+    updatedAt: any
+    name: string
+    members?: Array<{
+      __typename?: 'OrganizationMember'
+      id: string
+      userId: string
+      roleId: string
+      user?: {
+        __typename?: 'User'
+        id: string
+        firstName?: string | null
+        lastName?: string | null
+      } | null
+      role?: { __typename?: 'Role'; id: string; name: string } | null
+    }> | null
+    roles?: Array<{
+      __typename?: 'Role'
+      id: string
+      name: string
+      description?: string | null
+    }> | null
+  }
+}
+
+export type RejectOrganizationInvitationMutationVariables = Exact<{
+  input: RejectInvitationInput
+}>
+
+export type RejectOrganizationInvitationMutation = {
+  __typename?: 'Mutation'
+  rejectOrganizationInvitation: boolean
+}
+
+export type AddOrganizationMemberMutationVariables = Exact<{
+  input: AddOrganizationMemberInput
+}>
+
+export type AddOrganizationMemberMutation = {
+  __typename?: 'Mutation'
+  addOrganizationMember: boolean
+}
+
+export type RemoveOrganizationMemberMutationVariables = Exact<{
+  input: RemoveOrganizationMemberInput
+}>
+
+export type RemoveOrganizationMemberMutation = {
+  __typename?: 'Mutation'
+  removeOrganizationMember: boolean
+}
+
+export type UpdateOrganizationMemberRoleMutationVariables = Exact<{
+  input: UpdateMemberRoleInput
+}>
+
+export type UpdateOrganizationMemberRoleMutation = {
+  __typename?: 'Mutation'
+  updateOrganizationMemberRole: boolean
+}
+
+export type SwitchActiveOrganizationMutationVariables = Exact<{
+  input: SwitchOrganizationInput
+}>
+
+export type SwitchActiveOrganizationMutation = {
+  __typename?: 'Mutation'
+  switchActiveOrganization: {
+    __typename?: 'User'
+    id: string
+    activeOrganizationId?: string | null
+  }
+}
+
+export type MyOrganizationsQueryVariables = Exact<{ [key: string]: never }>
+
+export type MyOrganizationsQuery = {
+  __typename?: 'Query'
+  myOrganizations: Array<{
+    __typename?: 'Organization'
+    id: string
+    createdAt: any
+    updatedAt: any
+    name: string
+  }>
+}
+
+export type OrganizationRolesQueryVariables = Exact<{
   organizationId: Scalars['String']['input']
 }>
 
-export type OrganizationQuery = {
+export type OrganizationRolesQuery = {
   __typename?: 'Query'
-  organization?: {
-    __typename?: 'Organization'
+  organizationRoles: Array<{
+    __typename?: 'Role'
     id: string
-    createdAt: any
-    updatedAt: any
     name: string
-  } | null
+    description?: string | null
+    permissions?: Array<{
+      __typename?: 'Permission'
+      id: string
+      action: string
+      subject: string
+    }> | null
+  }>
 }
 
-export type OrganizationsQueryVariables = Exact<{
-  input?: InputMaybe<ListOrganizationInput>
+export type OrganizationInvitationsQueryVariables = Exact<{
+  organizationId: Scalars['String']['input']
 }>
 
-export type OrganizationsQuery = {
+export type OrganizationInvitationsQuery = {
   __typename?: 'Query'
-  organizations?: Array<{
-    __typename?: 'Organization'
+  organizationInvitations: Array<{
+    __typename?: 'Invite'
     id: string
-    createdAt: any
-    updatedAt: any
-    name: string
-  }> | null
-  counters?: {
-    __typename?: 'CorePaging'
-    count?: number | null
-    take?: number | null
-    page?: number | null
-    skip?: number | null
-    total?: number | null
-    filteredTotal?: number | null
-    pages?: number | null
-    hasNext?: boolean | null
-    hasPrev?: boolean | null
-  } | null
-}
-
-export type OrganizationPaginationQueryVariables = Exact<{
-  input?: InputMaybe<ListOrganizationInput>
-}>
-
-export type OrganizationPaginationQuery = {
-  __typename?: 'Query'
-  counters?: {
-    __typename?: 'CorePaging'
-    count?: number | null
-    take?: number | null
-    page?: number | null
-    skip?: number | null
-    total?: number | null
-    filteredTotal?: number | null
-    pages?: number | null
-    hasNext?: boolean | null
-    hasPrev?: boolean | null
-  } | null
+    email: string
+    status: InviteStatus
+    expiresAt: any
+    role?: { __typename?: 'Role'; id: string; name: string } | null
+    inviter?: {
+      __typename?: 'User'
+      id: string
+      firstName?: string | null
+      lastName?: string | null
+    } | null
+  }>
 }
 
 export type PermissionListFragment = {
@@ -10472,6 +10609,25 @@ export const OrganizationListFragmentDoc = gql`
 export const OrganizationDetailsFragmentDoc = gql`
   fragment OrganizationDetails on Organization {
     ...OrganizationList
+    members {
+      id
+      userId
+      roleId
+      user {
+        id
+        firstName
+        lastName
+      }
+      role {
+        id
+        name
+      }
+    }
+    roles {
+      id
+      name
+      description
+    }
   }
   ${OrganizationListFragmentDoc}
 `
@@ -14080,16 +14236,12 @@ export type AdminOrganizationMemberQueryResult = Apollo.QueryResult<
   AdminOrganizationMemberQueryVariables
 >
 export const AdminOrganizationMembersDocument = gql`
-  query AdminOrganizationMembers($input: ListOrganizationMemberInput) {
-    organizationMembers(input: $input) {
+  query AdminOrganizationMembers($organizationId: String!) {
+    organizationMembers(organizationId: $organizationId) {
       ...AdminOrganizationMemberList
-    }
-    counters: organizationMembersCount(input: $input) {
-      ...CorePagingDetails
     }
   }
   ${AdminOrganizationMemberListFragmentDoc}
-  ${CorePagingDetailsFragmentDoc}
 `
 
 /**
@@ -14104,15 +14256,16 @@ export const AdminOrganizationMembersDocument = gql`
  * @example
  * const { data, loading, error } = useAdminOrganizationMembersQuery({
  *   variables: {
- *      input: // value for 'input'
+ *      organizationId: // value for 'organizationId'
  *   },
  * });
  */
 export function useAdminOrganizationMembersQuery(
-  baseOptions?: Apollo.QueryHookOptions<
+  baseOptions: Apollo.QueryHookOptions<
     AdminOrganizationMembersQuery,
     AdminOrganizationMembersQueryVariables
-  >,
+  > &
+    ({ variables: AdminOrganizationMembersQueryVariables; skip?: boolean } | { skip: boolean }),
 ) {
   const options = { ...defaultOptions, ...baseOptions }
   return Apollo.useQuery<AdminOrganizationMembersQuery, AdminOrganizationMembersQueryVariables>(
@@ -14160,8 +14313,8 @@ export type AdminOrganizationMembersQueryResult = Apollo.QueryResult<
   AdminOrganizationMembersQuery,
   AdminOrganizationMembersQueryVariables
 >
-export const AdminOrganizationMemberPaginationDocument = gql`
-  query AdminOrganizationMemberPagination($input: ListOrganizationMemberInput) {
+export const AdminOrganizationMembersCountDocument = gql`
+  query AdminOrganizationMembersCount($input: ListOrganizationMemberInput) {
     counters: organizationMembersCount(input: $input) {
       ...CorePagingDetails
     }
@@ -14170,76 +14323,76 @@ export const AdminOrganizationMemberPaginationDocument = gql`
 `
 
 /**
- * __useAdminOrganizationMemberPaginationQuery__
+ * __useAdminOrganizationMembersCountQuery__
  *
- * To run a query within a React component, call `useAdminOrganizationMemberPaginationQuery` and pass it any options that fit your needs.
- * When your component renders, `useAdminOrganizationMemberPaginationQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useAdminOrganizationMembersCountQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAdminOrganizationMembersCountQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useAdminOrganizationMemberPaginationQuery({
+ * const { data, loading, error } = useAdminOrganizationMembersCountQuery({
  *   variables: {
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useAdminOrganizationMemberPaginationQuery(
+export function useAdminOrganizationMembersCountQuery(
   baseOptions?: Apollo.QueryHookOptions<
-    AdminOrganizationMemberPaginationQuery,
-    AdminOrganizationMemberPaginationQueryVariables
+    AdminOrganizationMembersCountQuery,
+    AdminOrganizationMembersCountQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
   return Apollo.useQuery<
-    AdminOrganizationMemberPaginationQuery,
-    AdminOrganizationMemberPaginationQueryVariables
-  >(AdminOrganizationMemberPaginationDocument, options)
+    AdminOrganizationMembersCountQuery,
+    AdminOrganizationMembersCountQueryVariables
+  >(AdminOrganizationMembersCountDocument, options)
 }
-export function useAdminOrganizationMemberPaginationLazyQuery(
+export function useAdminOrganizationMembersCountLazyQuery(
   baseOptions?: Apollo.LazyQueryHookOptions<
-    AdminOrganizationMemberPaginationQuery,
-    AdminOrganizationMemberPaginationQueryVariables
+    AdminOrganizationMembersCountQuery,
+    AdminOrganizationMembersCountQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
   return Apollo.useLazyQuery<
-    AdminOrganizationMemberPaginationQuery,
-    AdminOrganizationMemberPaginationQueryVariables
-  >(AdminOrganizationMemberPaginationDocument, options)
+    AdminOrganizationMembersCountQuery,
+    AdminOrganizationMembersCountQueryVariables
+  >(AdminOrganizationMembersCountDocument, options)
 }
-export function useAdminOrganizationMemberPaginationSuspenseQuery(
+export function useAdminOrganizationMembersCountSuspenseQuery(
   baseOptions?:
     | Apollo.SkipToken
     | Apollo.SuspenseQueryHookOptions<
-        AdminOrganizationMemberPaginationQuery,
-        AdminOrganizationMemberPaginationQueryVariables
+        AdminOrganizationMembersCountQuery,
+        AdminOrganizationMembersCountQueryVariables
       >,
 ) {
   const options =
     baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
   return Apollo.useSuspenseQuery<
-    AdminOrganizationMemberPaginationQuery,
-    AdminOrganizationMemberPaginationQueryVariables
-  >(AdminOrganizationMemberPaginationDocument, options)
+    AdminOrganizationMembersCountQuery,
+    AdminOrganizationMembersCountQueryVariables
+  >(AdminOrganizationMembersCountDocument, options)
 }
-export type AdminOrganizationMemberPaginationQueryHookResult = ReturnType<
-  typeof useAdminOrganizationMemberPaginationQuery
+export type AdminOrganizationMembersCountQueryHookResult = ReturnType<
+  typeof useAdminOrganizationMembersCountQuery
 >
-export type AdminOrganizationMemberPaginationLazyQueryHookResult = ReturnType<
-  typeof useAdminOrganizationMemberPaginationLazyQuery
+export type AdminOrganizationMembersCountLazyQueryHookResult = ReturnType<
+  typeof useAdminOrganizationMembersCountLazyQuery
 >
-export type AdminOrganizationMemberPaginationSuspenseQueryHookResult = ReturnType<
-  typeof useAdminOrganizationMemberPaginationSuspenseQuery
+export type AdminOrganizationMembersCountSuspenseQueryHookResult = ReturnType<
+  typeof useAdminOrganizationMembersCountSuspenseQuery
 >
-export type AdminOrganizationMemberPaginationQueryResult = Apollo.QueryResult<
-  AdminOrganizationMemberPaginationQuery,
-  AdminOrganizationMemberPaginationQueryVariables
+export type AdminOrganizationMembersCountQueryResult = Apollo.QueryResult<
+  AdminOrganizationMembersCountQuery,
+  AdminOrganizationMembersCountQueryVariables
 >
 export const AdminCreateOrganizationDocument = gql`
   mutation AdminCreateOrganization($input: CreateOrganizationInput!) {
-    createOrganization(input: $input) {
+    userCreateOrganization(input: $input) {
       ...AdminOrganizationDetails
     }
   }
@@ -14290,9 +14443,7 @@ export type AdminCreateOrganizationMutationOptions = Apollo.BaseMutationOptions<
 >
 export const AdminDeleteOrganizationDocument = gql`
   mutation AdminDeleteOrganization($organizationId: String!) {
-    deleteOrganization(organizationId: $organizationId) {
-      id
-    }
+    userDeleteOrganization(organizationId: $organizationId)
   }
 `
 export type AdminDeleteOrganizationMutationFn = Apollo.MutationFunction<
@@ -14339,8 +14490,8 @@ export type AdminDeleteOrganizationMutationOptions = Apollo.BaseMutationOptions<
   AdminDeleteOrganizationMutationVariables
 >
 export const AdminUpdateOrganizationDocument = gql`
-  mutation AdminUpdateOrganization($organizationId: String!, $input: UpdateOrganizationInput!) {
-    updateOrganization(organizationId: $organizationId, input: $input) {
+  mutation AdminUpdateOrganization($input: UpdateOrganizationInput!) {
+    userUpdateOrganization(input: $input) {
       ...AdminOrganizationDetails
     }
   }
@@ -14364,7 +14515,6 @@ export type AdminUpdateOrganizationMutationFn = Apollo.MutationFunction<
  * @example
  * const [adminUpdateOrganizationMutation, { data, loading, error }] = useAdminUpdateOrganizationMutation({
  *   variables: {
- *      organizationId: // value for 'organizationId'
  *      input: // value for 'input'
  *   },
  * });
@@ -14390,223 +14540,247 @@ export type AdminUpdateOrganizationMutationOptions = Apollo.BaseMutationOptions<
   AdminUpdateOrganizationMutation,
   AdminUpdateOrganizationMutationVariables
 >
-export const AdminOrganizationDocument = gql`
-  query AdminOrganization($organizationId: String!) {
-    organization(organizationId: $organizationId) {
-      ...AdminOrganizationDetails
+export const AdminMyOrganizationsDocument = gql`
+  query AdminMyOrganizations {
+    myOrganizations {
+      ...AdminOrganizationList
     }
   }
-  ${AdminOrganizationDetailsFragmentDoc}
+  ${AdminOrganizationListFragmentDoc}
 `
 
 /**
- * __useAdminOrganizationQuery__
+ * __useAdminMyOrganizationsQuery__
  *
- * To run a query within a React component, call `useAdminOrganizationQuery` and pass it any options that fit your needs.
- * When your component renders, `useAdminOrganizationQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useAdminMyOrganizationsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAdminMyOrganizationsQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useAdminOrganizationQuery({
+ * const { data, loading, error } = useAdminMyOrganizationsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useAdminMyOrganizationsQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    AdminMyOrganizationsQuery,
+    AdminMyOrganizationsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<AdminMyOrganizationsQuery, AdminMyOrganizationsQueryVariables>(
+    AdminMyOrganizationsDocument,
+    options,
+  )
+}
+export function useAdminMyOrganizationsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    AdminMyOrganizationsQuery,
+    AdminMyOrganizationsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<AdminMyOrganizationsQuery, AdminMyOrganizationsQueryVariables>(
+    AdminMyOrganizationsDocument,
+    options,
+  )
+}
+export function useAdminMyOrganizationsSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<
+        AdminMyOrganizationsQuery,
+        AdminMyOrganizationsQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<AdminMyOrganizationsQuery, AdminMyOrganizationsQueryVariables>(
+    AdminMyOrganizationsDocument,
+    options,
+  )
+}
+export type AdminMyOrganizationsQueryHookResult = ReturnType<typeof useAdminMyOrganizationsQuery>
+export type AdminMyOrganizationsLazyQueryHookResult = ReturnType<
+  typeof useAdminMyOrganizationsLazyQuery
+>
+export type AdminMyOrganizationsSuspenseQueryHookResult = ReturnType<
+  typeof useAdminMyOrganizationsSuspenseQuery
+>
+export type AdminMyOrganizationsQueryResult = Apollo.QueryResult<
+  AdminMyOrganizationsQuery,
+  AdminMyOrganizationsQueryVariables
+>
+export const AdminOrganizationRolesDocument = gql`
+  query AdminOrganizationRoles($organizationId: String!) {
+    organizationRoles(organizationId: $organizationId) {
+      id
+      name
+      description
+      permissions {
+        id
+        action
+        subject
+      }
+    }
+  }
+`
+
+/**
+ * __useAdminOrganizationRolesQuery__
+ *
+ * To run a query within a React component, call `useAdminOrganizationRolesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAdminOrganizationRolesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAdminOrganizationRolesQuery({
  *   variables: {
  *      organizationId: // value for 'organizationId'
  *   },
  * });
  */
-export function useAdminOrganizationQuery(
-  baseOptions: Apollo.QueryHookOptions<AdminOrganizationQuery, AdminOrganizationQueryVariables> &
-    ({ variables: AdminOrganizationQueryVariables; skip?: boolean } | { skip: boolean }),
+export function useAdminOrganizationRolesQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    AdminOrganizationRolesQuery,
+    AdminOrganizationRolesQueryVariables
+  > &
+    ({ variables: AdminOrganizationRolesQueryVariables; skip?: boolean } | { skip: boolean }),
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<AdminOrganizationQuery, AdminOrganizationQueryVariables>(
-    AdminOrganizationDocument,
+  return Apollo.useQuery<AdminOrganizationRolesQuery, AdminOrganizationRolesQueryVariables>(
+    AdminOrganizationRolesDocument,
     options,
   )
 }
-export function useAdminOrganizationLazyQuery(
+export function useAdminOrganizationRolesLazyQuery(
   baseOptions?: Apollo.LazyQueryHookOptions<
-    AdminOrganizationQuery,
-    AdminOrganizationQueryVariables
+    AdminOrganizationRolesQuery,
+    AdminOrganizationRolesQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<AdminOrganizationQuery, AdminOrganizationQueryVariables>(
-    AdminOrganizationDocument,
+  return Apollo.useLazyQuery<AdminOrganizationRolesQuery, AdminOrganizationRolesQueryVariables>(
+    AdminOrganizationRolesDocument,
     options,
   )
 }
-export function useAdminOrganizationSuspenseQuery(
+export function useAdminOrganizationRolesSuspenseQuery(
   baseOptions?:
     | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<AdminOrganizationQuery, AdminOrganizationQueryVariables>,
+    | Apollo.SuspenseQueryHookOptions<
+        AdminOrganizationRolesQuery,
+        AdminOrganizationRolesQueryVariables
+      >,
 ) {
   const options =
     baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<AdminOrganizationQuery, AdminOrganizationQueryVariables>(
-    AdminOrganizationDocument,
+  return Apollo.useSuspenseQuery<AdminOrganizationRolesQuery, AdminOrganizationRolesQueryVariables>(
+    AdminOrganizationRolesDocument,
     options,
   )
 }
-export type AdminOrganizationQueryHookResult = ReturnType<typeof useAdminOrganizationQuery>
-export type AdminOrganizationLazyQueryHookResult = ReturnType<typeof useAdminOrganizationLazyQuery>
-export type AdminOrganizationSuspenseQueryHookResult = ReturnType<
-  typeof useAdminOrganizationSuspenseQuery
+export type AdminOrganizationRolesQueryHookResult = ReturnType<
+  typeof useAdminOrganizationRolesQuery
 >
-export type AdminOrganizationQueryResult = Apollo.QueryResult<
-  AdminOrganizationQuery,
-  AdminOrganizationQueryVariables
+export type AdminOrganizationRolesLazyQueryHookResult = ReturnType<
+  typeof useAdminOrganizationRolesLazyQuery
 >
-export const AdminOrganizationsDocument = gql`
-  query AdminOrganizations($input: ListOrganizationInput) {
-    organizations(input: $input) {
-      ...AdminOrganizationList
-    }
-    counters: organizationsCount(input: $input) {
-      ...CorePagingDetails
+export type AdminOrganizationRolesSuspenseQueryHookResult = ReturnType<
+  typeof useAdminOrganizationRolesSuspenseQuery
+>
+export type AdminOrganizationRolesQueryResult = Apollo.QueryResult<
+  AdminOrganizationRolesQuery,
+  AdminOrganizationRolesQueryVariables
+>
+export const AdminOrganizationInvitationsDocument = gql`
+  query AdminOrganizationInvitations($organizationId: String!) {
+    organizationInvitations(organizationId: $organizationId) {
+      id
+      email
+      status
+      expiresAt
+      role {
+        id
+        name
+      }
     }
   }
-  ${AdminOrganizationListFragmentDoc}
-  ${CorePagingDetailsFragmentDoc}
 `
 
 /**
- * __useAdminOrganizationsQuery__
+ * __useAdminOrganizationInvitationsQuery__
  *
- * To run a query within a React component, call `useAdminOrganizationsQuery` and pass it any options that fit your needs.
- * When your component renders, `useAdminOrganizationsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useAdminOrganizationInvitationsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAdminOrganizationInvitationsQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useAdminOrganizationsQuery({
+ * const { data, loading, error } = useAdminOrganizationInvitationsQuery({
  *   variables: {
- *      input: // value for 'input'
+ *      organizationId: // value for 'organizationId'
  *   },
  * });
  */
-export function useAdminOrganizationsQuery(
-  baseOptions?: Apollo.QueryHookOptions<AdminOrganizationsQuery, AdminOrganizationsQueryVariables>,
-) {
-  const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<AdminOrganizationsQuery, AdminOrganizationsQueryVariables>(
-    AdminOrganizationsDocument,
-    options,
-  )
-}
-export function useAdminOrganizationsLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
-    AdminOrganizationsQuery,
-    AdminOrganizationsQueryVariables
-  >,
-) {
-  const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<AdminOrganizationsQuery, AdminOrganizationsQueryVariables>(
-    AdminOrganizationsDocument,
-    options,
-  )
-}
-export function useAdminOrganizationsSuspenseQuery(
-  baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<AdminOrganizationsQuery, AdminOrganizationsQueryVariables>,
-) {
-  const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<AdminOrganizationsQuery, AdminOrganizationsQueryVariables>(
-    AdminOrganizationsDocument,
-    options,
-  )
-}
-export type AdminOrganizationsQueryHookResult = ReturnType<typeof useAdminOrganizationsQuery>
-export type AdminOrganizationsLazyQueryHookResult = ReturnType<
-  typeof useAdminOrganizationsLazyQuery
->
-export type AdminOrganizationsSuspenseQueryHookResult = ReturnType<
-  typeof useAdminOrganizationsSuspenseQuery
->
-export type AdminOrganizationsQueryResult = Apollo.QueryResult<
-  AdminOrganizationsQuery,
-  AdminOrganizationsQueryVariables
->
-export const AdminOrganizationPaginationDocument = gql`
-  query AdminOrganizationPagination($input: ListOrganizationInput) {
-    counters: organizationsCount(input: $input) {
-      ...CorePagingDetails
-    }
-  }
-  ${CorePagingDetailsFragmentDoc}
-`
-
-/**
- * __useAdminOrganizationPaginationQuery__
- *
- * To run a query within a React component, call `useAdminOrganizationPaginationQuery` and pass it any options that fit your needs.
- * When your component renders, `useAdminOrganizationPaginationQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useAdminOrganizationPaginationQuery({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useAdminOrganizationPaginationQuery(
-  baseOptions?: Apollo.QueryHookOptions<
-    AdminOrganizationPaginationQuery,
-    AdminOrganizationPaginationQueryVariables
-  >,
+export function useAdminOrganizationInvitationsQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    AdminOrganizationInvitationsQuery,
+    AdminOrganizationInvitationsQueryVariables
+  > &
+    ({ variables: AdminOrganizationInvitationsQueryVariables; skip?: boolean } | { skip: boolean }),
 ) {
   const options = { ...defaultOptions, ...baseOptions }
   return Apollo.useQuery<
-    AdminOrganizationPaginationQuery,
-    AdminOrganizationPaginationQueryVariables
-  >(AdminOrganizationPaginationDocument, options)
+    AdminOrganizationInvitationsQuery,
+    AdminOrganizationInvitationsQueryVariables
+  >(AdminOrganizationInvitationsDocument, options)
 }
-export function useAdminOrganizationPaginationLazyQuery(
+export function useAdminOrganizationInvitationsLazyQuery(
   baseOptions?: Apollo.LazyQueryHookOptions<
-    AdminOrganizationPaginationQuery,
-    AdminOrganizationPaginationQueryVariables
+    AdminOrganizationInvitationsQuery,
+    AdminOrganizationInvitationsQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
   return Apollo.useLazyQuery<
-    AdminOrganizationPaginationQuery,
-    AdminOrganizationPaginationQueryVariables
-  >(AdminOrganizationPaginationDocument, options)
+    AdminOrganizationInvitationsQuery,
+    AdminOrganizationInvitationsQueryVariables
+  >(AdminOrganizationInvitationsDocument, options)
 }
-export function useAdminOrganizationPaginationSuspenseQuery(
+export function useAdminOrganizationInvitationsSuspenseQuery(
   baseOptions?:
     | Apollo.SkipToken
     | Apollo.SuspenseQueryHookOptions<
-        AdminOrganizationPaginationQuery,
-        AdminOrganizationPaginationQueryVariables
+        AdminOrganizationInvitationsQuery,
+        AdminOrganizationInvitationsQueryVariables
       >,
 ) {
   const options =
     baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
   return Apollo.useSuspenseQuery<
-    AdminOrganizationPaginationQuery,
-    AdminOrganizationPaginationQueryVariables
-  >(AdminOrganizationPaginationDocument, options)
+    AdminOrganizationInvitationsQuery,
+    AdminOrganizationInvitationsQueryVariables
+  >(AdminOrganizationInvitationsDocument, options)
 }
-export type AdminOrganizationPaginationQueryHookResult = ReturnType<
-  typeof useAdminOrganizationPaginationQuery
+export type AdminOrganizationInvitationsQueryHookResult = ReturnType<
+  typeof useAdminOrganizationInvitationsQuery
 >
-export type AdminOrganizationPaginationLazyQueryHookResult = ReturnType<
-  typeof useAdminOrganizationPaginationLazyQuery
+export type AdminOrganizationInvitationsLazyQueryHookResult = ReturnType<
+  typeof useAdminOrganizationInvitationsLazyQuery
 >
-export type AdminOrganizationPaginationSuspenseQueryHookResult = ReturnType<
-  typeof useAdminOrganizationPaginationSuspenseQuery
+export type AdminOrganizationInvitationsSuspenseQueryHookResult = ReturnType<
+  typeof useAdminOrganizationInvitationsSuspenseQuery
 >
-export type AdminOrganizationPaginationQueryResult = Apollo.QueryResult<
-  AdminOrganizationPaginationQuery,
-  AdminOrganizationPaginationQueryVariables
+export type AdminOrganizationInvitationsQueryResult = Apollo.QueryResult<
+  AdminOrganizationInvitationsQuery,
+  AdminOrganizationInvitationsQueryVariables
 >
 export const AdminCreatePermissionDocument = gql`
   mutation AdminCreatePermission($input: CreatePermissionInput!) {
@@ -22717,16 +22891,12 @@ export type OrganizationMemberQueryResult = Apollo.QueryResult<
   OrganizationMemberQueryVariables
 >
 export const OrganizationMembersDocument = gql`
-  query OrganizationMembers($input: ListOrganizationMemberInput) {
-    organizationMembers(input: $input) {
+  query OrganizationMembers($organizationId: String!) {
+    organizationMembers(organizationId: $organizationId) {
       ...OrganizationMemberList
-    }
-    counters: organizationMembersCount(input: $input) {
-      ...CorePagingDetails
     }
   }
   ${OrganizationMemberListFragmentDoc}
-  ${CorePagingDetailsFragmentDoc}
 `
 
 /**
@@ -22741,15 +22911,16 @@ export const OrganizationMembersDocument = gql`
  * @example
  * const { data, loading, error } = useOrganizationMembersQuery({
  *   variables: {
- *      input: // value for 'input'
+ *      organizationId: // value for 'organizationId'
  *   },
  * });
  */
 export function useOrganizationMembersQuery(
-  baseOptions?: Apollo.QueryHookOptions<
+  baseOptions: Apollo.QueryHookOptions<
     OrganizationMembersQuery,
     OrganizationMembersQueryVariables
-  >,
+  > &
+    ({ variables: OrganizationMembersQueryVariables; skip?: boolean } | { skip: boolean }),
 ) {
   const options = { ...defaultOptions, ...baseOptions }
   return Apollo.useQuery<OrganizationMembersQuery, OrganizationMembersQueryVariables>(
@@ -22792,8 +22963,8 @@ export type OrganizationMembersQueryResult = Apollo.QueryResult<
   OrganizationMembersQuery,
   OrganizationMembersQueryVariables
 >
-export const OrganizationMemberPaginationDocument = gql`
-  query OrganizationMemberPagination($input: ListOrganizationMemberInput) {
+export const OrganizationMembersCountDocument = gql`
+  query OrganizationMembersCount($input: ListOrganizationMemberInput) {
     counters: organizationMembersCount(input: $input) {
       ...CorePagingDetails
     }
@@ -22802,422 +22973,790 @@ export const OrganizationMemberPaginationDocument = gql`
 `
 
 /**
- * __useOrganizationMemberPaginationQuery__
+ * __useOrganizationMembersCountQuery__
  *
- * To run a query within a React component, call `useOrganizationMemberPaginationQuery` and pass it any options that fit your needs.
- * When your component renders, `useOrganizationMemberPaginationQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useOrganizationMembersCountQuery` and pass it any options that fit your needs.
+ * When your component renders, `useOrganizationMembersCountQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useOrganizationMemberPaginationQuery({
+ * const { data, loading, error } = useOrganizationMembersCountQuery({
  *   variables: {
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useOrganizationMemberPaginationQuery(
+export function useOrganizationMembersCountQuery(
   baseOptions?: Apollo.QueryHookOptions<
-    OrganizationMemberPaginationQuery,
-    OrganizationMemberPaginationQueryVariables
+    OrganizationMembersCountQuery,
+    OrganizationMembersCountQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<
-    OrganizationMemberPaginationQuery,
-    OrganizationMemberPaginationQueryVariables
-  >(OrganizationMemberPaginationDocument, options)
+  return Apollo.useQuery<OrganizationMembersCountQuery, OrganizationMembersCountQueryVariables>(
+    OrganizationMembersCountDocument,
+    options,
+  )
 }
-export function useOrganizationMemberPaginationLazyQuery(
+export function useOrganizationMembersCountLazyQuery(
   baseOptions?: Apollo.LazyQueryHookOptions<
-    OrganizationMemberPaginationQuery,
-    OrganizationMemberPaginationQueryVariables
+    OrganizationMembersCountQuery,
+    OrganizationMembersCountQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<
-    OrganizationMemberPaginationQuery,
-    OrganizationMemberPaginationQueryVariables
-  >(OrganizationMemberPaginationDocument, options)
+  return Apollo.useLazyQuery<OrganizationMembersCountQuery, OrganizationMembersCountQueryVariables>(
+    OrganizationMembersCountDocument,
+    options,
+  )
 }
-export function useOrganizationMemberPaginationSuspenseQuery(
+export function useOrganizationMembersCountSuspenseQuery(
   baseOptions?:
     | Apollo.SkipToken
     | Apollo.SuspenseQueryHookOptions<
-        OrganizationMemberPaginationQuery,
-        OrganizationMemberPaginationQueryVariables
+        OrganizationMembersCountQuery,
+        OrganizationMembersCountQueryVariables
       >,
 ) {
   const options =
     baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
   return Apollo.useSuspenseQuery<
-    OrganizationMemberPaginationQuery,
-    OrganizationMemberPaginationQueryVariables
-  >(OrganizationMemberPaginationDocument, options)
+    OrganizationMembersCountQuery,
+    OrganizationMembersCountQueryVariables
+  >(OrganizationMembersCountDocument, options)
 }
-export type OrganizationMemberPaginationQueryHookResult = ReturnType<
-  typeof useOrganizationMemberPaginationQuery
+export type OrganizationMembersCountQueryHookResult = ReturnType<
+  typeof useOrganizationMembersCountQuery
 >
-export type OrganizationMemberPaginationLazyQueryHookResult = ReturnType<
-  typeof useOrganizationMemberPaginationLazyQuery
+export type OrganizationMembersCountLazyQueryHookResult = ReturnType<
+  typeof useOrganizationMembersCountLazyQuery
 >
-export type OrganizationMemberPaginationSuspenseQueryHookResult = ReturnType<
-  typeof useOrganizationMemberPaginationSuspenseQuery
+export type OrganizationMembersCountSuspenseQueryHookResult = ReturnType<
+  typeof useOrganizationMembersCountSuspenseQuery
 >
-export type OrganizationMemberPaginationQueryResult = Apollo.QueryResult<
-  OrganizationMemberPaginationQuery,
-  OrganizationMemberPaginationQueryVariables
+export type OrganizationMembersCountQueryResult = Apollo.QueryResult<
+  OrganizationMembersCountQuery,
+  OrganizationMembersCountQueryVariables
 >
-export const CreateOrganizationDocument = gql`
-  mutation createOrganization($input: CreateOrganizationInput!) {
-    createOrganization(input: $input) {
+export const UserCreateOrganizationDocument = gql`
+  mutation userCreateOrganization($input: CreateOrganizationInput!) {
+    userCreateOrganization(input: $input) {
       ...OrganizationDetails
     }
   }
   ${OrganizationDetailsFragmentDoc}
 `
-export type CreateOrganizationMutationFn = Apollo.MutationFunction<
-  CreateOrganizationMutation,
-  CreateOrganizationMutationVariables
+export type UserCreateOrganizationMutationFn = Apollo.MutationFunction<
+  UserCreateOrganizationMutation,
+  UserCreateOrganizationMutationVariables
 >
 
 /**
- * __useCreateOrganizationMutation__
+ * __useUserCreateOrganizationMutation__
  *
- * To run a mutation, you first call `useCreateOrganizationMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateOrganizationMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useUserCreateOrganizationMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUserCreateOrganizationMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [createOrganizationMutation, { data, loading, error }] = useCreateOrganizationMutation({
+ * const [userCreateOrganizationMutation, { data, loading, error }] = useUserCreateOrganizationMutation({
  *   variables: {
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useCreateOrganizationMutation(
+export function useUserCreateOrganizationMutation(
   baseOptions?: Apollo.MutationHookOptions<
-    CreateOrganizationMutation,
-    CreateOrganizationMutationVariables
+    UserCreateOrganizationMutation,
+    UserCreateOrganizationMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<CreateOrganizationMutation, CreateOrganizationMutationVariables>(
-    CreateOrganizationDocument,
+  return Apollo.useMutation<
+    UserCreateOrganizationMutation,
+    UserCreateOrganizationMutationVariables
+  >(UserCreateOrganizationDocument, options)
+}
+export type UserCreateOrganizationMutationHookResult = ReturnType<
+  typeof useUserCreateOrganizationMutation
+>
+export type UserCreateOrganizationMutationResult =
+  Apollo.MutationResult<UserCreateOrganizationMutation>
+export type UserCreateOrganizationMutationOptions = Apollo.BaseMutationOptions<
+  UserCreateOrganizationMutation,
+  UserCreateOrganizationMutationVariables
+>
+export const UserDeleteOrganizationDocument = gql`
+  mutation userDeleteOrganization($organizationId: String!) {
+    userDeleteOrganization(organizationId: $organizationId)
+  }
+`
+export type UserDeleteOrganizationMutationFn = Apollo.MutationFunction<
+  UserDeleteOrganizationMutation,
+  UserDeleteOrganizationMutationVariables
+>
+
+/**
+ * __useUserDeleteOrganizationMutation__
+ *
+ * To run a mutation, you first call `useUserDeleteOrganizationMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUserDeleteOrganizationMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [userDeleteOrganizationMutation, { data, loading, error }] = useUserDeleteOrganizationMutation({
+ *   variables: {
+ *      organizationId: // value for 'organizationId'
+ *   },
+ * });
+ */
+export function useUserDeleteOrganizationMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    UserDeleteOrganizationMutation,
+    UserDeleteOrganizationMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<
+    UserDeleteOrganizationMutation,
+    UserDeleteOrganizationMutationVariables
+  >(UserDeleteOrganizationDocument, options)
+}
+export type UserDeleteOrganizationMutationHookResult = ReturnType<
+  typeof useUserDeleteOrganizationMutation
+>
+export type UserDeleteOrganizationMutationResult =
+  Apollo.MutationResult<UserDeleteOrganizationMutation>
+export type UserDeleteOrganizationMutationOptions = Apollo.BaseMutationOptions<
+  UserDeleteOrganizationMutation,
+  UserDeleteOrganizationMutationVariables
+>
+export const UserUpdateOrganizationDocument = gql`
+  mutation userUpdateOrganization($input: UpdateOrganizationInput!) {
+    userUpdateOrganization(input: $input) {
+      ...OrganizationDetails
+    }
+  }
+  ${OrganizationDetailsFragmentDoc}
+`
+export type UserUpdateOrganizationMutationFn = Apollo.MutationFunction<
+  UserUpdateOrganizationMutation,
+  UserUpdateOrganizationMutationVariables
+>
+
+/**
+ * __useUserUpdateOrganizationMutation__
+ *
+ * To run a mutation, you first call `useUserUpdateOrganizationMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUserUpdateOrganizationMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [userUpdateOrganizationMutation, { data, loading, error }] = useUserUpdateOrganizationMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useUserUpdateOrganizationMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    UserUpdateOrganizationMutation,
+    UserUpdateOrganizationMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<
+    UserUpdateOrganizationMutation,
+    UserUpdateOrganizationMutationVariables
+  >(UserUpdateOrganizationDocument, options)
+}
+export type UserUpdateOrganizationMutationHookResult = ReturnType<
+  typeof useUserUpdateOrganizationMutation
+>
+export type UserUpdateOrganizationMutationResult =
+  Apollo.MutationResult<UserUpdateOrganizationMutation>
+export type UserUpdateOrganizationMutationOptions = Apollo.BaseMutationOptions<
+  UserUpdateOrganizationMutation,
+  UserUpdateOrganizationMutationVariables
+>
+export const CreateOrganizationInvitationDocument = gql`
+  mutation createOrganizationInvitation($input: CreateInvitationInput!) {
+    createOrganizationInvitation(input: $input)
+  }
+`
+export type CreateOrganizationInvitationMutationFn = Apollo.MutationFunction<
+  CreateOrganizationInvitationMutation,
+  CreateOrganizationInvitationMutationVariables
+>
+
+/**
+ * __useCreateOrganizationInvitationMutation__
+ *
+ * To run a mutation, you first call `useCreateOrganizationInvitationMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateOrganizationInvitationMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createOrganizationInvitationMutation, { data, loading, error }] = useCreateOrganizationInvitationMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreateOrganizationInvitationMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    CreateOrganizationInvitationMutation,
+    CreateOrganizationInvitationMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<
+    CreateOrganizationInvitationMutation,
+    CreateOrganizationInvitationMutationVariables
+  >(CreateOrganizationInvitationDocument, options)
+}
+export type CreateOrganizationInvitationMutationHookResult = ReturnType<
+  typeof useCreateOrganizationInvitationMutation
+>
+export type CreateOrganizationInvitationMutationResult =
+  Apollo.MutationResult<CreateOrganizationInvitationMutation>
+export type CreateOrganizationInvitationMutationOptions = Apollo.BaseMutationOptions<
+  CreateOrganizationInvitationMutation,
+  CreateOrganizationInvitationMutationVariables
+>
+export const AcceptOrganizationInvitationDocument = gql`
+  mutation acceptOrganizationInvitation($input: AcceptInvitationInput!) {
+    acceptOrganizationInvitation(input: $input) {
+      ...OrganizationDetails
+    }
+  }
+  ${OrganizationDetailsFragmentDoc}
+`
+export type AcceptOrganizationInvitationMutationFn = Apollo.MutationFunction<
+  AcceptOrganizationInvitationMutation,
+  AcceptOrganizationInvitationMutationVariables
+>
+
+/**
+ * __useAcceptOrganizationInvitationMutation__
+ *
+ * To run a mutation, you first call `useAcceptOrganizationInvitationMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAcceptOrganizationInvitationMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [acceptOrganizationInvitationMutation, { data, loading, error }] = useAcceptOrganizationInvitationMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useAcceptOrganizationInvitationMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    AcceptOrganizationInvitationMutation,
+    AcceptOrganizationInvitationMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<
+    AcceptOrganizationInvitationMutation,
+    AcceptOrganizationInvitationMutationVariables
+  >(AcceptOrganizationInvitationDocument, options)
+}
+export type AcceptOrganizationInvitationMutationHookResult = ReturnType<
+  typeof useAcceptOrganizationInvitationMutation
+>
+export type AcceptOrganizationInvitationMutationResult =
+  Apollo.MutationResult<AcceptOrganizationInvitationMutation>
+export type AcceptOrganizationInvitationMutationOptions = Apollo.BaseMutationOptions<
+  AcceptOrganizationInvitationMutation,
+  AcceptOrganizationInvitationMutationVariables
+>
+export const RejectOrganizationInvitationDocument = gql`
+  mutation rejectOrganizationInvitation($input: RejectInvitationInput!) {
+    rejectOrganizationInvitation(input: $input)
+  }
+`
+export type RejectOrganizationInvitationMutationFn = Apollo.MutationFunction<
+  RejectOrganizationInvitationMutation,
+  RejectOrganizationInvitationMutationVariables
+>
+
+/**
+ * __useRejectOrganizationInvitationMutation__
+ *
+ * To run a mutation, you first call `useRejectOrganizationInvitationMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRejectOrganizationInvitationMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [rejectOrganizationInvitationMutation, { data, loading, error }] = useRejectOrganizationInvitationMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useRejectOrganizationInvitationMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    RejectOrganizationInvitationMutation,
+    RejectOrganizationInvitationMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<
+    RejectOrganizationInvitationMutation,
+    RejectOrganizationInvitationMutationVariables
+  >(RejectOrganizationInvitationDocument, options)
+}
+export type RejectOrganizationInvitationMutationHookResult = ReturnType<
+  typeof useRejectOrganizationInvitationMutation
+>
+export type RejectOrganizationInvitationMutationResult =
+  Apollo.MutationResult<RejectOrganizationInvitationMutation>
+export type RejectOrganizationInvitationMutationOptions = Apollo.BaseMutationOptions<
+  RejectOrganizationInvitationMutation,
+  RejectOrganizationInvitationMutationVariables
+>
+export const AddOrganizationMemberDocument = gql`
+  mutation addOrganizationMember($input: AddOrganizationMemberInput!) {
+    addOrganizationMember(input: $input)
+  }
+`
+export type AddOrganizationMemberMutationFn = Apollo.MutationFunction<
+  AddOrganizationMemberMutation,
+  AddOrganizationMemberMutationVariables
+>
+
+/**
+ * __useAddOrganizationMemberMutation__
+ *
+ * To run a mutation, you first call `useAddOrganizationMemberMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddOrganizationMemberMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [addOrganizationMemberMutation, { data, loading, error }] = useAddOrganizationMemberMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useAddOrganizationMemberMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    AddOrganizationMemberMutation,
+    AddOrganizationMemberMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<AddOrganizationMemberMutation, AddOrganizationMemberMutationVariables>(
+    AddOrganizationMemberDocument,
     options,
   )
 }
-export type CreateOrganizationMutationHookResult = ReturnType<typeof useCreateOrganizationMutation>
-export type CreateOrganizationMutationResult = Apollo.MutationResult<CreateOrganizationMutation>
-export type CreateOrganizationMutationOptions = Apollo.BaseMutationOptions<
-  CreateOrganizationMutation,
-  CreateOrganizationMutationVariables
+export type AddOrganizationMemberMutationHookResult = ReturnType<
+  typeof useAddOrganizationMemberMutation
 >
-export const DeleteOrganizationDocument = gql`
-  mutation deleteOrganization($organizationId: String!) {
-    deleteOrganization(organizationId: $organizationId) {
+export type AddOrganizationMemberMutationResult =
+  Apollo.MutationResult<AddOrganizationMemberMutation>
+export type AddOrganizationMemberMutationOptions = Apollo.BaseMutationOptions<
+  AddOrganizationMemberMutation,
+  AddOrganizationMemberMutationVariables
+>
+export const RemoveOrganizationMemberDocument = gql`
+  mutation removeOrganizationMember($input: RemoveOrganizationMemberInput!) {
+    removeOrganizationMember(input: $input)
+  }
+`
+export type RemoveOrganizationMemberMutationFn = Apollo.MutationFunction<
+  RemoveOrganizationMemberMutation,
+  RemoveOrganizationMemberMutationVariables
+>
+
+/**
+ * __useRemoveOrganizationMemberMutation__
+ *
+ * To run a mutation, you first call `useRemoveOrganizationMemberMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRemoveOrganizationMemberMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [removeOrganizationMemberMutation, { data, loading, error }] = useRemoveOrganizationMemberMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useRemoveOrganizationMemberMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    RemoveOrganizationMemberMutation,
+    RemoveOrganizationMemberMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<
+    RemoveOrganizationMemberMutation,
+    RemoveOrganizationMemberMutationVariables
+  >(RemoveOrganizationMemberDocument, options)
+}
+export type RemoveOrganizationMemberMutationHookResult = ReturnType<
+  typeof useRemoveOrganizationMemberMutation
+>
+export type RemoveOrganizationMemberMutationResult =
+  Apollo.MutationResult<RemoveOrganizationMemberMutation>
+export type RemoveOrganizationMemberMutationOptions = Apollo.BaseMutationOptions<
+  RemoveOrganizationMemberMutation,
+  RemoveOrganizationMemberMutationVariables
+>
+export const UpdateOrganizationMemberRoleDocument = gql`
+  mutation updateOrganizationMemberRole($input: UpdateMemberRoleInput!) {
+    updateOrganizationMemberRole(input: $input)
+  }
+`
+export type UpdateOrganizationMemberRoleMutationFn = Apollo.MutationFunction<
+  UpdateOrganizationMemberRoleMutation,
+  UpdateOrganizationMemberRoleMutationVariables
+>
+
+/**
+ * __useUpdateOrganizationMemberRoleMutation__
+ *
+ * To run a mutation, you first call `useUpdateOrganizationMemberRoleMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateOrganizationMemberRoleMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateOrganizationMemberRoleMutation, { data, loading, error }] = useUpdateOrganizationMemberRoleMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useUpdateOrganizationMemberRoleMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    UpdateOrganizationMemberRoleMutation,
+    UpdateOrganizationMemberRoleMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<
+    UpdateOrganizationMemberRoleMutation,
+    UpdateOrganizationMemberRoleMutationVariables
+  >(UpdateOrganizationMemberRoleDocument, options)
+}
+export type UpdateOrganizationMemberRoleMutationHookResult = ReturnType<
+  typeof useUpdateOrganizationMemberRoleMutation
+>
+export type UpdateOrganizationMemberRoleMutationResult =
+  Apollo.MutationResult<UpdateOrganizationMemberRoleMutation>
+export type UpdateOrganizationMemberRoleMutationOptions = Apollo.BaseMutationOptions<
+  UpdateOrganizationMemberRoleMutation,
+  UpdateOrganizationMemberRoleMutationVariables
+>
+export const SwitchActiveOrganizationDocument = gql`
+  mutation switchActiveOrganization($input: SwitchOrganizationInput!) {
+    switchActiveOrganization(input: $input) {
       id
+      activeOrganizationId
     }
   }
 `
-export type DeleteOrganizationMutationFn = Apollo.MutationFunction<
-  DeleteOrganizationMutation,
-  DeleteOrganizationMutationVariables
+export type SwitchActiveOrganizationMutationFn = Apollo.MutationFunction<
+  SwitchActiveOrganizationMutation,
+  SwitchActiveOrganizationMutationVariables
 >
 
 /**
- * __useDeleteOrganizationMutation__
+ * __useSwitchActiveOrganizationMutation__
  *
- * To run a mutation, you first call `useDeleteOrganizationMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useDeleteOrganizationMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useSwitchActiveOrganizationMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSwitchActiveOrganizationMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [deleteOrganizationMutation, { data, loading, error }] = useDeleteOrganizationMutation({
+ * const [switchActiveOrganizationMutation, { data, loading, error }] = useSwitchActiveOrganizationMutation({
  *   variables: {
- *      organizationId: // value for 'organizationId'
- *   },
- * });
- */
-export function useDeleteOrganizationMutation(
-  baseOptions?: Apollo.MutationHookOptions<
-    DeleteOrganizationMutation,
-    DeleteOrganizationMutationVariables
-  >,
-) {
-  const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<DeleteOrganizationMutation, DeleteOrganizationMutationVariables>(
-    DeleteOrganizationDocument,
-    options,
-  )
-}
-export type DeleteOrganizationMutationHookResult = ReturnType<typeof useDeleteOrganizationMutation>
-export type DeleteOrganizationMutationResult = Apollo.MutationResult<DeleteOrganizationMutation>
-export type DeleteOrganizationMutationOptions = Apollo.BaseMutationOptions<
-  DeleteOrganizationMutation,
-  DeleteOrganizationMutationVariables
->
-export const UpdateOrganizationDocument = gql`
-  mutation updateOrganization($organizationId: String!, $input: UpdateOrganizationInput!) {
-    updateOrganization(organizationId: $organizationId, input: $input) {
-      ...OrganizationDetails
-    }
-  }
-  ${OrganizationDetailsFragmentDoc}
-`
-export type UpdateOrganizationMutationFn = Apollo.MutationFunction<
-  UpdateOrganizationMutation,
-  UpdateOrganizationMutationVariables
->
-
-/**
- * __useUpdateOrganizationMutation__
- *
- * To run a mutation, you first call `useUpdateOrganizationMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateOrganizationMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updateOrganizationMutation, { data, loading, error }] = useUpdateOrganizationMutation({
- *   variables: {
- *      organizationId: // value for 'organizationId'
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useUpdateOrganizationMutation(
+export function useSwitchActiveOrganizationMutation(
   baseOptions?: Apollo.MutationHookOptions<
-    UpdateOrganizationMutation,
-    UpdateOrganizationMutationVariables
+    SwitchActiveOrganizationMutation,
+    SwitchActiveOrganizationMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<UpdateOrganizationMutation, UpdateOrganizationMutationVariables>(
-    UpdateOrganizationDocument,
-    options,
-  )
+  return Apollo.useMutation<
+    SwitchActiveOrganizationMutation,
+    SwitchActiveOrganizationMutationVariables
+  >(SwitchActiveOrganizationDocument, options)
 }
-export type UpdateOrganizationMutationHookResult = ReturnType<typeof useUpdateOrganizationMutation>
-export type UpdateOrganizationMutationResult = Apollo.MutationResult<UpdateOrganizationMutation>
-export type UpdateOrganizationMutationOptions = Apollo.BaseMutationOptions<
-  UpdateOrganizationMutation,
-  UpdateOrganizationMutationVariables
+export type SwitchActiveOrganizationMutationHookResult = ReturnType<
+  typeof useSwitchActiveOrganizationMutation
 >
-export const OrganizationDocument = gql`
-  query Organization($organizationId: String!) {
-    organization(organizationId: $organizationId) {
-      ...OrganizationDetails
-    }
-  }
-  ${OrganizationDetailsFragmentDoc}
-`
-
-/**
- * __useOrganizationQuery__
- *
- * To run a query within a React component, call `useOrganizationQuery` and pass it any options that fit your needs.
- * When your component renders, `useOrganizationQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useOrganizationQuery({
- *   variables: {
- *      organizationId: // value for 'organizationId'
- *   },
- * });
- */
-export function useOrganizationQuery(
-  baseOptions: Apollo.QueryHookOptions<OrganizationQuery, OrganizationQueryVariables> &
-    ({ variables: OrganizationQueryVariables; skip?: boolean } | { skip: boolean }),
-) {
-  const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<OrganizationQuery, OrganizationQueryVariables>(
-    OrganizationDocument,
-    options,
-  )
-}
-export function useOrganizationLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<OrganizationQuery, OrganizationQueryVariables>,
-) {
-  const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<OrganizationQuery, OrganizationQueryVariables>(
-    OrganizationDocument,
-    options,
-  )
-}
-export function useOrganizationSuspenseQuery(
-  baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<OrganizationQuery, OrganizationQueryVariables>,
-) {
-  const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<OrganizationQuery, OrganizationQueryVariables>(
-    OrganizationDocument,
-    options,
-  )
-}
-export type OrganizationQueryHookResult = ReturnType<typeof useOrganizationQuery>
-export type OrganizationLazyQueryHookResult = ReturnType<typeof useOrganizationLazyQuery>
-export type OrganizationSuspenseQueryHookResult = ReturnType<typeof useOrganizationSuspenseQuery>
-export type OrganizationQueryResult = Apollo.QueryResult<
-  OrganizationQuery,
-  OrganizationQueryVariables
+export type SwitchActiveOrganizationMutationResult =
+  Apollo.MutationResult<SwitchActiveOrganizationMutation>
+export type SwitchActiveOrganizationMutationOptions = Apollo.BaseMutationOptions<
+  SwitchActiveOrganizationMutation,
+  SwitchActiveOrganizationMutationVariables
 >
-export const OrganizationsDocument = gql`
-  query Organizations($input: ListOrganizationInput) {
-    organizations(input: $input) {
+export const MyOrganizationsDocument = gql`
+  query myOrganizations {
+    myOrganizations {
       ...OrganizationList
-    }
-    counters: organizationsCount(input: $input) {
-      ...CorePagingDetails
     }
   }
   ${OrganizationListFragmentDoc}
-  ${CorePagingDetailsFragmentDoc}
 `
 
 /**
- * __useOrganizationsQuery__
+ * __useMyOrganizationsQuery__
  *
- * To run a query within a React component, call `useOrganizationsQuery` and pass it any options that fit your needs.
- * When your component renders, `useOrganizationsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useMyOrganizationsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useMyOrganizationsQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useOrganizationsQuery({
+ * const { data, loading, error } = useMyOrganizationsQuery({
  *   variables: {
- *      input: // value for 'input'
  *   },
  * });
  */
-export function useOrganizationsQuery(
-  baseOptions?: Apollo.QueryHookOptions<OrganizationsQuery, OrganizationsQueryVariables>,
+export function useMyOrganizationsQuery(
+  baseOptions?: Apollo.QueryHookOptions<MyOrganizationsQuery, MyOrganizationsQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<OrganizationsQuery, OrganizationsQueryVariables>(
-    OrganizationsDocument,
+  return Apollo.useQuery<MyOrganizationsQuery, MyOrganizationsQueryVariables>(
+    MyOrganizationsDocument,
     options,
   )
 }
-export function useOrganizationsLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<OrganizationsQuery, OrganizationsQueryVariables>,
+export function useMyOrganizationsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<MyOrganizationsQuery, MyOrganizationsQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<OrganizationsQuery, OrganizationsQueryVariables>(
-    OrganizationsDocument,
+  return Apollo.useLazyQuery<MyOrganizationsQuery, MyOrganizationsQueryVariables>(
+    MyOrganizationsDocument,
     options,
   )
 }
-export function useOrganizationsSuspenseQuery(
+export function useMyOrganizationsSuspenseQuery(
   baseOptions?:
     | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<OrganizationsQuery, OrganizationsQueryVariables>,
+    | Apollo.SuspenseQueryHookOptions<MyOrganizationsQuery, MyOrganizationsQueryVariables>,
 ) {
   const options =
     baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<OrganizationsQuery, OrganizationsQueryVariables>(
-    OrganizationsDocument,
+  return Apollo.useSuspenseQuery<MyOrganizationsQuery, MyOrganizationsQueryVariables>(
+    MyOrganizationsDocument,
     options,
   )
 }
-export type OrganizationsQueryHookResult = ReturnType<typeof useOrganizationsQuery>
-export type OrganizationsLazyQueryHookResult = ReturnType<typeof useOrganizationsLazyQuery>
-export type OrganizationsSuspenseQueryHookResult = ReturnType<typeof useOrganizationsSuspenseQuery>
-export type OrganizationsQueryResult = Apollo.QueryResult<
-  OrganizationsQuery,
-  OrganizationsQueryVariables
+export type MyOrganizationsQueryHookResult = ReturnType<typeof useMyOrganizationsQuery>
+export type MyOrganizationsLazyQueryHookResult = ReturnType<typeof useMyOrganizationsLazyQuery>
+export type MyOrganizationsSuspenseQueryHookResult = ReturnType<
+  typeof useMyOrganizationsSuspenseQuery
 >
-export const OrganizationPaginationDocument = gql`
-  query OrganizationPagination($input: ListOrganizationInput) {
-    counters: organizationsCount(input: $input) {
-      ...CorePagingDetails
+export type MyOrganizationsQueryResult = Apollo.QueryResult<
+  MyOrganizationsQuery,
+  MyOrganizationsQueryVariables
+>
+export const OrganizationRolesDocument = gql`
+  query organizationRoles($organizationId: String!) {
+    organizationRoles(organizationId: $organizationId) {
+      id
+      name
+      description
+      permissions {
+        id
+        action
+        subject
+      }
     }
   }
-  ${CorePagingDetailsFragmentDoc}
 `
 
 /**
- * __useOrganizationPaginationQuery__
+ * __useOrganizationRolesQuery__
  *
- * To run a query within a React component, call `useOrganizationPaginationQuery` and pass it any options that fit your needs.
- * When your component renders, `useOrganizationPaginationQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useOrganizationRolesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useOrganizationRolesQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useOrganizationPaginationQuery({
+ * const { data, loading, error } = useOrganizationRolesQuery({
  *   variables: {
- *      input: // value for 'input'
+ *      organizationId: // value for 'organizationId'
  *   },
  * });
  */
-export function useOrganizationPaginationQuery(
-  baseOptions?: Apollo.QueryHookOptions<
-    OrganizationPaginationQuery,
-    OrganizationPaginationQueryVariables
-  >,
+export function useOrganizationRolesQuery(
+  baseOptions: Apollo.QueryHookOptions<OrganizationRolesQuery, OrganizationRolesQueryVariables> &
+    ({ variables: OrganizationRolesQueryVariables; skip?: boolean } | { skip: boolean }),
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<OrganizationPaginationQuery, OrganizationPaginationQueryVariables>(
-    OrganizationPaginationDocument,
+  return Apollo.useQuery<OrganizationRolesQuery, OrganizationRolesQueryVariables>(
+    OrganizationRolesDocument,
     options,
   )
 }
-export function useOrganizationPaginationLazyQuery(
+export function useOrganizationRolesLazyQuery(
   baseOptions?: Apollo.LazyQueryHookOptions<
-    OrganizationPaginationQuery,
-    OrganizationPaginationQueryVariables
+    OrganizationRolesQuery,
+    OrganizationRolesQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<OrganizationPaginationQuery, OrganizationPaginationQueryVariables>(
-    OrganizationPaginationDocument,
+  return Apollo.useLazyQuery<OrganizationRolesQuery, OrganizationRolesQueryVariables>(
+    OrganizationRolesDocument,
     options,
   )
 }
-export function useOrganizationPaginationSuspenseQuery(
+export function useOrganizationRolesSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<OrganizationRolesQuery, OrganizationRolesQueryVariables>,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<OrganizationRolesQuery, OrganizationRolesQueryVariables>(
+    OrganizationRolesDocument,
+    options,
+  )
+}
+export type OrganizationRolesQueryHookResult = ReturnType<typeof useOrganizationRolesQuery>
+export type OrganizationRolesLazyQueryHookResult = ReturnType<typeof useOrganizationRolesLazyQuery>
+export type OrganizationRolesSuspenseQueryHookResult = ReturnType<
+  typeof useOrganizationRolesSuspenseQuery
+>
+export type OrganizationRolesQueryResult = Apollo.QueryResult<
+  OrganizationRolesQuery,
+  OrganizationRolesQueryVariables
+>
+export const OrganizationInvitationsDocument = gql`
+  query organizationInvitations($organizationId: String!) {
+    organizationInvitations(organizationId: $organizationId) {
+      id
+      email
+      status
+      expiresAt
+      role {
+        id
+        name
+      }
+      inviter {
+        id
+        firstName
+        lastName
+      }
+    }
+  }
+`
+
+/**
+ * __useOrganizationInvitationsQuery__
+ *
+ * To run a query within a React component, call `useOrganizationInvitationsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useOrganizationInvitationsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useOrganizationInvitationsQuery({
+ *   variables: {
+ *      organizationId: // value for 'organizationId'
+ *   },
+ * });
+ */
+export function useOrganizationInvitationsQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    OrganizationInvitationsQuery,
+    OrganizationInvitationsQueryVariables
+  > &
+    ({ variables: OrganizationInvitationsQueryVariables; skip?: boolean } | { skip: boolean }),
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<OrganizationInvitationsQuery, OrganizationInvitationsQueryVariables>(
+    OrganizationInvitationsDocument,
+    options,
+  )
+}
+export function useOrganizationInvitationsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    OrganizationInvitationsQuery,
+    OrganizationInvitationsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<OrganizationInvitationsQuery, OrganizationInvitationsQueryVariables>(
+    OrganizationInvitationsDocument,
+    options,
+  )
+}
+export function useOrganizationInvitationsSuspenseQuery(
   baseOptions?:
     | Apollo.SkipToken
     | Apollo.SuspenseQueryHookOptions<
-        OrganizationPaginationQuery,
-        OrganizationPaginationQueryVariables
+        OrganizationInvitationsQuery,
+        OrganizationInvitationsQueryVariables
       >,
 ) {
   const options =
     baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<OrganizationPaginationQuery, OrganizationPaginationQueryVariables>(
-    OrganizationPaginationDocument,
-    options,
-  )
+  return Apollo.useSuspenseQuery<
+    OrganizationInvitationsQuery,
+    OrganizationInvitationsQueryVariables
+  >(OrganizationInvitationsDocument, options)
 }
-export type OrganizationPaginationQueryHookResult = ReturnType<
-  typeof useOrganizationPaginationQuery
+export type OrganizationInvitationsQueryHookResult = ReturnType<
+  typeof useOrganizationInvitationsQuery
 >
-export type OrganizationPaginationLazyQueryHookResult = ReturnType<
-  typeof useOrganizationPaginationLazyQuery
+export type OrganizationInvitationsLazyQueryHookResult = ReturnType<
+  typeof useOrganizationInvitationsLazyQuery
 >
-export type OrganizationPaginationSuspenseQueryHookResult = ReturnType<
-  typeof useOrganizationPaginationSuspenseQuery
+export type OrganizationInvitationsSuspenseQueryHookResult = ReturnType<
+  typeof useOrganizationInvitationsSuspenseQuery
 >
-export type OrganizationPaginationQueryResult = Apollo.QueryResult<
-  OrganizationPaginationQuery,
-  OrganizationPaginationQueryVariables
+export type OrganizationInvitationsQueryResult = Apollo.QueryResult<
+  OrganizationInvitationsQuery,
+  OrganizationInvitationsQueryVariables
 >
 export const CreatePermissionDocument = gql`
   mutation createPermission($input: CreatePermissionInput!) {

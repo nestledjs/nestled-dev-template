@@ -80,6 +80,9 @@ export default function Login() {
           </div>
         )}
         <Form id="login-form" theme={formTheme} fields={fields} submit={processLogin} />
+
+        {/* TODO: Add OAuth providers (Google, GitHub) when ready */}
+        {/* TODO: Add 2FA input when backend returns requires2FA: true */}
       </div>
     </AuthLayout>
   )

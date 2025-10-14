@@ -7,4 +7,23 @@ fragment OrganizationList on Organization {
 
 fragment OrganizationDetails on Organization {
   ...OrganizationList
+  members {
+    id
+    userId
+    roleId
+    user {
+      id
+      firstName
+      lastName
+    }
+    role {
+      id
+      name
+    }
+  }
+  roles {
+    id
+    name
+    description
+  }
 }

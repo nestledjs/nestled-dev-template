@@ -151,7 +151,10 @@ export class AuthService {
       const primaryEmail = payload.email?.trim()?.toLowerCase()
 
       // Create default organization for the user
-      const orgName = `${user.firstName}'s Organization`
+      const trimmedOrgName = payload.organizationName?.trim()
+      const orgName = (trimmedOrgName && trimmedOrgName.length > 0)
+        ? trimmedOrgName
+        : `${user.firstName}'s Organization`
       const organization = await this.data.organization.create({
         data: { name: orgName }
       })

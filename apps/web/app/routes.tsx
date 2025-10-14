@@ -4,25 +4,25 @@ export default [
   // Global layout - provides GlobalContextProvider and Apollo context to ALL routes
   route('', './routes/_layout.tsx', [
     // Public routes (no conflicting paths)
-    route('', './routes/public/_layout.tsx', [
-      index('./routes/public/_index.tsx'),
-      // route('about', './routes/public/about.tsx'),
-      route('login', './routes/public/login.tsx'),
-      route('register', './routes/public/register.tsx'),
-      route('forgot-password', './routes/public/forgot-password.tsx'),
-      route('reset-password', './routes/public/reset-password.tsx'),
-      route('verify-email', './routes/public/verify-email.tsx'),
-      // route('blog', './routes/public/blog.tsx'),
-      // route('contact', './routes/public/contact.tsx'),
-      // route('privacy-policy', './routes/public/privacy-policy.tsx'),
-      // route('terms-and-conditions', './routes/public/terms-and-conditions.tsx'),
-      // route('blog/:slug', './routes/public/blog/_layout.tsx', [
-      //   index('./routes/public/blog/$slug.tsx'),
+    route('', './routes/_public/_layout.tsx', [
+      index('./routes/_public/_index.tsx'),
+      // route('about', './routes/_public/about.tsx'),
+      route('login', './routes/_public/login.tsx'),
+      route('register', './routes/_public/register.tsx'),
+      route('forgot-password', './routes/_public/forgot-password.tsx'),
+      route('reset-password', './routes/_public/reset-password.tsx'),
+      route('verify-email', './routes/_public/verify-email.tsx'),
+      // route('blog', './routes/_public/blog.tsx'),
+      // route('contact', './routes/_public/contact.tsx'),
+      // route('privacy-policy', './routes/_public/privacy-policy.tsx'),
+      // route('terms-and-conditions', './routes/_public/terms-and-conditions.tsx'),
+      // route('blog/:slug', './routes/_public/blog/_layout.tsx', [
+      //   index('./routes/_public/blog/$slug.tsx'),
       // ]),
     ]),
 
     // Standalone unauthorized page (outside of public layout to avoid conflicts)
-    // route('unauthorized', './routes/public/unauthorized.tsx'),
+    // route('unauthorized', './routes/_public/unauthorized.tsx'),
     // Logout route clears cookies and cache, then redirects to login
     route('logout', './routes/logout.tsx'),
 
@@ -51,15 +51,29 @@ export default [
     //   ]),
     // ]),
 
-    // Members area - separated out since _auth_layout.tsx doesn't exist
-    route('members', './routes/members/_layout.tsx', [
-      index('./routes/members/_index.tsx'),
-      route('dashboard', './routes/members/dashboard.tsx'),
-      route('my-profile', './routes/members/my-profile/_layout.tsx', [
-        index('./routes/members/my-profile/_index.tsx'),
-        route('edit', './routes/members/my-profile/edit.tsx'),
+    // Authenticated area - shared auth layout for members and settings
+    route('', './routes/_authenticated/_layout.tsx', [
+      // Members area
+      route('members', './routes/members/_layout.tsx', [
+        index('./routes/members/_index.tsx'),
+        route('dashboard', './routes/members/dashboard.tsx'),
+        route('my-profile', './routes/members/my-profile/_layout.tsx', [
+          index('./routes/members/my-profile/_index.tsx'),
+          route('edit', './routes/members/my-profile/edit.tsx'),
+        ]),
+      ]),
+
+      // Settings area - organization and user settings
+      route('settings', './routes/settings/_layout.tsx', [
+        route('organization', './routes/settings/organization.tsx'),
+        route('members', './routes/settings/members.tsx'),
+        route('billing', './routes/settings/billing.tsx'),
+        route('security', './routes/settings/security.tsx'),
+        route('notifications', './routes/settings/notifications.tsx'),
+        route('preferences', './routes/settings/preferences.tsx'),
       ]),
     ]),
+
     // Sitemap
     route('sitemap.xml', './routes/sitemap.xml.ts'),
   ]),
