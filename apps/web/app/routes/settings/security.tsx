@@ -1,21 +1,32 @@
 import React, { useState } from 'react'
-import { useLoaderData } from 'react-router'
+import { Link, useLoaderData } from 'react-router'
 import { ShieldCheckIcon, KeyIcon, DeviceTabletIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline'
 import { Form, FormFieldClass } from '@nestledjs/forms'
 import { formTheme } from '@nestled-template/shared/styles'
 import { apolloLoader } from '@nestled-template/shared/apollo'
-import { MeDocument, MeQuery, useChangePasswordMutation } from '@nestled-template/shared/sdk'
+import { MeDocument, MeQuery, useChangePasswordMutation, SecurityEventsDocument, SecurityEventsQuery } from '@nestled-template/shared/sdk'
 import { QueryRef, useReadQuery } from '@apollo/client'
 
 export const loader = apolloLoader()(({ preloadQuery }) => {
   const meQueryRef = preloadQuery<MeQuery>(MeDocument)
-  return { meQueryRef }
+  const securityEventsQueryRef = preloadQuery<SecurityEventsQuery>(SecurityEventsDocument, {
+    variables: {
+      input: {
+        take: 3,
+        orderBy: 'createdAt',
+        orderDirection: 'desc'
+      }
+    }
+  })
+  return { meQueryRef, securityEventsQueryRef }
 })
 
 export default function SecuritySettings() {
-  const loaderData = useLoaderData() as { meQueryRef: QueryRef<MeQuery> }
+  const loaderData = useLoaderData() as { meQueryRef: QueryRef<MeQuery>; securityEventsQueryRef: QueryRef<SecurityEventsQuery> }
   const { data } = useReadQuery(loaderData.meQueryRef)
+  const { data: securityEventsData } = useReadQuery(loaderData.securityEventsQueryRef)
   const user = data?.me
+  const securityEvents = securityEventsData?.securityEvents || []
   const [formError, setFormError] = useState<string | null>(null)
   const [formSuccess, setFormSuccess] = useState<string | null>(null)
   const [changePassword] = useChangePasswordMutation()
@@ -44,7 +55,7 @@ export default function SecuritySettings() {
         },
       })
 
-      if (data?.changePassword?.id) {
+      if (data?.changePassword) {
         setFormSuccess('Password changed successfully!')
       } else {
         setFormError('Failed to change password')
@@ -221,16 +232,36 @@ export default function SecuritySettings() {
         </p>
 
         <div className="space-y-3">
-          <div className="flex items-start gap-3 text-sm p-3 rounded-lg bg-zinc-50 dark:bg-white/5">
-            <div className="h-2 w-2 rounded-full bg-emerald-500 mt-1.5"></div>
-            <div className="flex-1">
-              <p className="font-medium text-zinc-900 dark:text-white">Successful login</p>
-              <p className="text-xs text-zinc-600 dark:text-zinc-400 mt-1">
-                Today at {new Date().toLocaleTimeString()}
-              </p>
+          {securityEvents.length === 0 ? (
+            <div className="text-sm text-zinc-600 dark:text-zinc-400 p-3">
+              No recent security events
             </div>
-          </div>
+          ) : (
+            securityEvents.map((event) => (
+              <div key={event.id} className="flex items-start gap-3 text-sm p-3 rounded-lg bg-zinc-50 dark:bg-white/5">
+                <div className="h-2 w-2 rounded-full bg-emerald-500 mt-1.5"></div>
+                <div className="flex-1">
+                  <p className="font-medium text-zinc-900 dark:text-white">
+                    {event.metadata?.eventType || 'Security event'}
+                  </p>
+                  <p className="text-xs text-zinc-600 dark:text-zinc-400 mt-1">
+                    {new Date(event.createdAt).toLocaleString()}
+                    {event.ipAddress && (
+                      <span className="ml-2">• IP: {event.ipAddress}</span>
+                    )}
+                  </p>
+                </div>
+              </div>
+            ))
+          )}
         </div>
+
+        <Link
+          to="/settings/security/events"
+          className="mt-4 inline-block text-sm text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 font-medium"
+        >
+          View all security events →
+        </Link>
       </div>
     </div>
   )

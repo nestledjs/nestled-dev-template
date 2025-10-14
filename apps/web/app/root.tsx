@@ -172,6 +172,12 @@ export function Layout({ children }: Readonly<{ children: ReactNode }>) {
 export default App
 
 export function ErrorBoundary({ error }: Readonly<{ error: Error }>) {
+  // Detect Vite cache/build mismatch errors (Invalid hook call, useContext errors)
+  const isViteCacheError =
+    error?.message?.includes('Invalid hook call') ||
+    error?.message?.includes('useContext') ||
+    error?.message?.includes('Cannot read properties of null')
+
   // Default to dark theme for error boundary since loader data isn't available
   return (
     <html lang="en" className="dark">
@@ -205,7 +211,74 @@ export function ErrorBoundary({ error }: Readonly<{ error: Error }>) {
         />
       </head>
       <body>
-        <WebUiErrorBoundary error={error} autoRefresh={true} autoRefreshDelay={3000} />
+        {isViteCacheError ? (
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              minHeight: '100vh',
+              padding: '2rem',
+              fontFamily: 'Inter, system-ui, -apple-system, sans-serif',
+              backgroundColor: '#0a0a0a',
+              color: '#e5e5e5',
+            }}
+          >
+            <div
+              style={{
+                maxWidth: '500px',
+                textAlign: 'center',
+                backgroundColor: '#1a1a1a',
+                padding: '2.5rem',
+                borderRadius: '12px',
+                border: '1px solid #333',
+              }}
+            >
+              <h1
+                style={{
+                  fontSize: '1.75rem',
+                  fontWeight: '600',
+                  marginBottom: '1rem',
+                  color: '#f5f5f5',
+                }}
+              >
+                Cache Outdated
+              </h1>
+              <p
+                style={{
+                  fontSize: '1rem',
+                  lineHeight: '1.6',
+                  marginBottom: '2rem',
+                  color: '#a3a3a3',
+                }}
+              >
+                It looks like your local development cache is outdated. Please click the button below
+                to reload the page.
+              </p>
+              <button
+                onClick={() => window.location.reload()}
+                style={{
+                  backgroundColor: '#3b82f6',
+                  color: 'white',
+                  padding: '0.75rem 2rem',
+                  fontSize: '1rem',
+                  fontWeight: '500',
+                  border: 'none',
+                  borderRadius: '8px',
+                  cursor: 'pointer',
+                  transition: 'background-color 0.2s',
+                }}
+                onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#2563eb')}
+                onMouseOut={(e) => (e.currentTarget.style.backgroundColor = '#3b82f6')}
+              >
+                Reload Page
+              </button>
+            </div>
+          </div>
+        ) : (
+          <WebUiErrorBoundary error={error} autoRefresh={true} autoRefreshDelay={3000} />
+        )}
       </body>
     </html>
   )
