@@ -69,6 +69,7 @@ export default [
         route('members', './routes/settings/members.tsx'),
         route('billing', './routes/settings/billing.tsx'),
         route('security', './routes/settings/security.tsx'),
+        route('security/events', './routes/settings/security.events.tsx'),
         route('notifications', './routes/settings/notifications.tsx'),
         route('preferences', './routes/settings/preferences.tsx'),
       ]),
