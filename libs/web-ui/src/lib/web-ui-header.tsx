@@ -13,6 +13,7 @@ interface WebUiHeaderProps {
   icon: string
   siteName: string
   isAuthenticated: boolean
+  customHeaderContent?: React.ReactNode
 }
 export function WebUiHeader(props: Readonly<WebUiHeaderProps>) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -75,6 +76,7 @@ export function WebUiHeader(props: Readonly<WebUiHeaderProps>) {
           ))}
         </div>
         <div className="flex flex-1 items-center justify-end gap-x-3 lg:gap-x-6">
+          {props.customHeaderContent}
           <button
             type="button"
             aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}

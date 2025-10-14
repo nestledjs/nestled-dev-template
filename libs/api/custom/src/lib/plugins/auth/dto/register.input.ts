@@ -27,4 +27,7 @@ export class RegisterInput {
   @IsNotEmpty()
   @MinLength(8)
   password!: string
+
+  @Field({ nullable: true })
+  organizationName?: string
 }

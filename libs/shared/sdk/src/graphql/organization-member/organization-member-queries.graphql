@@ -4,16 +4,13 @@ query OrganizationMember($organizationMemberId: String!) {
   }
 }
 
-query OrganizationMembers($input: ListOrganizationMemberInput) {
-  organizationMembers(input: $input) {
+query OrganizationMembers($organizationId: String!) {
+  organizationMembers(organizationId: $organizationId) {
     ...OrganizationMemberList
-  }
-  counters: organizationMembersCount(input: $input) {
-    ...CorePagingDetails
   }
 }
 
-query OrganizationMemberPagination($input: ListOrganizationMemberInput) {
+query OrganizationMembersCount($input: ListOrganizationMemberInput) {
   counters: organizationMembersCount(input: $input) {
     ...CorePagingDetails
   }

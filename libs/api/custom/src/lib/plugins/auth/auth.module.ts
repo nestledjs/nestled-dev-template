@@ -10,7 +10,7 @@ import { JwtStrategy } from './strategies/jwt.strategy'
 import { AuthResolver } from './auth.resolver'
 import { OAuthService } from './oauth.service'
 import { OAuthController } from './oauth.controller'
-import { EmailModule } from '@nestled-template/api/integrations'
+import { EmailIntegrationModule } from '@nestled-template/api/integrations'
 import { ConfigModule } from '@nestled-template/api/config'
 import { SecurityEventsModule } from '../security'
 
@@ -18,7 +18,7 @@ import { SecurityEventsModule } from '../security'
   imports: [
     ApiCoreDataAccessModule,
     ApiCoreFeatureModule,
-    EmailModule,
+    EmailIntegrationModule,
     ConfigModule,
     SecurityEventsModule,
     PassportModule.register({ defaultStrategy: 'jwt' }),

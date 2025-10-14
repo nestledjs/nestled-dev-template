@@ -5,7 +5,7 @@ import { InMemoryCache } from '@apollo/client'
  * This configuration can be customized based on your needs
  */
 
-export const cache = new InMemoryCache({
+const cacheOptions = {
   typePolicies: {
     Query: {
       fields: {
@@ -97,4 +97,18 @@ export const cache = new InMemoryCache({
       },
     },
   },
-})
+}
+
+/**
+ * Creates a new cache instance
+ * Use this function instead of the singleton to ensure fresh cache for each client
+ */
+export function createCache() {
+  return new InMemoryCache(cacheOptions)
+}
+
+/**
+ * @deprecated Use createCache() instead to avoid cache sharing across SSR requests
+ * This is kept for backwards compatibility but should not be used on the server
+ */
+export const cache = new InMemoryCache(cacheOptions)

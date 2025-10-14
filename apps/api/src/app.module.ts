@@ -7,7 +7,6 @@ import {
   EmailModule,
   LinkModule,
   PhoneNumberModule,
-  OrganizationModule,
   InviteModule,
   OrganizationMemberModule,
   UserSessionModule,
@@ -26,6 +25,9 @@ import {
   SubscriptionModule,
   SecurityEventsModule,
   ApiTokensModule,
+  OrganizationPluginModule,
+  TenancyMiddleware,
+  TenancyModule,
 } from '@nestled-template/api/custom'
 import { ApiCoreFeatureModule } from '@nestled-template/api/core/feature'
 import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common'
@@ -48,7 +50,7 @@ export const defaultModules = [
   EmailModule,
   LinkModule,
   PhoneNumberModule,
-  OrganizationModule,
+  // OrganizationModule removed - using OrganizationPluginModule instead
   InviteModule,
   OrganizationMemberModule,
   UserSessionModule,
@@ -72,6 +74,8 @@ export const pluginModules = [
   ContactMailerModule,
   SecurityEventsModule,
   ApiTokensModule,
+  OrganizationPluginModule,
+  TenancyModule,
 ]
 // Combined modules used in the app
 export const appModules = [...coreModules, ...defaultModules, ...pluginModules]
@@ -92,6 +96,10 @@ export const appModules = [...coreModules, ...defaultModules, ...pluginModules]
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer): void {
+    // Apply logging middleware to all routes
     consumer.apply(LoggerMiddleware).forRoutes({ path: '*path', method: RequestMethod.ALL })
+
+    // Apply tenancy middleware to GraphQL endpoint (runs after authentication)
+    consumer.apply(TenancyMiddleware).forRoutes({ path: 'graphql', method: RequestMethod.ALL })
   }
 }

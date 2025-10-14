@@ -8,4 +8,4 @@ import { SimpleTemplateManager } from './template-manager-simple'
   providers: [EmailService, SimpleTemplateManager],
   exports: [EmailService, SimpleTemplateManager],
 })
-export class EmailModule {}
+export class EmailIntegrationModule {}

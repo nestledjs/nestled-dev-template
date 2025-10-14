@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { Link, useSearchParams } from 'react-router'
+import React, { useState, useEffect } from 'react'
+import { Link, useSearchParams, useNavigate } from 'react-router'
 import { Form, FormFieldClass } from '@nestledjs/forms'
 import { AuthLayout } from '@nestled-template/web'
 import { ResetPasswordInput, useResetPasswordMutation } from '@nestled-template/shared/sdk'
@@ -7,18 +7,33 @@ import { formTheme } from '@nestled-template/shared/styles'
 
 export default function ResetPassword() {
   const [params] = useSearchParams()
+  const navigate = useNavigate()
   const [formMessage, setFormMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
   const [resetPasswordMutation, { loading }] = useResetPasswordMutation()
   const token = params.get('token') || ''
 
+  // Validate token exists
+  useEffect(() => {
+    if (!token) {
+      setFormMessage({ type: 'error', text: 'Invalid or missing reset token. Please request a new password reset.' })
+    }
+  }, [token])
+
   async function handleReset(input: Omit<ResetPasswordInput, 'token'>) {
+    if (!token) {
+      setFormMessage({ type: 'error', text: 'Invalid reset token' })
+      return
+    }
+
     setFormMessage(null)
     try {
       const { data } = await resetPasswordMutation({ variables: { input: { ...input, token } } })
       if (data?.resetPassword?.id) {
-        setFormMessage({ type: 'success', text: 'Your password has been reset. You can now log in.' })
+        setFormMessage({ type: 'success', text: 'Your password has been reset. Redirecting to login...' })
+        // Redirect to login after 2 seconds
+        setTimeout(() => navigate('/login'), 2000)
       } else {
-        setFormMessage({ type: 'error', text: 'Unable to reset password. Please try again.' })
+        setFormMessage({ type: 'error', text: 'Unable to reset password. The token may have expired.' })
       }
     } catch (error) {
       setFormMessage({ type: 'error', text: (error as Error).message ?? 'Something went wrong' })
@@ -26,8 +41,18 @@ export default function ResetPassword() {
   }
 
   const fields = [
-    FormFieldClass.password('password', { label: 'New Password', required: true }),
-    FormFieldClass.button('submit', { text: loading ? 'Resetting...' : 'Reset Password', type: 'submit', loading }),
+    FormFieldClass.password('password', {
+      label: 'New Password',
+      required: true,
+      minLength: 8,
+      helperText: 'Must be at least 8 characters'
+    }),
+    FormFieldClass.button('submit', {
+      text: loading ? 'Resetting...' : 'Reset Password',
+      type: 'submit',
+      loading,
+      disabled: !token || loading
+    }),
   ]
 
   return (
