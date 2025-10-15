@@ -35,10 +35,10 @@ export default function SettingsLayout() {
 
   const navigation: NavItem[] = [
     {
-      name: 'My Profile',
-      href: '/members/my-profile',
+      name: 'Account',
+      href: '/settings/account',
       icon: UserCircleIcon,
-      description: 'Manage your personal information',
+      description: 'Personal account and data management',
     },
     {
       name: 'Organization',

@@ -11,3 +11,9 @@ query AvailableOAuthProviders {
     name
   }
 }
+
+query GetUserSessions {
+  getUserSessions {
+    ...ActiveSessionInfo
+  }
+}

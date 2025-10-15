@@ -151,6 +151,20 @@ export class SecurityEventsService {
   }
 
   /**
+   * Get user's security events with CorePaging support
+   */
+  async getUserSecurityEventsWithPaging(userId: string, input?: any) {
+    const { take = 50, skip = 0, orderBy = 'createdAt', orderDirection = 'desc' } = input || {}
+
+    return this.data.securityEvent.findMany({
+      where: { userId },
+      orderBy: { [orderBy]: orderDirection },
+      take,
+      skip,
+    })
+  }
+
+  /**
    * Get security events by type
    */
   async getEventsByType(userId: string, eventType: SecurityEventType, limit = 50) {

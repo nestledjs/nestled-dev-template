@@ -93,41 +93,51 @@ Build a complete user interface with authentication flows, organization manageme
 ## ⚙️ User Settings & Profile Pages
 
 ### Profile Management
-- [ ] **Enhance `/members/my-profile` pages**
-  - [ ] Update personal information (name, email, avatar)
-  - [ ] Change password functionality
-  - [ ] View login history and sessions
-  - [ ] Manage connected OAuth accounts
-  - [ ] Delete account option with confirmation
+- [x] **Create `/settings/account` page** ✅ COMPLETE
+  - [x] Display personal information (name, email)
+  - [x] View account creation date and last updated
+  - [x] Email verification status display
+  - [x] Export personal data (GDPR compliance) - FULLY FUNCTIONAL
+  - [x] Transfer organization ownership - Backend ready, UI placeholder
+  - [x] Delete account with confirmation flow - FULLY FUNCTIONAL
+  - [x] Backend implementation for data export (comprehensive GDPR export)
+  - [x] Backend implementation for account deletion (soft delete with validation)
+  - [x] Backend implementation for ownership transfer
+  - [ ] Update personal information (name, email, avatar) - needs file upload system
+  - [ ] Manage connected OAuth accounts - future enhancement
 
-- [x] **Create `/settings/security` page**
-  - [x] Enable/disable 2FA with QR code setup (UI ready, backend TODO)
-  - [x] Manage backup codes for 2FA (placeholder for future)
-  - [x] View active sessions with logout options (UI ready)
+- [x] **Create `/settings/security` page** ✅ COMPLETE
+  - [x] Enable/disable 2FA with QR code setup - FULLY FUNCTIONAL
+  - [x] Manage backup codes for 2FA - FULLY FUNCTIONAL (copy/download)
+  - [x] View active sessions with logout options (fully functional with IP display)
+  - [x] Logout from individual sessions or all other sessions
   - [x] Change password form
-  - [x] Security event history
+  - [x] Security event history (recent 3 events with link to full page)
+  - [x] Security events page at `/settings/security/events` (full table with 50 events)
+  - [x] IP address collection and display for all security events
+  - [x] User-specific security events endpoint (custom resolver, not admin)
+  - [x] Three complete modal flows: QR code setup, password disable, backup codes display
+  - [x] GraphQL mutations: setup2FA, enable2FA, disable2FA, verify2FACode
 
-- [x] **Create `/settings/notifications` page**
-  - [x] Email notification preferences
-  - [x] Digest frequency settings
-  - [x] Marketing email opt-in/out
-  - [x] Security alert preferences
+- [x] **Create `/settings/notifications` page** ✅ COMPLETE
+  - [x] Email notification preferences - FULLY FUNCTIONAL
+  - [x] Security alert preferences - FULLY FUNCTIONAL
+  - [x] Marketing email opt-in/out - FULLY FUNCTIONAL
+  - [x] Uses UserPreference backend for storage
+  - [x] Real-time toggle with GraphQL mutations
+  - [x] Organized by category (email, security, marketing)
 
-- [x] **Create `/settings/preferences` page**
-  - [x] User preference management interface
-  - [x] Key-value preference editor
-  - [x] Preference categories (UI, workflow, integrations)
-  - [x] Import/export preferences
-  - [x] Reset to defaults functionality
-  - [x] Preference validation and type checking
+- [x] **Create `/settings/preferences` page** ✅ COMPLETE
+  - [x] User preference management interface - FULLY FUNCTIONAL
+  - [x] Key-value preference editor with inline editing
+  - [x] Preference categories (UI, workflow, integrations, general)
+  - [x] Import/export preferences - FULLY FUNCTIONAL
+  - [x] Delete all preferences functionality
+  - [x] Add/update/delete preferences with GraphQL
+  - [x] Connected to real backend (UserPreference table)
 
 ### Account Management
-- [ ] **Create `/settings/account` page**
-  - [ ] View account creation date
-  - [ ] Export personal data (GDPR compliance)
-  - [ ] Delete account with confirmation
-  - [ ] Transfer organization ownership
-  - [ ] Account security overview
+- [x] **Account page created** - See Profile Management section above for details
 
 ---
 
@@ -395,10 +405,12 @@ Build a complete user interface with authentication flows, organization manageme
 
 #### Settings Pages
 - ✅ `apps/web/app/routes/settings/_layout.tsx` - Settings layout with sidebar navigation
+- ✅ `apps/web/app/routes/settings/account.tsx` - Personal account and data management (GDPR)
 - ✅ `apps/web/app/routes/settings/organization.tsx` - Organization details and management
 - ✅ `apps/web/app/routes/settings/members.tsx` - Team member management with RBAC
 - ✅ `apps/web/app/routes/settings/billing.tsx` - Billing, usage, and subscription management
 - ✅ `apps/web/app/routes/settings/security.tsx` - Password, 2FA, and security settings
+- ✅ `apps/web/app/routes/settings/security.events.tsx` - Full security events history page
 - ✅ `apps/web/app/routes/settings/notifications.tsx` - Notification preferences by category
 - ✅ `apps/web/app/routes/settings/preferences.tsx` - User preference management with import/export
 
@@ -412,12 +424,25 @@ Build a complete user interface with authentication flows, organization manageme
 
 #### Backend Integration
 - ✅ `libs/api/custom/src/lib/plugins/auth/dto/register.input.ts` - Added organizationName field
-- ✅ `libs/api/custom/src/lib/plugins/auth/auth.service.ts` - Uses organizationName from registration
+- ✅ `libs/api/custom/src/lib/plugins/auth/dto/export-user-data.output.ts` - GDPR export DTO
+- ✅ `libs/api/custom/src/lib/plugins/auth/dto/transfer-ownership.input.ts` - Ownership transfer input
+- ✅ `libs/api/custom/src/lib/plugins/auth/auth.service.ts` - Account management methods (export, delete, transfer)
+- ✅ `libs/api/custom/src/lib/plugins/auth/auth.resolver.ts` - All resolvers pass context for IP collection
+- ✅ `libs/api/custom/src/lib/plugins/auth/session.service.ts` - Session management with device detection
+- ✅ `libs/api/custom/src/lib/plugins/security/security-events.resolver.ts` - Custom user-specific endpoints
+- ✅ `libs/api/custom/src/lib/plugins/security/security-events.service.ts` - CorePaging support for events
+- ✅ `libs/shared/sdk/src/graphql/auth/auth-session-fragments.graphql` - Session data fragments
+- ✅ `libs/shared/sdk/src/graphql/auth/auth-queries.graphql` - Session queries
+- ✅ `libs/shared/sdk/src/graphql/auth/auth-mutations.graphql` - Session invalidation mutations
+- ✅ `libs/shared/sdk/src/graphql/auth/account-management.graphql` - Account export, delete, transfer mutations
+- ✅ `libs/shared/sdk/src/graphql/auth/twofa-mutations.graphql` - 2FA setup, enable, disable, verify
+- ✅ `libs/shared/sdk/src/graphql/security-event/my-security-event-queries.graphql` - User-specific security events
+- ✅ `apps/web/app/routes/settings/security.events.tsx` - Full security events table page
+- ✅ `apps/web/app/routes/settings/security.tsx` - 2FA implementation with three modal flows
 
 ### Page Components (To Do)
 - [ ] `apps/web/app/routes/_public/_index.tsx` - Public landing page (needs content update)
 - [ ] `apps/web/app/routes/pricing.tsx` - Pricing page
-- [ ] `apps/web/app/routes/settings/account.tsx` - Account management (GDPR, delete account)
 - [ ] `apps/web/app/routes/settings/usage.tsx` - Detailed usage metrics and charts
 
 ### Shared Components

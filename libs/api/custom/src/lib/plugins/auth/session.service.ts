@@ -241,22 +241,24 @@ export class SessionService {
 
     const ua = userAgent.toLowerCase()
 
-    // Detect OS
+    // Detect OS - order matters! Check more specific patterns first
     let os = 'Unknown OS'
-    if (ua.includes('windows')) os = 'Windows'
-    else if (ua.includes('mac os')) os = 'macOS'
-    else if (ua.includes('linux')) os = 'Linux'
-    else if (ua.includes('android')) os = 'Android'
+    if (ua.includes('android')) os = 'Android'
     else if (ua.includes('ios') || ua.includes('iphone') || ua.includes('ipad'))
       os = 'iOS'
+    else if (ua.includes('mac') || ua.includes('macintosh'))
+      os = 'macOS'
+    else if (ua.includes('windows') || ua.includes('win32') || ua.includes('win64'))
+      os = 'Windows'
+    else if (ua.includes('linux')) os = 'Linux'
 
-    // Detect Browser
+    // Detect Browser - order matters! Check more specific patterns first
     let browser = 'Unknown Browser'
     if (ua.includes('edg/')) browser = 'Edge'
+    else if (ua.includes('opr/') || ua.includes('opera')) browser = 'Opera'
     else if (ua.includes('chrome')) browser = 'Chrome'
     else if (ua.includes('firefox')) browser = 'Firefox'
-    else if (ua.includes('safari') && !ua.includes('chrome')) browser = 'Safari'
-    else if (ua.includes('opera') || ua.includes('opr/')) browser = 'Opera'
+    else if (ua.includes('safari')) browser = 'Safari'
 
     return `${browser} on ${os}`
   }

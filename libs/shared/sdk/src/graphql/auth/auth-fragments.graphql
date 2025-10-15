@@ -3,6 +3,8 @@ fragment UserTokenDetails on UserToken {
   user {
     ...AuthUserDetails
   }
+  requires2FA
+  tempToken
 }
 
 fragment AuthUserDetails on User {

@@ -456,6 +456,12 @@ type Enable2FAOutput {
   success: Boolean!
 }
 
+type ExportUserDataOutput {
+  exportedAt: Timestamp!
+  userData: JSONObject!
+  userId: String!
+}
+
 enum FailureReason {
   ACCOUNT_DISABLED
   ACCOUNT_LOCKED
@@ -1014,6 +1020,7 @@ type Mutation {
   addOrganizationMember(input: AddOrganizationMemberInput!): Boolean!
   changeEmail(input: ChangeEmailInput!): Boolean!
   changePassword(input: ChangePasswordInput!): Boolean!
+  complete2FALogin(code: String!, tempToken: String!): UserToken
   createAddress(input: CreateAddressInput!): Address
   createApiToken(input: CreateApiTokenInput!): ApiToken
   createAuditLog(input: CreateAuditLogInput!): AuditLog
@@ -1057,6 +1064,7 @@ type Mutation {
   deleteTeamMember(teamMemberId: String!): TeamMember
   deleteUpload(uploadId: String!): Upload
   deleteUser(userId: String!): User
+  deleteUserAccount: Boolean!
   deleteUserPreference(userPreferenceId: String!): UserPreference
   deleteUserSession(userSessionId: String!): UserSession
   disable2FA(input: Disable2FAInput!): Boolean!
@@ -1079,6 +1087,7 @@ type Mutation {
   rotateApiToken(input: RotateApiTokenInput!): GenerateApiTokenOutput!
   setup2FA: Setup2FAOutput!
   switchActiveOrganization(input: SwitchOrganizationInput!): User!
+  transferOrganizationOwnership(input: TransferOwnershipInput!): Boolean!
   unlinkOAuthAccount(input: UnlinkOAuthInput!): Boolean!
   unlockAccount(userId: String!): User!
   updateAddress(addressId: String!, input: UpdateAddressInput!): Address
@@ -1220,6 +1229,7 @@ type Query {
   email(emailId: String!): Email
   emails(input: ListEmailInput): [Email!]
   emailsCount(input: ListEmailInput): CorePaging
+  exportUserData: ExportUserDataOutput!
   getUserSessions: [UserSessionOutput!]!
   invite(inviteId: String!): Invite
   invites(input: ListInviteInput): [Invite!]
@@ -1233,6 +1243,7 @@ type Query {
   loginAttemptsCount(input: ListLoginAttemptInput): CorePaging
   me: User
   myOrganizations: [Organization!]!
+  mySecurityEvents(input: ListSecurityEventInput): [SecurityEvent!]!
   oAuthAccount(oAuthAccountId: String!): OAuthAccount
   oAuthAccounts(input: ListOAuthAccountInput): [OAuthAccount!]
   oAuthAccountsCount(input: ListOAuthAccountInput): CorePaging
@@ -1420,6 +1431,11 @@ type TeamMember {
 `Date` type as integer. Type represents date and time as number of milliseconds from start of UNIX epoch.
 """
 scalar Timestamp
+
+input TransferOwnershipInput {
+  newOwnerUserId: String!
+  organizationId: String!
+}
 
 enum TwoFactorMethod {
   AUTHENTICATOR
@@ -1842,6 +1858,12 @@ type UserSessionOutput {
 }
 
 type UserToken {
+  """Indicates if 2FA verification is required"""
+  requires2FA: Boolean
+
+  """Temporary token for 2FA verification"""
+  tempToken: String
+
   """JWT Bearer token"""
   token: String
   user: User

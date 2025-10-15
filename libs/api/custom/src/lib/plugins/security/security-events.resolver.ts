@@ -3,6 +3,7 @@ import { UseGuards } from '@nestjs/common'
 import { SecurityEventsService } from './security-events.service'
 import { CtxUser, GqlAuthGuard } from '@nestled-template/api/utils'
 import { SecurityEvent, SecurityEventType, User } from '@nestled-template/api/core/models'
+import { ListSecurityEventInput } from '@nestled-template/api/generated-crud/data-access'
 
 @Resolver(() => SecurityEvent)
 export class SecurityEventsResolver {
@@ -15,6 +16,15 @@ export class SecurityEventsResolver {
     @Args('limit', { type: () => Number, nullable: true }) limit?: number
   ): Promise<SecurityEvent[]> {
     return this.securityEventsService.getUserSecurityEvents(user.id, limit || 50)
+  }
+
+  @Query(() => [SecurityEvent])
+  @UseGuards(GqlAuthGuard)
+  async mySecurityEvents(
+    @CtxUser() user: User,
+    @Args({ name: 'input', type: () => ListSecurityEventInput, nullable: true }) input?: ListSecurityEventInput
+  ): Promise<SecurityEvent[]> {
+    return this.securityEventsService.getUserSecurityEventsWithPaging(user.id, input)
   }
 
   @Query(() => [SecurityEvent])

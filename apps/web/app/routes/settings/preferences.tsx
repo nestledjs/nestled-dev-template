@@ -2,81 +2,224 @@ import React, { useState } from 'react'
 import { useLoaderData } from 'react-router'
 import { Cog6ToothIcon, PlusIcon, TrashIcon, PencilIcon } from '@heroicons/react/24/outline'
 import { apolloLoader } from '@nestled-template/shared/apollo'
-import { MeDocument, MeQuery } from '@nestled-template/shared/sdk'
+import {
+  MeDocument,
+  MeQuery,
+  UserPreferencesDocument,
+  UserPreferencesQuery,
+  useCreateUserPreferenceMutation,
+  useUpdateUserPreferenceMutation,
+  useDeleteUserPreferenceMutation
+} from '@nestled-template/shared/sdk'
 import { QueryRef, useReadQuery } from '@apollo/client'
-
-interface UserPreference {
-  id: string
-  key: string
-  value: string
-  category: string
-}
 
 export const loader = apolloLoader()(({ preloadQuery }) => {
   const meQueryRef = preloadQuery<MeQuery>(MeDocument)
-  return { meQueryRef }
+  const preferencesQueryRef = preloadQuery<UserPreferencesQuery>(UserPreferencesDocument, {
+    variables: {
+      input: {
+        orderBy: 'key',
+        orderDirection: 'asc'
+      }
+    }
+  })
+  return { meQueryRef, preferencesQueryRef }
 })
 
 export default function PreferencesSettings() {
-  const loaderData = useLoaderData() as { meQueryRef: QueryRef<MeQuery> }
+  const loaderData = useLoaderData() as {
+    meQueryRef: QueryRef<MeQuery>
+    preferencesQueryRef: QueryRef<UserPreferencesQuery>
+  }
   const { data } = useReadQuery(loaderData.meQueryRef)
+  const { data: preferencesData, refetch: refetchPreferences } = useReadQuery(loaderData.preferencesQueryRef)
   const user = data?.me
+  const preferences = preferencesData?.userPreferences || []
+
   const [formSuccess, setFormSuccess] = useState<string | null>(null)
+  const [formError, setFormError] = useState<string | null>(null)
   const [isAddingNew, setIsAddingNew] = useState(false)
   const [newKey, setNewKey] = useState('')
   const [newValue, setNewValue] = useState('')
-  const [newCategory, setNewCategory] = useState('general')
 
-  // Sample preferences - in real app, fetch from backend using useGetUserPreferencesQuery
-  const [preferences, setPreferences] = useState<UserPreference[]>([
-    { id: '1', key: 'theme', value: 'dark', category: 'UI' },
-    { id: '2', key: 'language', value: 'en', category: 'UI' },
-    { id: '3', key: 'timezone', value: 'America/New_York', category: 'UI' },
-    { id: '4', key: 'dateFormat', value: 'MM/DD/YYYY', category: 'UI' },
-    { id: '5', key: 'defaultView', value: 'dashboard', category: 'Workflow' },
-    { id: '6', key: 'itemsPerPage', value: '25', category: 'Workflow' },
-  ])
+  const [createPreference] = useCreateUserPreferenceMutation()
+  const [updatePreference] = useUpdateUserPreferenceMutation()
+  const [deletePreference] = useDeleteUserPreferenceMutation()
 
-  const categories = ['UI', 'Workflow', 'Integrations', 'General']
+  const showSuccess = (message: string) => {
+    setFormSuccess(message)
+    setFormError(null)
+    setTimeout(() => setFormSuccess(null), 3000)
+  }
 
-  const handleAddPreference = () => {
+  const showError = (message: string) => {
+    setFormError(message)
+    setFormSuccess(null)
+  }
+
+  const handleAddPreference = async () => {
     if (!newKey.trim() || !newValue.trim()) {
+      showError('Key and value are required')
       return
     }
 
-    const newPref: UserPreference = {
-      id: Date.now().toString(),
-      key: newKey.trim(),
-      value: newValue.trim(),
-      category: newCategory,
+    try {
+      await createPreference({
+        variables: {
+          input: {
+            key: newKey.trim(),
+            value: newValue.trim(),
+          },
+        },
+        refetchQueries: [{ query: UserPreferencesDocument }],
+      })
+
+      setNewKey('')
+      setNewValue('')
+      setIsAddingNew(false)
+      showSuccess('Preference added successfully!')
+    } catch (error) {
+      showError((error as Error)?.message ?? 'Failed to add preference')
+    }
+  }
+
+  const handleDeletePreference = async (preferenceId: string, key: string) => {
+    if (!confirm(`Delete preference "${key}"?`)) {
+      return
     }
 
-    setPreferences([...preferences, newPref])
-    setNewKey('')
-    setNewValue('')
-    setNewCategory('general')
-    setIsAddingNew(false)
-    setFormSuccess('Preference added successfully!')
-    setTimeout(() => setFormSuccess(null), 3000)
+    try {
+      await deletePreference({
+        variables: { userPreferenceId: preferenceId },
+        refetchQueries: [{ query: UserPreferencesDocument }],
+      })
+      showSuccess('Preference deleted!')
+    } catch (error) {
+      showError((error as Error)?.message ?? 'Failed to delete preference')
+    }
   }
 
-  const handleDeletePreference = (id: string) => {
-    setPreferences(preferences.filter((p) => p.id !== id))
-    setFormSuccess('Preference deleted!')
-    setTimeout(() => setFormSuccess(null), 3000)
+  const handleUpdatePreference = async (preferenceId: string, newValue: string) => {
+    try {
+      await updatePreference({
+        variables: {
+          userPreferenceId: preferenceId,
+          input: { value: newValue },
+        },
+        refetchQueries: [{ query: UserPreferencesDocument }],
+      })
+      showSuccess('Preference updated!')
+    } catch (error) {
+      showError((error as Error)?.message ?? 'Failed to update preference')
+    }
   }
 
-  const handleUpdatePreference = (id: string, newValue: string) => {
-    setPreferences(
-      preferences.map((p) => (p.id === id ? { ...p, value: newValue } : p))
-    )
-    setFormSuccess('Preference updated!')
-    setTimeout(() => setFormSuccess(null), 3000)
+  const handleExportPreferences = () => {
+    const exportData = preferences.map(p => ({
+      key: p.key,
+      value: p.value,
+    }))
+    const dataStr = JSON.stringify(exportData, null, 2)
+    const dataBlob = new Blob([dataStr], { type: 'application/json' })
+    const url = URL.createObjectURL(dataBlob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = `preferences-${new Date().toISOString().split('T')[0]}.json`
+    link.click()
+    showSuccess('Preferences exported!')
   }
 
+  const handleImportPreferences = () => {
+    const input = document.createElement('input')
+    input.type = 'file'
+    input.accept = 'application/json'
+    input.onchange = async (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0]
+      if (!file) return
+
+      try {
+        const text = await file.text()
+        const imported = JSON.parse(text)
+
+        if (!Array.isArray(imported)) {
+          showError('Invalid import file format')
+          return
+        }
+
+        // Import each preference
+        for (const item of imported) {
+          if (!item.key || !item.value) continue
+
+          try {
+            await createPreference({
+              variables: {
+                input: {
+                  key: item.key,
+                  value: item.value,
+                },
+              },
+            })
+          } catch (error) {
+            // Preference might already exist, try updating
+            const existing = preferences.find(p => p.key === item.key)
+            if (existing) {
+              await updatePreference({
+                variables: {
+                  userPreferenceId: existing.id,
+                  input: { value: item.value },
+                },
+              })
+            }
+          }
+        }
+
+        refetchPreferences()
+        showSuccess(`Imported ${imported.length} preferences!`)
+      } catch (error) {
+        showError('Failed to import preferences: ' + (error as Error).message)
+      }
+    }
+    input.click()
+  }
+
+  const handleResetPreferences = async () => {
+    if (!confirm('Are you sure you want to delete all preferences? This action cannot be undone.')) {
+      return
+    }
+
+    try {
+      // Delete all preferences
+      for (const pref of preferences) {
+        await deletePreference({
+          variables: { userPreferenceId: pref.id },
+        })
+      }
+
+      refetchPreferences()
+      showSuccess('All preferences deleted!')
+    } catch (error) {
+      showError('Failed to reset preferences')
+    }
+  }
+
+  // Group preferences by a simple categorization
+  const categorizeKey = (key: string): string => {
+    if (key.startsWith('ui_') || ['theme', 'language', 'timezone', 'dateFormat'].includes(key)) {
+      return 'UI'
+    }
+    if (key.startsWith('workflow_') || ['defaultView', 'itemsPerPage'].includes(key)) {
+      return 'Workflow'
+    }
+    if (key.startsWith('integration_')) {
+      return 'Integrations'
+    }
+    return 'General'
+  }
+
+  const categories = ['UI', 'Workflow', 'Integrations', 'General']
   const groupedPreferences = categories.map((category) => ({
     category,
-    items: preferences.filter((p) => p.category === category),
+    items: preferences.filter((p) => categorizeKey(p.key) === category),
   }))
 
   return (
@@ -113,6 +256,12 @@ export default function PreferencesSettings() {
         </div>
       )}
 
+      {formError && (
+        <div className="rounded-lg text-sm text-rose-300 bg-rose-500/10 border border-rose-500/20 p-3">
+          {formError}
+        </div>
+      )}
+
       {/* Add New Preference Form */}
       {isAddingNew && (
         <div className="rounded-xl border border-zinc-200 dark:border-white/10 bg-white dark:bg-white/5 p-6 backdrop-blur">
@@ -129,9 +278,12 @@ export default function PreferencesSettings() {
                 type="text"
                 value={newKey}
                 onChange={(e) => setNewKey(e.target.value)}
-                placeholder="e.g., sidebarCollapsed"
+                placeholder="e.g., ui_sidebarCollapsed or theme"
                 className="w-full px-4 py-2 rounded-lg border border-zinc-300 dark:border-white/10 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
               />
+              <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
+                Tip: Use prefixes like ui_, workflow_, or integration_ to organize preferences
+              </p>
             </div>
 
             <div>
@@ -142,26 +294,9 @@ export default function PreferencesSettings() {
                 type="text"
                 value={newValue}
                 onChange={(e) => setNewValue(e.target.value)}
-                placeholder="e.g., true"
+                placeholder="e.g., true, dark, or 25"
                 className="w-full px-4 py-2 rounded-lg border border-zinc-300 dark:border-white/10 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
               />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
-                Category
-              </label>
-              <select
-                value={newCategory}
-                onChange={(e) => setNewCategory(e.target.value)}
-                className="w-full px-4 py-2 rounded-lg border border-zinc-300 dark:border-white/10 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-              >
-                {categories.map((cat) => (
-                  <option key={cat} value={cat}>
-                    {cat}
-                  </option>
-                ))}
-              </select>
             </div>
 
             <div className="flex gap-2">
@@ -176,7 +311,6 @@ export default function PreferencesSettings() {
                   setIsAddingNew(false)
                   setNewKey('')
                   setNewValue('')
-                  setNewCategory('general')
                 }}
                 className="px-4 py-2 bg-zinc-200 dark:bg-zinc-700 hover:bg-zinc-300 dark:hover:bg-zinc-600 text-zinc-900 dark:text-white rounded-lg text-sm font-medium transition-colors"
               >
@@ -213,6 +347,15 @@ export default function PreferencesSettings() {
           )
       )}
 
+      {preferences.length === 0 && !isAddingNew && (
+        <div className="rounded-xl border border-zinc-200 dark:border-white/10 bg-white dark:bg-white/5 p-8 backdrop-blur text-center">
+          <Cog6ToothIcon className="h-12 w-12 text-zinc-400 dark:text-zinc-600 mx-auto mb-3" />
+          <p className="text-zinc-600 dark:text-zinc-400">
+            No preferences set yet. Click "Add Preference" to get started.
+          </p>
+        </div>
+      )}
+
       {/* Import/Export */}
       <div className="rounded-xl border border-zinc-200 dark:border-white/10 bg-white dark:bg-white/5 p-6 backdrop-blur">
         <h3 className="text-lg font-semibold text-zinc-900 dark:text-white mb-4">
@@ -225,23 +368,14 @@ export default function PreferencesSettings() {
 
         <div className="flex gap-2">
           <button
-            onClick={() => {
-              const dataStr = JSON.stringify(preferences, null, 2)
-              const dataBlob = new Blob([dataStr], { type: 'application/json' })
-              const url = URL.createObjectURL(dataBlob)
-              const link = document.createElement('a')
-              link.href = url
-              link.download = 'preferences.json'
-              link.click()
-            }}
-            className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg text-sm font-medium transition-colors"
+            onClick={handleExportPreferences}
+            disabled={preferences.length === 0}
+            className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 disabled:bg-emerald-300 disabled:cursor-not-allowed text-white rounded-lg text-sm font-medium transition-colors"
           >
             Export Preferences
           </button>
           <button
-            onClick={() => {
-              alert('Import functionality will allow you to upload a JSON file with preferences')
-            }}
+            onClick={handleImportPreferences}
             className="px-4 py-2 bg-zinc-200 dark:bg-zinc-700 hover:bg-zinc-300 dark:hover:bg-zinc-600 text-zinc-900 dark:text-white rounded-lg text-sm font-medium transition-colors"
           >
             Import Preferences
@@ -250,34 +384,34 @@ export default function PreferencesSettings() {
       </div>
 
       {/* Reset to Defaults */}
-      <div className="rounded-xl border border-rose-200 dark:border-rose-500/20 bg-white dark:bg-white/5 p-6 backdrop-blur">
-        <h3 className="text-lg font-semibold text-rose-600 dark:text-rose-400 mb-2">
-          Reset to Defaults
-        </h3>
-        <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-4">
-          Reset all preferences to their default values. This action cannot be undone.
-        </p>
-        <button
-          onClick={() => {
-            if (confirm('Are you sure you want to reset all preferences to defaults?')) {
-              setPreferences([])
-              setFormSuccess('All preferences reset to defaults!')
-              setTimeout(() => setFormSuccess(null), 3000)
-            }
-          }}
-          className="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-sm font-medium transition-colors"
-        >
-          Reset All Preferences
-        </button>
-      </div>
+      {preferences.length > 0 && (
+        <div className="rounded-xl border border-rose-200 dark:border-rose-500/20 bg-white dark:bg-white/5 p-6 backdrop-blur">
+          <h3 className="text-lg font-semibold text-rose-600 dark:text-rose-400 mb-2">
+            Delete All Preferences
+          </h3>
+          <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-4">
+            Delete all your preferences. This action cannot be undone.
+          </p>
+          <button
+            onClick={handleResetPreferences}
+            className="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-sm font-medium transition-colors"
+          >
+            Delete All Preferences
+          </button>
+        </div>
+      )}
     </div>
   )
 }
 
 interface PreferenceItemProps {
-  preference: UserPreference
+  preference: {
+    id: string
+    key: string
+    value: string
+  }
   onUpdate: (id: string, value: string) => void
-  onDelete: (id: string) => void
+  onDelete: (id: string, key: string) => void
 }
 
 function PreferenceItem({ preference, onUpdate, onDelete }: PreferenceItemProps) {
@@ -287,6 +421,11 @@ function PreferenceItem({ preference, onUpdate, onDelete }: PreferenceItemProps)
   const handleSave = () => {
     onUpdate(preference.id, editValue)
     setIsEditing(false)
+  }
+
+  const handleCancel = () => {
+    setIsEditing(false)
+    setEditValue(preference.value)
   }
 
   return (
@@ -304,10 +443,7 @@ function PreferenceItem({ preference, onUpdate, onDelete }: PreferenceItemProps)
             onChange={(e) => setEditValue(e.target.value)}
             onKeyDown={(e) => {
               if (e.key === 'Enter') handleSave()
-              if (e.key === 'Escape') {
-                setIsEditing(false)
-                setEditValue(preference.value)
-              }
+              if (e.key === 'Escape') handleCancel()
             }}
             className="mt-2 w-full px-3 py-1.5 rounded border border-zinc-300 dark:border-white/10 bg-white dark:bg-zinc-800 text-sm text-zinc-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
             autoFocus
@@ -324,17 +460,14 @@ function PreferenceItem({ preference, onUpdate, onDelete }: PreferenceItemProps)
           <>
             <button
               onClick={handleSave}
-              className="p-1.5 rounded text-emerald-600 dark:text-emerald-400 hover:bg-emerald-100 dark:hover:bg-emerald-500/10"
+              className="px-2 py-1 rounded text-sm text-emerald-600 dark:text-emerald-400 hover:bg-emerald-100 dark:hover:bg-emerald-500/10"
               title="Save"
             >
               Save
             </button>
             <button
-              onClick={() => {
-                setIsEditing(false)
-                setEditValue(preference.value)
-              }}
-              className="p-1.5 rounded text-zinc-600 dark:text-zinc-400 hover:bg-zinc-200 dark:hover:bg-white/10"
+              onClick={handleCancel}
+              className="px-2 py-1 rounded text-sm text-zinc-600 dark:text-zinc-400 hover:bg-zinc-200 dark:hover:bg-white/10"
               title="Cancel"
             >
               Cancel
@@ -350,11 +483,7 @@ function PreferenceItem({ preference, onUpdate, onDelete }: PreferenceItemProps)
               <PencilIcon className="h-4 w-4" />
             </button>
             <button
-              onClick={() => {
-                if (confirm(`Delete preference "${preference.key}"?`)) {
-                  onDelete(preference.id)
-                }
-              }}
+              onClick={() => onDelete(preference.id, preference.key)}
               className="p-1.5 rounded text-rose-600 dark:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-500/10"
               title="Delete"
             >

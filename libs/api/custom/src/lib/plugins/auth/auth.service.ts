@@ -311,8 +311,11 @@ export class AuthService {
           },
         })
 
-        // Log account locked event
-        await this.securityEvents.logAccountLocked(user.id, 'Too many failed login attempts')
+        // Log account locked event with IP context
+        await this.securityEvents.logAccountLocked(user.id, 'Too many failed login attempts', {
+          ipAddress: sessionInfo?.ipAddress,
+          userAgent: sessionInfo?.userAgent,
+        })
 
         throw new BadRequestException(
           'Too many failed login attempts. Account locked for 15 minutes.'
@@ -322,13 +325,40 @@ export class AuthService {
       throw new BadRequestException(genericError)
     }
 
-    // Successful login - reset counters and update timestamps
+    // Successful password validation - reset counters
     await this.data.user.update({
       where: { id: user.id },
       data: {
         failedLoginCount: 0,
-        lastSuccessfulLogin: new Date(),
         lockedUntil: null, // Clear any existing lock
+      },
+    })
+
+    // Check if 2FA is enabled
+    if (user.twoFactorEnabled) {
+      // Generate temporary token for 2FA verification (short-lived, 5 minutes)
+      const tempPayload = {
+        userId: user.id,
+        temp2FA: true,
+        remember: input.remember || false,
+      }
+      const tempToken = this.jwtService.sign(tempPayload, { expiresIn: '5m' })
+
+      Logger.log(`2FA required for login: ${email}`)
+
+      return {
+        requires2FA: true,
+        tempToken,
+        user: null, // Don't return user data until 2FA is verified
+        token: null,
+      }
+    }
+
+    // No 2FA required - complete login
+    await this.data.user.update({
+      where: { id: user.id },
+      data: {
+        lastSuccessfulLogin: new Date(),
       },
     })
 
@@ -413,7 +443,7 @@ export class AuthService {
     return updatedUser
   }
 
-  async changeEmail(userId: string, newEmail: string): Promise<boolean> {
+  async changeEmail(userId: string, newEmail: string, sessionInfo?: SessionInfo): Promise<boolean> {
     const cleanEmail = newEmail?.trim()?.toLowerCase()
 
     // Check if email is already in use
@@ -462,8 +492,11 @@ export class AuthService {
       data: { emailValidated: false }
     })
 
-    // Log security event
-    await this.securityEvents.logEmailChanged(userId, primaryEmail.email, cleanEmail)
+    // Log security event with IP context
+    await this.securityEvents.logEmailChanged(userId, primaryEmail.email, cleanEmail, {
+      ipAddress: sessionInfo?.ipAddress,
+      userAgent: sessionInfo?.userAgent,
+    })
 
     // Send verification email to new address
     const appName = this.config.get('app.name')
@@ -524,7 +557,7 @@ export class AuthService {
     return updatedUser
   }
 
-  async changePassword(userId: string, input: ChangePasswordInput): Promise<boolean> {
+  async changePassword(userId: string, input: ChangePasswordInput, sessionInfo?: SessionInfo): Promise<boolean> {
     const user = await this.data.user.findUnique({
       where: { id: userId }
     })
@@ -550,8 +583,11 @@ export class AuthService {
       data: { password: hashedNewPassword }
     })
 
-    // Log security event
-    await this.securityEvents.logPasswordChanged(userId)
+    // Log security event with IP context
+    await this.securityEvents.logPasswordChanged(userId, {
+      ipAddress: sessionInfo?.ipAddress,
+      userAgent: sessionInfo?.userAgent,
+    })
 
     // Send password changed notification
     const appName = this.config.get('app.name')
@@ -642,7 +678,7 @@ export class AuthService {
     return this.signUser(admin)
   }
 
-  async forgotPassword(email: string): Promise<boolean> {
+  async forgotPassword(email: string, sessionInfo?: SessionInfo): Promise<boolean> {
     const user = await this.findUserByEmail(email)
 
     if (!user) {
@@ -658,8 +694,11 @@ export class AuthService {
       data: { passwordResetToken, passwordResetExpires },
     })
 
-    // Log security event
-    await this.securityEvents.logPasswordResetRequested(user.id)
+    // Log security event with IP context
+    await this.securityEvents.logPasswordResetRequested(user.id, {
+      ipAddress: sessionInfo?.ipAddress,
+      userAgent: sessionInfo?.userAgent,
+    })
 
     const appName = this.config.get('app.name')
     const siteUrl = this.config.get('siteUrl')
@@ -677,7 +716,7 @@ export class AuthService {
     return true
   }
 
-  async resetPassword(password: string, token: string): Promise<User> {
+  async resetPassword(password: string, token: string, sessionInfo?: SessionInfo): Promise<User> {
     const user = await this.data.user.findFirst({ where: { passwordResetToken: token } })
 
     if (!user) {
@@ -704,8 +743,11 @@ export class AuthService {
       },
     })
 
-    // Log security event
-    await this.securityEvents.logPasswordChanged(user.id)
+    // Log security event with IP context
+    await this.securityEvents.logPasswordChanged(user.id, {
+      ipAddress: sessionInfo?.ipAddress,
+      userAgent: sessionInfo?.userAgent,
+    })
 
     // Send password changed notification
     const appName = this.config.get('app.name')
@@ -817,7 +859,7 @@ export class AuthService {
   /**
    * Unlock a locked user account (admin function)
    */
-  async unlockAccount(userId: string): Promise<User> {
+  async unlockAccount(userId: string, sessionInfo?: SessionInfo): Promise<User> {
     const user = await this.data.user.findUnique({ where: { id: userId } })
 
     if (!user) {
@@ -832,8 +874,11 @@ export class AuthService {
       },
     })
 
-    // Log security event
-    await this.securityEvents.logAccountUnlocked(userId)
+    // Log security event with IP context
+    await this.securityEvents.logAccountUnlocked(userId, {
+      ipAddress: sessionInfo?.ipAddress,
+      userAgent: sessionInfo?.userAgent,
+    })
 
     Logger.log(`Account unlocked for user ${userId}`)
 
@@ -887,7 +932,7 @@ export class AuthService {
   /**
    * Verify 2FA code and enable 2FA
    */
-  async enable2FA(userId: string, code: string): Promise<Enable2FAOutput> {
+  async enable2FA(userId: string, code: string, sessionInfo?: SessionInfo): Promise<Enable2FAOutput> {
     const user = await this.data.user.findUnique({
       where: { id: userId },
       include: { emails: true }
@@ -930,8 +975,11 @@ export class AuthService {
       },
     })
 
-    // Log security event
-    await this.securityEvents.log2FAEnabled(userId)
+    // Log security event with IP context
+    await this.securityEvents.log2FAEnabled(userId, {
+      ipAddress: sessionInfo?.ipAddress,
+      userAgent: sessionInfo?.userAgent,
+    })
 
     // Send 2FA enabled notification email
     const primaryEmail = user.emails?.find(e => e.primary)?.email
@@ -962,7 +1010,7 @@ export class AuthService {
   /**
    * Disable 2FA
    */
-  async disable2FA(userId: string, input: Disable2FAInput): Promise<boolean> {
+  async disable2FA(userId: string, input: Disable2FAInput, sessionInfo?: SessionInfo): Promise<boolean> {
     const user = await this.data.user.findUnique({ where: { id: userId } })
 
     if (!user) {
@@ -989,8 +1037,11 @@ export class AuthService {
       },
     })
 
-    // Log security event
-    await this.securityEvents.log2FADisabled(userId)
+    // Log security event with IP context
+    await this.securityEvents.log2FADisabled(userId, {
+      ipAddress: sessionInfo?.ipAddress,
+      userAgent: sessionInfo?.userAgent,
+    })
 
     Logger.log(`2FA disabled for user ${userId}`)
 
@@ -1046,6 +1097,64 @@ export class AuthService {
   }
 
   /**
+   * Complete 2FA login - verify code and return full session token
+   */
+  async complete2FALogin(tempToken: string, code: string, sessionInfo?: SessionInfo): Promise<UserToken> {
+    // Decode temp token
+    const decoded = this.jwtService.decode(tempToken) as any
+
+    if (!decoded?.temp2FA || !decoded?.userId) {
+      throw new BadRequestException('Invalid or expired 2FA token')
+    }
+
+    const userId = decoded.userId
+    const rememberMe = decoded.remember || false
+
+    // Verify the 2FA code
+    const isValid = await this.verify2FALogin(userId, code)
+
+    if (!isValid) {
+      throw new BadRequestException('Invalid 2FA code. Please try again.')
+    }
+
+    // Get full user data
+    const user = await this.data.user.findUnique({
+      where: { id: userId },
+      include: {
+        emails: true,
+        phoneNumbers: true,
+      },
+    })
+
+    if (!user) {
+      throw new NotFoundException('User not found')
+    }
+
+    // Update login success
+    await this.data.user.update({
+      where: { id: userId },
+      data: {
+        lastSuccessfulLogin: new Date(),
+      },
+    })
+
+    // Log successful login
+    const primaryEmail = user.emails?.find(e => e.primary)?.email || 'unknown'
+    await this.data.loginAttempt.create({
+      data: {
+        userId: user.id,
+        email: primaryEmail,
+        success: true,
+      },
+    })
+
+    Logger.log(`2FA login completed for user ${userId}`)
+
+    // Return full session token
+    return this.signUser(user, rememberMe, undefined, sessionInfo)
+  }
+
+  /**
    * Get all active sessions for current user
    */
   async getUserSessions(userId: string, currentSessionId?: string) {
@@ -1086,5 +1195,280 @@ export class AuthService {
     const count = await this.sessionService.invalidateAllUserSessions(userId, exceptSessionId)
     Logger.log(`User ${userId} invalidated ${count} sessions` + (exceptSessionId ? ` (kept current session)` : ''))
     return count
+  }
+
+  /**
+   * Export all user data (GDPR compliance)
+   */
+  async exportUserData(userId: string) {
+    const user = await this.data.user.findUnique({
+      where: { id: userId },
+      include: {
+        emails: true,
+        phoneNumbers: true,
+        addresses: true,
+        links: true,
+        images: true,
+        organizations: {
+          include: {
+            organization: true,
+            role: {
+              include: {
+                permissions: true,
+              },
+            },
+          },
+        },
+        UserPreference: true,
+        activeSessions: true,
+        SecurityEvent: {
+          orderBy: { createdAt: 'desc' },
+          take: 100, // Last 100 security events
+        },
+        loginAttempts: {
+          orderBy: { createdAt: 'desc' },
+          take: 50, // Last 50 login attempts
+        },
+      },
+    })
+
+    if (!user) {
+      throw new NotFoundException('User not found')
+    }
+
+    // Remove sensitive data
+    const {
+      password,
+      passwordResetToken,
+      passwordResetExpires,
+      validateEmailToken,
+      validateEmailTokenExpires,
+      twoFactorSecret,
+      twoFactorRecoveryCodes,
+      ...safeUserData
+    } = user
+
+    const exportData = {
+      personalInformation: {
+        id: safeUserData.id,
+        firstName: safeUserData.firstName,
+        lastName: safeUserData.lastName,
+        displayName: safeUserData.displayName,
+        bio: safeUserData.bio,
+        isSuperAdmin: safeUserData.isSuperAdmin,
+        createdAt: safeUserData.createdAt,
+        updatedAt: safeUserData.updatedAt,
+      },
+      emails: safeUserData.emails.map(e => ({
+        email: e.email,
+        emailType: e.emailType,
+        primary: e.primary,
+        verified: e.verified,
+        createdAt: e.createdAt,
+      })),
+      phoneNumbers: safeUserData.phoneNumbers.map(p => ({
+        phone: p.phone,
+        phoneType: p.phoneType,
+        primary: p.primary,
+        createdAt: p.createdAt,
+      })),
+      addresses: safeUserData.addresses.map(a => ({
+        address1: a.address1,
+        address2: a.address2,
+        city: a.city,
+        region: a.region,
+        postalCode: a.postalCode,
+        addressType: a.addressType,
+        isPrimary: a.isPrimary,
+        createdAt: a.createdAt,
+      })),
+      links: safeUserData.links,
+      preferences: safeUserData.UserPreference,
+      organizations: safeUserData.organizations.map(om => ({
+        organizationName: om.organization.name,
+        roleName: om.role.name,
+        permissions: om.role.permissions.map(p => `${p.subject}:${p.action}`),
+        joinedAt: om.createdAt,
+      })),
+      securityInformation: {
+        emailValidated: safeUserData.emailValidated,
+        twoFactorEnabled: safeUserData.twoFactorEnabled,
+        twoFactorMethod: safeUserData.twoFactorMethod,
+        lastSuccessfulLogin: safeUserData.lastSuccessfulLogin,
+        lastFailedLogin: safeUserData.lastFailedLogin,
+        isActive: safeUserData.isActive,
+        deactivatedAt: safeUserData.deactivatedAt,
+        termsAcceptedAt: safeUserData.termsAcceptedAt,
+        privacyPolicyAcceptedAt: safeUserData.privacyPolicyAcceptedAt,
+      },
+      activeSessions: safeUserData.activeSessions.map(s => ({
+        deviceInfo: s.deviceInfo,
+        ipAddress: s.ipAddress,
+        createdAt: s.createdAt,
+        lastActiveAt: s.lastActiveAt,
+        twoFactorVerified: s.twoFactorVerified,
+      })),
+      securityEvents: safeUserData.SecurityEvent.map(e => ({
+        eventType: e.eventType,
+        ipAddress: e.ipAddress,
+        userAgent: e.userAgent,
+        metadata: e.metadata,
+        createdAt: e.createdAt,
+      })),
+      loginHistory: safeUserData.loginAttempts.map(l => ({
+        email: l.email,
+        success: l.success,
+        reason: l.reason,
+        ipAddress: l.ipAddress,
+        userAgent: l.userAgent,
+        location: l.location,
+        createdAt: l.createdAt,
+      })),
+    }
+
+    Logger.log(`User data exported for user ${userId}`)
+
+    return {
+      userData: exportData,
+      exportedAt: new Date(),
+      userId,
+    }
+  }
+
+  /**
+   * Delete user account (soft delete)
+   */
+  async deleteUserAccount(userId: string): Promise<boolean> {
+    const user = await this.data.user.findUnique({
+      where: { id: userId },
+      include: {
+        organizations: {
+          include: {
+            role: true,
+            organization: {
+              include: {
+                members: true,
+              },
+            },
+          },
+        },
+      },
+    })
+
+    if (!user) {
+      throw new NotFoundException('User not found')
+    }
+
+    // Check if user is the sole owner of any organizations
+    const ownedOrganizations = user.organizations.filter(
+      om => om.role.name === 'Owner' && om.organization.members.length === 1
+    )
+
+    if (ownedOrganizations.length > 0) {
+      throw new BadRequestException(
+        'You are the sole owner of one or more organizations. Please transfer ownership or delete the organizations before deleting your account.'
+      )
+    }
+
+    // Soft delete: deactivate account instead of hard delete
+    await this.data.user.update({
+      where: { id: userId },
+      data: {
+        isActive: false,
+        deactivatedAt: new Date(),
+        // Invalidate all sessions
+        activeSessions: {
+          updateMany: {
+            where: { userId },
+            data: { isValid: false },
+          },
+        },
+      },
+    })
+
+    Logger.warn(`User account deleted (soft delete): ${userId}`)
+
+    return true
+  }
+
+  /**
+   * Transfer organization ownership to another member
+   */
+  async transferOrganizationOwnership(
+    currentOwnerId: string,
+    organizationId: string,
+    newOwnerUserId: string
+  ): Promise<boolean> {
+    // Verify current owner
+    const currentOwnerMembership = await this.data.organizationMember.findFirst({
+      where: {
+        userId: currentOwnerId,
+        organizationId,
+        role: {
+          name: 'Owner',
+        },
+      },
+      include: {
+        role: true,
+      },
+    })
+
+    if (!currentOwnerMembership) {
+      throw new BadRequestException('You are not the owner of this organization')
+    }
+
+    // Verify new owner is a member
+    const newOwnerMembership = await this.data.organizationMember.findFirst({
+      where: {
+        userId: newOwnerUserId,
+        organizationId,
+      },
+      include: {
+        role: true,
+      },
+    })
+
+    if (!newOwnerMembership) {
+      throw new BadRequestException('New owner must be a member of the organization')
+    }
+
+    // Get Owner and Admin roles
+    const ownerRole = await this.data.role.findFirst({
+      where: {
+        name: 'Owner',
+        organizationId,
+      },
+    })
+
+    const adminRole = await this.data.role.findFirst({
+      where: {
+        name: 'Admin',
+        organizationId,
+      },
+    })
+
+    if (!ownerRole || !adminRole) {
+      throw new Error('Organization roles not properly configured')
+    }
+
+    // Transfer ownership in a transaction
+    await this.data.$transaction([
+      // Demote current owner to admin
+      this.data.organizationMember.update({
+        where: { id: currentOwnerMembership.id },
+        data: { roleId: adminRole.id },
+      }),
+      // Promote new owner
+      this.data.organizationMember.update({
+        where: { id: newOwnerMembership.id },
+        data: { roleId: ownerRole.id },
+      }),
+    ])
+
+    Logger.log(
+      `Organization ${organizationId} ownership transferred from ${currentOwnerId} to ${newOwnerUserId}`
+    )
+
+    return true
   }
 }

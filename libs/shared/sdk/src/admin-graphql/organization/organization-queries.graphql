@@ -1,31 +1,5 @@
-query AdminMyOrganizations {
+query AdminOrganizations {
   myOrganizations {
     ...AdminOrganizationList
-  }
-}
-
-query AdminOrganizationRoles($organizationId: String!) {
-  organizationRoles(organizationId: $organizationId) {
-    id
-    name
-    description
-    permissions {
-      id
-      action
-      subject
-    }
-  }
-}
-
-query AdminOrganizationInvitations($organizationId: String!) {
-  organizationInvitations(organizationId: $organizationId) {
-    id
-    email
-    status
-    expiresAt
-    role {
-      id
-      name
-    }
   }
 }
