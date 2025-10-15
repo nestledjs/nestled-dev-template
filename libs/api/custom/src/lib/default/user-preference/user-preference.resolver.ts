@@ -26,10 +26,12 @@ export class UserPreferenceResolver extends GeneratedUserPreferenceResolver {
     @Args('input') input: SecureCreateUserPreferenceInput,
     @CtxUser() user: User,
   ) {
-    return this['generatedService'].createUserPreference(info, {
-      ...input,
+    const fullInput: CreateUserPreferenceInput = {
+      key: input.key,
+      value: input.value,
       userId: user.id,
-    } as CreateUserPreferenceInput)
+    }
+    return this['generatedService'].createUserPreference(info, fullInput)
   }
 
   // Replace update to ensure user can only update their own preferences
