@@ -1,28 +1,25 @@
-import { ApiCrudDataAccessService } from '@nestled-template/api/generated-crud/data-access'
-import { GeneratedUserPreferenceResolver } from '@nestled-template/api/generated-crud/feature'
 import { Injectable, NotFoundException } from '@nestjs/common'
-import { Args, Info, Mutation, Query, Resolver } from '@nestjs/graphql'
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
 import { UserPreference, User } from '@nestled-template/api/core/models'
 import { CtxUser, GqlAuthGuard } from '@nestled-template/api/utils'
-import type { GraphQLResolveInfo } from 'graphql'
 import { SecureCreateUserPreferenceInput, SecureUpdateUserPreferenceInput } from './dto'
 import { PrismaClient } from '@nestled-template/api/prisma'
+import { ApiCrudDataAccessService } from '@nestled-template/api/generated-crud/data-access'
 
 @Resolver(() => UserPreference)
 @Injectable()
-export class UserPreferenceResolver extends GeneratedUserPreferenceResolver {
+export class UserPreferenceResolver {
   private readonly prisma: PrismaClient
 
   constructor(dataService: ApiCrudDataAccessService) {
-    super(dataService)
     this.prisma = dataService['data'] as PrismaClient
   }
 
-  // Override: Create with userId from context (no client-provided userId)
-  @Mutation(() => UserPreference, { nullable: true, name: 'createUserPreference' })
+  // Create with userId from context (no client-provided userId)
+  @Mutation(() => UserPreference, { nullable: true })
   @UseGuards(GqlAuthGuard)
-  async createUserPreferenceSecure(
+  async createUserPreference(
     @Args('input') input: SecureCreateUserPreferenceInput,
     @CtxUser() user: User,
   ): Promise<UserPreference> {
@@ -32,6 +29,10 @@ export class UserPreferenceResolver extends GeneratedUserPreferenceResolver {
       userId: user?.id,
       userExists: !!user,
     })
+
+    if (!user?.id) {
+      throw new Error('User not found in context')
+    }
 
     return this.prisma.userPreference.create({
       data: {
@@ -44,10 +45,10 @@ export class UserPreferenceResolver extends GeneratedUserPreferenceResolver {
     })
   }
 
-  // Override: Update - ensure user can only update their own preferences
-  @Mutation(() => UserPreference, { nullable: true, name: 'updateUserPreference' })
+  // Update - ensure user can only update their own preferences
+  @Mutation(() => UserPreference, { nullable: true })
   @UseGuards(GqlAuthGuard)
-  async updateUserPreferenceSecure(
+  async updateUserPreference(
     @Args('userPreferenceId') userPreferenceId: string,
     @Args('input') input: SecureUpdateUserPreferenceInput,
     @CtxUser() user: User,
@@ -74,10 +75,10 @@ export class UserPreferenceResolver extends GeneratedUserPreferenceResolver {
     })
   }
 
-  // Override: Delete - ensure user can only delete their own preferences
-  @Mutation(() => UserPreference, { nullable: true, name: 'deleteUserPreference' })
+  // Delete - ensure user can only delete their own preferences
+  @Mutation(() => UserPreference, { nullable: true })
   @UseGuards(GqlAuthGuard)
-  async deleteUserPreferenceSecure(
+  async deleteUserPreference(
     @Args('userPreferenceId') userPreferenceId: string,
     @CtxUser() user: User,
   ): Promise<UserPreference> {
@@ -99,10 +100,10 @@ export class UserPreferenceResolver extends GeneratedUserPreferenceResolver {
     })
   }
 
-  // Override: Read one - ensure user can only read their own preferences
-  @Query(() => UserPreference, { nullable: true, name: 'userPreference' })
+  // Read one - ensure user can only read their own preferences
+  @Query(() => UserPreference, { nullable: true })
   @UseGuards(GqlAuthGuard)
-  async userPreferenceSecure(
+  async userPreference(
     @Args('userPreferenceId') userPreferenceId: string,
     @CtxUser() user: User,
   ): Promise<UserPreference | null> {
@@ -118,10 +119,10 @@ export class UserPreferenceResolver extends GeneratedUserPreferenceResolver {
     return preference
   }
 
-  // Override: Read many - automatically filter to user's own preferences
-  @Query(() => [UserPreference], { nullable: true, name: 'userPreferences' })
+  // Read many - automatically filter to user's own preferences
+  @Query(() => [UserPreference], { nullable: true })
   @UseGuards(GqlAuthGuard)
-  async userPreferencesSecure(@CtxUser() user: User): Promise<UserPreference[]> {
+  async userPreferences(@CtxUser() user: User): Promise<UserPreference[]> {
     return this.prisma.userPreference.findMany({
       where: { userId: user.id },
       orderBy: { key: 'asc' },
