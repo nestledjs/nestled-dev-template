@@ -8,4 +8,10 @@ export class UserToken {
 
   @Field(() => User, { nullable: true })
   user?: User
+
+  @Field({ description: 'Indicates if 2FA verification is required', nullable: true })
+  requires2FA?: boolean
+
+  @Field({ description: 'Temporary token for 2FA verification', nullable: true })
+  tempToken?: string
 }

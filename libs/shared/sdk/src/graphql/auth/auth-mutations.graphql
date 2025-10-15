@@ -61,3 +61,11 @@ mutation LinkOAuthAccount($input: LinkOAuthInput!) {
 mutation UnlinkOAuthAccount($input: UnlinkOAuthInput!) {
   unlinkOAuthAccount(input: $input)
 }
+
+mutation InvalidateSession($sessionId: String!) {
+  invalidateSession(sessionId: $sessionId)
+}
+
+mutation InvalidateAllSessions {
+  invalidateAllSessions
+}

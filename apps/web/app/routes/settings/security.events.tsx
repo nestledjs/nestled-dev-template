@@ -1,6 +1,6 @@
 import { Link, useLoaderData } from 'react-router'
 import { apolloLoader } from '@nestled-template/shared/apollo'
-import { SecurityEventsDocument, SecurityEventsQuery } from '@nestled-template/shared/sdk'
+import { MySecurityEventsDocument, MySecurityEventsQuery } from '@nestled-template/shared/sdk'
 import { QueryRef, useReadQuery } from '@apollo/client'
 import { ShieldCheckIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
 import {
@@ -13,7 +13,7 @@ import {
 } from '~/components/ui/table'
 
 export const loader = apolloLoader()(({ preloadQuery }) => {
-  const securityEventsQueryRef = preloadQuery<SecurityEventsQuery>(SecurityEventsDocument, {
+  const securityEventsQueryRef = preloadQuery<MySecurityEventsQuery>(MySecurityEventsDocument, {
     variables: {
       input: {
         take: 50,
@@ -26,9 +26,9 @@ export const loader = apolloLoader()(({ preloadQuery }) => {
 })
 
 export default function SecurityEventsPage() {
-  const loaderData = useLoaderData() as { securityEventsQueryRef: QueryRef<SecurityEventsQuery> }
+  const loaderData = useLoaderData() as { securityEventsQueryRef: QueryRef<MySecurityEventsQuery> }
   const { data: securityEventsData } = useReadQuery(loaderData.securityEventsQueryRef)
-  const securityEvents = securityEventsData?.securityEvents || []
+  const securityEvents = securityEventsData?.mySecurityEvents || []
 
   return (
     <div className="space-y-6">
