@@ -1984,10 +1984,6 @@ export type QueryUserPreferenceArgs = {
   userPreferenceId: Scalars['String']['input']
 }
 
-export type QueryUserPreferencesArgs = {
-  input?: InputMaybe<ListUserPreferenceInput>
-}
-
 export type QueryUserPreferencesCountArgs = {
   input?: InputMaybe<ListUserPreferenceInput>
 }
@@ -5622,9 +5618,7 @@ export type AdminUserPreferenceQuery = {
   } | null
 }
 
-export type AdminUserPreferencesQueryVariables = Exact<{
-  input?: InputMaybe<ListUserPreferenceInput>
-}>
+export type AdminUserPreferencesQueryVariables = Exact<{ [key: string]: never }>
 
 export type AdminUserPreferencesQuery = {
   __typename?: 'Query'
@@ -5638,18 +5632,6 @@ export type AdminUserPreferencesQuery = {
     value: string
     user?: { __typename?: 'User'; id: string } | null
   }> | null
-  counters?: {
-    __typename?: 'CorePaging'
-    count?: number | null
-    take?: number | null
-    page?: number | null
-    skip?: number | null
-    total?: number | null
-    filteredTotal?: number | null
-    pages?: number | null
-    hasNext?: boolean | null
-    hasPrev?: boolean | null
-  } | null
 }
 
 export type AdminUserPreferencePaginationQueryVariables = Exact<{
@@ -9467,9 +9449,7 @@ export type UserPreferenceQuery = {
   } | null
 }
 
-export type UserPreferencesQueryVariables = Exact<{
-  input?: InputMaybe<ListUserPreferenceInput>
-}>
+export type UserPreferencesQueryVariables = Exact<{ [key: string]: never }>
 
 export type UserPreferencesQuery = {
   __typename?: 'Query'
@@ -17727,16 +17707,12 @@ export type AdminUserPreferenceQueryResult = Apollo.QueryResult<
   AdminUserPreferenceQueryVariables
 >
 export const AdminUserPreferencesDocument = gql`
-  query AdminUserPreferences($input: ListUserPreferenceInput) {
-    userPreferences(input: $input) {
+  query AdminUserPreferences {
+    userPreferences {
       ...AdminUserPreferenceList
-    }
-    counters: userPreferencesCount(input: $input) {
-      ...CorePagingDetails
     }
   }
   ${AdminUserPreferenceListFragmentDoc}
-  ${CorePagingDetailsFragmentDoc}
 `
 
 /**
@@ -17751,7 +17727,6 @@ export const AdminUserPreferencesDocument = gql`
  * @example
  * const { data, loading, error } = useAdminUserPreferencesQuery({
  *   variables: {
- *      input: // value for 'input'
  *   },
  * });
  */
@@ -27045,8 +27020,8 @@ export type UserPreferenceQueryResult = Apollo.QueryResult<
   UserPreferenceQueryVariables
 >
 export const UserPreferencesDocument = gql`
-  query UserPreferences($input: ListUserPreferenceInput) {
-    userPreferences(input: $input) {
+  query UserPreferences {
+    userPreferences {
       ...UserPreferenceList
     }
   }
@@ -27065,7 +27040,6 @@ export const UserPreferencesDocument = gql`
  * @example
  * const { data, loading, error } = useUserPreferencesQuery({
  *   variables: {
- *      input: // value for 'input'
  *   },
  * });
  */

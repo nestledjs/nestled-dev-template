@@ -4,12 +4,9 @@ query AdminUserPreference($userPreferenceId: String!) {
   }
 }
 
-query AdminUserPreferences($input: ListUserPreferenceInput) {
-  userPreferences(input: $input) {
+query AdminUserPreferences {
+  userPreferences {
     ...AdminUserPreferenceList
-  }
-  counters: userPreferencesCount(input: $input) {
-    ...CorePagingDetails
   }
 }
 
