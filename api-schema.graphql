@@ -1275,7 +1275,7 @@ type Query {
   uptime: Float
   user(userId: String!): User
   userPreference(userPreferenceId: String!): UserPreference
-  userPreferences(input: ListUserPreferenceInput): [UserPreference!]
+  userPreferences: [UserPreference!]
   userPreferencesCount(input: ListUserPreferenceInput): CorePaging
   userSecurityEvents(limit: Float): [SecurityEvent!]!
   userSession(userSessionId: String!): UserSession
