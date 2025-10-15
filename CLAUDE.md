@@ -76,6 +76,27 @@ This configuration:
 - Eliminates security vulnerabilities from client-side userId manipulation
 - Keeps resolver code clean by avoiding custom authorization logic
 
+### Custom Resolvers - NEVER Extend Generated Resolvers
+
+**CRITICAL RULE**: When creating custom resolvers, **NEVER extend the generated resolver class**. Always create a completely separate resolver with a different name.
+
+**WRONG** ❌:
+```typescript
+export class UserPreferenceResolver extends GeneratedUserPreferenceResolver {
+  // This will cause conflicts - generated methods are still registered!
+}
+```
+
+**CORRECT** ✅:
+```typescript
+// Create a separate resolver with custom/user prefix
+export class UserUserPreferenceResolver {
+  // Completely independent resolver
+}
+```
+
+**Why**: Generated resolvers are for default CRUD only. Extending them causes method conflicts where both the parent (generated) and child (custom) methods get registered with GraphQL, and NestJS will choose the wrong one.
+
 ### Skipping CRUD Generation for Custom Resolvers
 
 If you have a model with completely custom resolvers (like Organization), skip CRUD generation entirely using `@skipCrud`:
