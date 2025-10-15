@@ -391,15 +391,6 @@ input CreateUserInput {
   validateEmailTokenExpires: Timestamp
 }
 
-input CreateUserPreferenceInput {
-  createdAt: Timestamp
-  id: String
-  key: String!
-  updatedAt: Timestamp
-  userId: String!
-  value: String!
-}
-
 input CreateUserSessionInput {
   createdAt: Timestamp
   deviceInfo: String
@@ -1042,7 +1033,7 @@ type Mutation {
   createTeamMember(input: CreateTeamMemberInput!): TeamMember
   createUpload(input: CreateUploadInput!): Upload
   createUser(input: CreateUserInput!): User
-  createUserPreference(input: CreateUserPreferenceInput!): UserPreference
+  createUserPreference(input: SecureCreateUserPreferenceInput!): UserPreference
   createUserSession(input: CreateUserSessionInput!): UserSession
   deleteAddress(addressId: String!): Address
   deleteApiToken(apiTokenId: String!): ApiToken
@@ -1111,7 +1102,7 @@ type Mutation {
   updateTeamMember(input: UpdateTeamMemberInput!, teamMemberId: String!): TeamMember
   updateUpload(input: UpdateUploadInput!, uploadId: String!): Upload
   updateUser(input: UpdateUserInput!, userId: String!): User
-  updateUserPreference(input: UpdateUserPreferenceInput!, userPreferenceId: String!): UserPreference
+  updateUserPreference(input: SecureUpdateUserPreferenceInput!, userPreferenceId: String!): UserPreference
   updateUserSession(input: UpdateUserSessionInput!, userSessionId: String!): UserSession
   userCreateOrganization(input: CreateOrganizationInput!): Organization!
   userDeleteOrganization(organizationId: String!): Boolean!
@@ -1334,6 +1325,16 @@ type Role {
 input RotateApiTokenInput {
   keepOldTokenActive: Boolean = false
   tokenId: String!
+}
+
+input SecureCreateUserPreferenceInput {
+  key: String!
+  value: String!
+}
+
+input SecureUpdateUserPreferenceInput {
+  key: String
+  value: String
 }
 
 type SecurityEvent {
@@ -1733,15 +1734,6 @@ input UpdateUserInput {
   updatedAt: Timestamp
   validateEmailToken: String
   validateEmailTokenExpires: Timestamp
-}
-
-input UpdateUserPreferenceInput {
-  createdAt: Timestamp
-  id: String
-  key: String
-  updatedAt: Timestamp
-  userId: String
-  value: String
 }
 
 input UpdateUserSessionInput {

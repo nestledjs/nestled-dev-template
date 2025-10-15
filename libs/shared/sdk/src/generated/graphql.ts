@@ -425,15 +425,6 @@ export type CreateUserInput = {
   validateEmailTokenExpires?: InputMaybe<Scalars['Timestamp']['input']>
 }
 
-export type CreateUserPreferenceInput = {
-  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
-  id?: InputMaybe<Scalars['String']['input']>
-  key: Scalars['String']['input']
-  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
-  userId: Scalars['String']['input']
-  value: Scalars['String']['input']
-}
-
 export type CreateUserSessionInput = {
   createdAt?: InputMaybe<Scalars['Timestamp']['input']>
   deviceInfo?: InputMaybe<Scalars['String']['input']>
@@ -1250,7 +1241,7 @@ export type MutationCreateUserArgs = {
 }
 
 export type MutationCreateUserPreferenceArgs = {
-  input: CreateUserPreferenceInput
+  input: SecureCreateUserPreferenceInput
 }
 
 export type MutationCreateUserSessionArgs = {
@@ -1526,7 +1517,7 @@ export type MutationUpdateUserArgs = {
 }
 
 export type MutationUpdateUserPreferenceArgs = {
-  input: UpdateUserPreferenceInput
+  input: SecureUpdateUserPreferenceInput
   userPreferenceId: Scalars['String']['input']
 }
 
@@ -2068,6 +2059,16 @@ export type RotateApiTokenInput = {
   tokenId: Scalars['String']['input']
 }
 
+export type SecureCreateUserPreferenceInput = {
+  key: Scalars['String']['input']
+  value: Scalars['String']['input']
+}
+
+export type SecureUpdateUserPreferenceInput = {
+  key?: InputMaybe<Scalars['String']['input']>
+  value?: InputMaybe<Scalars['String']['input']>
+}
+
 export type SecurityEvent = {
   __typename?: 'SecurityEvent'
   createdAt: Scalars['Timestamp']['output']
@@ -2466,15 +2467,6 @@ export type UpdateUserInput = {
   updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
   validateEmailToken?: InputMaybe<Scalars['String']['input']>
   validateEmailTokenExpires?: InputMaybe<Scalars['Timestamp']['input']>
-}
-
-export type UpdateUserPreferenceInput = {
-  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
-  id?: InputMaybe<Scalars['String']['input']>
-  key?: InputMaybe<Scalars['String']['input']>
-  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
-  userId?: InputMaybe<Scalars['String']['input']>
-  value?: InputMaybe<Scalars['String']['input']>
 }
 
 export type UpdateUserSessionInput = {
@@ -5567,7 +5559,7 @@ export type AdminUserPreferenceDetailsFragment = {
 }
 
 export type AdminCreateUserPreferenceMutationVariables = Exact<{
-  input: CreateUserPreferenceInput
+  input: SecureCreateUserPreferenceInput
 }>
 
 export type AdminCreateUserPreferenceMutation = {
@@ -5595,7 +5587,7 @@ export type AdminDeleteUserPreferenceMutation = {
 
 export type AdminUpdateUserPreferenceMutationVariables = Exact<{
   userPreferenceId: Scalars['String']['input']
-  input: UpdateUserPreferenceInput
+  input: SecureUpdateUserPreferenceInput
 }>
 
 export type AdminUpdateUserPreferenceMutation = {
@@ -9418,7 +9410,7 @@ export type UserPreferenceDetailsFragment = {
 }
 
 export type CreateUserPreferenceMutationVariables = Exact<{
-  input: CreateUserPreferenceInput
+  input: SecureCreateUserPreferenceInput
 }>
 
 export type CreateUserPreferenceMutation = {
@@ -9444,7 +9436,7 @@ export type DeleteUserPreferenceMutation = {
 
 export type UpdateUserPreferenceMutationVariables = Exact<{
   userPreferenceId: Scalars['String']['input']
-  input: UpdateUserPreferenceInput
+  input: SecureUpdateUserPreferenceInput
 }>
 
 export type UpdateUserPreferenceMutation = {
@@ -17506,7 +17498,7 @@ export type AdminUploadPaginationQueryResult = Apollo.QueryResult<
   AdminUploadPaginationQueryVariables
 >
 export const AdminCreateUserPreferenceDocument = gql`
-  mutation AdminCreateUserPreference($input: CreateUserPreferenceInput!) {
+  mutation AdminCreateUserPreference($input: SecureCreateUserPreferenceInput!) {
     createUserPreference(input: $input) {
       ...AdminUserPreferenceDetails
     }
@@ -17609,7 +17601,7 @@ export type AdminDeleteUserPreferenceMutationOptions = Apollo.BaseMutationOption
 export const AdminUpdateUserPreferenceDocument = gql`
   mutation AdminUpdateUserPreference(
     $userPreferenceId: String!
-    $input: UpdateUserPreferenceInput!
+    $input: SecureUpdateUserPreferenceInput!
   ) {
     updateUserPreference(userPreferenceId: $userPreferenceId, input: $input) {
       ...AdminUserPreferenceDetails
@@ -26835,7 +26827,7 @@ export type UploadPaginationQueryResult = Apollo.QueryResult<
   UploadPaginationQueryVariables
 >
 export const CreateUserPreferenceDocument = gql`
-  mutation createUserPreference($input: CreateUserPreferenceInput!) {
+  mutation createUserPreference($input: SecureCreateUserPreferenceInput!) {
     createUserPreference(input: $input) {
       ...UserPreferenceDetails
     }
@@ -26934,7 +26926,10 @@ export type DeleteUserPreferenceMutationOptions = Apollo.BaseMutationOptions<
   DeleteUserPreferenceMutationVariables
 >
 export const UpdateUserPreferenceDocument = gql`
-  mutation updateUserPreference($userPreferenceId: String!, $input: UpdateUserPreferenceInput!) {
+  mutation updateUserPreference(
+    $userPreferenceId: String!
+    $input: SecureUpdateUserPreferenceInput!
+  ) {
     updateUserPreference(userPreferenceId: $userPreferenceId, input: $input) {
       ...UserPreferenceDetails
     }
