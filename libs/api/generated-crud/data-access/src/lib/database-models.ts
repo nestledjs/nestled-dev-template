@@ -4318,12 +4318,12 @@ export const DATABASE_MODELS: DatabaseModel[] = [
     pluralModelName: 'UserPreferences',
     pluralModelPropertyName: 'userPreferences',
     auth: {
-      readOne: 'admin',
-      readMany: 'admin',
+      readOne: 'user',
+      readMany: 'user',
       count: 'admin',
-      create: 'admin',
-      update: 'admin',
-      delete: 'admin',
+      create: 'user',
+      update: 'user',
+      delete: 'user',
     },
   },
   {
