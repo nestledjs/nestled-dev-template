@@ -65,6 +65,7 @@ export default [
 
       // Settings area - organization and user settings
       route('settings', './routes/settings/_layout.tsx', [
+        route('account', './routes/settings/account.tsx'),
         route('organization', './routes/settings/organization.tsx'),
         route('members', './routes/settings/members.tsx'),
         route('billing', './routes/settings/billing.tsx'),
