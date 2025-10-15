@@ -60,7 +60,7 @@ export type LoginAttempt = $Result.DefaultSelection<Prisma.$LoginAttemptPayload>
 export type OAuthAccount = $Result.DefaultSelection<Prisma.$OAuthAccountPayload>
 /**
  * Model Organization
- * 
+ * @skipCrud
  */
 export type Organization = $Result.DefaultSelection<Prisma.$OrganizationPayload>
 /**
@@ -120,7 +120,7 @@ export type Upload = $Result.DefaultSelection<Prisma.$UploadPayload>
 export type User = $Result.DefaultSelection<Prisma.$UserPayload>
 /**
  * Model UserPreference
- * 
+ * @crudAuth: { "readOne": "user", "readMany": "user", "create": "user", "update": "user", "delete": "user" }
  */
 export type UserPreference = $Result.DefaultSelection<Prisma.$UserPreferencePayload>
 /**

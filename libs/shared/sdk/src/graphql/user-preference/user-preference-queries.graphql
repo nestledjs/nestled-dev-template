@@ -8,13 +8,4 @@ query UserPreferences($input: ListUserPreferenceInput) {
   userPreferences(input: $input) {
     ...UserPreferenceList
   }
-  counters: userPreferencesCount(input: $input) {
-    ...CorePagingDetails
-  }
-}
-
-query UserPreferencePagination($input: ListUserPreferenceInput) {
-  counters: userPreferencesCount(input: $input) {
-    ...CorePagingDetails
-  }
 }

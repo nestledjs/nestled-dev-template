@@ -10,7 +10,7 @@ import {
   useCreateUserPreferenceMutation,
   useUpdateUserPreferenceMutation,
 } from '@nestled-template/shared/sdk'
-import { QueryRef, useReadQuery } from '@apollo/client'
+import { QueryRef, useReadQuery, gql } from '@apollo/client'
 
 interface NotificationSetting {
   key: string
@@ -144,16 +144,42 @@ export default function NotificationsSettings() {
       const existing = preferences.find((p) => p.key === key)
 
       if (existing) {
-        // Update existing preference
+        // Update existing preference with optimistic response
         await updatePreference({
           variables: {
             userPreferenceId: existing.id,
             input: { value: String(newValue) },
           },
-          refetchQueries: [{ query: UserPreferencesDocument }],
+          optimisticResponse: {
+            updateUserPreference: {
+              __typename: 'UserPreference',
+              id: existing.id,
+              key: existing.key,
+              value: String(newValue),
+              userId: existing.userId,
+              createdAt: existing.createdAt,
+              updatedAt: new Date().toISOString(),
+            },
+          },
+          update: (cache, { data }) => {
+            if (data?.updateUserPreference) {
+              // Update the cache directly
+              cache.modify({
+                fields: {
+                  userPreferences(existingPreferences = []) {
+                    return existingPreferences.map((pref: any) =>
+                      pref.__ref === cache.identify(data.updateUserPreference!)
+                        ? { ...pref, value: String(newValue) }
+                        : pref
+                    )
+                  },
+                },
+              })
+            }
+          },
         })
       } else {
-        // Create new preference
+        // Create new preference with optimistic response
         await createPreference({
           variables: {
             input: {
@@ -161,7 +187,42 @@ export default function NotificationsSettings() {
               value: String(newValue),
             },
           },
-          refetchQueries: [{ query: UserPreferencesDocument }],
+          optimisticResponse: {
+            createUserPreference: {
+              __typename: 'UserPreference',
+              id: `temp-${Date.now()}`,
+              key,
+              value: String(newValue),
+              userId: user?.id || '',
+              createdAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString(),
+            },
+          },
+          update: (cache, { data }) => {
+            if (data?.createUserPreference) {
+              // Update the cache to include the new preference
+              cache.modify({
+                fields: {
+                  userPreferences(existingPreferences = []) {
+                    const newPrefRef = cache.writeFragment({
+                      data: data.createUserPreference,
+                      fragment: gql`
+                        fragment NewUserPreference on UserPreference {
+                          id
+                          key
+                          value
+                          userId
+                          createdAt
+                          updatedAt
+                        }
+                      `,
+                    })
+                    return [...existingPreferences, newPrefRef]
+                  },
+                },
+              })
+            }
+          },
         })
       }
 

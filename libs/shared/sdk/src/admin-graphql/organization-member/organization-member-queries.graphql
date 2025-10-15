@@ -1,5 +1,12 @@
+query AdminOrganizationMember($organizationMemberId: String!) {
+  organizationMember(organizationMemberId: $organizationMemberId) {
+    ...AdminOrganizationMemberDetails
+  }
+}
+
 query AdminOrganizationMembers($organizationId: String!) {
   organizationMembers(organizationId: $organizationId) {
     ...AdminOrganizationMemberList
   }
 }
+
