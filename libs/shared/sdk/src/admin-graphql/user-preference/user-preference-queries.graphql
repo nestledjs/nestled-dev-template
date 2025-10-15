@@ -9,9 +9,3 @@ query AdminUserPreferences {
     ...AdminUserPreferenceList
   }
 }
-
-query AdminUserPreferencePagination($input: ListUserPreferenceInput) {
-  counters: userPreferencesCount(input: $input) {
-    ...CorePagingDetails
-  }
-}
