@@ -4,8 +4,8 @@ query UserPreference($userPreferenceId: String!) {
   }
 }
 
-query UserPreferences($input: ListUserPreferenceInput) {
-  userPreferences(input: $input) {
+query UserPreferences {
+  userPreferences {
     ...UserPreferenceList
   }
 }

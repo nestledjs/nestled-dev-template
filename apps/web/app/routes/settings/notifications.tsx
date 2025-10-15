@@ -89,14 +89,7 @@ const DEFAULT_NOTIFICATIONS: NotificationSetting[] = [
 
 export const loader = apolloLoader()(({ preloadQuery }) => {
   const meQueryRef = preloadQuery<MeQuery>(MeDocument)
-  const preferencesQueryRef = preloadQuery<UserPreferencesQuery>(UserPreferencesDocument, {
-    variables: {
-      input: {
-        orderBy: 'key',
-        orderDirection: 'asc',
-      },
-    },
-  })
+  const preferencesQueryRef = preloadQuery<UserPreferencesQuery>(UserPreferencesDocument)
   return { meQueryRef, preferencesQueryRef }
 })
 
