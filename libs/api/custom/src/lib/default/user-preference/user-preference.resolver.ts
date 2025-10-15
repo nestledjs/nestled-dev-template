@@ -26,11 +26,21 @@ export class UserPreferenceResolver extends GeneratedUserPreferenceResolver {
     @Args('input') input: SecureCreateUserPreferenceInput,
     @CtxUser() user: User,
   ) {
+    console.log('[UserPreferenceResolver] Creating preference:', {
+      key: input.key,
+      value: input.value,
+      userId: user?.id,
+      userExists: !!user,
+    })
+
     const fullInput: CreateUserPreferenceInput = {
       key: input.key,
       value: input.value,
       userId: user.id,
     }
+
+    console.log('[UserPreferenceResolver] Full input:', fullInput)
+
     return this['generatedService'].createUserPreference(info, fullInput)
   }
 
