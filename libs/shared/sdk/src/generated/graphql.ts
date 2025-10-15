@@ -972,22 +972,6 @@ export type ListUserInput = {
   validateEmailTokenExpires?: InputMaybe<Scalars['Timestamp']['input']>
 }
 
-export type ListUserPreferenceInput = {
-  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
-  filters?: InputMaybe<Scalars['JSONObject']['input']>
-  id?: InputMaybe<Scalars['String']['input']>
-  key?: InputMaybe<Scalars['String']['input']>
-  orderBy?: InputMaybe<Scalars['String']['input']>
-  orderDirection?: InputMaybe<Scalars['String']['input']>
-  search?: InputMaybe<Scalars['String']['input']>
-  searchFields?: InputMaybe<Array<Scalars['String']['input']>>
-  skip?: InputMaybe<Scalars['Float']['input']>
-  take?: InputMaybe<Scalars['Float']['input']>
-  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
-  userId?: InputMaybe<Scalars['String']['input']>
-  value?: InputMaybe<Scalars['String']['input']>
-}
-
 export type ListUserSessionInput = {
   createdAt?: InputMaybe<Scalars['Timestamp']['input']>
   deviceInfo?: InputMaybe<Scalars['String']['input']>
@@ -1722,7 +1706,6 @@ export type Query = {
   user?: Maybe<User>
   userPreference?: Maybe<UserPreference>
   userPreferences?: Maybe<Array<UserPreference>>
-  userPreferencesCount?: Maybe<CorePaging>
   userSecurityEvents: Array<SecurityEvent>
   userSession?: Maybe<UserSession>
   userSessions?: Maybe<Array<UserSession>>
@@ -1982,10 +1965,6 @@ export type QueryUserArgs = {
 
 export type QueryUserPreferenceArgs = {
   userPreferenceId: Scalars['String']['input']
-}
-
-export type QueryUserPreferencesCountArgs = {
-  input?: InputMaybe<ListUserPreferenceInput>
 }
 
 export type QueryUserSecurityEventsArgs = {
@@ -5632,26 +5611,6 @@ export type AdminUserPreferencesQuery = {
     value: string
     user?: { __typename?: 'User'; id: string } | null
   }> | null
-}
-
-export type AdminUserPreferencePaginationQueryVariables = Exact<{
-  input?: InputMaybe<ListUserPreferenceInput>
-}>
-
-export type AdminUserPreferencePaginationQuery = {
-  __typename?: 'Query'
-  counters?: {
-    __typename?: 'CorePaging'
-    count?: number | null
-    take?: number | null
-    page?: number | null
-    skip?: number | null
-    total?: number | null
-    filteredTotal?: number | null
-    pages?: number | null
-    hasNext?: boolean | null
-    hasPrev?: boolean | null
-  } | null
 }
 
 export type AdminUserSessionListFragment = {
@@ -17779,83 +17738,6 @@ export type AdminUserPreferencesSuspenseQueryHookResult = ReturnType<
 export type AdminUserPreferencesQueryResult = Apollo.QueryResult<
   AdminUserPreferencesQuery,
   AdminUserPreferencesQueryVariables
->
-export const AdminUserPreferencePaginationDocument = gql`
-  query AdminUserPreferencePagination($input: ListUserPreferenceInput) {
-    counters: userPreferencesCount(input: $input) {
-      ...CorePagingDetails
-    }
-  }
-  ${CorePagingDetailsFragmentDoc}
-`
-
-/**
- * __useAdminUserPreferencePaginationQuery__
- *
- * To run a query within a React component, call `useAdminUserPreferencePaginationQuery` and pass it any options that fit your needs.
- * When your component renders, `useAdminUserPreferencePaginationQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useAdminUserPreferencePaginationQuery({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useAdminUserPreferencePaginationQuery(
-  baseOptions?: Apollo.QueryHookOptions<
-    AdminUserPreferencePaginationQuery,
-    AdminUserPreferencePaginationQueryVariables
-  >,
-) {
-  const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<
-    AdminUserPreferencePaginationQuery,
-    AdminUserPreferencePaginationQueryVariables
-  >(AdminUserPreferencePaginationDocument, options)
-}
-export function useAdminUserPreferencePaginationLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
-    AdminUserPreferencePaginationQuery,
-    AdminUserPreferencePaginationQueryVariables
-  >,
-) {
-  const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<
-    AdminUserPreferencePaginationQuery,
-    AdminUserPreferencePaginationQueryVariables
-  >(AdminUserPreferencePaginationDocument, options)
-}
-export function useAdminUserPreferencePaginationSuspenseQuery(
-  baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<
-        AdminUserPreferencePaginationQuery,
-        AdminUserPreferencePaginationQueryVariables
-      >,
-) {
-  const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<
-    AdminUserPreferencePaginationQuery,
-    AdminUserPreferencePaginationQueryVariables
-  >(AdminUserPreferencePaginationDocument, options)
-}
-export type AdminUserPreferencePaginationQueryHookResult = ReturnType<
-  typeof useAdminUserPreferencePaginationQuery
->
-export type AdminUserPreferencePaginationLazyQueryHookResult = ReturnType<
-  typeof useAdminUserPreferencePaginationLazyQuery
->
-export type AdminUserPreferencePaginationSuspenseQueryHookResult = ReturnType<
-  typeof useAdminUserPreferencePaginationSuspenseQuery
->
-export type AdminUserPreferencePaginationQueryResult = Apollo.QueryResult<
-  AdminUserPreferencePaginationQuery,
-  AdminUserPreferencePaginationQueryVariables
 >
 export const AdminCreateUserSessionDocument = gql`
   mutation AdminCreateUserSession($input: CreateUserSessionInput!) {
