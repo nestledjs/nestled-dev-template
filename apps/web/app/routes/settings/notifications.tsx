@@ -149,7 +149,6 @@ export default function NotificationsSettings() {
               id: existing.id,
               key: existing.key,
               value: String(newValue),
-              userId: existing.userId,
               createdAt: existing.createdAt,
               updatedAt: new Date().toISOString(),
             },
@@ -186,7 +185,6 @@ export default function NotificationsSettings() {
               id: `temp-${Date.now()}`,
               key,
               value: String(newValue),
-              userId: user?.id || '',
               createdAt: new Date().toISOString(),
               updatedAt: new Date().toISOString(),
             },
@@ -204,7 +202,6 @@ export default function NotificationsSettings() {
                           id
                           key
                           value
-                          userId
                           createdAt
                           updatedAt
                         }
