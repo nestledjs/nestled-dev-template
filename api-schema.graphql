@@ -951,22 +951,6 @@ input ListUserInput {
   validateEmailTokenExpires: Timestamp
 }
 
-input ListUserPreferenceInput {
-  createdAt: Timestamp
-  filters: JSONObject
-  id: String
-  key: String
-  orderBy: String
-  orderDirection: String
-  search: String
-  searchFields: [String!]
-  skip: Float = 0
-  take: Float = 20
-  updatedAt: Timestamp
-  userId: String
-  value: String
-}
-
 input ListUserSessionInput {
   createdAt: Timestamp
   deviceInfo: String
@@ -1276,7 +1260,6 @@ type Query {
   user(userId: String!): User
   userPreference(userPreferenceId: String!): UserPreference
   userPreferences: [UserPreference!]
-  userPreferencesCount(input: ListUserPreferenceInput): CorePaging
   userSecurityEvents(limit: Float): [SecurityEvent!]!
   userSession(userSessionId: String!): UserSession
   userSessions(input: ListUserSessionInput): [UserSession!]
