@@ -4,9 +4,17 @@ query AdminOrganizationMember($organizationMemberId: String!) {
   }
 }
 
-query AdminOrganizationMembers($organizationId: String!) {
-  organizationMembers(organizationId: $organizationId) {
+query AdminOrganizationMembers($input: ListOrganizationMemberInput) {
+  organizationMembers(input: $input) {
     ...AdminOrganizationMemberList
+  }
+  counters: organizationMembersCount(input: $input) {
+    ...CorePagingDetails
   }
 }
 
+query AdminOrganizationMemberPagination($input: ListOrganizationMemberInput) {
+  counters: organizationMembersCount(input: $input) {
+    ...CorePagingDetails
+  }
+}

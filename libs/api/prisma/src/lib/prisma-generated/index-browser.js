@@ -334,18 +334,18 @@ exports.Prisma.UploadScalarFieldEnum = {
   id: 'id',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
-  type: 'type',
-  fileId: 'fileId',
-  filePath: 'filePath',
-  fileType: 'fileType',
-  height: 'height',
-  name: 'name',
+  provider: 'provider',
+  providerFileId: 'providerFileId',
+  folder: 'folder',
+  filename: 'filename',
+  originalName: 'originalName',
+  mimeType: 'mimeType',
   size: 'size',
-  thumbnailUrl: 'thumbnailUrl',
-  orientation: 'orientation',
   url: 'url',
-  versionInfo: 'versionInfo',
+  publicUrl: 'publicUrl',
   width: 'width',
+  height: 'height',
+  metadata: 'metadata',
   userId: 'userId',
   organizationId: 'organizationId'
 };
@@ -489,10 +489,12 @@ exports.SubscriptionStatus = exports.$Enums.SubscriptionStatus = {
   TRIALING: 'TRIALING'
 };
 
-exports.ImageType = exports.$Enums.ImageType = {
-  AVATAR: 'AVATAR',
-  BACKGROUND: 'BACKGROUND',
-  OTHER: 'OTHER'
+exports.StorageProvider = exports.$Enums.StorageProvider = {
+  LOCAL: 'LOCAL',
+  S3: 'S3',
+  CLOUDINARY: 'CLOUDINARY',
+  IMAGEKIT: 'IMAGEKIT',
+  GCS: 'GCS'
 };
 
 exports.TwoFactorMethod = exports.$Enums.TwoFactorMethod = {
