@@ -3,7 +3,7 @@ import { GraphQLJSONObject } from 'graphql-type-json';
 import { Decimal } from '@prisma/client/runtime/library';
 import { GraphQLDecimal } from 'prisma-graphql-type-decimal';
 import { Prisma } from '@nestled-template/api/prisma';
-import { AddressType, EmailType, FailureReason, ImageType, InviteStatus, PhoneType, SecurityEventType, SubscriptionStatus, TwoFactorMethod } from './enums';
+import { AddressType, EmailType, FailureReason, ImageType, InviteStatus, PhoneType, SecurityEventType, StorageProvider, SubscriptionStatus, TwoFactorMethod } from './enums';
 
 @ObjectType({ description: undefined })
 export class Address {
@@ -692,41 +692,41 @@ export class Upload {
   @Field(() => Date)
   updatedAt!: Date;
 
-  @Field(() => ImageType, { nullable: true })
-  type?: ImageType | null;
+  @Field(() => StorageProvider)
+  provider!: StorageProvider;
+
+  @Field(() => String)
+  providerFileId!: string;
 
   @Field(() => String, { nullable: true })
-  fileId?: string | null;
+  folder?: string | null;
+
+  @Field(() => String)
+  filename!: string;
+
+  @Field(() => String)
+  originalName!: string;
+
+  @Field(() => String)
+  mimeType!: string;
+
+  @Field(() => Int)
+  size!: number;
+
+  @Field(() => String)
+  url!: string;
 
   @Field(() => String, { nullable: true })
-  filePath?: string | null;
+  publicUrl?: string | null;
 
-  @Field(() => String, { nullable: true })
-  fileType?: string | null;
+  @Field(() => Int, { nullable: true })
+  width?: number | null;
 
   @Field(() => Int, { nullable: true })
   height?: number | null;
 
-  @Field(() => String, { nullable: true })
-  name?: string | null;
-
-  @Field(() => Int, { nullable: true })
-  size?: number | null;
-
-  @Field(() => String, { nullable: true })
-  thumbnailUrl?: string | null;
-
-  @Field(() => Int, { nullable: true })
-  orientation?: number | null;
-
-  @Field(() => String, { nullable: true })
-  url?: string | null;
-
   @Field(() => GraphQLJSONObject, { nullable: true })
-  versionInfo?: Prisma.JsonValue | null;
-
-  @Field(() => Int, { nullable: true })
-  width?: number | null;
+  metadata?: Prisma.JsonValue | null;
 
   @Field(() => String, { nullable: true })
   userId?: string | null;

@@ -214,6 +214,17 @@ export const SecurityEventType: {
 export type SecurityEventType = (typeof SecurityEventType)[keyof typeof SecurityEventType]
 
 
+export const StorageProvider: {
+  LOCAL: 'LOCAL',
+  S3: 'S3',
+  CLOUDINARY: 'CLOUDINARY',
+  IMAGEKIT: 'IMAGEKIT',
+  GCS: 'GCS'
+};
+
+export type StorageProvider = (typeof StorageProvider)[keyof typeof StorageProvider]
+
+
 export const SubscriptionStatus: {
   ACTIVE: 'ACTIVE',
   CANCELED: 'CANCELED',
@@ -264,6 +275,10 @@ export const PhoneType: typeof $Enums.PhoneType
 export type SecurityEventType = $Enums.SecurityEventType
 
 export const SecurityEventType: typeof $Enums.SecurityEventType
+
+export type StorageProvider = $Enums.StorageProvider
+
+export const StorageProvider: typeof $Enums.StorageProvider
 
 export type SubscriptionStatus = $Enums.SubscriptionStatus
 
@@ -25161,34 +25176,32 @@ export namespace Prisma {
   }
 
   export type UploadAvgAggregateOutputType = {
-    height: number | null
     size: number | null
-    orientation: number | null
     width: number | null
+    height: number | null
   }
 
   export type UploadSumAggregateOutputType = {
-    height: number | null
     size: number | null
-    orientation: number | null
     width: number | null
+    height: number | null
   }
 
   export type UploadMinAggregateOutputType = {
     id: string | null
     createdAt: Date | null
     updatedAt: Date | null
-    type: $Enums.ImageType | null
-    fileId: string | null
-    filePath: string | null
-    fileType: string | null
-    height: number | null
-    name: string | null
+    provider: $Enums.StorageProvider | null
+    providerFileId: string | null
+    folder: string | null
+    filename: string | null
+    originalName: string | null
+    mimeType: string | null
     size: number | null
-    thumbnailUrl: string | null
-    orientation: number | null
     url: string | null
+    publicUrl: string | null
     width: number | null
+    height: number | null
     userId: string | null
     organizationId: string | null
   }
@@ -25197,17 +25210,17 @@ export namespace Prisma {
     id: string | null
     createdAt: Date | null
     updatedAt: Date | null
-    type: $Enums.ImageType | null
-    fileId: string | null
-    filePath: string | null
-    fileType: string | null
-    height: number | null
-    name: string | null
+    provider: $Enums.StorageProvider | null
+    providerFileId: string | null
+    folder: string | null
+    filename: string | null
+    originalName: string | null
+    mimeType: string | null
     size: number | null
-    thumbnailUrl: string | null
-    orientation: number | null
     url: string | null
+    publicUrl: string | null
     width: number | null
+    height: number | null
     userId: string | null
     organizationId: string | null
   }
@@ -25216,18 +25229,18 @@ export namespace Prisma {
     id: number
     createdAt: number
     updatedAt: number
-    type: number
-    fileId: number
-    filePath: number
-    fileType: number
-    height: number
-    name: number
+    provider: number
+    providerFileId: number
+    folder: number
+    filename: number
+    originalName: number
+    mimeType: number
     size: number
-    thumbnailUrl: number
-    orientation: number
     url: number
-    versionInfo: number
+    publicUrl: number
     width: number
+    height: number
+    metadata: number
     userId: number
     organizationId: number
     _all: number
@@ -25235,34 +25248,32 @@ export namespace Prisma {
 
 
   export type UploadAvgAggregateInputType = {
-    height?: true
     size?: true
-    orientation?: true
     width?: true
+    height?: true
   }
 
   export type UploadSumAggregateInputType = {
-    height?: true
     size?: true
-    orientation?: true
     width?: true
+    height?: true
   }
 
   export type UploadMinAggregateInputType = {
     id?: true
     createdAt?: true
     updatedAt?: true
-    type?: true
-    fileId?: true
-    filePath?: true
-    fileType?: true
-    height?: true
-    name?: true
+    provider?: true
+    providerFileId?: true
+    folder?: true
+    filename?: true
+    originalName?: true
+    mimeType?: true
     size?: true
-    thumbnailUrl?: true
-    orientation?: true
     url?: true
+    publicUrl?: true
     width?: true
+    height?: true
     userId?: true
     organizationId?: true
   }
@@ -25271,17 +25282,17 @@ export namespace Prisma {
     id?: true
     createdAt?: true
     updatedAt?: true
-    type?: true
-    fileId?: true
-    filePath?: true
-    fileType?: true
-    height?: true
-    name?: true
+    provider?: true
+    providerFileId?: true
+    folder?: true
+    filename?: true
+    originalName?: true
+    mimeType?: true
     size?: true
-    thumbnailUrl?: true
-    orientation?: true
     url?: true
+    publicUrl?: true
     width?: true
+    height?: true
     userId?: true
     organizationId?: true
   }
@@ -25290,18 +25301,18 @@ export namespace Prisma {
     id?: true
     createdAt?: true
     updatedAt?: true
-    type?: true
-    fileId?: true
-    filePath?: true
-    fileType?: true
-    height?: true
-    name?: true
+    provider?: true
+    providerFileId?: true
+    folder?: true
+    filename?: true
+    originalName?: true
+    mimeType?: true
     size?: true
-    thumbnailUrl?: true
-    orientation?: true
     url?: true
-    versionInfo?: true
+    publicUrl?: true
     width?: true
+    height?: true
+    metadata?: true
     userId?: true
     organizationId?: true
     _all?: true
@@ -25397,18 +25408,18 @@ export namespace Prisma {
     id: string
     createdAt: Date
     updatedAt: Date
-    type: $Enums.ImageType | null
-    fileId: string | null
-    filePath: string | null
-    fileType: string | null
-    height: number | null
-    name: string | null
-    size: number | null
-    thumbnailUrl: string | null
-    orientation: number | null
-    url: string | null
-    versionInfo: JsonValue | null
+    provider: $Enums.StorageProvider
+    providerFileId: string
+    folder: string | null
+    filename: string
+    originalName: string
+    mimeType: string
+    size: number
+    url: string
+    publicUrl: string | null
     width: number | null
+    height: number | null
+    metadata: JsonValue | null
     userId: string | null
     organizationId: string | null
     _count: UploadCountAggregateOutputType | null
@@ -25436,18 +25447,18 @@ export namespace Prisma {
     id?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    type?: boolean
-    fileId?: boolean
-    filePath?: boolean
-    fileType?: boolean
-    height?: boolean
-    name?: boolean
+    provider?: boolean
+    providerFileId?: boolean
+    folder?: boolean
+    filename?: boolean
+    originalName?: boolean
+    mimeType?: boolean
     size?: boolean
-    thumbnailUrl?: boolean
-    orientation?: boolean
     url?: boolean
-    versionInfo?: boolean
+    publicUrl?: boolean
     width?: boolean
+    height?: boolean
+    metadata?: boolean
     userId?: boolean
     organizationId?: boolean
     user?: boolean | Upload$userArgs<ExtArgs>
@@ -25458,18 +25469,18 @@ export namespace Prisma {
     id?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    type?: boolean
-    fileId?: boolean
-    filePath?: boolean
-    fileType?: boolean
-    height?: boolean
-    name?: boolean
+    provider?: boolean
+    providerFileId?: boolean
+    folder?: boolean
+    filename?: boolean
+    originalName?: boolean
+    mimeType?: boolean
     size?: boolean
-    thumbnailUrl?: boolean
-    orientation?: boolean
     url?: boolean
-    versionInfo?: boolean
+    publicUrl?: boolean
     width?: boolean
+    height?: boolean
+    metadata?: boolean
     userId?: boolean
     organizationId?: boolean
     user?: boolean | Upload$userArgs<ExtArgs>
@@ -25480,18 +25491,18 @@ export namespace Prisma {
     id?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    type?: boolean
-    fileId?: boolean
-    filePath?: boolean
-    fileType?: boolean
-    height?: boolean
-    name?: boolean
+    provider?: boolean
+    providerFileId?: boolean
+    folder?: boolean
+    filename?: boolean
+    originalName?: boolean
+    mimeType?: boolean
     size?: boolean
-    thumbnailUrl?: boolean
-    orientation?: boolean
     url?: boolean
-    versionInfo?: boolean
+    publicUrl?: boolean
     width?: boolean
+    height?: boolean
+    metadata?: boolean
     userId?: boolean
     organizationId?: boolean
     user?: boolean | Upload$userArgs<ExtArgs>
@@ -25502,23 +25513,23 @@ export namespace Prisma {
     id?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    type?: boolean
-    fileId?: boolean
-    filePath?: boolean
-    fileType?: boolean
-    height?: boolean
-    name?: boolean
+    provider?: boolean
+    providerFileId?: boolean
+    folder?: boolean
+    filename?: boolean
+    originalName?: boolean
+    mimeType?: boolean
     size?: boolean
-    thumbnailUrl?: boolean
-    orientation?: boolean
     url?: boolean
-    versionInfo?: boolean
+    publicUrl?: boolean
     width?: boolean
+    height?: boolean
+    metadata?: boolean
     userId?: boolean
     organizationId?: boolean
   }
 
-  export type UploadOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "createdAt" | "updatedAt" | "type" | "fileId" | "filePath" | "fileType" | "height" | "name" | "size" | "thumbnailUrl" | "orientation" | "url" | "versionInfo" | "width" | "userId" | "organizationId", ExtArgs["result"]["upload"]>
+  export type UploadOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "createdAt" | "updatedAt" | "provider" | "providerFileId" | "folder" | "filename" | "originalName" | "mimeType" | "size" | "url" | "publicUrl" | "width" | "height" | "metadata" | "userId" | "organizationId", ExtArgs["result"]["upload"]>
   export type UploadInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | Upload$userArgs<ExtArgs>
     organization?: boolean | Upload$organizationArgs<ExtArgs>
@@ -25542,18 +25553,18 @@ export namespace Prisma {
       id: string
       createdAt: Date
       updatedAt: Date
-      type: $Enums.ImageType | null
-      fileId: string | null
-      filePath: string | null
-      fileType: string | null
-      height: number | null
-      name: string | null
-      size: number | null
-      thumbnailUrl: string | null
-      orientation: number | null
-      url: string | null
-      versionInfo: Prisma.JsonValue | null
+      provider: $Enums.StorageProvider
+      providerFileId: string
+      folder: string | null
+      filename: string
+      originalName: string
+      mimeType: string
+      size: number
+      url: string
+      publicUrl: string | null
       width: number | null
+      height: number | null
+      metadata: Prisma.JsonValue | null
       userId: string | null
       organizationId: string | null
     }, ExtArgs["result"]["upload"]>
@@ -25984,18 +25995,18 @@ export namespace Prisma {
     readonly id: FieldRef<"Upload", 'String'>
     readonly createdAt: FieldRef<"Upload", 'DateTime'>
     readonly updatedAt: FieldRef<"Upload", 'DateTime'>
-    readonly type: FieldRef<"Upload", 'ImageType'>
-    readonly fileId: FieldRef<"Upload", 'String'>
-    readonly filePath: FieldRef<"Upload", 'String'>
-    readonly fileType: FieldRef<"Upload", 'String'>
-    readonly height: FieldRef<"Upload", 'Int'>
-    readonly name: FieldRef<"Upload", 'String'>
+    readonly provider: FieldRef<"Upload", 'StorageProvider'>
+    readonly providerFileId: FieldRef<"Upload", 'String'>
+    readonly folder: FieldRef<"Upload", 'String'>
+    readonly filename: FieldRef<"Upload", 'String'>
+    readonly originalName: FieldRef<"Upload", 'String'>
+    readonly mimeType: FieldRef<"Upload", 'String'>
     readonly size: FieldRef<"Upload", 'Int'>
-    readonly thumbnailUrl: FieldRef<"Upload", 'String'>
-    readonly orientation: FieldRef<"Upload", 'Int'>
     readonly url: FieldRef<"Upload", 'String'>
-    readonly versionInfo: FieldRef<"Upload", 'Json'>
+    readonly publicUrl: FieldRef<"Upload", 'String'>
     readonly width: FieldRef<"Upload", 'Int'>
+    readonly height: FieldRef<"Upload", 'Int'>
+    readonly metadata: FieldRef<"Upload", 'Json'>
     readonly userId: FieldRef<"Upload", 'String'>
     readonly organizationId: FieldRef<"Upload", 'String'>
   }
@@ -30694,18 +30705,18 @@ export namespace Prisma {
     id: 'id',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt',
-    type: 'type',
-    fileId: 'fileId',
-    filePath: 'filePath',
-    fileType: 'fileType',
-    height: 'height',
-    name: 'name',
+    provider: 'provider',
+    providerFileId: 'providerFileId',
+    folder: 'folder',
+    filename: 'filename',
+    originalName: 'originalName',
+    mimeType: 'mimeType',
     size: 'size',
-    thumbnailUrl: 'thumbnailUrl',
-    orientation: 'orientation',
     url: 'url',
-    versionInfo: 'versionInfo',
+    publicUrl: 'publicUrl',
     width: 'width',
+    height: 'height',
+    metadata: 'metadata',
     userId: 'userId',
     organizationId: 'organizationId'
   };
@@ -30981,16 +30992,16 @@ export namespace Prisma {
 
 
   /**
-   * Reference to a field of type 'ImageType'
+   * Reference to a field of type 'StorageProvider'
    */
-  export type EnumImageTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ImageType'>
+  export type EnumStorageProviderFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'StorageProvider'>
     
 
 
   /**
-   * Reference to a field of type 'ImageType[]'
+   * Reference to a field of type 'StorageProvider[]'
    */
-  export type ListEnumImageTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ImageType[]'>
+  export type ListEnumStorageProviderFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'StorageProvider[]'>
     
 
 
@@ -32470,18 +32481,18 @@ export namespace Prisma {
     id?: StringFilter<"Upload"> | string
     createdAt?: DateTimeFilter<"Upload"> | Date | string
     updatedAt?: DateTimeFilter<"Upload"> | Date | string
-    type?: EnumImageTypeNullableFilter<"Upload"> | $Enums.ImageType | null
-    fileId?: StringNullableFilter<"Upload"> | string | null
-    filePath?: StringNullableFilter<"Upload"> | string | null
-    fileType?: StringNullableFilter<"Upload"> | string | null
-    height?: IntNullableFilter<"Upload"> | number | null
-    name?: StringNullableFilter<"Upload"> | string | null
-    size?: IntNullableFilter<"Upload"> | number | null
-    thumbnailUrl?: StringNullableFilter<"Upload"> | string | null
-    orientation?: IntNullableFilter<"Upload"> | number | null
-    url?: StringNullableFilter<"Upload"> | string | null
-    versionInfo?: JsonNullableFilter<"Upload">
+    provider?: EnumStorageProviderFilter<"Upload"> | $Enums.StorageProvider
+    providerFileId?: StringFilter<"Upload"> | string
+    folder?: StringNullableFilter<"Upload"> | string | null
+    filename?: StringFilter<"Upload"> | string
+    originalName?: StringFilter<"Upload"> | string
+    mimeType?: StringFilter<"Upload"> | string
+    size?: IntFilter<"Upload"> | number
+    url?: StringFilter<"Upload"> | string
+    publicUrl?: StringNullableFilter<"Upload"> | string | null
     width?: IntNullableFilter<"Upload"> | number | null
+    height?: IntNullableFilter<"Upload"> | number | null
+    metadata?: JsonNullableFilter<"Upload">
     userId?: StringNullableFilter<"Upload"> | string | null
     organizationId?: StringNullableFilter<"Upload"> | string | null
     user?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
@@ -32492,18 +32503,18 @@ export namespace Prisma {
     id?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    type?: SortOrderInput | SortOrder
-    fileId?: SortOrderInput | SortOrder
-    filePath?: SortOrderInput | SortOrder
-    fileType?: SortOrderInput | SortOrder
-    height?: SortOrderInput | SortOrder
-    name?: SortOrderInput | SortOrder
-    size?: SortOrderInput | SortOrder
-    thumbnailUrl?: SortOrderInput | SortOrder
-    orientation?: SortOrderInput | SortOrder
-    url?: SortOrderInput | SortOrder
-    versionInfo?: SortOrderInput | SortOrder
+    provider?: SortOrder
+    providerFileId?: SortOrder
+    folder?: SortOrderInput | SortOrder
+    filename?: SortOrder
+    originalName?: SortOrder
+    mimeType?: SortOrder
+    size?: SortOrder
+    url?: SortOrder
+    publicUrl?: SortOrderInput | SortOrder
     width?: SortOrderInput | SortOrder
+    height?: SortOrderInput | SortOrder
+    metadata?: SortOrderInput | SortOrder
     userId?: SortOrderInput | SortOrder
     organizationId?: SortOrderInput | SortOrder
     user?: UserOrderByWithRelationInput
@@ -32517,18 +32528,18 @@ export namespace Prisma {
     NOT?: UploadWhereInput | UploadWhereInput[]
     createdAt?: DateTimeFilter<"Upload"> | Date | string
     updatedAt?: DateTimeFilter<"Upload"> | Date | string
-    type?: EnumImageTypeNullableFilter<"Upload"> | $Enums.ImageType | null
-    fileId?: StringNullableFilter<"Upload"> | string | null
-    filePath?: StringNullableFilter<"Upload"> | string | null
-    fileType?: StringNullableFilter<"Upload"> | string | null
-    height?: IntNullableFilter<"Upload"> | number | null
-    name?: StringNullableFilter<"Upload"> | string | null
-    size?: IntNullableFilter<"Upload"> | number | null
-    thumbnailUrl?: StringNullableFilter<"Upload"> | string | null
-    orientation?: IntNullableFilter<"Upload"> | number | null
-    url?: StringNullableFilter<"Upload"> | string | null
-    versionInfo?: JsonNullableFilter<"Upload">
+    provider?: EnumStorageProviderFilter<"Upload"> | $Enums.StorageProvider
+    providerFileId?: StringFilter<"Upload"> | string
+    folder?: StringNullableFilter<"Upload"> | string | null
+    filename?: StringFilter<"Upload"> | string
+    originalName?: StringFilter<"Upload"> | string
+    mimeType?: StringFilter<"Upload"> | string
+    size?: IntFilter<"Upload"> | number
+    url?: StringFilter<"Upload"> | string
+    publicUrl?: StringNullableFilter<"Upload"> | string | null
     width?: IntNullableFilter<"Upload"> | number | null
+    height?: IntNullableFilter<"Upload"> | number | null
+    metadata?: JsonNullableFilter<"Upload">
     userId?: StringNullableFilter<"Upload"> | string | null
     organizationId?: StringNullableFilter<"Upload"> | string | null
     user?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
@@ -32539,18 +32550,18 @@ export namespace Prisma {
     id?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    type?: SortOrderInput | SortOrder
-    fileId?: SortOrderInput | SortOrder
-    filePath?: SortOrderInput | SortOrder
-    fileType?: SortOrderInput | SortOrder
-    height?: SortOrderInput | SortOrder
-    name?: SortOrderInput | SortOrder
-    size?: SortOrderInput | SortOrder
-    thumbnailUrl?: SortOrderInput | SortOrder
-    orientation?: SortOrderInput | SortOrder
-    url?: SortOrderInput | SortOrder
-    versionInfo?: SortOrderInput | SortOrder
+    provider?: SortOrder
+    providerFileId?: SortOrder
+    folder?: SortOrderInput | SortOrder
+    filename?: SortOrder
+    originalName?: SortOrder
+    mimeType?: SortOrder
+    size?: SortOrder
+    url?: SortOrder
+    publicUrl?: SortOrderInput | SortOrder
     width?: SortOrderInput | SortOrder
+    height?: SortOrderInput | SortOrder
+    metadata?: SortOrderInput | SortOrder
     userId?: SortOrderInput | SortOrder
     organizationId?: SortOrderInput | SortOrder
     _count?: UploadCountOrderByAggregateInput
@@ -32567,18 +32578,18 @@ export namespace Prisma {
     id?: StringWithAggregatesFilter<"Upload"> | string
     createdAt?: DateTimeWithAggregatesFilter<"Upload"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Upload"> | Date | string
-    type?: EnumImageTypeNullableWithAggregatesFilter<"Upload"> | $Enums.ImageType | null
-    fileId?: StringNullableWithAggregatesFilter<"Upload"> | string | null
-    filePath?: StringNullableWithAggregatesFilter<"Upload"> | string | null
-    fileType?: StringNullableWithAggregatesFilter<"Upload"> | string | null
-    height?: IntNullableWithAggregatesFilter<"Upload"> | number | null
-    name?: StringNullableWithAggregatesFilter<"Upload"> | string | null
-    size?: IntNullableWithAggregatesFilter<"Upload"> | number | null
-    thumbnailUrl?: StringNullableWithAggregatesFilter<"Upload"> | string | null
-    orientation?: IntNullableWithAggregatesFilter<"Upload"> | number | null
-    url?: StringNullableWithAggregatesFilter<"Upload"> | string | null
-    versionInfo?: JsonNullableWithAggregatesFilter<"Upload">
+    provider?: EnumStorageProviderWithAggregatesFilter<"Upload"> | $Enums.StorageProvider
+    providerFileId?: StringWithAggregatesFilter<"Upload"> | string
+    folder?: StringNullableWithAggregatesFilter<"Upload"> | string | null
+    filename?: StringWithAggregatesFilter<"Upload"> | string
+    originalName?: StringWithAggregatesFilter<"Upload"> | string
+    mimeType?: StringWithAggregatesFilter<"Upload"> | string
+    size?: IntWithAggregatesFilter<"Upload"> | number
+    url?: StringWithAggregatesFilter<"Upload"> | string
+    publicUrl?: StringNullableWithAggregatesFilter<"Upload"> | string | null
     width?: IntNullableWithAggregatesFilter<"Upload"> | number | null
+    height?: IntNullableWithAggregatesFilter<"Upload"> | number | null
+    metadata?: JsonNullableWithAggregatesFilter<"Upload">
     userId?: StringNullableWithAggregatesFilter<"Upload"> | string | null
     organizationId?: StringNullableWithAggregatesFilter<"Upload"> | string | null
   }
@@ -34450,18 +34461,18 @@ export namespace Prisma {
     id?: string
     createdAt?: Date | string
     updatedAt?: Date | string
-    type?: $Enums.ImageType | null
-    fileId?: string | null
-    filePath?: string | null
-    fileType?: string | null
-    height?: number | null
-    name?: string | null
-    size?: number | null
-    thumbnailUrl?: string | null
-    orientation?: number | null
-    url?: string | null
-    versionInfo?: NullableJsonNullValueInput | InputJsonValue
+    provider: $Enums.StorageProvider
+    providerFileId: string
+    folder?: string | null
+    filename: string
+    originalName: string
+    mimeType: string
+    size: number
+    url: string
+    publicUrl?: string | null
     width?: number | null
+    height?: number | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
     user?: UserCreateNestedOneWithoutImagesInput
     organization?: OrganizationCreateNestedOneWithoutImagesInput
   }
@@ -34470,18 +34481,18 @@ export namespace Prisma {
     id?: string
     createdAt?: Date | string
     updatedAt?: Date | string
-    type?: $Enums.ImageType | null
-    fileId?: string | null
-    filePath?: string | null
-    fileType?: string | null
-    height?: number | null
-    name?: string | null
-    size?: number | null
-    thumbnailUrl?: string | null
-    orientation?: number | null
-    url?: string | null
-    versionInfo?: NullableJsonNullValueInput | InputJsonValue
+    provider: $Enums.StorageProvider
+    providerFileId: string
+    folder?: string | null
+    filename: string
+    originalName: string
+    mimeType: string
+    size: number
+    url: string
+    publicUrl?: string | null
     width?: number | null
+    height?: number | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
     userId?: string | null
     organizationId?: string | null
   }
@@ -34490,18 +34501,18 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    type?: NullableEnumImageTypeFieldUpdateOperationsInput | $Enums.ImageType | null
-    fileId?: NullableStringFieldUpdateOperationsInput | string | null
-    filePath?: NullableStringFieldUpdateOperationsInput | string | null
-    fileType?: NullableStringFieldUpdateOperationsInput | string | null
-    height?: NullableIntFieldUpdateOperationsInput | number | null
-    name?: NullableStringFieldUpdateOperationsInput | string | null
-    size?: NullableIntFieldUpdateOperationsInput | number | null
-    thumbnailUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    orientation?: NullableIntFieldUpdateOperationsInput | number | null
-    url?: NullableStringFieldUpdateOperationsInput | string | null
-    versionInfo?: NullableJsonNullValueInput | InputJsonValue
+    provider?: EnumStorageProviderFieldUpdateOperationsInput | $Enums.StorageProvider
+    providerFileId?: StringFieldUpdateOperationsInput | string
+    folder?: NullableStringFieldUpdateOperationsInput | string | null
+    filename?: StringFieldUpdateOperationsInput | string
+    originalName?: StringFieldUpdateOperationsInput | string
+    mimeType?: StringFieldUpdateOperationsInput | string
+    size?: IntFieldUpdateOperationsInput | number
+    url?: StringFieldUpdateOperationsInput | string
+    publicUrl?: NullableStringFieldUpdateOperationsInput | string | null
     width?: NullableIntFieldUpdateOperationsInput | number | null
+    height?: NullableIntFieldUpdateOperationsInput | number | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
     user?: UserUpdateOneWithoutImagesNestedInput
     organization?: OrganizationUpdateOneWithoutImagesNestedInput
   }
@@ -34510,18 +34521,18 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    type?: NullableEnumImageTypeFieldUpdateOperationsInput | $Enums.ImageType | null
-    fileId?: NullableStringFieldUpdateOperationsInput | string | null
-    filePath?: NullableStringFieldUpdateOperationsInput | string | null
-    fileType?: NullableStringFieldUpdateOperationsInput | string | null
-    height?: NullableIntFieldUpdateOperationsInput | number | null
-    name?: NullableStringFieldUpdateOperationsInput | string | null
-    size?: NullableIntFieldUpdateOperationsInput | number | null
-    thumbnailUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    orientation?: NullableIntFieldUpdateOperationsInput | number | null
-    url?: NullableStringFieldUpdateOperationsInput | string | null
-    versionInfo?: NullableJsonNullValueInput | InputJsonValue
+    provider?: EnumStorageProviderFieldUpdateOperationsInput | $Enums.StorageProvider
+    providerFileId?: StringFieldUpdateOperationsInput | string
+    folder?: NullableStringFieldUpdateOperationsInput | string | null
+    filename?: StringFieldUpdateOperationsInput | string
+    originalName?: StringFieldUpdateOperationsInput | string
+    mimeType?: StringFieldUpdateOperationsInput | string
+    size?: IntFieldUpdateOperationsInput | number
+    url?: StringFieldUpdateOperationsInput | string
+    publicUrl?: NullableStringFieldUpdateOperationsInput | string | null
     width?: NullableIntFieldUpdateOperationsInput | number | null
+    height?: NullableIntFieldUpdateOperationsInput | number | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
     userId?: NullableStringFieldUpdateOperationsInput | string | null
     organizationId?: NullableStringFieldUpdateOperationsInput | string | null
   }
@@ -34530,18 +34541,18 @@ export namespace Prisma {
     id?: string
     createdAt?: Date | string
     updatedAt?: Date | string
-    type?: $Enums.ImageType | null
-    fileId?: string | null
-    filePath?: string | null
-    fileType?: string | null
-    height?: number | null
-    name?: string | null
-    size?: number | null
-    thumbnailUrl?: string | null
-    orientation?: number | null
-    url?: string | null
-    versionInfo?: NullableJsonNullValueInput | InputJsonValue
+    provider: $Enums.StorageProvider
+    providerFileId: string
+    folder?: string | null
+    filename: string
+    originalName: string
+    mimeType: string
+    size: number
+    url: string
+    publicUrl?: string | null
     width?: number | null
+    height?: number | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
     userId?: string | null
     organizationId?: string | null
   }
@@ -34550,36 +34561,36 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    type?: NullableEnumImageTypeFieldUpdateOperationsInput | $Enums.ImageType | null
-    fileId?: NullableStringFieldUpdateOperationsInput | string | null
-    filePath?: NullableStringFieldUpdateOperationsInput | string | null
-    fileType?: NullableStringFieldUpdateOperationsInput | string | null
-    height?: NullableIntFieldUpdateOperationsInput | number | null
-    name?: NullableStringFieldUpdateOperationsInput | string | null
-    size?: NullableIntFieldUpdateOperationsInput | number | null
-    thumbnailUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    orientation?: NullableIntFieldUpdateOperationsInput | number | null
-    url?: NullableStringFieldUpdateOperationsInput | string | null
-    versionInfo?: NullableJsonNullValueInput | InputJsonValue
+    provider?: EnumStorageProviderFieldUpdateOperationsInput | $Enums.StorageProvider
+    providerFileId?: StringFieldUpdateOperationsInput | string
+    folder?: NullableStringFieldUpdateOperationsInput | string | null
+    filename?: StringFieldUpdateOperationsInput | string
+    originalName?: StringFieldUpdateOperationsInput | string
+    mimeType?: StringFieldUpdateOperationsInput | string
+    size?: IntFieldUpdateOperationsInput | number
+    url?: StringFieldUpdateOperationsInput | string
+    publicUrl?: NullableStringFieldUpdateOperationsInput | string | null
     width?: NullableIntFieldUpdateOperationsInput | number | null
+    height?: NullableIntFieldUpdateOperationsInput | number | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
   }
 
   export type UploadUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    type?: NullableEnumImageTypeFieldUpdateOperationsInput | $Enums.ImageType | null
-    fileId?: NullableStringFieldUpdateOperationsInput | string | null
-    filePath?: NullableStringFieldUpdateOperationsInput | string | null
-    fileType?: NullableStringFieldUpdateOperationsInput | string | null
-    height?: NullableIntFieldUpdateOperationsInput | number | null
-    name?: NullableStringFieldUpdateOperationsInput | string | null
-    size?: NullableIntFieldUpdateOperationsInput | number | null
-    thumbnailUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    orientation?: NullableIntFieldUpdateOperationsInput | number | null
-    url?: NullableStringFieldUpdateOperationsInput | string | null
-    versionInfo?: NullableJsonNullValueInput | InputJsonValue
+    provider?: EnumStorageProviderFieldUpdateOperationsInput | $Enums.StorageProvider
+    providerFileId?: StringFieldUpdateOperationsInput | string
+    folder?: NullableStringFieldUpdateOperationsInput | string | null
+    filename?: StringFieldUpdateOperationsInput | string
+    originalName?: StringFieldUpdateOperationsInput | string
+    mimeType?: StringFieldUpdateOperationsInput | string
+    size?: IntFieldUpdateOperationsInput | number
+    url?: StringFieldUpdateOperationsInput | string
+    publicUrl?: NullableStringFieldUpdateOperationsInput | string | null
     width?: NullableIntFieldUpdateOperationsInput | number | null
+    height?: NullableIntFieldUpdateOperationsInput | number | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
     userId?: NullableStringFieldUpdateOperationsInput | string | null
     organizationId?: NullableStringFieldUpdateOperationsInput | string | null
   }
@@ -36155,11 +36166,22 @@ export namespace Prisma {
     roleId?: SortOrder
   }
 
-  export type EnumImageTypeNullableFilter<$PrismaModel = never> = {
-    equals?: $Enums.ImageType | EnumImageTypeFieldRefInput<$PrismaModel> | null
-    in?: $Enums.ImageType[] | ListEnumImageTypeFieldRefInput<$PrismaModel> | null
-    notIn?: $Enums.ImageType[] | ListEnumImageTypeFieldRefInput<$PrismaModel> | null
-    not?: NestedEnumImageTypeNullableFilter<$PrismaModel> | $Enums.ImageType | null
+  export type EnumStorageProviderFilter<$PrismaModel = never> = {
+    equals?: $Enums.StorageProvider | EnumStorageProviderFieldRefInput<$PrismaModel>
+    in?: $Enums.StorageProvider[] | ListEnumStorageProviderFieldRefInput<$PrismaModel>
+    notIn?: $Enums.StorageProvider[] | ListEnumStorageProviderFieldRefInput<$PrismaModel>
+    not?: NestedEnumStorageProviderFilter<$PrismaModel> | $Enums.StorageProvider
+  }
+
+  export type IntFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntFilter<$PrismaModel> | number
   }
 
   export type IntNullableFilter<$PrismaModel = never> = {
@@ -36177,44 +36199,43 @@ export namespace Prisma {
     id?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    type?: SortOrder
-    fileId?: SortOrder
-    filePath?: SortOrder
-    fileType?: SortOrder
-    height?: SortOrder
-    name?: SortOrder
+    provider?: SortOrder
+    providerFileId?: SortOrder
+    folder?: SortOrder
+    filename?: SortOrder
+    originalName?: SortOrder
+    mimeType?: SortOrder
     size?: SortOrder
-    thumbnailUrl?: SortOrder
-    orientation?: SortOrder
     url?: SortOrder
-    versionInfo?: SortOrder
+    publicUrl?: SortOrder
     width?: SortOrder
+    height?: SortOrder
+    metadata?: SortOrder
     userId?: SortOrder
     organizationId?: SortOrder
   }
 
   export type UploadAvgOrderByAggregateInput = {
-    height?: SortOrder
     size?: SortOrder
-    orientation?: SortOrder
     width?: SortOrder
+    height?: SortOrder
   }
 
   export type UploadMaxOrderByAggregateInput = {
     id?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    type?: SortOrder
-    fileId?: SortOrder
-    filePath?: SortOrder
-    fileType?: SortOrder
-    height?: SortOrder
-    name?: SortOrder
+    provider?: SortOrder
+    providerFileId?: SortOrder
+    folder?: SortOrder
+    filename?: SortOrder
+    originalName?: SortOrder
+    mimeType?: SortOrder
     size?: SortOrder
-    thumbnailUrl?: SortOrder
-    orientation?: SortOrder
     url?: SortOrder
+    publicUrl?: SortOrder
     width?: SortOrder
+    height?: SortOrder
     userId?: SortOrder
     organizationId?: SortOrder
   }
@@ -36223,36 +36244,51 @@ export namespace Prisma {
     id?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    type?: SortOrder
-    fileId?: SortOrder
-    filePath?: SortOrder
-    fileType?: SortOrder
-    height?: SortOrder
-    name?: SortOrder
+    provider?: SortOrder
+    providerFileId?: SortOrder
+    folder?: SortOrder
+    filename?: SortOrder
+    originalName?: SortOrder
+    mimeType?: SortOrder
     size?: SortOrder
-    thumbnailUrl?: SortOrder
-    orientation?: SortOrder
     url?: SortOrder
+    publicUrl?: SortOrder
     width?: SortOrder
+    height?: SortOrder
     userId?: SortOrder
     organizationId?: SortOrder
   }
 
   export type UploadSumOrderByAggregateInput = {
-    height?: SortOrder
     size?: SortOrder
-    orientation?: SortOrder
     width?: SortOrder
+    height?: SortOrder
   }
 
-  export type EnumImageTypeNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.ImageType | EnumImageTypeFieldRefInput<$PrismaModel> | null
-    in?: $Enums.ImageType[] | ListEnumImageTypeFieldRefInput<$PrismaModel> | null
-    notIn?: $Enums.ImageType[] | ListEnumImageTypeFieldRefInput<$PrismaModel> | null
-    not?: NestedEnumImageTypeNullableWithAggregatesFilter<$PrismaModel> | $Enums.ImageType | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedEnumImageTypeNullableFilter<$PrismaModel>
-    _max?: NestedEnumImageTypeNullableFilter<$PrismaModel>
+  export type EnumStorageProviderWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.StorageProvider | EnumStorageProviderFieldRefInput<$PrismaModel>
+    in?: $Enums.StorageProvider[] | ListEnumStorageProviderFieldRefInput<$PrismaModel>
+    notIn?: $Enums.StorageProvider[] | ListEnumStorageProviderFieldRefInput<$PrismaModel>
+    not?: NestedEnumStorageProviderWithAggregatesFilter<$PrismaModel> | $Enums.StorageProvider
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumStorageProviderFilter<$PrismaModel>
+    _max?: NestedEnumStorageProviderFilter<$PrismaModel>
+  }
+
+  export type IntWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedIntFilter<$PrismaModel>
+    _min?: NestedIntFilter<$PrismaModel>
+    _max?: NestedIntFilter<$PrismaModel>
   }
 
   export type IntNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -36284,17 +36320,6 @@ export namespace Prisma {
     in?: $Enums.TwoFactorMethod[] | ListEnumTwoFactorMethodFieldRefInput<$PrismaModel>
     notIn?: $Enums.TwoFactorMethod[] | ListEnumTwoFactorMethodFieldRefInput<$PrismaModel>
     not?: NestedEnumTwoFactorMethodFilter<$PrismaModel> | $Enums.TwoFactorMethod
-  }
-
-  export type IntFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[] | ListIntFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntFilter<$PrismaModel> | number
   }
 
   export type UserSessionListRelationFilter = {
@@ -36461,22 +36486,6 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumTwoFactorMethodFilter<$PrismaModel>
     _max?: NestedEnumTwoFactorMethodFilter<$PrismaModel>
-  }
-
-  export type IntWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[] | ListIntFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
-    _count?: NestedIntFilter<$PrismaModel>
-    _avg?: NestedFloatFilter<$PrismaModel>
-    _sum?: NestedIntFilter<$PrismaModel>
-    _min?: NestedIntFilter<$PrismaModel>
-    _max?: NestedIntFilter<$PrismaModel>
   }
 
   export type UserPreferenceUserIdKeyCompoundUniqueInput = {
@@ -37813,8 +37822,16 @@ export namespace Prisma {
     connect?: OrganizationWhereUniqueInput
   }
 
-  export type NullableEnumImageTypeFieldUpdateOperationsInput = {
-    set?: $Enums.ImageType | null
+  export type EnumStorageProviderFieldUpdateOperationsInput = {
+    set?: $Enums.StorageProvider
+  }
+
+  export type IntFieldUpdateOperationsInput = {
+    set?: number
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
   }
 
   export type NullableIntFieldUpdateOperationsInput = {
@@ -38066,14 +38083,6 @@ export namespace Prisma {
 
   export type EnumTwoFactorMethodFieldUpdateOperationsInput = {
     set?: $Enums.TwoFactorMethod
-  }
-
-  export type IntFieldUpdateOperationsInput = {
-    set?: number
-    increment?: number
-    decrement?: number
-    multiply?: number
-    divide?: number
   }
 
   export type EmailUpdateManyWithoutUserNestedInput = {
@@ -38840,21 +38849,48 @@ export namespace Prisma {
     _max?: NestedEnumSubscriptionStatusFilter<$PrismaModel>
   }
 
-  export type NestedEnumImageTypeNullableFilter<$PrismaModel = never> = {
-    equals?: $Enums.ImageType | EnumImageTypeFieldRefInput<$PrismaModel> | null
-    in?: $Enums.ImageType[] | ListEnumImageTypeFieldRefInput<$PrismaModel> | null
-    notIn?: $Enums.ImageType[] | ListEnumImageTypeFieldRefInput<$PrismaModel> | null
-    not?: NestedEnumImageTypeNullableFilter<$PrismaModel> | $Enums.ImageType | null
+  export type NestedEnumStorageProviderFilter<$PrismaModel = never> = {
+    equals?: $Enums.StorageProvider | EnumStorageProviderFieldRefInput<$PrismaModel>
+    in?: $Enums.StorageProvider[] | ListEnumStorageProviderFieldRefInput<$PrismaModel>
+    notIn?: $Enums.StorageProvider[] | ListEnumStorageProviderFieldRefInput<$PrismaModel>
+    not?: NestedEnumStorageProviderFilter<$PrismaModel> | $Enums.StorageProvider
   }
 
-  export type NestedEnumImageTypeNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.ImageType | EnumImageTypeFieldRefInput<$PrismaModel> | null
-    in?: $Enums.ImageType[] | ListEnumImageTypeFieldRefInput<$PrismaModel> | null
-    notIn?: $Enums.ImageType[] | ListEnumImageTypeFieldRefInput<$PrismaModel> | null
-    not?: NestedEnumImageTypeNullableWithAggregatesFilter<$PrismaModel> | $Enums.ImageType | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedEnumImageTypeNullableFilter<$PrismaModel>
-    _max?: NestedEnumImageTypeNullableFilter<$PrismaModel>
+  export type NestedEnumStorageProviderWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.StorageProvider | EnumStorageProviderFieldRefInput<$PrismaModel>
+    in?: $Enums.StorageProvider[] | ListEnumStorageProviderFieldRefInput<$PrismaModel>
+    notIn?: $Enums.StorageProvider[] | ListEnumStorageProviderFieldRefInput<$PrismaModel>
+    not?: NestedEnumStorageProviderWithAggregatesFilter<$PrismaModel> | $Enums.StorageProvider
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumStorageProviderFilter<$PrismaModel>
+    _max?: NestedEnumStorageProviderFilter<$PrismaModel>
+  }
+
+  export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedIntFilter<$PrismaModel>
+    _min?: NestedIntFilter<$PrismaModel>
+    _max?: NestedIntFilter<$PrismaModel>
+  }
+
+  export type NestedFloatFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatFilter<$PrismaModel> | number
   }
 
   export type NestedIntNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -38899,33 +38935,6 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumTwoFactorMethodFilter<$PrismaModel>
     _max?: NestedEnumTwoFactorMethodFilter<$PrismaModel>
-  }
-
-  export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[] | ListIntFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
-    _count?: NestedIntFilter<$PrismaModel>
-    _avg?: NestedFloatFilter<$PrismaModel>
-    _sum?: NestedIntFilter<$PrismaModel>
-    _min?: NestedIntFilter<$PrismaModel>
-    _max?: NestedIntFilter<$PrismaModel>
-  }
-
-  export type NestedFloatFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel>
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatFilter<$PrismaModel> | number
   }
 
   export type CountryCreateWithoutAddressesInput = {
@@ -41199,18 +41208,18 @@ export namespace Prisma {
     id?: string
     createdAt?: Date | string
     updatedAt?: Date | string
-    type?: $Enums.ImageType | null
-    fileId?: string | null
-    filePath?: string | null
-    fileType?: string | null
-    height?: number | null
-    name?: string | null
-    size?: number | null
-    thumbnailUrl?: string | null
-    orientation?: number | null
-    url?: string | null
-    versionInfo?: NullableJsonNullValueInput | InputJsonValue
+    provider: $Enums.StorageProvider
+    providerFileId: string
+    folder?: string | null
+    filename: string
+    originalName: string
+    mimeType: string
+    size: number
+    url: string
+    publicUrl?: string | null
     width?: number | null
+    height?: number | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
     user?: UserCreateNestedOneWithoutImagesInput
   }
 
@@ -41218,18 +41227,18 @@ export namespace Prisma {
     id?: string
     createdAt?: Date | string
     updatedAt?: Date | string
-    type?: $Enums.ImageType | null
-    fileId?: string | null
-    filePath?: string | null
-    fileType?: string | null
-    height?: number | null
-    name?: string | null
-    size?: number | null
-    thumbnailUrl?: string | null
-    orientation?: number | null
-    url?: string | null
-    versionInfo?: NullableJsonNullValueInput | InputJsonValue
+    provider: $Enums.StorageProvider
+    providerFileId: string
+    folder?: string | null
+    filename: string
+    originalName: string
+    mimeType: string
+    size: number
+    url: string
+    publicUrl?: string | null
     width?: number | null
+    height?: number | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
     userId?: string | null
   }
 
@@ -41578,18 +41587,18 @@ export namespace Prisma {
     id?: StringFilter<"Upload"> | string
     createdAt?: DateTimeFilter<"Upload"> | Date | string
     updatedAt?: DateTimeFilter<"Upload"> | Date | string
-    type?: EnumImageTypeNullableFilter<"Upload"> | $Enums.ImageType | null
-    fileId?: StringNullableFilter<"Upload"> | string | null
-    filePath?: StringNullableFilter<"Upload"> | string | null
-    fileType?: StringNullableFilter<"Upload"> | string | null
-    height?: IntNullableFilter<"Upload"> | number | null
-    name?: StringNullableFilter<"Upload"> | string | null
-    size?: IntNullableFilter<"Upload"> | number | null
-    thumbnailUrl?: StringNullableFilter<"Upload"> | string | null
-    orientation?: IntNullableFilter<"Upload"> | number | null
-    url?: StringNullableFilter<"Upload"> | string | null
-    versionInfo?: JsonNullableFilter<"Upload">
+    provider?: EnumStorageProviderFilter<"Upload"> | $Enums.StorageProvider
+    providerFileId?: StringFilter<"Upload"> | string
+    folder?: StringNullableFilter<"Upload"> | string | null
+    filename?: StringFilter<"Upload"> | string
+    originalName?: StringFilter<"Upload"> | string
+    mimeType?: StringFilter<"Upload"> | string
+    size?: IntFilter<"Upload"> | number
+    url?: StringFilter<"Upload"> | string
+    publicUrl?: StringNullableFilter<"Upload"> | string | null
     width?: IntNullableFilter<"Upload"> | number | null
+    height?: IntNullableFilter<"Upload"> | number | null
+    metadata?: JsonNullableFilter<"Upload">
     userId?: StringNullableFilter<"Upload"> | string | null
     organizationId?: StringNullableFilter<"Upload"> | string | null
   }
@@ -43914,18 +43923,18 @@ export namespace Prisma {
     id?: string
     createdAt?: Date | string
     updatedAt?: Date | string
-    type?: $Enums.ImageType | null
-    fileId?: string | null
-    filePath?: string | null
-    fileType?: string | null
-    height?: number | null
-    name?: string | null
-    size?: number | null
-    thumbnailUrl?: string | null
-    orientation?: number | null
-    url?: string | null
-    versionInfo?: NullableJsonNullValueInput | InputJsonValue
+    provider: $Enums.StorageProvider
+    providerFileId: string
+    folder?: string | null
+    filename: string
+    originalName: string
+    mimeType: string
+    size: number
+    url: string
+    publicUrl?: string | null
     width?: number | null
+    height?: number | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
     organization?: OrganizationCreateNestedOneWithoutImagesInput
   }
 
@@ -43933,18 +43942,18 @@ export namespace Prisma {
     id?: string
     createdAt?: Date | string
     updatedAt?: Date | string
-    type?: $Enums.ImageType | null
-    fileId?: string | null
-    filePath?: string | null
-    fileType?: string | null
-    height?: number | null
-    name?: string | null
-    size?: number | null
-    thumbnailUrl?: string | null
-    orientation?: number | null
-    url?: string | null
-    versionInfo?: NullableJsonNullValueInput | InputJsonValue
+    provider: $Enums.StorageProvider
+    providerFileId: string
+    folder?: string | null
+    filename: string
+    originalName: string
+    mimeType: string
+    size: number
+    url: string
+    publicUrl?: string | null
     width?: number | null
+    height?: number | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
     organizationId?: string | null
   }
 
@@ -45101,18 +45110,18 @@ export namespace Prisma {
     id?: string
     createdAt?: Date | string
     updatedAt?: Date | string
-    type?: $Enums.ImageType | null
-    fileId?: string | null
-    filePath?: string | null
-    fileType?: string | null
-    height?: number | null
-    name?: string | null
-    size?: number | null
-    thumbnailUrl?: string | null
-    orientation?: number | null
-    url?: string | null
-    versionInfo?: NullableJsonNullValueInput | InputJsonValue
+    provider: $Enums.StorageProvider
+    providerFileId: string
+    folder?: string | null
+    filename: string
+    originalName: string
+    mimeType: string
+    size: number
+    url: string
+    publicUrl?: string | null
     width?: number | null
+    height?: number | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
     userId?: string | null
   }
 
@@ -45279,18 +45288,18 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    type?: NullableEnumImageTypeFieldUpdateOperationsInput | $Enums.ImageType | null
-    fileId?: NullableStringFieldUpdateOperationsInput | string | null
-    filePath?: NullableStringFieldUpdateOperationsInput | string | null
-    fileType?: NullableStringFieldUpdateOperationsInput | string | null
-    height?: NullableIntFieldUpdateOperationsInput | number | null
-    name?: NullableStringFieldUpdateOperationsInput | string | null
-    size?: NullableIntFieldUpdateOperationsInput | number | null
-    thumbnailUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    orientation?: NullableIntFieldUpdateOperationsInput | number | null
-    url?: NullableStringFieldUpdateOperationsInput | string | null
-    versionInfo?: NullableJsonNullValueInput | InputJsonValue
+    provider?: EnumStorageProviderFieldUpdateOperationsInput | $Enums.StorageProvider
+    providerFileId?: StringFieldUpdateOperationsInput | string
+    folder?: NullableStringFieldUpdateOperationsInput | string | null
+    filename?: StringFieldUpdateOperationsInput | string
+    originalName?: StringFieldUpdateOperationsInput | string
+    mimeType?: StringFieldUpdateOperationsInput | string
+    size?: IntFieldUpdateOperationsInput | number
+    url?: StringFieldUpdateOperationsInput | string
+    publicUrl?: NullableStringFieldUpdateOperationsInput | string | null
     width?: NullableIntFieldUpdateOperationsInput | number | null
+    height?: NullableIntFieldUpdateOperationsInput | number | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
     user?: UserUpdateOneWithoutImagesNestedInput
   }
 
@@ -45298,18 +45307,18 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    type?: NullableEnumImageTypeFieldUpdateOperationsInput | $Enums.ImageType | null
-    fileId?: NullableStringFieldUpdateOperationsInput | string | null
-    filePath?: NullableStringFieldUpdateOperationsInput | string | null
-    fileType?: NullableStringFieldUpdateOperationsInput | string | null
-    height?: NullableIntFieldUpdateOperationsInput | number | null
-    name?: NullableStringFieldUpdateOperationsInput | string | null
-    size?: NullableIntFieldUpdateOperationsInput | number | null
-    thumbnailUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    orientation?: NullableIntFieldUpdateOperationsInput | number | null
-    url?: NullableStringFieldUpdateOperationsInput | string | null
-    versionInfo?: NullableJsonNullValueInput | InputJsonValue
+    provider?: EnumStorageProviderFieldUpdateOperationsInput | $Enums.StorageProvider
+    providerFileId?: StringFieldUpdateOperationsInput | string
+    folder?: NullableStringFieldUpdateOperationsInput | string | null
+    filename?: StringFieldUpdateOperationsInput | string
+    originalName?: StringFieldUpdateOperationsInput | string
+    mimeType?: StringFieldUpdateOperationsInput | string
+    size?: IntFieldUpdateOperationsInput | number
+    url?: StringFieldUpdateOperationsInput | string
+    publicUrl?: NullableStringFieldUpdateOperationsInput | string | null
     width?: NullableIntFieldUpdateOperationsInput | number | null
+    height?: NullableIntFieldUpdateOperationsInput | number | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
     userId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
@@ -45317,18 +45326,18 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    type?: NullableEnumImageTypeFieldUpdateOperationsInput | $Enums.ImageType | null
-    fileId?: NullableStringFieldUpdateOperationsInput | string | null
-    filePath?: NullableStringFieldUpdateOperationsInput | string | null
-    fileType?: NullableStringFieldUpdateOperationsInput | string | null
-    height?: NullableIntFieldUpdateOperationsInput | number | null
-    name?: NullableStringFieldUpdateOperationsInput | string | null
-    size?: NullableIntFieldUpdateOperationsInput | number | null
-    thumbnailUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    orientation?: NullableIntFieldUpdateOperationsInput | number | null
-    url?: NullableStringFieldUpdateOperationsInput | string | null
-    versionInfo?: NullableJsonNullValueInput | InputJsonValue
+    provider?: EnumStorageProviderFieldUpdateOperationsInput | $Enums.StorageProvider
+    providerFileId?: StringFieldUpdateOperationsInput | string
+    folder?: NullableStringFieldUpdateOperationsInput | string | null
+    filename?: StringFieldUpdateOperationsInput | string
+    originalName?: StringFieldUpdateOperationsInput | string
+    mimeType?: StringFieldUpdateOperationsInput | string
+    size?: IntFieldUpdateOperationsInput | number
+    url?: StringFieldUpdateOperationsInput | string
+    publicUrl?: NullableStringFieldUpdateOperationsInput | string | null
     width?: NullableIntFieldUpdateOperationsInput | number | null
+    height?: NullableIntFieldUpdateOperationsInput | number | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
     userId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
@@ -45799,18 +45808,18 @@ export namespace Prisma {
     id?: string
     createdAt?: Date | string
     updatedAt?: Date | string
-    type?: $Enums.ImageType | null
-    fileId?: string | null
-    filePath?: string | null
-    fileType?: string | null
-    height?: number | null
-    name?: string | null
-    size?: number | null
-    thumbnailUrl?: string | null
-    orientation?: number | null
-    url?: string | null
-    versionInfo?: NullableJsonNullValueInput | InputJsonValue
+    provider: $Enums.StorageProvider
+    providerFileId: string
+    folder?: string | null
+    filename: string
+    originalName: string
+    mimeType: string
+    size: number
+    url: string
+    publicUrl?: string | null
     width?: number | null
+    height?: number | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
     organizationId?: string | null
   }
 
@@ -46031,18 +46040,18 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    type?: NullableEnumImageTypeFieldUpdateOperationsInput | $Enums.ImageType | null
-    fileId?: NullableStringFieldUpdateOperationsInput | string | null
-    filePath?: NullableStringFieldUpdateOperationsInput | string | null
-    fileType?: NullableStringFieldUpdateOperationsInput | string | null
-    height?: NullableIntFieldUpdateOperationsInput | number | null
-    name?: NullableStringFieldUpdateOperationsInput | string | null
-    size?: NullableIntFieldUpdateOperationsInput | number | null
-    thumbnailUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    orientation?: NullableIntFieldUpdateOperationsInput | number | null
-    url?: NullableStringFieldUpdateOperationsInput | string | null
-    versionInfo?: NullableJsonNullValueInput | InputJsonValue
+    provider?: EnumStorageProviderFieldUpdateOperationsInput | $Enums.StorageProvider
+    providerFileId?: StringFieldUpdateOperationsInput | string
+    folder?: NullableStringFieldUpdateOperationsInput | string | null
+    filename?: StringFieldUpdateOperationsInput | string
+    originalName?: StringFieldUpdateOperationsInput | string
+    mimeType?: StringFieldUpdateOperationsInput | string
+    size?: IntFieldUpdateOperationsInput | number
+    url?: StringFieldUpdateOperationsInput | string
+    publicUrl?: NullableStringFieldUpdateOperationsInput | string | null
     width?: NullableIntFieldUpdateOperationsInput | number | null
+    height?: NullableIntFieldUpdateOperationsInput | number | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
     organization?: OrganizationUpdateOneWithoutImagesNestedInput
   }
 
@@ -46050,18 +46059,18 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    type?: NullableEnumImageTypeFieldUpdateOperationsInput | $Enums.ImageType | null
-    fileId?: NullableStringFieldUpdateOperationsInput | string | null
-    filePath?: NullableStringFieldUpdateOperationsInput | string | null
-    fileType?: NullableStringFieldUpdateOperationsInput | string | null
-    height?: NullableIntFieldUpdateOperationsInput | number | null
-    name?: NullableStringFieldUpdateOperationsInput | string | null
-    size?: NullableIntFieldUpdateOperationsInput | number | null
-    thumbnailUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    orientation?: NullableIntFieldUpdateOperationsInput | number | null
-    url?: NullableStringFieldUpdateOperationsInput | string | null
-    versionInfo?: NullableJsonNullValueInput | InputJsonValue
+    provider?: EnumStorageProviderFieldUpdateOperationsInput | $Enums.StorageProvider
+    providerFileId?: StringFieldUpdateOperationsInput | string
+    folder?: NullableStringFieldUpdateOperationsInput | string | null
+    filename?: StringFieldUpdateOperationsInput | string
+    originalName?: StringFieldUpdateOperationsInput | string
+    mimeType?: StringFieldUpdateOperationsInput | string
+    size?: IntFieldUpdateOperationsInput | number
+    url?: StringFieldUpdateOperationsInput | string
+    publicUrl?: NullableStringFieldUpdateOperationsInput | string | null
     width?: NullableIntFieldUpdateOperationsInput | number | null
+    height?: NullableIntFieldUpdateOperationsInput | number | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
     organizationId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
@@ -46069,18 +46078,18 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    type?: NullableEnumImageTypeFieldUpdateOperationsInput | $Enums.ImageType | null
-    fileId?: NullableStringFieldUpdateOperationsInput | string | null
-    filePath?: NullableStringFieldUpdateOperationsInput | string | null
-    fileType?: NullableStringFieldUpdateOperationsInput | string | null
-    height?: NullableIntFieldUpdateOperationsInput | number | null
-    name?: NullableStringFieldUpdateOperationsInput | string | null
-    size?: NullableIntFieldUpdateOperationsInput | number | null
-    thumbnailUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    orientation?: NullableIntFieldUpdateOperationsInput | number | null
-    url?: NullableStringFieldUpdateOperationsInput | string | null
-    versionInfo?: NullableJsonNullValueInput | InputJsonValue
+    provider?: EnumStorageProviderFieldUpdateOperationsInput | $Enums.StorageProvider
+    providerFileId?: StringFieldUpdateOperationsInput | string
+    folder?: NullableStringFieldUpdateOperationsInput | string | null
+    filename?: StringFieldUpdateOperationsInput | string
+    originalName?: StringFieldUpdateOperationsInput | string
+    mimeType?: StringFieldUpdateOperationsInput | string
+    size?: IntFieldUpdateOperationsInput | number
+    url?: StringFieldUpdateOperationsInput | string
+    publicUrl?: NullableStringFieldUpdateOperationsInput | string | null
     width?: NullableIntFieldUpdateOperationsInput | number | null
+    height?: NullableIntFieldUpdateOperationsInput | number | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
     organizationId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 

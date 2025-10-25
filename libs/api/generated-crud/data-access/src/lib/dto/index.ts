@@ -7,7 +7,7 @@ import {
   PhoneType,
   SecurityEventType,
   SubscriptionStatus,
-  ImageType,
+  StorageProvider,
   TwoFactorMethod,
 } from '@nestled-template/api/core/models'
 import { GraphQLJSON } from 'graphql-type-json'
@@ -1743,41 +1743,41 @@ export class CreateUploadInput {
   @Field(() => Date, { nullable: true })
   updatedAt?: Date
 
-  @Field(() => ImageType, { nullable: true })
-  type?: ImageType
+  @Field(() => StorageProvider, { nullable: false })
+  provider!: StorageProvider
+
+  @Field({ nullable: false })
+  providerFileId!: string
 
   @Field({ nullable: true })
-  fileId?: string
+  folder?: string
+
+  @Field({ nullable: false })
+  filename!: string
+
+  @Field({ nullable: false })
+  originalName!: string
+
+  @Field({ nullable: false })
+  mimeType!: string
+
+  @Field(() => Int, { nullable: false })
+  size!: number
+
+  @Field({ nullable: false })
+  url!: string
 
   @Field({ nullable: true })
-  filePath?: string
+  publicUrl?: string
 
-  @Field({ nullable: true })
-  fileType?: string
+  @Field(() => Int, { nullable: true })
+  width?: number
 
   @Field(() => Int, { nullable: true })
   height?: number
 
-  @Field({ nullable: true })
-  name?: string
-
-  @Field(() => Int, { nullable: true })
-  size?: number
-
-  @Field({ nullable: true })
-  thumbnailUrl?: string
-
-  @Field(() => Int, { nullable: true })
-  orientation?: number
-
-  @Field({ nullable: true })
-  url?: string
-
   @Field(() => GraphQLJSON, { nullable: true })
-  versionInfo?: typeof GraphQLJSON
-
-  @Field(() => Int, { nullable: true })
-  width?: number
+  metadata?: typeof GraphQLJSON
 
   @Field({ nullable: true })
   userId?: string
@@ -1797,41 +1797,41 @@ export class UpdateUploadInput {
   @Field(() => Date, { nullable: true })
   updatedAt?: Date
 
-  @Field(() => ImageType, { nullable: true })
-  type?: ImageType
+  @Field(() => StorageProvider, { nullable: true })
+  provider?: StorageProvider
 
   @Field({ nullable: true })
-  fileId?: string
+  providerFileId?: string
 
   @Field({ nullable: true })
-  filePath?: string
+  folder?: string
 
   @Field({ nullable: true })
-  fileType?: string
-
-  @Field(() => Int, { nullable: true })
-  height?: number
+  filename?: string
 
   @Field({ nullable: true })
-  name?: string
+  originalName?: string
+
+  @Field({ nullable: true })
+  mimeType?: string
 
   @Field(() => Int, { nullable: true })
   size?: number
 
   @Field({ nullable: true })
-  thumbnailUrl?: string
-
-  @Field(() => Int, { nullable: true })
-  orientation?: number
-
-  @Field({ nullable: true })
   url?: string
 
-  @Field(() => GraphQLJSON, { nullable: true })
-  versionInfo?: typeof GraphQLJSON
+  @Field({ nullable: true })
+  publicUrl?: string
 
   @Field(() => Int, { nullable: true })
   width?: number
+
+  @Field(() => Int, { nullable: true })
+  height?: number
+
+  @Field(() => GraphQLJSON, { nullable: true })
+  metadata?: typeof GraphQLJSON
 
   @Field({ nullable: true })
   userId?: string
@@ -1851,41 +1851,41 @@ export class ListUploadInput extends CorePagingInput {
   @Field(() => Date, { nullable: true })
   updatedAt?: Date
 
-  @Field(() => ImageType, { nullable: true })
-  type?: ImageType
+  @Field(() => StorageProvider, { nullable: true })
+  provider?: StorageProvider
 
   @Field({ nullable: true })
-  fileId?: string
+  providerFileId?: string
 
   @Field({ nullable: true })
-  filePath?: string
+  folder?: string
 
   @Field({ nullable: true })
-  fileType?: string
-
-  @Field(() => Int, { nullable: true })
-  height?: number
+  filename?: string
 
   @Field({ nullable: true })
-  name?: string
+  originalName?: string
+
+  @Field({ nullable: true })
+  mimeType?: string
 
   @Field(() => Int, { nullable: true })
   size?: number
 
   @Field({ nullable: true })
-  thumbnailUrl?: string
-
-  @Field(() => Int, { nullable: true })
-  orientation?: number
-
-  @Field({ nullable: true })
   url?: string
 
-  @Field(() => GraphQLJSON, { nullable: true })
-  versionInfo?: typeof GraphQLJSON
+  @Field({ nullable: true })
+  publicUrl?: string
 
   @Field(() => Int, { nullable: true })
   width?: number
+
+  @Field(() => Int, { nullable: true })
+  height?: number
+
+  @Field(() => GraphQLJSON, { nullable: true })
+  metadata?: typeof GraphQLJSON
 
   @Field({ nullable: true })
   userId?: string

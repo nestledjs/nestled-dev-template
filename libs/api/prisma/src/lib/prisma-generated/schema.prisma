@@ -277,25 +277,41 @@ model TeamMember {
 }
 
 model Upload {
-  id             String        @id @default(uuid())
-  createdAt      DateTime      @default(now())
-  updatedAt      DateTime      @updatedAt
-  type           ImageType?
-  fileId         String?
-  filePath       String?
-  fileType       String?
-  height         Int?
-  name           String?
-  size           Int?
-  thumbnailUrl   String?
-  orientation    Int?
-  url            String?
-  versionInfo    Json?
-  width          Int?
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Storage info
+  provider       StorageProvider
+  providerFileId String // Provider-specific ID/key
+  folder         String?
+
+  // File info
+  filename     String
+  originalName String
+  mimeType     String
+  size         Int
+
+  // URLs
+  url       String
+  publicUrl String?
+
+  // Image metadata (if applicable)
+  width  Int?
+  height Int?
+
+  // Generic metadata
+  metadata Json?
+
+  // Relations
   userId         String?
   organizationId String?
   user           User?         @relation("Upload_belongsTo_User", fields: [userId], references: [id])
   organization   Organization? @relation("Upload_belongsTo_Organization", fields: [organizationId], references: [id])
+
+  @@index([userId])
+  @@index([organizationId])
+  @@index([provider])
 }
 
 model User {
@@ -429,6 +445,14 @@ enum SecurityEventType {
   API_TOKEN_CREATED
   API_TOKEN_REVOKED
   API_TOKEN_ROTATED
+}
+
+enum StorageProvider {
+  LOCAL
+  S3
+  CLOUDINARY
+  IMAGEKIT
+  GCS
 }
 
 enum SubscriptionStatus {

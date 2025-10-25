@@ -126,6 +126,48 @@ Use this when you have custom operations like:
 1. Delete any auto-generated admin GraphQL files for that model in `/libs/shared/sdk/src/admin-graphql/`
 2. If custom resolvers are used by other models (e.g., `organizationMembers` used by OrganizationMember), manually update those GraphQL files to match the custom resolver signatures
 
+## Prisma Import Paths
+
+**CRITICAL**: Always import Prisma types from the project's wrapper, NOT from `@prisma/client` directly.
+
+### Correct Import Pattern ✅
+
+```typescript
+import { PrismaClient, User, Upload, StorageProvider } from '@nestled-template/api/prisma'
+```
+
+### Incorrect Import Pattern ❌
+
+```typescript
+import { User, Upload } from '@prisma/client'  // WRONG - Will cause build errors
+```
+
+**Why**: This project uses a custom Prisma wrapper at `@nestled-template/api/prisma` that exports the generated Prisma client and all types. Importing directly from `@prisma/client` will fail because the types are generated in a custom location.
+
+### Common Types to Import
+
+All Prisma-generated types should come from `@nestled-template/api/prisma`:
+- `PrismaClient` - The Prisma database client
+- Model types: `User`, `Organization`, `Upload`, etc.
+- Enum types: `StorageProvider`, `AddressType`, `EmailType`, etc.
+- Helper types: `Prisma` namespace for advanced queries
+
+### Example Usage
+
+```typescript
+import { Injectable } from '@nestjs/common'
+import { PrismaClient, User, Organization } from '@nestled-template/api/prisma'
+
+@Injectable()
+export class MyService {
+  constructor(private readonly prisma: PrismaClient) {}
+
+  async findUser(id: string): Promise<User> {
+    return this.prisma.user.findUnique({ where: { id } })
+  }
+}
+```
+
 ## Code Generation Workflow
 
 After making changes to the Prisma schema:

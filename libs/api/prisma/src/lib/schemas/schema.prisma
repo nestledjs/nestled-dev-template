@@ -156,7 +156,7 @@ model Organization {
   emails       Email[]              @relation("Email_belongsTo_Organization")
   links        Link[]               @relation("Link_belongsTo_Organization")
   phoneNumbers PhoneNumber[]        @relation("PhoneNumber_belongsTo_Organization")
-  images       Upload[]             @relation("Upload_belongsTo_Organization")
+  images       StoredFile[]         @relation("StoredFile_belongsTo_Organization")
   members      OrganizationMember[] @relation("OrganizationMember_belongsTo_Organization")
   addresses    Address[]            @relation("Address_belongsTo_Organization")
   invites      Invite[]             @relation("Invite_belongsTo_Organization")
@@ -276,26 +276,42 @@ model TeamMember {
   role      Role     @relation(fields: [roleId], references: [id])
 }
 
-model Upload {
-  id             String        @id @default(uuid())
-  createdAt      DateTime      @default(now())
-  updatedAt      DateTime      @updatedAt
-  type           ImageType?
-  fileId         String?
-  filePath       String?
-  fileType       String?
-  height         Int?
-  name           String?
-  size           Int?
-  thumbnailUrl   String?
-  orientation    Int?
-  url            String?
-  versionInfo    Json?
-  width          Int?
+model StoredFile {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Storage info
+  provider       StorageProvider
+  providerFileId String // Provider-specific ID/key
+  folder         String?
+
+  // File info
+  filename     String
+  originalName String
+  mimeType     String
+  size         Int
+
+  // URLs
+  url       String
+  publicUrl String?
+
+  // Image metadata (if applicable)
+  width  Int?
+  height Int?
+
+  // Generic metadata
+  metadata Json?
+
+  // Relations
   userId         String?
   organizationId String?
-  user           User?         @relation("Upload_belongsTo_User", fields: [userId], references: [id])
-  organization   Organization? @relation("Upload_belongsTo_Organization", fields: [organizationId], references: [id])
+  user           User?         @relation("StoredFile_belongsTo_User", fields: [userId], references: [id])
+  organization   Organization? @relation("StoredFile_belongsTo_Organization", fields: [organizationId], references: [id])
+
+  @@index([userId])
+  @@index([organizationId])
+  @@index([provider])
 }
 
 model User {
@@ -316,7 +332,7 @@ model User {
   emails                    Email[]              @relation("Email_belongsTo_User")
   links                     Link[]               @relation("Link_belongsTo_User")
   phoneNumbers              PhoneNumber[]        @relation("PhoneNumber_belongsTo_User")
-  images                    Upload[]             @relation("Upload_belongsTo_User")
+  images                    StoredFile[]         @relation("StoredFile_belongsTo_User")
   organizations             OrganizationMember[] @relation("OrganizationMember_belongsTo_User")
   activeOrganizationId      String?
   addresses                 Address[]            @relation("Address_belongsTo_User")
@@ -429,6 +445,14 @@ enum SecurityEventType {
   API_TOKEN_CREATED
   API_TOKEN_REVOKED
   API_TOKEN_ROTATED
+}
+
+enum StorageProvider {
+  LOCAL
+  S3
+  CLOUDINARY
+  IMAGEKIT
+  GCS
 }
 
 enum SubscriptionStatus {

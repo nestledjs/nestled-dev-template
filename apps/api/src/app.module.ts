@@ -26,6 +26,7 @@ import {
   SecurityEventsModule,
   ApiTokensModule,
   OrganizationPluginModule,
+  StoragePluginModule,
   TenancyMiddleware,
   TenancyModule,
 } from '@nestled-template/api/custom'
@@ -75,6 +76,7 @@ export const pluginModules = [
   SecurityEventsModule,
   ApiTokensModule,
   OrganizationPluginModule,
+  StoragePluginModule,
   TenancyModule,
 ]
 // Combined modules used in the app
