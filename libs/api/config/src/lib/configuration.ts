@@ -24,7 +24,7 @@ export const configuration = () => ({
       },
     },
     cors: {
-      origin: (process.env['ALLOWED_ORIGINS'] ?? '').split(','),
+      origin: (process.env['ALLOWED_ORIGINS'] ?? '').split(',').map(o => o.trim()).filter(o => o.length > 0),
     },
   },
   siteUrl: process.env['SITE_URL'] ?? process.env['API_URL']?.replace('/api', ''),

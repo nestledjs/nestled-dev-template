@@ -1733,7 +1733,7 @@ export class ListTeamMemberInput extends CorePagingInput {
 }
 
 @InputType()
-export class CreateUploadInput {
+export class CreateStoredFileInput {
   @Field({ nullable: true })
   id?: string
 
@@ -1787,7 +1787,7 @@ export class CreateUploadInput {
 }
 
 @InputType()
-export class UpdateUploadInput {
+export class UpdateStoredFileInput {
   @Field({ nullable: true })
   id?: string
 
@@ -1841,7 +1841,7 @@ export class UpdateUploadInput {
 }
 
 @InputType()
-export class ListUploadInput extends CorePagingInput {
+export class ListStoredFileInput extends CorePagingInput {
   @Field({ nullable: true })
   id?: string
 

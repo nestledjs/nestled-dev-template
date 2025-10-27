@@ -147,7 +147,6 @@ model OAuthAccount {
   @@unique([provider, providerUserId])
 }
 
-/// @skipCrud
 model Organization {
   id           String               @id @default(uuid())
   createdAt    DateTime             @default(now())

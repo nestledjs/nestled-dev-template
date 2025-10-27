@@ -1,19 +1,26 @@
 import React, { useState } from 'react'
 import { useLoaderData } from 'react-router'
-import { UsersIcon, PlusIcon, UserMinusIcon, PencilIcon, EnvelopeIcon } from '@heroicons/react/24/outline'
+import {
+  EnvelopeIcon,
+  PencilIcon,
+  PlusIcon,
+  UserMinusIcon,
+  UsersIcon,
+} from '@heroicons/react/24/outline'
 import { RequirePermission } from '@nestled-template/web'
 import { Form, FormFieldClass } from '@nestledjs/forms'
 import { formTheme } from '@nestled-template/shared/styles'
 import { apolloLoader } from '@nestled-template/shared/apollo'
 import {
-  MyOrganizationsDocument,
-  MyOrganizationsQuery,
   MeDocument,
   MeQuery,
-  useGetOrganizationMembersQuery,
-  useInviteOrganizationMemberMutation,
-  useUpdateOrganizationMemberMutation,
+  MyOrganizationsDocument,
+  MyOrganizationsQuery,
+  useUserOrganizationMembersQuery,
+  useCreateOrganizationInvitationMutation,
+  useAddOrganizationMemberMutation,
   useRemoveOrganizationMemberMutation,
+  useUpdateOrganizationMemberRoleMutation,
 } from '@nestled-template/shared/sdk'
 import { QueryRef, useReadQuery } from '@apollo/client'
 
@@ -33,25 +40,25 @@ export default function MembersSettings() {
   const organizations = orgData?.myOrganizations || []
   const activeOrganization = organizations[0] || null
   const user = meData?.me
-  const activeOrganizationMember = activeOrganization?.members?.find(
-    (member: any) => member.userId === user?.id
-  ) || null
+  const activeOrganizationMember =
+    activeOrganization?.members?.find((member: any) => member.userId === user?.id) || null
   const [showInviteForm, setShowInviteForm] = useState(false)
   const [formError, setFormError] = useState<string | null>(null)
   const [formSuccess, setFormSuccess] = useState<string | null>(null)
 
-  const [inviteMember] = useInviteOrganizationMemberMutation()
-  const [updateMember] = useUpdateOrganizationMemberMutation()
+  const [inviteMember] = useCreateOrganizationInvitationMutation()
+  const [addMember] = useAddOrganizationMemberMutation()
   const [removeMember] = useRemoveOrganizationMemberMutation()
+  const [updateMemberRole] = useUpdateOrganizationMemberRoleMutation()
 
-  const { data, loading, error, refetch } = useGetOrganizationMembersQuery({
+  const { data, loading, error, refetch } = useUserOrganizationMembersQuery({
     variables: {
       organizationId: activeOrganization?.id || '',
     },
     skip: !activeOrganization?.id,
   })
 
-  const members = data?.organizationMembers?.items || []
+  const members = data?.userOrganizationMembers || []
 
   async function handleInviteMember(input: { email: string; roleId: string }) {
     setFormError(null)
@@ -76,7 +83,7 @@ export default function MembersSettings() {
     }
   }
 
-  async function handleRemoveMember(memberId: string, memberName: string) {
+  async function handleRemoveMember(userId: string, memberName: string) {
     if (!confirm(`Are you sure you want to remove ${memberName} from the organization?`)) {
       return
     }
@@ -87,7 +94,10 @@ export default function MembersSettings() {
     try {
       await removeMember({
         variables: {
-          organizationMemberId: memberId,
+          input: {
+            organizationId: activeOrganization!.id,
+            userId: userId,
+          },
         },
       })
 
@@ -151,9 +161,7 @@ export default function MembersSettings() {
                 <UsersIcon className="h-6 w-6 text-emerald-600 dark:text-emerald-400" />
               </div>
               <div>
-                <h2 className="text-xl font-bold text-zinc-900 dark:text-white">
-                  Team Members
-                </h2>
+                <h2 className="text-xl font-bold text-zinc-900 dark:text-white">Team Members</h2>
                 <p className="text-sm text-zinc-600 dark:text-zinc-400">
                   Manage your organization's team members and roles
                 </p>
@@ -291,8 +299,8 @@ export default function MembersSettings() {
                         <button
                           onClick={() =>
                             handleRemoveMember(
-                              member.id,
-                              `${member.user?.firstName} ${member.user?.lastName}`
+                              member.user?.id || '',
+                              `${member.user?.firstName} ${member.user?.lastName}`,
                             )
                           }
                           className="p-1.5 rounded text-rose-600 dark:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-500/10"
@@ -317,9 +325,7 @@ export default function MembersSettings() {
 
           <div className="text-center py-6">
             <EnvelopeIcon className="h-10 w-10 mx-auto text-zinc-400 dark:text-zinc-600 mb-2" />
-            <p className="text-sm text-zinc-600 dark:text-zinc-400">
-              No pending invitations
-            </p>
+            <p className="text-sm text-zinc-600 dark:text-zinc-400">No pending invitations</p>
           </div>
         </div>
 
@@ -335,7 +341,8 @@ export default function MembersSettings() {
                 Owner
               </div>
               <p className="flex-1 text-zinc-600 dark:text-zinc-400">
-                Full access to all features, including billing, member management, and organization settings.
+                Full access to all features, including billing, member management, and organization
+                settings.
               </p>
             </div>
             <div className="flex items-start gap-3">
@@ -343,7 +350,8 @@ export default function MembersSettings() {
                 Admin
               </div>
               <p className="flex-1 text-zinc-600 dark:text-zinc-400">
-                Can manage members, view analytics, and configure organization settings (except billing).
+                Can manage members, view analytics, and configure organization settings (except
+                billing).
               </p>
             </div>
             <div className="flex items-start gap-3">

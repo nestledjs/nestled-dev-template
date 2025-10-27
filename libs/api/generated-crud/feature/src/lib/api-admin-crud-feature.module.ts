@@ -19,7 +19,7 @@ import { GeneratedSecurityEventResolver } from './security-event.resolver'
 import { GeneratedSubscriptionResolver } from './subscription.resolver'
 import { GeneratedTeamResolver } from './team.resolver'
 import { GeneratedTeamMemberResolver } from './team-member.resolver'
-import { GeneratedUploadResolver } from './upload.resolver'
+import { GeneratedStoredFileResolver } from './stored-file.resolver'
 import { GeneratedUserResolver } from './user.resolver'
 import { GeneratedUserPreferenceResolver } from './user-preference.resolver'
 import { GeneratedUserSessionResolver } from './user-session.resolver'
@@ -46,7 +46,7 @@ import { GeneratedUserSessionResolver } from './user-session.resolver'
     GeneratedSubscriptionResolver,
     GeneratedTeamResolver,
     GeneratedTeamMemberResolver,
-    GeneratedUploadResolver,
+    GeneratedStoredFileResolver,
     GeneratedUserResolver,
     GeneratedUserPreferenceResolver,
     GeneratedUserSessionResolver,

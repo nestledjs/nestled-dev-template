@@ -1,10 +1,29 @@
 import React, { useState } from 'react'
 import { Link, useLoaderData } from 'react-router'
-import { ShieldCheckIcon, KeyIcon, DeviceTabletIcon, ExclamationTriangleIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import {
+  DeviceTabletIcon,
+  ExclamationTriangleIcon,
+  KeyIcon,
+  ShieldCheckIcon,
+  XMarkIcon,
+} from '@heroicons/react/24/outline'
 import { Form, FormFieldClass } from '@nestledjs/forms'
 import { formTheme } from '@nestled-template/shared/styles'
 import { apolloLoader } from '@nestled-template/shared/apollo'
-import { MeDocument, MeQuery, useChangePasswordMutation, MySecurityEventsDocument, MySecurityEventsQuery, GetUserSessionsDocument, GetUserSessionsQuery, useInvalidateSessionMutation, useInvalidateAllSessionsMutation, useSetup2FaMutation, useEnable2FaMutation, useDisable2FaMutation } from '@nestled-template/shared/sdk'
+import {
+  GetUserSessionsDocument,
+  GetUserSessionsQuery,
+  MeDocument,
+  MeQuery,
+  MySecurityEventsDocument,
+  MySecurityEventsQuery,
+  useChangePasswordMutation,
+  useDisable2FaMutation,
+  useEnable2FaMutation,
+  useInvalidateAllSessionsMutation,
+  useInvalidateSessionMutation,
+  useSetup2FaMutation,
+} from '@nestled-template/shared/sdk'
 import { QueryRef, useReadQuery } from '@apollo/client'
 
 export const loader = apolloLoader()(({ preloadQuery }) => {
@@ -14,9 +33,9 @@ export const loader = apolloLoader()(({ preloadQuery }) => {
       input: {
         take: 3,
         orderBy: 'createdAt',
-        orderDirection: 'desc'
-      }
-    }
+        orderDirection: 'desc',
+      },
+    },
   })
   const userSessionsQueryRef = preloadQuery<GetUserSessionsQuery>(GetUserSessionsDocument)
   return { meQueryRef, securityEventsQueryRef, userSessionsQueryRef }
@@ -66,7 +85,11 @@ export default function SecuritySettings() {
     setFormSuccess(null)
   }
 
-  async function handleChangePassword(input: { currentPassword: string; newPassword: string; confirmPassword: string }) {
+  async function handleChangePassword(input: {
+    currentPassword: string
+    newPassword: string
+    confirmPassword: string
+  }) {
     setFormError(null)
     setFormSuccess(null)
 
@@ -116,7 +139,11 @@ export default function SecuritySettings() {
   }
 
   async function handleInvalidateAllSessions() {
-    if (!confirm('Are you sure you want to log out of all other sessions? This will not affect your current session.')) {
+    if (
+      !confirm(
+        'Are you sure you want to log out of all other sessions? This will not affect your current session.',
+      )
+    ) {
       return
     }
 
@@ -154,9 +181,9 @@ export default function SecuritySettings() {
     try {
       const { data } = await enable2FA({
         variables: {
-          input: { code: verificationCode }
+          input: { code: verificationCode },
         },
-        refetchQueries: [{ query: MeDocument }]
+        refetchQueries: [{ query: MeDocument }],
       })
 
       if (data?.enable2FA?.success) {
@@ -165,7 +192,11 @@ export default function SecuritySettings() {
         setShowBackupCodes(true)
         setVerificationCode('')
         showSuccess('2FA enabled successfully!')
-        refetchMe()
+
+        // Force refetch with a small delay to ensure the mutation has completed
+        setTimeout(async () => {
+          await refetchMe()
+        }, 500)
       }
     } catch (error) {
       showError((error as Error)?.message ?? 'Failed to enable 2FA. Please check your code.')
@@ -181,15 +212,19 @@ export default function SecuritySettings() {
     try {
       await disable2FA({
         variables: {
-          input: { password: disablePassword }
+          input: { password: disablePassword },
         },
-        refetchQueries: [{ query: MeDocument }]
+        refetchQueries: [{ query: MeDocument }],
       })
 
       setShow2FADisable(false)
       setDisablePassword('')
       showSuccess('2FA disabled successfully')
-      refetchMe()
+
+      // Force refetch with a small delay to ensure the mutation has completed
+      setTimeout(async () => {
+        await refetchMe()
+      }, 500)
     } catch (error) {
       showError((error as Error)?.message ?? 'Failed to disable 2FA. Please check your password.')
     }
@@ -244,9 +279,7 @@ export default function SecuritySettings() {
             <ShieldCheckIcon className="h-6 w-6 text-emerald-600 dark:text-emerald-400" />
           </div>
           <div>
-            <h2 className="text-xl font-bold text-zinc-900 dark:text-white">
-              Security Settings
-            </h2>
+            <h2 className="text-xl font-bold text-zinc-900 dark:text-white">Security Settings</h2>
             <p className="text-sm text-zinc-600 dark:text-zinc-400">
               Manage your account security and authentication
             </p>
@@ -272,9 +305,7 @@ export default function SecuritySettings() {
           <div className="rounded-lg bg-sky-100 dark:bg-sky-500/10 p-2">
             <KeyIcon className="h-5 w-5 text-sky-600 dark:text-sky-400" />
           </div>
-          <h3 className="text-lg font-semibold text-zinc-900 dark:text-white">
-            Change Password
-          </h3>
+          <h3 className="text-lg font-semibold text-zinc-900 dark:text-white">Change Password</h3>
         </div>
 
         <Form
@@ -297,12 +328,15 @@ export default function SecuritySettings() {
         </div>
 
         <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-4">
-          Add an extra layer of security to your account by requiring a verification code in addition to your password.
+          Add an extra layer of security to your account by requiring a verification code in
+          addition to your password.
         </p>
 
         <div className="flex items-center justify-between p-4 rounded-lg bg-zinc-50 dark:bg-white/5 border border-zinc-200 dark:border-white/10">
           <div className="flex items-center gap-3">
-            <div className={`h-3 w-3 rounded-full ${user?.twoFactorEnabled ? 'bg-emerald-500' : 'bg-zinc-400'}`}></div>
+            <div
+              className={`h-3 w-3 rounded-full ${user?.twoFactorEnabled ? 'bg-emerald-500' : 'bg-zinc-400'}`}
+            ></div>
             <div>
               <p className="text-sm font-medium text-zinc-900 dark:text-white">
                 {user?.twoFactorEnabled ? 'Enabled' : 'Disabled'}
@@ -337,7 +371,8 @@ export default function SecuritySettings() {
         </h3>
 
         <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-4">
-          Manage your active sessions across all devices. You can log out of any session you don't recognize.
+          Manage your active sessions across all devices. You can log out of any session you don't
+          recognize.
         </p>
 
         <div className="space-y-3">
@@ -346,7 +381,7 @@ export default function SecuritySettings() {
               No active sessions found
             </div>
           ) : (
-            userSessions.map((session) => (
+            userSessions.map(session => (
               <div
                 key={session.id}
                 className="flex items-center justify-between p-4 rounded-lg bg-zinc-50 dark:bg-white/5 border border-zinc-200 dark:border-white/10"
@@ -364,9 +399,7 @@ export default function SecuritySettings() {
                   </div>
                   <p className="text-xs text-zinc-600 dark:text-zinc-400 mt-1">
                     Last active: {new Date(session.lastActiveAt).toLocaleString()}
-                    {session.ipAddress && (
-                      <span className="ml-2">• IP: {session.ipAddress}</span>
-                    )}
+                    {session.ipAddress && <span className="ml-2">• IP: {session.ipAddress}</span>}
                   </p>
                 </div>
                 {!session.isCurrent && (
@@ -415,18 +448,22 @@ export default function SecuritySettings() {
               No recent security events
             </div>
           ) : (
-            securityEvents.map((event) => (
-              <div key={event.id} className="flex items-start gap-3 text-sm p-3 rounded-lg bg-zinc-50 dark:bg-white/5">
+            securityEvents.map(event => (
+              <div
+                key={event.id}
+                className="flex items-start gap-3 text-sm p-3 rounded-lg bg-zinc-50 dark:bg-white/5"
+              >
                 <div className="h-2 w-2 rounded-full bg-emerald-500 mt-1.5"></div>
                 <div className="flex-1">
                   <p className="font-medium text-zinc-900 dark:text-white">
-                    {event.metadata?.eventType || 'Security event'}
+                    {event.eventType
+                      ?.replace(/_/g, ' ')
+                      .toLowerCase()
+                      .replace(/\b\w/g, l => l.toUpperCase()) || 'Security event'}
                   </p>
                   <p className="text-xs text-zinc-600 dark:text-zinc-400 mt-1">
                     {new Date(event.createdAt).toLocaleString()}
-                    {event.ipAddress && (
-                      <span className="ml-2">• IP: {event.ipAddress}</span>
-                    )}
+                    {event.ipAddress && <span className="ml-2">• IP: {event.ipAddress}</span>}
                   </p>
                 </div>
               </div>
@@ -465,7 +502,10 @@ export default function SecuritySettings() {
 
             <div className="space-y-4">
               <div className="text-sm text-zinc-600 dark:text-zinc-400">
-                <p className="mb-2">1. Scan this QR code with your authenticator app (Google Authenticator, Authy, etc.)</p>
+                <p className="mb-2">
+                  1. Scan this QR code with your authenticator app (Google Authenticator, Authy,
+                  etc.)
+                </p>
               </div>
 
               <div className="flex justify-center p-4 bg-white rounded-lg">
@@ -486,7 +526,7 @@ export default function SecuritySettings() {
                 <input
                   type="text"
                   value={verificationCode}
-                  onChange={(e) => setVerificationCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                  onChange={e => setVerificationCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
                   placeholder="000000"
                   className="w-full px-4 py-2 rounded-lg border border-zinc-300 dark:border-white/10 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white text-center text-2xl font-mono tracking-widest focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                   maxLength={6}
@@ -540,7 +580,8 @@ export default function SecuritySettings() {
 
             <div className="space-y-4">
               <p className="text-sm text-zinc-600 dark:text-zinc-400">
-                Disabling 2FA will make your account less secure. You'll only need your password to log in.
+                Disabling 2FA will make your account less secure. You'll only need your password to
+                log in.
               </p>
 
               <div>
@@ -550,7 +591,7 @@ export default function SecuritySettings() {
                 <input
                   type="password"
                   value={disablePassword}
-                  onChange={(e) => setDisablePassword(e.target.value)}
+                  onChange={e => setDisablePassword(e.target.value)}
                   placeholder="Your password"
                   className="w-full px-4 py-2 rounded-lg border border-zinc-300 dark:border-white/10 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                   autoFocus
@@ -589,15 +630,22 @@ export default function SecuritySettings() {
                 Save Your Backup Codes
               </h3>
               <p className="text-sm text-zinc-600 dark:text-zinc-400">
-                These backup codes can be used to access your account if you lose your authenticator device.
-                <strong className="text-amber-600 dark:text-amber-400"> Save them in a safe place!</strong>
+                These backup codes can be used to access your account if you lose your authenticator
+                device.
+                <strong className="text-amber-600 dark:text-amber-400">
+                  {' '}
+                  Save them in a safe place!
+                </strong>
               </p>
             </div>
 
             <div className="bg-zinc-100 dark:bg-zinc-800 rounded-lg p-4 mb-4">
               <div className="grid grid-cols-2 gap-2 font-mono text-sm text-zinc-900 dark:text-white">
                 {backupCodes.map((code, index) => (
-                  <div key={index} className="bg-white dark:bg-zinc-900 px-3 py-2 rounded border border-zinc-200 dark:border-white/10 text-center">
+                  <div
+                    key={index}
+                    className="bg-white dark:bg-zinc-900 px-3 py-2 rounded border border-zinc-200 dark:border-white/10 text-center"
+                  >
                     {code}
                   </div>
                 ))}

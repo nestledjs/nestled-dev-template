@@ -60,6 +60,7 @@ Enterprise-grade multi-tenant architecture with role-based access control is pro
 
 **Queries:**
 - `myOrganizations` - User's organization memberships
+- `myOrganizationsWithMembers` - Organizations with detailed member data (added field resolver)
 - `organizationMembers` - Members with roles
 - `organizationInvitations` - Pending invitations
 - `organizationRoles` - Roles with permissions
@@ -68,7 +69,7 @@ Enterprise-grade multi-tenant architecture with role-based access control is pro
 
 ### Backend Services & Resolvers
 - `libs/api/custom/src/lib/plugins/organization/organization.service.ts` (300+ lines)
-- `libs/api/custom/src/lib/plugins/organization/organization.resolver.ts` (200+ lines)
+- `libs/api/custom/src/lib/plugins/organization/organization.resolver.ts` (200+ lines with field resolvers)
 - `libs/api/custom/src/lib/plugins/organization/organization.module.ts`
 
 ### DTOs (Input Types)

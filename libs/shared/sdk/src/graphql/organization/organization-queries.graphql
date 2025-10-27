@@ -34,3 +34,15 @@ query organizationInvitations($organizationId: String!) {
     }
   }
 }
+
+query myOrganizationsWithMembers {
+  myOrganizations {
+    ...OrganizationDetails
+  }
+}
+
+query userOrganizationMembers($organizationId: String!) {
+  userOrganizationMembers(organizationId: $organizationId) {
+    ...OrganizationMemberList
+  }
+}

@@ -97,15 +97,18 @@ Build a complete user interface with authentication flows, organization manageme
 
 ### Profile Management
 - [x] **Create `/settings/account` page** ✅ COMPLETE
-  - [x] Display personal information (name, email)
+  - [x] Display personal information (name, email) - Fixed email display logic
   - [x] View account creation date and last updated
-  - [x] Email verification status display
-  - [x] Export personal data (GDPR compliance) - FULLY FUNCTIONAL
-  - [x] Transfer organization ownership - Backend ready, UI placeholder
+  - [x] Email verification status display - Fixed field name (emailValidated)
+  - [x] Email verification button with resend functionality - FULLY FUNCTIONAL
+  - [x] Export personal data (GDPR compliance) - FULLY FUNCTIONAL with in-page feedback
+  - [x] Transfer organization ownership - FULLY FUNCTIONAL with modal UI
   - [x] Delete account with confirmation flow - FULLY FUNCTIONAL
   - [x] Backend implementation for data export (comprehensive GDPR export)
   - [x] Backend implementation for account deletion (soft delete with validation)
   - [x] Backend implementation for ownership transfer
+  - [x] Organization transfer modal with member selection and validation
+  - [x] Improved UX with in-page success/error feedback (no alerts)
   - [ ] Update personal information (name, email, avatar) - needs file upload system
   - [ ] Manage connected OAuth accounts - future enhancement
 
@@ -442,6 +445,9 @@ Build a complete user interface with authentication flows, organization manageme
 - ✅ `libs/shared/sdk/src/graphql/security-event/my-security-event-queries.graphql` - User-specific security events
 - ✅ `apps/web/app/routes/settings/security.events.tsx` - Full security events table page
 - ✅ `apps/web/app/routes/settings/security.tsx` - 2FA implementation with three modal flows
+- ✅ `libs/api/custom/src/lib/plugins/organization/organization.resolver.ts` - Added members field resolver
+- ✅ `libs/shared/sdk/src/graphql/organization/organization-queries.graphql` - Added myOrganizationsWithMembers query
+- ✅ `apps/web/app/components/TransferOwnershipModal.tsx` - Complete ownership transfer modal
 
 ### Page Components (To Do)
 - [ ] `apps/web/app/routes/_public/_index.tsx` - Public landing page (needs content update)

@@ -1,16 +1,14 @@
 import React, { useState } from 'react'
-import { useLoaderData } from 'react-router'
-import { BellIcon, EnvelopeIcon, BellAlertIcon } from '@heroicons/react/24/outline'
-import { apolloLoader } from '@nestled-template/shared/apollo'
+import { BellAlertIcon, BellIcon, EnvelopeIcon } from '@heroicons/react/24/outline'
 import {
   MeDocument,
   MeQuery,
+  useCreateUserPreferenceMutation,
   UserPreferencesDocument,
   UserPreferencesQuery,
-  useCreateUserPreferenceMutation,
   useUpdateUserPreferenceMutation,
 } from '@nestled-template/shared/sdk'
-import { QueryRef, useReadQuery, gql } from '@apollo/client'
+import { gql, useQuery } from '@apollo/client'
 
 interface NotificationSetting {
   key: string
@@ -87,19 +85,11 @@ const DEFAULT_NOTIFICATIONS: NotificationSetting[] = [
   },
 ]
 
-export const loader = apolloLoader()(({ preloadQuery }) => {
-  const meQueryRef = preloadQuery<MeQuery>(MeDocument)
-  const preferencesQueryRef = preloadQuery<UserPreferencesQuery>(UserPreferencesDocument)
-  return { meQueryRef, preferencesQueryRef }
-})
+export const loader = () => ({})
 
 export default function NotificationsSettings() {
-  const loaderData = useLoaderData() as {
-    meQueryRef: QueryRef<MeQuery>
-    preferencesQueryRef: QueryRef<UserPreferencesQuery>
-  }
-  const { data } = useReadQuery(loaderData.meQueryRef)
-  const { data: preferencesData } = useReadQuery(loaderData.preferencesQueryRef)
+  const { data } = useQuery<MeQuery>(MeDocument)
+  const { data: preferencesData } = useQuery<UserPreferencesQuery>(UserPreferencesDocument)
   const user = data?.me
   const preferences = preferencesData?.userPreferences || []
 
@@ -121,8 +111,8 @@ export default function NotificationsSettings() {
   }
 
   // Merge default settings with user preferences
-  const notifications: NotificationSetting[] = DEFAULT_NOTIFICATIONS.map((defaultSetting) => {
-    const userPref = preferences.find((p) => p.key === defaultSetting.key)
+  const notifications: NotificationSetting[] = DEFAULT_NOTIFICATIONS.map(defaultSetting => {
+    const userPref = preferences.find(p => p.key === defaultSetting.key)
     return {
       ...defaultSetting,
       enabled: userPref ? userPref.value === 'true' : defaultSetting.enabled,
@@ -134,7 +124,7 @@ export default function NotificationsSettings() {
 
     try {
       // Check if preference exists
-      const existing = preferences.find((p) => p.key === key)
+      const existing = preferences.find(p => p.key === key)
 
       if (existing) {
         // Update existing preference with optimistic response
@@ -162,7 +152,7 @@ export default function NotificationsSettings() {
                     return existingPreferences.map((pref: any) =>
                       pref.__ref === cache.identify(data.updateUserPreference!)
                         ? { ...pref, value: String(newValue) }
-                        : pref
+                        : pref,
                     )
                   },
                 },
@@ -222,9 +212,9 @@ export default function NotificationsSettings() {
     }
   }
 
-  const emailNotifications = notifications.filter((n) => n.category === 'email')
-  const securityNotifications = notifications.filter((n) => n.category === 'security')
-  const marketingNotifications = notifications.filter((n) => n.category === 'marketing')
+  const emailNotifications = notifications.filter(n => n.category === 'email')
+  const securityNotifications = notifications.filter(n => n.category === 'security')
+  const marketingNotifications = notifications.filter(n => n.category === 'marketing')
 
   return (
     <div className="space-y-6">
@@ -274,7 +264,7 @@ export default function NotificationsSettings() {
         </div>
 
         <div className="space-y-4">
-          {emailNotifications.map((notification) => (
+          {emailNotifications.map(notification => (
             <NotificationToggle
               key={notification.key}
               notification={notification}
@@ -301,7 +291,7 @@ export default function NotificationsSettings() {
         </div>
 
         <div className="space-y-4">
-          {securityNotifications.map((notification) => (
+          {securityNotifications.map(notification => (
             <NotificationToggle
               key={notification.key}
               notification={notification}
@@ -328,7 +318,7 @@ export default function NotificationsSettings() {
         </div>
 
         <div className="space-y-4">
-          {marketingNotifications.map((notification) => (
+          {marketingNotifications.map(notification => (
             <NotificationToggle
               key={notification.key}
               notification={notification}
@@ -350,12 +340,8 @@ function NotificationToggle({ notification, onToggle }: NotificationToggleProps)
   return (
     <div className="flex items-start justify-between p-4 rounded-lg bg-zinc-50 dark:bg-white/5 border border-zinc-200 dark:border-white/10">
       <div className="flex-1 pr-4">
-        <h4 className="text-sm font-medium text-zinc-900 dark:text-white">
-          {notification.title}
-        </h4>
-        <p className="text-xs text-zinc-600 dark:text-zinc-400 mt-1">
-          {notification.description}
-        </p>
+        <h4 className="text-sm font-medium text-zinc-900 dark:text-white">{notification.title}</h4>
+        <p className="text-xs text-zinc-600 dark:text-zinc-400 mt-1">{notification.description}</p>
       </div>
       <button
         onClick={() => onToggle(notification.key, notification.enabled)}

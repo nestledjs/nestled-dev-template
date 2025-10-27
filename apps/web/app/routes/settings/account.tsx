@@ -1,9 +1,24 @@
 import React, { useState } from 'react'
 import { useLoaderData, useNavigate } from 'react-router'
-import { UserCircleIcon, CalendarIcon, ArrowDownTrayIcon, ExclamationTriangleIcon, ArrowsRightLeftIcon } from '@heroicons/react/24/outline'
+import {
+  ArrowDownTrayIcon,
+  ArrowsRightLeftIcon,
+  CalendarIcon,
+  CheckCircleIcon,
+  ExclamationTriangleIcon,
+  UserCircleIcon,
+  XCircleIcon,
+} from '@heroicons/react/24/outline'
 import { apolloLoader } from '@nestled-template/shared/apollo'
-import { MeDocument, MeQuery, useExportUserDataQuery, useDeleteUserAccountMutation } from '@nestled-template/shared/sdk'
+import {
+  MeDocument,
+  MeQuery,
+  useDeleteUserAccountMutation,
+  useExportUserDataLazyQuery,
+  useResendVerificationEmailMutation,
+} from '@nestled-template/shared/sdk'
 import { QueryRef, useReadQuery } from '@apollo/client'
+import TransferOwnershipModal from '../../components/TransferOwnershipModal'
 
 export const loader = apolloLoader()(({ preloadQuery }) => {
   const meQueryRef = preloadQuery<MeQuery>(MeDocument)
@@ -18,41 +33,35 @@ export default function AccountSettings() {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const [deleteConfirmText, setDeleteConfirmText] = useState('')
   const [isExporting, setIsExporting] = useState(false)
+  const [exportSuccess, setExportSuccess] = useState(false)
+  const [exportError, setExportError] = useState<string | null>(null)
+  const [showTransferModal, setShowTransferModal] = useState(false)
+  const [isResendingEmail, setIsResendingEmail] = useState(false)
+  const [emailResendSuccess, setEmailResendSuccess] = useState(false)
 
   const [deleteAccountMutation] = useDeleteUserAccountMutation()
+  const [exportUserData] = useExportUserDataLazyQuery()
+  const [resendVerificationEmail] = useResendVerificationEmailMutation()
 
   const handleExportData = async () => {
     if (isExporting) return
 
     setIsExporting(true)
+    setExportError(null)
+    setExportSuccess(false)
+
     try {
-      // Fetch export data
-      const response = await fetch('/graphql', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify({
-          query: `
-            query ExportUserData {
-              exportUserData {
-                userData
-                exportedAt
-                userId
-              }
-            }
-          `,
-        }),
-      })
+      const result = await exportUserData()
 
-      const result = await response.json()
-
-      if (result.errors) {
-        throw new Error(result.errors[0]?.message || 'Failed to export data')
+      if (result.error) {
+        throw new Error(result.error.message || 'Failed to export data')
       }
 
       const exportData = result.data?.exportUserData
+
+      if (!exportData) {
+        throw new Error('No export data returned')
+      }
 
       // Download as JSON file
       const dataStr = JSON.stringify(exportData.userData, null, 2)
@@ -63,9 +72,14 @@ export default function AccountSettings() {
       link.download = `user-data-export-${new Date().toISOString().split('T')[0]}.json`
       link.click()
 
-      alert('Your data has been exported successfully!')
+      // Show success feedback
+      setExportSuccess(true)
+      // Hide success message after 5 seconds
+      setTimeout(() => setExportSuccess(false), 5000)
     } catch (error) {
-      alert('Failed to export data: ' + (error as Error).message)
+      setExportError((error as Error).message)
+      // Hide error message after 8 seconds
+      setTimeout(() => setExportError(null), 8000)
     } finally {
       setIsExporting(false)
     }
@@ -91,7 +105,37 @@ export default function AccountSettings() {
   }
 
   const handleTransferOwnership = () => {
-    alert('Organization ownership transfer UI will be implemented with a modal to select the organization and new owner')
+    setShowTransferModal(true)
+  }
+
+  const handleTransferSuccess = () => {
+    // Optionally refresh data or show success message
+    // The modal will handle the success alert
+  }
+
+  const handleResendVerificationEmail = async () => {
+    const primaryEmail = user.emails?.find(e => e.primary)?.email
+    if (!primaryEmail) {
+      alert('No primary email found')
+      return
+    }
+
+    setIsResendingEmail(true)
+    setEmailResendSuccess(false)
+
+    try {
+      await resendVerificationEmail({
+        variables: { email: primaryEmail },
+      })
+
+      setEmailResendSuccess(true)
+      // Hide success message after 5 seconds
+      setTimeout(() => setEmailResendSuccess(false), 5000)
+    } catch (error) {
+      alert('Failed to resend verification email: ' + (error as Error).message)
+    } finally {
+      setIsResendingEmail(false)
+    }
   }
 
   if (!user) {
@@ -107,9 +151,7 @@ export default function AccountSettings() {
             <UserCircleIcon className="h-6 w-6 text-sky-600 dark:text-sky-400" />
           </div>
           <div>
-            <h2 className="text-xl font-bold text-zinc-900 dark:text-white">
-              Account Settings
-            </h2>
+            <h2 className="text-xl font-bold text-zinc-900 dark:text-white">Account Settings</h2>
             <p className="text-sm text-zinc-600 dark:text-zinc-400">
               Manage your personal account information and preferences
             </p>
@@ -138,24 +180,26 @@ export default function AccountSettings() {
               Email Address
             </label>
             <div className="text-sm text-zinc-900 dark:text-white bg-zinc-50 dark:bg-white/5 border border-zinc-200 dark:border-white/10 rounded-lg px-3 py-2">
-              {user.email || user.emails?.find(e => e.isPrimary)?.email || 'No email set'}
+              {user.emails?.find(e => e.primary)?.email || 'No email set'}
             </div>
             <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
               To change your email, use the Security settings page
             </p>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
-              Super Admin Status
-            </label>
-            <div className="flex items-center gap-2">
-              <div className={`h-2 w-2 rounded-full ${user.isSuperAdmin ? 'bg-emerald-500' : 'bg-zinc-400'}`}></div>
-              <span className="text-sm text-zinc-900 dark:text-white">
-                {user.isSuperAdmin ? 'Yes - You have super admin privileges' : 'No'}
-              </span>
+          {user.isSuperAdmin && (
+            <div>
+              <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
+                Super Admin Status
+              </label>
+              <div className="flex items-center gap-2">
+                <div className="h-2 w-2 rounded-full bg-emerald-500"></div>
+                <span className="text-sm text-zinc-900 dark:text-white">
+                  Yes - You have super admin privileges
+                </span>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
 
@@ -173,9 +217,7 @@ export default function AccountSettings() {
         <div className="space-y-3">
           <div className="flex items-center justify-between p-3 rounded-lg bg-zinc-50 dark:bg-white/5">
             <div>
-              <p className="text-sm font-medium text-zinc-900 dark:text-white">
-                Account Created
-              </p>
+              <p className="text-sm font-medium text-zinc-900 dark:text-white">Account Created</p>
               <p className="text-xs text-zinc-600 dark:text-zinc-400">
                 {new Date(user.createdAt).toLocaleDateString('en-US', {
                   year: 'numeric',
@@ -188,9 +230,7 @@ export default function AccountSettings() {
 
           <div className="flex items-center justify-between p-3 rounded-lg bg-zinc-50 dark:bg-white/5">
             <div>
-              <p className="text-sm font-medium text-zinc-900 dark:text-white">
-                Last Updated
-              </p>
+              <p className="text-sm font-medium text-zinc-900 dark:text-white">Last Updated</p>
               <p className="text-xs text-zinc-600 dark:text-zinc-400">
                 {new Date(user.updatedAt).toLocaleDateString('en-US', {
                   year: 'numeric',
@@ -203,20 +243,28 @@ export default function AccountSettings() {
 
           <div className="flex items-center justify-between p-3 rounded-lg bg-zinc-50 dark:bg-white/5">
             <div>
-              <p className="text-sm font-medium text-zinc-900 dark:text-white">
-                Email Verified
-              </p>
+              <p className="text-sm font-medium text-zinc-900 dark:text-white">Email Verified</p>
               <p className="text-xs text-zinc-600 dark:text-zinc-400">
-                {user.emailVerified ? 'Yes' : 'No'}
+                {user.emailValidated ? 'Yes' : 'No'}
               </p>
             </div>
-            {!user.emailVerified && (
-              <button
-                type="button"
-                className="px-3 py-1.5 text-sm bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg font-medium transition-colors"
-              >
-                Verify Email
-              </button>
+            {!user.emailValidated && (
+              <div className="space-y-2">
+                <button
+                  type="button"
+                  onClick={handleResendVerificationEmail}
+                  disabled={isResendingEmail}
+                  className="px-3 py-1.5 text-sm bg-emerald-500 hover:bg-emerald-600 disabled:bg-emerald-300 disabled:cursor-not-allowed text-white rounded-lg font-medium transition-colors"
+                >
+                  {isResendingEmail ? 'Sending...' : 'Verify Email'}
+                </button>
+                {emailResendSuccess && (
+                  <div className="flex items-center gap-2 text-xs text-emerald-600 dark:text-emerald-400">
+                    <CheckCircleIcon className="h-3 w-3" />
+                    <span>Verification email sent! Check your inbox.</span>
+                  </div>
+                )}
+              </div>
             )}
           </div>
         </div>
@@ -228,28 +276,43 @@ export default function AccountSettings() {
           <div className="rounded-lg bg-blue-100 dark:bg-blue-500/10 p-2">
             <ArrowDownTrayIcon className="h-5 w-5 text-blue-600 dark:text-blue-400" />
           </div>
-          <h3 className="text-lg font-semibold text-zinc-900 dark:text-white">
-            Export Your Data
-          </h3>
+          <h3 className="text-lg font-semibold text-zinc-900 dark:text-white">Export Your Data</h3>
         </div>
 
         <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-4">
-          Download a copy of all your personal data in JSON format. This includes your profile information, security events, preferences, and organization memberships.
+          Download a copy of all your personal data in JSON format. This includes your profile
+          information, security events, preferences, and organization memberships.
         </p>
 
-        <button
-          type="button"
-          onClick={handleExportData}
-          disabled={isExporting}
-          className="px-4 py-2 bg-blue-500 hover:bg-blue-600 disabled:bg-blue-300 disabled:cursor-not-allowed text-white rounded-lg text-sm font-medium transition-colors inline-flex items-center gap-2"
-        >
-          <ArrowDownTrayIcon className="h-4 w-4" />
-          {isExporting ? 'Exporting...' : 'Export Personal Data'}
-        </button>
+        <div className="space-y-3">
+          <button
+            type="button"
+            onClick={handleExportData}
+            disabled={isExporting}
+            className="px-4 py-2 bg-blue-500 hover:bg-blue-600 disabled:bg-blue-300 disabled:cursor-not-allowed text-white rounded-lg text-sm font-medium transition-colors inline-flex items-center gap-2"
+          >
+            <ArrowDownTrayIcon className="h-4 w-4" />
+            {isExporting ? 'Exporting...' : 'Export Personal Data'}
+          </button>
 
-        <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-3">
-          GDPR Compliance: You have the right to access and export your personal data at any time.
-        </p>
+          {exportSuccess && (
+            <div className="flex items-center gap-2 text-sm text-emerald-600 dark:text-emerald-400">
+              <CheckCircleIcon className="h-4 w-4" />
+              <span>Your data has been exported successfully!</span>
+            </div>
+          )}
+
+          {exportError && (
+            <div className="flex items-center gap-2 text-sm text-red-600 dark:text-red-400">
+              <XCircleIcon className="h-4 w-4" />
+              <span>Failed to export data: {exportError}</span>
+            </div>
+          )}
+
+          <p className="text-xs text-zinc-500 dark:text-zinc-400">
+            GDPR Compliance: You have the right to access and export your personal data at any time.
+          </p>
+        </div>
       </div>
 
       {/* Organization Ownership Transfer */}
@@ -264,7 +327,8 @@ export default function AccountSettings() {
         </div>
 
         <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-4">
-          If you are the owner of an organization, you can transfer ownership to another member. This action cannot be undone.
+          If you are the owner of an organization, you can transfer ownership to another member.
+          This action cannot be undone.
         </p>
 
         <button
@@ -282,13 +346,13 @@ export default function AccountSettings() {
           <div className="rounded-lg bg-rose-100 dark:bg-rose-500/10 p-2">
             <ExclamationTriangleIcon className="h-5 w-5 text-rose-600 dark:text-rose-400" />
           </div>
-          <h3 className="text-lg font-semibold text-rose-900 dark:text-rose-400">
-            Danger Zone
-          </h3>
+          <h3 className="text-lg font-semibold text-rose-900 dark:text-rose-400">Danger Zone</h3>
         </div>
 
         <p className="text-sm text-rose-700 dark:text-rose-300 mb-4">
-          <strong>Delete your account:</strong> Once you delete your account, there is no going back. This will permanently delete your account and all associated data. You will be removed from all organizations.
+          <strong>Delete your account:</strong> Once you delete your account, there is no going
+          back. This will permanently delete your account and all associated data. You will be
+          removed from all organizations.
         </p>
 
         {!showDeleteConfirm ? (
@@ -306,12 +370,13 @@ export default function AccountSettings() {
                 Are you absolutely sure?
               </p>
               <p className="text-sm text-rose-700 dark:text-rose-400 mb-3">
-                This action <strong>cannot be undone</strong>. Please type <strong>DELETE</strong> to confirm.
+                This action <strong>cannot be undone</strong>. Please type <strong>DELETE</strong>{' '}
+                to confirm.
               </p>
               <input
                 type="text"
                 value={deleteConfirmText}
-                onChange={(e) => setDeleteConfirmText(e.target.value)}
+                onChange={e => setDeleteConfirmText(e.target.value)}
                 placeholder="Type DELETE to confirm"
                 className="w-full px-3 py-2 border border-rose-300 dark:border-rose-500/30 rounded-lg bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-rose-500 dark:focus:ring-rose-400"
               />
@@ -339,6 +404,13 @@ export default function AccountSettings() {
           </div>
         )}
       </div>
+
+      {/* Transfer Ownership Modal */}
+      <TransferOwnershipModal
+        isOpen={showTransferModal}
+        onClose={() => setShowTransferModal(false)}
+        onSuccess={handleTransferSuccess}
+      />
     </div>
   )
 }

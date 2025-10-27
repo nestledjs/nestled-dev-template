@@ -2,6 +2,7 @@ fragment SecurityEventList on SecurityEvent {
   id
   createdAt
   updatedAt
+  eventType
   ipAddress
   userAgent
   metadata

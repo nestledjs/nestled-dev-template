@@ -97,34 +97,56 @@ export class UserUserPreferenceResolver {
 
 **Why**: Generated resolvers are for default CRUD only. Extending them causes method conflicts where both the parent (generated) and child (custom) methods get registered with GraphQL, and NestJS will choose the wrong one.
 
-### Skipping CRUD Generation for Custom Resolvers
+### Standard Pattern Summary
 
-If you have a model with completely custom resolvers (like Organization), skip CRUD generation entirely using `@skipCrud`:
+1. **Every model gets generated admin CRUD** (organization, createOrganization, updateOrganization, etc.)
+2. **User-specific operations get custom resolvers** (myOrganizations, userCreateOrganization, etc.)
+3. **No @skipCrud annotations ever**
+4. **No extending generated resolvers**
+5. **Admin operations are admin-only by default**
+6. **User operations are in separate resolvers with clear naming**
 
-```prisma
-/// @skipCrud
-model Organization {
-  id           String               @id @default(uuid())
-  createdAt    DateTime             @default(now())
-  updatedAt    DateTime             @updatedAt
-  name         String
-  // ... rest of model
+## CRITICAL RULE: Never Skip CRUD Generation
+
+**FUNDAMENTAL PRINCIPLE**: We NEVER use `@skipCrud` and NEVER skip CRUD generation for any model.
+
+### Why We Always Generate CRUD
+
+1. **Admin access is always needed**: Every model needs admin-level CRUD operations for administrative purposes
+2. **Consistency**: All models follow the same pattern - standard admin CRUD + custom user-specific resolvers when needed
+3. **No conflicts**: Generated CRUD uses standard names, custom resolvers use prefixed names
+4. **Separation of concerns**: Admin operations are separate from user operations
+
+### Pattern for User-Specific Operations
+
+When you need user-specific operations in addition to admin CRUD:
+
+**CORRECT** ✅:
+```typescript
+// Standard admin CRUD is generated automatically (organization, organizations, createOrganization, etc.)
+
+// Custom user-specific resolvers with different names
+@Resolver(() => Organization)
+export class UserOrganizationResolver {
+  @Query(() => [Organization])
+  myOrganizations(@CtxUser() user: User): Promise<Organization[]> {
+    // User-specific logic
+  }
+
+  @Mutation(() => Organization)
+  userCreateOrganization(@CtxUser() user: User, @Args('input') input: CreateOrganizationInput): Promise<Organization> {
+    // User-specific creation logic
+  }
 }
 ```
 
-This prevents:
-- Generating conflicting standard CRUD operations
-- Creating unused GraphQL queries/mutations
-- SDK validation errors for operations that don't exist
-
-Use this when you have custom operations like:
-- `userCreateOrganization` instead of `createOrganization`
-- `userUpdateOrganization` instead of `updateOrganization`
-- Custom business logic that doesn't fit the standard CRUD pattern
-
-**Important**: After adding `@skipCrud`:
-1. Delete any auto-generated admin GraphQL files for that model in `/libs/shared/sdk/src/admin-graphql/`
-2. If custom resolvers are used by other models (e.g., `organizationMembers` used by OrganizationMember), manually update those GraphQL files to match the custom resolver signatures
+**WRONG** ❌:
+```prisma
+/// @skipCrud  // NEVER DO THIS
+model Organization {
+  // This breaks admin access and SDK generation
+}
+```
 
 ## Prisma Import Paths
 

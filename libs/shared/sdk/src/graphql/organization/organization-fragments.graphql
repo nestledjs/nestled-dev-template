@@ -3,6 +3,16 @@ fragment OrganizationList on Organization {
   createdAt
   updatedAt
   name
+  images {
+    id
+    url
+    publicUrl
+    filename
+    mimeType
+    metadata
+    folder
+    createdAt
+  }
 }
 
 fragment OrganizationDetails on Organization {

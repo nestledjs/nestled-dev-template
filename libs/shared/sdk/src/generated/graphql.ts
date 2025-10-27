@@ -29,6 +29,8 @@ export type Scalars = {
   JSONObject: { input: any; output: any }
   /** `Date` type as integer. Type represents date and time as number of milliseconds from start of UNIX epoch. */
   Timestamp: { input: any; output: any }
+  /** The `Upload` scalar type represents a file upload. */
+  Upload: { input: any; output: any }
 }
 
 export type AcceptInvitationInput = {
@@ -264,7 +266,21 @@ export type CreateOAuthAccountInput = {
 }
 
 export type CreateOrganizationInput = {
+  AuditLogIds?: InputMaybe<Array<Scalars['String']['input']>>
+  TeamIds?: InputMaybe<Array<Scalars['String']['input']>>
+  addressesIds?: InputMaybe<Array<Scalars['String']['input']>>
+  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
+  emailsIds?: InputMaybe<Array<Scalars['String']['input']>>
+  id?: InputMaybe<Scalars['String']['input']>
+  imagesIds?: InputMaybe<Array<Scalars['String']['input']>>
+  invitesIds?: InputMaybe<Array<Scalars['String']['input']>>
+  linksIds?: InputMaybe<Array<Scalars['String']['input']>>
+  membersIds?: InputMaybe<Array<Scalars['String']['input']>>
   name: Scalars['String']['input']
+  phoneNumbersIds?: InputMaybe<Array<Scalars['String']['input']>>
+  rolesIds?: InputMaybe<Array<Scalars['String']['input']>>
+  subscriptionId?: InputMaybe<Scalars['String']['input']>
+  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
 }
 
 export type CreateOrganizationMemberInput = {
@@ -328,6 +344,26 @@ export type CreateSecurityEventInput = {
   userId: Scalars['String']['input']
 }
 
+export type CreateStoredFileInput = {
+  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
+  filename: Scalars['String']['input']
+  folder?: InputMaybe<Scalars['String']['input']>
+  height?: InputMaybe<Scalars['Int']['input']>
+  id?: InputMaybe<Scalars['String']['input']>
+  metadata?: InputMaybe<Scalars['JSON']['input']>
+  mimeType: Scalars['String']['input']
+  organizationId?: InputMaybe<Scalars['String']['input']>
+  originalName: Scalars['String']['input']
+  provider: StorageProvider
+  providerFileId: Scalars['String']['input']
+  publicUrl?: InputMaybe<Scalars['String']['input']>
+  size: Scalars['Int']['input']
+  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
+  url: Scalars['String']['input']
+  userId?: InputMaybe<Scalars['String']['input']>
+  width?: InputMaybe<Scalars['Int']['input']>
+}
+
 export type CreateSubscriptionInput = {
   createdAt?: InputMaybe<Scalars['Timestamp']['input']>
   id?: InputMaybe<Scalars['String']['input']>
@@ -358,26 +394,6 @@ export type CreateTeamMemberInput = {
   teamId: Scalars['String']['input']
   updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
   userId: Scalars['String']['input']
-}
-
-export type CreateUploadInput = {
-  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
-  fileId?: InputMaybe<Scalars['String']['input']>
-  filePath?: InputMaybe<Scalars['String']['input']>
-  fileType?: InputMaybe<Scalars['String']['input']>
-  height?: InputMaybe<Scalars['Int']['input']>
-  id?: InputMaybe<Scalars['String']['input']>
-  name?: InputMaybe<Scalars['String']['input']>
-  organizationId?: InputMaybe<Scalars['String']['input']>
-  orientation?: InputMaybe<Scalars['Int']['input']>
-  size?: InputMaybe<Scalars['Int']['input']>
-  thumbnailUrl?: InputMaybe<Scalars['String']['input']>
-  type?: InputMaybe<ImageType>
-  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
-  url?: InputMaybe<Scalars['String']['input']>
-  userId?: InputMaybe<Scalars['String']['input']>
-  versionInfo?: InputMaybe<Scalars['JSON']['input']>
-  width?: InputMaybe<Scalars['Int']['input']>
 }
 
 export type CreateUserInput = {
@@ -423,6 +439,15 @@ export type CreateUserInput = {
   updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
   validateEmailToken?: InputMaybe<Scalars['String']['input']>
   validateEmailTokenExpires?: InputMaybe<Scalars['Timestamp']['input']>
+}
+
+export type CreateUserPreferenceInput = {
+  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
+  id?: InputMaybe<Scalars['String']['input']>
+  key: Scalars['String']['input']
+  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
+  userId: Scalars['String']['input']
+  value: Scalars['String']['input']
 }
 
 export type CreateUserSessionInput = {
@@ -505,12 +530,6 @@ export type GenerateApiTokenOutput = {
   __typename?: 'GenerateApiTokenOutput'
   apiToken: ApiToken
   token: Scalars['String']['output']
-}
-
-export enum ImageType {
-  Avatar = 'AVATAR',
-  Background = 'BACKGROUND',
-  Other = 'OTHER',
 }
 
 export type Invite = {
@@ -737,6 +756,31 @@ export type ListOAuthAccountInput = {
   userId?: InputMaybe<Scalars['String']['input']>
 }
 
+export type ListOrganizationInput = {
+  AuditLogIds?: InputMaybe<Array<Scalars['String']['input']>>
+  TeamIds?: InputMaybe<Array<Scalars['String']['input']>>
+  addressesIds?: InputMaybe<Array<Scalars['String']['input']>>
+  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
+  emailsIds?: InputMaybe<Array<Scalars['String']['input']>>
+  filters?: InputMaybe<Scalars['JSONObject']['input']>
+  id?: InputMaybe<Scalars['String']['input']>
+  imagesIds?: InputMaybe<Array<Scalars['String']['input']>>
+  invitesIds?: InputMaybe<Array<Scalars['String']['input']>>
+  linksIds?: InputMaybe<Array<Scalars['String']['input']>>
+  membersIds?: InputMaybe<Array<Scalars['String']['input']>>
+  name?: InputMaybe<Scalars['String']['input']>
+  orderBy?: InputMaybe<Scalars['String']['input']>
+  orderDirection?: InputMaybe<Scalars['String']['input']>
+  phoneNumbersIds?: InputMaybe<Array<Scalars['String']['input']>>
+  rolesIds?: InputMaybe<Array<Scalars['String']['input']>>
+  search?: InputMaybe<Scalars['String']['input']>
+  searchFields?: InputMaybe<Array<Scalars['String']['input']>>
+  skip?: InputMaybe<Scalars['Float']['input']>
+  subscriptionId?: InputMaybe<Scalars['String']['input']>
+  take?: InputMaybe<Scalars['Float']['input']>
+  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
+}
+
 export type ListOrganizationMemberInput = {
   createdAt?: InputMaybe<Scalars['Timestamp']['input']>
   filters?: InputMaybe<Scalars['JSONObject']['input']>
@@ -840,6 +884,33 @@ export type ListSecurityEventInput = {
   userId?: InputMaybe<Scalars['String']['input']>
 }
 
+export type ListStoredFileInput = {
+  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
+  filename?: InputMaybe<Scalars['String']['input']>
+  filters?: InputMaybe<Scalars['JSONObject']['input']>
+  folder?: InputMaybe<Scalars['String']['input']>
+  height?: InputMaybe<Scalars['Int']['input']>
+  id?: InputMaybe<Scalars['String']['input']>
+  metadata?: InputMaybe<Scalars['JSON']['input']>
+  mimeType?: InputMaybe<Scalars['String']['input']>
+  orderBy?: InputMaybe<Scalars['String']['input']>
+  orderDirection?: InputMaybe<Scalars['String']['input']>
+  organizationId?: InputMaybe<Scalars['String']['input']>
+  originalName?: InputMaybe<Scalars['String']['input']>
+  provider?: InputMaybe<StorageProvider>
+  providerFileId?: InputMaybe<Scalars['String']['input']>
+  publicUrl?: InputMaybe<Scalars['String']['input']>
+  search?: InputMaybe<Scalars['String']['input']>
+  searchFields?: InputMaybe<Array<Scalars['String']['input']>>
+  size?: InputMaybe<Scalars['Int']['input']>
+  skip?: InputMaybe<Scalars['Float']['input']>
+  take?: InputMaybe<Scalars['Float']['input']>
+  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
+  url?: InputMaybe<Scalars['String']['input']>
+  userId?: InputMaybe<Scalars['String']['input']>
+  width?: InputMaybe<Scalars['Int']['input']>
+}
+
 export type ListSubscriptionInput = {
   createdAt?: InputMaybe<Scalars['Timestamp']['input']>
   filters?: InputMaybe<Scalars['JSONObject']['input']>
@@ -893,33 +964,6 @@ export type ListTeamMemberInput = {
   userId?: InputMaybe<Scalars['String']['input']>
 }
 
-export type ListUploadInput = {
-  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
-  fileId?: InputMaybe<Scalars['String']['input']>
-  filePath?: InputMaybe<Scalars['String']['input']>
-  fileType?: InputMaybe<Scalars['String']['input']>
-  filters?: InputMaybe<Scalars['JSONObject']['input']>
-  height?: InputMaybe<Scalars['Int']['input']>
-  id?: InputMaybe<Scalars['String']['input']>
-  name?: InputMaybe<Scalars['String']['input']>
-  orderBy?: InputMaybe<Scalars['String']['input']>
-  orderDirection?: InputMaybe<Scalars['String']['input']>
-  organizationId?: InputMaybe<Scalars['String']['input']>
-  orientation?: InputMaybe<Scalars['Int']['input']>
-  search?: InputMaybe<Scalars['String']['input']>
-  searchFields?: InputMaybe<Array<Scalars['String']['input']>>
-  size?: InputMaybe<Scalars['Int']['input']>
-  skip?: InputMaybe<Scalars['Float']['input']>
-  take?: InputMaybe<Scalars['Float']['input']>
-  thumbnailUrl?: InputMaybe<Scalars['String']['input']>
-  type?: InputMaybe<ImageType>
-  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
-  url?: InputMaybe<Scalars['String']['input']>
-  userId?: InputMaybe<Scalars['String']['input']>
-  versionInfo?: InputMaybe<Scalars['JSON']['input']>
-  width?: InputMaybe<Scalars['Int']['input']>
-}
-
 export type ListUserInput = {
   AuditLogIds?: InputMaybe<Array<Scalars['String']['input']>>
   SecurityEventIds?: InputMaybe<Array<Scalars['String']['input']>>
@@ -970,6 +1014,22 @@ export type ListUserInput = {
   updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
   validateEmailToken?: InputMaybe<Scalars['String']['input']>
   validateEmailTokenExpires?: InputMaybe<Scalars['Timestamp']['input']>
+}
+
+export type ListUserPreferenceInput = {
+  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
+  filters?: InputMaybe<Scalars['JSONObject']['input']>
+  id?: InputMaybe<Scalars['String']['input']>
+  key?: InputMaybe<Scalars['String']['input']>
+  orderBy?: InputMaybe<Scalars['String']['input']>
+  orderDirection?: InputMaybe<Scalars['String']['input']>
+  search?: InputMaybe<Scalars['String']['input']>
+  searchFields?: InputMaybe<Array<Scalars['String']['input']>>
+  skip?: InputMaybe<Scalars['Float']['input']>
+  take?: InputMaybe<Scalars['Float']['input']>
+  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
+  userId?: InputMaybe<Scalars['String']['input']>
+  value?: InputMaybe<Scalars['String']['input']>
 }
 
 export type ListUserSessionInput = {
@@ -1028,6 +1088,7 @@ export type Mutation = {
   createLink?: Maybe<Link>
   createLoginAttempt?: Maybe<LoginAttempt>
   createOAuthAccount?: Maybe<OAuthAccount>
+  createOrganization?: Maybe<Organization>
   createOrganizationInvitation: Scalars['String']['output']
   createOrganizationMember?: Maybe<OrganizationMember>
   createPermission?: Maybe<Permission>
@@ -1035,10 +1096,10 @@ export type Mutation = {
   createPlan?: Maybe<Plan>
   createRole?: Maybe<Role>
   createSecurityEvent?: Maybe<SecurityEvent>
+  createStoredFile?: Maybe<StoredFile>
   createSubscription?: Maybe<Subscription>
   createTeam?: Maybe<Team>
   createTeamMember?: Maybe<TeamMember>
-  createUpload?: Maybe<Upload>
   createUser?: Maybe<User>
   createUserPreference?: Maybe<UserPreference>
   createUserSession?: Maybe<UserSession>
@@ -1047,20 +1108,22 @@ export type Mutation = {
   deleteAuditLog?: Maybe<AuditLog>
   deleteCountry?: Maybe<Country>
   deleteEmail?: Maybe<Email>
+  deleteFile: Scalars['Boolean']['output']
   deleteInvite?: Maybe<Invite>
   deleteLink?: Maybe<Link>
   deleteLoginAttempt?: Maybe<LoginAttempt>
   deleteOAuthAccount?: Maybe<OAuthAccount>
+  deleteOrganization?: Maybe<Organization>
   deleteOrganizationMember?: Maybe<OrganizationMember>
   deletePermission?: Maybe<Permission>
   deletePhoneNumber?: Maybe<PhoneNumber>
   deletePlan?: Maybe<Plan>
   deleteRole?: Maybe<Role>
   deleteSecurityEvent?: Maybe<SecurityEvent>
+  deleteStoredFile?: Maybe<StoredFile>
   deleteSubscription?: Maybe<Subscription>
   deleteTeam?: Maybe<Team>
   deleteTeamMember?: Maybe<TeamMember>
-  deleteUpload?: Maybe<Upload>
   deleteUser?: Maybe<User>
   deleteUserAccount: Scalars['Boolean']['output']
   deleteUserPreference?: Maybe<UserPreference>
@@ -1097,6 +1160,7 @@ export type Mutation = {
   updateLink?: Maybe<Link>
   updateLoginAttempt?: Maybe<LoginAttempt>
   updateOAuthAccount?: Maybe<OAuthAccount>
+  updateOrganization?: Maybe<Organization>
   updateOrganizationMember?: Maybe<OrganizationMember>
   updateOrganizationMemberRole: Scalars['Boolean']['output']
   updatePermission?: Maybe<Permission>
@@ -1104,16 +1168,22 @@ export type Mutation = {
   updatePlan?: Maybe<Plan>
   updateRole?: Maybe<Role>
   updateSecurityEvent?: Maybe<SecurityEvent>
+  updateStoredFile?: Maybe<StoredFile>
   updateSubscription?: Maybe<Subscription>
   updateTeam?: Maybe<Team>
   updateTeamMember?: Maybe<TeamMember>
-  updateUpload?: Maybe<Upload>
   updateUser?: Maybe<User>
   updateUserPreference?: Maybe<UserPreference>
   updateUserSession?: Maybe<UserSession>
+  uploadFile: UploadedFile
+  uploadOrganizationLogo: UploadedFile
+  uploadUserAvatar: UploadedFile
   userCreateOrganization: Organization
+  userCreateUserPreference?: Maybe<UserPreference>
   userDeleteOrganization: Scalars['Boolean']['output']
+  userDeleteUserPreference?: Maybe<UserPreference>
   userUpdateOrganization: Organization
+  userUpdateUserPreference?: Maybe<UserPreference>
   verify2FACode: Scalars['Boolean']['output']
   verifyEmail: User
   verifyEmailChange: User
@@ -1176,6 +1246,10 @@ export type MutationCreateOAuthAccountArgs = {
   input: CreateOAuthAccountInput
 }
 
+export type MutationCreateOrganizationArgs = {
+  input: CreateOrganizationInput
+}
+
 export type MutationCreateOrganizationInvitationArgs = {
   input: CreateInvitationInput
 }
@@ -1204,6 +1278,10 @@ export type MutationCreateSecurityEventArgs = {
   input: CreateSecurityEventInput
 }
 
+export type MutationCreateStoredFileArgs = {
+  input: CreateStoredFileInput
+}
+
 export type MutationCreateSubscriptionArgs = {
   input: CreateSubscriptionInput
 }
@@ -1216,16 +1294,12 @@ export type MutationCreateTeamMemberArgs = {
   input: CreateTeamMemberInput
 }
 
-export type MutationCreateUploadArgs = {
-  input: CreateUploadInput
-}
-
 export type MutationCreateUserArgs = {
   input: CreateUserInput
 }
 
 export type MutationCreateUserPreferenceArgs = {
-  input: SecureCreateUserPreferenceInput
+  input: CreateUserPreferenceInput
 }
 
 export type MutationCreateUserSessionArgs = {
@@ -1252,6 +1326,10 @@ export type MutationDeleteEmailArgs = {
   emailId: Scalars['String']['input']
 }
 
+export type MutationDeleteFileArgs = {
+  uploadId: Scalars['String']['input']
+}
+
 export type MutationDeleteInviteArgs = {
   inviteId: Scalars['String']['input']
 }
@@ -1266,6 +1344,10 @@ export type MutationDeleteLoginAttemptArgs = {
 
 export type MutationDeleteOAuthAccountArgs = {
   oAuthAccountId: Scalars['String']['input']
+}
+
+export type MutationDeleteOrganizationArgs = {
+  organizationId: Scalars['String']['input']
 }
 
 export type MutationDeleteOrganizationMemberArgs = {
@@ -1292,6 +1374,10 @@ export type MutationDeleteSecurityEventArgs = {
   securityEventId: Scalars['String']['input']
 }
 
+export type MutationDeleteStoredFileArgs = {
+  storedFileId: Scalars['String']['input']
+}
+
 export type MutationDeleteSubscriptionArgs = {
   subscriptionId: Scalars['String']['input']
 }
@@ -1302,10 +1388,6 @@ export type MutationDeleteTeamArgs = {
 
 export type MutationDeleteTeamMemberArgs = {
   teamMemberId: Scalars['String']['input']
-}
-
-export type MutationDeleteUploadArgs = {
-  uploadId: Scalars['String']['input']
 }
 
 export type MutationDeleteUserArgs = {
@@ -1441,6 +1523,11 @@ export type MutationUpdateOAuthAccountArgs = {
   oAuthAccountId: Scalars['String']['input']
 }
 
+export type MutationUpdateOrganizationArgs = {
+  input: UpdateOrganizationInput
+  organizationId: Scalars['String']['input']
+}
+
 export type MutationUpdateOrganizationMemberArgs = {
   input: UpdateOrganizationMemberInput
   organizationMemberId: Scalars['String']['input']
@@ -1475,6 +1562,11 @@ export type MutationUpdateSecurityEventArgs = {
   securityEventId: Scalars['String']['input']
 }
 
+export type MutationUpdateStoredFileArgs = {
+  input: UpdateStoredFileInput
+  storedFileId: Scalars['String']['input']
+}
+
 export type MutationUpdateSubscriptionArgs = {
   input: UpdateSubscriptionInput
   subscriptionId: Scalars['String']['input']
@@ -1490,18 +1582,13 @@ export type MutationUpdateTeamMemberArgs = {
   teamMemberId: Scalars['String']['input']
 }
 
-export type MutationUpdateUploadArgs = {
-  input: UpdateUploadInput
-  uploadId: Scalars['String']['input']
-}
-
 export type MutationUpdateUserArgs = {
   input: UpdateUserInput
   userId: Scalars['String']['input']
 }
 
 export type MutationUpdateUserPreferenceArgs = {
-  input: SecureUpdateUserPreferenceInput
+  input: UpdateUserPreferenceInput
   userPreferenceId: Scalars['String']['input']
 }
 
@@ -1510,16 +1597,44 @@ export type MutationUpdateUserSessionArgs = {
   userSessionId: Scalars['String']['input']
 }
 
+export type MutationUploadFileArgs = {
+  file: Scalars['Upload']['input']
+  folder?: InputMaybe<Scalars['String']['input']>
+}
+
+export type MutationUploadOrganizationLogoArgs = {
+  file: Scalars['Upload']['input']
+  organizationId: Scalars['String']['input']
+}
+
+export type MutationUploadUserAvatarArgs = {
+  file: Scalars['Upload']['input']
+}
+
 export type MutationUserCreateOrganizationArgs = {
   input: CreateOrganizationInput
+}
+
+export type MutationUserCreateUserPreferenceArgs = {
+  input: SecureCreateUserPreferenceInput
 }
 
 export type MutationUserDeleteOrganizationArgs = {
   organizationId: Scalars['String']['input']
 }
 
+export type MutationUserDeleteUserPreferenceArgs = {
+  userPreferenceId: Scalars['String']['input']
+}
+
 export type MutationUserUpdateOrganizationArgs = {
   input: UpdateOrganizationInput
+  organizationId: Scalars['String']['input']
+}
+
+export type MutationUserUpdateUserPreferenceArgs = {
+  input: SecureUpdateUserPreferenceInput
+  userPreferenceId: Scalars['String']['input']
 }
 
 export type MutationVerify2FaCodeArgs = {
@@ -1566,7 +1681,7 @@ export type Organization = {
   createdAt: Scalars['Timestamp']['output']
   emails?: Maybe<Array<Email>>
   id: Scalars['String']['output']
-  images?: Maybe<Array<Upload>>
+  images?: Maybe<Array<StoredFile>>
   invites?: Maybe<Array<Invite>>
   links?: Maybe<Array<Link>>
   members?: Maybe<Array<OrganizationMember>>
@@ -1651,6 +1766,7 @@ export type Query = {
   emails?: Maybe<Array<Email>>
   emailsCount?: Maybe<CorePaging>
   exportUserData: ExportUserDataOutput
+  getSignedUrl: Scalars['String']['output']
   getUserSessions: Array<UserSessionOutput>
   invite?: Maybe<Invite>
   invites?: Maybe<Array<Invite>>
@@ -1668,11 +1784,15 @@ export type Query = {
   oAuthAccount?: Maybe<OAuthAccount>
   oAuthAccounts?: Maybe<Array<OAuthAccount>>
   oAuthAccountsCount?: Maybe<CorePaging>
+  organization?: Maybe<Organization>
+  organizationFiles: Array<UploadedFile>
   organizationInvitations: Array<Invite>
   organizationMember?: Maybe<OrganizationMember>
-  organizationMembers: Array<OrganizationMember>
+  organizationMembers?: Maybe<Array<OrganizationMember>>
   organizationMembersCount?: Maybe<CorePaging>
   organizationRoles: Array<Role>
+  organizations?: Maybe<Array<Organization>>
+  organizationsCount?: Maybe<CorePaging>
   permission?: Maybe<Permission>
   permissions?: Maybe<Array<Permission>>
   permissionsCount?: Maybe<CorePaging>
@@ -1690,6 +1810,9 @@ export type Query = {
   securityEventsByType: Array<SecurityEvent>
   securityEventsCount?: Maybe<CorePaging>
   securitySummary: SecuritySummary
+  storedFile?: Maybe<StoredFile>
+  storedFiles?: Maybe<Array<StoredFile>>
+  storedFilesCount?: Maybe<CorePaging>
   subscription?: Maybe<Subscription>
   subscriptions?: Maybe<Array<Subscription>>
   subscriptionsCount?: Maybe<CorePaging>
@@ -1699,13 +1822,15 @@ export type Query = {
   teamMembersCount?: Maybe<CorePaging>
   teams?: Maybe<Array<Team>>
   teamsCount?: Maybe<CorePaging>
-  upload?: Maybe<Upload>
-  uploads?: Maybe<Array<Upload>>
-  uploadsCount?: Maybe<CorePaging>
   uptime?: Maybe<Scalars['Float']['output']>
   user?: Maybe<User>
+  userFiles: Array<UploadedFile>
+  userGetUserPreference?: Maybe<UserPreference>
+  userGetUserPreferences?: Maybe<Array<UserPreference>>
+  userOrganizationMembers: Array<OrganizationMember>
   userPreference?: Maybe<UserPreference>
   userPreferences?: Maybe<Array<UserPreference>>
+  userPreferencesCount?: Maybe<CorePaging>
   userSecurityEvents: Array<SecurityEvent>
   userSession?: Maybe<UserSession>
   userSessions?: Maybe<Array<UserSession>>
@@ -1774,6 +1899,11 @@ export type QueryEmailsCountArgs = {
   input?: InputMaybe<ListEmailInput>
 }
 
+export type QueryGetSignedUrlArgs = {
+  expiresIn?: InputMaybe<Scalars['Int']['input']>
+  uploadId: Scalars['String']['input']
+}
+
 export type QueryInviteArgs = {
   inviteId: Scalars['String']['input']
 }
@@ -1826,6 +1956,16 @@ export type QueryOAuthAccountsCountArgs = {
   input?: InputMaybe<ListOAuthAccountInput>
 }
 
+export type QueryOrganizationArgs = {
+  organizationId: Scalars['String']['input']
+}
+
+export type QueryOrganizationFilesArgs = {
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
+  organizationId: Scalars['String']['input']
+}
+
 export type QueryOrganizationInvitationsArgs = {
   organizationId: Scalars['String']['input']
 }
@@ -1835,7 +1975,7 @@ export type QueryOrganizationMemberArgs = {
 }
 
 export type QueryOrganizationMembersArgs = {
-  organizationId: Scalars['String']['input']
+  input?: InputMaybe<ListOrganizationMemberInput>
 }
 
 export type QueryOrganizationMembersCountArgs = {
@@ -1844,6 +1984,14 @@ export type QueryOrganizationMembersCountArgs = {
 
 export type QueryOrganizationRolesArgs = {
   organizationId: Scalars['String']['input']
+}
+
+export type QueryOrganizationsArgs = {
+  input?: InputMaybe<ListOrganizationInput>
+}
+
+export type QueryOrganizationsCountArgs = {
+  input?: InputMaybe<ListOrganizationInput>
 }
 
 export type QueryPermissionArgs = {
@@ -1911,6 +2059,18 @@ export type QuerySecurityEventsCountArgs = {
   input?: InputMaybe<ListSecurityEventInput>
 }
 
+export type QueryStoredFileArgs = {
+  storedFileId: Scalars['String']['input']
+}
+
+export type QueryStoredFilesArgs = {
+  input?: InputMaybe<ListStoredFileInput>
+}
+
+export type QueryStoredFilesCountArgs = {
+  input?: InputMaybe<ListStoredFileInput>
+}
+
 export type QuerySubscriptionArgs = {
   subscriptionId: Scalars['String']['input']
 }
@@ -1947,24 +2107,33 @@ export type QueryTeamsCountArgs = {
   input?: InputMaybe<ListTeamInput>
 }
 
-export type QueryUploadArgs = {
-  uploadId: Scalars['String']['input']
-}
-
-export type QueryUploadsArgs = {
-  input?: InputMaybe<ListUploadInput>
-}
-
-export type QueryUploadsCountArgs = {
-  input?: InputMaybe<ListUploadInput>
-}
-
 export type QueryUserArgs = {
   userId: Scalars['String']['input']
 }
 
+export type QueryUserFilesArgs = {
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
+}
+
+export type QueryUserGetUserPreferenceArgs = {
+  userPreferenceId: Scalars['String']['input']
+}
+
+export type QueryUserOrganizationMembersArgs = {
+  organizationId: Scalars['String']['input']
+}
+
 export type QueryUserPreferenceArgs = {
   userPreferenceId: Scalars['String']['input']
+}
+
+export type QueryUserPreferencesArgs = {
+  input?: InputMaybe<ListUserPreferenceInput>
+}
+
+export type QueryUserPreferencesCountArgs = {
+  input?: InputMaybe<ListUserPreferenceInput>
 }
 
 export type QueryUserSecurityEventsArgs = {
@@ -2085,6 +2254,38 @@ export type Setup2FaOutput = {
   otpauthUrl: Scalars['String']['output']
   qrCode: Scalars['String']['output']
   secret: Scalars['String']['output']
+}
+
+/** The storage provider used for file uploads */
+export enum StorageProvider {
+  Cloudinary = 'CLOUDINARY',
+  Gcs = 'GCS',
+  Imagekit = 'IMAGEKIT',
+  Local = 'LOCAL',
+  S3 = 'S3',
+}
+
+export type StoredFile = {
+  __typename?: 'StoredFile'
+  createdAt: Scalars['Timestamp']['output']
+  filename: Scalars['String']['output']
+  folder?: Maybe<Scalars['String']['output']>
+  height?: Maybe<Scalars['Int']['output']>
+  id: Scalars['String']['output']
+  metadata?: Maybe<Scalars['JSONObject']['output']>
+  mimeType: Scalars['String']['output']
+  organization?: Maybe<Organization>
+  organizationId?: Maybe<Scalars['String']['output']>
+  originalName: Scalars['String']['output']
+  provider: StorageProvider
+  providerFileId: Scalars['String']['output']
+  publicUrl?: Maybe<Scalars['String']['output']>
+  size: Scalars['Int']['output']
+  updatedAt: Scalars['Timestamp']['output']
+  url: Scalars['String']['output']
+  user?: Maybe<User>
+  userId?: Maybe<Scalars['String']['output']>
+  width?: Maybe<Scalars['Int']['output']>
 }
 
 export type Subscription = {
@@ -2282,8 +2483,21 @@ export type UpdateOAuthAccountInput = {
 }
 
 export type UpdateOrganizationInput = {
+  AuditLogIds?: InputMaybe<Array<Scalars['String']['input']>>
+  TeamIds?: InputMaybe<Array<Scalars['String']['input']>>
+  addressesIds?: InputMaybe<Array<Scalars['String']['input']>>
+  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
+  emailsIds?: InputMaybe<Array<Scalars['String']['input']>>
+  id?: InputMaybe<Scalars['String']['input']>
+  imagesIds?: InputMaybe<Array<Scalars['String']['input']>>
+  invitesIds?: InputMaybe<Array<Scalars['String']['input']>>
+  linksIds?: InputMaybe<Array<Scalars['String']['input']>>
+  membersIds?: InputMaybe<Array<Scalars['String']['input']>>
   name?: InputMaybe<Scalars['String']['input']>
-  organizationId: Scalars['String']['input']
+  phoneNumbersIds?: InputMaybe<Array<Scalars['String']['input']>>
+  rolesIds?: InputMaybe<Array<Scalars['String']['input']>>
+  subscriptionId?: InputMaybe<Scalars['String']['input']>
+  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
 }
 
 export type UpdateOrganizationMemberInput = {
@@ -2347,6 +2561,26 @@ export type UpdateSecurityEventInput = {
   userId?: InputMaybe<Scalars['String']['input']>
 }
 
+export type UpdateStoredFileInput = {
+  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
+  filename?: InputMaybe<Scalars['String']['input']>
+  folder?: InputMaybe<Scalars['String']['input']>
+  height?: InputMaybe<Scalars['Int']['input']>
+  id?: InputMaybe<Scalars['String']['input']>
+  metadata?: InputMaybe<Scalars['JSON']['input']>
+  mimeType?: InputMaybe<Scalars['String']['input']>
+  organizationId?: InputMaybe<Scalars['String']['input']>
+  originalName?: InputMaybe<Scalars['String']['input']>
+  provider?: InputMaybe<StorageProvider>
+  providerFileId?: InputMaybe<Scalars['String']['input']>
+  publicUrl?: InputMaybe<Scalars['String']['input']>
+  size?: InputMaybe<Scalars['Int']['input']>
+  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
+  url?: InputMaybe<Scalars['String']['input']>
+  userId?: InputMaybe<Scalars['String']['input']>
+  width?: InputMaybe<Scalars['Int']['input']>
+}
+
 export type UpdateSubscriptionInput = {
   createdAt?: InputMaybe<Scalars['Timestamp']['input']>
   id?: InputMaybe<Scalars['String']['input']>
@@ -2377,26 +2611,6 @@ export type UpdateTeamMemberInput = {
   teamId?: InputMaybe<Scalars['String']['input']>
   updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
   userId?: InputMaybe<Scalars['String']['input']>
-}
-
-export type UpdateUploadInput = {
-  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
-  fileId?: InputMaybe<Scalars['String']['input']>
-  filePath?: InputMaybe<Scalars['String']['input']>
-  fileType?: InputMaybe<Scalars['String']['input']>
-  height?: InputMaybe<Scalars['Int']['input']>
-  id?: InputMaybe<Scalars['String']['input']>
-  name?: InputMaybe<Scalars['String']['input']>
-  organizationId?: InputMaybe<Scalars['String']['input']>
-  orientation?: InputMaybe<Scalars['Int']['input']>
-  size?: InputMaybe<Scalars['Int']['input']>
-  thumbnailUrl?: InputMaybe<Scalars['String']['input']>
-  type?: InputMaybe<ImageType>
-  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
-  url?: InputMaybe<Scalars['String']['input']>
-  userId?: InputMaybe<Scalars['String']['input']>
-  versionInfo?: InputMaybe<Scalars['JSON']['input']>
-  width?: InputMaybe<Scalars['Int']['input']>
 }
 
 export type UpdateUserInput = {
@@ -2444,6 +2658,15 @@ export type UpdateUserInput = {
   validateEmailTokenExpires?: InputMaybe<Scalars['Timestamp']['input']>
 }
 
+export type UpdateUserPreferenceInput = {
+  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
+  id?: InputMaybe<Scalars['String']['input']>
+  key?: InputMaybe<Scalars['String']['input']>
+  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
+  userId?: InputMaybe<Scalars['String']['input']>
+  value?: InputMaybe<Scalars['String']['input']>
+}
+
 export type UpdateUserSessionInput = {
   createdAt?: InputMaybe<Scalars['Timestamp']['input']>
   deviceInfo?: InputMaybe<Scalars['String']['input']>
@@ -2456,26 +2679,24 @@ export type UpdateUserSessionInput = {
   userId?: InputMaybe<Scalars['String']['input']>
 }
 
-export type Upload = {
-  __typename?: 'Upload'
+export type UploadedFile = {
+  __typename?: 'UploadedFile'
   createdAt: Scalars['Timestamp']['output']
-  fileId?: Maybe<Scalars['String']['output']>
-  filePath?: Maybe<Scalars['String']['output']>
-  fileType?: Maybe<Scalars['String']['output']>
+  filename: Scalars['String']['output']
+  folder?: Maybe<Scalars['String']['output']>
   height?: Maybe<Scalars['Int']['output']>
   id: Scalars['String']['output']
-  name?: Maybe<Scalars['String']['output']>
-  organization?: Maybe<Organization>
+  metadata?: Maybe<Scalars['JSON']['output']>
+  mimeType: Scalars['String']['output']
   organizationId?: Maybe<Scalars['String']['output']>
-  orientation?: Maybe<Scalars['Int']['output']>
-  size?: Maybe<Scalars['Int']['output']>
-  thumbnailUrl?: Maybe<Scalars['String']['output']>
-  type?: Maybe<ImageType>
+  originalName: Scalars['String']['output']
+  provider: StorageProvider
+  providerFileId: Scalars['String']['output']
+  publicUrl?: Maybe<Scalars['String']['output']>
+  size: Scalars['Int']['output']
   updatedAt: Scalars['Timestamp']['output']
-  url?: Maybe<Scalars['String']['output']>
-  user?: Maybe<User>
+  url: Scalars['String']['output']
   userId?: Maybe<Scalars['String']['output']>
-  versionInfo?: Maybe<Scalars['JSONObject']['output']>
   width?: Maybe<Scalars['Int']['output']>
 }
 
@@ -2498,7 +2719,7 @@ export type User = {
   failedLoginCount: Scalars['Int']['output']
   firstName?: Maybe<Scalars['String']['output']>
   id: Scalars['String']['output']
-  images?: Maybe<Array<Upload>>
+  images?: Maybe<Array<StoredFile>>
   invitesSent?: Maybe<Array<Invite>>
   isActive: Scalars['Boolean']['output']
   isSuperAdmin: Scalars['Boolean']['output']
@@ -4154,12 +4375,12 @@ export type AdminOrganizationMemberQuery = {
 }
 
 export type AdminOrganizationMembersQueryVariables = Exact<{
-  organizationId: Scalars['String']['input']
+  input?: InputMaybe<ListOrganizationMemberInput>
 }>
 
 export type AdminOrganizationMembersQuery = {
   __typename?: 'Query'
-  organizationMembers: Array<{
+  organizationMembers?: Array<{
     __typename?: 'OrganizationMember'
     id: string
     createdAt: any
@@ -4170,7 +4391,163 @@ export type AdminOrganizationMembersQuery = {
     role?: { __typename?: 'Role'; id: string } | null
     user?: { __typename?: 'User'; id: string } | null
     organization?: { __typename?: 'Organization'; id: string } | null
-  }>
+  }> | null
+  counters?: {
+    __typename?: 'CorePaging'
+    count?: number | null
+    take?: number | null
+    page?: number | null
+    skip?: number | null
+    total?: number | null
+    filteredTotal?: number | null
+    pages?: number | null
+    hasNext?: boolean | null
+    hasPrev?: boolean | null
+  } | null
+}
+
+export type AdminOrganizationMemberPaginationQueryVariables = Exact<{
+  input?: InputMaybe<ListOrganizationMemberInput>
+}>
+
+export type AdminOrganizationMemberPaginationQuery = {
+  __typename?: 'Query'
+  counters?: {
+    __typename?: 'CorePaging'
+    count?: number | null
+    take?: number | null
+    page?: number | null
+    skip?: number | null
+    total?: number | null
+    filteredTotal?: number | null
+    pages?: number | null
+    hasNext?: boolean | null
+    hasPrev?: boolean | null
+  } | null
+}
+
+export type AdminOrganizationListFragment = {
+  __typename?: 'Organization'
+  id: string
+  createdAt: any
+  updatedAt: any
+  name: string
+  subscription?: { __typename?: 'Subscription'; id: string } | null
+}
+
+export type AdminOrganizationDetailsFragment = {
+  __typename?: 'Organization'
+  id: string
+  createdAt: any
+  updatedAt: any
+  name: string
+  subscription?: { __typename?: 'Subscription'; id: string } | null
+}
+
+export type AdminCreateOrganizationMutationVariables = Exact<{
+  input: CreateOrganizationInput
+}>
+
+export type AdminCreateOrganizationMutation = {
+  __typename?: 'Mutation'
+  createOrganization?: {
+    __typename?: 'Organization'
+    id: string
+    createdAt: any
+    updatedAt: any
+    name: string
+    subscription?: { __typename?: 'Subscription'; id: string } | null
+  } | null
+}
+
+export type AdminDeleteOrganizationMutationVariables = Exact<{
+  organizationId: Scalars['String']['input']
+}>
+
+export type AdminDeleteOrganizationMutation = {
+  __typename?: 'Mutation'
+  deleteOrganization?: { __typename?: 'Organization'; id: string } | null
+}
+
+export type AdminUpdateOrganizationMutationVariables = Exact<{
+  organizationId: Scalars['String']['input']
+  input: UpdateOrganizationInput
+}>
+
+export type AdminUpdateOrganizationMutation = {
+  __typename?: 'Mutation'
+  updateOrganization?: {
+    __typename?: 'Organization'
+    id: string
+    createdAt: any
+    updatedAt: any
+    name: string
+    subscription?: { __typename?: 'Subscription'; id: string } | null
+  } | null
+}
+
+export type AdminOrganizationQueryVariables = Exact<{
+  organizationId: Scalars['String']['input']
+}>
+
+export type AdminOrganizationQuery = {
+  __typename?: 'Query'
+  organization?: {
+    __typename?: 'Organization'
+    id: string
+    createdAt: any
+    updatedAt: any
+    name: string
+    subscription?: { __typename?: 'Subscription'; id: string } | null
+  } | null
+}
+
+export type AdminOrganizationsQueryVariables = Exact<{
+  input?: InputMaybe<ListOrganizationInput>
+}>
+
+export type AdminOrganizationsQuery = {
+  __typename?: 'Query'
+  organizations?: Array<{
+    __typename?: 'Organization'
+    id: string
+    createdAt: any
+    updatedAt: any
+    name: string
+    subscription?: { __typename?: 'Subscription'; id: string } | null
+  }> | null
+  counters?: {
+    __typename?: 'CorePaging'
+    count?: number | null
+    take?: number | null
+    page?: number | null
+    skip?: number | null
+    total?: number | null
+    filteredTotal?: number | null
+    pages?: number | null
+    hasNext?: boolean | null
+    hasPrev?: boolean | null
+  } | null
+}
+
+export type AdminOrganizationPaginationQueryVariables = Exact<{
+  input?: InputMaybe<ListOrganizationInput>
+}>
+
+export type AdminOrganizationPaginationQuery = {
+  __typename?: 'Query'
+  counters?: {
+    __typename?: 'CorePaging'
+    count?: number | null
+    take?: number | null
+    page?: number | null
+    skip?: number | null
+    total?: number | null
+    filteredTotal?: number | null
+    pages?: number | null
+    hasNext?: boolean | null
+    hasPrev?: boolean | null
+  } | null
 }
 
 export type AdminPermissionListFragment = {
@@ -4853,6 +5230,214 @@ export type AdminSecurityEventPaginationQuery = {
   } | null
 }
 
+export type AdminStoredFileListFragment = {
+  __typename?: 'StoredFile'
+  id: string
+  createdAt: any
+  updatedAt: any
+  provider: StorageProvider
+  providerFileId: string
+  folder?: string | null
+  filename: string
+  originalName: string
+  mimeType: string
+  size: number
+  url: string
+  publicUrl?: string | null
+  width?: number | null
+  height?: number | null
+  metadata?: any | null
+  userId?: string | null
+  organizationId?: string | null
+  user?: { __typename?: 'User'; id: string } | null
+  organization?: { __typename?: 'Organization'; id: string } | null
+}
+
+export type AdminStoredFileDetailsFragment = {
+  __typename?: 'StoredFile'
+  id: string
+  createdAt: any
+  updatedAt: any
+  provider: StorageProvider
+  providerFileId: string
+  folder?: string | null
+  filename: string
+  originalName: string
+  mimeType: string
+  size: number
+  url: string
+  publicUrl?: string | null
+  width?: number | null
+  height?: number | null
+  metadata?: any | null
+  userId?: string | null
+  organizationId?: string | null
+  user?: { __typename?: 'User'; id: string } | null
+  organization?: { __typename?: 'Organization'; id: string } | null
+}
+
+export type AdminCreateStoredFileMutationVariables = Exact<{
+  input: CreateStoredFileInput
+}>
+
+export type AdminCreateStoredFileMutation = {
+  __typename?: 'Mutation'
+  createStoredFile?: {
+    __typename?: 'StoredFile'
+    id: string
+    createdAt: any
+    updatedAt: any
+    provider: StorageProvider
+    providerFileId: string
+    folder?: string | null
+    filename: string
+    originalName: string
+    mimeType: string
+    size: number
+    url: string
+    publicUrl?: string | null
+    width?: number | null
+    height?: number | null
+    metadata?: any | null
+    userId?: string | null
+    organizationId?: string | null
+    user?: { __typename?: 'User'; id: string } | null
+    organization?: { __typename?: 'Organization'; id: string } | null
+  } | null
+}
+
+export type AdminDeleteStoredFileMutationVariables = Exact<{
+  storedFileId: Scalars['String']['input']
+}>
+
+export type AdminDeleteStoredFileMutation = {
+  __typename?: 'Mutation'
+  deleteStoredFile?: { __typename?: 'StoredFile'; id: string } | null
+}
+
+export type AdminUpdateStoredFileMutationVariables = Exact<{
+  storedFileId: Scalars['String']['input']
+  input: UpdateStoredFileInput
+}>
+
+export type AdminUpdateStoredFileMutation = {
+  __typename?: 'Mutation'
+  updateStoredFile?: {
+    __typename?: 'StoredFile'
+    id: string
+    createdAt: any
+    updatedAt: any
+    provider: StorageProvider
+    providerFileId: string
+    folder?: string | null
+    filename: string
+    originalName: string
+    mimeType: string
+    size: number
+    url: string
+    publicUrl?: string | null
+    width?: number | null
+    height?: number | null
+    metadata?: any | null
+    userId?: string | null
+    organizationId?: string | null
+    user?: { __typename?: 'User'; id: string } | null
+    organization?: { __typename?: 'Organization'; id: string } | null
+  } | null
+}
+
+export type AdminStoredFileQueryVariables = Exact<{
+  storedFileId: Scalars['String']['input']
+}>
+
+export type AdminStoredFileQuery = {
+  __typename?: 'Query'
+  storedFile?: {
+    __typename?: 'StoredFile'
+    id: string
+    createdAt: any
+    updatedAt: any
+    provider: StorageProvider
+    providerFileId: string
+    folder?: string | null
+    filename: string
+    originalName: string
+    mimeType: string
+    size: number
+    url: string
+    publicUrl?: string | null
+    width?: number | null
+    height?: number | null
+    metadata?: any | null
+    userId?: string | null
+    organizationId?: string | null
+    user?: { __typename?: 'User'; id: string } | null
+    organization?: { __typename?: 'Organization'; id: string } | null
+  } | null
+}
+
+export type AdminStoredFilesQueryVariables = Exact<{
+  input?: InputMaybe<ListStoredFileInput>
+}>
+
+export type AdminStoredFilesQuery = {
+  __typename?: 'Query'
+  storedFiles?: Array<{
+    __typename?: 'StoredFile'
+    id: string
+    createdAt: any
+    updatedAt: any
+    provider: StorageProvider
+    providerFileId: string
+    folder?: string | null
+    filename: string
+    originalName: string
+    mimeType: string
+    size: number
+    url: string
+    publicUrl?: string | null
+    width?: number | null
+    height?: number | null
+    metadata?: any | null
+    userId?: string | null
+    organizationId?: string | null
+    user?: { __typename?: 'User'; id: string } | null
+    organization?: { __typename?: 'Organization'; id: string } | null
+  }> | null
+  counters?: {
+    __typename?: 'CorePaging'
+    count?: number | null
+    take?: number | null
+    page?: number | null
+    skip?: number | null
+    total?: number | null
+    filteredTotal?: number | null
+    pages?: number | null
+    hasNext?: boolean | null
+    hasPrev?: boolean | null
+  } | null
+}
+
+export type AdminStoredFilePaginationQueryVariables = Exact<{
+  input?: InputMaybe<ListStoredFileInput>
+}>
+
+export type AdminStoredFilePaginationQuery = {
+  __typename?: 'Query'
+  counters?: {
+    __typename?: 'CorePaging'
+    count?: number | null
+    take?: number | null
+    page?: number | null
+    skip?: number | null
+    total?: number | null
+    filteredTotal?: number | null
+    pages?: number | null
+    hasNext?: boolean | null
+    hasPrev?: boolean | null
+  } | null
+}
+
 export type AdminSubscriptionListFragment = {
   __typename?: 'Subscription'
   id: string
@@ -5303,214 +5888,6 @@ export type AdminTeamPaginationQuery = {
   } | null
 }
 
-export type AdminUploadListFragment = {
-  __typename?: 'Upload'
-  id: string
-  createdAt: any
-  updatedAt: any
-  type?: ImageType | null
-  fileId?: string | null
-  filePath?: string | null
-  fileType?: string | null
-  height?: number | null
-  name?: string | null
-  size?: number | null
-  thumbnailUrl?: string | null
-  orientation?: number | null
-  url?: string | null
-  versionInfo?: any | null
-  width?: number | null
-  userId?: string | null
-  organizationId?: string | null
-  user?: { __typename?: 'User'; id: string } | null
-  organization?: { __typename?: 'Organization'; id: string } | null
-}
-
-export type AdminUploadDetailsFragment = {
-  __typename?: 'Upload'
-  id: string
-  createdAt: any
-  updatedAt: any
-  type?: ImageType | null
-  fileId?: string | null
-  filePath?: string | null
-  fileType?: string | null
-  height?: number | null
-  name?: string | null
-  size?: number | null
-  thumbnailUrl?: string | null
-  orientation?: number | null
-  url?: string | null
-  versionInfo?: any | null
-  width?: number | null
-  userId?: string | null
-  organizationId?: string | null
-  user?: { __typename?: 'User'; id: string } | null
-  organization?: { __typename?: 'Organization'; id: string } | null
-}
-
-export type AdminCreateUploadMutationVariables = Exact<{
-  input: CreateUploadInput
-}>
-
-export type AdminCreateUploadMutation = {
-  __typename?: 'Mutation'
-  createUpload?: {
-    __typename?: 'Upload'
-    id: string
-    createdAt: any
-    updatedAt: any
-    type?: ImageType | null
-    fileId?: string | null
-    filePath?: string | null
-    fileType?: string | null
-    height?: number | null
-    name?: string | null
-    size?: number | null
-    thumbnailUrl?: string | null
-    orientation?: number | null
-    url?: string | null
-    versionInfo?: any | null
-    width?: number | null
-    userId?: string | null
-    organizationId?: string | null
-    user?: { __typename?: 'User'; id: string } | null
-    organization?: { __typename?: 'Organization'; id: string } | null
-  } | null
-}
-
-export type AdminDeleteUploadMutationVariables = Exact<{
-  uploadId: Scalars['String']['input']
-}>
-
-export type AdminDeleteUploadMutation = {
-  __typename?: 'Mutation'
-  deleteUpload?: { __typename?: 'Upload'; id: string } | null
-}
-
-export type AdminUpdateUploadMutationVariables = Exact<{
-  uploadId: Scalars['String']['input']
-  input: UpdateUploadInput
-}>
-
-export type AdminUpdateUploadMutation = {
-  __typename?: 'Mutation'
-  updateUpload?: {
-    __typename?: 'Upload'
-    id: string
-    createdAt: any
-    updatedAt: any
-    type?: ImageType | null
-    fileId?: string | null
-    filePath?: string | null
-    fileType?: string | null
-    height?: number | null
-    name?: string | null
-    size?: number | null
-    thumbnailUrl?: string | null
-    orientation?: number | null
-    url?: string | null
-    versionInfo?: any | null
-    width?: number | null
-    userId?: string | null
-    organizationId?: string | null
-    user?: { __typename?: 'User'; id: string } | null
-    organization?: { __typename?: 'Organization'; id: string } | null
-  } | null
-}
-
-export type AdminUploadQueryVariables = Exact<{
-  uploadId: Scalars['String']['input']
-}>
-
-export type AdminUploadQuery = {
-  __typename?: 'Query'
-  upload?: {
-    __typename?: 'Upload'
-    id: string
-    createdAt: any
-    updatedAt: any
-    type?: ImageType | null
-    fileId?: string | null
-    filePath?: string | null
-    fileType?: string | null
-    height?: number | null
-    name?: string | null
-    size?: number | null
-    thumbnailUrl?: string | null
-    orientation?: number | null
-    url?: string | null
-    versionInfo?: any | null
-    width?: number | null
-    userId?: string | null
-    organizationId?: string | null
-    user?: { __typename?: 'User'; id: string } | null
-    organization?: { __typename?: 'Organization'; id: string } | null
-  } | null
-}
-
-export type AdminUploadsQueryVariables = Exact<{
-  input?: InputMaybe<ListUploadInput>
-}>
-
-export type AdminUploadsQuery = {
-  __typename?: 'Query'
-  uploads?: Array<{
-    __typename?: 'Upload'
-    id: string
-    createdAt: any
-    updatedAt: any
-    type?: ImageType | null
-    fileId?: string | null
-    filePath?: string | null
-    fileType?: string | null
-    height?: number | null
-    name?: string | null
-    size?: number | null
-    thumbnailUrl?: string | null
-    orientation?: number | null
-    url?: string | null
-    versionInfo?: any | null
-    width?: number | null
-    userId?: string | null
-    organizationId?: string | null
-    user?: { __typename?: 'User'; id: string } | null
-    organization?: { __typename?: 'Organization'; id: string } | null
-  }> | null
-  counters?: {
-    __typename?: 'CorePaging'
-    count?: number | null
-    take?: number | null
-    page?: number | null
-    skip?: number | null
-    total?: number | null
-    filteredTotal?: number | null
-    pages?: number | null
-    hasNext?: boolean | null
-    hasPrev?: boolean | null
-  } | null
-}
-
-export type AdminUploadPaginationQueryVariables = Exact<{
-  input?: InputMaybe<ListUploadInput>
-}>
-
-export type AdminUploadPaginationQuery = {
-  __typename?: 'Query'
-  counters?: {
-    __typename?: 'CorePaging'
-    count?: number | null
-    take?: number | null
-    page?: number | null
-    skip?: number | null
-    total?: number | null
-    filteredTotal?: number | null
-    pages?: number | null
-    hasNext?: boolean | null
-    hasPrev?: boolean | null
-  } | null
-}
-
 export type AdminUserPreferenceListFragment = {
   __typename?: 'UserPreference'
   id: string
@@ -5534,7 +5911,7 @@ export type AdminUserPreferenceDetailsFragment = {
 }
 
 export type AdminCreateUserPreferenceMutationVariables = Exact<{
-  input: SecureCreateUserPreferenceInput
+  input: CreateUserPreferenceInput
 }>
 
 export type AdminCreateUserPreferenceMutation = {
@@ -5562,7 +5939,7 @@ export type AdminDeleteUserPreferenceMutation = {
 
 export type AdminUpdateUserPreferenceMutationVariables = Exact<{
   userPreferenceId: Scalars['String']['input']
-  input: SecureUpdateUserPreferenceInput
+  input: UpdateUserPreferenceInput
 }>
 
 export type AdminUpdateUserPreferenceMutation = {
@@ -5597,7 +5974,9 @@ export type AdminUserPreferenceQuery = {
   } | null
 }
 
-export type AdminUserPreferencesQueryVariables = Exact<{ [key: string]: never }>
+export type AdminUserPreferencesQueryVariables = Exact<{
+  input?: InputMaybe<ListUserPreferenceInput>
+}>
 
 export type AdminUserPreferencesQuery = {
   __typename?: 'Query'
@@ -5611,6 +5990,38 @@ export type AdminUserPreferencesQuery = {
     value: string
     user?: { __typename?: 'User'; id: string } | null
   }> | null
+  counters?: {
+    __typename?: 'CorePaging'
+    count?: number | null
+    take?: number | null
+    page?: number | null
+    skip?: number | null
+    total?: number | null
+    filteredTotal?: number | null
+    pages?: number | null
+    hasNext?: boolean | null
+    hasPrev?: boolean | null
+  } | null
+}
+
+export type AdminUserPreferencePaginationQueryVariables = Exact<{
+  input?: InputMaybe<ListUserPreferenceInput>
+}>
+
+export type AdminUserPreferencePaginationQuery = {
+  __typename?: 'Query'
+  counters?: {
+    __typename?: 'CorePaging'
+    count?: number | null
+    take?: number | null
+    page?: number | null
+    skip?: number | null
+    total?: number | null
+    filteredTotal?: number | null
+    pages?: number | null
+    hasNext?: boolean | null
+    hasPrev?: boolean | null
+  } | null
 }
 
 export type AdminUserSessionListFragment = {
@@ -6517,6 +6928,7 @@ export type UserTokenDetailsFragment = {
     bio?: string | null
     isSuperAdmin: boolean
     emailValidated: boolean
+    twoFactorEnabled: boolean
     createdAt: any
     updatedAt: any
     emails?: Array<{
@@ -6532,6 +6944,17 @@ export type UserTokenDetailsFragment = {
       phone: string
       primary: boolean
     }> | null
+    images?: Array<{
+      __typename?: 'StoredFile'
+      id: string
+      url: string
+      publicUrl?: string | null
+      filename: string
+      mimeType: string
+      metadata?: any | null
+      folder?: string | null
+      createdAt: any
+    }> | null
   } | null
 }
 
@@ -6544,6 +6967,7 @@ export type AuthUserDetailsFragment = {
   bio?: string | null
   isSuperAdmin: boolean
   emailValidated: boolean
+  twoFactorEnabled: boolean
   createdAt: any
   updatedAt: any
   emails?: Array<{
@@ -6558,6 +6982,17 @@ export type AuthUserDetailsFragment = {
     id: string
     phone: string
     primary: boolean
+  }> | null
+  images?: Array<{
+    __typename?: 'StoredFile'
+    id: string
+    url: string
+    publicUrl?: string | null
+    filename: string
+    mimeType: string
+    metadata?: any | null
+    folder?: string | null
+    createdAt: any
   }> | null
 }
 
@@ -6581,6 +7016,7 @@ export type LoginMutation = {
       bio?: string | null
       isSuperAdmin: boolean
       emailValidated: boolean
+      twoFactorEnabled: boolean
       createdAt: any
       updatedAt: any
       emails?: Array<{
@@ -6595,6 +7031,17 @@ export type LoginMutation = {
         id: string
         phone: string
         primary: boolean
+      }> | null
+      images?: Array<{
+        __typename?: 'StoredFile'
+        id: string
+        url: string
+        publicUrl?: string | null
+        filename: string
+        mimeType: string
+        metadata?: any | null
+        folder?: string | null
+        createdAt: any
       }> | null
     } | null
   } | null
@@ -6620,6 +7067,7 @@ export type RegisterMutation = {
       bio?: string | null
       isSuperAdmin: boolean
       emailValidated: boolean
+      twoFactorEnabled: boolean
       createdAt: any
       updatedAt: any
       emails?: Array<{
@@ -6634,6 +7082,17 @@ export type RegisterMutation = {
         id: string
         phone: string
         primary: boolean
+      }> | null
+      images?: Array<{
+        __typename?: 'StoredFile'
+        id: string
+        url: string
+        publicUrl?: string | null
+        filename: string
+        mimeType: string
+        metadata?: any | null
+        folder?: string | null
+        createdAt: any
       }> | null
     } | null
   } | null
@@ -6664,6 +7123,7 @@ export type ResetPasswordMutation = {
     bio?: string | null
     isSuperAdmin: boolean
     emailValidated: boolean
+    twoFactorEnabled: boolean
     createdAt: any
     updatedAt: any
     emails?: Array<{
@@ -6678,6 +7138,17 @@ export type ResetPasswordMutation = {
       id: string
       phone: string
       primary: boolean
+    }> | null
+    images?: Array<{
+      __typename?: 'StoredFile'
+      id: string
+      url: string
+      publicUrl?: string | null
+      filename: string
+      mimeType: string
+      metadata?: any | null
+      folder?: string | null
+      createdAt: any
     }> | null
   } | null
 }
@@ -6697,6 +7168,7 @@ export type VerifyEmailMutation = {
     bio?: string | null
     isSuperAdmin: boolean
     emailValidated: boolean
+    twoFactorEnabled: boolean
     createdAt: any
     updatedAt: any
     emails?: Array<{
@@ -6711,6 +7183,17 @@ export type VerifyEmailMutation = {
       id: string
       phone: string
       primary: boolean
+    }> | null
+    images?: Array<{
+      __typename?: 'StoredFile'
+      id: string
+      url: string
+      publicUrl?: string | null
+      filename: string
+      mimeType: string
+      metadata?: any | null
+      folder?: string | null
+      createdAt: any
     }> | null
   }
 }
@@ -6744,6 +7227,7 @@ export type EmulateUserMutation = {
       bio?: string | null
       isSuperAdmin: boolean
       emailValidated: boolean
+      twoFactorEnabled: boolean
       createdAt: any
       updatedAt: any
       emails?: Array<{
@@ -6758,6 +7242,17 @@ export type EmulateUserMutation = {
         id: string
         phone: string
         primary: boolean
+      }> | null
+      images?: Array<{
+        __typename?: 'StoredFile'
+        id: string
+        url: string
+        publicUrl?: string | null
+        filename: string
+        mimeType: string
+        metadata?: any | null
+        folder?: string | null
+        createdAt: any
       }> | null
     } | null
   } | null
@@ -6784,6 +7279,7 @@ export type VerifyEmailChangeMutation = {
     bio?: string | null
     isSuperAdmin: boolean
     emailValidated: boolean
+    twoFactorEnabled: boolean
     createdAt: any
     updatedAt: any
     emails?: Array<{
@@ -6798,6 +7294,17 @@ export type VerifyEmailChangeMutation = {
       id: string
       phone: string
       primary: boolean
+    }> | null
+    images?: Array<{
+      __typename?: 'StoredFile'
+      id: string
+      url: string
+      publicUrl?: string | null
+      filename: string
+      mimeType: string
+      metadata?: any | null
+      folder?: string | null
+      createdAt: any
     }> | null
   }
 }
@@ -6846,6 +7353,7 @@ export type MeQuery = {
     bio?: string | null
     isSuperAdmin: boolean
     emailValidated: boolean
+    twoFactorEnabled: boolean
     createdAt: any
     updatedAt: any
     emails?: Array<{
@@ -6860,6 +7368,17 @@ export type MeQuery = {
       id: string
       phone: string
       primary: boolean
+    }> | null
+    images?: Array<{
+      __typename?: 'StoredFile'
+      id: string
+      url: string
+      publicUrl?: string | null
+      filename: string
+      mimeType: string
+      metadata?: any | null
+      folder?: string | null
+      createdAt: any
     }> | null
   } | null
 }
@@ -6954,6 +7473,7 @@ export type Complete2FaLoginMutation = {
       bio?: string | null
       isSuperAdmin: boolean
       emailValidated: boolean
+      twoFactorEnabled: boolean
       createdAt: any
       updatedAt: any
       emails?: Array<{
@@ -6968,6 +7488,17 @@ export type Complete2FaLoginMutation = {
         id: string
         phone: string
         primary: boolean
+      }> | null
+      images?: Array<{
+        __typename?: 'StoredFile'
+        id: string
+        url: string
+        publicUrl?: string | null
+        filename: string
+        mimeType: string
+        metadata?: any | null
+        folder?: string | null
+        createdAt: any
       }> | null
     } | null
   } | null
@@ -7897,17 +8428,17 @@ export type OrganizationMemberQuery = {
 }
 
 export type OrganizationMembersQueryVariables = Exact<{
-  organizationId: Scalars['String']['input']
+  input?: InputMaybe<ListOrganizationMemberInput>
 }>
 
 export type OrganizationMembersQuery = {
   __typename?: 'Query'
-  organizationMembers: Array<{
+  organizationMembers?: Array<{
     __typename?: 'OrganizationMember'
     id: string
     createdAt: any
     updatedAt: any
-  }>
+  }> | null
 }
 
 export type OrganizationMembersCountQueryVariables = Exact<{
@@ -7936,6 +8467,17 @@ export type OrganizationListFragment = {
   createdAt: any
   updatedAt: any
   name: string
+  images?: Array<{
+    __typename?: 'StoredFile'
+    id: string
+    url: string
+    publicUrl?: string | null
+    filename: string
+    mimeType: string
+    metadata?: any | null
+    folder?: string | null
+    createdAt: any
+  }> | null
 }
 
 export type OrganizationDetailsFragment = {
@@ -7962,6 +8504,17 @@ export type OrganizationDetailsFragment = {
     id: string
     name: string
     description?: string | null
+  }> | null
+  images?: Array<{
+    __typename?: 'StoredFile'
+    id: string
+    url: string
+    publicUrl?: string | null
+    filename: string
+    mimeType: string
+    metadata?: any | null
+    folder?: string | null
+    createdAt: any
   }> | null
 }
 
@@ -7996,6 +8549,17 @@ export type UserCreateOrganizationMutation = {
       name: string
       description?: string | null
     }> | null
+    images?: Array<{
+      __typename?: 'StoredFile'
+      id: string
+      url: string
+      publicUrl?: string | null
+      filename: string
+      mimeType: string
+      metadata?: any | null
+      folder?: string | null
+      createdAt: any
+    }> | null
   }
 }
 
@@ -8009,6 +8573,7 @@ export type UserDeleteOrganizationMutation = {
 }
 
 export type UserUpdateOrganizationMutationVariables = Exact<{
+  organizationId: Scalars['String']['input']
   input: UpdateOrganizationInput
 }>
 
@@ -8038,6 +8603,17 @@ export type UserUpdateOrganizationMutation = {
       id: string
       name: string
       description?: string | null
+    }> | null
+    images?: Array<{
+      __typename?: 'StoredFile'
+      id: string
+      url: string
+      publicUrl?: string | null
+      filename: string
+      mimeType: string
+      metadata?: any | null
+      folder?: string | null
+      createdAt: any
     }> | null
   }
 }
@@ -8081,6 +8657,17 @@ export type AcceptOrganizationInvitationMutation = {
       id: string
       name: string
       description?: string | null
+    }> | null
+    images?: Array<{
+      __typename?: 'StoredFile'
+      id: string
+      url: string
+      publicUrl?: string | null
+      filename: string
+      mimeType: string
+      metadata?: any | null
+      folder?: string | null
+      createdAt: any
     }> | null
   }
 }
@@ -8144,6 +8731,17 @@ export type MyOrganizationsQuery = {
     createdAt: any
     updatedAt: any
     name: string
+    images?: Array<{
+      __typename?: 'StoredFile'
+      id: string
+      url: string
+      publicUrl?: string | null
+      filename: string
+      mimeType: string
+      metadata?: any | null
+      folder?: string | null
+      createdAt: any
+    }> | null
   }>
 }
 
@@ -8186,6 +8784,63 @@ export type OrganizationInvitationsQuery = {
       firstName?: string | null
       lastName?: string | null
     } | null
+  }>
+}
+
+export type MyOrganizationsWithMembersQueryVariables = Exact<{ [key: string]: never }>
+
+export type MyOrganizationsWithMembersQuery = {
+  __typename?: 'Query'
+  myOrganizations: Array<{
+    __typename?: 'Organization'
+    id: string
+    createdAt: any
+    updatedAt: any
+    name: string
+    members?: Array<{
+      __typename?: 'OrganizationMember'
+      id: string
+      userId: string
+      roleId: string
+      user?: {
+        __typename?: 'User'
+        id: string
+        firstName?: string | null
+        lastName?: string | null
+      } | null
+      role?: { __typename?: 'Role'; id: string; name: string } | null
+    }> | null
+    roles?: Array<{
+      __typename?: 'Role'
+      id: string
+      name: string
+      description?: string | null
+    }> | null
+    images?: Array<{
+      __typename?: 'StoredFile'
+      id: string
+      url: string
+      publicUrl?: string | null
+      filename: string
+      mimeType: string
+      metadata?: any | null
+      folder?: string | null
+      createdAt: any
+    }> | null
+  }>
+}
+
+export type UserOrganizationMembersQueryVariables = Exact<{
+  organizationId: Scalars['String']['input']
+}>
+
+export type UserOrganizationMembersQuery = {
+  __typename?: 'Query'
+  userOrganizationMembers: Array<{
+    __typename?: 'OrganizationMember'
+    id: string
+    createdAt: any
+    updatedAt: any
   }>
 }
 
@@ -8675,6 +9330,7 @@ export type MySecurityEventsQuery = {
     id: string
     createdAt: any
     updatedAt: any
+    eventType: SecurityEventType
     ipAddress?: string | null
     userAgent?: string | null
     metadata?: any | null
@@ -8686,6 +9342,7 @@ export type SecurityEventListFragment = {
   id: string
   createdAt: any
   updatedAt: any
+  eventType: SecurityEventType
   ipAddress?: string | null
   userAgent?: string | null
   metadata?: any | null
@@ -8696,6 +9353,7 @@ export type SecurityEventDetailsFragment = {
   id: string
   createdAt: any
   updatedAt: any
+  eventType: SecurityEventType
   ipAddress?: string | null
   userAgent?: string | null
   metadata?: any | null
@@ -8712,6 +9370,7 @@ export type CreateSecurityEventMutation = {
     id: string
     createdAt: any
     updatedAt: any
+    eventType: SecurityEventType
     ipAddress?: string | null
     userAgent?: string | null
     metadata?: any | null
@@ -8739,6 +9398,7 @@ export type UpdateSecurityEventMutation = {
     id: string
     createdAt: any
     updatedAt: any
+    eventType: SecurityEventType
     ipAddress?: string | null
     userAgent?: string | null
     metadata?: any | null
@@ -8756,6 +9416,7 @@ export type SecurityEventQuery = {
     id: string
     createdAt: any
     updatedAt: any
+    eventType: SecurityEventType
     ipAddress?: string | null
     userAgent?: string | null
     metadata?: any | null
@@ -8773,6 +9434,7 @@ export type SecurityEventsQuery = {
     id: string
     createdAt: any
     updatedAt: any
+    eventType: SecurityEventType
     ipAddress?: string | null
     userAgent?: string | null
     metadata?: any | null
@@ -8796,6 +9458,313 @@ export type SecurityEventPaginationQueryVariables = Exact<{
 }>
 
 export type SecurityEventPaginationQuery = {
+  __typename?: 'Query'
+  counters?: {
+    __typename?: 'CorePaging'
+    count?: number | null
+    take?: number | null
+    page?: number | null
+    skip?: number | null
+    total?: number | null
+    filteredTotal?: number | null
+    pages?: number | null
+    hasNext?: boolean | null
+    hasPrev?: boolean | null
+  } | null
+}
+
+export type UploadUserAvatarMutationVariables = Exact<{
+  file: Scalars['Upload']['input']
+}>
+
+export type UploadUserAvatarMutation = {
+  __typename?: 'Mutation'
+  uploadUserAvatar: {
+    __typename?: 'UploadedFile'
+    id: string
+    url: string
+    publicUrl?: string | null
+    filename: string
+    originalName: string
+    mimeType: string
+    size: number
+    width?: number | null
+    height?: number | null
+    provider: StorageProvider
+    metadata?: any | null
+    createdAt: any
+  }
+}
+
+export type UploadOrganizationLogoMutationVariables = Exact<{
+  file: Scalars['Upload']['input']
+  organizationId: Scalars['String']['input']
+}>
+
+export type UploadOrganizationLogoMutation = {
+  __typename?: 'Mutation'
+  uploadOrganizationLogo: {
+    __typename?: 'UploadedFile'
+    id: string
+    url: string
+    publicUrl?: string | null
+    filename: string
+    originalName: string
+    mimeType: string
+    size: number
+    width?: number | null
+    height?: number | null
+    provider: StorageProvider
+    metadata?: any | null
+    createdAt: any
+  }
+}
+
+export type UploadFileMutationVariables = Exact<{
+  file: Scalars['Upload']['input']
+  folder?: InputMaybe<Scalars['String']['input']>
+}>
+
+export type UploadFileMutation = {
+  __typename?: 'Mutation'
+  uploadFile: {
+    __typename?: 'UploadedFile'
+    id: string
+    url: string
+    publicUrl?: string | null
+    filename: string
+    originalName: string
+    mimeType: string
+    size: number
+    width?: number | null
+    height?: number | null
+    provider: StorageProvider
+    metadata?: any | null
+    createdAt: any
+  }
+}
+
+export type DeleteFileMutationVariables = Exact<{
+  uploadId: Scalars['String']['input']
+}>
+
+export type DeleteFileMutation = { __typename?: 'Mutation'; deleteFile: boolean }
+
+export type UserFilesQueryVariables = Exact<{
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
+}>
+
+export type UserFilesQuery = {
+  __typename?: 'Query'
+  userFiles: Array<{
+    __typename?: 'UploadedFile'
+    id: string
+    url: string
+    publicUrl?: string | null
+    filename: string
+    originalName: string
+    mimeType: string
+    size: number
+    width?: number | null
+    height?: number | null
+    provider: StorageProvider
+    metadata?: any | null
+    createdAt: any
+    folder?: string | null
+  }>
+}
+
+export type OrganizationFilesQueryVariables = Exact<{
+  organizationId: Scalars['String']['input']
+  limit?: InputMaybe<Scalars['Int']['input']>
+  offset?: InputMaybe<Scalars['Int']['input']>
+}>
+
+export type OrganizationFilesQuery = {
+  __typename?: 'Query'
+  organizationFiles: Array<{
+    __typename?: 'UploadedFile'
+    id: string
+    url: string
+    publicUrl?: string | null
+    filename: string
+    originalName: string
+    mimeType: string
+    size: number
+    width?: number | null
+    height?: number | null
+    provider: StorageProvider
+    metadata?: any | null
+    createdAt: any
+    folder?: string | null
+  }>
+}
+
+export type GetSignedUrlQueryVariables = Exact<{
+  uploadId: Scalars['String']['input']
+  expiresIn?: InputMaybe<Scalars['Int']['input']>
+}>
+
+export type GetSignedUrlQuery = { __typename?: 'Query'; getSignedUrl: string }
+
+export type StoredFileListFragment = {
+  __typename?: 'StoredFile'
+  id: string
+  createdAt: any
+  updatedAt: any
+  folder?: string | null
+  filename: string
+  originalName: string
+  mimeType: string
+  size: number
+  url: string
+  publicUrl?: string | null
+  width?: number | null
+  height?: number | null
+  metadata?: any | null
+}
+
+export type StoredFileDetailsFragment = {
+  __typename?: 'StoredFile'
+  id: string
+  createdAt: any
+  updatedAt: any
+  folder?: string | null
+  filename: string
+  originalName: string
+  mimeType: string
+  size: number
+  url: string
+  publicUrl?: string | null
+  width?: number | null
+  height?: number | null
+  metadata?: any | null
+}
+
+export type CreateStoredFileMutationVariables = Exact<{
+  input: CreateStoredFileInput
+}>
+
+export type CreateStoredFileMutation = {
+  __typename?: 'Mutation'
+  createStoredFile?: {
+    __typename?: 'StoredFile'
+    id: string
+    createdAt: any
+    updatedAt: any
+    folder?: string | null
+    filename: string
+    originalName: string
+    mimeType: string
+    size: number
+    url: string
+    publicUrl?: string | null
+    width?: number | null
+    height?: number | null
+    metadata?: any | null
+  } | null
+}
+
+export type DeleteStoredFileMutationVariables = Exact<{
+  storedFileId: Scalars['String']['input']
+}>
+
+export type DeleteStoredFileMutation = {
+  __typename?: 'Mutation'
+  deleteStoredFile?: { __typename?: 'StoredFile'; id: string } | null
+}
+
+export type UpdateStoredFileMutationVariables = Exact<{
+  storedFileId: Scalars['String']['input']
+  input: UpdateStoredFileInput
+}>
+
+export type UpdateStoredFileMutation = {
+  __typename?: 'Mutation'
+  updateStoredFile?: {
+    __typename?: 'StoredFile'
+    id: string
+    createdAt: any
+    updatedAt: any
+    folder?: string | null
+    filename: string
+    originalName: string
+    mimeType: string
+    size: number
+    url: string
+    publicUrl?: string | null
+    width?: number | null
+    height?: number | null
+    metadata?: any | null
+  } | null
+}
+
+export type StoredFileQueryVariables = Exact<{
+  storedFileId: Scalars['String']['input']
+}>
+
+export type StoredFileQuery = {
+  __typename?: 'Query'
+  storedFile?: {
+    __typename?: 'StoredFile'
+    id: string
+    createdAt: any
+    updatedAt: any
+    folder?: string | null
+    filename: string
+    originalName: string
+    mimeType: string
+    size: number
+    url: string
+    publicUrl?: string | null
+    width?: number | null
+    height?: number | null
+    metadata?: any | null
+  } | null
+}
+
+export type StoredFilesQueryVariables = Exact<{
+  input?: InputMaybe<ListStoredFileInput>
+}>
+
+export type StoredFilesQuery = {
+  __typename?: 'Query'
+  storedFiles?: Array<{
+    __typename?: 'StoredFile'
+    id: string
+    createdAt: any
+    updatedAt: any
+    folder?: string | null
+    filename: string
+    originalName: string
+    mimeType: string
+    size: number
+    url: string
+    publicUrl?: string | null
+    width?: number | null
+    height?: number | null
+    metadata?: any | null
+  }> | null
+  counters?: {
+    __typename?: 'CorePaging'
+    count?: number | null
+    take?: number | null
+    page?: number | null
+    skip?: number | null
+    total?: number | null
+    filteredTotal?: number | null
+    pages?: number | null
+    hasNext?: boolean | null
+    hasPrev?: boolean | null
+  } | null
+}
+
+export type StoredFilePaginationQueryVariables = Exact<{
+  input?: InputMaybe<ListStoredFileInput>
+}>
+
+export type StoredFilePaginationQuery = {
   __typename?: 'Query'
   counters?: {
     __typename?: 'CorePaging'
@@ -9160,178 +10129,6 @@ export type TeamPaginationQuery = {
   } | null
 }
 
-export type UploadListFragment = {
-  __typename?: 'Upload'
-  id: string
-  createdAt: any
-  updatedAt: any
-  filePath?: string | null
-  fileType?: string | null
-  height?: number | null
-  name?: string | null
-  size?: number | null
-  thumbnailUrl?: string | null
-  orientation?: number | null
-  url?: string | null
-  versionInfo?: any | null
-  width?: number | null
-}
-
-export type UploadDetailsFragment = {
-  __typename?: 'Upload'
-  id: string
-  createdAt: any
-  updatedAt: any
-  filePath?: string | null
-  fileType?: string | null
-  height?: number | null
-  name?: string | null
-  size?: number | null
-  thumbnailUrl?: string | null
-  orientation?: number | null
-  url?: string | null
-  versionInfo?: any | null
-  width?: number | null
-}
-
-export type CreateUploadMutationVariables = Exact<{
-  input: CreateUploadInput
-}>
-
-export type CreateUploadMutation = {
-  __typename?: 'Mutation'
-  createUpload?: {
-    __typename?: 'Upload'
-    id: string
-    createdAt: any
-    updatedAt: any
-    filePath?: string | null
-    fileType?: string | null
-    height?: number | null
-    name?: string | null
-    size?: number | null
-    thumbnailUrl?: string | null
-    orientation?: number | null
-    url?: string | null
-    versionInfo?: any | null
-    width?: number | null
-  } | null
-}
-
-export type DeleteUploadMutationVariables = Exact<{
-  uploadId: Scalars['String']['input']
-}>
-
-export type DeleteUploadMutation = {
-  __typename?: 'Mutation'
-  deleteUpload?: { __typename?: 'Upload'; id: string } | null
-}
-
-export type UpdateUploadMutationVariables = Exact<{
-  uploadId: Scalars['String']['input']
-  input: UpdateUploadInput
-}>
-
-export type UpdateUploadMutation = {
-  __typename?: 'Mutation'
-  updateUpload?: {
-    __typename?: 'Upload'
-    id: string
-    createdAt: any
-    updatedAt: any
-    filePath?: string | null
-    fileType?: string | null
-    height?: number | null
-    name?: string | null
-    size?: number | null
-    thumbnailUrl?: string | null
-    orientation?: number | null
-    url?: string | null
-    versionInfo?: any | null
-    width?: number | null
-  } | null
-}
-
-export type UploadQueryVariables = Exact<{
-  uploadId: Scalars['String']['input']
-}>
-
-export type UploadQuery = {
-  __typename?: 'Query'
-  upload?: {
-    __typename?: 'Upload'
-    id: string
-    createdAt: any
-    updatedAt: any
-    filePath?: string | null
-    fileType?: string | null
-    height?: number | null
-    name?: string | null
-    size?: number | null
-    thumbnailUrl?: string | null
-    orientation?: number | null
-    url?: string | null
-    versionInfo?: any | null
-    width?: number | null
-  } | null
-}
-
-export type UploadsQueryVariables = Exact<{
-  input?: InputMaybe<ListUploadInput>
-}>
-
-export type UploadsQuery = {
-  __typename?: 'Query'
-  uploads?: Array<{
-    __typename?: 'Upload'
-    id: string
-    createdAt: any
-    updatedAt: any
-    filePath?: string | null
-    fileType?: string | null
-    height?: number | null
-    name?: string | null
-    size?: number | null
-    thumbnailUrl?: string | null
-    orientation?: number | null
-    url?: string | null
-    versionInfo?: any | null
-    width?: number | null
-  }> | null
-  counters?: {
-    __typename?: 'CorePaging'
-    count?: number | null
-    take?: number | null
-    page?: number | null
-    skip?: number | null
-    total?: number | null
-    filteredTotal?: number | null
-    pages?: number | null
-    hasNext?: boolean | null
-    hasPrev?: boolean | null
-  } | null
-}
-
-export type UploadPaginationQueryVariables = Exact<{
-  input?: InputMaybe<ListUploadInput>
-}>
-
-export type UploadPaginationQuery = {
-  __typename?: 'Query'
-  counters?: {
-    __typename?: 'CorePaging'
-    count?: number | null
-    take?: number | null
-    page?: number | null
-    skip?: number | null
-    total?: number | null
-    filteredTotal?: number | null
-    pages?: number | null
-    hasNext?: boolean | null
-    hasPrev?: boolean | null
-  } | null
-}
-
 export type UserPreferenceListFragment = {
   __typename?: 'UserPreference'
   id: string
@@ -9351,7 +10148,7 @@ export type UserPreferenceDetailsFragment = {
 }
 
 export type CreateUserPreferenceMutationVariables = Exact<{
-  input: SecureCreateUserPreferenceInput
+  input: CreateUserPreferenceInput
 }>
 
 export type CreateUserPreferenceMutation = {
@@ -9377,7 +10174,7 @@ export type DeleteUserPreferenceMutation = {
 
 export type UpdateUserPreferenceMutationVariables = Exact<{
   userPreferenceId: Scalars['String']['input']
-  input: SecureUpdateUserPreferenceInput
+  input: UpdateUserPreferenceInput
 }>
 
 export type UpdateUserPreferenceMutation = {
@@ -10046,6 +10843,23 @@ export const AdminOrganizationMemberDetailsFragmentDoc = gql`
   }
   ${AdminOrganizationMemberListFragmentDoc}
 `
+export const AdminOrganizationListFragmentDoc = gql`
+  fragment AdminOrganizationList on Organization {
+    id
+    createdAt
+    updatedAt
+    name
+    subscription {
+      id
+    }
+  }
+`
+export const AdminOrganizationDetailsFragmentDoc = gql`
+  fragment AdminOrganizationDetails on Organization {
+    ...AdminOrganizationList
+  }
+  ${AdminOrganizationListFragmentDoc}
+`
 export const AdminPermissionListFragmentDoc = gql`
   fragment AdminPermissionList on Permission {
     id
@@ -10139,6 +10953,39 @@ export const AdminSecurityEventDetailsFragmentDoc = gql`
   }
   ${AdminSecurityEventListFragmentDoc}
 `
+export const AdminStoredFileListFragmentDoc = gql`
+  fragment AdminStoredFileList on StoredFile {
+    id
+    createdAt
+    updatedAt
+    provider
+    providerFileId
+    folder
+    filename
+    originalName
+    mimeType
+    size
+    url
+    publicUrl
+    width
+    height
+    metadata
+    userId
+    organizationId
+    user {
+      id
+    }
+    organization {
+      id
+    }
+  }
+`
+export const AdminStoredFileDetailsFragmentDoc = gql`
+  fragment AdminStoredFileDetails on StoredFile {
+    ...AdminStoredFileList
+  }
+  ${AdminStoredFileListFragmentDoc}
+`
 export const AdminSubscriptionListFragmentDoc = gql`
   fragment AdminSubscriptionList on Subscription {
     id
@@ -10208,39 +11055,6 @@ export const AdminTeamDetailsFragmentDoc = gql`
     ...AdminTeamList
   }
   ${AdminTeamListFragmentDoc}
-`
-export const AdminUploadListFragmentDoc = gql`
-  fragment AdminUploadList on Upload {
-    id
-    createdAt
-    updatedAt
-    type
-    fileId
-    filePath
-    fileType
-    height
-    name
-    size
-    thumbnailUrl
-    orientation
-    url
-    versionInfo
-    width
-    userId
-    organizationId
-    user {
-      id
-    }
-    organization {
-      id
-    }
-  }
-`
-export const AdminUploadDetailsFragmentDoc = gql`
-  fragment AdminUploadDetails on Upload {
-    ...AdminUploadList
-  }
-  ${AdminUploadListFragmentDoc}
 `
 export const AdminUserPreferenceListFragmentDoc = gql`
   fragment AdminUserPreferenceList on UserPreference {
@@ -10389,6 +11203,7 @@ export const AuthUserDetailsFragmentDoc = gql`
     bio
     isSuperAdmin
     emailValidated
+    twoFactorEnabled
     createdAt
     updatedAt
     emails {
@@ -10401,6 +11216,16 @@ export const AuthUserDetailsFragmentDoc = gql`
       id
       phone
       primary
+    }
+    images {
+      id
+      url
+      publicUrl
+      filename
+      mimeType
+      metadata
+      folder
+      createdAt
     }
   }
 `
@@ -10565,6 +11390,16 @@ export const OrganizationListFragmentDoc = gql`
     createdAt
     updatedAt
     name
+    images {
+      id
+      url
+      publicUrl
+      filename
+      mimeType
+      metadata
+      folder
+      createdAt
+    }
   }
 `
 export const OrganizationDetailsFragmentDoc = gql`
@@ -10656,6 +11491,7 @@ export const SecurityEventListFragmentDoc = gql`
     id
     createdAt
     updatedAt
+    eventType
     ipAddress
     userAgent
     metadata
@@ -10666,6 +11502,29 @@ export const SecurityEventDetailsFragmentDoc = gql`
     ...SecurityEventList
   }
   ${SecurityEventListFragmentDoc}
+`
+export const StoredFileListFragmentDoc = gql`
+  fragment StoredFileList on StoredFile {
+    id
+    createdAt
+    updatedAt
+    folder
+    filename
+    originalName
+    mimeType
+    size
+    url
+    publicUrl
+    width
+    height
+    metadata
+  }
+`
+export const StoredFileDetailsFragmentDoc = gql`
+  fragment StoredFileDetails on StoredFile {
+    ...StoredFileList
+  }
+  ${StoredFileListFragmentDoc}
 `
 export const SubscriptionListFragmentDoc = gql`
   fragment SubscriptionList on Subscription {
@@ -10708,29 +11567,6 @@ export const TeamDetailsFragmentDoc = gql`
     ...TeamList
   }
   ${TeamListFragmentDoc}
-`
-export const UploadListFragmentDoc = gql`
-  fragment UploadList on Upload {
-    id
-    createdAt
-    updatedAt
-    filePath
-    fileType
-    height
-    name
-    size
-    thumbnailUrl
-    orientation
-    url
-    versionInfo
-    width
-  }
-`
-export const UploadDetailsFragmentDoc = gql`
-  fragment UploadDetails on Upload {
-    ...UploadList
-  }
-  ${UploadListFragmentDoc}
 `
 export const UserPreferenceListFragmentDoc = gql`
   fragment UserPreferenceList on UserPreference {
@@ -14197,12 +15033,16 @@ export type AdminOrganizationMemberQueryResult = Apollo.QueryResult<
   AdminOrganizationMemberQueryVariables
 >
 export const AdminOrganizationMembersDocument = gql`
-  query AdminOrganizationMembers($organizationId: String!) {
-    organizationMembers(organizationId: $organizationId) {
+  query AdminOrganizationMembers($input: ListOrganizationMemberInput) {
+    organizationMembers(input: $input) {
       ...AdminOrganizationMemberList
+    }
+    counters: organizationMembersCount(input: $input) {
+      ...CorePagingDetails
     }
   }
   ${AdminOrganizationMemberListFragmentDoc}
+  ${CorePagingDetailsFragmentDoc}
 `
 
 /**
@@ -14217,16 +15057,15 @@ export const AdminOrganizationMembersDocument = gql`
  * @example
  * const { data, loading, error } = useAdminOrganizationMembersQuery({
  *   variables: {
- *      organizationId: // value for 'organizationId'
+ *      input: // value for 'input'
  *   },
  * });
  */
 export function useAdminOrganizationMembersQuery(
-  baseOptions: Apollo.QueryHookOptions<
+  baseOptions?: Apollo.QueryHookOptions<
     AdminOrganizationMembersQuery,
     AdminOrganizationMembersQueryVariables
-  > &
-    ({ variables: AdminOrganizationMembersQueryVariables; skip?: boolean } | { skip: boolean }),
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
   return Apollo.useQuery<AdminOrganizationMembersQuery, AdminOrganizationMembersQueryVariables>(
@@ -14273,6 +15112,454 @@ export type AdminOrganizationMembersSuspenseQueryHookResult = ReturnType<
 export type AdminOrganizationMembersQueryResult = Apollo.QueryResult<
   AdminOrganizationMembersQuery,
   AdminOrganizationMembersQueryVariables
+>
+export const AdminOrganizationMemberPaginationDocument = gql`
+  query AdminOrganizationMemberPagination($input: ListOrganizationMemberInput) {
+    counters: organizationMembersCount(input: $input) {
+      ...CorePagingDetails
+    }
+  }
+  ${CorePagingDetailsFragmentDoc}
+`
+
+/**
+ * __useAdminOrganizationMemberPaginationQuery__
+ *
+ * To run a query within a React component, call `useAdminOrganizationMemberPaginationQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAdminOrganizationMemberPaginationQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAdminOrganizationMemberPaginationQuery({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useAdminOrganizationMemberPaginationQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    AdminOrganizationMemberPaginationQuery,
+    AdminOrganizationMemberPaginationQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<
+    AdminOrganizationMemberPaginationQuery,
+    AdminOrganizationMemberPaginationQueryVariables
+  >(AdminOrganizationMemberPaginationDocument, options)
+}
+export function useAdminOrganizationMemberPaginationLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    AdminOrganizationMemberPaginationQuery,
+    AdminOrganizationMemberPaginationQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<
+    AdminOrganizationMemberPaginationQuery,
+    AdminOrganizationMemberPaginationQueryVariables
+  >(AdminOrganizationMemberPaginationDocument, options)
+}
+export function useAdminOrganizationMemberPaginationSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<
+        AdminOrganizationMemberPaginationQuery,
+        AdminOrganizationMemberPaginationQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<
+    AdminOrganizationMemberPaginationQuery,
+    AdminOrganizationMemberPaginationQueryVariables
+  >(AdminOrganizationMemberPaginationDocument, options)
+}
+export type AdminOrganizationMemberPaginationQueryHookResult = ReturnType<
+  typeof useAdminOrganizationMemberPaginationQuery
+>
+export type AdminOrganizationMemberPaginationLazyQueryHookResult = ReturnType<
+  typeof useAdminOrganizationMemberPaginationLazyQuery
+>
+export type AdminOrganizationMemberPaginationSuspenseQueryHookResult = ReturnType<
+  typeof useAdminOrganizationMemberPaginationSuspenseQuery
+>
+export type AdminOrganizationMemberPaginationQueryResult = Apollo.QueryResult<
+  AdminOrganizationMemberPaginationQuery,
+  AdminOrganizationMemberPaginationQueryVariables
+>
+export const AdminCreateOrganizationDocument = gql`
+  mutation AdminCreateOrganization($input: CreateOrganizationInput!) {
+    createOrganization(input: $input) {
+      ...AdminOrganizationDetails
+    }
+  }
+  ${AdminOrganizationDetailsFragmentDoc}
+`
+export type AdminCreateOrganizationMutationFn = Apollo.MutationFunction<
+  AdminCreateOrganizationMutation,
+  AdminCreateOrganizationMutationVariables
+>
+
+/**
+ * __useAdminCreateOrganizationMutation__
+ *
+ * To run a mutation, you first call `useAdminCreateOrganizationMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAdminCreateOrganizationMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [adminCreateOrganizationMutation, { data, loading, error }] = useAdminCreateOrganizationMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useAdminCreateOrganizationMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    AdminCreateOrganizationMutation,
+    AdminCreateOrganizationMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<
+    AdminCreateOrganizationMutation,
+    AdminCreateOrganizationMutationVariables
+  >(AdminCreateOrganizationDocument, options)
+}
+export type AdminCreateOrganizationMutationHookResult = ReturnType<
+  typeof useAdminCreateOrganizationMutation
+>
+export type AdminCreateOrganizationMutationResult =
+  Apollo.MutationResult<AdminCreateOrganizationMutation>
+export type AdminCreateOrganizationMutationOptions = Apollo.BaseMutationOptions<
+  AdminCreateOrganizationMutation,
+  AdminCreateOrganizationMutationVariables
+>
+export const AdminDeleteOrganizationDocument = gql`
+  mutation AdminDeleteOrganization($organizationId: String!) {
+    deleteOrganization(organizationId: $organizationId) {
+      id
+    }
+  }
+`
+export type AdminDeleteOrganizationMutationFn = Apollo.MutationFunction<
+  AdminDeleteOrganizationMutation,
+  AdminDeleteOrganizationMutationVariables
+>
+
+/**
+ * __useAdminDeleteOrganizationMutation__
+ *
+ * To run a mutation, you first call `useAdminDeleteOrganizationMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAdminDeleteOrganizationMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [adminDeleteOrganizationMutation, { data, loading, error }] = useAdminDeleteOrganizationMutation({
+ *   variables: {
+ *      organizationId: // value for 'organizationId'
+ *   },
+ * });
+ */
+export function useAdminDeleteOrganizationMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    AdminDeleteOrganizationMutation,
+    AdminDeleteOrganizationMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<
+    AdminDeleteOrganizationMutation,
+    AdminDeleteOrganizationMutationVariables
+  >(AdminDeleteOrganizationDocument, options)
+}
+export type AdminDeleteOrganizationMutationHookResult = ReturnType<
+  typeof useAdminDeleteOrganizationMutation
+>
+export type AdminDeleteOrganizationMutationResult =
+  Apollo.MutationResult<AdminDeleteOrganizationMutation>
+export type AdminDeleteOrganizationMutationOptions = Apollo.BaseMutationOptions<
+  AdminDeleteOrganizationMutation,
+  AdminDeleteOrganizationMutationVariables
+>
+export const AdminUpdateOrganizationDocument = gql`
+  mutation AdminUpdateOrganization($organizationId: String!, $input: UpdateOrganizationInput!) {
+    updateOrganization(organizationId: $organizationId, input: $input) {
+      ...AdminOrganizationDetails
+    }
+  }
+  ${AdminOrganizationDetailsFragmentDoc}
+`
+export type AdminUpdateOrganizationMutationFn = Apollo.MutationFunction<
+  AdminUpdateOrganizationMutation,
+  AdminUpdateOrganizationMutationVariables
+>
+
+/**
+ * __useAdminUpdateOrganizationMutation__
+ *
+ * To run a mutation, you first call `useAdminUpdateOrganizationMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAdminUpdateOrganizationMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [adminUpdateOrganizationMutation, { data, loading, error }] = useAdminUpdateOrganizationMutation({
+ *   variables: {
+ *      organizationId: // value for 'organizationId'
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useAdminUpdateOrganizationMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    AdminUpdateOrganizationMutation,
+    AdminUpdateOrganizationMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<
+    AdminUpdateOrganizationMutation,
+    AdminUpdateOrganizationMutationVariables
+  >(AdminUpdateOrganizationDocument, options)
+}
+export type AdminUpdateOrganizationMutationHookResult = ReturnType<
+  typeof useAdminUpdateOrganizationMutation
+>
+export type AdminUpdateOrganizationMutationResult =
+  Apollo.MutationResult<AdminUpdateOrganizationMutation>
+export type AdminUpdateOrganizationMutationOptions = Apollo.BaseMutationOptions<
+  AdminUpdateOrganizationMutation,
+  AdminUpdateOrganizationMutationVariables
+>
+export const AdminOrganizationDocument = gql`
+  query AdminOrganization($organizationId: String!) {
+    organization(organizationId: $organizationId) {
+      ...AdminOrganizationDetails
+    }
+  }
+  ${AdminOrganizationDetailsFragmentDoc}
+`
+
+/**
+ * __useAdminOrganizationQuery__
+ *
+ * To run a query within a React component, call `useAdminOrganizationQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAdminOrganizationQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAdminOrganizationQuery({
+ *   variables: {
+ *      organizationId: // value for 'organizationId'
+ *   },
+ * });
+ */
+export function useAdminOrganizationQuery(
+  baseOptions: Apollo.QueryHookOptions<AdminOrganizationQuery, AdminOrganizationQueryVariables> &
+    ({ variables: AdminOrganizationQueryVariables; skip?: boolean } | { skip: boolean }),
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<AdminOrganizationQuery, AdminOrganizationQueryVariables>(
+    AdminOrganizationDocument,
+    options,
+  )
+}
+export function useAdminOrganizationLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    AdminOrganizationQuery,
+    AdminOrganizationQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<AdminOrganizationQuery, AdminOrganizationQueryVariables>(
+    AdminOrganizationDocument,
+    options,
+  )
+}
+export function useAdminOrganizationSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<AdminOrganizationQuery, AdminOrganizationQueryVariables>,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<AdminOrganizationQuery, AdminOrganizationQueryVariables>(
+    AdminOrganizationDocument,
+    options,
+  )
+}
+export type AdminOrganizationQueryHookResult = ReturnType<typeof useAdminOrganizationQuery>
+export type AdminOrganizationLazyQueryHookResult = ReturnType<typeof useAdminOrganizationLazyQuery>
+export type AdminOrganizationSuspenseQueryHookResult = ReturnType<
+  typeof useAdminOrganizationSuspenseQuery
+>
+export type AdminOrganizationQueryResult = Apollo.QueryResult<
+  AdminOrganizationQuery,
+  AdminOrganizationQueryVariables
+>
+export const AdminOrganizationsDocument = gql`
+  query AdminOrganizations($input: ListOrganizationInput) {
+    organizations(input: $input) {
+      ...AdminOrganizationList
+    }
+    counters: organizationsCount(input: $input) {
+      ...CorePagingDetails
+    }
+  }
+  ${AdminOrganizationListFragmentDoc}
+  ${CorePagingDetailsFragmentDoc}
+`
+
+/**
+ * __useAdminOrganizationsQuery__
+ *
+ * To run a query within a React component, call `useAdminOrganizationsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAdminOrganizationsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAdminOrganizationsQuery({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useAdminOrganizationsQuery(
+  baseOptions?: Apollo.QueryHookOptions<AdminOrganizationsQuery, AdminOrganizationsQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<AdminOrganizationsQuery, AdminOrganizationsQueryVariables>(
+    AdminOrganizationsDocument,
+    options,
+  )
+}
+export function useAdminOrganizationsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    AdminOrganizationsQuery,
+    AdminOrganizationsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<AdminOrganizationsQuery, AdminOrganizationsQueryVariables>(
+    AdminOrganizationsDocument,
+    options,
+  )
+}
+export function useAdminOrganizationsSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<AdminOrganizationsQuery, AdminOrganizationsQueryVariables>,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<AdminOrganizationsQuery, AdminOrganizationsQueryVariables>(
+    AdminOrganizationsDocument,
+    options,
+  )
+}
+export type AdminOrganizationsQueryHookResult = ReturnType<typeof useAdminOrganizationsQuery>
+export type AdminOrganizationsLazyQueryHookResult = ReturnType<
+  typeof useAdminOrganizationsLazyQuery
+>
+export type AdminOrganizationsSuspenseQueryHookResult = ReturnType<
+  typeof useAdminOrganizationsSuspenseQuery
+>
+export type AdminOrganizationsQueryResult = Apollo.QueryResult<
+  AdminOrganizationsQuery,
+  AdminOrganizationsQueryVariables
+>
+export const AdminOrganizationPaginationDocument = gql`
+  query AdminOrganizationPagination($input: ListOrganizationInput) {
+    counters: organizationsCount(input: $input) {
+      ...CorePagingDetails
+    }
+  }
+  ${CorePagingDetailsFragmentDoc}
+`
+
+/**
+ * __useAdminOrganizationPaginationQuery__
+ *
+ * To run a query within a React component, call `useAdminOrganizationPaginationQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAdminOrganizationPaginationQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAdminOrganizationPaginationQuery({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useAdminOrganizationPaginationQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    AdminOrganizationPaginationQuery,
+    AdminOrganizationPaginationQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<
+    AdminOrganizationPaginationQuery,
+    AdminOrganizationPaginationQueryVariables
+  >(AdminOrganizationPaginationDocument, options)
+}
+export function useAdminOrganizationPaginationLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    AdminOrganizationPaginationQuery,
+    AdminOrganizationPaginationQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<
+    AdminOrganizationPaginationQuery,
+    AdminOrganizationPaginationQueryVariables
+  >(AdminOrganizationPaginationDocument, options)
+}
+export function useAdminOrganizationPaginationSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<
+        AdminOrganizationPaginationQuery,
+        AdminOrganizationPaginationQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<
+    AdminOrganizationPaginationQuery,
+    AdminOrganizationPaginationQueryVariables
+  >(AdminOrganizationPaginationDocument, options)
+}
+export type AdminOrganizationPaginationQueryHookResult = ReturnType<
+  typeof useAdminOrganizationPaginationQuery
+>
+export type AdminOrganizationPaginationLazyQueryHookResult = ReturnType<
+  typeof useAdminOrganizationPaginationLazyQuery
+>
+export type AdminOrganizationPaginationSuspenseQueryHookResult = ReturnType<
+  typeof useAdminOrganizationPaginationSuspenseQuery
+>
+export type AdminOrganizationPaginationQueryResult = Apollo.QueryResult<
+  AdminOrganizationPaginationQuery,
+  AdminOrganizationPaginationQueryVariables
 >
 export const AdminCreatePermissionDocument = gql`
   mutation AdminCreatePermission($input: CreatePermissionInput!) {
@@ -16033,6 +17320,369 @@ export type AdminSecurityEventPaginationQueryResult = Apollo.QueryResult<
   AdminSecurityEventPaginationQuery,
   AdminSecurityEventPaginationQueryVariables
 >
+export const AdminCreateStoredFileDocument = gql`
+  mutation AdminCreateStoredFile($input: CreateStoredFileInput!) {
+    createStoredFile(input: $input) {
+      ...AdminStoredFileDetails
+    }
+  }
+  ${AdminStoredFileDetailsFragmentDoc}
+`
+export type AdminCreateStoredFileMutationFn = Apollo.MutationFunction<
+  AdminCreateStoredFileMutation,
+  AdminCreateStoredFileMutationVariables
+>
+
+/**
+ * __useAdminCreateStoredFileMutation__
+ *
+ * To run a mutation, you first call `useAdminCreateStoredFileMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAdminCreateStoredFileMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [adminCreateStoredFileMutation, { data, loading, error }] = useAdminCreateStoredFileMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useAdminCreateStoredFileMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    AdminCreateStoredFileMutation,
+    AdminCreateStoredFileMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<AdminCreateStoredFileMutation, AdminCreateStoredFileMutationVariables>(
+    AdminCreateStoredFileDocument,
+    options,
+  )
+}
+export type AdminCreateStoredFileMutationHookResult = ReturnType<
+  typeof useAdminCreateStoredFileMutation
+>
+export type AdminCreateStoredFileMutationResult =
+  Apollo.MutationResult<AdminCreateStoredFileMutation>
+export type AdminCreateStoredFileMutationOptions = Apollo.BaseMutationOptions<
+  AdminCreateStoredFileMutation,
+  AdminCreateStoredFileMutationVariables
+>
+export const AdminDeleteStoredFileDocument = gql`
+  mutation AdminDeleteStoredFile($storedFileId: String!) {
+    deleteStoredFile(storedFileId: $storedFileId) {
+      id
+    }
+  }
+`
+export type AdminDeleteStoredFileMutationFn = Apollo.MutationFunction<
+  AdminDeleteStoredFileMutation,
+  AdminDeleteStoredFileMutationVariables
+>
+
+/**
+ * __useAdminDeleteStoredFileMutation__
+ *
+ * To run a mutation, you first call `useAdminDeleteStoredFileMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAdminDeleteStoredFileMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [adminDeleteStoredFileMutation, { data, loading, error }] = useAdminDeleteStoredFileMutation({
+ *   variables: {
+ *      storedFileId: // value for 'storedFileId'
+ *   },
+ * });
+ */
+export function useAdminDeleteStoredFileMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    AdminDeleteStoredFileMutation,
+    AdminDeleteStoredFileMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<AdminDeleteStoredFileMutation, AdminDeleteStoredFileMutationVariables>(
+    AdminDeleteStoredFileDocument,
+    options,
+  )
+}
+export type AdminDeleteStoredFileMutationHookResult = ReturnType<
+  typeof useAdminDeleteStoredFileMutation
+>
+export type AdminDeleteStoredFileMutationResult =
+  Apollo.MutationResult<AdminDeleteStoredFileMutation>
+export type AdminDeleteStoredFileMutationOptions = Apollo.BaseMutationOptions<
+  AdminDeleteStoredFileMutation,
+  AdminDeleteStoredFileMutationVariables
+>
+export const AdminUpdateStoredFileDocument = gql`
+  mutation AdminUpdateStoredFile($storedFileId: String!, $input: UpdateStoredFileInput!) {
+    updateStoredFile(storedFileId: $storedFileId, input: $input) {
+      ...AdminStoredFileDetails
+    }
+  }
+  ${AdminStoredFileDetailsFragmentDoc}
+`
+export type AdminUpdateStoredFileMutationFn = Apollo.MutationFunction<
+  AdminUpdateStoredFileMutation,
+  AdminUpdateStoredFileMutationVariables
+>
+
+/**
+ * __useAdminUpdateStoredFileMutation__
+ *
+ * To run a mutation, you first call `useAdminUpdateStoredFileMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAdminUpdateStoredFileMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [adminUpdateStoredFileMutation, { data, loading, error }] = useAdminUpdateStoredFileMutation({
+ *   variables: {
+ *      storedFileId: // value for 'storedFileId'
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useAdminUpdateStoredFileMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    AdminUpdateStoredFileMutation,
+    AdminUpdateStoredFileMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<AdminUpdateStoredFileMutation, AdminUpdateStoredFileMutationVariables>(
+    AdminUpdateStoredFileDocument,
+    options,
+  )
+}
+export type AdminUpdateStoredFileMutationHookResult = ReturnType<
+  typeof useAdminUpdateStoredFileMutation
+>
+export type AdminUpdateStoredFileMutationResult =
+  Apollo.MutationResult<AdminUpdateStoredFileMutation>
+export type AdminUpdateStoredFileMutationOptions = Apollo.BaseMutationOptions<
+  AdminUpdateStoredFileMutation,
+  AdminUpdateStoredFileMutationVariables
+>
+export const AdminStoredFileDocument = gql`
+  query AdminStoredFile($storedFileId: String!) {
+    storedFile(storedFileId: $storedFileId) {
+      ...AdminStoredFileDetails
+    }
+  }
+  ${AdminStoredFileDetailsFragmentDoc}
+`
+
+/**
+ * __useAdminStoredFileQuery__
+ *
+ * To run a query within a React component, call `useAdminStoredFileQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAdminStoredFileQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAdminStoredFileQuery({
+ *   variables: {
+ *      storedFileId: // value for 'storedFileId'
+ *   },
+ * });
+ */
+export function useAdminStoredFileQuery(
+  baseOptions: Apollo.QueryHookOptions<AdminStoredFileQuery, AdminStoredFileQueryVariables> &
+    ({ variables: AdminStoredFileQueryVariables; skip?: boolean } | { skip: boolean }),
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<AdminStoredFileQuery, AdminStoredFileQueryVariables>(
+    AdminStoredFileDocument,
+    options,
+  )
+}
+export function useAdminStoredFileLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<AdminStoredFileQuery, AdminStoredFileQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<AdminStoredFileQuery, AdminStoredFileQueryVariables>(
+    AdminStoredFileDocument,
+    options,
+  )
+}
+export function useAdminStoredFileSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<AdminStoredFileQuery, AdminStoredFileQueryVariables>,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<AdminStoredFileQuery, AdminStoredFileQueryVariables>(
+    AdminStoredFileDocument,
+    options,
+  )
+}
+export type AdminStoredFileQueryHookResult = ReturnType<typeof useAdminStoredFileQuery>
+export type AdminStoredFileLazyQueryHookResult = ReturnType<typeof useAdminStoredFileLazyQuery>
+export type AdminStoredFileSuspenseQueryHookResult = ReturnType<
+  typeof useAdminStoredFileSuspenseQuery
+>
+export type AdminStoredFileQueryResult = Apollo.QueryResult<
+  AdminStoredFileQuery,
+  AdminStoredFileQueryVariables
+>
+export const AdminStoredFilesDocument = gql`
+  query AdminStoredFiles($input: ListStoredFileInput) {
+    storedFiles(input: $input) {
+      ...AdminStoredFileList
+    }
+    counters: storedFilesCount(input: $input) {
+      ...CorePagingDetails
+    }
+  }
+  ${AdminStoredFileListFragmentDoc}
+  ${CorePagingDetailsFragmentDoc}
+`
+
+/**
+ * __useAdminStoredFilesQuery__
+ *
+ * To run a query within a React component, call `useAdminStoredFilesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAdminStoredFilesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAdminStoredFilesQuery({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useAdminStoredFilesQuery(
+  baseOptions?: Apollo.QueryHookOptions<AdminStoredFilesQuery, AdminStoredFilesQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<AdminStoredFilesQuery, AdminStoredFilesQueryVariables>(
+    AdminStoredFilesDocument,
+    options,
+  )
+}
+export function useAdminStoredFilesLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<AdminStoredFilesQuery, AdminStoredFilesQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<AdminStoredFilesQuery, AdminStoredFilesQueryVariables>(
+    AdminStoredFilesDocument,
+    options,
+  )
+}
+export function useAdminStoredFilesSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<AdminStoredFilesQuery, AdminStoredFilesQueryVariables>,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<AdminStoredFilesQuery, AdminStoredFilesQueryVariables>(
+    AdminStoredFilesDocument,
+    options,
+  )
+}
+export type AdminStoredFilesQueryHookResult = ReturnType<typeof useAdminStoredFilesQuery>
+export type AdminStoredFilesLazyQueryHookResult = ReturnType<typeof useAdminStoredFilesLazyQuery>
+export type AdminStoredFilesSuspenseQueryHookResult = ReturnType<
+  typeof useAdminStoredFilesSuspenseQuery
+>
+export type AdminStoredFilesQueryResult = Apollo.QueryResult<
+  AdminStoredFilesQuery,
+  AdminStoredFilesQueryVariables
+>
+export const AdminStoredFilePaginationDocument = gql`
+  query AdminStoredFilePagination($input: ListStoredFileInput) {
+    counters: storedFilesCount(input: $input) {
+      ...CorePagingDetails
+    }
+  }
+  ${CorePagingDetailsFragmentDoc}
+`
+
+/**
+ * __useAdminStoredFilePaginationQuery__
+ *
+ * To run a query within a React component, call `useAdminStoredFilePaginationQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAdminStoredFilePaginationQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAdminStoredFilePaginationQuery({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useAdminStoredFilePaginationQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    AdminStoredFilePaginationQuery,
+    AdminStoredFilePaginationQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<AdminStoredFilePaginationQuery, AdminStoredFilePaginationQueryVariables>(
+    AdminStoredFilePaginationDocument,
+    options,
+  )
+}
+export function useAdminStoredFilePaginationLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    AdminStoredFilePaginationQuery,
+    AdminStoredFilePaginationQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<
+    AdminStoredFilePaginationQuery,
+    AdminStoredFilePaginationQueryVariables
+  >(AdminStoredFilePaginationDocument, options)
+}
+export function useAdminStoredFilePaginationSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<
+        AdminStoredFilePaginationQuery,
+        AdminStoredFilePaginationQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<
+    AdminStoredFilePaginationQuery,
+    AdminStoredFilePaginationQueryVariables
+  >(AdminStoredFilePaginationDocument, options)
+}
+export type AdminStoredFilePaginationQueryHookResult = ReturnType<
+  typeof useAdminStoredFilePaginationQuery
+>
+export type AdminStoredFilePaginationLazyQueryHookResult = ReturnType<
+  typeof useAdminStoredFilePaginationLazyQuery
+>
+export type AdminStoredFilePaginationSuspenseQueryHookResult = ReturnType<
+  typeof useAdminStoredFilePaginationSuspenseQuery
+>
+export type AdminStoredFilePaginationQueryResult = Apollo.QueryResult<
+  AdminStoredFilePaginationQuery,
+  AdminStoredFilePaginationQueryVariables
+>
 export const AdminCreateSubscriptionDocument = gql`
   mutation AdminCreateSubscription($input: CreateSubscriptionInput!) {
     createSubscription(input: $input) {
@@ -17094,350 +18744,8 @@ export type AdminTeamPaginationQueryResult = Apollo.QueryResult<
   AdminTeamPaginationQuery,
   AdminTeamPaginationQueryVariables
 >
-export const AdminCreateUploadDocument = gql`
-  mutation AdminCreateUpload($input: CreateUploadInput!) {
-    createUpload(input: $input) {
-      ...AdminUploadDetails
-    }
-  }
-  ${AdminUploadDetailsFragmentDoc}
-`
-export type AdminCreateUploadMutationFn = Apollo.MutationFunction<
-  AdminCreateUploadMutation,
-  AdminCreateUploadMutationVariables
->
-
-/**
- * __useAdminCreateUploadMutation__
- *
- * To run a mutation, you first call `useAdminCreateUploadMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAdminCreateUploadMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [adminCreateUploadMutation, { data, loading, error }] = useAdminCreateUploadMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useAdminCreateUploadMutation(
-  baseOptions?: Apollo.MutationHookOptions<
-    AdminCreateUploadMutation,
-    AdminCreateUploadMutationVariables
-  >,
-) {
-  const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<AdminCreateUploadMutation, AdminCreateUploadMutationVariables>(
-    AdminCreateUploadDocument,
-    options,
-  )
-}
-export type AdminCreateUploadMutationHookResult = ReturnType<typeof useAdminCreateUploadMutation>
-export type AdminCreateUploadMutationResult = Apollo.MutationResult<AdminCreateUploadMutation>
-export type AdminCreateUploadMutationOptions = Apollo.BaseMutationOptions<
-  AdminCreateUploadMutation,
-  AdminCreateUploadMutationVariables
->
-export const AdminDeleteUploadDocument = gql`
-  mutation AdminDeleteUpload($uploadId: String!) {
-    deleteUpload(uploadId: $uploadId) {
-      id
-    }
-  }
-`
-export type AdminDeleteUploadMutationFn = Apollo.MutationFunction<
-  AdminDeleteUploadMutation,
-  AdminDeleteUploadMutationVariables
->
-
-/**
- * __useAdminDeleteUploadMutation__
- *
- * To run a mutation, you first call `useAdminDeleteUploadMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAdminDeleteUploadMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [adminDeleteUploadMutation, { data, loading, error }] = useAdminDeleteUploadMutation({
- *   variables: {
- *      uploadId: // value for 'uploadId'
- *   },
- * });
- */
-export function useAdminDeleteUploadMutation(
-  baseOptions?: Apollo.MutationHookOptions<
-    AdminDeleteUploadMutation,
-    AdminDeleteUploadMutationVariables
-  >,
-) {
-  const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<AdminDeleteUploadMutation, AdminDeleteUploadMutationVariables>(
-    AdminDeleteUploadDocument,
-    options,
-  )
-}
-export type AdminDeleteUploadMutationHookResult = ReturnType<typeof useAdminDeleteUploadMutation>
-export type AdminDeleteUploadMutationResult = Apollo.MutationResult<AdminDeleteUploadMutation>
-export type AdminDeleteUploadMutationOptions = Apollo.BaseMutationOptions<
-  AdminDeleteUploadMutation,
-  AdminDeleteUploadMutationVariables
->
-export const AdminUpdateUploadDocument = gql`
-  mutation AdminUpdateUpload($uploadId: String!, $input: UpdateUploadInput!) {
-    updateUpload(uploadId: $uploadId, input: $input) {
-      ...AdminUploadDetails
-    }
-  }
-  ${AdminUploadDetailsFragmentDoc}
-`
-export type AdminUpdateUploadMutationFn = Apollo.MutationFunction<
-  AdminUpdateUploadMutation,
-  AdminUpdateUploadMutationVariables
->
-
-/**
- * __useAdminUpdateUploadMutation__
- *
- * To run a mutation, you first call `useAdminUpdateUploadMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAdminUpdateUploadMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [adminUpdateUploadMutation, { data, loading, error }] = useAdminUpdateUploadMutation({
- *   variables: {
- *      uploadId: // value for 'uploadId'
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useAdminUpdateUploadMutation(
-  baseOptions?: Apollo.MutationHookOptions<
-    AdminUpdateUploadMutation,
-    AdminUpdateUploadMutationVariables
-  >,
-) {
-  const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<AdminUpdateUploadMutation, AdminUpdateUploadMutationVariables>(
-    AdminUpdateUploadDocument,
-    options,
-  )
-}
-export type AdminUpdateUploadMutationHookResult = ReturnType<typeof useAdminUpdateUploadMutation>
-export type AdminUpdateUploadMutationResult = Apollo.MutationResult<AdminUpdateUploadMutation>
-export type AdminUpdateUploadMutationOptions = Apollo.BaseMutationOptions<
-  AdminUpdateUploadMutation,
-  AdminUpdateUploadMutationVariables
->
-export const AdminUploadDocument = gql`
-  query AdminUpload($uploadId: String!) {
-    upload(uploadId: $uploadId) {
-      ...AdminUploadDetails
-    }
-  }
-  ${AdminUploadDetailsFragmentDoc}
-`
-
-/**
- * __useAdminUploadQuery__
- *
- * To run a query within a React component, call `useAdminUploadQuery` and pass it any options that fit your needs.
- * When your component renders, `useAdminUploadQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useAdminUploadQuery({
- *   variables: {
- *      uploadId: // value for 'uploadId'
- *   },
- * });
- */
-export function useAdminUploadQuery(
-  baseOptions: Apollo.QueryHookOptions<AdminUploadQuery, AdminUploadQueryVariables> &
-    ({ variables: AdminUploadQueryVariables; skip?: boolean } | { skip: boolean }),
-) {
-  const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<AdminUploadQuery, AdminUploadQueryVariables>(AdminUploadDocument, options)
-}
-export function useAdminUploadLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<AdminUploadQuery, AdminUploadQueryVariables>,
-) {
-  const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<AdminUploadQuery, AdminUploadQueryVariables>(
-    AdminUploadDocument,
-    options,
-  )
-}
-export function useAdminUploadSuspenseQuery(
-  baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<AdminUploadQuery, AdminUploadQueryVariables>,
-) {
-  const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<AdminUploadQuery, AdminUploadQueryVariables>(
-    AdminUploadDocument,
-    options,
-  )
-}
-export type AdminUploadQueryHookResult = ReturnType<typeof useAdminUploadQuery>
-export type AdminUploadLazyQueryHookResult = ReturnType<typeof useAdminUploadLazyQuery>
-export type AdminUploadSuspenseQueryHookResult = ReturnType<typeof useAdminUploadSuspenseQuery>
-export type AdminUploadQueryResult = Apollo.QueryResult<AdminUploadQuery, AdminUploadQueryVariables>
-export const AdminUploadsDocument = gql`
-  query AdminUploads($input: ListUploadInput) {
-    uploads(input: $input) {
-      ...AdminUploadList
-    }
-    counters: uploadsCount(input: $input) {
-      ...CorePagingDetails
-    }
-  }
-  ${AdminUploadListFragmentDoc}
-  ${CorePagingDetailsFragmentDoc}
-`
-
-/**
- * __useAdminUploadsQuery__
- *
- * To run a query within a React component, call `useAdminUploadsQuery` and pass it any options that fit your needs.
- * When your component renders, `useAdminUploadsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useAdminUploadsQuery({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useAdminUploadsQuery(
-  baseOptions?: Apollo.QueryHookOptions<AdminUploadsQuery, AdminUploadsQueryVariables>,
-) {
-  const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<AdminUploadsQuery, AdminUploadsQueryVariables>(
-    AdminUploadsDocument,
-    options,
-  )
-}
-export function useAdminUploadsLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<AdminUploadsQuery, AdminUploadsQueryVariables>,
-) {
-  const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<AdminUploadsQuery, AdminUploadsQueryVariables>(
-    AdminUploadsDocument,
-    options,
-  )
-}
-export function useAdminUploadsSuspenseQuery(
-  baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<AdminUploadsQuery, AdminUploadsQueryVariables>,
-) {
-  const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<AdminUploadsQuery, AdminUploadsQueryVariables>(
-    AdminUploadsDocument,
-    options,
-  )
-}
-export type AdminUploadsQueryHookResult = ReturnType<typeof useAdminUploadsQuery>
-export type AdminUploadsLazyQueryHookResult = ReturnType<typeof useAdminUploadsLazyQuery>
-export type AdminUploadsSuspenseQueryHookResult = ReturnType<typeof useAdminUploadsSuspenseQuery>
-export type AdminUploadsQueryResult = Apollo.QueryResult<
-  AdminUploadsQuery,
-  AdminUploadsQueryVariables
->
-export const AdminUploadPaginationDocument = gql`
-  query AdminUploadPagination($input: ListUploadInput) {
-    counters: uploadsCount(input: $input) {
-      ...CorePagingDetails
-    }
-  }
-  ${CorePagingDetailsFragmentDoc}
-`
-
-/**
- * __useAdminUploadPaginationQuery__
- *
- * To run a query within a React component, call `useAdminUploadPaginationQuery` and pass it any options that fit your needs.
- * When your component renders, `useAdminUploadPaginationQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useAdminUploadPaginationQuery({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useAdminUploadPaginationQuery(
-  baseOptions?: Apollo.QueryHookOptions<
-    AdminUploadPaginationQuery,
-    AdminUploadPaginationQueryVariables
-  >,
-) {
-  const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<AdminUploadPaginationQuery, AdminUploadPaginationQueryVariables>(
-    AdminUploadPaginationDocument,
-    options,
-  )
-}
-export function useAdminUploadPaginationLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
-    AdminUploadPaginationQuery,
-    AdminUploadPaginationQueryVariables
-  >,
-) {
-  const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<AdminUploadPaginationQuery, AdminUploadPaginationQueryVariables>(
-    AdminUploadPaginationDocument,
-    options,
-  )
-}
-export function useAdminUploadPaginationSuspenseQuery(
-  baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<
-        AdminUploadPaginationQuery,
-        AdminUploadPaginationQueryVariables
-      >,
-) {
-  const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<AdminUploadPaginationQuery, AdminUploadPaginationQueryVariables>(
-    AdminUploadPaginationDocument,
-    options,
-  )
-}
-export type AdminUploadPaginationQueryHookResult = ReturnType<typeof useAdminUploadPaginationQuery>
-export type AdminUploadPaginationLazyQueryHookResult = ReturnType<
-  typeof useAdminUploadPaginationLazyQuery
->
-export type AdminUploadPaginationSuspenseQueryHookResult = ReturnType<
-  typeof useAdminUploadPaginationSuspenseQuery
->
-export type AdminUploadPaginationQueryResult = Apollo.QueryResult<
-  AdminUploadPaginationQuery,
-  AdminUploadPaginationQueryVariables
->
 export const AdminCreateUserPreferenceDocument = gql`
-  mutation AdminCreateUserPreference($input: SecureCreateUserPreferenceInput!) {
+  mutation AdminCreateUserPreference($input: CreateUserPreferenceInput!) {
     createUserPreference(input: $input) {
       ...AdminUserPreferenceDetails
     }
@@ -17540,7 +18848,7 @@ export type AdminDeleteUserPreferenceMutationOptions = Apollo.BaseMutationOption
 export const AdminUpdateUserPreferenceDocument = gql`
   mutation AdminUpdateUserPreference(
     $userPreferenceId: String!
-    $input: SecureUpdateUserPreferenceInput!
+    $input: UpdateUserPreferenceInput!
   ) {
     updateUserPreference(userPreferenceId: $userPreferenceId, input: $input) {
       ...AdminUserPreferenceDetails
@@ -17666,12 +18974,16 @@ export type AdminUserPreferenceQueryResult = Apollo.QueryResult<
   AdminUserPreferenceQueryVariables
 >
 export const AdminUserPreferencesDocument = gql`
-  query AdminUserPreferences {
-    userPreferences {
+  query AdminUserPreferences($input: ListUserPreferenceInput) {
+    userPreferences(input: $input) {
       ...AdminUserPreferenceList
+    }
+    counters: userPreferencesCount(input: $input) {
+      ...CorePagingDetails
     }
   }
   ${AdminUserPreferenceListFragmentDoc}
+  ${CorePagingDetailsFragmentDoc}
 `
 
 /**
@@ -17686,6 +18998,7 @@ export const AdminUserPreferencesDocument = gql`
  * @example
  * const { data, loading, error } = useAdminUserPreferencesQuery({
  *   variables: {
+ *      input: // value for 'input'
  *   },
  * });
  */
@@ -17738,6 +19051,83 @@ export type AdminUserPreferencesSuspenseQueryHookResult = ReturnType<
 export type AdminUserPreferencesQueryResult = Apollo.QueryResult<
   AdminUserPreferencesQuery,
   AdminUserPreferencesQueryVariables
+>
+export const AdminUserPreferencePaginationDocument = gql`
+  query AdminUserPreferencePagination($input: ListUserPreferenceInput) {
+    counters: userPreferencesCount(input: $input) {
+      ...CorePagingDetails
+    }
+  }
+  ${CorePagingDetailsFragmentDoc}
+`
+
+/**
+ * __useAdminUserPreferencePaginationQuery__
+ *
+ * To run a query within a React component, call `useAdminUserPreferencePaginationQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAdminUserPreferencePaginationQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAdminUserPreferencePaginationQuery({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useAdminUserPreferencePaginationQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    AdminUserPreferencePaginationQuery,
+    AdminUserPreferencePaginationQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<
+    AdminUserPreferencePaginationQuery,
+    AdminUserPreferencePaginationQueryVariables
+  >(AdminUserPreferencePaginationDocument, options)
+}
+export function useAdminUserPreferencePaginationLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    AdminUserPreferencePaginationQuery,
+    AdminUserPreferencePaginationQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<
+    AdminUserPreferencePaginationQuery,
+    AdminUserPreferencePaginationQueryVariables
+  >(AdminUserPreferencePaginationDocument, options)
+}
+export function useAdminUserPreferencePaginationSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<
+        AdminUserPreferencePaginationQuery,
+        AdminUserPreferencePaginationQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<
+    AdminUserPreferencePaginationQuery,
+    AdminUserPreferencePaginationQueryVariables
+  >(AdminUserPreferencePaginationDocument, options)
+}
+export type AdminUserPreferencePaginationQueryHookResult = ReturnType<
+  typeof useAdminUserPreferencePaginationQuery
+>
+export type AdminUserPreferencePaginationLazyQueryHookResult = ReturnType<
+  typeof useAdminUserPreferencePaginationLazyQuery
+>
+export type AdminUserPreferencePaginationSuspenseQueryHookResult = ReturnType<
+  typeof useAdminUserPreferencePaginationSuspenseQuery
+>
+export type AdminUserPreferencePaginationQueryResult = Apollo.QueryResult<
+  AdminUserPreferencePaginationQuery,
+  AdminUserPreferencePaginationQueryVariables
 >
 export const AdminCreateUserSessionDocument = gql`
   mutation AdminCreateUserSession($input: CreateUserSessionInput!) {
@@ -22832,8 +24222,8 @@ export type OrganizationMemberQueryResult = Apollo.QueryResult<
   OrganizationMemberQueryVariables
 >
 export const OrganizationMembersDocument = gql`
-  query OrganizationMembers($organizationId: String!) {
-    organizationMembers(organizationId: $organizationId) {
+  query OrganizationMembers($input: ListOrganizationMemberInput) {
+    organizationMembers(input: $input) {
       ...OrganizationMemberList
     }
   }
@@ -22852,16 +24242,15 @@ export const OrganizationMembersDocument = gql`
  * @example
  * const { data, loading, error } = useOrganizationMembersQuery({
  *   variables: {
- *      organizationId: // value for 'organizationId'
+ *      input: // value for 'input'
  *   },
  * });
  */
 export function useOrganizationMembersQuery(
-  baseOptions: Apollo.QueryHookOptions<
+  baseOptions?: Apollo.QueryHookOptions<
     OrganizationMembersQuery,
     OrganizationMembersQueryVariables
-  > &
-    ({ variables: OrganizationMembersQueryVariables; skip?: boolean } | { skip: boolean }),
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
   return Apollo.useQuery<OrganizationMembersQuery, OrganizationMembersQueryVariables>(
@@ -23081,8 +24470,8 @@ export type UserDeleteOrganizationMutationOptions = Apollo.BaseMutationOptions<
   UserDeleteOrganizationMutationVariables
 >
 export const UserUpdateOrganizationDocument = gql`
-  mutation userUpdateOrganization($input: UpdateOrganizationInput!) {
-    userUpdateOrganization(input: $input) {
+  mutation userUpdateOrganization($organizationId: String!, $input: UpdateOrganizationInput!) {
+    userUpdateOrganization(organizationId: $organizationId, input: $input) {
       ...OrganizationDetails
     }
   }
@@ -23106,6 +24495,7 @@ export type UserUpdateOrganizationMutationFn = Apollo.MutationFunction<
  * @example
  * const [userUpdateOrganizationMutation, { data, loading, error }] = useUserUpdateOrganizationMutation({
  *   variables: {
+ *      organizationId: // value for 'organizationId'
  *      input: // value for 'input'
  *   },
  * });
@@ -23698,6 +25088,160 @@ export type OrganizationInvitationsSuspenseQueryHookResult = ReturnType<
 export type OrganizationInvitationsQueryResult = Apollo.QueryResult<
   OrganizationInvitationsQuery,
   OrganizationInvitationsQueryVariables
+>
+export const MyOrganizationsWithMembersDocument = gql`
+  query myOrganizationsWithMembers {
+    myOrganizations {
+      ...OrganizationDetails
+    }
+  }
+  ${OrganizationDetailsFragmentDoc}
+`
+
+/**
+ * __useMyOrganizationsWithMembersQuery__
+ *
+ * To run a query within a React component, call `useMyOrganizationsWithMembersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useMyOrganizationsWithMembersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useMyOrganizationsWithMembersQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useMyOrganizationsWithMembersQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    MyOrganizationsWithMembersQuery,
+    MyOrganizationsWithMembersQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<MyOrganizationsWithMembersQuery, MyOrganizationsWithMembersQueryVariables>(
+    MyOrganizationsWithMembersDocument,
+    options,
+  )
+}
+export function useMyOrganizationsWithMembersLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    MyOrganizationsWithMembersQuery,
+    MyOrganizationsWithMembersQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<
+    MyOrganizationsWithMembersQuery,
+    MyOrganizationsWithMembersQueryVariables
+  >(MyOrganizationsWithMembersDocument, options)
+}
+export function useMyOrganizationsWithMembersSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<
+        MyOrganizationsWithMembersQuery,
+        MyOrganizationsWithMembersQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<
+    MyOrganizationsWithMembersQuery,
+    MyOrganizationsWithMembersQueryVariables
+  >(MyOrganizationsWithMembersDocument, options)
+}
+export type MyOrganizationsWithMembersQueryHookResult = ReturnType<
+  typeof useMyOrganizationsWithMembersQuery
+>
+export type MyOrganizationsWithMembersLazyQueryHookResult = ReturnType<
+  typeof useMyOrganizationsWithMembersLazyQuery
+>
+export type MyOrganizationsWithMembersSuspenseQueryHookResult = ReturnType<
+  typeof useMyOrganizationsWithMembersSuspenseQuery
+>
+export type MyOrganizationsWithMembersQueryResult = Apollo.QueryResult<
+  MyOrganizationsWithMembersQuery,
+  MyOrganizationsWithMembersQueryVariables
+>
+export const UserOrganizationMembersDocument = gql`
+  query userOrganizationMembers($organizationId: String!) {
+    userOrganizationMembers(organizationId: $organizationId) {
+      ...OrganizationMemberList
+    }
+  }
+  ${OrganizationMemberListFragmentDoc}
+`
+
+/**
+ * __useUserOrganizationMembersQuery__
+ *
+ * To run a query within a React component, call `useUserOrganizationMembersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useUserOrganizationMembersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useUserOrganizationMembersQuery({
+ *   variables: {
+ *      organizationId: // value for 'organizationId'
+ *   },
+ * });
+ */
+export function useUserOrganizationMembersQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    UserOrganizationMembersQuery,
+    UserOrganizationMembersQueryVariables
+  > &
+    ({ variables: UserOrganizationMembersQueryVariables; skip?: boolean } | { skip: boolean }),
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<UserOrganizationMembersQuery, UserOrganizationMembersQueryVariables>(
+    UserOrganizationMembersDocument,
+    options,
+  )
+}
+export function useUserOrganizationMembersLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    UserOrganizationMembersQuery,
+    UserOrganizationMembersQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<UserOrganizationMembersQuery, UserOrganizationMembersQueryVariables>(
+    UserOrganizationMembersDocument,
+    options,
+  )
+}
+export function useUserOrganizationMembersSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<
+        UserOrganizationMembersQuery,
+        UserOrganizationMembersQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<
+    UserOrganizationMembersQuery,
+    UserOrganizationMembersQueryVariables
+  >(UserOrganizationMembersDocument, options)
+}
+export type UserOrganizationMembersQueryHookResult = ReturnType<
+  typeof useUserOrganizationMembersQuery
+>
+export type UserOrganizationMembersLazyQueryHookResult = ReturnType<
+  typeof useUserOrganizationMembersLazyQuery
+>
+export type UserOrganizationMembersSuspenseQueryHookResult = ReturnType<
+  typeof useUserOrganizationMembersSuspenseQuery
+>
+export type UserOrganizationMembersQueryResult = Apollo.QueryResult<
+  UserOrganizationMembersQuery,
+  UserOrganizationMembersQueryVariables
 >
 export const CreatePermissionDocument = gql`
   mutation createPermission($input: CreatePermissionInput!) {
@@ -25396,6 +26940,764 @@ export type SecurityEventPaginationQueryResult = Apollo.QueryResult<
   SecurityEventPaginationQuery,
   SecurityEventPaginationQueryVariables
 >
+export const UploadUserAvatarDocument = gql`
+  mutation UploadUserAvatar($file: Upload!) {
+    uploadUserAvatar(file: $file) {
+      id
+      url
+      publicUrl
+      filename
+      originalName
+      mimeType
+      size
+      width
+      height
+      provider
+      metadata
+      createdAt
+    }
+  }
+`
+export type UploadUserAvatarMutationFn = Apollo.MutationFunction<
+  UploadUserAvatarMutation,
+  UploadUserAvatarMutationVariables
+>
+
+/**
+ * __useUploadUserAvatarMutation__
+ *
+ * To run a mutation, you first call `useUploadUserAvatarMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUploadUserAvatarMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [uploadUserAvatarMutation, { data, loading, error }] = useUploadUserAvatarMutation({
+ *   variables: {
+ *      file: // value for 'file'
+ *   },
+ * });
+ */
+export function useUploadUserAvatarMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    UploadUserAvatarMutation,
+    UploadUserAvatarMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<UploadUserAvatarMutation, UploadUserAvatarMutationVariables>(
+    UploadUserAvatarDocument,
+    options,
+  )
+}
+export type UploadUserAvatarMutationHookResult = ReturnType<typeof useUploadUserAvatarMutation>
+export type UploadUserAvatarMutationResult = Apollo.MutationResult<UploadUserAvatarMutation>
+export type UploadUserAvatarMutationOptions = Apollo.BaseMutationOptions<
+  UploadUserAvatarMutation,
+  UploadUserAvatarMutationVariables
+>
+export const UploadOrganizationLogoDocument = gql`
+  mutation UploadOrganizationLogo($file: Upload!, $organizationId: String!) {
+    uploadOrganizationLogo(file: $file, organizationId: $organizationId) {
+      id
+      url
+      publicUrl
+      filename
+      originalName
+      mimeType
+      size
+      width
+      height
+      provider
+      metadata
+      createdAt
+    }
+  }
+`
+export type UploadOrganizationLogoMutationFn = Apollo.MutationFunction<
+  UploadOrganizationLogoMutation,
+  UploadOrganizationLogoMutationVariables
+>
+
+/**
+ * __useUploadOrganizationLogoMutation__
+ *
+ * To run a mutation, you first call `useUploadOrganizationLogoMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUploadOrganizationLogoMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [uploadOrganizationLogoMutation, { data, loading, error }] = useUploadOrganizationLogoMutation({
+ *   variables: {
+ *      file: // value for 'file'
+ *      organizationId: // value for 'organizationId'
+ *   },
+ * });
+ */
+export function useUploadOrganizationLogoMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    UploadOrganizationLogoMutation,
+    UploadOrganizationLogoMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<
+    UploadOrganizationLogoMutation,
+    UploadOrganizationLogoMutationVariables
+  >(UploadOrganizationLogoDocument, options)
+}
+export type UploadOrganizationLogoMutationHookResult = ReturnType<
+  typeof useUploadOrganizationLogoMutation
+>
+export type UploadOrganizationLogoMutationResult =
+  Apollo.MutationResult<UploadOrganizationLogoMutation>
+export type UploadOrganizationLogoMutationOptions = Apollo.BaseMutationOptions<
+  UploadOrganizationLogoMutation,
+  UploadOrganizationLogoMutationVariables
+>
+export const UploadFileDocument = gql`
+  mutation UploadFile($file: Upload!, $folder: String) {
+    uploadFile(file: $file, folder: $folder) {
+      id
+      url
+      publicUrl
+      filename
+      originalName
+      mimeType
+      size
+      width
+      height
+      provider
+      metadata
+      createdAt
+    }
+  }
+`
+export type UploadFileMutationFn = Apollo.MutationFunction<
+  UploadFileMutation,
+  UploadFileMutationVariables
+>
+
+/**
+ * __useUploadFileMutation__
+ *
+ * To run a mutation, you first call `useUploadFileMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUploadFileMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [uploadFileMutation, { data, loading, error }] = useUploadFileMutation({
+ *   variables: {
+ *      file: // value for 'file'
+ *      folder: // value for 'folder'
+ *   },
+ * });
+ */
+export function useUploadFileMutation(
+  baseOptions?: Apollo.MutationHookOptions<UploadFileMutation, UploadFileMutationVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<UploadFileMutation, UploadFileMutationVariables>(
+    UploadFileDocument,
+    options,
+  )
+}
+export type UploadFileMutationHookResult = ReturnType<typeof useUploadFileMutation>
+export type UploadFileMutationResult = Apollo.MutationResult<UploadFileMutation>
+export type UploadFileMutationOptions = Apollo.BaseMutationOptions<
+  UploadFileMutation,
+  UploadFileMutationVariables
+>
+export const DeleteFileDocument = gql`
+  mutation DeleteFile($uploadId: String!) {
+    deleteFile(uploadId: $uploadId)
+  }
+`
+export type DeleteFileMutationFn = Apollo.MutationFunction<
+  DeleteFileMutation,
+  DeleteFileMutationVariables
+>
+
+/**
+ * __useDeleteFileMutation__
+ *
+ * To run a mutation, you first call `useDeleteFileMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteFileMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteFileMutation, { data, loading, error }] = useDeleteFileMutation({
+ *   variables: {
+ *      uploadId: // value for 'uploadId'
+ *   },
+ * });
+ */
+export function useDeleteFileMutation(
+  baseOptions?: Apollo.MutationHookOptions<DeleteFileMutation, DeleteFileMutationVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<DeleteFileMutation, DeleteFileMutationVariables>(
+    DeleteFileDocument,
+    options,
+  )
+}
+export type DeleteFileMutationHookResult = ReturnType<typeof useDeleteFileMutation>
+export type DeleteFileMutationResult = Apollo.MutationResult<DeleteFileMutation>
+export type DeleteFileMutationOptions = Apollo.BaseMutationOptions<
+  DeleteFileMutation,
+  DeleteFileMutationVariables
+>
+export const UserFilesDocument = gql`
+  query UserFiles($limit: Int, $offset: Int) {
+    userFiles(limit: $limit, offset: $offset) {
+      id
+      url
+      publicUrl
+      filename
+      originalName
+      mimeType
+      size
+      width
+      height
+      provider
+      metadata
+      createdAt
+      folder
+    }
+  }
+`
+
+/**
+ * __useUserFilesQuery__
+ *
+ * To run a query within a React component, call `useUserFilesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useUserFilesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useUserFilesQuery({
+ *   variables: {
+ *      limit: // value for 'limit'
+ *      offset: // value for 'offset'
+ *   },
+ * });
+ */
+export function useUserFilesQuery(
+  baseOptions?: Apollo.QueryHookOptions<UserFilesQuery, UserFilesQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<UserFilesQuery, UserFilesQueryVariables>(UserFilesDocument, options)
+}
+export function useUserFilesLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<UserFilesQuery, UserFilesQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<UserFilesQuery, UserFilesQueryVariables>(UserFilesDocument, options)
+}
+export function useUserFilesSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<UserFilesQuery, UserFilesQueryVariables>,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<UserFilesQuery, UserFilesQueryVariables>(
+    UserFilesDocument,
+    options,
+  )
+}
+export type UserFilesQueryHookResult = ReturnType<typeof useUserFilesQuery>
+export type UserFilesLazyQueryHookResult = ReturnType<typeof useUserFilesLazyQuery>
+export type UserFilesSuspenseQueryHookResult = ReturnType<typeof useUserFilesSuspenseQuery>
+export type UserFilesQueryResult = Apollo.QueryResult<UserFilesQuery, UserFilesQueryVariables>
+export const OrganizationFilesDocument = gql`
+  query OrganizationFiles($organizationId: String!, $limit: Int, $offset: Int) {
+    organizationFiles(organizationId: $organizationId, limit: $limit, offset: $offset) {
+      id
+      url
+      publicUrl
+      filename
+      originalName
+      mimeType
+      size
+      width
+      height
+      provider
+      metadata
+      createdAt
+      folder
+    }
+  }
+`
+
+/**
+ * __useOrganizationFilesQuery__
+ *
+ * To run a query within a React component, call `useOrganizationFilesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useOrganizationFilesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useOrganizationFilesQuery({
+ *   variables: {
+ *      organizationId: // value for 'organizationId'
+ *      limit: // value for 'limit'
+ *      offset: // value for 'offset'
+ *   },
+ * });
+ */
+export function useOrganizationFilesQuery(
+  baseOptions: Apollo.QueryHookOptions<OrganizationFilesQuery, OrganizationFilesQueryVariables> &
+    ({ variables: OrganizationFilesQueryVariables; skip?: boolean } | { skip: boolean }),
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<OrganizationFilesQuery, OrganizationFilesQueryVariables>(
+    OrganizationFilesDocument,
+    options,
+  )
+}
+export function useOrganizationFilesLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    OrganizationFilesQuery,
+    OrganizationFilesQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<OrganizationFilesQuery, OrganizationFilesQueryVariables>(
+    OrganizationFilesDocument,
+    options,
+  )
+}
+export function useOrganizationFilesSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<OrganizationFilesQuery, OrganizationFilesQueryVariables>,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<OrganizationFilesQuery, OrganizationFilesQueryVariables>(
+    OrganizationFilesDocument,
+    options,
+  )
+}
+export type OrganizationFilesQueryHookResult = ReturnType<typeof useOrganizationFilesQuery>
+export type OrganizationFilesLazyQueryHookResult = ReturnType<typeof useOrganizationFilesLazyQuery>
+export type OrganizationFilesSuspenseQueryHookResult = ReturnType<
+  typeof useOrganizationFilesSuspenseQuery
+>
+export type OrganizationFilesQueryResult = Apollo.QueryResult<
+  OrganizationFilesQuery,
+  OrganizationFilesQueryVariables
+>
+export const GetSignedUrlDocument = gql`
+  query GetSignedUrl($uploadId: String!, $expiresIn: Int) {
+    getSignedUrl(uploadId: $uploadId, expiresIn: $expiresIn)
+  }
+`
+
+/**
+ * __useGetSignedUrlQuery__
+ *
+ * To run a query within a React component, call `useGetSignedUrlQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetSignedUrlQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetSignedUrlQuery({
+ *   variables: {
+ *      uploadId: // value for 'uploadId'
+ *      expiresIn: // value for 'expiresIn'
+ *   },
+ * });
+ */
+export function useGetSignedUrlQuery(
+  baseOptions: Apollo.QueryHookOptions<GetSignedUrlQuery, GetSignedUrlQueryVariables> &
+    ({ variables: GetSignedUrlQueryVariables; skip?: boolean } | { skip: boolean }),
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<GetSignedUrlQuery, GetSignedUrlQueryVariables>(
+    GetSignedUrlDocument,
+    options,
+  )
+}
+export function useGetSignedUrlLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<GetSignedUrlQuery, GetSignedUrlQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<GetSignedUrlQuery, GetSignedUrlQueryVariables>(
+    GetSignedUrlDocument,
+    options,
+  )
+}
+export function useGetSignedUrlSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<GetSignedUrlQuery, GetSignedUrlQueryVariables>,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<GetSignedUrlQuery, GetSignedUrlQueryVariables>(
+    GetSignedUrlDocument,
+    options,
+  )
+}
+export type GetSignedUrlQueryHookResult = ReturnType<typeof useGetSignedUrlQuery>
+export type GetSignedUrlLazyQueryHookResult = ReturnType<typeof useGetSignedUrlLazyQuery>
+export type GetSignedUrlSuspenseQueryHookResult = ReturnType<typeof useGetSignedUrlSuspenseQuery>
+export type GetSignedUrlQueryResult = Apollo.QueryResult<
+  GetSignedUrlQuery,
+  GetSignedUrlQueryVariables
+>
+export const CreateStoredFileDocument = gql`
+  mutation createStoredFile($input: CreateStoredFileInput!) {
+    createStoredFile(input: $input) {
+      ...StoredFileDetails
+    }
+  }
+  ${StoredFileDetailsFragmentDoc}
+`
+export type CreateStoredFileMutationFn = Apollo.MutationFunction<
+  CreateStoredFileMutation,
+  CreateStoredFileMutationVariables
+>
+
+/**
+ * __useCreateStoredFileMutation__
+ *
+ * To run a mutation, you first call `useCreateStoredFileMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateStoredFileMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createStoredFileMutation, { data, loading, error }] = useCreateStoredFileMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreateStoredFileMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    CreateStoredFileMutation,
+    CreateStoredFileMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<CreateStoredFileMutation, CreateStoredFileMutationVariables>(
+    CreateStoredFileDocument,
+    options,
+  )
+}
+export type CreateStoredFileMutationHookResult = ReturnType<typeof useCreateStoredFileMutation>
+export type CreateStoredFileMutationResult = Apollo.MutationResult<CreateStoredFileMutation>
+export type CreateStoredFileMutationOptions = Apollo.BaseMutationOptions<
+  CreateStoredFileMutation,
+  CreateStoredFileMutationVariables
+>
+export const DeleteStoredFileDocument = gql`
+  mutation deleteStoredFile($storedFileId: String!) {
+    deleteStoredFile(storedFileId: $storedFileId) {
+      id
+    }
+  }
+`
+export type DeleteStoredFileMutationFn = Apollo.MutationFunction<
+  DeleteStoredFileMutation,
+  DeleteStoredFileMutationVariables
+>
+
+/**
+ * __useDeleteStoredFileMutation__
+ *
+ * To run a mutation, you first call `useDeleteStoredFileMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteStoredFileMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteStoredFileMutation, { data, loading, error }] = useDeleteStoredFileMutation({
+ *   variables: {
+ *      storedFileId: // value for 'storedFileId'
+ *   },
+ * });
+ */
+export function useDeleteStoredFileMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    DeleteStoredFileMutation,
+    DeleteStoredFileMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<DeleteStoredFileMutation, DeleteStoredFileMutationVariables>(
+    DeleteStoredFileDocument,
+    options,
+  )
+}
+export type DeleteStoredFileMutationHookResult = ReturnType<typeof useDeleteStoredFileMutation>
+export type DeleteStoredFileMutationResult = Apollo.MutationResult<DeleteStoredFileMutation>
+export type DeleteStoredFileMutationOptions = Apollo.BaseMutationOptions<
+  DeleteStoredFileMutation,
+  DeleteStoredFileMutationVariables
+>
+export const UpdateStoredFileDocument = gql`
+  mutation updateStoredFile($storedFileId: String!, $input: UpdateStoredFileInput!) {
+    updateStoredFile(storedFileId: $storedFileId, input: $input) {
+      ...StoredFileDetails
+    }
+  }
+  ${StoredFileDetailsFragmentDoc}
+`
+export type UpdateStoredFileMutationFn = Apollo.MutationFunction<
+  UpdateStoredFileMutation,
+  UpdateStoredFileMutationVariables
+>
+
+/**
+ * __useUpdateStoredFileMutation__
+ *
+ * To run a mutation, you first call `useUpdateStoredFileMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateStoredFileMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateStoredFileMutation, { data, loading, error }] = useUpdateStoredFileMutation({
+ *   variables: {
+ *      storedFileId: // value for 'storedFileId'
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useUpdateStoredFileMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    UpdateStoredFileMutation,
+    UpdateStoredFileMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<UpdateStoredFileMutation, UpdateStoredFileMutationVariables>(
+    UpdateStoredFileDocument,
+    options,
+  )
+}
+export type UpdateStoredFileMutationHookResult = ReturnType<typeof useUpdateStoredFileMutation>
+export type UpdateStoredFileMutationResult = Apollo.MutationResult<UpdateStoredFileMutation>
+export type UpdateStoredFileMutationOptions = Apollo.BaseMutationOptions<
+  UpdateStoredFileMutation,
+  UpdateStoredFileMutationVariables
+>
+export const StoredFileDocument = gql`
+  query StoredFile($storedFileId: String!) {
+    storedFile(storedFileId: $storedFileId) {
+      ...StoredFileDetails
+    }
+  }
+  ${StoredFileDetailsFragmentDoc}
+`
+
+/**
+ * __useStoredFileQuery__
+ *
+ * To run a query within a React component, call `useStoredFileQuery` and pass it any options that fit your needs.
+ * When your component renders, `useStoredFileQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useStoredFileQuery({
+ *   variables: {
+ *      storedFileId: // value for 'storedFileId'
+ *   },
+ * });
+ */
+export function useStoredFileQuery(
+  baseOptions: Apollo.QueryHookOptions<StoredFileQuery, StoredFileQueryVariables> &
+    ({ variables: StoredFileQueryVariables; skip?: boolean } | { skip: boolean }),
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<StoredFileQuery, StoredFileQueryVariables>(StoredFileDocument, options)
+}
+export function useStoredFileLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<StoredFileQuery, StoredFileQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<StoredFileQuery, StoredFileQueryVariables>(StoredFileDocument, options)
+}
+export function useStoredFileSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<StoredFileQuery, StoredFileQueryVariables>,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<StoredFileQuery, StoredFileQueryVariables>(
+    StoredFileDocument,
+    options,
+  )
+}
+export type StoredFileQueryHookResult = ReturnType<typeof useStoredFileQuery>
+export type StoredFileLazyQueryHookResult = ReturnType<typeof useStoredFileLazyQuery>
+export type StoredFileSuspenseQueryHookResult = ReturnType<typeof useStoredFileSuspenseQuery>
+export type StoredFileQueryResult = Apollo.QueryResult<StoredFileQuery, StoredFileQueryVariables>
+export const StoredFilesDocument = gql`
+  query StoredFiles($input: ListStoredFileInput) {
+    storedFiles(input: $input) {
+      ...StoredFileList
+    }
+    counters: storedFilesCount(input: $input) {
+      ...CorePagingDetails
+    }
+  }
+  ${StoredFileListFragmentDoc}
+  ${CorePagingDetailsFragmentDoc}
+`
+
+/**
+ * __useStoredFilesQuery__
+ *
+ * To run a query within a React component, call `useStoredFilesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useStoredFilesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useStoredFilesQuery({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useStoredFilesQuery(
+  baseOptions?: Apollo.QueryHookOptions<StoredFilesQuery, StoredFilesQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<StoredFilesQuery, StoredFilesQueryVariables>(StoredFilesDocument, options)
+}
+export function useStoredFilesLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<StoredFilesQuery, StoredFilesQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<StoredFilesQuery, StoredFilesQueryVariables>(
+    StoredFilesDocument,
+    options,
+  )
+}
+export function useStoredFilesSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<StoredFilesQuery, StoredFilesQueryVariables>,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<StoredFilesQuery, StoredFilesQueryVariables>(
+    StoredFilesDocument,
+    options,
+  )
+}
+export type StoredFilesQueryHookResult = ReturnType<typeof useStoredFilesQuery>
+export type StoredFilesLazyQueryHookResult = ReturnType<typeof useStoredFilesLazyQuery>
+export type StoredFilesSuspenseQueryHookResult = ReturnType<typeof useStoredFilesSuspenseQuery>
+export type StoredFilesQueryResult = Apollo.QueryResult<StoredFilesQuery, StoredFilesQueryVariables>
+export const StoredFilePaginationDocument = gql`
+  query StoredFilePagination($input: ListStoredFileInput) {
+    counters: storedFilesCount(input: $input) {
+      ...CorePagingDetails
+    }
+  }
+  ${CorePagingDetailsFragmentDoc}
+`
+
+/**
+ * __useStoredFilePaginationQuery__
+ *
+ * To run a query within a React component, call `useStoredFilePaginationQuery` and pass it any options that fit your needs.
+ * When your component renders, `useStoredFilePaginationQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useStoredFilePaginationQuery({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useStoredFilePaginationQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    StoredFilePaginationQuery,
+    StoredFilePaginationQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<StoredFilePaginationQuery, StoredFilePaginationQueryVariables>(
+    StoredFilePaginationDocument,
+    options,
+  )
+}
+export function useStoredFilePaginationLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    StoredFilePaginationQuery,
+    StoredFilePaginationQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<StoredFilePaginationQuery, StoredFilePaginationQueryVariables>(
+    StoredFilePaginationDocument,
+    options,
+  )
+}
+export function useStoredFilePaginationSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<
+        StoredFilePaginationQuery,
+        StoredFilePaginationQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<StoredFilePaginationQuery, StoredFilePaginationQueryVariables>(
+    StoredFilePaginationDocument,
+    options,
+  )
+}
+export type StoredFilePaginationQueryHookResult = ReturnType<typeof useStoredFilePaginationQuery>
+export type StoredFilePaginationLazyQueryHookResult = ReturnType<
+  typeof useStoredFilePaginationLazyQuery
+>
+export type StoredFilePaginationSuspenseQueryHookResult = ReturnType<
+  typeof useStoredFilePaginationSuspenseQuery
+>
+export type StoredFilePaginationQueryResult = Apollo.QueryResult<
+  StoredFilePaginationQuery,
+  StoredFilePaginationQueryVariables
+>
 export const CreateSubscriptionDocument = gql`
   mutation createSubscription($input: CreateSubscriptionInput!) {
     createSubscription(input: $input) {
@@ -26379,312 +28681,8 @@ export type TeamPaginationQueryResult = Apollo.QueryResult<
   TeamPaginationQuery,
   TeamPaginationQueryVariables
 >
-export const CreateUploadDocument = gql`
-  mutation createUpload($input: CreateUploadInput!) {
-    createUpload(input: $input) {
-      ...UploadDetails
-    }
-  }
-  ${UploadDetailsFragmentDoc}
-`
-export type CreateUploadMutationFn = Apollo.MutationFunction<
-  CreateUploadMutation,
-  CreateUploadMutationVariables
->
-
-/**
- * __useCreateUploadMutation__
- *
- * To run a mutation, you first call `useCreateUploadMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateUploadMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [createUploadMutation, { data, loading, error }] = useCreateUploadMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useCreateUploadMutation(
-  baseOptions?: Apollo.MutationHookOptions<CreateUploadMutation, CreateUploadMutationVariables>,
-) {
-  const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<CreateUploadMutation, CreateUploadMutationVariables>(
-    CreateUploadDocument,
-    options,
-  )
-}
-export type CreateUploadMutationHookResult = ReturnType<typeof useCreateUploadMutation>
-export type CreateUploadMutationResult = Apollo.MutationResult<CreateUploadMutation>
-export type CreateUploadMutationOptions = Apollo.BaseMutationOptions<
-  CreateUploadMutation,
-  CreateUploadMutationVariables
->
-export const DeleteUploadDocument = gql`
-  mutation deleteUpload($uploadId: String!) {
-    deleteUpload(uploadId: $uploadId) {
-      id
-    }
-  }
-`
-export type DeleteUploadMutationFn = Apollo.MutationFunction<
-  DeleteUploadMutation,
-  DeleteUploadMutationVariables
->
-
-/**
- * __useDeleteUploadMutation__
- *
- * To run a mutation, you first call `useDeleteUploadMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useDeleteUploadMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [deleteUploadMutation, { data, loading, error }] = useDeleteUploadMutation({
- *   variables: {
- *      uploadId: // value for 'uploadId'
- *   },
- * });
- */
-export function useDeleteUploadMutation(
-  baseOptions?: Apollo.MutationHookOptions<DeleteUploadMutation, DeleteUploadMutationVariables>,
-) {
-  const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<DeleteUploadMutation, DeleteUploadMutationVariables>(
-    DeleteUploadDocument,
-    options,
-  )
-}
-export type DeleteUploadMutationHookResult = ReturnType<typeof useDeleteUploadMutation>
-export type DeleteUploadMutationResult = Apollo.MutationResult<DeleteUploadMutation>
-export type DeleteUploadMutationOptions = Apollo.BaseMutationOptions<
-  DeleteUploadMutation,
-  DeleteUploadMutationVariables
->
-export const UpdateUploadDocument = gql`
-  mutation updateUpload($uploadId: String!, $input: UpdateUploadInput!) {
-    updateUpload(uploadId: $uploadId, input: $input) {
-      ...UploadDetails
-    }
-  }
-  ${UploadDetailsFragmentDoc}
-`
-export type UpdateUploadMutationFn = Apollo.MutationFunction<
-  UpdateUploadMutation,
-  UpdateUploadMutationVariables
->
-
-/**
- * __useUpdateUploadMutation__
- *
- * To run a mutation, you first call `useUpdateUploadMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateUploadMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updateUploadMutation, { data, loading, error }] = useUpdateUploadMutation({
- *   variables: {
- *      uploadId: // value for 'uploadId'
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useUpdateUploadMutation(
-  baseOptions?: Apollo.MutationHookOptions<UpdateUploadMutation, UpdateUploadMutationVariables>,
-) {
-  const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<UpdateUploadMutation, UpdateUploadMutationVariables>(
-    UpdateUploadDocument,
-    options,
-  )
-}
-export type UpdateUploadMutationHookResult = ReturnType<typeof useUpdateUploadMutation>
-export type UpdateUploadMutationResult = Apollo.MutationResult<UpdateUploadMutation>
-export type UpdateUploadMutationOptions = Apollo.BaseMutationOptions<
-  UpdateUploadMutation,
-  UpdateUploadMutationVariables
->
-export const UploadDocument = gql`
-  query Upload($uploadId: String!) {
-    upload(uploadId: $uploadId) {
-      ...UploadDetails
-    }
-  }
-  ${UploadDetailsFragmentDoc}
-`
-
-/**
- * __useUploadQuery__
- *
- * To run a query within a React component, call `useUploadQuery` and pass it any options that fit your needs.
- * When your component renders, `useUploadQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useUploadQuery({
- *   variables: {
- *      uploadId: // value for 'uploadId'
- *   },
- * });
- */
-export function useUploadQuery(
-  baseOptions: Apollo.QueryHookOptions<UploadQuery, UploadQueryVariables> &
-    ({ variables: UploadQueryVariables; skip?: boolean } | { skip: boolean }),
-) {
-  const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<UploadQuery, UploadQueryVariables>(UploadDocument, options)
-}
-export function useUploadLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<UploadQuery, UploadQueryVariables>,
-) {
-  const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<UploadQuery, UploadQueryVariables>(UploadDocument, options)
-}
-export function useUploadSuspenseQuery(
-  baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<UploadQuery, UploadQueryVariables>,
-) {
-  const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<UploadQuery, UploadQueryVariables>(UploadDocument, options)
-}
-export type UploadQueryHookResult = ReturnType<typeof useUploadQuery>
-export type UploadLazyQueryHookResult = ReturnType<typeof useUploadLazyQuery>
-export type UploadSuspenseQueryHookResult = ReturnType<typeof useUploadSuspenseQuery>
-export type UploadQueryResult = Apollo.QueryResult<UploadQuery, UploadQueryVariables>
-export const UploadsDocument = gql`
-  query Uploads($input: ListUploadInput) {
-    uploads(input: $input) {
-      ...UploadList
-    }
-    counters: uploadsCount(input: $input) {
-      ...CorePagingDetails
-    }
-  }
-  ${UploadListFragmentDoc}
-  ${CorePagingDetailsFragmentDoc}
-`
-
-/**
- * __useUploadsQuery__
- *
- * To run a query within a React component, call `useUploadsQuery` and pass it any options that fit your needs.
- * When your component renders, `useUploadsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useUploadsQuery({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useUploadsQuery(
-  baseOptions?: Apollo.QueryHookOptions<UploadsQuery, UploadsQueryVariables>,
-) {
-  const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<UploadsQuery, UploadsQueryVariables>(UploadsDocument, options)
-}
-export function useUploadsLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<UploadsQuery, UploadsQueryVariables>,
-) {
-  const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<UploadsQuery, UploadsQueryVariables>(UploadsDocument, options)
-}
-export function useUploadsSuspenseQuery(
-  baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<UploadsQuery, UploadsQueryVariables>,
-) {
-  const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<UploadsQuery, UploadsQueryVariables>(UploadsDocument, options)
-}
-export type UploadsQueryHookResult = ReturnType<typeof useUploadsQuery>
-export type UploadsLazyQueryHookResult = ReturnType<typeof useUploadsLazyQuery>
-export type UploadsSuspenseQueryHookResult = ReturnType<typeof useUploadsSuspenseQuery>
-export type UploadsQueryResult = Apollo.QueryResult<UploadsQuery, UploadsQueryVariables>
-export const UploadPaginationDocument = gql`
-  query UploadPagination($input: ListUploadInput) {
-    counters: uploadsCount(input: $input) {
-      ...CorePagingDetails
-    }
-  }
-  ${CorePagingDetailsFragmentDoc}
-`
-
-/**
- * __useUploadPaginationQuery__
- *
- * To run a query within a React component, call `useUploadPaginationQuery` and pass it any options that fit your needs.
- * When your component renders, `useUploadPaginationQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useUploadPaginationQuery({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useUploadPaginationQuery(
-  baseOptions?: Apollo.QueryHookOptions<UploadPaginationQuery, UploadPaginationQueryVariables>,
-) {
-  const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<UploadPaginationQuery, UploadPaginationQueryVariables>(
-    UploadPaginationDocument,
-    options,
-  )
-}
-export function useUploadPaginationLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<UploadPaginationQuery, UploadPaginationQueryVariables>,
-) {
-  const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<UploadPaginationQuery, UploadPaginationQueryVariables>(
-    UploadPaginationDocument,
-    options,
-  )
-}
-export function useUploadPaginationSuspenseQuery(
-  baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<UploadPaginationQuery, UploadPaginationQueryVariables>,
-) {
-  const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<UploadPaginationQuery, UploadPaginationQueryVariables>(
-    UploadPaginationDocument,
-    options,
-  )
-}
-export type UploadPaginationQueryHookResult = ReturnType<typeof useUploadPaginationQuery>
-export type UploadPaginationLazyQueryHookResult = ReturnType<typeof useUploadPaginationLazyQuery>
-export type UploadPaginationSuspenseQueryHookResult = ReturnType<
-  typeof useUploadPaginationSuspenseQuery
->
-export type UploadPaginationQueryResult = Apollo.QueryResult<
-  UploadPaginationQuery,
-  UploadPaginationQueryVariables
->
 export const CreateUserPreferenceDocument = gql`
-  mutation createUserPreference($input: SecureCreateUserPreferenceInput!) {
+  mutation createUserPreference($input: CreateUserPreferenceInput!) {
     createUserPreference(input: $input) {
       ...UserPreferenceDetails
     }
@@ -26783,10 +28781,7 @@ export type DeleteUserPreferenceMutationOptions = Apollo.BaseMutationOptions<
   DeleteUserPreferenceMutationVariables
 >
 export const UpdateUserPreferenceDocument = gql`
-  mutation updateUserPreference(
-    $userPreferenceId: String!
-    $input: SecureUpdateUserPreferenceInput!
-  ) {
+  mutation updateUserPreference($userPreferenceId: String!, $input: UpdateUserPreferenceInput!) {
     updateUserPreference(userPreferenceId: $userPreferenceId, input: $input) {
       ...UserPreferenceDetails
     }
