@@ -60,7 +60,7 @@ export type LoginAttempt = $Result.DefaultSelection<Prisma.$LoginAttemptPayload>
 export type OAuthAccount = $Result.DefaultSelection<Prisma.$OAuthAccountPayload>
 /**
  * Model Organization
- * @skipCrud
+ * 
  */
 export type Organization = $Result.DefaultSelection<Prisma.$OrganizationPayload>
 /**
@@ -109,10 +109,10 @@ export type Team = $Result.DefaultSelection<Prisma.$TeamPayload>
  */
 export type TeamMember = $Result.DefaultSelection<Prisma.$TeamMemberPayload>
 /**
- * Model Upload
+ * Model StoredFile
  * 
  */
-export type Upload = $Result.DefaultSelection<Prisma.$UploadPayload>
+export type StoredFile = $Result.DefaultSelection<Prisma.$StoredFilePayload>
 /**
  * Model User
  * 
@@ -597,14 +597,14 @@ export class PrismaClient<
   get teamMember(): Prisma.TeamMemberDelegate<ExtArgs, ClientOptions>;
 
   /**
-   * `prisma.upload`: Exposes CRUD operations for the **Upload** model.
+   * `prisma.storedFile`: Exposes CRUD operations for the **StoredFile** model.
     * Example usage:
     * ```ts
-    * // Fetch zero or more Uploads
-    * const uploads = await prisma.upload.findMany()
+    * // Fetch zero or more StoredFiles
+    * const storedFiles = await prisma.storedFile.findMany()
     * ```
     */
-  get upload(): Prisma.UploadDelegate<ExtArgs, ClientOptions>;
+  get storedFile(): Prisma.StoredFileDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.user`: Exposes CRUD operations for the **User** model.
@@ -1094,7 +1094,7 @@ export namespace Prisma {
     Subscription: 'Subscription',
     Team: 'Team',
     TeamMember: 'TeamMember',
-    Upload: 'Upload',
+    StoredFile: 'StoredFile',
     User: 'User',
     UserPreference: 'UserPreference',
     UserSession: 'UserSession'
@@ -1116,7 +1116,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "address" | "apiToken" | "auditLog" | "country" | "email" | "invite" | "link" | "loginAttempt" | "oAuthAccount" | "organization" | "organizationMember" | "permission" | "phoneNumber" | "plan" | "role" | "securityEvent" | "subscription" | "team" | "teamMember" | "upload" | "user" | "userPreference" | "userSession"
+      modelProps: "address" | "apiToken" | "auditLog" | "country" | "email" | "invite" | "link" | "loginAttempt" | "oAuthAccount" | "organization" | "organizationMember" | "permission" | "phoneNumber" | "plan" | "role" | "securityEvent" | "subscription" | "team" | "teamMember" | "storedFile" | "user" | "userPreference" | "userSession"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -2526,77 +2526,77 @@ export namespace Prisma {
           }
         }
       }
-      Upload: {
-        payload: Prisma.$UploadPayload<ExtArgs>
-        fields: Prisma.UploadFieldRefs
+      StoredFile: {
+        payload: Prisma.$StoredFilePayload<ExtArgs>
+        fields: Prisma.StoredFileFieldRefs
         operations: {
           findUnique: {
-            args: Prisma.UploadFindUniqueArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$UploadPayload> | null
+            args: Prisma.StoredFileFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StoredFilePayload> | null
           }
           findUniqueOrThrow: {
-            args: Prisma.UploadFindUniqueOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$UploadPayload>
+            args: Prisma.StoredFileFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StoredFilePayload>
           }
           findFirst: {
-            args: Prisma.UploadFindFirstArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$UploadPayload> | null
+            args: Prisma.StoredFileFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StoredFilePayload> | null
           }
           findFirstOrThrow: {
-            args: Prisma.UploadFindFirstOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$UploadPayload>
+            args: Prisma.StoredFileFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StoredFilePayload>
           }
           findMany: {
-            args: Prisma.UploadFindManyArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$UploadPayload>[]
+            args: Prisma.StoredFileFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StoredFilePayload>[]
           }
           create: {
-            args: Prisma.UploadCreateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$UploadPayload>
+            args: Prisma.StoredFileCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StoredFilePayload>
           }
           createMany: {
-            args: Prisma.UploadCreateManyArgs<ExtArgs>
+            args: Prisma.StoredFileCreateManyArgs<ExtArgs>
             result: BatchPayload
           }
           createManyAndReturn: {
-            args: Prisma.UploadCreateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$UploadPayload>[]
+            args: Prisma.StoredFileCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StoredFilePayload>[]
           }
           delete: {
-            args: Prisma.UploadDeleteArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$UploadPayload>
+            args: Prisma.StoredFileDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StoredFilePayload>
           }
           update: {
-            args: Prisma.UploadUpdateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$UploadPayload>
+            args: Prisma.StoredFileUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StoredFilePayload>
           }
           deleteMany: {
-            args: Prisma.UploadDeleteManyArgs<ExtArgs>
+            args: Prisma.StoredFileDeleteManyArgs<ExtArgs>
             result: BatchPayload
           }
           updateMany: {
-            args: Prisma.UploadUpdateManyArgs<ExtArgs>
+            args: Prisma.StoredFileUpdateManyArgs<ExtArgs>
             result: BatchPayload
           }
           updateManyAndReturn: {
-            args: Prisma.UploadUpdateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$UploadPayload>[]
+            args: Prisma.StoredFileUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StoredFilePayload>[]
           }
           upsert: {
-            args: Prisma.UploadUpsertArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$UploadPayload>
+            args: Prisma.StoredFileUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StoredFilePayload>
           }
           aggregate: {
-            args: Prisma.UploadAggregateArgs<ExtArgs>
-            result: $Utils.Optional<AggregateUpload>
+            args: Prisma.StoredFileAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateStoredFile>
           }
           groupBy: {
-            args: Prisma.UploadGroupByArgs<ExtArgs>
-            result: $Utils.Optional<UploadGroupByOutputType>[]
+            args: Prisma.StoredFileGroupByArgs<ExtArgs>
+            result: $Utils.Optional<StoredFileGroupByOutputType>[]
           }
           count: {
-            args: Prisma.UploadCountArgs<ExtArgs>
-            result: $Utils.Optional<UploadCountAggregateOutputType> | number
+            args: Prisma.StoredFileCountArgs<ExtArgs>
+            result: $Utils.Optional<StoredFileCountAggregateOutputType> | number
           }
         }
       }
@@ -2933,7 +2933,7 @@ export namespace Prisma {
     subscription?: SubscriptionOmit
     team?: TeamOmit
     teamMember?: TeamMemberOmit
-    upload?: UploadOmit
+    storedFile?: StoredFileOmit
     user?: UserOmit
     userPreference?: UserPreferenceOmit
     userSession?: UserSessionOmit
@@ -3109,7 +3109,7 @@ export namespace Prisma {
    * OrganizationCountOutputType without action
    */
   export type OrganizationCountOutputTypeCountImagesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: UploadWhereInput
+    where?: StoredFileWhereInput
   }
 
   /**
@@ -3382,7 +3382,7 @@ export namespace Prisma {
    * UserCountOutputType without action
    */
   export type UserCountOutputTypeCountImagesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: UploadWhereInput
+    where?: StoredFileWhereInput
   }
 
   /**
@@ -14043,7 +14043,7 @@ export namespace Prisma {
       emails: Prisma.$EmailPayload<ExtArgs>[]
       links: Prisma.$LinkPayload<ExtArgs>[]
       phoneNumbers: Prisma.$PhoneNumberPayload<ExtArgs>[]
-      images: Prisma.$UploadPayload<ExtArgs>[]
+      images: Prisma.$StoredFilePayload<ExtArgs>[]
       members: Prisma.$OrganizationMemberPayload<ExtArgs>[]
       addresses: Prisma.$AddressPayload<ExtArgs>[]
       invites: Prisma.$InvitePayload<ExtArgs>[]
@@ -14454,7 +14454,7 @@ export namespace Prisma {
     emails<T extends Organization$emailsArgs<ExtArgs> = {}>(args?: Subset<T, Organization$emailsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EmailPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     links<T extends Organization$linksArgs<ExtArgs> = {}>(args?: Subset<T, Organization$linksArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$LinkPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     phoneNumbers<T extends Organization$phoneNumbersArgs<ExtArgs> = {}>(args?: Subset<T, Organization$phoneNumbersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PhoneNumberPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    images<T extends Organization$imagesArgs<ExtArgs> = {}>(args?: Subset<T, Organization$imagesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UploadPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    images<T extends Organization$imagesArgs<ExtArgs> = {}>(args?: Subset<T, Organization$imagesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$StoredFilePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     members<T extends Organization$membersArgs<ExtArgs> = {}>(args?: Subset<T, Organization$membersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OrganizationMemberPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     addresses<T extends Organization$addressesArgs<ExtArgs> = {}>(args?: Subset<T, Organization$addressesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AddressPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     invites<T extends Organization$invitesArgs<ExtArgs> = {}>(args?: Subset<T, Organization$invitesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$InvitePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -14959,23 +14959,23 @@ export namespace Prisma {
    */
   export type Organization$imagesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the Upload
+     * Select specific fields to fetch from the StoredFile
      */
-    select?: UploadSelect<ExtArgs> | null
+    select?: StoredFileSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the Upload
+     * Omit specific fields from the StoredFile
      */
-    omit?: UploadOmit<ExtArgs> | null
+    omit?: StoredFileOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: UploadInclude<ExtArgs> | null
-    where?: UploadWhereInput
-    orderBy?: UploadOrderByWithRelationInput | UploadOrderByWithRelationInput[]
-    cursor?: UploadWhereUniqueInput
+    include?: StoredFileInclude<ExtArgs> | null
+    where?: StoredFileWhereInput
+    orderBy?: StoredFileOrderByWithRelationInput | StoredFileOrderByWithRelationInput[]
+    cursor?: StoredFileWhereUniqueInput
     take?: number
     skip?: number
-    distinct?: UploadScalarFieldEnum | UploadScalarFieldEnum[]
+    distinct?: StoredFileScalarFieldEnum | StoredFileScalarFieldEnum[]
   }
 
   /**
@@ -25164,30 +25164,30 @@ export namespace Prisma {
 
 
   /**
-   * Model Upload
+   * Model StoredFile
    */
 
-  export type AggregateUpload = {
-    _count: UploadCountAggregateOutputType | null
-    _avg: UploadAvgAggregateOutputType | null
-    _sum: UploadSumAggregateOutputType | null
-    _min: UploadMinAggregateOutputType | null
-    _max: UploadMaxAggregateOutputType | null
+  export type AggregateStoredFile = {
+    _count: StoredFileCountAggregateOutputType | null
+    _avg: StoredFileAvgAggregateOutputType | null
+    _sum: StoredFileSumAggregateOutputType | null
+    _min: StoredFileMinAggregateOutputType | null
+    _max: StoredFileMaxAggregateOutputType | null
   }
 
-  export type UploadAvgAggregateOutputType = {
+  export type StoredFileAvgAggregateOutputType = {
     size: number | null
     width: number | null
     height: number | null
   }
 
-  export type UploadSumAggregateOutputType = {
+  export type StoredFileSumAggregateOutputType = {
     size: number | null
     width: number | null
     height: number | null
   }
 
-  export type UploadMinAggregateOutputType = {
+  export type StoredFileMinAggregateOutputType = {
     id: string | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -25206,7 +25206,7 @@ export namespace Prisma {
     organizationId: string | null
   }
 
-  export type UploadMaxAggregateOutputType = {
+  export type StoredFileMaxAggregateOutputType = {
     id: string | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -25225,7 +25225,7 @@ export namespace Prisma {
     organizationId: string | null
   }
 
-  export type UploadCountAggregateOutputType = {
+  export type StoredFileCountAggregateOutputType = {
     id: number
     createdAt: number
     updatedAt: number
@@ -25247,19 +25247,19 @@ export namespace Prisma {
   }
 
 
-  export type UploadAvgAggregateInputType = {
+  export type StoredFileAvgAggregateInputType = {
     size?: true
     width?: true
     height?: true
   }
 
-  export type UploadSumAggregateInputType = {
+  export type StoredFileSumAggregateInputType = {
     size?: true
     width?: true
     height?: true
   }
 
-  export type UploadMinAggregateInputType = {
+  export type StoredFileMinAggregateInputType = {
     id?: true
     createdAt?: true
     updatedAt?: true
@@ -25278,7 +25278,7 @@ export namespace Prisma {
     organizationId?: true
   }
 
-  export type UploadMaxAggregateInputType = {
+  export type StoredFileMaxAggregateInputType = {
     id?: true
     createdAt?: true
     updatedAt?: true
@@ -25297,7 +25297,7 @@ export namespace Prisma {
     organizationId?: true
   }
 
-  export type UploadCountAggregateInputType = {
+  export type StoredFileCountAggregateInputType = {
     id?: true
     createdAt?: true
     updatedAt?: true
@@ -25318,93 +25318,93 @@ export namespace Prisma {
     _all?: true
   }
 
-  export type UploadAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type StoredFileAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Filter which Upload to aggregate.
+     * Filter which StoredFile to aggregate.
      */
-    where?: UploadWhereInput
+    where?: StoredFileWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
      * 
-     * Determine the order of Uploads to fetch.
+     * Determine the order of StoredFiles to fetch.
      */
-    orderBy?: UploadOrderByWithRelationInput | UploadOrderByWithRelationInput[]
+    orderBy?: StoredFileOrderByWithRelationInput | StoredFileOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
      * 
      * Sets the start position
      */
-    cursor?: UploadWhereUniqueInput
+    cursor?: StoredFileWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
-     * Take `±n` Uploads from the position of the cursor.
+     * Take `±n` StoredFiles from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
-     * Skip the first `n` Uploads.
+     * Skip the first `n` StoredFiles.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
-     * Count returned Uploads
+     * Count returned StoredFiles
     **/
-    _count?: true | UploadCountAggregateInputType
+    _count?: true | StoredFileCountAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
      * Select which fields to average
     **/
-    _avg?: UploadAvgAggregateInputType
+    _avg?: StoredFileAvgAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
      * Select which fields to sum
     **/
-    _sum?: UploadSumAggregateInputType
+    _sum?: StoredFileSumAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
      * Select which fields to find the minimum value
     **/
-    _min?: UploadMinAggregateInputType
+    _min?: StoredFileMinAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
      * Select which fields to find the maximum value
     **/
-    _max?: UploadMaxAggregateInputType
+    _max?: StoredFileMaxAggregateInputType
   }
 
-  export type GetUploadAggregateType<T extends UploadAggregateArgs> = {
-        [P in keyof T & keyof AggregateUpload]: P extends '_count' | 'count'
+  export type GetStoredFileAggregateType<T extends StoredFileAggregateArgs> = {
+        [P in keyof T & keyof AggregateStoredFile]: P extends '_count' | 'count'
       ? T[P] extends true
         ? number
-        : GetScalarType<T[P], AggregateUpload[P]>
-      : GetScalarType<T[P], AggregateUpload[P]>
+        : GetScalarType<T[P], AggregateStoredFile[P]>
+      : GetScalarType<T[P], AggregateStoredFile[P]>
   }
 
 
 
 
-  export type UploadGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: UploadWhereInput
-    orderBy?: UploadOrderByWithAggregationInput | UploadOrderByWithAggregationInput[]
-    by: UploadScalarFieldEnum[] | UploadScalarFieldEnum
-    having?: UploadScalarWhereWithAggregatesInput
+  export type StoredFileGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: StoredFileWhereInput
+    orderBy?: StoredFileOrderByWithAggregationInput | StoredFileOrderByWithAggregationInput[]
+    by: StoredFileScalarFieldEnum[] | StoredFileScalarFieldEnum
+    having?: StoredFileScalarWhereWithAggregatesInput
     take?: number
     skip?: number
-    _count?: UploadCountAggregateInputType | true
-    _avg?: UploadAvgAggregateInputType
-    _sum?: UploadSumAggregateInputType
-    _min?: UploadMinAggregateInputType
-    _max?: UploadMaxAggregateInputType
+    _count?: StoredFileCountAggregateInputType | true
+    _avg?: StoredFileAvgAggregateInputType
+    _sum?: StoredFileSumAggregateInputType
+    _min?: StoredFileMinAggregateInputType
+    _max?: StoredFileMaxAggregateInputType
   }
 
-  export type UploadGroupByOutputType = {
+  export type StoredFileGroupByOutputType = {
     id: string
     createdAt: Date
     updatedAt: Date
@@ -25422,28 +25422,28 @@ export namespace Prisma {
     metadata: JsonValue | null
     userId: string | null
     organizationId: string | null
-    _count: UploadCountAggregateOutputType | null
-    _avg: UploadAvgAggregateOutputType | null
-    _sum: UploadSumAggregateOutputType | null
-    _min: UploadMinAggregateOutputType | null
-    _max: UploadMaxAggregateOutputType | null
+    _count: StoredFileCountAggregateOutputType | null
+    _avg: StoredFileAvgAggregateOutputType | null
+    _sum: StoredFileSumAggregateOutputType | null
+    _min: StoredFileMinAggregateOutputType | null
+    _max: StoredFileMaxAggregateOutputType | null
   }
 
-  type GetUploadGroupByPayload<T extends UploadGroupByArgs> = Prisma.PrismaPromise<
+  type GetStoredFileGroupByPayload<T extends StoredFileGroupByArgs> = Prisma.PrismaPromise<
     Array<
-      PickEnumerable<UploadGroupByOutputType, T['by']> &
+      PickEnumerable<StoredFileGroupByOutputType, T['by']> &
         {
-          [P in ((keyof T) & (keyof UploadGroupByOutputType))]: P extends '_count'
+          [P in ((keyof T) & (keyof StoredFileGroupByOutputType))]: P extends '_count'
             ? T[P] extends boolean
               ? number
-              : GetScalarType<T[P], UploadGroupByOutputType[P]>
-            : GetScalarType<T[P], UploadGroupByOutputType[P]>
+              : GetScalarType<T[P], StoredFileGroupByOutputType[P]>
+            : GetScalarType<T[P], StoredFileGroupByOutputType[P]>
         }
       >
     >
 
 
-  export type UploadSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+  export type StoredFileSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -25461,11 +25461,11 @@ export namespace Prisma {
     metadata?: boolean
     userId?: boolean
     organizationId?: boolean
-    user?: boolean | Upload$userArgs<ExtArgs>
-    organization?: boolean | Upload$organizationArgs<ExtArgs>
-  }, ExtArgs["result"]["upload"]>
+    user?: boolean | StoredFile$userArgs<ExtArgs>
+    organization?: boolean | StoredFile$organizationArgs<ExtArgs>
+  }, ExtArgs["result"]["storedFile"]>
 
-  export type UploadSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+  export type StoredFileSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -25483,11 +25483,11 @@ export namespace Prisma {
     metadata?: boolean
     userId?: boolean
     organizationId?: boolean
-    user?: boolean | Upload$userArgs<ExtArgs>
-    organization?: boolean | Upload$organizationArgs<ExtArgs>
-  }, ExtArgs["result"]["upload"]>
+    user?: boolean | StoredFile$userArgs<ExtArgs>
+    organization?: boolean | StoredFile$organizationArgs<ExtArgs>
+  }, ExtArgs["result"]["storedFile"]>
 
-  export type UploadSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+  export type StoredFileSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -25505,11 +25505,11 @@ export namespace Prisma {
     metadata?: boolean
     userId?: boolean
     organizationId?: boolean
-    user?: boolean | Upload$userArgs<ExtArgs>
-    organization?: boolean | Upload$organizationArgs<ExtArgs>
-  }, ExtArgs["result"]["upload"]>
+    user?: boolean | StoredFile$userArgs<ExtArgs>
+    organization?: boolean | StoredFile$organizationArgs<ExtArgs>
+  }, ExtArgs["result"]["storedFile"]>
 
-  export type UploadSelectScalar = {
+  export type StoredFileSelectScalar = {
     id?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -25529,22 +25529,22 @@ export namespace Prisma {
     organizationId?: boolean
   }
 
-  export type UploadOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "createdAt" | "updatedAt" | "provider" | "providerFileId" | "folder" | "filename" | "originalName" | "mimeType" | "size" | "url" | "publicUrl" | "width" | "height" | "metadata" | "userId" | "organizationId", ExtArgs["result"]["upload"]>
-  export type UploadInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | Upload$userArgs<ExtArgs>
-    organization?: boolean | Upload$organizationArgs<ExtArgs>
+  export type StoredFileOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "createdAt" | "updatedAt" | "provider" | "providerFileId" | "folder" | "filename" | "originalName" | "mimeType" | "size" | "url" | "publicUrl" | "width" | "height" | "metadata" | "userId" | "organizationId", ExtArgs["result"]["storedFile"]>
+  export type StoredFileInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | StoredFile$userArgs<ExtArgs>
+    organization?: boolean | StoredFile$organizationArgs<ExtArgs>
   }
-  export type UploadIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | Upload$userArgs<ExtArgs>
-    organization?: boolean | Upload$organizationArgs<ExtArgs>
+  export type StoredFileIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | StoredFile$userArgs<ExtArgs>
+    organization?: boolean | StoredFile$organizationArgs<ExtArgs>
   }
-  export type UploadIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | Upload$userArgs<ExtArgs>
-    organization?: boolean | Upload$organizationArgs<ExtArgs>
+  export type StoredFileIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | StoredFile$userArgs<ExtArgs>
+    organization?: boolean | StoredFile$organizationArgs<ExtArgs>
   }
 
-  export type $UploadPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    name: "Upload"
+  export type $StoredFilePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "StoredFile"
     objects: {
       user: Prisma.$UserPayload<ExtArgs> | null
       organization: Prisma.$OrganizationPayload<ExtArgs> | null
@@ -25567,136 +25567,136 @@ export namespace Prisma {
       metadata: Prisma.JsonValue | null
       userId: string | null
       organizationId: string | null
-    }, ExtArgs["result"]["upload"]>
+    }, ExtArgs["result"]["storedFile"]>
     composites: {}
   }
 
-  type UploadGetPayload<S extends boolean | null | undefined | UploadDefaultArgs> = $Result.GetResult<Prisma.$UploadPayload, S>
+  type StoredFileGetPayload<S extends boolean | null | undefined | StoredFileDefaultArgs> = $Result.GetResult<Prisma.$StoredFilePayload, S>
 
-  type UploadCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
-    Omit<UploadFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
-      select?: UploadCountAggregateInputType | true
+  type StoredFileCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<StoredFileFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: StoredFileCountAggregateInputType | true
     }
 
-  export interface UploadDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
-    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Upload'], meta: { name: 'Upload' } }
+  export interface StoredFileDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['StoredFile'], meta: { name: 'StoredFile' } }
     /**
-     * Find zero or one Upload that matches the filter.
-     * @param {UploadFindUniqueArgs} args - Arguments to find a Upload
+     * Find zero or one StoredFile that matches the filter.
+     * @param {StoredFileFindUniqueArgs} args - Arguments to find a StoredFile
      * @example
-     * // Get one Upload
-     * const upload = await prisma.upload.findUnique({
+     * // Get one StoredFile
+     * const storedFile = await prisma.storedFile.findUnique({
      *   where: {
      *     // ... provide filter here
      *   }
      * })
      */
-    findUnique<T extends UploadFindUniqueArgs>(args: SelectSubset<T, UploadFindUniqueArgs<ExtArgs>>): Prisma__UploadClient<$Result.GetResult<Prisma.$UploadPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    findUnique<T extends StoredFileFindUniqueArgs>(args: SelectSubset<T, StoredFileFindUniqueArgs<ExtArgs>>): Prisma__StoredFileClient<$Result.GetResult<Prisma.$StoredFilePayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
 
     /**
-     * Find one Upload that matches the filter or throw an error with `error.code='P2025'`
+     * Find one StoredFile that matches the filter or throw an error with `error.code='P2025'`
      * if no matches were found.
-     * @param {UploadFindUniqueOrThrowArgs} args - Arguments to find a Upload
+     * @param {StoredFileFindUniqueOrThrowArgs} args - Arguments to find a StoredFile
      * @example
-     * // Get one Upload
-     * const upload = await prisma.upload.findUniqueOrThrow({
+     * // Get one StoredFile
+     * const storedFile = await prisma.storedFile.findUniqueOrThrow({
      *   where: {
      *     // ... provide filter here
      *   }
      * })
      */
-    findUniqueOrThrow<T extends UploadFindUniqueOrThrowArgs>(args: SelectSubset<T, UploadFindUniqueOrThrowArgs<ExtArgs>>): Prisma__UploadClient<$Result.GetResult<Prisma.$UploadPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+    findUniqueOrThrow<T extends StoredFileFindUniqueOrThrowArgs>(args: SelectSubset<T, StoredFileFindUniqueOrThrowArgs<ExtArgs>>): Prisma__StoredFileClient<$Result.GetResult<Prisma.$StoredFilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
-     * Find the first Upload that matches the filter.
+     * Find the first StoredFile that matches the filter.
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     * @param {UploadFindFirstArgs} args - Arguments to find a Upload
+     * @param {StoredFileFindFirstArgs} args - Arguments to find a StoredFile
      * @example
-     * // Get one Upload
-     * const upload = await prisma.upload.findFirst({
+     * // Get one StoredFile
+     * const storedFile = await prisma.storedFile.findFirst({
      *   where: {
      *     // ... provide filter here
      *   }
      * })
      */
-    findFirst<T extends UploadFindFirstArgs>(args?: SelectSubset<T, UploadFindFirstArgs<ExtArgs>>): Prisma__UploadClient<$Result.GetResult<Prisma.$UploadPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    findFirst<T extends StoredFileFindFirstArgs>(args?: SelectSubset<T, StoredFileFindFirstArgs<ExtArgs>>): Prisma__StoredFileClient<$Result.GetResult<Prisma.$StoredFilePayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
 
     /**
-     * Find the first Upload that matches the filter or
+     * Find the first StoredFile that matches the filter or
      * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     * @param {UploadFindFirstOrThrowArgs} args - Arguments to find a Upload
+     * @param {StoredFileFindFirstOrThrowArgs} args - Arguments to find a StoredFile
      * @example
-     * // Get one Upload
-     * const upload = await prisma.upload.findFirstOrThrow({
+     * // Get one StoredFile
+     * const storedFile = await prisma.storedFile.findFirstOrThrow({
      *   where: {
      *     // ... provide filter here
      *   }
      * })
      */
-    findFirstOrThrow<T extends UploadFindFirstOrThrowArgs>(args?: SelectSubset<T, UploadFindFirstOrThrowArgs<ExtArgs>>): Prisma__UploadClient<$Result.GetResult<Prisma.$UploadPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+    findFirstOrThrow<T extends StoredFileFindFirstOrThrowArgs>(args?: SelectSubset<T, StoredFileFindFirstOrThrowArgs<ExtArgs>>): Prisma__StoredFileClient<$Result.GetResult<Prisma.$StoredFilePayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
-     * Find zero or more Uploads that matches the filter.
+     * Find zero or more StoredFiles that matches the filter.
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     * @param {UploadFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @param {StoredFileFindManyArgs} args - Arguments to filter and select certain fields only.
      * @example
-     * // Get all Uploads
-     * const uploads = await prisma.upload.findMany()
+     * // Get all StoredFiles
+     * const storedFiles = await prisma.storedFile.findMany()
      * 
-     * // Get first 10 Uploads
-     * const uploads = await prisma.upload.findMany({ take: 10 })
+     * // Get first 10 StoredFiles
+     * const storedFiles = await prisma.storedFile.findMany({ take: 10 })
      * 
      * // Only select the `id`
-     * const uploadWithIdOnly = await prisma.upload.findMany({ select: { id: true } })
+     * const storedFileWithIdOnly = await prisma.storedFile.findMany({ select: { id: true } })
      * 
      */
-    findMany<T extends UploadFindManyArgs>(args?: SelectSubset<T, UploadFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UploadPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+    findMany<T extends StoredFileFindManyArgs>(args?: SelectSubset<T, StoredFileFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$StoredFilePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
 
     /**
-     * Create a Upload.
-     * @param {UploadCreateArgs} args - Arguments to create a Upload.
+     * Create a StoredFile.
+     * @param {StoredFileCreateArgs} args - Arguments to create a StoredFile.
      * @example
-     * // Create one Upload
-     * const Upload = await prisma.upload.create({
+     * // Create one StoredFile
+     * const StoredFile = await prisma.storedFile.create({
      *   data: {
-     *     // ... data to create a Upload
+     *     // ... data to create a StoredFile
      *   }
      * })
      * 
      */
-    create<T extends UploadCreateArgs>(args: SelectSubset<T, UploadCreateArgs<ExtArgs>>): Prisma__UploadClient<$Result.GetResult<Prisma.$UploadPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+    create<T extends StoredFileCreateArgs>(args: SelectSubset<T, StoredFileCreateArgs<ExtArgs>>): Prisma__StoredFileClient<$Result.GetResult<Prisma.$StoredFilePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
-     * Create many Uploads.
-     * @param {UploadCreateManyArgs} args - Arguments to create many Uploads.
+     * Create many StoredFiles.
+     * @param {StoredFileCreateManyArgs} args - Arguments to create many StoredFiles.
      * @example
-     * // Create many Uploads
-     * const upload = await prisma.upload.createMany({
+     * // Create many StoredFiles
+     * const storedFile = await prisma.storedFile.createMany({
      *   data: [
      *     // ... provide data here
      *   ]
      * })
      *     
      */
-    createMany<T extends UploadCreateManyArgs>(args?: SelectSubset<T, UploadCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+    createMany<T extends StoredFileCreateManyArgs>(args?: SelectSubset<T, StoredFileCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
-     * Create many Uploads and returns the data saved in the database.
-     * @param {UploadCreateManyAndReturnArgs} args - Arguments to create many Uploads.
+     * Create many StoredFiles and returns the data saved in the database.
+     * @param {StoredFileCreateManyAndReturnArgs} args - Arguments to create many StoredFiles.
      * @example
-     * // Create many Uploads
-     * const upload = await prisma.upload.createManyAndReturn({
+     * // Create many StoredFiles
+     * const storedFile = await prisma.storedFile.createManyAndReturn({
      *   data: [
      *     // ... provide data here
      *   ]
      * })
      * 
-     * // Create many Uploads and only return the `id`
-     * const uploadWithIdOnly = await prisma.upload.createManyAndReturn({
+     * // Create many StoredFiles and only return the `id`
+     * const storedFileWithIdOnly = await prisma.storedFile.createManyAndReturn({
      *   select: { id: true },
      *   data: [
      *     // ... provide data here
@@ -25706,28 +25706,28 @@ export namespace Prisma {
      * Read more here: https://pris.ly/d/null-undefined
      * 
      */
-    createManyAndReturn<T extends UploadCreateManyAndReturnArgs>(args?: SelectSubset<T, UploadCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UploadPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+    createManyAndReturn<T extends StoredFileCreateManyAndReturnArgs>(args?: SelectSubset<T, StoredFileCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$StoredFilePayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
 
     /**
-     * Delete a Upload.
-     * @param {UploadDeleteArgs} args - Arguments to delete one Upload.
+     * Delete a StoredFile.
+     * @param {StoredFileDeleteArgs} args - Arguments to delete one StoredFile.
      * @example
-     * // Delete one Upload
-     * const Upload = await prisma.upload.delete({
+     * // Delete one StoredFile
+     * const StoredFile = await prisma.storedFile.delete({
      *   where: {
-     *     // ... filter to delete one Upload
+     *     // ... filter to delete one StoredFile
      *   }
      * })
      * 
      */
-    delete<T extends UploadDeleteArgs>(args: SelectSubset<T, UploadDeleteArgs<ExtArgs>>): Prisma__UploadClient<$Result.GetResult<Prisma.$UploadPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+    delete<T extends StoredFileDeleteArgs>(args: SelectSubset<T, StoredFileDeleteArgs<ExtArgs>>): Prisma__StoredFileClient<$Result.GetResult<Prisma.$StoredFilePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
-     * Update one Upload.
-     * @param {UploadUpdateArgs} args - Arguments to update one Upload.
+     * Update one StoredFile.
+     * @param {StoredFileUpdateArgs} args - Arguments to update one StoredFile.
      * @example
-     * // Update one Upload
-     * const upload = await prisma.upload.update({
+     * // Update one StoredFile
+     * const storedFile = await prisma.storedFile.update({
      *   where: {
      *     // ... provide filter here
      *   },
@@ -25737,30 +25737,30 @@ export namespace Prisma {
      * })
      * 
      */
-    update<T extends UploadUpdateArgs>(args: SelectSubset<T, UploadUpdateArgs<ExtArgs>>): Prisma__UploadClient<$Result.GetResult<Prisma.$UploadPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+    update<T extends StoredFileUpdateArgs>(args: SelectSubset<T, StoredFileUpdateArgs<ExtArgs>>): Prisma__StoredFileClient<$Result.GetResult<Prisma.$StoredFilePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
-     * Delete zero or more Uploads.
-     * @param {UploadDeleteManyArgs} args - Arguments to filter Uploads to delete.
+     * Delete zero or more StoredFiles.
+     * @param {StoredFileDeleteManyArgs} args - Arguments to filter StoredFiles to delete.
      * @example
-     * // Delete a few Uploads
-     * const { count } = await prisma.upload.deleteMany({
+     * // Delete a few StoredFiles
+     * const { count } = await prisma.storedFile.deleteMany({
      *   where: {
      *     // ... provide filter here
      *   }
      * })
      * 
      */
-    deleteMany<T extends UploadDeleteManyArgs>(args?: SelectSubset<T, UploadDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+    deleteMany<T extends StoredFileDeleteManyArgs>(args?: SelectSubset<T, StoredFileDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
-     * Update zero or more Uploads.
+     * Update zero or more StoredFiles.
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     * @param {UploadUpdateManyArgs} args - Arguments to update one or more rows.
+     * @param {StoredFileUpdateManyArgs} args - Arguments to update one or more rows.
      * @example
-     * // Update many Uploads
-     * const upload = await prisma.upload.updateMany({
+     * // Update many StoredFiles
+     * const storedFile = await prisma.storedFile.updateMany({
      *   where: {
      *     // ... provide filter here
      *   },
@@ -25770,14 +25770,14 @@ export namespace Prisma {
      * })
      * 
      */
-    updateMany<T extends UploadUpdateManyArgs>(args: SelectSubset<T, UploadUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+    updateMany<T extends StoredFileUpdateManyArgs>(args: SelectSubset<T, StoredFileUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
-     * Update zero or more Uploads and returns the data updated in the database.
-     * @param {UploadUpdateManyAndReturnArgs} args - Arguments to update many Uploads.
+     * Update zero or more StoredFiles and returns the data updated in the database.
+     * @param {StoredFileUpdateManyAndReturnArgs} args - Arguments to update many StoredFiles.
      * @example
-     * // Update many Uploads
-     * const upload = await prisma.upload.updateManyAndReturn({
+     * // Update many StoredFiles
+     * const storedFile = await prisma.storedFile.updateManyAndReturn({
      *   where: {
      *     // ... provide filter here
      *   },
@@ -25786,8 +25786,8 @@ export namespace Prisma {
      *   ]
      * })
      * 
-     * // Update zero or more Uploads and only return the `id`
-     * const uploadWithIdOnly = await prisma.upload.updateManyAndReturn({
+     * // Update zero or more StoredFiles and only return the `id`
+     * const storedFileWithIdOnly = await prisma.storedFile.updateManyAndReturn({
      *   select: { id: true },
      *   where: {
      *     // ... provide filter here
@@ -25800,56 +25800,56 @@ export namespace Prisma {
      * Read more here: https://pris.ly/d/null-undefined
      * 
      */
-    updateManyAndReturn<T extends UploadUpdateManyAndReturnArgs>(args: SelectSubset<T, UploadUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UploadPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+    updateManyAndReturn<T extends StoredFileUpdateManyAndReturnArgs>(args: SelectSubset<T, StoredFileUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$StoredFilePayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
 
     /**
-     * Create or update one Upload.
-     * @param {UploadUpsertArgs} args - Arguments to update or create a Upload.
+     * Create or update one StoredFile.
+     * @param {StoredFileUpsertArgs} args - Arguments to update or create a StoredFile.
      * @example
-     * // Update or create a Upload
-     * const upload = await prisma.upload.upsert({
+     * // Update or create a StoredFile
+     * const storedFile = await prisma.storedFile.upsert({
      *   create: {
-     *     // ... data to create a Upload
+     *     // ... data to create a StoredFile
      *   },
      *   update: {
      *     // ... in case it already exists, update
      *   },
      *   where: {
-     *     // ... the filter for the Upload we want to update
+     *     // ... the filter for the StoredFile we want to update
      *   }
      * })
      */
-    upsert<T extends UploadUpsertArgs>(args: SelectSubset<T, UploadUpsertArgs<ExtArgs>>): Prisma__UploadClient<$Result.GetResult<Prisma.$UploadPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+    upsert<T extends StoredFileUpsertArgs>(args: SelectSubset<T, StoredFileUpsertArgs<ExtArgs>>): Prisma__StoredFileClient<$Result.GetResult<Prisma.$StoredFilePayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
 
     /**
-     * Count the number of Uploads.
+     * Count the number of StoredFiles.
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     * @param {UploadCountArgs} args - Arguments to filter Uploads to count.
+     * @param {StoredFileCountArgs} args - Arguments to filter StoredFiles to count.
      * @example
-     * // Count the number of Uploads
-     * const count = await prisma.upload.count({
+     * // Count the number of StoredFiles
+     * const count = await prisma.storedFile.count({
      *   where: {
-     *     // ... the filter for the Uploads we want to count
+     *     // ... the filter for the StoredFiles we want to count
      *   }
      * })
     **/
-    count<T extends UploadCountArgs>(
-      args?: Subset<T, UploadCountArgs>,
+    count<T extends StoredFileCountArgs>(
+      args?: Subset<T, StoredFileCountArgs>,
     ): Prisma.PrismaPromise<
       T extends $Utils.Record<'select', any>
         ? T['select'] extends true
           ? number
-          : GetScalarType<T['select'], UploadCountAggregateOutputType>
+          : GetScalarType<T['select'], StoredFileCountAggregateOutputType>
         : number
     >
 
     /**
-     * Allows you to perform aggregations operations on a Upload.
+     * Allows you to perform aggregations operations on a StoredFile.
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     * @param {UploadAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @param {StoredFileAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
      * @example
      * // Ordered by age ascending
      * // Where email contains prisma.io
@@ -25869,13 +25869,13 @@ export namespace Prisma {
      *   take: 10,
      * })
     **/
-    aggregate<T extends UploadAggregateArgs>(args: Subset<T, UploadAggregateArgs>): Prisma.PrismaPromise<GetUploadAggregateType<T>>
+    aggregate<T extends StoredFileAggregateArgs>(args: Subset<T, StoredFileAggregateArgs>): Prisma.PrismaPromise<GetStoredFileAggregateType<T>>
 
     /**
-     * Group by Upload.
+     * Group by StoredFile.
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     * @param {UploadGroupByArgs} args - Group by arguments.
+     * @param {StoredFileGroupByArgs} args - Group by arguments.
      * @example
      * // Group by city, order by createdAt, get count
      * const result = await prisma.user.groupBy({
@@ -25890,14 +25890,14 @@ export namespace Prisma {
      * 
     **/
     groupBy<
-      T extends UploadGroupByArgs,
+      T extends StoredFileGroupByArgs,
       HasSelectOrTake extends Or<
         Extends<'skip', Keys<T>>,
         Extends<'take', Keys<T>>
       >,
       OrderByArg extends True extends HasSelectOrTake
-        ? { orderBy: UploadGroupByArgs['orderBy'] }
-        : { orderBy?: UploadGroupByArgs['orderBy'] },
+        ? { orderBy: StoredFileGroupByArgs['orderBy'] }
+        : { orderBy?: StoredFileGroupByArgs['orderBy'] },
       OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
       ByFields extends MaybeTupleToUnion<T['by']>,
       ByValid extends Has<ByFields, OrderFields>,
@@ -25946,23 +25946,23 @@ export namespace Prisma {
             ? never
             : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
         }[OrderFields]
-    >(args: SubsetIntersection<T, UploadGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetUploadGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+    >(args: SubsetIntersection<T, StoredFileGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetStoredFileGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
   /**
-   * Fields of the Upload model
+   * Fields of the StoredFile model
    */
-  readonly fields: UploadFieldRefs;
+  readonly fields: StoredFileFieldRefs;
   }
 
   /**
-   * The delegate class that acts as a "Promise-like" for Upload.
+   * The delegate class that acts as a "Promise-like" for StoredFile.
    * Why is this prefixed with `Prisma__`?
    * Because we want to prevent naming conflicts as mentioned in
    * https://github.com/prisma/prisma-client-js/issues/707
    */
-  export interface Prisma__UploadClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+  export interface Prisma__StoredFileClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    user<T extends Upload$userArgs<ExtArgs> = {}>(args?: Subset<T, Upload$userArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-    organization<T extends Upload$organizationArgs<ExtArgs> = {}>(args?: Subset<T, Upload$organizationArgs<ExtArgs>>): Prisma__OrganizationClient<$Result.GetResult<Prisma.$OrganizationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    user<T extends StoredFile$userArgs<ExtArgs> = {}>(args?: Subset<T, StoredFile$userArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    organization<T extends StoredFile$organizationArgs<ExtArgs> = {}>(args?: Subset<T, StoredFile$organizationArgs<ExtArgs>>): Prisma__OrganizationClient<$Result.GetResult<Prisma.$OrganizationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -25989,425 +25989,425 @@ export namespace Prisma {
 
 
   /**
-   * Fields of the Upload model
+   * Fields of the StoredFile model
    */
-  interface UploadFieldRefs {
-    readonly id: FieldRef<"Upload", 'String'>
-    readonly createdAt: FieldRef<"Upload", 'DateTime'>
-    readonly updatedAt: FieldRef<"Upload", 'DateTime'>
-    readonly provider: FieldRef<"Upload", 'StorageProvider'>
-    readonly providerFileId: FieldRef<"Upload", 'String'>
-    readonly folder: FieldRef<"Upload", 'String'>
-    readonly filename: FieldRef<"Upload", 'String'>
-    readonly originalName: FieldRef<"Upload", 'String'>
-    readonly mimeType: FieldRef<"Upload", 'String'>
-    readonly size: FieldRef<"Upload", 'Int'>
-    readonly url: FieldRef<"Upload", 'String'>
-    readonly publicUrl: FieldRef<"Upload", 'String'>
-    readonly width: FieldRef<"Upload", 'Int'>
-    readonly height: FieldRef<"Upload", 'Int'>
-    readonly metadata: FieldRef<"Upload", 'Json'>
-    readonly userId: FieldRef<"Upload", 'String'>
-    readonly organizationId: FieldRef<"Upload", 'String'>
+  interface StoredFileFieldRefs {
+    readonly id: FieldRef<"StoredFile", 'String'>
+    readonly createdAt: FieldRef<"StoredFile", 'DateTime'>
+    readonly updatedAt: FieldRef<"StoredFile", 'DateTime'>
+    readonly provider: FieldRef<"StoredFile", 'StorageProvider'>
+    readonly providerFileId: FieldRef<"StoredFile", 'String'>
+    readonly folder: FieldRef<"StoredFile", 'String'>
+    readonly filename: FieldRef<"StoredFile", 'String'>
+    readonly originalName: FieldRef<"StoredFile", 'String'>
+    readonly mimeType: FieldRef<"StoredFile", 'String'>
+    readonly size: FieldRef<"StoredFile", 'Int'>
+    readonly url: FieldRef<"StoredFile", 'String'>
+    readonly publicUrl: FieldRef<"StoredFile", 'String'>
+    readonly width: FieldRef<"StoredFile", 'Int'>
+    readonly height: FieldRef<"StoredFile", 'Int'>
+    readonly metadata: FieldRef<"StoredFile", 'Json'>
+    readonly userId: FieldRef<"StoredFile", 'String'>
+    readonly organizationId: FieldRef<"StoredFile", 'String'>
   }
     
 
   // Custom InputTypes
   /**
-   * Upload findUnique
+   * StoredFile findUnique
    */
-  export type UploadFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type StoredFileFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the Upload
+     * Select specific fields to fetch from the StoredFile
      */
-    select?: UploadSelect<ExtArgs> | null
+    select?: StoredFileSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the Upload
+     * Omit specific fields from the StoredFile
      */
-    omit?: UploadOmit<ExtArgs> | null
+    omit?: StoredFileOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: UploadInclude<ExtArgs> | null
+    include?: StoredFileInclude<ExtArgs> | null
     /**
-     * Filter, which Upload to fetch.
+     * Filter, which StoredFile to fetch.
      */
-    where: UploadWhereUniqueInput
+    where: StoredFileWhereUniqueInput
   }
 
   /**
-   * Upload findUniqueOrThrow
+   * StoredFile findUniqueOrThrow
    */
-  export type UploadFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type StoredFileFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the Upload
+     * Select specific fields to fetch from the StoredFile
      */
-    select?: UploadSelect<ExtArgs> | null
+    select?: StoredFileSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the Upload
+     * Omit specific fields from the StoredFile
      */
-    omit?: UploadOmit<ExtArgs> | null
+    omit?: StoredFileOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: UploadInclude<ExtArgs> | null
+    include?: StoredFileInclude<ExtArgs> | null
     /**
-     * Filter, which Upload to fetch.
+     * Filter, which StoredFile to fetch.
      */
-    where: UploadWhereUniqueInput
+    where: StoredFileWhereUniqueInput
   }
 
   /**
-   * Upload findFirst
+   * StoredFile findFirst
    */
-  export type UploadFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type StoredFileFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the Upload
+     * Select specific fields to fetch from the StoredFile
      */
-    select?: UploadSelect<ExtArgs> | null
+    select?: StoredFileSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the Upload
+     * Omit specific fields from the StoredFile
      */
-    omit?: UploadOmit<ExtArgs> | null
+    omit?: StoredFileOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: UploadInclude<ExtArgs> | null
+    include?: StoredFileInclude<ExtArgs> | null
     /**
-     * Filter, which Upload to fetch.
+     * Filter, which StoredFile to fetch.
      */
-    where?: UploadWhereInput
+    where?: StoredFileWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
      * 
-     * Determine the order of Uploads to fetch.
+     * Determine the order of StoredFiles to fetch.
      */
-    orderBy?: UploadOrderByWithRelationInput | UploadOrderByWithRelationInput[]
+    orderBy?: StoredFileOrderByWithRelationInput | StoredFileOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
      * 
-     * Sets the position for searching for Uploads.
+     * Sets the position for searching for StoredFiles.
      */
-    cursor?: UploadWhereUniqueInput
+    cursor?: StoredFileWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
-     * Take `±n` Uploads from the position of the cursor.
+     * Take `±n` StoredFiles from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
-     * Skip the first `n` Uploads.
+     * Skip the first `n` StoredFiles.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
      * 
-     * Filter by unique combinations of Uploads.
+     * Filter by unique combinations of StoredFiles.
      */
-    distinct?: UploadScalarFieldEnum | UploadScalarFieldEnum[]
+    distinct?: StoredFileScalarFieldEnum | StoredFileScalarFieldEnum[]
   }
 
   /**
-   * Upload findFirstOrThrow
+   * StoredFile findFirstOrThrow
    */
-  export type UploadFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type StoredFileFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the Upload
+     * Select specific fields to fetch from the StoredFile
      */
-    select?: UploadSelect<ExtArgs> | null
+    select?: StoredFileSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the Upload
+     * Omit specific fields from the StoredFile
      */
-    omit?: UploadOmit<ExtArgs> | null
+    omit?: StoredFileOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: UploadInclude<ExtArgs> | null
+    include?: StoredFileInclude<ExtArgs> | null
     /**
-     * Filter, which Upload to fetch.
+     * Filter, which StoredFile to fetch.
      */
-    where?: UploadWhereInput
+    where?: StoredFileWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
      * 
-     * Determine the order of Uploads to fetch.
+     * Determine the order of StoredFiles to fetch.
      */
-    orderBy?: UploadOrderByWithRelationInput | UploadOrderByWithRelationInput[]
+    orderBy?: StoredFileOrderByWithRelationInput | StoredFileOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
      * 
-     * Sets the position for searching for Uploads.
+     * Sets the position for searching for StoredFiles.
      */
-    cursor?: UploadWhereUniqueInput
+    cursor?: StoredFileWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
-     * Take `±n` Uploads from the position of the cursor.
+     * Take `±n` StoredFiles from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
-     * Skip the first `n` Uploads.
+     * Skip the first `n` StoredFiles.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
      * 
-     * Filter by unique combinations of Uploads.
+     * Filter by unique combinations of StoredFiles.
      */
-    distinct?: UploadScalarFieldEnum | UploadScalarFieldEnum[]
+    distinct?: StoredFileScalarFieldEnum | StoredFileScalarFieldEnum[]
   }
 
   /**
-   * Upload findMany
+   * StoredFile findMany
    */
-  export type UploadFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type StoredFileFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the Upload
+     * Select specific fields to fetch from the StoredFile
      */
-    select?: UploadSelect<ExtArgs> | null
+    select?: StoredFileSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the Upload
+     * Omit specific fields from the StoredFile
      */
-    omit?: UploadOmit<ExtArgs> | null
+    omit?: StoredFileOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: UploadInclude<ExtArgs> | null
+    include?: StoredFileInclude<ExtArgs> | null
     /**
-     * Filter, which Uploads to fetch.
+     * Filter, which StoredFiles to fetch.
      */
-    where?: UploadWhereInput
+    where?: StoredFileWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
      * 
-     * Determine the order of Uploads to fetch.
+     * Determine the order of StoredFiles to fetch.
      */
-    orderBy?: UploadOrderByWithRelationInput | UploadOrderByWithRelationInput[]
+    orderBy?: StoredFileOrderByWithRelationInput | StoredFileOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
      * 
-     * Sets the position for listing Uploads.
+     * Sets the position for listing StoredFiles.
      */
-    cursor?: UploadWhereUniqueInput
+    cursor?: StoredFileWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
-     * Take `±n` Uploads from the position of the cursor.
+     * Take `±n` StoredFiles from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
-     * Skip the first `n` Uploads.
+     * Skip the first `n` StoredFiles.
      */
     skip?: number
-    distinct?: UploadScalarFieldEnum | UploadScalarFieldEnum[]
+    distinct?: StoredFileScalarFieldEnum | StoredFileScalarFieldEnum[]
   }
 
   /**
-   * Upload create
+   * StoredFile create
    */
-  export type UploadCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type StoredFileCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the Upload
+     * Select specific fields to fetch from the StoredFile
      */
-    select?: UploadSelect<ExtArgs> | null
+    select?: StoredFileSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the Upload
+     * Omit specific fields from the StoredFile
      */
-    omit?: UploadOmit<ExtArgs> | null
+    omit?: StoredFileOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: UploadInclude<ExtArgs> | null
+    include?: StoredFileInclude<ExtArgs> | null
     /**
-     * The data needed to create a Upload.
+     * The data needed to create a StoredFile.
      */
-    data: XOR<UploadCreateInput, UploadUncheckedCreateInput>
+    data: XOR<StoredFileCreateInput, StoredFileUncheckedCreateInput>
   }
 
   /**
-   * Upload createMany
+   * StoredFile createMany
    */
-  export type UploadCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type StoredFileCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * The data used to create many Uploads.
+     * The data used to create many StoredFiles.
      */
-    data: UploadCreateManyInput | UploadCreateManyInput[]
+    data: StoredFileCreateManyInput | StoredFileCreateManyInput[]
     skipDuplicates?: boolean
   }
 
   /**
-   * Upload createManyAndReturn
+   * StoredFile createManyAndReturn
    */
-  export type UploadCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type StoredFileCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the Upload
+     * Select specific fields to fetch from the StoredFile
      */
-    select?: UploadSelectCreateManyAndReturn<ExtArgs> | null
+    select?: StoredFileSelectCreateManyAndReturn<ExtArgs> | null
     /**
-     * Omit specific fields from the Upload
+     * Omit specific fields from the StoredFile
      */
-    omit?: UploadOmit<ExtArgs> | null
+    omit?: StoredFileOmit<ExtArgs> | null
     /**
-     * The data used to create many Uploads.
+     * The data used to create many StoredFiles.
      */
-    data: UploadCreateManyInput | UploadCreateManyInput[]
+    data: StoredFileCreateManyInput | StoredFileCreateManyInput[]
     skipDuplicates?: boolean
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: UploadIncludeCreateManyAndReturn<ExtArgs> | null
+    include?: StoredFileIncludeCreateManyAndReturn<ExtArgs> | null
   }
 
   /**
-   * Upload update
+   * StoredFile update
    */
-  export type UploadUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type StoredFileUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the Upload
+     * Select specific fields to fetch from the StoredFile
      */
-    select?: UploadSelect<ExtArgs> | null
+    select?: StoredFileSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the Upload
+     * Omit specific fields from the StoredFile
      */
-    omit?: UploadOmit<ExtArgs> | null
+    omit?: StoredFileOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: UploadInclude<ExtArgs> | null
+    include?: StoredFileInclude<ExtArgs> | null
     /**
-     * The data needed to update a Upload.
+     * The data needed to update a StoredFile.
      */
-    data: XOR<UploadUpdateInput, UploadUncheckedUpdateInput>
+    data: XOR<StoredFileUpdateInput, StoredFileUncheckedUpdateInput>
     /**
-     * Choose, which Upload to update.
+     * Choose, which StoredFile to update.
      */
-    where: UploadWhereUniqueInput
+    where: StoredFileWhereUniqueInput
   }
 
   /**
-   * Upload updateMany
+   * StoredFile updateMany
    */
-  export type UploadUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type StoredFileUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * The data used to update Uploads.
+     * The data used to update StoredFiles.
      */
-    data: XOR<UploadUpdateManyMutationInput, UploadUncheckedUpdateManyInput>
+    data: XOR<StoredFileUpdateManyMutationInput, StoredFileUncheckedUpdateManyInput>
     /**
-     * Filter which Uploads to update
+     * Filter which StoredFiles to update
      */
-    where?: UploadWhereInput
+    where?: StoredFileWhereInput
     /**
-     * Limit how many Uploads to update.
+     * Limit how many StoredFiles to update.
      */
     limit?: number
   }
 
   /**
-   * Upload updateManyAndReturn
+   * StoredFile updateManyAndReturn
    */
-  export type UploadUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type StoredFileUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the Upload
+     * Select specific fields to fetch from the StoredFile
      */
-    select?: UploadSelectUpdateManyAndReturn<ExtArgs> | null
+    select?: StoredFileSelectUpdateManyAndReturn<ExtArgs> | null
     /**
-     * Omit specific fields from the Upload
+     * Omit specific fields from the StoredFile
      */
-    omit?: UploadOmit<ExtArgs> | null
+    omit?: StoredFileOmit<ExtArgs> | null
     /**
-     * The data used to update Uploads.
+     * The data used to update StoredFiles.
      */
-    data: XOR<UploadUpdateManyMutationInput, UploadUncheckedUpdateManyInput>
+    data: XOR<StoredFileUpdateManyMutationInput, StoredFileUncheckedUpdateManyInput>
     /**
-     * Filter which Uploads to update
+     * Filter which StoredFiles to update
      */
-    where?: UploadWhereInput
+    where?: StoredFileWhereInput
     /**
-     * Limit how many Uploads to update.
+     * Limit how many StoredFiles to update.
      */
     limit?: number
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: UploadIncludeUpdateManyAndReturn<ExtArgs> | null
+    include?: StoredFileIncludeUpdateManyAndReturn<ExtArgs> | null
   }
 
   /**
-   * Upload upsert
+   * StoredFile upsert
    */
-  export type UploadUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type StoredFileUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the Upload
+     * Select specific fields to fetch from the StoredFile
      */
-    select?: UploadSelect<ExtArgs> | null
+    select?: StoredFileSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the Upload
+     * Omit specific fields from the StoredFile
      */
-    omit?: UploadOmit<ExtArgs> | null
+    omit?: StoredFileOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: UploadInclude<ExtArgs> | null
+    include?: StoredFileInclude<ExtArgs> | null
     /**
-     * The filter to search for the Upload to update in case it exists.
+     * The filter to search for the StoredFile to update in case it exists.
      */
-    where: UploadWhereUniqueInput
+    where: StoredFileWhereUniqueInput
     /**
-     * In case the Upload found by the `where` argument doesn't exist, create a new Upload with this data.
+     * In case the StoredFile found by the `where` argument doesn't exist, create a new StoredFile with this data.
      */
-    create: XOR<UploadCreateInput, UploadUncheckedCreateInput>
+    create: XOR<StoredFileCreateInput, StoredFileUncheckedCreateInput>
     /**
-     * In case the Upload was found with the provided `where` argument, update it with this data.
+     * In case the StoredFile was found with the provided `where` argument, update it with this data.
      */
-    update: XOR<UploadUpdateInput, UploadUncheckedUpdateInput>
+    update: XOR<StoredFileUpdateInput, StoredFileUncheckedUpdateInput>
   }
 
   /**
-   * Upload delete
+   * StoredFile delete
    */
-  export type UploadDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type StoredFileDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the Upload
+     * Select specific fields to fetch from the StoredFile
      */
-    select?: UploadSelect<ExtArgs> | null
+    select?: StoredFileSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the Upload
+     * Omit specific fields from the StoredFile
      */
-    omit?: UploadOmit<ExtArgs> | null
+    omit?: StoredFileOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: UploadInclude<ExtArgs> | null
+    include?: StoredFileInclude<ExtArgs> | null
     /**
-     * Filter which Upload to delete.
+     * Filter which StoredFile to delete.
      */
-    where: UploadWhereUniqueInput
+    where: StoredFileWhereUniqueInput
   }
 
   /**
-   * Upload deleteMany
+   * StoredFile deleteMany
    */
-  export type UploadDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type StoredFileDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Filter which Uploads to delete
+     * Filter which StoredFiles to delete
      */
-    where?: UploadWhereInput
+    where?: StoredFileWhereInput
     /**
-     * Limit how many Uploads to delete.
+     * Limit how many StoredFiles to delete.
      */
     limit?: number
   }
 
   /**
-   * Upload.user
+   * StoredFile.user
    */
-  export type Upload$userArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type StoredFile$userArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
      * Select specific fields to fetch from the User
      */
@@ -26424,9 +26424,9 @@ export namespace Prisma {
   }
 
   /**
-   * Upload.organization
+   * StoredFile.organization
    */
-  export type Upload$organizationArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type StoredFile$organizationArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
      * Select specific fields to fetch from the Organization
      */
@@ -26443,21 +26443,21 @@ export namespace Prisma {
   }
 
   /**
-   * Upload without action
+   * StoredFile without action
    */
-  export type UploadDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type StoredFileDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the Upload
+     * Select specific fields to fetch from the StoredFile
      */
-    select?: UploadSelect<ExtArgs> | null
+    select?: StoredFileSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the Upload
+     * Omit specific fields from the StoredFile
      */
-    omit?: UploadOmit<ExtArgs> | null
+    omit?: StoredFileOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: UploadInclude<ExtArgs> | null
+    include?: StoredFileInclude<ExtArgs> | null
   }
 
 
@@ -26967,7 +26967,7 @@ export namespace Prisma {
       emails: Prisma.$EmailPayload<ExtArgs>[]
       links: Prisma.$LinkPayload<ExtArgs>[]
       phoneNumbers: Prisma.$PhoneNumberPayload<ExtArgs>[]
-      images: Prisma.$UploadPayload<ExtArgs>[]
+      images: Prisma.$StoredFilePayload<ExtArgs>[]
       organizations: Prisma.$OrganizationMemberPayload<ExtArgs>[]
       addresses: Prisma.$AddressPayload<ExtArgs>[]
       invitesSent: Prisma.$InvitePayload<ExtArgs>[]
@@ -27405,7 +27405,7 @@ export namespace Prisma {
     emails<T extends User$emailsArgs<ExtArgs> = {}>(args?: Subset<T, User$emailsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EmailPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     links<T extends User$linksArgs<ExtArgs> = {}>(args?: Subset<T, User$linksArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$LinkPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     phoneNumbers<T extends User$phoneNumbersArgs<ExtArgs> = {}>(args?: Subset<T, User$phoneNumbersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PhoneNumberPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    images<T extends User$imagesArgs<ExtArgs> = {}>(args?: Subset<T, User$imagesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UploadPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    images<T extends User$imagesArgs<ExtArgs> = {}>(args?: Subset<T, User$imagesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$StoredFilePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     organizations<T extends User$organizationsArgs<ExtArgs> = {}>(args?: Subset<T, User$organizationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OrganizationMemberPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     addresses<T extends User$addressesArgs<ExtArgs> = {}>(args?: Subset<T, User$addressesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AddressPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     invitesSent<T extends User$invitesSentArgs<ExtArgs> = {}>(args?: Subset<T, User$invitesSentArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$InvitePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -27937,23 +27937,23 @@ export namespace Prisma {
    */
   export type User$imagesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the Upload
+     * Select specific fields to fetch from the StoredFile
      */
-    select?: UploadSelect<ExtArgs> | null
+    select?: StoredFileSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the Upload
+     * Omit specific fields from the StoredFile
      */
-    omit?: UploadOmit<ExtArgs> | null
+    omit?: StoredFileOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: UploadInclude<ExtArgs> | null
-    where?: UploadWhereInput
-    orderBy?: UploadOrderByWithRelationInput | UploadOrderByWithRelationInput[]
-    cursor?: UploadWhereUniqueInput
+    include?: StoredFileInclude<ExtArgs> | null
+    where?: StoredFileWhereInput
+    orderBy?: StoredFileOrderByWithRelationInput | StoredFileOrderByWithRelationInput[]
+    cursor?: StoredFileWhereUniqueInput
     take?: number
     skip?: number
-    distinct?: UploadScalarFieldEnum | UploadScalarFieldEnum[]
+    distinct?: StoredFileScalarFieldEnum | StoredFileScalarFieldEnum[]
   }
 
   /**
@@ -30701,7 +30701,7 @@ export namespace Prisma {
   export type TeamMemberScalarFieldEnum = (typeof TeamMemberScalarFieldEnum)[keyof typeof TeamMemberScalarFieldEnum]
 
 
-  export const UploadScalarFieldEnum: {
+  export const StoredFileScalarFieldEnum: {
     id: 'id',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt',
@@ -30721,7 +30721,7 @@ export namespace Prisma {
     organizationId: 'organizationId'
   };
 
-  export type UploadScalarFieldEnum = (typeof UploadScalarFieldEnum)[keyof typeof UploadScalarFieldEnum]
+  export type StoredFileScalarFieldEnum = (typeof StoredFileScalarFieldEnum)[keyof typeof StoredFileScalarFieldEnum]
 
 
   export const UserScalarFieldEnum: {
@@ -31803,7 +31803,7 @@ export namespace Prisma {
     emails?: EmailListRelationFilter
     links?: LinkListRelationFilter
     phoneNumbers?: PhoneNumberListRelationFilter
-    images?: UploadListRelationFilter
+    images?: StoredFileListRelationFilter
     members?: OrganizationMemberListRelationFilter
     addresses?: AddressListRelationFilter
     invites?: InviteListRelationFilter
@@ -31821,7 +31821,7 @@ export namespace Prisma {
     emails?: EmailOrderByRelationAggregateInput
     links?: LinkOrderByRelationAggregateInput
     phoneNumbers?: PhoneNumberOrderByRelationAggregateInput
-    images?: UploadOrderByRelationAggregateInput
+    images?: StoredFileOrderByRelationAggregateInput
     members?: OrganizationMemberOrderByRelationAggregateInput
     addresses?: AddressOrderByRelationAggregateInput
     invites?: InviteOrderByRelationAggregateInput
@@ -31842,7 +31842,7 @@ export namespace Prisma {
     emails?: EmailListRelationFilter
     links?: LinkListRelationFilter
     phoneNumbers?: PhoneNumberListRelationFilter
-    images?: UploadListRelationFilter
+    images?: StoredFileListRelationFilter
     members?: OrganizationMemberListRelationFilter
     addresses?: AddressListRelationFilter
     invites?: InviteListRelationFilter
@@ -32474,32 +32474,32 @@ export namespace Prisma {
     roleId?: StringWithAggregatesFilter<"TeamMember"> | string
   }
 
-  export type UploadWhereInput = {
-    AND?: UploadWhereInput | UploadWhereInput[]
-    OR?: UploadWhereInput[]
-    NOT?: UploadWhereInput | UploadWhereInput[]
-    id?: StringFilter<"Upload"> | string
-    createdAt?: DateTimeFilter<"Upload"> | Date | string
-    updatedAt?: DateTimeFilter<"Upload"> | Date | string
-    provider?: EnumStorageProviderFilter<"Upload"> | $Enums.StorageProvider
-    providerFileId?: StringFilter<"Upload"> | string
-    folder?: StringNullableFilter<"Upload"> | string | null
-    filename?: StringFilter<"Upload"> | string
-    originalName?: StringFilter<"Upload"> | string
-    mimeType?: StringFilter<"Upload"> | string
-    size?: IntFilter<"Upload"> | number
-    url?: StringFilter<"Upload"> | string
-    publicUrl?: StringNullableFilter<"Upload"> | string | null
-    width?: IntNullableFilter<"Upload"> | number | null
-    height?: IntNullableFilter<"Upload"> | number | null
-    metadata?: JsonNullableFilter<"Upload">
-    userId?: StringNullableFilter<"Upload"> | string | null
-    organizationId?: StringNullableFilter<"Upload"> | string | null
+  export type StoredFileWhereInput = {
+    AND?: StoredFileWhereInput | StoredFileWhereInput[]
+    OR?: StoredFileWhereInput[]
+    NOT?: StoredFileWhereInput | StoredFileWhereInput[]
+    id?: StringFilter<"StoredFile"> | string
+    createdAt?: DateTimeFilter<"StoredFile"> | Date | string
+    updatedAt?: DateTimeFilter<"StoredFile"> | Date | string
+    provider?: EnumStorageProviderFilter<"StoredFile"> | $Enums.StorageProvider
+    providerFileId?: StringFilter<"StoredFile"> | string
+    folder?: StringNullableFilter<"StoredFile"> | string | null
+    filename?: StringFilter<"StoredFile"> | string
+    originalName?: StringFilter<"StoredFile"> | string
+    mimeType?: StringFilter<"StoredFile"> | string
+    size?: IntFilter<"StoredFile"> | number
+    url?: StringFilter<"StoredFile"> | string
+    publicUrl?: StringNullableFilter<"StoredFile"> | string | null
+    width?: IntNullableFilter<"StoredFile"> | number | null
+    height?: IntNullableFilter<"StoredFile"> | number | null
+    metadata?: JsonNullableFilter<"StoredFile">
+    userId?: StringNullableFilter<"StoredFile"> | string | null
+    organizationId?: StringNullableFilter<"StoredFile"> | string | null
     user?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     organization?: XOR<OrganizationNullableScalarRelationFilter, OrganizationWhereInput> | null
   }
 
-  export type UploadOrderByWithRelationInput = {
+  export type StoredFileOrderByWithRelationInput = {
     id?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -32521,32 +32521,32 @@ export namespace Prisma {
     organization?: OrganizationOrderByWithRelationInput
   }
 
-  export type UploadWhereUniqueInput = Prisma.AtLeast<{
+  export type StoredFileWhereUniqueInput = Prisma.AtLeast<{
     id?: string
-    AND?: UploadWhereInput | UploadWhereInput[]
-    OR?: UploadWhereInput[]
-    NOT?: UploadWhereInput | UploadWhereInput[]
-    createdAt?: DateTimeFilter<"Upload"> | Date | string
-    updatedAt?: DateTimeFilter<"Upload"> | Date | string
-    provider?: EnumStorageProviderFilter<"Upload"> | $Enums.StorageProvider
-    providerFileId?: StringFilter<"Upload"> | string
-    folder?: StringNullableFilter<"Upload"> | string | null
-    filename?: StringFilter<"Upload"> | string
-    originalName?: StringFilter<"Upload"> | string
-    mimeType?: StringFilter<"Upload"> | string
-    size?: IntFilter<"Upload"> | number
-    url?: StringFilter<"Upload"> | string
-    publicUrl?: StringNullableFilter<"Upload"> | string | null
-    width?: IntNullableFilter<"Upload"> | number | null
-    height?: IntNullableFilter<"Upload"> | number | null
-    metadata?: JsonNullableFilter<"Upload">
-    userId?: StringNullableFilter<"Upload"> | string | null
-    organizationId?: StringNullableFilter<"Upload"> | string | null
+    AND?: StoredFileWhereInput | StoredFileWhereInput[]
+    OR?: StoredFileWhereInput[]
+    NOT?: StoredFileWhereInput | StoredFileWhereInput[]
+    createdAt?: DateTimeFilter<"StoredFile"> | Date | string
+    updatedAt?: DateTimeFilter<"StoredFile"> | Date | string
+    provider?: EnumStorageProviderFilter<"StoredFile"> | $Enums.StorageProvider
+    providerFileId?: StringFilter<"StoredFile"> | string
+    folder?: StringNullableFilter<"StoredFile"> | string | null
+    filename?: StringFilter<"StoredFile"> | string
+    originalName?: StringFilter<"StoredFile"> | string
+    mimeType?: StringFilter<"StoredFile"> | string
+    size?: IntFilter<"StoredFile"> | number
+    url?: StringFilter<"StoredFile"> | string
+    publicUrl?: StringNullableFilter<"StoredFile"> | string | null
+    width?: IntNullableFilter<"StoredFile"> | number | null
+    height?: IntNullableFilter<"StoredFile"> | number | null
+    metadata?: JsonNullableFilter<"StoredFile">
+    userId?: StringNullableFilter<"StoredFile"> | string | null
+    organizationId?: StringNullableFilter<"StoredFile"> | string | null
     user?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     organization?: XOR<OrganizationNullableScalarRelationFilter, OrganizationWhereInput> | null
   }, "id">
 
-  export type UploadOrderByWithAggregationInput = {
+  export type StoredFileOrderByWithAggregationInput = {
     id?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -32564,34 +32564,34 @@ export namespace Prisma {
     metadata?: SortOrderInput | SortOrder
     userId?: SortOrderInput | SortOrder
     organizationId?: SortOrderInput | SortOrder
-    _count?: UploadCountOrderByAggregateInput
-    _avg?: UploadAvgOrderByAggregateInput
-    _max?: UploadMaxOrderByAggregateInput
-    _min?: UploadMinOrderByAggregateInput
-    _sum?: UploadSumOrderByAggregateInput
+    _count?: StoredFileCountOrderByAggregateInput
+    _avg?: StoredFileAvgOrderByAggregateInput
+    _max?: StoredFileMaxOrderByAggregateInput
+    _min?: StoredFileMinOrderByAggregateInput
+    _sum?: StoredFileSumOrderByAggregateInput
   }
 
-  export type UploadScalarWhereWithAggregatesInput = {
-    AND?: UploadScalarWhereWithAggregatesInput | UploadScalarWhereWithAggregatesInput[]
-    OR?: UploadScalarWhereWithAggregatesInput[]
-    NOT?: UploadScalarWhereWithAggregatesInput | UploadScalarWhereWithAggregatesInput[]
-    id?: StringWithAggregatesFilter<"Upload"> | string
-    createdAt?: DateTimeWithAggregatesFilter<"Upload"> | Date | string
-    updatedAt?: DateTimeWithAggregatesFilter<"Upload"> | Date | string
-    provider?: EnumStorageProviderWithAggregatesFilter<"Upload"> | $Enums.StorageProvider
-    providerFileId?: StringWithAggregatesFilter<"Upload"> | string
-    folder?: StringNullableWithAggregatesFilter<"Upload"> | string | null
-    filename?: StringWithAggregatesFilter<"Upload"> | string
-    originalName?: StringWithAggregatesFilter<"Upload"> | string
-    mimeType?: StringWithAggregatesFilter<"Upload"> | string
-    size?: IntWithAggregatesFilter<"Upload"> | number
-    url?: StringWithAggregatesFilter<"Upload"> | string
-    publicUrl?: StringNullableWithAggregatesFilter<"Upload"> | string | null
-    width?: IntNullableWithAggregatesFilter<"Upload"> | number | null
-    height?: IntNullableWithAggregatesFilter<"Upload"> | number | null
-    metadata?: JsonNullableWithAggregatesFilter<"Upload">
-    userId?: StringNullableWithAggregatesFilter<"Upload"> | string | null
-    organizationId?: StringNullableWithAggregatesFilter<"Upload"> | string | null
+  export type StoredFileScalarWhereWithAggregatesInput = {
+    AND?: StoredFileScalarWhereWithAggregatesInput | StoredFileScalarWhereWithAggregatesInput[]
+    OR?: StoredFileScalarWhereWithAggregatesInput[]
+    NOT?: StoredFileScalarWhereWithAggregatesInput | StoredFileScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"StoredFile"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"StoredFile"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"StoredFile"> | Date | string
+    provider?: EnumStorageProviderWithAggregatesFilter<"StoredFile"> | $Enums.StorageProvider
+    providerFileId?: StringWithAggregatesFilter<"StoredFile"> | string
+    folder?: StringNullableWithAggregatesFilter<"StoredFile"> | string | null
+    filename?: StringWithAggregatesFilter<"StoredFile"> | string
+    originalName?: StringWithAggregatesFilter<"StoredFile"> | string
+    mimeType?: StringWithAggregatesFilter<"StoredFile"> | string
+    size?: IntWithAggregatesFilter<"StoredFile"> | number
+    url?: StringWithAggregatesFilter<"StoredFile"> | string
+    publicUrl?: StringNullableWithAggregatesFilter<"StoredFile"> | string | null
+    width?: IntNullableWithAggregatesFilter<"StoredFile"> | number | null
+    height?: IntNullableWithAggregatesFilter<"StoredFile"> | number | null
+    metadata?: JsonNullableWithAggregatesFilter<"StoredFile">
+    userId?: StringNullableWithAggregatesFilter<"StoredFile"> | string | null
+    organizationId?: StringNullableWithAggregatesFilter<"StoredFile"> | string | null
   }
 
   export type UserWhereInput = {
@@ -32628,7 +32628,7 @@ export namespace Prisma {
     emails?: EmailListRelationFilter
     links?: LinkListRelationFilter
     phoneNumbers?: PhoneNumberListRelationFilter
-    images?: UploadListRelationFilter
+    images?: StoredFileListRelationFilter
     organizations?: OrganizationMemberListRelationFilter
     addresses?: AddressListRelationFilter
     invitesSent?: InviteListRelationFilter
@@ -32673,7 +32673,7 @@ export namespace Prisma {
     emails?: EmailOrderByRelationAggregateInput
     links?: LinkOrderByRelationAggregateInput
     phoneNumbers?: PhoneNumberOrderByRelationAggregateInput
-    images?: UploadOrderByRelationAggregateInput
+    images?: StoredFileOrderByRelationAggregateInput
     organizations?: OrganizationMemberOrderByRelationAggregateInput
     addresses?: AddressOrderByRelationAggregateInput
     invitesSent?: InviteOrderByRelationAggregateInput
@@ -32721,7 +32721,7 @@ export namespace Prisma {
     emails?: EmailListRelationFilter
     links?: LinkListRelationFilter
     phoneNumbers?: PhoneNumberListRelationFilter
-    images?: UploadListRelationFilter
+    images?: StoredFileListRelationFilter
     organizations?: OrganizationMemberListRelationFilter
     addresses?: AddressListRelationFilter
     invitesSent?: InviteListRelationFilter
@@ -33755,7 +33755,7 @@ export namespace Prisma {
     emails?: EmailCreateNestedManyWithoutOrganizationInput
     links?: LinkCreateNestedManyWithoutOrganizationInput
     phoneNumbers?: PhoneNumberCreateNestedManyWithoutOrganizationInput
-    images?: UploadCreateNestedManyWithoutOrganizationInput
+    images?: StoredFileCreateNestedManyWithoutOrganizationInput
     members?: OrganizationMemberCreateNestedManyWithoutOrganizationInput
     addresses?: AddressCreateNestedManyWithoutOrganizationInput
     invites?: InviteCreateNestedManyWithoutOrganizationInput
@@ -33773,7 +33773,7 @@ export namespace Prisma {
     emails?: EmailUncheckedCreateNestedManyWithoutOrganizationInput
     links?: LinkUncheckedCreateNestedManyWithoutOrganizationInput
     phoneNumbers?: PhoneNumberUncheckedCreateNestedManyWithoutOrganizationInput
-    images?: UploadUncheckedCreateNestedManyWithoutOrganizationInput
+    images?: StoredFileUncheckedCreateNestedManyWithoutOrganizationInput
     members?: OrganizationMemberUncheckedCreateNestedManyWithoutOrganizationInput
     addresses?: AddressUncheckedCreateNestedManyWithoutOrganizationInput
     invites?: InviteUncheckedCreateNestedManyWithoutOrganizationInput
@@ -33791,7 +33791,7 @@ export namespace Prisma {
     emails?: EmailUpdateManyWithoutOrganizationNestedInput
     links?: LinkUpdateManyWithoutOrganizationNestedInput
     phoneNumbers?: PhoneNumberUpdateManyWithoutOrganizationNestedInput
-    images?: UploadUpdateManyWithoutOrganizationNestedInput
+    images?: StoredFileUpdateManyWithoutOrganizationNestedInput
     members?: OrganizationMemberUpdateManyWithoutOrganizationNestedInput
     addresses?: AddressUpdateManyWithoutOrganizationNestedInput
     invites?: InviteUpdateManyWithoutOrganizationNestedInput
@@ -33809,7 +33809,7 @@ export namespace Prisma {
     emails?: EmailUncheckedUpdateManyWithoutOrganizationNestedInput
     links?: LinkUncheckedUpdateManyWithoutOrganizationNestedInput
     phoneNumbers?: PhoneNumberUncheckedUpdateManyWithoutOrganizationNestedInput
-    images?: UploadUncheckedUpdateManyWithoutOrganizationNestedInput
+    images?: StoredFileUncheckedUpdateManyWithoutOrganizationNestedInput
     members?: OrganizationMemberUncheckedUpdateManyWithoutOrganizationNestedInput
     addresses?: AddressUncheckedUpdateManyWithoutOrganizationNestedInput
     invites?: InviteUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -34457,7 +34457,7 @@ export namespace Prisma {
     roleId?: StringFieldUpdateOperationsInput | string
   }
 
-  export type UploadCreateInput = {
+  export type StoredFileCreateInput = {
     id?: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -34477,7 +34477,7 @@ export namespace Prisma {
     organization?: OrganizationCreateNestedOneWithoutImagesInput
   }
 
-  export type UploadUncheckedCreateInput = {
+  export type StoredFileUncheckedCreateInput = {
     id?: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -34497,7 +34497,7 @@ export namespace Prisma {
     organizationId?: string | null
   }
 
-  export type UploadUpdateInput = {
+  export type StoredFileUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -34517,7 +34517,7 @@ export namespace Prisma {
     organization?: OrganizationUpdateOneWithoutImagesNestedInput
   }
 
-  export type UploadUncheckedUpdateInput = {
+  export type StoredFileUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -34537,7 +34537,7 @@ export namespace Prisma {
     organizationId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
-  export type UploadCreateManyInput = {
+  export type StoredFileCreateManyInput = {
     id?: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -34557,7 +34557,7 @@ export namespace Prisma {
     organizationId?: string | null
   }
 
-  export type UploadUpdateManyMutationInput = {
+  export type StoredFileUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -34575,7 +34575,7 @@ export namespace Prisma {
     metadata?: NullableJsonNullValueInput | InputJsonValue
   }
 
-  export type UploadUncheckedUpdateManyInput = {
+  export type StoredFileUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -34626,7 +34626,7 @@ export namespace Prisma {
     emails?: EmailCreateNestedManyWithoutUserInput
     links?: LinkCreateNestedManyWithoutUserInput
     phoneNumbers?: PhoneNumberCreateNestedManyWithoutUserInput
-    images?: UploadCreateNestedManyWithoutUserInput
+    images?: StoredFileCreateNestedManyWithoutUserInput
     organizations?: OrganizationMemberCreateNestedManyWithoutUserInput
     addresses?: AddressCreateNestedManyWithoutUserInput
     invitesSent?: InviteCreateNestedManyWithoutInviterInput
@@ -34671,7 +34671,7 @@ export namespace Prisma {
     emails?: EmailUncheckedCreateNestedManyWithoutUserInput
     links?: LinkUncheckedCreateNestedManyWithoutUserInput
     phoneNumbers?: PhoneNumberUncheckedCreateNestedManyWithoutUserInput
-    images?: UploadUncheckedCreateNestedManyWithoutUserInput
+    images?: StoredFileUncheckedCreateNestedManyWithoutUserInput
     organizations?: OrganizationMemberUncheckedCreateNestedManyWithoutUserInput
     addresses?: AddressUncheckedCreateNestedManyWithoutUserInput
     invitesSent?: InviteUncheckedCreateNestedManyWithoutInviterInput
@@ -34716,7 +34716,7 @@ export namespace Prisma {
     emails?: EmailUpdateManyWithoutUserNestedInput
     links?: LinkUpdateManyWithoutUserNestedInput
     phoneNumbers?: PhoneNumberUpdateManyWithoutUserNestedInput
-    images?: UploadUpdateManyWithoutUserNestedInput
+    images?: StoredFileUpdateManyWithoutUserNestedInput
     organizations?: OrganizationMemberUpdateManyWithoutUserNestedInput
     addresses?: AddressUpdateManyWithoutUserNestedInput
     invitesSent?: InviteUpdateManyWithoutInviterNestedInput
@@ -34761,7 +34761,7 @@ export namespace Prisma {
     emails?: EmailUncheckedUpdateManyWithoutUserNestedInput
     links?: LinkUncheckedUpdateManyWithoutUserNestedInput
     phoneNumbers?: PhoneNumberUncheckedUpdateManyWithoutUserNestedInput
-    images?: UploadUncheckedUpdateManyWithoutUserNestedInput
+    images?: StoredFileUncheckedUpdateManyWithoutUserNestedInput
     organizations?: OrganizationMemberUncheckedUpdateManyWithoutUserNestedInput
     addresses?: AddressUncheckedUpdateManyWithoutUserNestedInput
     invitesSent?: InviteUncheckedUpdateManyWithoutInviterNestedInput
@@ -35673,10 +35673,10 @@ export namespace Prisma {
     none?: PhoneNumberWhereInput
   }
 
-  export type UploadListRelationFilter = {
-    every?: UploadWhereInput
-    some?: UploadWhereInput
-    none?: UploadWhereInput
+  export type StoredFileListRelationFilter = {
+    every?: StoredFileWhereInput
+    some?: StoredFileWhereInput
+    none?: StoredFileWhereInput
   }
 
   export type OrganizationMemberListRelationFilter = {
@@ -35726,7 +35726,7 @@ export namespace Prisma {
     _count?: SortOrder
   }
 
-  export type UploadOrderByRelationAggregateInput = {
+  export type StoredFileOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -36195,7 +36195,7 @@ export namespace Prisma {
     not?: NestedIntNullableFilter<$PrismaModel> | number | null
   }
 
-  export type UploadCountOrderByAggregateInput = {
+  export type StoredFileCountOrderByAggregateInput = {
     id?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -36215,13 +36215,13 @@ export namespace Prisma {
     organizationId?: SortOrder
   }
 
-  export type UploadAvgOrderByAggregateInput = {
+  export type StoredFileAvgOrderByAggregateInput = {
     size?: SortOrder
     width?: SortOrder
     height?: SortOrder
   }
 
-  export type UploadMaxOrderByAggregateInput = {
+  export type StoredFileMaxOrderByAggregateInput = {
     id?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -36240,7 +36240,7 @@ export namespace Prisma {
     organizationId?: SortOrder
   }
 
-  export type UploadMinOrderByAggregateInput = {
+  export type StoredFileMinOrderByAggregateInput = {
     id?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -36259,7 +36259,7 @@ export namespace Prisma {
     organizationId?: SortOrder
   }
 
-  export type UploadSumOrderByAggregateInput = {
+  export type StoredFileSumOrderByAggregateInput = {
     size?: SortOrder
     width?: SortOrder
     height?: SortOrder
@@ -36885,11 +36885,11 @@ export namespace Prisma {
     connect?: PhoneNumberWhereUniqueInput | PhoneNumberWhereUniqueInput[]
   }
 
-  export type UploadCreateNestedManyWithoutOrganizationInput = {
-    create?: XOR<UploadCreateWithoutOrganizationInput, UploadUncheckedCreateWithoutOrganizationInput> | UploadCreateWithoutOrganizationInput[] | UploadUncheckedCreateWithoutOrganizationInput[]
-    connectOrCreate?: UploadCreateOrConnectWithoutOrganizationInput | UploadCreateOrConnectWithoutOrganizationInput[]
-    createMany?: UploadCreateManyOrganizationInputEnvelope
-    connect?: UploadWhereUniqueInput | UploadWhereUniqueInput[]
+  export type StoredFileCreateNestedManyWithoutOrganizationInput = {
+    create?: XOR<StoredFileCreateWithoutOrganizationInput, StoredFileUncheckedCreateWithoutOrganizationInput> | StoredFileCreateWithoutOrganizationInput[] | StoredFileUncheckedCreateWithoutOrganizationInput[]
+    connectOrCreate?: StoredFileCreateOrConnectWithoutOrganizationInput | StoredFileCreateOrConnectWithoutOrganizationInput[]
+    createMany?: StoredFileCreateManyOrganizationInputEnvelope
+    connect?: StoredFileWhereUniqueInput | StoredFileWhereUniqueInput[]
   }
 
   export type OrganizationMemberCreateNestedManyWithoutOrganizationInput = {
@@ -36961,11 +36961,11 @@ export namespace Prisma {
     connect?: PhoneNumberWhereUniqueInput | PhoneNumberWhereUniqueInput[]
   }
 
-  export type UploadUncheckedCreateNestedManyWithoutOrganizationInput = {
-    create?: XOR<UploadCreateWithoutOrganizationInput, UploadUncheckedCreateWithoutOrganizationInput> | UploadCreateWithoutOrganizationInput[] | UploadUncheckedCreateWithoutOrganizationInput[]
-    connectOrCreate?: UploadCreateOrConnectWithoutOrganizationInput | UploadCreateOrConnectWithoutOrganizationInput[]
-    createMany?: UploadCreateManyOrganizationInputEnvelope
-    connect?: UploadWhereUniqueInput | UploadWhereUniqueInput[]
+  export type StoredFileUncheckedCreateNestedManyWithoutOrganizationInput = {
+    create?: XOR<StoredFileCreateWithoutOrganizationInput, StoredFileUncheckedCreateWithoutOrganizationInput> | StoredFileCreateWithoutOrganizationInput[] | StoredFileUncheckedCreateWithoutOrganizationInput[]
+    connectOrCreate?: StoredFileCreateOrConnectWithoutOrganizationInput | StoredFileCreateOrConnectWithoutOrganizationInput[]
+    createMany?: StoredFileCreateManyOrganizationInputEnvelope
+    connect?: StoredFileWhereUniqueInput | StoredFileWhereUniqueInput[]
   }
 
   export type OrganizationMemberUncheckedCreateNestedManyWithoutOrganizationInput = {
@@ -37058,18 +37058,18 @@ export namespace Prisma {
     deleteMany?: PhoneNumberScalarWhereInput | PhoneNumberScalarWhereInput[]
   }
 
-  export type UploadUpdateManyWithoutOrganizationNestedInput = {
-    create?: XOR<UploadCreateWithoutOrganizationInput, UploadUncheckedCreateWithoutOrganizationInput> | UploadCreateWithoutOrganizationInput[] | UploadUncheckedCreateWithoutOrganizationInput[]
-    connectOrCreate?: UploadCreateOrConnectWithoutOrganizationInput | UploadCreateOrConnectWithoutOrganizationInput[]
-    upsert?: UploadUpsertWithWhereUniqueWithoutOrganizationInput | UploadUpsertWithWhereUniqueWithoutOrganizationInput[]
-    createMany?: UploadCreateManyOrganizationInputEnvelope
-    set?: UploadWhereUniqueInput | UploadWhereUniqueInput[]
-    disconnect?: UploadWhereUniqueInput | UploadWhereUniqueInput[]
-    delete?: UploadWhereUniqueInput | UploadWhereUniqueInput[]
-    connect?: UploadWhereUniqueInput | UploadWhereUniqueInput[]
-    update?: UploadUpdateWithWhereUniqueWithoutOrganizationInput | UploadUpdateWithWhereUniqueWithoutOrganizationInput[]
-    updateMany?: UploadUpdateManyWithWhereWithoutOrganizationInput | UploadUpdateManyWithWhereWithoutOrganizationInput[]
-    deleteMany?: UploadScalarWhereInput | UploadScalarWhereInput[]
+  export type StoredFileUpdateManyWithoutOrganizationNestedInput = {
+    create?: XOR<StoredFileCreateWithoutOrganizationInput, StoredFileUncheckedCreateWithoutOrganizationInput> | StoredFileCreateWithoutOrganizationInput[] | StoredFileUncheckedCreateWithoutOrganizationInput[]
+    connectOrCreate?: StoredFileCreateOrConnectWithoutOrganizationInput | StoredFileCreateOrConnectWithoutOrganizationInput[]
+    upsert?: StoredFileUpsertWithWhereUniqueWithoutOrganizationInput | StoredFileUpsertWithWhereUniqueWithoutOrganizationInput[]
+    createMany?: StoredFileCreateManyOrganizationInputEnvelope
+    set?: StoredFileWhereUniqueInput | StoredFileWhereUniqueInput[]
+    disconnect?: StoredFileWhereUniqueInput | StoredFileWhereUniqueInput[]
+    delete?: StoredFileWhereUniqueInput | StoredFileWhereUniqueInput[]
+    connect?: StoredFileWhereUniqueInput | StoredFileWhereUniqueInput[]
+    update?: StoredFileUpdateWithWhereUniqueWithoutOrganizationInput | StoredFileUpdateWithWhereUniqueWithoutOrganizationInput[]
+    updateMany?: StoredFileUpdateManyWithWhereWithoutOrganizationInput | StoredFileUpdateManyWithWhereWithoutOrganizationInput[]
+    deleteMany?: StoredFileScalarWhereInput | StoredFileScalarWhereInput[]
   }
 
   export type OrganizationMemberUpdateManyWithoutOrganizationNestedInput = {
@@ -37208,18 +37208,18 @@ export namespace Prisma {
     deleteMany?: PhoneNumberScalarWhereInput | PhoneNumberScalarWhereInput[]
   }
 
-  export type UploadUncheckedUpdateManyWithoutOrganizationNestedInput = {
-    create?: XOR<UploadCreateWithoutOrganizationInput, UploadUncheckedCreateWithoutOrganizationInput> | UploadCreateWithoutOrganizationInput[] | UploadUncheckedCreateWithoutOrganizationInput[]
-    connectOrCreate?: UploadCreateOrConnectWithoutOrganizationInput | UploadCreateOrConnectWithoutOrganizationInput[]
-    upsert?: UploadUpsertWithWhereUniqueWithoutOrganizationInput | UploadUpsertWithWhereUniqueWithoutOrganizationInput[]
-    createMany?: UploadCreateManyOrganizationInputEnvelope
-    set?: UploadWhereUniqueInput | UploadWhereUniqueInput[]
-    disconnect?: UploadWhereUniqueInput | UploadWhereUniqueInput[]
-    delete?: UploadWhereUniqueInput | UploadWhereUniqueInput[]
-    connect?: UploadWhereUniqueInput | UploadWhereUniqueInput[]
-    update?: UploadUpdateWithWhereUniqueWithoutOrganizationInput | UploadUpdateWithWhereUniqueWithoutOrganizationInput[]
-    updateMany?: UploadUpdateManyWithWhereWithoutOrganizationInput | UploadUpdateManyWithWhereWithoutOrganizationInput[]
-    deleteMany?: UploadScalarWhereInput | UploadScalarWhereInput[]
+  export type StoredFileUncheckedUpdateManyWithoutOrganizationNestedInput = {
+    create?: XOR<StoredFileCreateWithoutOrganizationInput, StoredFileUncheckedCreateWithoutOrganizationInput> | StoredFileCreateWithoutOrganizationInput[] | StoredFileUncheckedCreateWithoutOrganizationInput[]
+    connectOrCreate?: StoredFileCreateOrConnectWithoutOrganizationInput | StoredFileCreateOrConnectWithoutOrganizationInput[]
+    upsert?: StoredFileUpsertWithWhereUniqueWithoutOrganizationInput | StoredFileUpsertWithWhereUniqueWithoutOrganizationInput[]
+    createMany?: StoredFileCreateManyOrganizationInputEnvelope
+    set?: StoredFileWhereUniqueInput | StoredFileWhereUniqueInput[]
+    disconnect?: StoredFileWhereUniqueInput | StoredFileWhereUniqueInput[]
+    delete?: StoredFileWhereUniqueInput | StoredFileWhereUniqueInput[]
+    connect?: StoredFileWhereUniqueInput | StoredFileWhereUniqueInput[]
+    update?: StoredFileUpdateWithWhereUniqueWithoutOrganizationInput | StoredFileUpdateWithWhereUniqueWithoutOrganizationInput[]
+    updateMany?: StoredFileUpdateManyWithWhereWithoutOrganizationInput | StoredFileUpdateManyWithWhereWithoutOrganizationInput[]
+    deleteMany?: StoredFileScalarWhereInput | StoredFileScalarWhereInput[]
   }
 
   export type OrganizationMemberUncheckedUpdateManyWithoutOrganizationNestedInput = {
@@ -37887,11 +37887,11 @@ export namespace Prisma {
     connect?: PhoneNumberWhereUniqueInput | PhoneNumberWhereUniqueInput[]
   }
 
-  export type UploadCreateNestedManyWithoutUserInput = {
-    create?: XOR<UploadCreateWithoutUserInput, UploadUncheckedCreateWithoutUserInput> | UploadCreateWithoutUserInput[] | UploadUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: UploadCreateOrConnectWithoutUserInput | UploadCreateOrConnectWithoutUserInput[]
-    createMany?: UploadCreateManyUserInputEnvelope
-    connect?: UploadWhereUniqueInput | UploadWhereUniqueInput[]
+  export type StoredFileCreateNestedManyWithoutUserInput = {
+    create?: XOR<StoredFileCreateWithoutUserInput, StoredFileUncheckedCreateWithoutUserInput> | StoredFileCreateWithoutUserInput[] | StoredFileUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: StoredFileCreateOrConnectWithoutUserInput | StoredFileCreateOrConnectWithoutUserInput[]
+    createMany?: StoredFileCreateManyUserInputEnvelope
+    connect?: StoredFileWhereUniqueInput | StoredFileWhereUniqueInput[]
   }
 
   export type OrganizationMemberCreateNestedManyWithoutUserInput = {
@@ -37992,11 +37992,11 @@ export namespace Prisma {
     connect?: PhoneNumberWhereUniqueInput | PhoneNumberWhereUniqueInput[]
   }
 
-  export type UploadUncheckedCreateNestedManyWithoutUserInput = {
-    create?: XOR<UploadCreateWithoutUserInput, UploadUncheckedCreateWithoutUserInput> | UploadCreateWithoutUserInput[] | UploadUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: UploadCreateOrConnectWithoutUserInput | UploadCreateOrConnectWithoutUserInput[]
-    createMany?: UploadCreateManyUserInputEnvelope
-    connect?: UploadWhereUniqueInput | UploadWhereUniqueInput[]
+  export type StoredFileUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<StoredFileCreateWithoutUserInput, StoredFileUncheckedCreateWithoutUserInput> | StoredFileCreateWithoutUserInput[] | StoredFileUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: StoredFileCreateOrConnectWithoutUserInput | StoredFileCreateOrConnectWithoutUserInput[]
+    createMany?: StoredFileCreateManyUserInputEnvelope
+    connect?: StoredFileWhereUniqueInput | StoredFileWhereUniqueInput[]
   }
 
   export type OrganizationMemberUncheckedCreateNestedManyWithoutUserInput = {
@@ -38127,18 +38127,18 @@ export namespace Prisma {
     deleteMany?: PhoneNumberScalarWhereInput | PhoneNumberScalarWhereInput[]
   }
 
-  export type UploadUpdateManyWithoutUserNestedInput = {
-    create?: XOR<UploadCreateWithoutUserInput, UploadUncheckedCreateWithoutUserInput> | UploadCreateWithoutUserInput[] | UploadUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: UploadCreateOrConnectWithoutUserInput | UploadCreateOrConnectWithoutUserInput[]
-    upsert?: UploadUpsertWithWhereUniqueWithoutUserInput | UploadUpsertWithWhereUniqueWithoutUserInput[]
-    createMany?: UploadCreateManyUserInputEnvelope
-    set?: UploadWhereUniqueInput | UploadWhereUniqueInput[]
-    disconnect?: UploadWhereUniqueInput | UploadWhereUniqueInput[]
-    delete?: UploadWhereUniqueInput | UploadWhereUniqueInput[]
-    connect?: UploadWhereUniqueInput | UploadWhereUniqueInput[]
-    update?: UploadUpdateWithWhereUniqueWithoutUserInput | UploadUpdateWithWhereUniqueWithoutUserInput[]
-    updateMany?: UploadUpdateManyWithWhereWithoutUserInput | UploadUpdateManyWithWhereWithoutUserInput[]
-    deleteMany?: UploadScalarWhereInput | UploadScalarWhereInput[]
+  export type StoredFileUpdateManyWithoutUserNestedInput = {
+    create?: XOR<StoredFileCreateWithoutUserInput, StoredFileUncheckedCreateWithoutUserInput> | StoredFileCreateWithoutUserInput[] | StoredFileUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: StoredFileCreateOrConnectWithoutUserInput | StoredFileCreateOrConnectWithoutUserInput[]
+    upsert?: StoredFileUpsertWithWhereUniqueWithoutUserInput | StoredFileUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: StoredFileCreateManyUserInputEnvelope
+    set?: StoredFileWhereUniqueInput | StoredFileWhereUniqueInput[]
+    disconnect?: StoredFileWhereUniqueInput | StoredFileWhereUniqueInput[]
+    delete?: StoredFileWhereUniqueInput | StoredFileWhereUniqueInput[]
+    connect?: StoredFileWhereUniqueInput | StoredFileWhereUniqueInput[]
+    update?: StoredFileUpdateWithWhereUniqueWithoutUserInput | StoredFileUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: StoredFileUpdateManyWithWhereWithoutUserInput | StoredFileUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: StoredFileScalarWhereInput | StoredFileScalarWhereInput[]
   }
 
   export type OrganizationMemberUpdateManyWithoutUserNestedInput = {
@@ -38337,18 +38337,18 @@ export namespace Prisma {
     deleteMany?: PhoneNumberScalarWhereInput | PhoneNumberScalarWhereInput[]
   }
 
-  export type UploadUncheckedUpdateManyWithoutUserNestedInput = {
-    create?: XOR<UploadCreateWithoutUserInput, UploadUncheckedCreateWithoutUserInput> | UploadCreateWithoutUserInput[] | UploadUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: UploadCreateOrConnectWithoutUserInput | UploadCreateOrConnectWithoutUserInput[]
-    upsert?: UploadUpsertWithWhereUniqueWithoutUserInput | UploadUpsertWithWhereUniqueWithoutUserInput[]
-    createMany?: UploadCreateManyUserInputEnvelope
-    set?: UploadWhereUniqueInput | UploadWhereUniqueInput[]
-    disconnect?: UploadWhereUniqueInput | UploadWhereUniqueInput[]
-    delete?: UploadWhereUniqueInput | UploadWhereUniqueInput[]
-    connect?: UploadWhereUniqueInput | UploadWhereUniqueInput[]
-    update?: UploadUpdateWithWhereUniqueWithoutUserInput | UploadUpdateWithWhereUniqueWithoutUserInput[]
-    updateMany?: UploadUpdateManyWithWhereWithoutUserInput | UploadUpdateManyWithWhereWithoutUserInput[]
-    deleteMany?: UploadScalarWhereInput | UploadScalarWhereInput[]
+  export type StoredFileUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<StoredFileCreateWithoutUserInput, StoredFileUncheckedCreateWithoutUserInput> | StoredFileCreateWithoutUserInput[] | StoredFileUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: StoredFileCreateOrConnectWithoutUserInput | StoredFileCreateOrConnectWithoutUserInput[]
+    upsert?: StoredFileUpsertWithWhereUniqueWithoutUserInput | StoredFileUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: StoredFileCreateManyUserInputEnvelope
+    set?: StoredFileWhereUniqueInput | StoredFileWhereUniqueInput[]
+    disconnect?: StoredFileWhereUniqueInput | StoredFileWhereUniqueInput[]
+    delete?: StoredFileWhereUniqueInput | StoredFileWhereUniqueInput[]
+    connect?: StoredFileWhereUniqueInput | StoredFileWhereUniqueInput[]
+    update?: StoredFileUpdateWithWhereUniqueWithoutUserInput | StoredFileUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: StoredFileUpdateManyWithWhereWithoutUserInput | StoredFileUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: StoredFileScalarWhereInput | StoredFileScalarWhereInput[]
   }
 
   export type OrganizationMemberUncheckedUpdateManyWithoutUserNestedInput = {
@@ -39007,7 +39007,7 @@ export namespace Prisma {
     emails?: EmailCreateNestedManyWithoutUserInput
     links?: LinkCreateNestedManyWithoutUserInput
     phoneNumbers?: PhoneNumberCreateNestedManyWithoutUserInput
-    images?: UploadCreateNestedManyWithoutUserInput
+    images?: StoredFileCreateNestedManyWithoutUserInput
     organizations?: OrganizationMemberCreateNestedManyWithoutUserInput
     invitesSent?: InviteCreateNestedManyWithoutInviterInput
     activeSessions?: UserSessionCreateNestedManyWithoutUserInput
@@ -39051,7 +39051,7 @@ export namespace Prisma {
     emails?: EmailUncheckedCreateNestedManyWithoutUserInput
     links?: LinkUncheckedCreateNestedManyWithoutUserInput
     phoneNumbers?: PhoneNumberUncheckedCreateNestedManyWithoutUserInput
-    images?: UploadUncheckedCreateNestedManyWithoutUserInput
+    images?: StoredFileUncheckedCreateNestedManyWithoutUserInput
     organizations?: OrganizationMemberUncheckedCreateNestedManyWithoutUserInput
     invitesSent?: InviteUncheckedCreateNestedManyWithoutInviterInput
     activeSessions?: UserSessionUncheckedCreateNestedManyWithoutUserInput
@@ -39077,7 +39077,7 @@ export namespace Prisma {
     emails?: EmailCreateNestedManyWithoutOrganizationInput
     links?: LinkCreateNestedManyWithoutOrganizationInput
     phoneNumbers?: PhoneNumberCreateNestedManyWithoutOrganizationInput
-    images?: UploadCreateNestedManyWithoutOrganizationInput
+    images?: StoredFileCreateNestedManyWithoutOrganizationInput
     members?: OrganizationMemberCreateNestedManyWithoutOrganizationInput
     invites?: InviteCreateNestedManyWithoutOrganizationInput
     AuditLog?: AuditLogCreateNestedManyWithoutOrganizationInput
@@ -39094,7 +39094,7 @@ export namespace Prisma {
     emails?: EmailUncheckedCreateNestedManyWithoutOrganizationInput
     links?: LinkUncheckedCreateNestedManyWithoutOrganizationInput
     phoneNumbers?: PhoneNumberUncheckedCreateNestedManyWithoutOrganizationInput
-    images?: UploadUncheckedCreateNestedManyWithoutOrganizationInput
+    images?: StoredFileUncheckedCreateNestedManyWithoutOrganizationInput
     members?: OrganizationMemberUncheckedCreateNestedManyWithoutOrganizationInput
     invites?: InviteUncheckedCreateNestedManyWithoutOrganizationInput
     AuditLog?: AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
@@ -39195,7 +39195,7 @@ export namespace Prisma {
     emails?: EmailUpdateManyWithoutUserNestedInput
     links?: LinkUpdateManyWithoutUserNestedInput
     phoneNumbers?: PhoneNumberUpdateManyWithoutUserNestedInput
-    images?: UploadUpdateManyWithoutUserNestedInput
+    images?: StoredFileUpdateManyWithoutUserNestedInput
     organizations?: OrganizationMemberUpdateManyWithoutUserNestedInput
     invitesSent?: InviteUpdateManyWithoutInviterNestedInput
     activeSessions?: UserSessionUpdateManyWithoutUserNestedInput
@@ -39239,7 +39239,7 @@ export namespace Prisma {
     emails?: EmailUncheckedUpdateManyWithoutUserNestedInput
     links?: LinkUncheckedUpdateManyWithoutUserNestedInput
     phoneNumbers?: PhoneNumberUncheckedUpdateManyWithoutUserNestedInput
-    images?: UploadUncheckedUpdateManyWithoutUserNestedInput
+    images?: StoredFileUncheckedUpdateManyWithoutUserNestedInput
     organizations?: OrganizationMemberUncheckedUpdateManyWithoutUserNestedInput
     invitesSent?: InviteUncheckedUpdateManyWithoutInviterNestedInput
     activeSessions?: UserSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -39271,7 +39271,7 @@ export namespace Prisma {
     emails?: EmailUpdateManyWithoutOrganizationNestedInput
     links?: LinkUpdateManyWithoutOrganizationNestedInput
     phoneNumbers?: PhoneNumberUpdateManyWithoutOrganizationNestedInput
-    images?: UploadUpdateManyWithoutOrganizationNestedInput
+    images?: StoredFileUpdateManyWithoutOrganizationNestedInput
     members?: OrganizationMemberUpdateManyWithoutOrganizationNestedInput
     invites?: InviteUpdateManyWithoutOrganizationNestedInput
     AuditLog?: AuditLogUpdateManyWithoutOrganizationNestedInput
@@ -39288,7 +39288,7 @@ export namespace Prisma {
     emails?: EmailUncheckedUpdateManyWithoutOrganizationNestedInput
     links?: LinkUncheckedUpdateManyWithoutOrganizationNestedInput
     phoneNumbers?: PhoneNumberUncheckedUpdateManyWithoutOrganizationNestedInput
-    images?: UploadUncheckedUpdateManyWithoutOrganizationNestedInput
+    images?: StoredFileUncheckedUpdateManyWithoutOrganizationNestedInput
     members?: OrganizationMemberUncheckedUpdateManyWithoutOrganizationNestedInput
     invites?: InviteUncheckedUpdateManyWithoutOrganizationNestedInput
     AuditLog?: AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -39328,7 +39328,7 @@ export namespace Prisma {
     emails?: EmailCreateNestedManyWithoutUserInput
     links?: LinkCreateNestedManyWithoutUserInput
     phoneNumbers?: PhoneNumberCreateNestedManyWithoutUserInput
-    images?: UploadCreateNestedManyWithoutUserInput
+    images?: StoredFileCreateNestedManyWithoutUserInput
     organizations?: OrganizationMemberCreateNestedManyWithoutUserInput
     addresses?: AddressCreateNestedManyWithoutUserInput
     invitesSent?: InviteCreateNestedManyWithoutInviterInput
@@ -39372,7 +39372,7 @@ export namespace Prisma {
     emails?: EmailUncheckedCreateNestedManyWithoutUserInput
     links?: LinkUncheckedCreateNestedManyWithoutUserInput
     phoneNumbers?: PhoneNumberUncheckedCreateNestedManyWithoutUserInput
-    images?: UploadUncheckedCreateNestedManyWithoutUserInput
+    images?: StoredFileUncheckedCreateNestedManyWithoutUserInput
     organizations?: OrganizationMemberUncheckedCreateNestedManyWithoutUserInput
     addresses?: AddressUncheckedCreateNestedManyWithoutUserInput
     invitesSent?: InviteUncheckedCreateNestedManyWithoutInviterInput
@@ -39432,7 +39432,7 @@ export namespace Prisma {
     emails?: EmailUpdateManyWithoutUserNestedInput
     links?: LinkUpdateManyWithoutUserNestedInput
     phoneNumbers?: PhoneNumberUpdateManyWithoutUserNestedInput
-    images?: UploadUpdateManyWithoutUserNestedInput
+    images?: StoredFileUpdateManyWithoutUserNestedInput
     organizations?: OrganizationMemberUpdateManyWithoutUserNestedInput
     addresses?: AddressUpdateManyWithoutUserNestedInput
     invitesSent?: InviteUpdateManyWithoutInviterNestedInput
@@ -39476,7 +39476,7 @@ export namespace Prisma {
     emails?: EmailUncheckedUpdateManyWithoutUserNestedInput
     links?: LinkUncheckedUpdateManyWithoutUserNestedInput
     phoneNumbers?: PhoneNumberUncheckedUpdateManyWithoutUserNestedInput
-    images?: UploadUncheckedUpdateManyWithoutUserNestedInput
+    images?: StoredFileUncheckedUpdateManyWithoutUserNestedInput
     organizations?: OrganizationMemberUncheckedUpdateManyWithoutUserNestedInput
     addresses?: AddressUncheckedUpdateManyWithoutUserNestedInput
     invitesSent?: InviteUncheckedUpdateManyWithoutInviterNestedInput
@@ -39520,7 +39520,7 @@ export namespace Prisma {
     emails?: EmailCreateNestedManyWithoutUserInput
     links?: LinkCreateNestedManyWithoutUserInput
     phoneNumbers?: PhoneNumberCreateNestedManyWithoutUserInput
-    images?: UploadCreateNestedManyWithoutUserInput
+    images?: StoredFileCreateNestedManyWithoutUserInput
     organizations?: OrganizationMemberCreateNestedManyWithoutUserInput
     addresses?: AddressCreateNestedManyWithoutUserInput
     invitesSent?: InviteCreateNestedManyWithoutInviterInput
@@ -39564,7 +39564,7 @@ export namespace Prisma {
     emails?: EmailUncheckedCreateNestedManyWithoutUserInput
     links?: LinkUncheckedCreateNestedManyWithoutUserInput
     phoneNumbers?: PhoneNumberUncheckedCreateNestedManyWithoutUserInput
-    images?: UploadUncheckedCreateNestedManyWithoutUserInput
+    images?: StoredFileUncheckedCreateNestedManyWithoutUserInput
     organizations?: OrganizationMemberUncheckedCreateNestedManyWithoutUserInput
     addresses?: AddressUncheckedCreateNestedManyWithoutUserInput
     invitesSent?: InviteUncheckedCreateNestedManyWithoutInviterInput
@@ -39590,7 +39590,7 @@ export namespace Prisma {
     emails?: EmailCreateNestedManyWithoutOrganizationInput
     links?: LinkCreateNestedManyWithoutOrganizationInput
     phoneNumbers?: PhoneNumberCreateNestedManyWithoutOrganizationInput
-    images?: UploadCreateNestedManyWithoutOrganizationInput
+    images?: StoredFileCreateNestedManyWithoutOrganizationInput
     members?: OrganizationMemberCreateNestedManyWithoutOrganizationInput
     addresses?: AddressCreateNestedManyWithoutOrganizationInput
     invites?: InviteCreateNestedManyWithoutOrganizationInput
@@ -39607,7 +39607,7 @@ export namespace Prisma {
     emails?: EmailUncheckedCreateNestedManyWithoutOrganizationInput
     links?: LinkUncheckedCreateNestedManyWithoutOrganizationInput
     phoneNumbers?: PhoneNumberUncheckedCreateNestedManyWithoutOrganizationInput
-    images?: UploadUncheckedCreateNestedManyWithoutOrganizationInput
+    images?: StoredFileUncheckedCreateNestedManyWithoutOrganizationInput
     members?: OrganizationMemberUncheckedCreateNestedManyWithoutOrganizationInput
     addresses?: AddressUncheckedCreateNestedManyWithoutOrganizationInput
     invites?: InviteUncheckedCreateNestedManyWithoutOrganizationInput
@@ -39663,7 +39663,7 @@ export namespace Prisma {
     emails?: EmailUpdateManyWithoutUserNestedInput
     links?: LinkUpdateManyWithoutUserNestedInput
     phoneNumbers?: PhoneNumberUpdateManyWithoutUserNestedInput
-    images?: UploadUpdateManyWithoutUserNestedInput
+    images?: StoredFileUpdateManyWithoutUserNestedInput
     organizations?: OrganizationMemberUpdateManyWithoutUserNestedInput
     addresses?: AddressUpdateManyWithoutUserNestedInput
     invitesSent?: InviteUpdateManyWithoutInviterNestedInput
@@ -39707,7 +39707,7 @@ export namespace Prisma {
     emails?: EmailUncheckedUpdateManyWithoutUserNestedInput
     links?: LinkUncheckedUpdateManyWithoutUserNestedInput
     phoneNumbers?: PhoneNumberUncheckedUpdateManyWithoutUserNestedInput
-    images?: UploadUncheckedUpdateManyWithoutUserNestedInput
+    images?: StoredFileUncheckedUpdateManyWithoutUserNestedInput
     organizations?: OrganizationMemberUncheckedUpdateManyWithoutUserNestedInput
     addresses?: AddressUncheckedUpdateManyWithoutUserNestedInput
     invitesSent?: InviteUncheckedUpdateManyWithoutInviterNestedInput
@@ -39739,7 +39739,7 @@ export namespace Prisma {
     emails?: EmailUpdateManyWithoutOrganizationNestedInput
     links?: LinkUpdateManyWithoutOrganizationNestedInput
     phoneNumbers?: PhoneNumberUpdateManyWithoutOrganizationNestedInput
-    images?: UploadUpdateManyWithoutOrganizationNestedInput
+    images?: StoredFileUpdateManyWithoutOrganizationNestedInput
     members?: OrganizationMemberUpdateManyWithoutOrganizationNestedInput
     addresses?: AddressUpdateManyWithoutOrganizationNestedInput
     invites?: InviteUpdateManyWithoutOrganizationNestedInput
@@ -39756,7 +39756,7 @@ export namespace Prisma {
     emails?: EmailUncheckedUpdateManyWithoutOrganizationNestedInput
     links?: LinkUncheckedUpdateManyWithoutOrganizationNestedInput
     phoneNumbers?: PhoneNumberUncheckedUpdateManyWithoutOrganizationNestedInput
-    images?: UploadUncheckedUpdateManyWithoutOrganizationNestedInput
+    images?: StoredFileUncheckedUpdateManyWithoutOrganizationNestedInput
     members?: OrganizationMemberUncheckedUpdateManyWithoutOrganizationNestedInput
     addresses?: AddressUncheckedUpdateManyWithoutOrganizationNestedInput
     invites?: InviteUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -39870,7 +39870,7 @@ export namespace Prisma {
     privacyPolicyAcceptedAt?: Date | string | null
     links?: LinkCreateNestedManyWithoutUserInput
     phoneNumbers?: PhoneNumberCreateNestedManyWithoutUserInput
-    images?: UploadCreateNestedManyWithoutUserInput
+    images?: StoredFileCreateNestedManyWithoutUserInput
     organizations?: OrganizationMemberCreateNestedManyWithoutUserInput
     addresses?: AddressCreateNestedManyWithoutUserInput
     invitesSent?: InviteCreateNestedManyWithoutInviterInput
@@ -39914,7 +39914,7 @@ export namespace Prisma {
     privacyPolicyAcceptedAt?: Date | string | null
     links?: LinkUncheckedCreateNestedManyWithoutUserInput
     phoneNumbers?: PhoneNumberUncheckedCreateNestedManyWithoutUserInput
-    images?: UploadUncheckedCreateNestedManyWithoutUserInput
+    images?: StoredFileUncheckedCreateNestedManyWithoutUserInput
     organizations?: OrganizationMemberUncheckedCreateNestedManyWithoutUserInput
     addresses?: AddressUncheckedCreateNestedManyWithoutUserInput
     invitesSent?: InviteUncheckedCreateNestedManyWithoutInviterInput
@@ -39940,7 +39940,7 @@ export namespace Prisma {
     name: string
     links?: LinkCreateNestedManyWithoutOrganizationInput
     phoneNumbers?: PhoneNumberCreateNestedManyWithoutOrganizationInput
-    images?: UploadCreateNestedManyWithoutOrganizationInput
+    images?: StoredFileCreateNestedManyWithoutOrganizationInput
     members?: OrganizationMemberCreateNestedManyWithoutOrganizationInput
     addresses?: AddressCreateNestedManyWithoutOrganizationInput
     invites?: InviteCreateNestedManyWithoutOrganizationInput
@@ -39957,7 +39957,7 @@ export namespace Prisma {
     name: string
     links?: LinkUncheckedCreateNestedManyWithoutOrganizationInput
     phoneNumbers?: PhoneNumberUncheckedCreateNestedManyWithoutOrganizationInput
-    images?: UploadUncheckedCreateNestedManyWithoutOrganizationInput
+    images?: StoredFileUncheckedCreateNestedManyWithoutOrganizationInput
     members?: OrganizationMemberUncheckedCreateNestedManyWithoutOrganizationInput
     addresses?: AddressUncheckedCreateNestedManyWithoutOrganizationInput
     invites?: InviteUncheckedCreateNestedManyWithoutOrganizationInput
@@ -40013,7 +40013,7 @@ export namespace Prisma {
     privacyPolicyAcceptedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     links?: LinkUpdateManyWithoutUserNestedInput
     phoneNumbers?: PhoneNumberUpdateManyWithoutUserNestedInput
-    images?: UploadUpdateManyWithoutUserNestedInput
+    images?: StoredFileUpdateManyWithoutUserNestedInput
     organizations?: OrganizationMemberUpdateManyWithoutUserNestedInput
     addresses?: AddressUpdateManyWithoutUserNestedInput
     invitesSent?: InviteUpdateManyWithoutInviterNestedInput
@@ -40057,7 +40057,7 @@ export namespace Prisma {
     privacyPolicyAcceptedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     links?: LinkUncheckedUpdateManyWithoutUserNestedInput
     phoneNumbers?: PhoneNumberUncheckedUpdateManyWithoutUserNestedInput
-    images?: UploadUncheckedUpdateManyWithoutUserNestedInput
+    images?: StoredFileUncheckedUpdateManyWithoutUserNestedInput
     organizations?: OrganizationMemberUncheckedUpdateManyWithoutUserNestedInput
     addresses?: AddressUncheckedUpdateManyWithoutUserNestedInput
     invitesSent?: InviteUncheckedUpdateManyWithoutInviterNestedInput
@@ -40089,7 +40089,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     links?: LinkUpdateManyWithoutOrganizationNestedInput
     phoneNumbers?: PhoneNumberUpdateManyWithoutOrganizationNestedInput
-    images?: UploadUpdateManyWithoutOrganizationNestedInput
+    images?: StoredFileUpdateManyWithoutOrganizationNestedInput
     members?: OrganizationMemberUpdateManyWithoutOrganizationNestedInput
     addresses?: AddressUpdateManyWithoutOrganizationNestedInput
     invites?: InviteUpdateManyWithoutOrganizationNestedInput
@@ -40106,7 +40106,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     links?: LinkUncheckedUpdateManyWithoutOrganizationNestedInput
     phoneNumbers?: PhoneNumberUncheckedUpdateManyWithoutOrganizationNestedInput
-    images?: UploadUncheckedUpdateManyWithoutOrganizationNestedInput
+    images?: StoredFileUncheckedUpdateManyWithoutOrganizationNestedInput
     members?: OrganizationMemberUncheckedUpdateManyWithoutOrganizationNestedInput
     addresses?: AddressUncheckedUpdateManyWithoutOrganizationNestedInput
     invites?: InviteUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -40147,7 +40147,7 @@ export namespace Prisma {
     emails?: EmailCreateNestedManyWithoutUserInput
     links?: LinkCreateNestedManyWithoutUserInput
     phoneNumbers?: PhoneNumberCreateNestedManyWithoutUserInput
-    images?: UploadCreateNestedManyWithoutUserInput
+    images?: StoredFileCreateNestedManyWithoutUserInput
     organizations?: OrganizationMemberCreateNestedManyWithoutUserInput
     addresses?: AddressCreateNestedManyWithoutUserInput
     activeSessions?: UserSessionCreateNestedManyWithoutUserInput
@@ -40191,7 +40191,7 @@ export namespace Prisma {
     emails?: EmailUncheckedCreateNestedManyWithoutUserInput
     links?: LinkUncheckedCreateNestedManyWithoutUserInput
     phoneNumbers?: PhoneNumberUncheckedCreateNestedManyWithoutUserInput
-    images?: UploadUncheckedCreateNestedManyWithoutUserInput
+    images?: StoredFileUncheckedCreateNestedManyWithoutUserInput
     organizations?: OrganizationMemberUncheckedCreateNestedManyWithoutUserInput
     addresses?: AddressUncheckedCreateNestedManyWithoutUserInput
     activeSessions?: UserSessionUncheckedCreateNestedManyWithoutUserInput
@@ -40217,7 +40217,7 @@ export namespace Prisma {
     emails?: EmailCreateNestedManyWithoutOrganizationInput
     links?: LinkCreateNestedManyWithoutOrganizationInput
     phoneNumbers?: PhoneNumberCreateNestedManyWithoutOrganizationInput
-    images?: UploadCreateNestedManyWithoutOrganizationInput
+    images?: StoredFileCreateNestedManyWithoutOrganizationInput
     members?: OrganizationMemberCreateNestedManyWithoutOrganizationInput
     addresses?: AddressCreateNestedManyWithoutOrganizationInput
     AuditLog?: AuditLogCreateNestedManyWithoutOrganizationInput
@@ -40234,7 +40234,7 @@ export namespace Prisma {
     emails?: EmailUncheckedCreateNestedManyWithoutOrganizationInput
     links?: LinkUncheckedCreateNestedManyWithoutOrganizationInput
     phoneNumbers?: PhoneNumberUncheckedCreateNestedManyWithoutOrganizationInput
-    images?: UploadUncheckedCreateNestedManyWithoutOrganizationInput
+    images?: StoredFileUncheckedCreateNestedManyWithoutOrganizationInput
     members?: OrganizationMemberUncheckedCreateNestedManyWithoutOrganizationInput
     addresses?: AddressUncheckedCreateNestedManyWithoutOrganizationInput
     AuditLog?: AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
@@ -40315,7 +40315,7 @@ export namespace Prisma {
     emails?: EmailUpdateManyWithoutUserNestedInput
     links?: LinkUpdateManyWithoutUserNestedInput
     phoneNumbers?: PhoneNumberUpdateManyWithoutUserNestedInput
-    images?: UploadUpdateManyWithoutUserNestedInput
+    images?: StoredFileUpdateManyWithoutUserNestedInput
     organizations?: OrganizationMemberUpdateManyWithoutUserNestedInput
     addresses?: AddressUpdateManyWithoutUserNestedInput
     activeSessions?: UserSessionUpdateManyWithoutUserNestedInput
@@ -40359,7 +40359,7 @@ export namespace Prisma {
     emails?: EmailUncheckedUpdateManyWithoutUserNestedInput
     links?: LinkUncheckedUpdateManyWithoutUserNestedInput
     phoneNumbers?: PhoneNumberUncheckedUpdateManyWithoutUserNestedInput
-    images?: UploadUncheckedUpdateManyWithoutUserNestedInput
+    images?: StoredFileUncheckedUpdateManyWithoutUserNestedInput
     organizations?: OrganizationMemberUncheckedUpdateManyWithoutUserNestedInput
     addresses?: AddressUncheckedUpdateManyWithoutUserNestedInput
     activeSessions?: UserSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -40391,7 +40391,7 @@ export namespace Prisma {
     emails?: EmailUpdateManyWithoutOrganizationNestedInput
     links?: LinkUpdateManyWithoutOrganizationNestedInput
     phoneNumbers?: PhoneNumberUpdateManyWithoutOrganizationNestedInput
-    images?: UploadUpdateManyWithoutOrganizationNestedInput
+    images?: StoredFileUpdateManyWithoutOrganizationNestedInput
     members?: OrganizationMemberUpdateManyWithoutOrganizationNestedInput
     addresses?: AddressUpdateManyWithoutOrganizationNestedInput
     AuditLog?: AuditLogUpdateManyWithoutOrganizationNestedInput
@@ -40408,7 +40408,7 @@ export namespace Prisma {
     emails?: EmailUncheckedUpdateManyWithoutOrganizationNestedInput
     links?: LinkUncheckedUpdateManyWithoutOrganizationNestedInput
     phoneNumbers?: PhoneNumberUncheckedUpdateManyWithoutOrganizationNestedInput
-    images?: UploadUncheckedUpdateManyWithoutOrganizationNestedInput
+    images?: StoredFileUncheckedUpdateManyWithoutOrganizationNestedInput
     members?: OrganizationMemberUncheckedUpdateManyWithoutOrganizationNestedInput
     addresses?: AddressUncheckedUpdateManyWithoutOrganizationNestedInput
     AuditLog?: AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -40478,7 +40478,7 @@ export namespace Prisma {
     privacyPolicyAcceptedAt?: Date | string | null
     emails?: EmailCreateNestedManyWithoutUserInput
     phoneNumbers?: PhoneNumberCreateNestedManyWithoutUserInput
-    images?: UploadCreateNestedManyWithoutUserInput
+    images?: StoredFileCreateNestedManyWithoutUserInput
     organizations?: OrganizationMemberCreateNestedManyWithoutUserInput
     addresses?: AddressCreateNestedManyWithoutUserInput
     invitesSent?: InviteCreateNestedManyWithoutInviterInput
@@ -40522,7 +40522,7 @@ export namespace Prisma {
     privacyPolicyAcceptedAt?: Date | string | null
     emails?: EmailUncheckedCreateNestedManyWithoutUserInput
     phoneNumbers?: PhoneNumberUncheckedCreateNestedManyWithoutUserInput
-    images?: UploadUncheckedCreateNestedManyWithoutUserInput
+    images?: StoredFileUncheckedCreateNestedManyWithoutUserInput
     organizations?: OrganizationMemberUncheckedCreateNestedManyWithoutUserInput
     addresses?: AddressUncheckedCreateNestedManyWithoutUserInput
     invitesSent?: InviteUncheckedCreateNestedManyWithoutInviterInput
@@ -40548,7 +40548,7 @@ export namespace Prisma {
     name: string
     emails?: EmailCreateNestedManyWithoutOrganizationInput
     phoneNumbers?: PhoneNumberCreateNestedManyWithoutOrganizationInput
-    images?: UploadCreateNestedManyWithoutOrganizationInput
+    images?: StoredFileCreateNestedManyWithoutOrganizationInput
     members?: OrganizationMemberCreateNestedManyWithoutOrganizationInput
     addresses?: AddressCreateNestedManyWithoutOrganizationInput
     invites?: InviteCreateNestedManyWithoutOrganizationInput
@@ -40565,7 +40565,7 @@ export namespace Prisma {
     name: string
     emails?: EmailUncheckedCreateNestedManyWithoutOrganizationInput
     phoneNumbers?: PhoneNumberUncheckedCreateNestedManyWithoutOrganizationInput
-    images?: UploadUncheckedCreateNestedManyWithoutOrganizationInput
+    images?: StoredFileUncheckedCreateNestedManyWithoutOrganizationInput
     members?: OrganizationMemberUncheckedCreateNestedManyWithoutOrganizationInput
     addresses?: AddressUncheckedCreateNestedManyWithoutOrganizationInput
     invites?: InviteUncheckedCreateNestedManyWithoutOrganizationInput
@@ -40621,7 +40621,7 @@ export namespace Prisma {
     privacyPolicyAcceptedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     emails?: EmailUpdateManyWithoutUserNestedInput
     phoneNumbers?: PhoneNumberUpdateManyWithoutUserNestedInput
-    images?: UploadUpdateManyWithoutUserNestedInput
+    images?: StoredFileUpdateManyWithoutUserNestedInput
     organizations?: OrganizationMemberUpdateManyWithoutUserNestedInput
     addresses?: AddressUpdateManyWithoutUserNestedInput
     invitesSent?: InviteUpdateManyWithoutInviterNestedInput
@@ -40665,7 +40665,7 @@ export namespace Prisma {
     privacyPolicyAcceptedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     emails?: EmailUncheckedUpdateManyWithoutUserNestedInput
     phoneNumbers?: PhoneNumberUncheckedUpdateManyWithoutUserNestedInput
-    images?: UploadUncheckedUpdateManyWithoutUserNestedInput
+    images?: StoredFileUncheckedUpdateManyWithoutUserNestedInput
     organizations?: OrganizationMemberUncheckedUpdateManyWithoutUserNestedInput
     addresses?: AddressUncheckedUpdateManyWithoutUserNestedInput
     invitesSent?: InviteUncheckedUpdateManyWithoutInviterNestedInput
@@ -40697,7 +40697,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     emails?: EmailUpdateManyWithoutOrganizationNestedInput
     phoneNumbers?: PhoneNumberUpdateManyWithoutOrganizationNestedInput
-    images?: UploadUpdateManyWithoutOrganizationNestedInput
+    images?: StoredFileUpdateManyWithoutOrganizationNestedInput
     members?: OrganizationMemberUpdateManyWithoutOrganizationNestedInput
     addresses?: AddressUpdateManyWithoutOrganizationNestedInput
     invites?: InviteUpdateManyWithoutOrganizationNestedInput
@@ -40714,7 +40714,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     emails?: EmailUncheckedUpdateManyWithoutOrganizationNestedInput
     phoneNumbers?: PhoneNumberUncheckedUpdateManyWithoutOrganizationNestedInput
-    images?: UploadUncheckedUpdateManyWithoutOrganizationNestedInput
+    images?: StoredFileUncheckedUpdateManyWithoutOrganizationNestedInput
     members?: OrganizationMemberUncheckedUpdateManyWithoutOrganizationNestedInput
     addresses?: AddressUncheckedUpdateManyWithoutOrganizationNestedInput
     invites?: InviteUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -40755,7 +40755,7 @@ export namespace Prisma {
     emails?: EmailCreateNestedManyWithoutUserInput
     links?: LinkCreateNestedManyWithoutUserInput
     phoneNumbers?: PhoneNumberCreateNestedManyWithoutUserInput
-    images?: UploadCreateNestedManyWithoutUserInput
+    images?: StoredFileCreateNestedManyWithoutUserInput
     organizations?: OrganizationMemberCreateNestedManyWithoutUserInput
     addresses?: AddressCreateNestedManyWithoutUserInput
     invitesSent?: InviteCreateNestedManyWithoutInviterInput
@@ -40799,7 +40799,7 @@ export namespace Prisma {
     emails?: EmailUncheckedCreateNestedManyWithoutUserInput
     links?: LinkUncheckedCreateNestedManyWithoutUserInput
     phoneNumbers?: PhoneNumberUncheckedCreateNestedManyWithoutUserInput
-    images?: UploadUncheckedCreateNestedManyWithoutUserInput
+    images?: StoredFileUncheckedCreateNestedManyWithoutUserInput
     organizations?: OrganizationMemberUncheckedCreateNestedManyWithoutUserInput
     addresses?: AddressUncheckedCreateNestedManyWithoutUserInput
     invitesSent?: InviteUncheckedCreateNestedManyWithoutInviterInput
@@ -40859,7 +40859,7 @@ export namespace Prisma {
     emails?: EmailUpdateManyWithoutUserNestedInput
     links?: LinkUpdateManyWithoutUserNestedInput
     phoneNumbers?: PhoneNumberUpdateManyWithoutUserNestedInput
-    images?: UploadUpdateManyWithoutUserNestedInput
+    images?: StoredFileUpdateManyWithoutUserNestedInput
     organizations?: OrganizationMemberUpdateManyWithoutUserNestedInput
     addresses?: AddressUpdateManyWithoutUserNestedInput
     invitesSent?: InviteUpdateManyWithoutInviterNestedInput
@@ -40903,7 +40903,7 @@ export namespace Prisma {
     emails?: EmailUncheckedUpdateManyWithoutUserNestedInput
     links?: LinkUncheckedUpdateManyWithoutUserNestedInput
     phoneNumbers?: PhoneNumberUncheckedUpdateManyWithoutUserNestedInput
-    images?: UploadUncheckedUpdateManyWithoutUserNestedInput
+    images?: StoredFileUncheckedUpdateManyWithoutUserNestedInput
     organizations?: OrganizationMemberUncheckedUpdateManyWithoutUserNestedInput
     addresses?: AddressUncheckedUpdateManyWithoutUserNestedInput
     invitesSent?: InviteUncheckedUpdateManyWithoutInviterNestedInput
@@ -40947,7 +40947,7 @@ export namespace Prisma {
     emails?: EmailCreateNestedManyWithoutUserInput
     links?: LinkCreateNestedManyWithoutUserInput
     phoneNumbers?: PhoneNumberCreateNestedManyWithoutUserInput
-    images?: UploadCreateNestedManyWithoutUserInput
+    images?: StoredFileCreateNestedManyWithoutUserInput
     organizations?: OrganizationMemberCreateNestedManyWithoutUserInput
     addresses?: AddressCreateNestedManyWithoutUserInput
     invitesSent?: InviteCreateNestedManyWithoutInviterInput
@@ -40991,7 +40991,7 @@ export namespace Prisma {
     emails?: EmailUncheckedCreateNestedManyWithoutUserInput
     links?: LinkUncheckedCreateNestedManyWithoutUserInput
     phoneNumbers?: PhoneNumberUncheckedCreateNestedManyWithoutUserInput
-    images?: UploadUncheckedCreateNestedManyWithoutUserInput
+    images?: StoredFileUncheckedCreateNestedManyWithoutUserInput
     organizations?: OrganizationMemberUncheckedCreateNestedManyWithoutUserInput
     addresses?: AddressUncheckedCreateNestedManyWithoutUserInput
     invitesSent?: InviteUncheckedCreateNestedManyWithoutInviterInput
@@ -41051,7 +41051,7 @@ export namespace Prisma {
     emails?: EmailUpdateManyWithoutUserNestedInput
     links?: LinkUpdateManyWithoutUserNestedInput
     phoneNumbers?: PhoneNumberUpdateManyWithoutUserNestedInput
-    images?: UploadUpdateManyWithoutUserNestedInput
+    images?: StoredFileUpdateManyWithoutUserNestedInput
     organizations?: OrganizationMemberUpdateManyWithoutUserNestedInput
     addresses?: AddressUpdateManyWithoutUserNestedInput
     invitesSent?: InviteUpdateManyWithoutInviterNestedInput
@@ -41095,7 +41095,7 @@ export namespace Prisma {
     emails?: EmailUncheckedUpdateManyWithoutUserNestedInput
     links?: LinkUncheckedUpdateManyWithoutUserNestedInput
     phoneNumbers?: PhoneNumberUncheckedUpdateManyWithoutUserNestedInput
-    images?: UploadUncheckedUpdateManyWithoutUserNestedInput
+    images?: StoredFileUncheckedUpdateManyWithoutUserNestedInput
     organizations?: OrganizationMemberUncheckedUpdateManyWithoutUserNestedInput
     addresses?: AddressUncheckedUpdateManyWithoutUserNestedInput
     invitesSent?: InviteUncheckedUpdateManyWithoutInviterNestedInput
@@ -41204,7 +41204,7 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
-  export type UploadCreateWithoutOrganizationInput = {
+  export type StoredFileCreateWithoutOrganizationInput = {
     id?: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -41223,7 +41223,7 @@ export namespace Prisma {
     user?: UserCreateNestedOneWithoutImagesInput
   }
 
-  export type UploadUncheckedCreateWithoutOrganizationInput = {
+  export type StoredFileUncheckedCreateWithoutOrganizationInput = {
     id?: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -41242,13 +41242,13 @@ export namespace Prisma {
     userId?: string | null
   }
 
-  export type UploadCreateOrConnectWithoutOrganizationInput = {
-    where: UploadWhereUniqueInput
-    create: XOR<UploadCreateWithoutOrganizationInput, UploadUncheckedCreateWithoutOrganizationInput>
+  export type StoredFileCreateOrConnectWithoutOrganizationInput = {
+    where: StoredFileWhereUniqueInput
+    create: XOR<StoredFileCreateWithoutOrganizationInput, StoredFileUncheckedCreateWithoutOrganizationInput>
   }
 
-  export type UploadCreateManyOrganizationInputEnvelope = {
-    data: UploadCreateManyOrganizationInput | UploadCreateManyOrganizationInput[]
+  export type StoredFileCreateManyOrganizationInputEnvelope = {
+    data: StoredFileCreateManyOrganizationInput | StoredFileCreateManyOrganizationInput[]
     skipDuplicates?: boolean
   }
 
@@ -41564,43 +41564,43 @@ export namespace Prisma {
     organizationId?: StringNullableFilter<"PhoneNumber"> | string | null
   }
 
-  export type UploadUpsertWithWhereUniqueWithoutOrganizationInput = {
-    where: UploadWhereUniqueInput
-    update: XOR<UploadUpdateWithoutOrganizationInput, UploadUncheckedUpdateWithoutOrganizationInput>
-    create: XOR<UploadCreateWithoutOrganizationInput, UploadUncheckedCreateWithoutOrganizationInput>
+  export type StoredFileUpsertWithWhereUniqueWithoutOrganizationInput = {
+    where: StoredFileWhereUniqueInput
+    update: XOR<StoredFileUpdateWithoutOrganizationInput, StoredFileUncheckedUpdateWithoutOrganizationInput>
+    create: XOR<StoredFileCreateWithoutOrganizationInput, StoredFileUncheckedCreateWithoutOrganizationInput>
   }
 
-  export type UploadUpdateWithWhereUniqueWithoutOrganizationInput = {
-    where: UploadWhereUniqueInput
-    data: XOR<UploadUpdateWithoutOrganizationInput, UploadUncheckedUpdateWithoutOrganizationInput>
+  export type StoredFileUpdateWithWhereUniqueWithoutOrganizationInput = {
+    where: StoredFileWhereUniqueInput
+    data: XOR<StoredFileUpdateWithoutOrganizationInput, StoredFileUncheckedUpdateWithoutOrganizationInput>
   }
 
-  export type UploadUpdateManyWithWhereWithoutOrganizationInput = {
-    where: UploadScalarWhereInput
-    data: XOR<UploadUpdateManyMutationInput, UploadUncheckedUpdateManyWithoutOrganizationInput>
+  export type StoredFileUpdateManyWithWhereWithoutOrganizationInput = {
+    where: StoredFileScalarWhereInput
+    data: XOR<StoredFileUpdateManyMutationInput, StoredFileUncheckedUpdateManyWithoutOrganizationInput>
   }
 
-  export type UploadScalarWhereInput = {
-    AND?: UploadScalarWhereInput | UploadScalarWhereInput[]
-    OR?: UploadScalarWhereInput[]
-    NOT?: UploadScalarWhereInput | UploadScalarWhereInput[]
-    id?: StringFilter<"Upload"> | string
-    createdAt?: DateTimeFilter<"Upload"> | Date | string
-    updatedAt?: DateTimeFilter<"Upload"> | Date | string
-    provider?: EnumStorageProviderFilter<"Upload"> | $Enums.StorageProvider
-    providerFileId?: StringFilter<"Upload"> | string
-    folder?: StringNullableFilter<"Upload"> | string | null
-    filename?: StringFilter<"Upload"> | string
-    originalName?: StringFilter<"Upload"> | string
-    mimeType?: StringFilter<"Upload"> | string
-    size?: IntFilter<"Upload"> | number
-    url?: StringFilter<"Upload"> | string
-    publicUrl?: StringNullableFilter<"Upload"> | string | null
-    width?: IntNullableFilter<"Upload"> | number | null
-    height?: IntNullableFilter<"Upload"> | number | null
-    metadata?: JsonNullableFilter<"Upload">
-    userId?: StringNullableFilter<"Upload"> | string | null
-    organizationId?: StringNullableFilter<"Upload"> | string | null
+  export type StoredFileScalarWhereInput = {
+    AND?: StoredFileScalarWhereInput | StoredFileScalarWhereInput[]
+    OR?: StoredFileScalarWhereInput[]
+    NOT?: StoredFileScalarWhereInput | StoredFileScalarWhereInput[]
+    id?: StringFilter<"StoredFile"> | string
+    createdAt?: DateTimeFilter<"StoredFile"> | Date | string
+    updatedAt?: DateTimeFilter<"StoredFile"> | Date | string
+    provider?: EnumStorageProviderFilter<"StoredFile"> | $Enums.StorageProvider
+    providerFileId?: StringFilter<"StoredFile"> | string
+    folder?: StringNullableFilter<"StoredFile"> | string | null
+    filename?: StringFilter<"StoredFile"> | string
+    originalName?: StringFilter<"StoredFile"> | string
+    mimeType?: StringFilter<"StoredFile"> | string
+    size?: IntFilter<"StoredFile"> | number
+    url?: StringFilter<"StoredFile"> | string
+    publicUrl?: StringNullableFilter<"StoredFile"> | string | null
+    width?: IntNullableFilter<"StoredFile"> | number | null
+    height?: IntNullableFilter<"StoredFile"> | number | null
+    metadata?: JsonNullableFilter<"StoredFile">
+    userId?: StringNullableFilter<"StoredFile"> | string | null
+    organizationId?: StringNullableFilter<"StoredFile"> | string | null
   }
 
   export type OrganizationMemberUpsertWithWhereUniqueWithoutOrganizationInput = {
@@ -41855,7 +41855,7 @@ export namespace Prisma {
     emails?: EmailCreateNestedManyWithoutUserInput
     links?: LinkCreateNestedManyWithoutUserInput
     phoneNumbers?: PhoneNumberCreateNestedManyWithoutUserInput
-    images?: UploadCreateNestedManyWithoutUserInput
+    images?: StoredFileCreateNestedManyWithoutUserInput
     addresses?: AddressCreateNestedManyWithoutUserInput
     invitesSent?: InviteCreateNestedManyWithoutInviterInput
     activeSessions?: UserSessionCreateNestedManyWithoutUserInput
@@ -41899,7 +41899,7 @@ export namespace Prisma {
     emails?: EmailUncheckedCreateNestedManyWithoutUserInput
     links?: LinkUncheckedCreateNestedManyWithoutUserInput
     phoneNumbers?: PhoneNumberUncheckedCreateNestedManyWithoutUserInput
-    images?: UploadUncheckedCreateNestedManyWithoutUserInput
+    images?: StoredFileUncheckedCreateNestedManyWithoutUserInput
     addresses?: AddressUncheckedCreateNestedManyWithoutUserInput
     invitesSent?: InviteUncheckedCreateNestedManyWithoutInviterInput
     activeSessions?: UserSessionUncheckedCreateNestedManyWithoutUserInput
@@ -41925,7 +41925,7 @@ export namespace Prisma {
     emails?: EmailCreateNestedManyWithoutOrganizationInput
     links?: LinkCreateNestedManyWithoutOrganizationInput
     phoneNumbers?: PhoneNumberCreateNestedManyWithoutOrganizationInput
-    images?: UploadCreateNestedManyWithoutOrganizationInput
+    images?: StoredFileCreateNestedManyWithoutOrganizationInput
     addresses?: AddressCreateNestedManyWithoutOrganizationInput
     invites?: InviteCreateNestedManyWithoutOrganizationInput
     AuditLog?: AuditLogCreateNestedManyWithoutOrganizationInput
@@ -41942,7 +41942,7 @@ export namespace Prisma {
     emails?: EmailUncheckedCreateNestedManyWithoutOrganizationInput
     links?: LinkUncheckedCreateNestedManyWithoutOrganizationInput
     phoneNumbers?: PhoneNumberUncheckedCreateNestedManyWithoutOrganizationInput
-    images?: UploadUncheckedCreateNestedManyWithoutOrganizationInput
+    images?: StoredFileUncheckedCreateNestedManyWithoutOrganizationInput
     addresses?: AddressUncheckedCreateNestedManyWithoutOrganizationInput
     invites?: InviteUncheckedCreateNestedManyWithoutOrganizationInput
     AuditLog?: AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
@@ -42029,7 +42029,7 @@ export namespace Prisma {
     emails?: EmailUpdateManyWithoutUserNestedInput
     links?: LinkUpdateManyWithoutUserNestedInput
     phoneNumbers?: PhoneNumberUpdateManyWithoutUserNestedInput
-    images?: UploadUpdateManyWithoutUserNestedInput
+    images?: StoredFileUpdateManyWithoutUserNestedInput
     addresses?: AddressUpdateManyWithoutUserNestedInput
     invitesSent?: InviteUpdateManyWithoutInviterNestedInput
     activeSessions?: UserSessionUpdateManyWithoutUserNestedInput
@@ -42073,7 +42073,7 @@ export namespace Prisma {
     emails?: EmailUncheckedUpdateManyWithoutUserNestedInput
     links?: LinkUncheckedUpdateManyWithoutUserNestedInput
     phoneNumbers?: PhoneNumberUncheckedUpdateManyWithoutUserNestedInput
-    images?: UploadUncheckedUpdateManyWithoutUserNestedInput
+    images?: StoredFileUncheckedUpdateManyWithoutUserNestedInput
     addresses?: AddressUncheckedUpdateManyWithoutUserNestedInput
     invitesSent?: InviteUncheckedUpdateManyWithoutInviterNestedInput
     activeSessions?: UserSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -42105,7 +42105,7 @@ export namespace Prisma {
     emails?: EmailUpdateManyWithoutOrganizationNestedInput
     links?: LinkUpdateManyWithoutOrganizationNestedInput
     phoneNumbers?: PhoneNumberUpdateManyWithoutOrganizationNestedInput
-    images?: UploadUpdateManyWithoutOrganizationNestedInput
+    images?: StoredFileUpdateManyWithoutOrganizationNestedInput
     addresses?: AddressUpdateManyWithoutOrganizationNestedInput
     invites?: InviteUpdateManyWithoutOrganizationNestedInput
     AuditLog?: AuditLogUpdateManyWithoutOrganizationNestedInput
@@ -42122,7 +42122,7 @@ export namespace Prisma {
     emails?: EmailUncheckedUpdateManyWithoutOrganizationNestedInput
     links?: LinkUncheckedUpdateManyWithoutOrganizationNestedInput
     phoneNumbers?: PhoneNumberUncheckedUpdateManyWithoutOrganizationNestedInput
-    images?: UploadUncheckedUpdateManyWithoutOrganizationNestedInput
+    images?: StoredFileUncheckedUpdateManyWithoutOrganizationNestedInput
     addresses?: AddressUncheckedUpdateManyWithoutOrganizationNestedInput
     invites?: InviteUncheckedUpdateManyWithoutOrganizationNestedInput
     AuditLog?: AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -42202,7 +42202,7 @@ export namespace Prisma {
     privacyPolicyAcceptedAt?: Date | string | null
     emails?: EmailCreateNestedManyWithoutUserInput
     links?: LinkCreateNestedManyWithoutUserInput
-    images?: UploadCreateNestedManyWithoutUserInput
+    images?: StoredFileCreateNestedManyWithoutUserInput
     organizations?: OrganizationMemberCreateNestedManyWithoutUserInput
     addresses?: AddressCreateNestedManyWithoutUserInput
     invitesSent?: InviteCreateNestedManyWithoutInviterInput
@@ -42246,7 +42246,7 @@ export namespace Prisma {
     privacyPolicyAcceptedAt?: Date | string | null
     emails?: EmailUncheckedCreateNestedManyWithoutUserInput
     links?: LinkUncheckedCreateNestedManyWithoutUserInput
-    images?: UploadUncheckedCreateNestedManyWithoutUserInput
+    images?: StoredFileUncheckedCreateNestedManyWithoutUserInput
     organizations?: OrganizationMemberUncheckedCreateNestedManyWithoutUserInput
     addresses?: AddressUncheckedCreateNestedManyWithoutUserInput
     invitesSent?: InviteUncheckedCreateNestedManyWithoutInviterInput
@@ -42272,7 +42272,7 @@ export namespace Prisma {
     name: string
     emails?: EmailCreateNestedManyWithoutOrganizationInput
     links?: LinkCreateNestedManyWithoutOrganizationInput
-    images?: UploadCreateNestedManyWithoutOrganizationInput
+    images?: StoredFileCreateNestedManyWithoutOrganizationInput
     members?: OrganizationMemberCreateNestedManyWithoutOrganizationInput
     addresses?: AddressCreateNestedManyWithoutOrganizationInput
     invites?: InviteCreateNestedManyWithoutOrganizationInput
@@ -42289,7 +42289,7 @@ export namespace Prisma {
     name: string
     emails?: EmailUncheckedCreateNestedManyWithoutOrganizationInput
     links?: LinkUncheckedCreateNestedManyWithoutOrganizationInput
-    images?: UploadUncheckedCreateNestedManyWithoutOrganizationInput
+    images?: StoredFileUncheckedCreateNestedManyWithoutOrganizationInput
     members?: OrganizationMemberUncheckedCreateNestedManyWithoutOrganizationInput
     addresses?: AddressUncheckedCreateNestedManyWithoutOrganizationInput
     invites?: InviteUncheckedCreateNestedManyWithoutOrganizationInput
@@ -42345,7 +42345,7 @@ export namespace Prisma {
     privacyPolicyAcceptedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     emails?: EmailUpdateManyWithoutUserNestedInput
     links?: LinkUpdateManyWithoutUserNestedInput
-    images?: UploadUpdateManyWithoutUserNestedInput
+    images?: StoredFileUpdateManyWithoutUserNestedInput
     organizations?: OrganizationMemberUpdateManyWithoutUserNestedInput
     addresses?: AddressUpdateManyWithoutUserNestedInput
     invitesSent?: InviteUpdateManyWithoutInviterNestedInput
@@ -42389,7 +42389,7 @@ export namespace Prisma {
     privacyPolicyAcceptedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     emails?: EmailUncheckedUpdateManyWithoutUserNestedInput
     links?: LinkUncheckedUpdateManyWithoutUserNestedInput
-    images?: UploadUncheckedUpdateManyWithoutUserNestedInput
+    images?: StoredFileUncheckedUpdateManyWithoutUserNestedInput
     organizations?: OrganizationMemberUncheckedUpdateManyWithoutUserNestedInput
     addresses?: AddressUncheckedUpdateManyWithoutUserNestedInput
     invitesSent?: InviteUncheckedUpdateManyWithoutInviterNestedInput
@@ -42421,7 +42421,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     emails?: EmailUpdateManyWithoutOrganizationNestedInput
     links?: LinkUpdateManyWithoutOrganizationNestedInput
-    images?: UploadUpdateManyWithoutOrganizationNestedInput
+    images?: StoredFileUpdateManyWithoutOrganizationNestedInput
     members?: OrganizationMemberUpdateManyWithoutOrganizationNestedInput
     addresses?: AddressUpdateManyWithoutOrganizationNestedInput
     invites?: InviteUpdateManyWithoutOrganizationNestedInput
@@ -42438,7 +42438,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     emails?: EmailUncheckedUpdateManyWithoutOrganizationNestedInput
     links?: LinkUncheckedUpdateManyWithoutOrganizationNestedInput
-    images?: UploadUncheckedUpdateManyWithoutOrganizationNestedInput
+    images?: StoredFileUncheckedUpdateManyWithoutOrganizationNestedInput
     members?: OrganizationMemberUncheckedUpdateManyWithoutOrganizationNestedInput
     addresses?: AddressUncheckedUpdateManyWithoutOrganizationNestedInput
     invites?: InviteUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -42522,7 +42522,7 @@ export namespace Prisma {
     emails?: EmailCreateNestedManyWithoutOrganizationInput
     links?: LinkCreateNestedManyWithoutOrganizationInput
     phoneNumbers?: PhoneNumberCreateNestedManyWithoutOrganizationInput
-    images?: UploadCreateNestedManyWithoutOrganizationInput
+    images?: StoredFileCreateNestedManyWithoutOrganizationInput
     members?: OrganizationMemberCreateNestedManyWithoutOrganizationInput
     addresses?: AddressCreateNestedManyWithoutOrganizationInput
     invites?: InviteCreateNestedManyWithoutOrganizationInput
@@ -42539,7 +42539,7 @@ export namespace Prisma {
     emails?: EmailUncheckedCreateNestedManyWithoutOrganizationInput
     links?: LinkUncheckedCreateNestedManyWithoutOrganizationInput
     phoneNumbers?: PhoneNumberUncheckedCreateNestedManyWithoutOrganizationInput
-    images?: UploadUncheckedCreateNestedManyWithoutOrganizationInput
+    images?: StoredFileUncheckedCreateNestedManyWithoutOrganizationInput
     members?: OrganizationMemberUncheckedCreateNestedManyWithoutOrganizationInput
     addresses?: AddressUncheckedCreateNestedManyWithoutOrganizationInput
     invites?: InviteUncheckedCreateNestedManyWithoutOrganizationInput
@@ -42677,7 +42677,7 @@ export namespace Prisma {
     emails?: EmailUpdateManyWithoutOrganizationNestedInput
     links?: LinkUpdateManyWithoutOrganizationNestedInput
     phoneNumbers?: PhoneNumberUpdateManyWithoutOrganizationNestedInput
-    images?: UploadUpdateManyWithoutOrganizationNestedInput
+    images?: StoredFileUpdateManyWithoutOrganizationNestedInput
     members?: OrganizationMemberUpdateManyWithoutOrganizationNestedInput
     addresses?: AddressUpdateManyWithoutOrganizationNestedInput
     invites?: InviteUpdateManyWithoutOrganizationNestedInput
@@ -42694,7 +42694,7 @@ export namespace Prisma {
     emails?: EmailUncheckedUpdateManyWithoutOrganizationNestedInput
     links?: LinkUncheckedUpdateManyWithoutOrganizationNestedInput
     phoneNumbers?: PhoneNumberUncheckedUpdateManyWithoutOrganizationNestedInput
-    images?: UploadUncheckedUpdateManyWithoutOrganizationNestedInput
+    images?: StoredFileUncheckedUpdateManyWithoutOrganizationNestedInput
     members?: OrganizationMemberUncheckedUpdateManyWithoutOrganizationNestedInput
     addresses?: AddressUncheckedUpdateManyWithoutOrganizationNestedInput
     invites?: InviteUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -42820,7 +42820,7 @@ export namespace Prisma {
     emails?: EmailCreateNestedManyWithoutUserInput
     links?: LinkCreateNestedManyWithoutUserInput
     phoneNumbers?: PhoneNumberCreateNestedManyWithoutUserInput
-    images?: UploadCreateNestedManyWithoutUserInput
+    images?: StoredFileCreateNestedManyWithoutUserInput
     organizations?: OrganizationMemberCreateNestedManyWithoutUserInput
     addresses?: AddressCreateNestedManyWithoutUserInput
     invitesSent?: InviteCreateNestedManyWithoutInviterInput
@@ -42864,7 +42864,7 @@ export namespace Prisma {
     emails?: EmailUncheckedCreateNestedManyWithoutUserInput
     links?: LinkUncheckedCreateNestedManyWithoutUserInput
     phoneNumbers?: PhoneNumberUncheckedCreateNestedManyWithoutUserInput
-    images?: UploadUncheckedCreateNestedManyWithoutUserInput
+    images?: StoredFileUncheckedCreateNestedManyWithoutUserInput
     organizations?: OrganizationMemberUncheckedCreateNestedManyWithoutUserInput
     addresses?: AddressUncheckedCreateNestedManyWithoutUserInput
     invitesSent?: InviteUncheckedCreateNestedManyWithoutInviterInput
@@ -42924,7 +42924,7 @@ export namespace Prisma {
     emails?: EmailUpdateManyWithoutUserNestedInput
     links?: LinkUpdateManyWithoutUserNestedInput
     phoneNumbers?: PhoneNumberUpdateManyWithoutUserNestedInput
-    images?: UploadUpdateManyWithoutUserNestedInput
+    images?: StoredFileUpdateManyWithoutUserNestedInput
     organizations?: OrganizationMemberUpdateManyWithoutUserNestedInput
     addresses?: AddressUpdateManyWithoutUserNestedInput
     invitesSent?: InviteUpdateManyWithoutInviterNestedInput
@@ -42968,7 +42968,7 @@ export namespace Prisma {
     emails?: EmailUncheckedUpdateManyWithoutUserNestedInput
     links?: LinkUncheckedUpdateManyWithoutUserNestedInput
     phoneNumbers?: PhoneNumberUncheckedUpdateManyWithoutUserNestedInput
-    images?: UploadUncheckedUpdateManyWithoutUserNestedInput
+    images?: StoredFileUncheckedUpdateManyWithoutUserNestedInput
     organizations?: OrganizationMemberUncheckedUpdateManyWithoutUserNestedInput
     addresses?: AddressUncheckedUpdateManyWithoutUserNestedInput
     invitesSent?: InviteUncheckedUpdateManyWithoutInviterNestedInput
@@ -42989,7 +42989,7 @@ export namespace Prisma {
     emails?: EmailCreateNestedManyWithoutOrganizationInput
     links?: LinkCreateNestedManyWithoutOrganizationInput
     phoneNumbers?: PhoneNumberCreateNestedManyWithoutOrganizationInput
-    images?: UploadCreateNestedManyWithoutOrganizationInput
+    images?: StoredFileCreateNestedManyWithoutOrganizationInput
     members?: OrganizationMemberCreateNestedManyWithoutOrganizationInput
     addresses?: AddressCreateNestedManyWithoutOrganizationInput
     invites?: InviteCreateNestedManyWithoutOrganizationInput
@@ -43006,7 +43006,7 @@ export namespace Prisma {
     emails?: EmailUncheckedCreateNestedManyWithoutOrganizationInput
     links?: LinkUncheckedCreateNestedManyWithoutOrganizationInput
     phoneNumbers?: PhoneNumberUncheckedCreateNestedManyWithoutOrganizationInput
-    images?: UploadUncheckedCreateNestedManyWithoutOrganizationInput
+    images?: StoredFileUncheckedCreateNestedManyWithoutOrganizationInput
     members?: OrganizationMemberUncheckedCreateNestedManyWithoutOrganizationInput
     addresses?: AddressUncheckedCreateNestedManyWithoutOrganizationInput
     invites?: InviteUncheckedCreateNestedManyWithoutOrganizationInput
@@ -43064,7 +43064,7 @@ export namespace Prisma {
     emails?: EmailUpdateManyWithoutOrganizationNestedInput
     links?: LinkUpdateManyWithoutOrganizationNestedInput
     phoneNumbers?: PhoneNumberUpdateManyWithoutOrganizationNestedInput
-    images?: UploadUpdateManyWithoutOrganizationNestedInput
+    images?: StoredFileUpdateManyWithoutOrganizationNestedInput
     members?: OrganizationMemberUpdateManyWithoutOrganizationNestedInput
     addresses?: AddressUpdateManyWithoutOrganizationNestedInput
     invites?: InviteUpdateManyWithoutOrganizationNestedInput
@@ -43081,7 +43081,7 @@ export namespace Prisma {
     emails?: EmailUncheckedUpdateManyWithoutOrganizationNestedInput
     links?: LinkUncheckedUpdateManyWithoutOrganizationNestedInput
     phoneNumbers?: PhoneNumberUncheckedUpdateManyWithoutOrganizationNestedInput
-    images?: UploadUncheckedUpdateManyWithoutOrganizationNestedInput
+    images?: StoredFileUncheckedUpdateManyWithoutOrganizationNestedInput
     members?: OrganizationMemberUncheckedUpdateManyWithoutOrganizationNestedInput
     addresses?: AddressUncheckedUpdateManyWithoutOrganizationNestedInput
     invites?: InviteUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -43129,7 +43129,7 @@ export namespace Prisma {
     emails?: EmailCreateNestedManyWithoutOrganizationInput
     links?: LinkCreateNestedManyWithoutOrganizationInput
     phoneNumbers?: PhoneNumberCreateNestedManyWithoutOrganizationInput
-    images?: UploadCreateNestedManyWithoutOrganizationInput
+    images?: StoredFileCreateNestedManyWithoutOrganizationInput
     members?: OrganizationMemberCreateNestedManyWithoutOrganizationInput
     addresses?: AddressCreateNestedManyWithoutOrganizationInput
     invites?: InviteCreateNestedManyWithoutOrganizationInput
@@ -43146,7 +43146,7 @@ export namespace Prisma {
     emails?: EmailUncheckedCreateNestedManyWithoutOrganizationInput
     links?: LinkUncheckedCreateNestedManyWithoutOrganizationInput
     phoneNumbers?: PhoneNumberUncheckedCreateNestedManyWithoutOrganizationInput
-    images?: UploadUncheckedCreateNestedManyWithoutOrganizationInput
+    images?: StoredFileUncheckedCreateNestedManyWithoutOrganizationInput
     members?: OrganizationMemberUncheckedCreateNestedManyWithoutOrganizationInput
     addresses?: AddressUncheckedCreateNestedManyWithoutOrganizationInput
     invites?: InviteUncheckedCreateNestedManyWithoutOrganizationInput
@@ -43205,7 +43205,7 @@ export namespace Prisma {
     emails?: EmailUpdateManyWithoutOrganizationNestedInput
     links?: LinkUpdateManyWithoutOrganizationNestedInput
     phoneNumbers?: PhoneNumberUpdateManyWithoutOrganizationNestedInput
-    images?: UploadUpdateManyWithoutOrganizationNestedInput
+    images?: StoredFileUpdateManyWithoutOrganizationNestedInput
     members?: OrganizationMemberUpdateManyWithoutOrganizationNestedInput
     addresses?: AddressUpdateManyWithoutOrganizationNestedInput
     invites?: InviteUpdateManyWithoutOrganizationNestedInput
@@ -43222,7 +43222,7 @@ export namespace Prisma {
     emails?: EmailUncheckedUpdateManyWithoutOrganizationNestedInput
     links?: LinkUncheckedUpdateManyWithoutOrganizationNestedInput
     phoneNumbers?: PhoneNumberUncheckedUpdateManyWithoutOrganizationNestedInput
-    images?: UploadUncheckedUpdateManyWithoutOrganizationNestedInput
+    images?: StoredFileUncheckedUpdateManyWithoutOrganizationNestedInput
     members?: OrganizationMemberUncheckedUpdateManyWithoutOrganizationNestedInput
     addresses?: AddressUncheckedUpdateManyWithoutOrganizationNestedInput
     invites?: InviteUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -43301,7 +43301,7 @@ export namespace Prisma {
     emails?: EmailCreateNestedManyWithoutUserInput
     links?: LinkCreateNestedManyWithoutUserInput
     phoneNumbers?: PhoneNumberCreateNestedManyWithoutUserInput
-    images?: UploadCreateNestedManyWithoutUserInput
+    images?: StoredFileCreateNestedManyWithoutUserInput
     organizations?: OrganizationMemberCreateNestedManyWithoutUserInput
     addresses?: AddressCreateNestedManyWithoutUserInput
     invitesSent?: InviteCreateNestedManyWithoutInviterInput
@@ -43345,7 +43345,7 @@ export namespace Prisma {
     emails?: EmailUncheckedCreateNestedManyWithoutUserInput
     links?: LinkUncheckedCreateNestedManyWithoutUserInput
     phoneNumbers?: PhoneNumberUncheckedCreateNestedManyWithoutUserInput
-    images?: UploadUncheckedCreateNestedManyWithoutUserInput
+    images?: StoredFileUncheckedCreateNestedManyWithoutUserInput
     organizations?: OrganizationMemberUncheckedCreateNestedManyWithoutUserInput
     addresses?: AddressUncheckedCreateNestedManyWithoutUserInput
     invitesSent?: InviteUncheckedCreateNestedManyWithoutInviterInput
@@ -43459,7 +43459,7 @@ export namespace Prisma {
     emails?: EmailUpdateManyWithoutUserNestedInput
     links?: LinkUpdateManyWithoutUserNestedInput
     phoneNumbers?: PhoneNumberUpdateManyWithoutUserNestedInput
-    images?: UploadUpdateManyWithoutUserNestedInput
+    images?: StoredFileUpdateManyWithoutUserNestedInput
     organizations?: OrganizationMemberUpdateManyWithoutUserNestedInput
     addresses?: AddressUpdateManyWithoutUserNestedInput
     invitesSent?: InviteUpdateManyWithoutInviterNestedInput
@@ -43503,7 +43503,7 @@ export namespace Prisma {
     emails?: EmailUncheckedUpdateManyWithoutUserNestedInput
     links?: LinkUncheckedUpdateManyWithoutUserNestedInput
     phoneNumbers?: PhoneNumberUncheckedUpdateManyWithoutUserNestedInput
-    images?: UploadUncheckedUpdateManyWithoutUserNestedInput
+    images?: StoredFileUncheckedUpdateManyWithoutUserNestedInput
     organizations?: OrganizationMemberUncheckedUpdateManyWithoutUserNestedInput
     addresses?: AddressUncheckedUpdateManyWithoutUserNestedInput
     invitesSent?: InviteUncheckedUpdateManyWithoutInviterNestedInput
@@ -43919,7 +43919,7 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
-  export type UploadCreateWithoutUserInput = {
+  export type StoredFileCreateWithoutUserInput = {
     id?: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -43938,7 +43938,7 @@ export namespace Prisma {
     organization?: OrganizationCreateNestedOneWithoutImagesInput
   }
 
-  export type UploadUncheckedCreateWithoutUserInput = {
+  export type StoredFileUncheckedCreateWithoutUserInput = {
     id?: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -43957,13 +43957,13 @@ export namespace Prisma {
     organizationId?: string | null
   }
 
-  export type UploadCreateOrConnectWithoutUserInput = {
-    where: UploadWhereUniqueInput
-    create: XOR<UploadCreateWithoutUserInput, UploadUncheckedCreateWithoutUserInput>
+  export type StoredFileCreateOrConnectWithoutUserInput = {
+    where: StoredFileWhereUniqueInput
+    create: XOR<StoredFileCreateWithoutUserInput, StoredFileUncheckedCreateWithoutUserInput>
   }
 
-  export type UploadCreateManyUserInputEnvelope = {
-    data: UploadCreateManyUserInput | UploadCreateManyUserInput[]
+  export type StoredFileCreateManyUserInputEnvelope = {
+    data: StoredFileCreateManyUserInput | StoredFileCreateManyUserInput[]
     skipDuplicates?: boolean
   }
 
@@ -44353,20 +44353,20 @@ export namespace Prisma {
     data: XOR<PhoneNumberUpdateManyMutationInput, PhoneNumberUncheckedUpdateManyWithoutUserInput>
   }
 
-  export type UploadUpsertWithWhereUniqueWithoutUserInput = {
-    where: UploadWhereUniqueInput
-    update: XOR<UploadUpdateWithoutUserInput, UploadUncheckedUpdateWithoutUserInput>
-    create: XOR<UploadCreateWithoutUserInput, UploadUncheckedCreateWithoutUserInput>
+  export type StoredFileUpsertWithWhereUniqueWithoutUserInput = {
+    where: StoredFileWhereUniqueInput
+    update: XOR<StoredFileUpdateWithoutUserInput, StoredFileUncheckedUpdateWithoutUserInput>
+    create: XOR<StoredFileCreateWithoutUserInput, StoredFileUncheckedCreateWithoutUserInput>
   }
 
-  export type UploadUpdateWithWhereUniqueWithoutUserInput = {
-    where: UploadWhereUniqueInput
-    data: XOR<UploadUpdateWithoutUserInput, UploadUncheckedUpdateWithoutUserInput>
+  export type StoredFileUpdateWithWhereUniqueWithoutUserInput = {
+    where: StoredFileWhereUniqueInput
+    data: XOR<StoredFileUpdateWithoutUserInput, StoredFileUncheckedUpdateWithoutUserInput>
   }
 
-  export type UploadUpdateManyWithWhereWithoutUserInput = {
-    where: UploadScalarWhereInput
-    data: XOR<UploadUpdateManyMutationInput, UploadUncheckedUpdateManyWithoutUserInput>
+  export type StoredFileUpdateManyWithWhereWithoutUserInput = {
+    where: StoredFileScalarWhereInput
+    data: XOR<StoredFileUpdateManyMutationInput, StoredFileUncheckedUpdateManyWithoutUserInput>
   }
 
   export type OrganizationMemberUpsertWithWhereUniqueWithoutUserInput = {
@@ -44660,7 +44660,7 @@ export namespace Prisma {
     emails?: EmailCreateNestedManyWithoutUserInput
     links?: LinkCreateNestedManyWithoutUserInput
     phoneNumbers?: PhoneNumberCreateNestedManyWithoutUserInput
-    images?: UploadCreateNestedManyWithoutUserInput
+    images?: StoredFileCreateNestedManyWithoutUserInput
     organizations?: OrganizationMemberCreateNestedManyWithoutUserInput
     addresses?: AddressCreateNestedManyWithoutUserInput
     invitesSent?: InviteCreateNestedManyWithoutInviterInput
@@ -44704,7 +44704,7 @@ export namespace Prisma {
     emails?: EmailUncheckedCreateNestedManyWithoutUserInput
     links?: LinkUncheckedCreateNestedManyWithoutUserInput
     phoneNumbers?: PhoneNumberUncheckedCreateNestedManyWithoutUserInput
-    images?: UploadUncheckedCreateNestedManyWithoutUserInput
+    images?: StoredFileUncheckedCreateNestedManyWithoutUserInput
     organizations?: OrganizationMemberUncheckedCreateNestedManyWithoutUserInput
     addresses?: AddressUncheckedCreateNestedManyWithoutUserInput
     invitesSent?: InviteUncheckedCreateNestedManyWithoutInviterInput
@@ -44764,7 +44764,7 @@ export namespace Prisma {
     emails?: EmailUpdateManyWithoutUserNestedInput
     links?: LinkUpdateManyWithoutUserNestedInput
     phoneNumbers?: PhoneNumberUpdateManyWithoutUserNestedInput
-    images?: UploadUpdateManyWithoutUserNestedInput
+    images?: StoredFileUpdateManyWithoutUserNestedInput
     organizations?: OrganizationMemberUpdateManyWithoutUserNestedInput
     addresses?: AddressUpdateManyWithoutUserNestedInput
     invitesSent?: InviteUpdateManyWithoutInviterNestedInput
@@ -44808,7 +44808,7 @@ export namespace Prisma {
     emails?: EmailUncheckedUpdateManyWithoutUserNestedInput
     links?: LinkUncheckedUpdateManyWithoutUserNestedInput
     phoneNumbers?: PhoneNumberUncheckedUpdateManyWithoutUserNestedInput
-    images?: UploadUncheckedUpdateManyWithoutUserNestedInput
+    images?: StoredFileUncheckedUpdateManyWithoutUserNestedInput
     organizations?: OrganizationMemberUncheckedUpdateManyWithoutUserNestedInput
     addresses?: AddressUncheckedUpdateManyWithoutUserNestedInput
     invitesSent?: InviteUncheckedUpdateManyWithoutInviterNestedInput
@@ -44852,7 +44852,7 @@ export namespace Prisma {
     emails?: EmailCreateNestedManyWithoutUserInput
     links?: LinkCreateNestedManyWithoutUserInput
     phoneNumbers?: PhoneNumberCreateNestedManyWithoutUserInput
-    images?: UploadCreateNestedManyWithoutUserInput
+    images?: StoredFileCreateNestedManyWithoutUserInput
     organizations?: OrganizationMemberCreateNestedManyWithoutUserInput
     addresses?: AddressCreateNestedManyWithoutUserInput
     invitesSent?: InviteCreateNestedManyWithoutInviterInput
@@ -44896,7 +44896,7 @@ export namespace Prisma {
     emails?: EmailUncheckedCreateNestedManyWithoutUserInput
     links?: LinkUncheckedCreateNestedManyWithoutUserInput
     phoneNumbers?: PhoneNumberUncheckedCreateNestedManyWithoutUserInput
-    images?: UploadUncheckedCreateNestedManyWithoutUserInput
+    images?: StoredFileUncheckedCreateNestedManyWithoutUserInput
     organizations?: OrganizationMemberUncheckedCreateNestedManyWithoutUserInput
     addresses?: AddressUncheckedCreateNestedManyWithoutUserInput
     invitesSent?: InviteUncheckedCreateNestedManyWithoutInviterInput
@@ -44956,7 +44956,7 @@ export namespace Prisma {
     emails?: EmailUpdateManyWithoutUserNestedInput
     links?: LinkUpdateManyWithoutUserNestedInput
     phoneNumbers?: PhoneNumberUpdateManyWithoutUserNestedInput
-    images?: UploadUpdateManyWithoutUserNestedInput
+    images?: StoredFileUpdateManyWithoutUserNestedInput
     organizations?: OrganizationMemberUpdateManyWithoutUserNestedInput
     addresses?: AddressUpdateManyWithoutUserNestedInput
     invitesSent?: InviteUpdateManyWithoutInviterNestedInput
@@ -45000,7 +45000,7 @@ export namespace Prisma {
     emails?: EmailUncheckedUpdateManyWithoutUserNestedInput
     links?: LinkUncheckedUpdateManyWithoutUserNestedInput
     phoneNumbers?: PhoneNumberUncheckedUpdateManyWithoutUserNestedInput
-    images?: UploadUncheckedUpdateManyWithoutUserNestedInput
+    images?: StoredFileUncheckedUpdateManyWithoutUserNestedInput
     organizations?: OrganizationMemberUncheckedUpdateManyWithoutUserNestedInput
     addresses?: AddressUncheckedUpdateManyWithoutUserNestedInput
     invitesSent?: InviteUncheckedUpdateManyWithoutInviterNestedInput
@@ -45106,7 +45106,7 @@ export namespace Prisma {
     primary?: boolean
   }
 
-  export type UploadCreateManyOrganizationInput = {
+  export type StoredFileCreateManyOrganizationInput = {
     id?: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -45284,7 +45284,7 @@ export namespace Prisma {
     primary?: BoolFieldUpdateOperationsInput | boolean
   }
 
-  export type UploadUpdateWithoutOrganizationInput = {
+  export type StoredFileUpdateWithoutOrganizationInput = {
     id?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -45303,7 +45303,7 @@ export namespace Prisma {
     user?: UserUpdateOneWithoutImagesNestedInput
   }
 
-  export type UploadUncheckedUpdateWithoutOrganizationInput = {
+  export type StoredFileUncheckedUpdateWithoutOrganizationInput = {
     id?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -45322,7 +45322,7 @@ export namespace Prisma {
     userId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
-  export type UploadUncheckedUpdateManyWithoutOrganizationInput = {
+  export type StoredFileUncheckedUpdateManyWithoutOrganizationInput = {
     id?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -45804,7 +45804,7 @@ export namespace Prisma {
     organizationId?: string | null
   }
 
-  export type UploadCreateManyUserInput = {
+  export type StoredFileCreateManyUserInput = {
     id?: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -46036,7 +46036,7 @@ export namespace Prisma {
     organizationId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
-  export type UploadUpdateWithoutUserInput = {
+  export type StoredFileUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -46055,7 +46055,7 @@ export namespace Prisma {
     organization?: OrganizationUpdateOneWithoutImagesNestedInput
   }
 
-  export type UploadUncheckedUpdateWithoutUserInput = {
+  export type StoredFileUncheckedUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -46074,7 +46074,7 @@ export namespace Prisma {
     organizationId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
-  export type UploadUncheckedUpdateManyWithoutUserInput = {
+  export type StoredFileUncheckedUpdateManyWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string

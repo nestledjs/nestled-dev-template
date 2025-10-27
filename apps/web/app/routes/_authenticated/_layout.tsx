@@ -1,13 +1,13 @@
-import { Outlet, useNavigate, Navigate, useLocation, useLoaderData } from 'react-router'
-import { useGlobalCtx, GlobalContextProvider } from '@nestled-template/web'
-import { WebUiHeader, WebUiFooter } from '@nestled-template/web-ui'
+import { Navigate, Outlet, useLoaderData, useLocation } from 'react-router'
+import { GlobalContextProvider, useGlobalCtx } from '@nestled-template/web'
+import { WebUiFooter, WebUiHeader } from '@nestled-template/web-ui'
 import { apolloLoader } from '@nestled-template/shared/apollo'
 import { MyOrganizationsDocument, MyOrganizationsQuery } from '@nestled-template/shared/sdk'
-import { QueryRef, useReadQuery } from '@apollo/client'
+import { useReadQuery } from '@apollo/client'
 
 export const loader = apolloLoader()(({ preloadQuery }) => {
   const myOrganizationsQueryRef = preloadQuery<MyOrganizationsQuery>(MyOrganizationsDocument, {
-    fetchPolicy: 'network-only' // Always fetch fresh data, bypass cache
+    fetchPolicy: 'network-only', // Always fetch fresh data, bypass cache
   })
   return { myOrganizationsQueryRef }
 })
@@ -15,21 +15,21 @@ export const loader = apolloLoader()(({ preloadQuery }) => {
 export default function AuthenticatedLayout() {
   const { user } = useGlobalCtx()
   const location = useLocation()
-  const navigate = useNavigate()
-  const loaderData = useLoaderData() as { myOrganizationsQueryRef: QueryRef<MyOrganizationsQuery> }
+  const loaderData = useLoaderData()
+
+  // Read organizations from preloaded query
+  const { data: orgsData } = useReadQuery<MyOrganizationsQuery>(loaderData.myOrganizationsQueryRef)
 
   // Redirect to login if not authenticated
   if (!user) {
     return <Navigate to="/login" state={{ from: location }} replace />
   }
 
-  // Read organizations from preloaded query
-  const { data: orgsData } = useReadQuery(loaderData.myOrganizationsQueryRef)
   const organizations = orgsData?.myOrganizations || []
-  const activeOrganization = organizations.find(org => org.id === user.activeOrganizationId) || organizations[0] || null
-  const activeOrganizationMember = activeOrganization?.members?.find(
-    (member: any) => member.userId === user?.id
-  ) || null
+  const activeOrganization =
+    organizations.find(org => org.id === user.activeOrganizationId) || organizations[0] || null
+  const activeOrganizationMember =
+    activeOrganization?.members?.find((member: any) => member.userId === user?.id) || null
 
   return (
     <GlobalContextProvider
@@ -46,7 +46,7 @@ export default function AuthenticatedLayout() {
           navigation={[
             { name: 'Dashboard', href: '/members/dashboard' },
             { name: 'My Profile', href: '/members/my-profile' },
-            { name: 'Settings', href: '/settings/organization' },
+            { name: 'Settings', href: '/settings/profile' },
             { name: 'Logout', href: '/logout' },
           ]}
           isAuthenticated={true}

@@ -1,4 +1,4 @@
-mutation createUserPreference($input: SecureCreateUserPreferenceInput!) {
+mutation createUserPreference($input: CreateUserPreferenceInput!) {
   createUserPreference(input: $input) {
     ...UserPreferenceDetails
   }
@@ -10,7 +10,7 @@ mutation deleteUserPreference($userPreferenceId: String!) {
   }
 }
 
-mutation updateUserPreference($userPreferenceId: String!, $input: SecureUpdateUserPreferenceInput!) {
+mutation updateUserPreference($userPreferenceId: String!, $input: UpdateUserPreferenceInput!) {
   updateUserPreference(userPreferenceId: $userPreferenceId, input: $input) {
     ...UserPreferenceDetails
   }

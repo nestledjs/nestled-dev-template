@@ -17,4 +17,5 @@ export * from './lib/web-ui-simple-list-item'
 export * from './lib/web-ui-social-links'
 export * from './lib/web-ui-vite-cache-error'
 export * from './lib/components/organization-switcher'
+export * from './lib/components/avatar'
 

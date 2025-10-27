@@ -15,6 +15,7 @@ fragment AuthUserDetails on User {
   bio
   isSuperAdmin
   emailValidated
+  twoFactorEnabled
   createdAt
   updatedAt
   emails {
@@ -27,5 +28,15 @@ fragment AuthUserDetails on User {
     id
     phone
     primary
+  }
+  images {
+    id
+    url
+    publicUrl
+    filename
+    mimeType
+    metadata
+    folder
+    createdAt
   }
 }

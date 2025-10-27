@@ -16,7 +16,7 @@ export default defineConfig(() => ({
   define: {
     // Ensure API URL is available in client bundle
     'import.meta.env.VITE_API_URL': JSON.stringify(
-      process.env.VITE_API_URL || 'http://localhost:3000/graphql'
+      process.env.VITE_API_URL || 'http://localhost:3000/graphql',
     ),
   },
   resolve: {
@@ -39,10 +39,7 @@ export default defineConfig(() => ({
   plugins: [
     mdx({
       include: [/\.mdx?$/], // Handle both .md and .mdx files
-      remarkPlugins: [
-        remarkFrontmatter,
-        [remarkMdxFrontmatter, { name: 'attributes' }]
-      ]
+      remarkPlugins: [remarkFrontmatter, [remarkMdxFrontmatter, { name: 'attributes' }]],
     }),
     !process.env.VITEST && reactRouter(),
     nxViteTsPaths(),
@@ -50,12 +47,12 @@ export default defineConfig(() => ({
     tailwindcss(),
   ],
   optimizeDeps: {
-    include: ['@apollo/client/core', '@apollo/client/react/hooks'],
+    include: ['@apollo/client/core', '@apollo/client/hooks'],
   },
   ssr: {
     noExternal: [
       // Add any package that causes ESM/CJS issues during SSR.
-      // A regex is robust to catch all sub-imports like '@apollo/client/react'.
+      // A regex is robust to catch all sub-imports like '@apollo/client'.
       '@nestledjs/forms',
       /^@apollo\/client/,
     ],

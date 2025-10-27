@@ -330,7 +330,7 @@ exports.Prisma.TeamMemberScalarFieldEnum = {
   roleId: 'roleId'
 };
 
-exports.Prisma.UploadScalarFieldEnum = {
+exports.Prisma.StoredFileScalarFieldEnum = {
   id: 'id',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
@@ -524,7 +524,7 @@ exports.Prisma.ModelName = {
   Subscription: 'Subscription',
   Team: 'Team',
   TeamMember: 'TeamMember',
-  Upload: 'Upload',
+  StoredFile: 'StoredFile',
   User: 'User',
   UserPreference: 'UserPreference',
   UserSession: 'UserSession'

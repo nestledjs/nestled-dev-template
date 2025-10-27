@@ -4,8 +4,8 @@ query OrganizationMember($organizationMemberId: String!) {
   }
 }
 
-query OrganizationMembers($organizationId: String!) {
-  organizationMembers(organizationId: $organizationId) {
+query OrganizationMembers($input: ListOrganizationMemberInput) {
+  organizationMembers(input: $input) {
     ...OrganizationMemberList
   }
 }

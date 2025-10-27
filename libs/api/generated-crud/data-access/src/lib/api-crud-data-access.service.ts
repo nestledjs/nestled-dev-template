@@ -2126,7 +2126,7 @@ export class ApiCrudDataAccessService {
     })
   }
 
-  async createUpload(info: GraphQLResolveInfo, input: dto.CreateUploadInput) {
+  async createStoredFile(info: GraphQLResolveInfo, input: dto.CreateStoredFileInput) {
     const { userId, organizationId, ...regularFields } = input
     const data: any = regularFields
 
@@ -2152,23 +2152,23 @@ export class ApiCrudDataAccessService {
       }
     }
 
-    return this.data['upload'].create({
+    return this.data['storedFile'].create({
       data,
       select: createSelect(info),
     })
   }
 
-  async uploads(info: GraphQLResolveInfo, input?: dto.ListUploadInput) {
-    return this.data['upload'].findMany({
+  async storedFiles(info: GraphQLResolveInfo, input?: dto.ListStoredFileInput) {
+    return this.data['storedFile'].findMany({
       ...this.data.filter(input),
       select: createSelect(info),
     })
   }
 
-  async uploadsCount(input?: dto.ListUploadInput) {
-    const total = await this.data['upload'].count()
+  async storedFilesCount(input?: dto.ListStoredFileInput) {
+    const total = await this.data['storedFile'].count()
     const { where, take = 10, skip = 0 } = this.data.filter(input)
-    const filteredTotal = await this.data['upload'].count({ where })
+    const filteredTotal = await this.data['storedFile'].count({ where })
     const page = Math.floor(skip / take)
     const pages = take > 0 ? Math.ceil(filteredTotal / take) : 0
     const hasNext = skip + take < filteredTotal
@@ -2187,14 +2187,14 @@ export class ApiCrudDataAccessService {
     }
   }
 
-  async upload(info: GraphQLResolveInfo, id: string) {
-    return this.data['upload'].findUnique({
+  async storedFile(info: GraphQLResolveInfo, id: string) {
+    return this.data['storedFile'].findUnique({
       where: { id },
       select: createSelect(info),
     })
   }
 
-  async updateUpload(info: GraphQLResolveInfo, id: string, input: dto.UpdateUploadInput) {
+  async updateStoredFile(info: GraphQLResolveInfo, id: string, input: dto.UpdateStoredFileInput) {
     const { userId, organizationId, ...regularFields } = input
     const data: any = regularFields
 
@@ -2220,15 +2220,15 @@ export class ApiCrudDataAccessService {
       }
     }
 
-    return this.data['upload'].update({
+    return this.data['storedFile'].update({
       where: { id },
       data,
       select: createSelect(info),
     })
   }
 
-  async deleteUpload(id: string) {
-    return this.data['upload'].delete({
+  async deleteStoredFile(id: string) {
+    return this.data['storedFile'].delete({
       where: { id },
     })
   }

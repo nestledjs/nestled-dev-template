@@ -243,11 +243,9 @@ export class SessionService {
 
     // Detect OS - order matters! Check more specific patterns first
     let os = 'Unknown OS'
-    if (ua.includes('android')) os = 'Android'
-    else if (ua.includes('ios') || ua.includes('iphone') || ua.includes('ipad'))
-      os = 'iOS'
-    else if (ua.includes('mac') || ua.includes('macintosh'))
-      os = 'macOS'
+    if (ua.includes('iphone') || ua.includes('ipad')) os = 'iOS'
+    else if (ua.includes('mac') || ua.includes('macintosh')) os = 'macOS'
+    else if (ua.includes('android')) os = 'Android'
     else if (ua.includes('windows') || ua.includes('win32') || ua.includes('win64'))
       os = 'Windows'
     else if (ua.includes('linux')) os = 'Linux'

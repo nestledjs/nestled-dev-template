@@ -230,7 +230,21 @@ input CreateOAuthAccountInput {
 }
 
 input CreateOrganizationInput {
+  AuditLogIds: [String!]
+  TeamIds: [String!]
+  addressesIds: [String!]
+  createdAt: Timestamp
+  emailsIds: [String!]
+  id: String
+  imagesIds: [String!]
+  invitesIds: [String!]
+  linksIds: [String!]
+  membersIds: [String!]
   name: String!
+  phoneNumbersIds: [String!]
+  rolesIds: [String!]
+  subscriptionId: String
+  updatedAt: Timestamp
 }
 
 input CreateOrganizationMemberInput {
@@ -294,6 +308,26 @@ input CreateSecurityEventInput {
   userId: String!
 }
 
+input CreateStoredFileInput {
+  createdAt: Timestamp
+  filename: String!
+  folder: String
+  height: Int
+  id: String
+  metadata: JSON
+  mimeType: String!
+  organizationId: String
+  originalName: String!
+  provider: StorageProvider!
+  providerFileId: String!
+  publicUrl: String
+  size: Int!
+  updatedAt: Timestamp
+  url: String!
+  userId: String
+  width: Int
+}
+
 input CreateSubscriptionInput {
   createdAt: Timestamp
   id: String
@@ -324,26 +358,6 @@ input CreateTeamMemberInput {
   teamId: String!
   updatedAt: Timestamp
   userId: String!
-}
-
-input CreateUploadInput {
-  createdAt: Timestamp
-  fileId: String
-  filePath: String
-  fileType: String
-  height: Int
-  id: String
-  name: String
-  organizationId: String
-  orientation: Int
-  size: Int
-  thumbnailUrl: String
-  type: ImageType
-  updatedAt: Timestamp
-  url: String
-  userId: String
-  versionInfo: JSON
-  width: Int
 }
 
 input CreateUserInput {
@@ -389,6 +403,15 @@ input CreateUserInput {
   updatedAt: Timestamp
   validateEmailToken: String
   validateEmailTokenExpires: Timestamp
+}
+
+input CreateUserPreferenceInput {
+  createdAt: Timestamp
+  id: String
+  key: String!
+  updatedAt: Timestamp
+  userId: String!
+  value: String!
 }
 
 input CreateUserSessionInput {
@@ -475,12 +498,6 @@ input GenerateApiTokenInput {
 type GenerateApiTokenOutput {
   apiToken: ApiToken!
   token: String!
-}
-
-enum ImageType {
-  AVATAR
-  BACKGROUND
-  OTHER
 }
 
 type Invite {
@@ -716,6 +733,31 @@ input ListOAuthAccountInput {
   userId: String
 }
 
+input ListOrganizationInput {
+  AuditLogIds: [String!]
+  TeamIds: [String!]
+  addressesIds: [String!]
+  createdAt: Timestamp
+  emailsIds: [String!]
+  filters: JSONObject
+  id: String
+  imagesIds: [String!]
+  invitesIds: [String!]
+  linksIds: [String!]
+  membersIds: [String!]
+  name: String
+  orderBy: String
+  orderDirection: String
+  phoneNumbersIds: [String!]
+  rolesIds: [String!]
+  search: String
+  searchFields: [String!]
+  skip: Float = 0
+  subscriptionId: String
+  take: Float = 20
+  updatedAt: Timestamp
+}
+
 input ListOrganizationMemberInput {
   createdAt: Timestamp
   filters: JSONObject
@@ -819,6 +861,33 @@ input ListSecurityEventInput {
   userId: String
 }
 
+input ListStoredFileInput {
+  createdAt: Timestamp
+  filename: String
+  filters: JSONObject
+  folder: String
+  height: Int
+  id: String
+  metadata: JSON
+  mimeType: String
+  orderBy: String
+  orderDirection: String
+  organizationId: String
+  originalName: String
+  provider: StorageProvider
+  providerFileId: String
+  publicUrl: String
+  search: String
+  searchFields: [String!]
+  size: Int
+  skip: Float = 0
+  take: Float = 20
+  updatedAt: Timestamp
+  url: String
+  userId: String
+  width: Int
+}
+
 input ListSubscriptionInput {
   createdAt: Timestamp
   filters: JSONObject
@@ -872,33 +941,6 @@ input ListTeamMemberInput {
   userId: String
 }
 
-input ListUploadInput {
-  createdAt: Timestamp
-  fileId: String
-  filePath: String
-  fileType: String
-  filters: JSONObject
-  height: Int
-  id: String
-  name: String
-  orderBy: String
-  orderDirection: String
-  organizationId: String
-  orientation: Int
-  search: String
-  searchFields: [String!]
-  size: Int
-  skip: Float = 0
-  take: Float = 20
-  thumbnailUrl: String
-  type: ImageType
-  updatedAt: Timestamp
-  url: String
-  userId: String
-  versionInfo: JSON
-  width: Int
-}
-
 input ListUserInput {
   AuditLogIds: [String!]
   SecurityEventIds: [String!]
@@ -949,6 +991,22 @@ input ListUserInput {
   updatedAt: Timestamp
   validateEmailToken: String
   validateEmailTokenExpires: Timestamp
+}
+
+input ListUserPreferenceInput {
+  createdAt: Timestamp
+  filters: JSONObject
+  id: String
+  key: String
+  orderBy: String
+  orderDirection: String
+  search: String
+  searchFields: [String!]
+  skip: Float = 0
+  take: Float = 20
+  updatedAt: Timestamp
+  userId: String
+  value: String
 }
 
 input ListUserSessionInput {
@@ -1005,6 +1063,7 @@ type Mutation {
   createLink(input: CreateLinkInput!): Link
   createLoginAttempt(input: CreateLoginAttemptInput!): LoginAttempt
   createOAuthAccount(input: CreateOAuthAccountInput!): OAuthAccount
+  createOrganization(input: CreateOrganizationInput!): Organization
   createOrganizationInvitation(input: CreateInvitationInput!): String!
   createOrganizationMember(input: CreateOrganizationMemberInput!): OrganizationMember
   createPermission(input: CreatePermissionInput!): Permission
@@ -1012,32 +1071,34 @@ type Mutation {
   createPlan(input: CreatePlanInput!): Plan
   createRole(input: CreateRoleInput!): Role
   createSecurityEvent(input: CreateSecurityEventInput!): SecurityEvent
+  createStoredFile(input: CreateStoredFileInput!): StoredFile
   createSubscription(input: CreateSubscriptionInput!): Subscription
   createTeam(input: CreateTeamInput!): Team
   createTeamMember(input: CreateTeamMemberInput!): TeamMember
-  createUpload(input: CreateUploadInput!): Upload
   createUser(input: CreateUserInput!): User
-  createUserPreference(input: SecureCreateUserPreferenceInput!): UserPreference
+  createUserPreference(input: CreateUserPreferenceInput!): UserPreference
   createUserSession(input: CreateUserSessionInput!): UserSession
   deleteAddress(addressId: String!): Address
   deleteApiToken(apiTokenId: String!): ApiToken
   deleteAuditLog(auditLogId: String!): AuditLog
   deleteCountry(countryId: String!): Country
   deleteEmail(emailId: String!): Email
+  deleteFile(uploadId: String!): Boolean!
   deleteInvite(inviteId: String!): Invite
   deleteLink(linkId: String!): Link
   deleteLoginAttempt(loginAttemptId: String!): LoginAttempt
   deleteOAuthAccount(oAuthAccountId: String!): OAuthAccount
+  deleteOrganization(organizationId: String!): Organization
   deleteOrganizationMember(organizationMemberId: String!): OrganizationMember
   deletePermission(permissionId: String!): Permission
   deletePhoneNumber(phoneNumberId: String!): PhoneNumber
   deletePlan(planId: String!): Plan
   deleteRole(roleId: String!): Role
   deleteSecurityEvent(securityEventId: String!): SecurityEvent
+  deleteStoredFile(storedFileId: String!): StoredFile
   deleteSubscription(subscriptionId: String!): Subscription
   deleteTeam(teamId: String!): Team
   deleteTeamMember(teamMemberId: String!): TeamMember
-  deleteUpload(uploadId: String!): Upload
   deleteUser(userId: String!): User
   deleteUserAccount: Boolean!
   deleteUserPreference(userPreferenceId: String!): UserPreference
@@ -1074,6 +1135,7 @@ type Mutation {
   updateLink(input: UpdateLinkInput!, linkId: String!): Link
   updateLoginAttempt(input: UpdateLoginAttemptInput!, loginAttemptId: String!): LoginAttempt
   updateOAuthAccount(input: UpdateOAuthAccountInput!, oAuthAccountId: String!): OAuthAccount
+  updateOrganization(input: UpdateOrganizationInput!, organizationId: String!): Organization
   updateOrganizationMember(input: UpdateOrganizationMemberInput!, organizationMemberId: String!): OrganizationMember
   updateOrganizationMemberRole(input: UpdateMemberRoleInput!): Boolean!
   updatePermission(input: UpdatePermissionInput!, permissionId: String!): Permission
@@ -1081,16 +1143,22 @@ type Mutation {
   updatePlan(input: UpdatePlanInput!, planId: String!): Plan
   updateRole(input: UpdateRoleInput!, roleId: String!): Role
   updateSecurityEvent(input: UpdateSecurityEventInput!, securityEventId: String!): SecurityEvent
+  updateStoredFile(input: UpdateStoredFileInput!, storedFileId: String!): StoredFile
   updateSubscription(input: UpdateSubscriptionInput!, subscriptionId: String!): Subscription
   updateTeam(input: UpdateTeamInput!, teamId: String!): Team
   updateTeamMember(input: UpdateTeamMemberInput!, teamMemberId: String!): TeamMember
-  updateUpload(input: UpdateUploadInput!, uploadId: String!): Upload
   updateUser(input: UpdateUserInput!, userId: String!): User
-  updateUserPreference(input: SecureUpdateUserPreferenceInput!, userPreferenceId: String!): UserPreference
+  updateUserPreference(input: UpdateUserPreferenceInput!, userPreferenceId: String!): UserPreference
   updateUserSession(input: UpdateUserSessionInput!, userSessionId: String!): UserSession
+  uploadFile(file: Upload!, folder: String): UploadedFile!
+  uploadOrganizationLogo(file: Upload!, organizationId: String!): UploadedFile!
+  uploadUserAvatar(file: Upload!): UploadedFile!
   userCreateOrganization(input: CreateOrganizationInput!): Organization!
+  userCreateUserPreference(input: SecureCreateUserPreferenceInput!): UserPreference
   userDeleteOrganization(organizationId: String!): Boolean!
-  userUpdateOrganization(input: UpdateOrganizationInput!): Organization!
+  userDeleteUserPreference(userPreferenceId: String!): UserPreference
+  userUpdateOrganization(input: UpdateOrganizationInput!, organizationId: String!): Organization!
+  userUpdateUserPreference(input: SecureUpdateUserPreferenceInput!, userPreferenceId: String!): UserPreference
   verify2FACode(input: Verify2FAInput!): Boolean!
   verifyEmail(input: VerifyEmailInput!): User!
   verifyEmailChange(token: String!): User!
@@ -1125,7 +1193,7 @@ type Organization {
   createdAt: Timestamp!
   emails: [Email!]
   id: String!
-  images: [Upload!]
+  images: [StoredFile!]
   invites: [Invite!]
   links: [Link!]
   members: [OrganizationMember!]
@@ -1205,6 +1273,7 @@ type Query {
   emails(input: ListEmailInput): [Email!]
   emailsCount(input: ListEmailInput): CorePaging
   exportUserData: ExportUserDataOutput!
+  getSignedUrl(expiresIn: Int, uploadId: String!): String!
   getUserSessions: [UserSessionOutput!]!
   invite(inviteId: String!): Invite
   invites(input: ListInviteInput): [Invite!]
@@ -1222,11 +1291,15 @@ type Query {
   oAuthAccount(oAuthAccountId: String!): OAuthAccount
   oAuthAccounts(input: ListOAuthAccountInput): [OAuthAccount!]
   oAuthAccountsCount(input: ListOAuthAccountInput): CorePaging
+  organization(organizationId: String!): Organization
+  organizationFiles(limit: Int, offset: Int, organizationId: String!): [UploadedFile!]!
   organizationInvitations(organizationId: String!): [Invite!]!
   organizationMember(organizationMemberId: String!): OrganizationMember
-  organizationMembers(organizationId: String!): [OrganizationMember!]!
+  organizationMembers(input: ListOrganizationMemberInput): [OrganizationMember!]
   organizationMembersCount(input: ListOrganizationMemberInput): CorePaging
   organizationRoles(organizationId: String!): [Role!]!
+  organizations(input: ListOrganizationInput): [Organization!]
+  organizationsCount(input: ListOrganizationInput): CorePaging
   permission(permissionId: String!): Permission
   permissions(input: ListPermissionInput): [Permission!]
   permissionsCount(input: ListPermissionInput): CorePaging
@@ -1244,6 +1317,9 @@ type Query {
   securityEventsByType(eventType: SecurityEventType!, limit: Float): [SecurityEvent!]!
   securityEventsCount(input: ListSecurityEventInput): CorePaging
   securitySummary: SecuritySummary!
+  storedFile(storedFileId: String!): StoredFile
+  storedFiles(input: ListStoredFileInput): [StoredFile!]
+  storedFilesCount(input: ListStoredFileInput): CorePaging
   subscription(subscriptionId: String!): Subscription
   subscriptions(input: ListSubscriptionInput): [Subscription!]
   subscriptionsCount(input: ListSubscriptionInput): CorePaging
@@ -1253,13 +1329,15 @@ type Query {
   teamMembersCount(input: ListTeamMemberInput): CorePaging
   teams(input: ListTeamInput): [Team!]
   teamsCount(input: ListTeamInput): CorePaging
-  upload(uploadId: String!): Upload
-  uploads(input: ListUploadInput): [Upload!]
-  uploadsCount(input: ListUploadInput): CorePaging
   uptime: Float
   user(userId: String!): User
+  userFiles(limit: Int, offset: Int): [UploadedFile!]!
+  userGetUserPreference(userPreferenceId: String!): UserPreference
+  userGetUserPreferences: [UserPreference!]
+  userOrganizationMembers(organizationId: String!): [OrganizationMember!]!
   userPreference(userPreferenceId: String!): UserPreference
-  userPreferences: [UserPreference!]
+  userPreferences(input: ListUserPreferenceInput): [UserPreference!]
+  userPreferencesCount(input: ListUserPreferenceInput): CorePaging
   userSecurityEvents(limit: Float): [SecurityEvent!]!
   userSession(userSessionId: String!): UserSession
   userSessions(input: ListUserSessionInput): [UserSession!]
@@ -1358,6 +1436,37 @@ type Setup2FAOutput {
   otpauthUrl: String!
   qrCode: String!
   secret: String!
+}
+
+"""The storage provider used for file uploads"""
+enum StorageProvider {
+  CLOUDINARY
+  GCS
+  IMAGEKIT
+  LOCAL
+  S3
+}
+
+type StoredFile {
+  createdAt: Timestamp!
+  filename: String!
+  folder: String
+  height: Int
+  id: String!
+  metadata: JSONObject
+  mimeType: String!
+  organization: Organization
+  organizationId: String
+  originalName: String!
+  provider: StorageProvider!
+  providerFileId: String!
+  publicUrl: String
+  size: Int!
+  updatedAt: Timestamp!
+  url: String!
+  user: User
+  userId: String
+  width: Int
 }
 
 type Subscription {
@@ -1557,8 +1666,21 @@ input UpdateOAuthAccountInput {
 }
 
 input UpdateOrganizationInput {
+  AuditLogIds: [String!]
+  TeamIds: [String!]
+  addressesIds: [String!]
+  createdAt: Timestamp
+  emailsIds: [String!]
+  id: String
+  imagesIds: [String!]
+  invitesIds: [String!]
+  linksIds: [String!]
+  membersIds: [String!]
   name: String
-  organizationId: String!
+  phoneNumbersIds: [String!]
+  rolesIds: [String!]
+  subscriptionId: String
+  updatedAt: Timestamp
 }
 
 input UpdateOrganizationMemberInput {
@@ -1622,6 +1744,26 @@ input UpdateSecurityEventInput {
   userId: String
 }
 
+input UpdateStoredFileInput {
+  createdAt: Timestamp
+  filename: String
+  folder: String
+  height: Int
+  id: String
+  metadata: JSON
+  mimeType: String
+  organizationId: String
+  originalName: String
+  provider: StorageProvider
+  providerFileId: String
+  publicUrl: String
+  size: Int
+  updatedAt: Timestamp
+  url: String
+  userId: String
+  width: Int
+}
+
 input UpdateSubscriptionInput {
   createdAt: Timestamp
   id: String
@@ -1652,26 +1794,6 @@ input UpdateTeamMemberInput {
   teamId: String
   updatedAt: Timestamp
   userId: String
-}
-
-input UpdateUploadInput {
-  createdAt: Timestamp
-  fileId: String
-  filePath: String
-  fileType: String
-  height: Int
-  id: String
-  name: String
-  organizationId: String
-  orientation: Int
-  size: Int
-  thumbnailUrl: String
-  type: ImageType
-  updatedAt: Timestamp
-  url: String
-  userId: String
-  versionInfo: JSON
-  width: Int
 }
 
 input UpdateUserInput {
@@ -1719,6 +1841,15 @@ input UpdateUserInput {
   validateEmailTokenExpires: Timestamp
 }
 
+input UpdateUserPreferenceInput {
+  createdAt: Timestamp
+  id: String
+  key: String
+  updatedAt: Timestamp
+  userId: String
+  value: String
+}
+
 input UpdateUserSessionInput {
   createdAt: Timestamp
   deviceInfo: String
@@ -1731,25 +1862,26 @@ input UpdateUserSessionInput {
   userId: String
 }
 
-type Upload {
+"""The `Upload` scalar type represents a file upload."""
+scalar Upload
+
+type UploadedFile {
   createdAt: Timestamp!
-  fileId: String
-  filePath: String
-  fileType: String
+  filename: String!
+  folder: String
   height: Int
   id: String!
-  name: String
-  organization: Organization
+  metadata: JSON
+  mimeType: String!
   organizationId: String
-  orientation: Int
-  size: Int
-  thumbnailUrl: String
-  type: ImageType
+  originalName: String!
+  provider: StorageProvider!
+  providerFileId: String!
+  publicUrl: String
+  size: Int!
   updatedAt: Timestamp!
-  url: String
-  user: User
+  url: String!
   userId: String
-  versionInfo: JSONObject
   width: Int
 }
 
@@ -1771,7 +1903,7 @@ type User {
   failedLoginCount: Int!
   firstName: String
   id: String!
-  images: [Upload!]
+  images: [StoredFile!]
   invitesSent: [Invite!]
   isActive: Boolean!
   isSuperAdmin: Boolean!

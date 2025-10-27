@@ -382,8 +382,8 @@ export class Organization {
   @Field(() => [PhoneNumber], { nullable: true })
   phoneNumbers?: Partial<PhoneNumber>[] | null;
 
-  @Field(() => [Upload], { nullable: true })
-  images?: Partial<Upload>[] | null;
+  @Field(() => [StoredFile], { nullable: true })
+  images?: Partial<StoredFile>[] | null;
 
   @Field(() => [OrganizationMember], { nullable: true })
   members?: Partial<OrganizationMember>[] | null;
@@ -682,7 +682,7 @@ export class TeamMember {
 }
 
 @ObjectType({ description: undefined })
-export class Upload {
+export class StoredFile {
   @Field(() => String)
   id!: string;
 
@@ -795,8 +795,8 @@ export class User {
   @Field(() => [PhoneNumber], { nullable: true })
   phoneNumbers?: Partial<PhoneNumber>[] | null;
 
-  @Field(() => [Upload], { nullable: true })
-  images?: Partial<Upload>[] | null;
+  @Field(() => [StoredFile], { nullable: true })
+  images?: Partial<StoredFile>[] | null;
 
   @Field(() => [OrganizationMember], { nullable: true })
   organizations?: Partial<OrganizationMember>[] | null;

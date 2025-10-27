@@ -2,7 +2,7 @@ import { Link, useLoaderData } from 'react-router'
 import { apolloLoader } from '@nestled-template/shared/apollo'
 import { MySecurityEventsDocument, MySecurityEventsQuery } from '@nestled-template/shared/sdk'
 import { QueryRef, useReadQuery } from '@apollo/client'
-import { ShieldCheckIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
+import { ChevronRightIcon, ShieldCheckIcon } from '@heroicons/react/24/outline'
 import {
   Table,
   TableBody,
@@ -18,9 +18,9 @@ export const loader = apolloLoader()(({ preloadQuery }) => {
       input: {
         take: 50,
         orderBy: 'createdAt',
-        orderDirection: 'desc'
-      }
-    }
+        orderDirection: 'desc',
+      },
+    },
   })
   return { securityEventsQueryRef }
 })
@@ -48,9 +48,7 @@ export default function SecurityEventsPage() {
           Security
         </Link>
         <ChevronRightIcon className="h-4 w-4 text-zinc-400 dark:text-zinc-600" />
-        <span className="text-zinc-900 dark:text-white font-medium">
-          Security Events
-        </span>
+        <span className="text-zinc-900 dark:text-white font-medium">Security Events</span>
       </nav>
 
       {/* Header */}
@@ -60,9 +58,7 @@ export default function SecurityEventsPage() {
             <ShieldCheckIcon className="h-6 w-6 text-amber-600 dark:text-amber-400" />
           </div>
           <div>
-            <h2 className="text-xl font-bold text-zinc-900 dark:text-white">
-              Security Events
-            </h2>
+            <h2 className="text-xl font-bold text-zinc-900 dark:text-white">Security Events</h2>
             <p className="text-sm text-zinc-600 dark:text-zinc-400">
               View all security-related activities on your account
             </p>
@@ -80,20 +76,31 @@ export default function SecurityEventsPage() {
           <Table>
             <TableHeader>
               <TableRow className="border-b border-zinc-200 dark:border-white/10 hover:bg-transparent">
-                <TableHead className="text-zinc-900 dark:text-white font-semibold">Event Type</TableHead>
-                <TableHead className="text-zinc-900 dark:text-white font-semibold">Date & Time</TableHead>
-                <TableHead className="text-zinc-900 dark:text-white font-semibold">IP Address</TableHead>
-                <TableHead className="text-zinc-900 dark:text-white font-semibold">User Agent</TableHead>
+                <TableHead className="text-zinc-900 dark:text-white font-semibold">
+                  Event Type
+                </TableHead>
+                <TableHead className="text-zinc-900 dark:text-white font-semibold">
+                  Date & Time
+                </TableHead>
+                <TableHead className="text-zinc-900 dark:text-white font-semibold">
+                  IP Address
+                </TableHead>
+                <TableHead className="text-zinc-900 dark:text-white font-semibold">
+                  User Agent
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {securityEvents.map((event) => (
+              {securityEvents.map(event => (
                 <TableRow
                   key={event.id}
                   className="border-b border-zinc-200 dark:border-white/10 hover:bg-zinc-50 dark:hover:bg-white/5"
                 >
                   <TableCell className="font-medium text-zinc-900 dark:text-white">
-                    {event.metadata?.eventType || 'Security event'}
+                    {event.eventType
+                      ?.replace(/_/g, ' ')
+                      .toLowerCase()
+                      .replace(/\b\w/g, l => l.toUpperCase()) || 'Security event'}
                   </TableCell>
                   <TableCell className="text-zinc-600 dark:text-zinc-400">
                     {new Date(event.createdAt).toLocaleString()}

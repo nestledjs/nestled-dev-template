@@ -65,6 +65,7 @@ export default [
 
       // Settings area - organization and user settings
       route('settings', './routes/settings/_layout.tsx', [
+        route('profile', './routes/settings/profile.tsx'),
         route('account', './routes/settings/account.tsx'),
         route('organization', './routes/settings/organization.tsx'),
         route('members', './routes/settings/members.tsx'),
@@ -72,6 +73,7 @@ export default [
         route('security', './routes/settings/security.tsx'),
         route('security/events', './routes/settings/security.events.tsx'),
         route('notifications', './routes/settings/notifications.tsx'),
+        route('preferences', './routes/settings/preferences.tsx'),
       ]),
     ]),
 

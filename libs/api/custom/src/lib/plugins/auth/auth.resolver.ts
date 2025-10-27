@@ -332,6 +332,11 @@ export class AuthResolver {
 
   @ResolveField('user')
   user(@Parent() auth: UserToken) {
+    // If 2FA is required, user field should be null until 2FA is completed
+    if (auth?.requires2FA && !auth?.token) {
+      return null
+    }
+    
     if (!auth?.token) {
       throw new Error('No AuthToken for resolved user')
     }
