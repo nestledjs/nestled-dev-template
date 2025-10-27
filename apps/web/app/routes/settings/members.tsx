@@ -16,15 +16,15 @@ import {
   MeQuery,
   MyOrganizationsDocument,
   MyOrganizationsQuery,
-  useUserOrganizationMembersQuery,
-  useCreateOrganizationInvitationMutation,
   useAddOrganizationMemberMutation,
+  useCreateOrganizationInvitationMutation,
   useRemoveOrganizationMemberMutation,
   useUpdateOrganizationMemberRoleMutation,
+  useUserOrganizationMembersQuery,
 } from '@nestled-template/shared/sdk'
 import { QueryRef, useReadQuery } from '@apollo/client'
 
-export const loader = apolloLoader()(({ preloadQuery }) => {
+const loader = apolloLoader()(({ preloadQuery }) => {
   const myOrganizationsQueryRef = preloadQuery<MyOrganizationsQuery>(MyOrganizationsDocument)
   const meQueryRef = preloadQuery<MeQuery>(MeDocument)
   return { myOrganizationsQueryRef, meQueryRef }
