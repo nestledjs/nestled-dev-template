@@ -18,6 +18,8 @@ fragment AuthUserDetails on User {
   twoFactorEnabled
   createdAt
   updatedAt
+  isEmulating
+  originalAdminId
   emails {
     id
     email

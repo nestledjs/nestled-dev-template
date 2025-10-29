@@ -37,7 +37,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     })
   }
 
-  async validate(payload: { userId: string }): Promise<User> {
+  async validate(payload: { userId: string; isEmulating?: boolean; originalAdminId?: string }): Promise<User> {
     if (!payload || !payload.userId) {
       throw new UnauthorizedException('Invalid JWT payload.')
     }
@@ -45,6 +45,16 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     if (!user) {
       throw new UnauthorizedException('User from token not found or invalid.')
     }
+
+    // Attach emulation metadata to user object if present in JWT
+    if (payload.isEmulating && payload.originalAdminId) {
+      return {
+        ...user,
+        isEmulating: true,
+        originalAdminId: payload.originalAdminId,
+      } as User
+    }
+
     return user
   }
 }

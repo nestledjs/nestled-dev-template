@@ -39,6 +39,30 @@ enum AddressType {
   WORK
 }
 
+input AdminUserFiltersInput {
+  accountLocked: Boolean
+  emailVerified: Boolean
+  isSuperAdmin: Boolean
+  lastLoginAfter: Timestamp
+  lastLoginBefore: Timestamp
+  organizationId: String
+  registeredAfter: Timestamp
+  registeredBefore: Timestamp
+  search: String
+  skip: Float = 0
+  sortBy: String = "createdAt"
+  sortOrder: String = "desc"
+  take: Float = 50
+  twoFactorEnabled: Boolean
+}
+
+type AdminUsersResponse {
+  skip: Int!
+  take: Int!
+  total: Int!
+  users: [User!]!
+}
+
 type ApiToken {
   createdAt: Timestamp!
   expiresAt: Timestamp
@@ -1306,6 +1330,8 @@ type Query {
   address(addressId: String!): Address
   addresses(input: ListAddressInput): [Address!]
   addressesCount(input: ListAddressInput): CorePaging
+  adminUserDetails(userId: String!): User!
+  adminUsers(filters: AdminUserFiltersInput): AdminUsersResponse!
   apiToken(apiTokenId: String!): ApiToken
   apiTokens(input: ListApiTokenInput): [ApiToken!]
   apiTokensCount(input: ListApiTokenInput): CorePaging
@@ -1988,6 +2014,7 @@ type User {
   images: [StoredFile!]
   invitesSent: [Invite!]
   isActive: Boolean!
+  isEmulating: Boolean
   isSuperAdmin: Boolean!
   lastFailedLogin: Timestamp
   lastName: String
@@ -1997,6 +2024,7 @@ type User {
   loginAttempts: [LoginAttempt!]
   oAuthAccounts: [OAuthAccount!]
   organizations: [OrganizationMember!]
+  originalAdminId: String
   password: String
   passwordResetExpires: Timestamp
   passwordResetToken: String

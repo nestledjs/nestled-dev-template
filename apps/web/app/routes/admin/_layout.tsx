@@ -1,9 +1,8 @@
 import { Link, Outlet, useMatches } from 'react-router'
 import { useGlobalCtx } from '@nestled-template/web'
-import { Role } from '@nestled-template/shared/sdk'
 import { Fragment } from 'react'
 import { Menu, Transition } from '@headlessui/react'
-import { ChartPieIcon, ChevronDownIcon, CogIcon, HomeIcon } from '@heroicons/react/24/outline'
+import { ChartPieIcon, ChevronDownIcon, CogIcon, HomeIcon, UsersIcon } from '@heroicons/react/24/outline'
 import { clsx } from 'clsx'
 
 export async function loader({ request }: { request: Request }) {
@@ -55,6 +54,20 @@ function AdminTopNav() {
             >
               <HomeIcon className="h-5 w-5 mr-2" />
               Dashboard
+            </Link>
+
+            {/* Users Link */}
+            <Link
+              to="/admin/users"
+              className={clsx(
+                'inline-flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors',
+                currentPath.startsWith('/admin/users')
+                  ? 'text-blue-600 bg-blue-50'
+                  : 'text-gray-700 hover:text-blue-600 hover:bg-gray-50',
+              )}
+            >
+              <UsersIcon className="h-5 w-5 mr-2" />
+              Users
             </Link>
 
             {/* Reports Dropdown */}
@@ -162,23 +175,22 @@ export default function AdminContentLayout() {
     return null // Or loading component
   }
 
-  // Check if user has admin role
-  const hasAccess = user.role === Role.Admin
+  // Check if user has super admin access
+  const hasAccess = user.isSuperAdmin
 
-  console.log('[Admin Layout] User role check:', {
+  console.log('[Admin Layout] Super admin check:', {
     userId: user.id,
-    userRole: user.role,
+    isSuperAdmin: user.isSuperAdmin,
     hasAccess,
-    roleCheck: `${user.role} === ${Role.Admin}`,
   })
 
-  // Show access denied if user doesn't have admin role
+  // Show access denied if user doesn't have super admin access
   if (!hasAccess) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="max-w-md w-full space-y-8 text-center">
           <h2 className="text-2xl font-bold text-gray-900">Access Denied</h2>
-          <p className="text-gray-600">Admin role required. Current role: {user.role}</p>
+          <p className="text-gray-600">Super admin access required.</p>
           <a href="/members/dashboard" className="text-blue-600 hover:underline">
             Go to Dashboard
           </a>

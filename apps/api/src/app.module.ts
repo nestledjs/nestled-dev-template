@@ -1,5 +1,6 @@
 import {
   AddressModule,
+  AdminModule,
   ApiTokenModule,
   ApiTokensModule,
   AuditLogModule,
@@ -74,6 +75,7 @@ export const defaultModules = [
 // Manually maintained plugin modules (never overwritten by generator)
 export const pluginModules = [
   // Manually maintained plugin modules (never overwritten by generator)
+  AdminModule,
   AuthModule,
   ContactMailerModule,
   SecurityEventsModule,

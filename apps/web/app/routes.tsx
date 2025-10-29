@@ -12,6 +12,7 @@ export default [
       route('forgot-password', './routes/_public/forgot-password.tsx'),
       route('reset-password', './routes/_public/reset-password.tsx'),
       route('verify-email', './routes/_public/verify-email.tsx'),
+      route('pricing', './routes/pricing.tsx'),
       // route('blog', './routes/_public/blog.tsx'),
       // route('contact', './routes/_public/contact.tsx'),
       // route('privacy-policy', './routes/_public/privacy-policy.tsx'),
@@ -27,6 +28,9 @@ export default [
     route('logout', './routes/logout.tsx'),
     // Accept organization invitation route
     route('accept-invitation', './routes/accept-invitation.tsx'),
+    // Checkout routes
+    route('checkout/success', './routes/checkout/success.tsx'),
+    route('checkout/cancel', './routes/checkout/cancel.tsx'),
 
     // Authenticated areas - all share the same sidebar/userback layout
     // route('', './routes/_auth_layout.tsx', [
@@ -59,10 +63,6 @@ export default [
       route('members', './routes/members/_layout.tsx', [
         index('./routes/members/_index.tsx'),
         route('dashboard', './routes/members/dashboard.tsx'),
-        route('my-profile', './routes/members/my-profile/_layout.tsx', [
-          index('./routes/members/my-profile/_index.tsx'),
-          route('edit', './routes/members/my-profile/edit.tsx'),
-        ]),
       ]),
 
       // Settings area - organization and user settings
@@ -76,6 +76,25 @@ export default [
         route('security/events', './routes/settings/security.events.tsx'),
         route('notifications', './routes/settings/notifications.tsx'),
         route('preferences', './routes/settings/preferences.tsx'),
+
+        // Application-wide admin settings (super admin only)
+        route('admin', './routes/settings/admin/_layout.tsx', [
+          route('billing', './routes/settings/admin/billing/_index.tsx'),
+          route('billing/plans', './routes/settings/admin/billing/plans.tsx'),
+          route('billing/subscriptions', './routes/settings/admin/billing/subscriptions.tsx'),
+        ]),
+      ]),
+
+      // Admin panel - super admin only
+      route('admin', './routes/admin/_layout.tsx', [
+        index('./routes/admin/_index.tsx'),
+        route('users', './routes/admin/users/_index.tsx'),
+        route('data', './routes/admin/data/_layout.tsx', [
+          index('./routes/admin/data/index.tsx'),
+          route(':dataTypePlural', './routes/admin/data/$dataTypePlural.tsx'),
+          route(':dataType/create', './routes/admin/data/$dataType.create.tsx'),
+          route(':dataType/:id', './routes/admin/data/$dataType.$id.tsx'),
+        ]),
       ]),
     ]),
 
