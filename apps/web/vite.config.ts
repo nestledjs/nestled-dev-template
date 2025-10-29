@@ -16,7 +16,7 @@ export default defineConfig(() => ({
   define: {
     // Ensure API URL is available in client bundle
     'import.meta.env.VITE_API_URL': JSON.stringify(
-      process.env.VITE_API_URL || 'http://localhost:3000/graphql',
+      process.env.VITE_API_URL || 'http://localhost:3000',
     ),
   },
   resolve: {

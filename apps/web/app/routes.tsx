@@ -25,6 +25,8 @@ export default [
     // route('unauthorized', './routes/_public/unauthorized.tsx'),
     // Logout route clears cookies and cache, then redirects to login
     route('logout', './routes/logout.tsx'),
+    // Accept organization invitation route
+    route('accept-invitation', './routes/accept-invitation.tsx'),
 
     // Authenticated areas - all share the same sidebar/userback layout
     // route('', './routes/_auth_layout.tsx', [

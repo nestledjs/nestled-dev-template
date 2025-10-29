@@ -20,12 +20,12 @@ exports.Prisma = Prisma
 exports.$Enums = {}
 
 /**
- * Prisma Client JS version: 6.14.0
- * Query Engine version: 717184b7b35ea05dfa71a3236b7af656013e1e49
+ * Prisma Client JS version: 6.18.0
+ * Query Engine version: 34b5a692b7bd79939a9a2c3ef97d816e749cda2f
  */
 Prisma.prismaVersion = {
-  client: "6.14.0",
-  engine: "717184b7b35ea05dfa71a3236b7af656013e1e49"
+  client: "6.18.0",
+  engine: "34b5a692b7bd79939a9a2c3ef97d816e749cda2f"
 }
 
 Prisma.PrismaClientKnownRequestError = () => {
@@ -274,11 +274,17 @@ exports.Prisma.PhoneNumberScalarFieldEnum = {
 exports.Prisma.PlanScalarFieldEnum = {
   id: 'id',
   createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
   name: 'name',
+  description: 'description',
   price: 'price',
   interval: 'interval',
   features: 'features',
-  active: 'active'
+  limits: 'limits',
+  active: 'active',
+  stripeProductId: 'stripeProductId',
+  stripePriceId: 'stripePriceId',
+  trialPeriodDays: 'trialPeriodDays'
 };
 
 exports.Prisma.RoleScalarFieldEnum = {
@@ -309,6 +315,11 @@ exports.Prisma.SubscriptionScalarFieldEnum = {
   stripeSubscriptionId: 'stripeSubscriptionId',
   stripePriceId: 'stripePriceId',
   stripeCurrentPeriodEnd: 'stripeCurrentPeriodEnd',
+  trialStart: 'trialStart',
+  trialEnd: 'trialEnd',
+  cancelAt: 'cancelAt',
+  canceledAt: 'canceledAt',
+  cancelAtPeriodEnd: 'cancelAtPeriodEnd',
   status: 'status'
 };
 

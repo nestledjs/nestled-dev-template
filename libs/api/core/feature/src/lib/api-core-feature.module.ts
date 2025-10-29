@@ -24,6 +24,9 @@ const redisPubSubProvider = {
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'api-schema.graphql'),
+      csrfPrevention: {
+        requestHeaders: ['apollo-require-preflight'],
+      },
       subscriptions: {
         'graphql-ws': {
           onConnect: async (context: Context<Record<string, unknown> | undefined>) => {

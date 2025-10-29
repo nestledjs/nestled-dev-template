@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Link, LoaderFunctionArgs, redirect, useLoaderData, useNavigate } from 'react-router'
+import { Link, LoaderFunctionArgs, redirect, useLoaderData, useNavigate, useSearchParams } from 'react-router'
 import { Form, FormFieldClass } from '@nestledjs/forms'
 import { AuthLayout } from '@nestled-template/web'
 import { getCookie, getJsonCookie } from '@nestled-template/shared/utils'
@@ -29,10 +29,13 @@ export const ForgotPasswordWrapper = (children: React.ReactNode) => (
 export default function Login() {
   const isRemembered = useLoaderData()
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
   const [formError, setFormError] = useState<string | null>(null)
   const [requires2FA, setRequires2FA] = useState(false)
   const [tempToken, setTempToken] = useState<string | null>(null)
   const [twoFACode, setTwoFACode] = useState('')
+
+  const redirectUrl = searchParams.get('redirect') || '/members/dashboard'
 
   const [loginMutation] = useLoginMutation()
   const [complete2FALoginMutation] = useComplete2FaLoginMutation()
@@ -55,7 +58,7 @@ export default function Login() {
       if (loginInfo?.user?.id) {
         // The backend already sets the __session cookie via the GraphQL mutation
         // We should not set our own cookies here, just navigate
-        navigate('/members/dashboard')
+        navigate(redirectUrl)
       } else {
         setFormError('Invalid login credentials')
       }
@@ -78,7 +81,7 @@ export default function Login() {
       })
 
       if (data?.complete2FALogin?.user?.id) {
-        navigate('/members/dashboard')
+        navigate(redirectUrl)
       } else {
         setFormError('Invalid 2FA code')
       }

@@ -11,6 +11,7 @@ import {
   RemoveOrganizationMemberInput,
   UpdateMemberRoleInput,
   CreateInvitationInput,
+  ResendInvitationInput,
   AcceptInvitationInput,
   RejectInvitationInput,
   SwitchOrganizationInput,
@@ -370,7 +371,7 @@ export class OrganizationService {
     // Send invitation email
     const appName = this.config.get('app.name')
     const siteUrl = this.config.get('siteUrl')
-    const invitationUrl = `${siteUrl}/invitation/accept?token=${token}`
+    const invitationUrl = `${siteUrl}/accept-invitation?token=${token}`
 
     await this.emailService.sendTemplate(input.email, {
       templateId: 'organization-invitation',
@@ -386,6 +387,123 @@ export class OrganizationService {
     Logger.log(`User ${userId} invited ${input.email} to organization ${input.organizationId}`)
 
     return invite.id
+  }
+
+  /**
+   * Get invitation details (public - no authentication required)
+   */
+  async getInvitationDetails(token: string) {
+    const invite = await this.data.invite.findUnique({
+      where: { token },
+      include: {
+        organization: true,
+        role: true,
+        inviter: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            displayName: true,
+          }
+        }
+      }
+    })
+
+    if (!invite) {
+      throw new NotFoundException('Invitation not found')
+    }
+
+    if (invite.status !== 'PENDING') {
+      throw new BadRequestException('This invitation has already been used or expired')
+    }
+
+    if (invite.expiresAt < new Date()) {
+      // Mark as expired
+      await this.data.invite.update({
+        where: { id: invite.id },
+        data: { status: 'EXPIRED' }
+      })
+      throw new BadRequestException('This invitation has expired')
+    }
+
+    // Return safe invitation details (no sensitive data)
+    return {
+      id: invite.id,
+      email: invite.email,
+      organizationName: invite.organization.name,
+      roleName: invite.role?.name || 'Member',
+      inviterName: invite.inviter.firstName
+        ? `${invite.inviter.firstName} ${invite.inviter.lastName || ''}`.trim()
+        : invite.inviter.displayName,
+      expiresAt: invite.expiresAt,
+    }
+  }
+
+  /**
+   * Resend organization invitation (requires member:invite permission)
+   */
+  async resendOrganizationInvitation(userId: string, input: ResendInvitationInput): Promise<boolean> {
+    // Find the invitation
+    const invite = await this.data.invite.findUnique({
+      where: { id: input.invitationId },
+      include: { organization: true, role: true }
+    })
+
+    if (!invite) {
+      throw new NotFoundException('Invitation not found')
+    }
+
+    // Check if user has permission to invite members
+    const canInvite = await this.hasPermission(userId, invite.organizationId, 'member', 'invite')
+
+    if (!canInvite) {
+      throw new ForbiddenException('You do not have permission to resend invitations for this organization')
+    }
+
+    // Only allow resending PENDING invitations
+    if (invite.status !== 'PENDING') {
+      throw new BadRequestException('Can only resend pending invitations')
+    }
+
+    // Generate new invitation token
+    const token = randomBytes(32).toString('hex')
+    const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 days
+
+    // Update invitation with new token and expiration
+    await this.data.invite.update({
+      where: { id: invite.id },
+      data: {
+        token,
+        expiresAt,
+      }
+    })
+
+    // Get inviter details for email
+    const inviter = await this.data.user.findUnique({ where: { id: userId } })
+
+    if (!inviter) {
+      throw new Error('Failed to fetch inviter details')
+    }
+
+    // Send invitation email
+    const appName = this.config.get('app.name')
+    const siteUrl = this.config.get('siteUrl')
+    const invitationUrl = `${siteUrl}/accept-invitation?token=${token}`
+
+    await this.emailService.sendTemplate(invite.email, {
+      templateId: 'organization-invitation',
+      variables: {
+        organizationName: invite.organization.name,
+        inviterName: inviter.firstName || inviter.displayName || 'A team member',
+        invitationUrl,
+        appName,
+        expirationDays: 7
+      }
+    })
+
+    Logger.log(`User ${userId} resent invitation ${invite.id} to ${invite.email}`)
+
+    return true
   }
 
   /**
@@ -566,7 +684,11 @@ export class OrganizationService {
             emails: { where: { primary: true } }
           }
         },
-        role: true
+        role: {
+          include: {
+            permissions: true
+          }
+        }
       }
     })
 

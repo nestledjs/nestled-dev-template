@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Link, useLoaderData } from 'react-router'
+import { useLoaderData } from 'react-router'
 import {
   ArrowDownTrayIcon,
   ArrowsRightLeftIcon,
@@ -14,7 +14,7 @@ import {
   MeDocument,
   MeQuery,
   useChangeEmailMutation,
-  useChangePasswordMutation,
+  useDeleteFileMutation,
   useDeleteUserAccountMutation,
   useExportUserDataLazyQuery,
   useResendVerificationEmailMutation,
@@ -40,11 +40,11 @@ export default function ProfileSettings() {
 
   const [updateUser] = useUpdateUserMutation()
   const [changeEmail] = useChangeEmailMutation()
-  const [changePassword] = useChangePasswordMutation()
   const [resendVerificationEmail] = useResendVerificationEmailMutation()
   const [deleteAccountMutation] = useDeleteUserAccountMutation()
   const [exportUserData] = useExportUserDataLazyQuery()
   const [uploadUserAvatar] = useUploadUserAvatarMutation()
+  const [deleteFile] = useDeleteFileMutation()
 
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const [deleteConfirmText, setDeleteConfirmText] = useState('')
@@ -89,10 +89,26 @@ export default function ProfileSettings() {
   }
 
   const handleAvatarRemove = async () => {
-    // For now, we'll implement a simple removal
-    // In a real app, you might want to call a deleteFile mutation
-    setMessage({ type: 'success', text: 'Avatar removed successfully!' })
-    setTimeout(() => setMessage(null), 3000)
+    if (!userAvatar?.id) {
+      setMessage({ type: 'error', text: 'No avatar to remove' })
+      setTimeout(() => setMessage(null), 3000)
+      return
+    }
+
+    try {
+      await deleteFile({
+        variables: { uploadId: userAvatar.id },
+      })
+
+      // Refresh user data to remove avatar from UI
+      await client.refetchQueries({ include: [MeDocument] })
+      setMessage({ type: 'success', text: 'Avatar removed successfully!' })
+      setTimeout(() => setMessage(null), 3000)
+    } catch (error: any) {
+      console.error('Avatar removal failed:', error)
+      setMessage({ type: 'error', text: error.message || 'Failed to remove avatar' })
+      setTimeout(() => setMessage(null), 5000)
+    }
   }
 
   const AvatarSection = () => (
@@ -172,42 +188,6 @@ export default function ProfileSettings() {
         </>
       ),
     }),
-    FormFieldClass.content('headerPassword', {
-      content: (
-        <div className="border-t border-zinc-200 dark:border-white/10 pt-6">
-          <h3 className="text-lg font-semibold text-zinc-900 dark:text-white mb-2">
-            Change Password
-          </h3>
-          <p className="text-sm text-zinc-600 dark:text-zinc-400">
-            Leave blank to keep your current password
-          </p>
-        </div>
-      ),
-    }),
-    FormFieldClass.password('currentPassword', {
-      label: 'Current Password',
-      required: false,
-    }),
-    FormFieldClass.content('forgotPasswordLink', {
-      content: (
-        <div className="-mt-2 mb-2">
-          <Link
-            to="/forgot-password"
-            className="text-sm text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 underline"
-          >
-            Forgot your current password?
-          </Link>
-        </div>
-      ),
-    }),
-    FormFieldClass.password('newPassword', {
-      label: 'New Password',
-      required: false,
-    }),
-    FormFieldClass.password('confirmPassword', {
-      label: 'Confirm New Password',
-      required: false,
-    }),
     FormFieldClass.content('buttons', {
       content: (
         <div className="flex gap-4 pt-6">
@@ -229,9 +209,6 @@ export default function ProfileSettings() {
       lastName: user?.lastName || '',
       displayName: user?.displayName || '',
       email: primaryEmail?.email || '',
-      currentPassword: '',
-      newPassword: '',
-      confirmPassword: '',
     }
   }
 
@@ -240,33 +217,6 @@ export default function ProfileSettings() {
     setMessage(null)
 
     try {
-      // Validate password fields
-      if (values.newPassword || values.currentPassword) {
-        if (!values.currentPassword) {
-          setMessage({
-            type: 'error',
-            text: 'Current password is required to change your password',
-          })
-          setLoading(false)
-          return
-        }
-        if (!values.newPassword) {
-          setMessage({ type: 'error', text: 'New password is required' })
-          setLoading(false)
-          return
-        }
-        if (values.newPassword !== values.confirmPassword) {
-          setMessage({ type: 'error', text: 'New passwords do not match' })
-          setLoading(false)
-          return
-        }
-        if (values.newPassword.length < 8) {
-          setMessage({ type: 'error', text: 'New password must be at least 8 characters' })
-          setLoading(false)
-          return
-        }
-      }
-
       let emailChanged = false
 
       // Validate and sanitize displayName if changed
@@ -300,18 +250,6 @@ export default function ProfileSettings() {
           variables: {
             userId: user.id,
             input: updates,
-          },
-        })
-      }
-
-      // Handle password change separately with current password verification
-      if (values.newPassword && values.currentPassword) {
-        await changePassword({
-          variables: {
-            input: {
-              currentPassword: values.currentPassword,
-              newPassword: values.newPassword,
-            },
           },
         })
       }

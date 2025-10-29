@@ -5,13 +5,28 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 
 const {
+  PrismaClientKnownRequestError,
+  PrismaClientUnknownRequestError,
+  PrismaClientRustPanicError,
+  PrismaClientInitializationError,
+  PrismaClientValidationError,
+  getPrismaClient,
+  sqltag,
+  empty,
+  join,
+  raw,
+  skip,
   Decimal,
+  Debug,
   objectEnumValues,
   makeStrictEnum,
+  Extensions,
+  warnOnce,
+  defineDmmfProperty,
   Public,
   getRuntime,
-  skip
-} = require('./runtime/index-browser.js')
+  createParam,
+} = require('./runtime/wasm-engine-edge.js')
 
 
 const Prisma = {}
@@ -20,79 +35,35 @@ exports.Prisma = Prisma
 exports.$Enums = {}
 
 /**
- * Prisma Client JS version: 6.14.0
- * Query Engine version: 717184b7b35ea05dfa71a3236b7af656013e1e49
+ * Prisma Client JS version: 6.18.0
+ * Query Engine version: 34b5a692b7bd79939a9a2c3ef97d816e749cda2f
  */
 Prisma.prismaVersion = {
-  client: "6.14.0",
-  engine: "717184b7b35ea05dfa71a3236b7af656013e1e49"
+  client: "6.18.0",
+  engine: "34b5a692b7bd79939a9a2c3ef97d816e749cda2f"
 }
 
-Prisma.PrismaClientKnownRequestError = () => {
-  const runtimeName = getRuntime().prettyName;
-  throw new Error(`PrismaClientKnownRequestError is unable to run in this browser environment, or has been bundled for the browser (running in ${runtimeName}).
-In case this error is unexpected for you, please report it in https://pris.ly/prisma-prisma-bug-report`,
-)};
-Prisma.PrismaClientUnknownRequestError = () => {
-  const runtimeName = getRuntime().prettyName;
-  throw new Error(`PrismaClientUnknownRequestError is unable to run in this browser environment, or has been bundled for the browser (running in ${runtimeName}).
-In case this error is unexpected for you, please report it in https://pris.ly/prisma-prisma-bug-report`,
-)}
-Prisma.PrismaClientRustPanicError = () => {
-  const runtimeName = getRuntime().prettyName;
-  throw new Error(`PrismaClientRustPanicError is unable to run in this browser environment, or has been bundled for the browser (running in ${runtimeName}).
-In case this error is unexpected for you, please report it in https://pris.ly/prisma-prisma-bug-report`,
-)}
-Prisma.PrismaClientInitializationError = () => {
-  const runtimeName = getRuntime().prettyName;
-  throw new Error(`PrismaClientInitializationError is unable to run in this browser environment, or has been bundled for the browser (running in ${runtimeName}).
-In case this error is unexpected for you, please report it in https://pris.ly/prisma-prisma-bug-report`,
-)}
-Prisma.PrismaClientValidationError = () => {
-  const runtimeName = getRuntime().prettyName;
-  throw new Error(`PrismaClientValidationError is unable to run in this browser environment, or has been bundled for the browser (running in ${runtimeName}).
-In case this error is unexpected for you, please report it in https://pris.ly/prisma-prisma-bug-report`,
-)}
+Prisma.PrismaClientKnownRequestError = PrismaClientKnownRequestError;
+Prisma.PrismaClientUnknownRequestError = PrismaClientUnknownRequestError
+Prisma.PrismaClientRustPanicError = PrismaClientRustPanicError
+Prisma.PrismaClientInitializationError = PrismaClientInitializationError
+Prisma.PrismaClientValidationError = PrismaClientValidationError
 Prisma.Decimal = Decimal
 
 /**
  * Re-export of sql-template-tag
  */
-Prisma.sql = () => {
-  const runtimeName = getRuntime().prettyName;
-  throw new Error(`sqltag is unable to run in this browser environment, or has been bundled for the browser (running in ${runtimeName}).
-In case this error is unexpected for you, please report it in https://pris.ly/prisma-prisma-bug-report`,
-)}
-Prisma.empty = () => {
-  const runtimeName = getRuntime().prettyName;
-  throw new Error(`empty is unable to run in this browser environment, or has been bundled for the browser (running in ${runtimeName}).
-In case this error is unexpected for you, please report it in https://pris.ly/prisma-prisma-bug-report`,
-)}
-Prisma.join = () => {
-  const runtimeName = getRuntime().prettyName;
-  throw new Error(`join is unable to run in this browser environment, or has been bundled for the browser (running in ${runtimeName}).
-In case this error is unexpected for you, please report it in https://pris.ly/prisma-prisma-bug-report`,
-)}
-Prisma.raw = () => {
-  const runtimeName = getRuntime().prettyName;
-  throw new Error(`raw is unable to run in this browser environment, or has been bundled for the browser (running in ${runtimeName}).
-In case this error is unexpected for you, please report it in https://pris.ly/prisma-prisma-bug-report`,
-)}
+Prisma.sql = sqltag
+Prisma.empty = empty
+Prisma.join = join
+Prisma.raw = raw
 Prisma.validator = Public.validator
 
 /**
 * Extensions
 */
-Prisma.getExtensionContext = () => {
-  const runtimeName = getRuntime().prettyName;
-  throw new Error(`Extensions.getExtensionContext is unable to run in this browser environment, or has been bundled for the browser (running in ${runtimeName}).
-In case this error is unexpected for you, please report it in https://pris.ly/prisma-prisma-bug-report`,
-)}
-Prisma.defineExtension = () => {
-  const runtimeName = getRuntime().prettyName;
-  throw new Error(`Extensions.defineExtension is unable to run in this browser environment, or has been bundled for the browser (running in ${runtimeName}).
-In case this error is unexpected for you, please report it in https://pris.ly/prisma-prisma-bug-report`,
-)}
+Prisma.getExtensionContext = Extensions.getExtensionContext
+Prisma.defineExtension = Extensions.defineExtension
 
 /**
  * Shorthand utilities for JSON filtering
@@ -109,10 +80,11 @@ Prisma.NullTypes = {
 
 
 
+
+
 /**
  * Enums
  */
-
 exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
   ReadUncommitted: 'ReadUncommitted',
   ReadCommitted: 'ReadCommitted',
@@ -274,11 +246,17 @@ exports.Prisma.PhoneNumberScalarFieldEnum = {
 exports.Prisma.PlanScalarFieldEnum = {
   id: 'id',
   createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
   name: 'name',
+  description: 'description',
   price: 'price',
   interval: 'interval',
   features: 'features',
-  active: 'active'
+  limits: 'limits',
+  active: 'active',
+  stripeProductId: 'stripeProductId',
+  stripePriceId: 'stripePriceId',
+  trialPeriodDays: 'trialPeriodDays'
 };
 
 exports.Prisma.RoleScalarFieldEnum = {
@@ -309,6 +287,11 @@ exports.Prisma.SubscriptionScalarFieldEnum = {
   stripeSubscriptionId: 'stripeSubscriptionId',
   stripePriceId: 'stripePriceId',
   stripeCurrentPeriodEnd: 'stripeCurrentPeriodEnd',
+  trialStart: 'trialStart',
+  trialEnd: 'trialEnd',
+  cancelAt: 'cancelAt',
+  canceledAt: 'canceledAt',
+  cancelAtPeriodEnd: 'cancelAtPeriodEnd',
   status: 'status'
 };
 
@@ -440,13 +423,6 @@ exports.EmailType = exports.$Enums.EmailType = {
   OTHER: 'OTHER'
 };
 
-exports.InviteStatus = exports.$Enums.InviteStatus = {
-  PENDING: 'PENDING',
-  ACCEPTED: 'ACCEPTED',
-  DECLINED: 'DECLINED',
-  EXPIRED: 'EXPIRED'
-};
-
 exports.FailureReason = exports.$Enums.FailureReason = {
   INVALID_PASSWORD: 'INVALID_PASSWORD',
   INVALID_EMAIL: 'INVALID_EMAIL',
@@ -455,6 +431,19 @@ exports.FailureReason = exports.$Enums.FailureReason = {
   INVALID_2FA: 'INVALID_2FA',
   EXPIRED_TOKEN: 'EXPIRED_TOKEN',
   TOO_MANY_ATTEMPTS: 'TOO_MANY_ATTEMPTS'
+};
+
+exports.ImageType = exports.$Enums.ImageType = {
+  AVATAR: 'AVATAR',
+  BACKGROUND: 'BACKGROUND',
+  OTHER: 'OTHER'
+};
+
+exports.InviteStatus = exports.$Enums.InviteStatus = {
+  PENDING: 'PENDING',
+  ACCEPTED: 'ACCEPTED',
+  DECLINED: 'DECLINED',
+  EXPIRED: 'EXPIRED'
 };
 
 exports.PhoneType = exports.$Enums.PhoneType = {
@@ -480,6 +469,14 @@ exports.SecurityEventType = exports.$Enums.SecurityEventType = {
   API_TOKEN_ROTATED: 'API_TOKEN_ROTATED'
 };
 
+exports.StorageProvider = exports.$Enums.StorageProvider = {
+  LOCAL: 'LOCAL',
+  S3: 'S3',
+  CLOUDINARY: 'CLOUDINARY',
+  IMAGEKIT: 'IMAGEKIT',
+  GCS: 'GCS'
+};
+
 exports.SubscriptionStatus = exports.$Enums.SubscriptionStatus = {
   ACTIVE: 'ACTIVE',
   CANCELED: 'CANCELED',
@@ -487,14 +484,6 @@ exports.SubscriptionStatus = exports.$Enums.SubscriptionStatus = {
   INCOMPLETE: 'INCOMPLETE',
   INCOMPLETE_EXPIRED: 'INCOMPLETE_EXPIRED',
   TRIALING: 'TRIALING'
-};
-
-exports.StorageProvider = exports.$Enums.StorageProvider = {
-  LOCAL: 'LOCAL',
-  S3: 'S3',
-  CLOUDINARY: 'CLOUDINARY',
-  IMAGEKIT: 'IMAGEKIT',
-  GCS: 'GCS'
 };
 
 exports.TwoFactorMethod = exports.$Enums.TwoFactorMethod = {
@@ -529,34 +518,83 @@ exports.Prisma.ModelName = {
   UserPreference: 'UserPreference',
   UserSession: 'UserSession'
 };
-
 /**
- * This is a stub Prisma Client that will error at runtime if called.
+ * Create the Client
  */
-class PrismaClient {
-  constructor() {
-    return new Proxy(this, {
-      get(target, prop) {
-        let message
-        const runtime = getRuntime()
-        if (runtime.isEdge) {
-          message = `PrismaClient is not configured to run in ${runtime.prettyName}. In order to run Prisma Client on edge runtime, either:
-- Use Prisma Accelerate: https://pris.ly/d/accelerate
-- Use Driver Adapters: https://pris.ly/d/driver-adapters
-`;
-        } else {
-          message = 'PrismaClient is unable to run in this browser environment, or has been bundled for the browser (running in `' + runtime.prettyName + '`).'
-        }
-
-        message += `
-If this is unexpected, please open an issue: https://pris.ly/prisma-prisma-bug-report`
-
-        throw new Error(message)
+const config = {
+  "generator": {
+    "name": "client",
+    "provider": {
+      "fromEnvVar": null,
+      "value": "prisma-client-js"
+    },
+    "output": {
+      "value": "/Users/justinhandley/IdeaProjects/nestled_template/libs/api/prisma/src/lib/prisma-generated",
+      "fromEnvVar": null
+    },
+    "config": {
+      "engineType": "library"
+    },
+    "binaryTargets": [
+      {
+        "fromEnvVar": null,
+        "value": "darwin",
+        "native": true
       }
-    })
+    ],
+    "previewFeatures": [],
+    "sourceFilePath": "/Users/justinhandley/IdeaProjects/nestled_template/libs/api/prisma/src/lib/schemas/schema.prisma",
+    "isCustomOutput": true
+  },
+  "relativeEnvPaths": {
+    "rootEnvPath": null,
+    "schemaEnvPath": "../../../../../../.env"
+  },
+  "relativePath": "../schemas",
+  "clientVersion": "6.18.0",
+  "engineVersion": "34b5a692b7bd79939a9a2c3ef97d816e749cda2f",
+  "datasourceNames": [
+    "db"
+  ],
+  "activeProvider": "postgresql",
+  "postinstall": false,
+  "inlineDatasources": {
+    "db": {
+      "url": {
+        "fromEnvVar": "DATABASE_URL",
+        "value": null
+      }
+    }
+  },
+  "inlineSchema": "generator client {\n  provider        = \"prisma-client-js\"\n  previewFeatures = []\n  binaryTargets   = [\"native\"]\n  output          = \"../prisma-generated\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\n// Models (Alphabetical Order)\n\nmodel Address {\n  id             String        @id @default(uuid())\n  createdAt      DateTime      @default(now())\n  updatedAt      DateTime      @updatedAt\n  address1       String?\n  address2       String?\n  city           String?\n  region         String?\n  postalCode     String?\n  addressType    AddressType   @default(WORK)\n  isPrimary      Boolean       @default(false)\n  countryId      String?\n  country        Country?      @relation(fields: [countryId], references: [id])\n  userId         String?\n  user           User?         @relation(\"Address_belongsTo_User\", fields: [userId], references: [id])\n  organizationId String?\n  organization   Organization? @relation(\"Address_belongsTo_Organization\", fields: [organizationId], references: [id])\n}\n\nmodel ApiToken {\n  id         String    @id @default(uuid())\n  createdAt  DateTime  @default(now())\n  updatedAt  DateTime  @updatedAt\n  userId     String\n  user       User      @relation(\"User_hasMany_APITokens\", fields: [userId], references: [id])\n  tokenHash  String    @unique\n  name       String\n  expiresAt  DateTime?\n  lastUsedAt DateTime?\n  revoked    Boolean   @default(false)\n}\n\nmodel AuditLog {\n  id             String        @id @default(uuid())\n  createdAt      DateTime      @default(now())\n  updatedAt      DateTime      @updatedAt\n  entityId       String\n  entityType     String\n  action         String\n  userId         String\n  user           User          @relation(fields: [userId], references: [id])\n  organizationId String?\n  organization   Organization? @relation(fields: [organizationId], references: [id])\n  changes        Json?\n}\n\nmodel Country {\n  id                     String    @id @default(uuid())\n  createdAt              DateTime  @default(now())\n  updatedAt              DateTime  @updatedAt\n  name                   String\n  alpha2                 String    @unique\n  alpha3                 String    @unique\n  countryCode            String\n  iso3166_2              String\n  region                 String\n  subRegion              String\n  intermediateRegion     String\n  regionCode             String\n  subRegionCode          String\n  intermediateRegionCode String\n  addresses              Address[]\n}\n\nmodel Email {\n  id             String        @id @default(uuid())\n  createdAt      DateTime      @default(now())\n  updatedAt      DateTime      @updatedAt\n  email          String        @unique\n  public         Boolean       @default(false)\n  primary        Boolean       @default(false)\n  verified       Boolean       @default(false)\n  verifyToken    String?\n  verifyExpires  DateTime?\n  userId         String?\n  emailType      EmailType     @default(WORK)\n  organizationId String?\n  user           User?         @relation(\"Email_belongsTo_User\", fields: [userId], references: [id])\n  organization   Organization? @relation(\"Email_belongsTo_Organization\", fields: [organizationId], references: [id])\n}\n\nmodel Invite {\n  id             String       @id @default(uuid())\n  createdAt      DateTime     @default(now())\n  updatedAt      DateTime     @updatedAt\n  expiresAt      DateTime\n  email          String\n  token          String       @unique\n  inviterId      String\n  inviter        User         @relation(\"Invite_sentBy_User\", fields: [inviterId], references: [id])\n  organizationId String\n  organization   Organization @relation(\"Invite_belongsTo_Organization\", fields: [organizationId], references: [id])\n  status         InviteStatus @default(PENDING)\n  roleId         String? // The ID of the role the user will be granted upon accepting\n  role           Role?        @relation(fields: [roleId], references: [id])\n}\n\nmodel Link {\n  id             String        @id @default(uuid())\n  createdAt      DateTime      @default(now())\n  updatedAt      DateTime      @updatedAt\n  name           String\n  url            String\n  userId         String?\n  organizationId String?\n  user           User?         @relation(\"Link_belongsTo_User\", fields: [userId], references: [id])\n  organization   Organization? @relation(\"Link_belongsTo_Organization\", fields: [organizationId], references: [id])\n}\n\nmodel LoginAttempt {\n  id        String         @id @default(uuid())\n  createdAt DateTime       @default(now())\n  updatedAt DateTime       @updatedAt\n  userId    String?\n  user      User?          @relation(fields: [userId], references: [id])\n  email     String\n  success   Boolean        @default(false)\n  ipAddress String?\n  userAgent String?\n  location  String?\n  reason    FailureReason?\n}\n\nmodel OAuthAccount {\n  id             String   @id @default(uuid())\n  createdAt      DateTime @default(now())\n  updatedAt      DateTime @updatedAt\n  provider       String\n  providerUserId String\n  userId         String\n  user           User     @relation(\"User_hasMany_OAuthAccounts\", fields: [userId], references: [id])\n\n  @@unique([provider, providerUserId])\n}\n\nmodel Organization {\n  id           String               @id @default(uuid())\n  createdAt    DateTime             @default(now())\n  updatedAt    DateTime             @updatedAt\n  name         String\n  emails       Email[]              @relation(\"Email_belongsTo_Organization\")\n  links        Link[]               @relation(\"Link_belongsTo_Organization\")\n  phoneNumbers PhoneNumber[]        @relation(\"PhoneNumber_belongsTo_Organization\")\n  images       StoredFile[]         @relation(\"StoredFile_belongsTo_Organization\")\n  members      OrganizationMember[] @relation(\"OrganizationMember_belongsTo_Organization\")\n  addresses    Address[]            @relation(\"Address_belongsTo_Organization\")\n  invites      Invite[]             @relation(\"Invite_belongsTo_Organization\")\n  AuditLog     AuditLog[]\n  Team         Team[]\n  subscription Subscription?\n  roles        Role[]\n}\n\nmodel OrganizationMember {\n  id             String       @id @default(uuid())\n  createdAt      DateTime     @default(now())\n  updatedAt      DateTime     @updatedAt\n  roleId         String\n  role           Role         @relation(fields: [roleId], references: [id])\n  userId         String\n  user           User         @relation(\"OrganizationMember_belongsTo_User\", fields: [userId], references: [id])\n  organizationId String\n  organization   Organization @relation(\"OrganizationMember_belongsTo_Organization\", fields: [organizationId], references: [id])\n}\n\nmodel Permission {\n  id          String  @id @default(uuid())\n  action      String\n  subject     String\n  description String?\n  roles       Role[]  @relation(\"RolePermissions\")\n\n  @@unique([action, subject])\n}\n\nmodel PhoneNumber {\n  id             String        @id @default(uuid())\n  createdAt      DateTime      @default(now())\n  updatedAt      DateTime      @updatedAt\n  phone          String        @unique\n  phoneType      PhoneType     @default(MOBILE)\n  userId         String?\n  primary        Boolean       @default(false)\n  organizationId String?\n  user           User?         @relation(\"PhoneNumber_belongsTo_User\", fields: [userId], references: [id])\n  organization   Organization? @relation(\"PhoneNumber_belongsTo_Organization\", fields: [organizationId], references: [id])\n}\n\nmodel Plan {\n  id              String         @id @default(uuid())\n  createdAt       DateTime       @default(now())\n  updatedAt       DateTime       @updatedAt\n  name            String         @unique\n  description     String?\n  price           Decimal\n  interval        String // 'month', 'year', 'one_time'\n  features        Json? // Array of feature descriptions\n  limits          Json? // Usage limits: { members: 5, storage: 1000, apiCalls: 10000 }\n  active          Boolean        @default(true)\n  stripeProductId String?        @unique\n  stripePriceId   String?        @unique\n  trialPeriodDays Int?\n  subscriptions   Subscription[]\n}\n\nmodel Role {\n  id             String               @id @default(uuid())\n  name           String\n  description    String?\n  organizationId String?\n  organization   Organization?        @relation(fields: [organizationId], references: [id])\n  permissions    Permission[]         @relation(\"RolePermissions\")\n  members        OrganizationMember[]\n  teamMembers    TeamMember[]\n  invites        Invite[]\n\n  @@unique([name, organizationId])\n}\n\nmodel SecurityEvent {\n  id        String            @id @default(uuid())\n  createdAt DateTime          @default(now())\n  updatedAt DateTime          @updatedAt\n  userId    String\n  user      User              @relation(fields: [userId], references: [id])\n  eventType SecurityEventType\n  ipAddress String?\n  userAgent String?\n  metadata  Json?\n}\n\nmodel Subscription {\n  id                     String             @id @default(uuid())\n  createdAt              DateTime           @default(now())\n  updatedAt              DateTime           @updatedAt\n  organizationId         String             @unique\n  organization           Organization       @relation(fields: [organizationId], references: [id])\n  planId                 String\n  plan                   Plan               @relation(fields: [planId], references: [id])\n  stripeCustomerId       String?            @unique\n  stripeSubscriptionId   String?            @unique\n  stripePriceId          String?\n  stripeCurrentPeriodEnd DateTime?\n  trialStart             DateTime?\n  trialEnd               DateTime?\n  cancelAt               DateTime?\n  canceledAt             DateTime?\n  cancelAtPeriodEnd      Boolean            @default(false)\n  status                 SubscriptionStatus @default(INCOMPLETE)\n}\n\nmodel Team {\n  id             String       @id @default(uuid())\n  createdAt      DateTime     @default(now())\n  updatedAt      DateTime     @updatedAt\n  name           String\n  description    String?\n  organizationId String\n  organization   Organization @relation(fields: [organizationId], references: [id])\n  members        TeamMember[]\n}\n\nmodel TeamMember {\n  id        String   @id @default(uuid())\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n  teamId    String\n  team      Team     @relation(fields: [teamId], references: [id])\n  userId    String\n  user      User     @relation(fields: [userId], references: [id])\n  roleId    String\n  role      Role     @relation(fields: [roleId], references: [id])\n}\n\nmodel StoredFile {\n  id        String   @id @default(uuid())\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  // Storage info\n  provider       StorageProvider\n  providerFileId String // Provider-specific ID/key\n  folder         String?\n\n  // File info\n  filename     String\n  originalName String\n  mimeType     String\n  size         Int\n\n  // URLs\n  url       String\n  publicUrl String?\n\n  // Image metadata (if applicable)\n  width  Int?\n  height Int?\n\n  // Generic metadata\n  metadata Json?\n\n  // Relations\n  userId         String?\n  organizationId String?\n  user           User?         @relation(\"StoredFile_belongsTo_User\", fields: [userId], references: [id])\n  organization   Organization? @relation(\"StoredFile_belongsTo_Organization\", fields: [organizationId], references: [id])\n\n  @@index([userId])\n  @@index([organizationId])\n  @@index([provider])\n}\n\nmodel User {\n  id                        String               @id @default(uuid())\n  createdAt                 DateTime             @default(now())\n  updatedAt                 DateTime             @updatedAt\n  firstName                 String?\n  lastName                  String?\n  isSuperAdmin              Boolean              @default(false)\n  bio                       String?\n  displayName               String?              @unique\n  password                  String?\n  passwordResetToken        String?\n  passwordResetExpires      DateTime?\n  emailValidated            Boolean              @default(false)\n  validateEmailToken        String?              @unique\n  validateEmailTokenExpires DateTime?\n  emails                    Email[]              @relation(\"Email_belongsTo_User\")\n  links                     Link[]               @relation(\"Link_belongsTo_User\")\n  phoneNumbers              PhoneNumber[]        @relation(\"PhoneNumber_belongsTo_User\")\n  images                    StoredFile[]         @relation(\"StoredFile_belongsTo_User\")\n  organizations             OrganizationMember[] @relation(\"OrganizationMember_belongsTo_User\")\n  activeOrganizationId      String?\n  addresses                 Address[]            @relation(\"Address_belongsTo_User\")\n  invitesSent               Invite[]             @relation(\"Invite_sentBy_User\")\n  twoFactorEnabled          Boolean              @default(false)\n  twoFactorSecret           String?\n  twoFactorRecoveryCodes    String[]\n  twoFactorMethod           TwoFactorMethod      @default(NONE)\n  activeSessions            UserSession[]\n  loginAttempts             LoginAttempt[]\n  lastSuccessfulLogin       DateTime?\n  lastFailedLogin           DateTime?\n  failedLoginCount          Int                  @default(0)\n  lockedUntil               DateTime?\n  AuditLog                  AuditLog[]\n  UserPreference            UserPreference[]\n  TeamMember                TeamMember[]\n  SecurityEvent             SecurityEvent[]\n  isActive                  Boolean              @default(true)\n  deactivatedAt             DateTime?\n  termsAcceptedAt           DateTime?\n  privacyPolicyAcceptedAt   DateTime?\n  apiTokens                 ApiToken[]           @relation(\"User_hasMany_APITokens\")\n  oAuthAccounts             OAuthAccount[]       @relation(\"User_hasMany_OAuthAccounts\")\n}\n\n/// @crudAuth: { \"readOne\": \"user\", \"readMany\": \"user\", \"create\": \"user\", \"update\": \"user\", \"delete\": \"user\" }\nmodel UserPreference {\n  id        String   @id @default(uuid())\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n  userId    String\n  user      User     @relation(fields: [userId], references: [id])\n  key       String\n  value     String\n\n  @@unique([userId, key])\n}\n\nmodel UserSession {\n  id                String   @id @default(uuid())\n  createdAt         DateTime @default(now())\n  updatedAt         DateTime @updatedAt\n  lastActiveAt      DateTime @default(now())\n  userId            String\n  user              User     @relation(fields: [userId], references: [id])\n  deviceInfo        String?\n  ipAddress         String?\n  isValid           Boolean  @default(true)\n  twoFactorVerified Boolean  @default(false)\n}\n\n// Enums (Alphabetical Order)\n\nenum AddressType {\n  HOME\n  WORK\n  VENUE\n  EVENT\n  OTHER\n}\n\nenum EmailType {\n  PERSONAL\n  WORK\n  OTHER\n}\n\nenum FailureReason {\n  INVALID_PASSWORD\n  INVALID_EMAIL\n  ACCOUNT_LOCKED\n  ACCOUNT_DISABLED\n  INVALID_2FA\n  EXPIRED_TOKEN\n  TOO_MANY_ATTEMPTS\n}\n\nenum ImageType {\n  AVATAR\n  BACKGROUND\n  OTHER\n}\n\nenum InviteStatus {\n  PENDING\n  ACCEPTED\n  DECLINED\n  EXPIRED\n}\n\nenum PhoneType {\n  HOME\n  WORK\n  MOBILE\n  OTHER\n}\n\nenum SecurityEventType {\n  PASSWORD_CHANGED\n  EMAIL_CHANGED\n  TWO_FACTOR_ENABLED\n  TWO_FACTOR_DISABLED\n  RECOVERY_CODES_GENERATED\n  ACCOUNT_LOCKED\n  ACCOUNT_UNLOCKED\n  SUSPICIOUS_LOGIN_ATTEMPT\n  PASSWORD_RESET_REQUESTED\n  LOGIN_LOCATION_CHANGE\n  API_TOKEN_CREATED\n  API_TOKEN_REVOKED\n  API_TOKEN_ROTATED\n}\n\nenum StorageProvider {\n  LOCAL\n  S3\n  CLOUDINARY\n  IMAGEKIT\n  GCS\n}\n\nenum SubscriptionStatus {\n  ACTIVE\n  CANCELED\n  PAST_DUE\n  INCOMPLETE\n  INCOMPLETE_EXPIRED\n  TRIALING\n}\n\nenum TwoFactorMethod {\n  NONE\n  AUTHENTICATOR\n  SMS\n  EMAIL\n}\n",
+  "inlineSchemaHash": "cd02b3b46142912e9742c2dae61a3f0bd7e0a44a8357169e8a0198710f4e1329",
+  "copyEngine": true
+}
+config.dirname = '/'
+
+config.runtimeDataModel = JSON.parse("{\"models\":{\"Address\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"address1\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"address2\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"city\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"region\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"postalCode\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"addressType\",\"kind\":\"enum\",\"type\":\"AddressType\"},{\"name\":\"isPrimary\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"countryId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"country\",\"kind\":\"object\",\"type\":\"Country\",\"relationName\":\"AddressToCountry\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"Address_belongsTo_User\"},{\"name\":\"organizationId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"organization\",\"kind\":\"object\",\"type\":\"Organization\",\"relationName\":\"Address_belongsTo_Organization\"}],\"dbName\":null},\"ApiToken\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"User_hasMany_APITokens\"},{\"name\":\"tokenHash\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"expiresAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"lastUsedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"revoked\",\"kind\":\"scalar\",\"type\":\"Boolean\"}],\"dbName\":null},\"AuditLog\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"entityId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"entityType\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"action\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"AuditLogToUser\"},{\"name\":\"organizationId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"organization\",\"kind\":\"object\",\"type\":\"Organization\",\"relationName\":\"AuditLogToOrganization\"},{\"name\":\"changes\",\"kind\":\"scalar\",\"type\":\"Json\"}],\"dbName\":null},\"Country\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"alpha2\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"alpha3\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"countryCode\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"iso3166_2\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"region\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"subRegion\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"intermediateRegion\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"regionCode\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"subRegionCode\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"intermediateRegionCode\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"addresses\",\"kind\":\"object\",\"type\":\"Address\",\"relationName\":\"AddressToCountry\"}],\"dbName\":null},\"Email\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"public\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"primary\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"verified\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"verifyToken\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"verifyExpires\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"emailType\",\"kind\":\"enum\",\"type\":\"EmailType\"},{\"name\":\"organizationId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"Email_belongsTo_User\"},{\"name\":\"organization\",\"kind\":\"object\",\"type\":\"Organization\",\"relationName\":\"Email_belongsTo_Organization\"}],\"dbName\":null},\"Invite\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"expiresAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"token\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"inviterId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"inviter\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"Invite_sentBy_User\"},{\"name\":\"organizationId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"organization\",\"kind\":\"object\",\"type\":\"Organization\",\"relationName\":\"Invite_belongsTo_Organization\"},{\"name\":\"status\",\"kind\":\"enum\",\"type\":\"InviteStatus\"},{\"name\":\"roleId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"role\",\"kind\":\"object\",\"type\":\"Role\",\"relationName\":\"InviteToRole\"}],\"dbName\":null},\"Link\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"url\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"organizationId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"Link_belongsTo_User\"},{\"name\":\"organization\",\"kind\":\"object\",\"type\":\"Organization\",\"relationName\":\"Link_belongsTo_Organization\"}],\"dbName\":null},\"LoginAttempt\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"LoginAttemptToUser\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"success\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"ipAddress\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userAgent\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"location\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"reason\",\"kind\":\"enum\",\"type\":\"FailureReason\"}],\"dbName\":null},\"OAuthAccount\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"provider\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"providerUserId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"User_hasMany_OAuthAccounts\"}],\"dbName\":null},\"Organization\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"emails\",\"kind\":\"object\",\"type\":\"Email\",\"relationName\":\"Email_belongsTo_Organization\"},{\"name\":\"links\",\"kind\":\"object\",\"type\":\"Link\",\"relationName\":\"Link_belongsTo_Organization\"},{\"name\":\"phoneNumbers\",\"kind\":\"object\",\"type\":\"PhoneNumber\",\"relationName\":\"PhoneNumber_belongsTo_Organization\"},{\"name\":\"images\",\"kind\":\"object\",\"type\":\"StoredFile\",\"relationName\":\"StoredFile_belongsTo_Organization\"},{\"name\":\"members\",\"kind\":\"object\",\"type\":\"OrganizationMember\",\"relationName\":\"OrganizationMember_belongsTo_Organization\"},{\"name\":\"addresses\",\"kind\":\"object\",\"type\":\"Address\",\"relationName\":\"Address_belongsTo_Organization\"},{\"name\":\"invites\",\"kind\":\"object\",\"type\":\"Invite\",\"relationName\":\"Invite_belongsTo_Organization\"},{\"name\":\"AuditLog\",\"kind\":\"object\",\"type\":\"AuditLog\",\"relationName\":\"AuditLogToOrganization\"},{\"name\":\"Team\",\"kind\":\"object\",\"type\":\"Team\",\"relationName\":\"OrganizationToTeam\"},{\"name\":\"subscription\",\"kind\":\"object\",\"type\":\"Subscription\",\"relationName\":\"OrganizationToSubscription\"},{\"name\":\"roles\",\"kind\":\"object\",\"type\":\"Role\",\"relationName\":\"OrganizationToRole\"}],\"dbName\":null},\"OrganizationMember\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"roleId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"role\",\"kind\":\"object\",\"type\":\"Role\",\"relationName\":\"OrganizationMemberToRole\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"OrganizationMember_belongsTo_User\"},{\"name\":\"organizationId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"organization\",\"kind\":\"object\",\"type\":\"Organization\",\"relationName\":\"OrganizationMember_belongsTo_Organization\"}],\"dbName\":null},\"Permission\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"action\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"subject\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"roles\",\"kind\":\"object\",\"type\":\"Role\",\"relationName\":\"RolePermissions\"}],\"dbName\":null},\"PhoneNumber\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"phone\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"phoneType\",\"kind\":\"enum\",\"type\":\"PhoneType\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"primary\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"organizationId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"PhoneNumber_belongsTo_User\"},{\"name\":\"organization\",\"kind\":\"object\",\"type\":\"Organization\",\"relationName\":\"PhoneNumber_belongsTo_Organization\"}],\"dbName\":null},\"Plan\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"price\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"interval\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"features\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"limits\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"active\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"stripeProductId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"stripePriceId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"trialPeriodDays\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"subscriptions\",\"kind\":\"object\",\"type\":\"Subscription\",\"relationName\":\"PlanToSubscription\"}],\"dbName\":null},\"Role\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"organizationId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"organization\",\"kind\":\"object\",\"type\":\"Organization\",\"relationName\":\"OrganizationToRole\"},{\"name\":\"permissions\",\"kind\":\"object\",\"type\":\"Permission\",\"relationName\":\"RolePermissions\"},{\"name\":\"members\",\"kind\":\"object\",\"type\":\"OrganizationMember\",\"relationName\":\"OrganizationMemberToRole\"},{\"name\":\"teamMembers\",\"kind\":\"object\",\"type\":\"TeamMember\",\"relationName\":\"RoleToTeamMember\"},{\"name\":\"invites\",\"kind\":\"object\",\"type\":\"Invite\",\"relationName\":\"InviteToRole\"}],\"dbName\":null},\"SecurityEvent\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"SecurityEventToUser\"},{\"name\":\"eventType\",\"kind\":\"enum\",\"type\":\"SecurityEventType\"},{\"name\":\"ipAddress\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userAgent\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"metadata\",\"kind\":\"scalar\",\"type\":\"Json\"}],\"dbName\":null},\"Subscription\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"organizationId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"organization\",\"kind\":\"object\",\"type\":\"Organization\",\"relationName\":\"OrganizationToSubscription\"},{\"name\":\"planId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"plan\",\"kind\":\"object\",\"type\":\"Plan\",\"relationName\":\"PlanToSubscription\"},{\"name\":\"stripeCustomerId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"stripeSubscriptionId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"stripePriceId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"stripeCurrentPeriodEnd\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"trialStart\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"trialEnd\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"cancelAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"canceledAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"cancelAtPeriodEnd\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"status\",\"kind\":\"enum\",\"type\":\"SubscriptionStatus\"}],\"dbName\":null},\"Team\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"organizationId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"organization\",\"kind\":\"object\",\"type\":\"Organization\",\"relationName\":\"OrganizationToTeam\"},{\"name\":\"members\",\"kind\":\"object\",\"type\":\"TeamMember\",\"relationName\":\"TeamToTeamMember\"}],\"dbName\":null},\"TeamMember\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"teamId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"team\",\"kind\":\"object\",\"type\":\"Team\",\"relationName\":\"TeamToTeamMember\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"TeamMemberToUser\"},{\"name\":\"roleId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"role\",\"kind\":\"object\",\"type\":\"Role\",\"relationName\":\"RoleToTeamMember\"}],\"dbName\":null},\"StoredFile\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"provider\",\"kind\":\"enum\",\"type\":\"StorageProvider\"},{\"name\":\"providerFileId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"folder\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"filename\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"originalName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"mimeType\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"size\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"url\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"publicUrl\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"width\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"height\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"metadata\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"organizationId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"StoredFile_belongsTo_User\"},{\"name\":\"organization\",\"kind\":\"object\",\"type\":\"Organization\",\"relationName\":\"StoredFile_belongsTo_Organization\"}],\"dbName\":null},\"User\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"firstName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"lastName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"isSuperAdmin\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"bio\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"displayName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"password\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"passwordResetToken\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"passwordResetExpires\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"emailValidated\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"validateEmailToken\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"validateEmailTokenExpires\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"emails\",\"kind\":\"object\",\"type\":\"Email\",\"relationName\":\"Email_belongsTo_User\"},{\"name\":\"links\",\"kind\":\"object\",\"type\":\"Link\",\"relationName\":\"Link_belongsTo_User\"},{\"name\":\"phoneNumbers\",\"kind\":\"object\",\"type\":\"PhoneNumber\",\"relationName\":\"PhoneNumber_belongsTo_User\"},{\"name\":\"images\",\"kind\":\"object\",\"type\":\"StoredFile\",\"relationName\":\"StoredFile_belongsTo_User\"},{\"name\":\"organizations\",\"kind\":\"object\",\"type\":\"OrganizationMember\",\"relationName\":\"OrganizationMember_belongsTo_User\"},{\"name\":\"activeOrganizationId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"addresses\",\"kind\":\"object\",\"type\":\"Address\",\"relationName\":\"Address_belongsTo_User\"},{\"name\":\"invitesSent\",\"kind\":\"object\",\"type\":\"Invite\",\"relationName\":\"Invite_sentBy_User\"},{\"name\":\"twoFactorEnabled\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"twoFactorSecret\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"twoFactorRecoveryCodes\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"twoFactorMethod\",\"kind\":\"enum\",\"type\":\"TwoFactorMethod\"},{\"name\":\"activeSessions\",\"kind\":\"object\",\"type\":\"UserSession\",\"relationName\":\"UserToUserSession\"},{\"name\":\"loginAttempts\",\"kind\":\"object\",\"type\":\"LoginAttempt\",\"relationName\":\"LoginAttemptToUser\"},{\"name\":\"lastSuccessfulLogin\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"lastFailedLogin\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"failedLoginCount\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"lockedUntil\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"AuditLog\",\"kind\":\"object\",\"type\":\"AuditLog\",\"relationName\":\"AuditLogToUser\"},{\"name\":\"UserPreference\",\"kind\":\"object\",\"type\":\"UserPreference\",\"relationName\":\"UserToUserPreference\"},{\"name\":\"TeamMember\",\"kind\":\"object\",\"type\":\"TeamMember\",\"relationName\":\"TeamMemberToUser\"},{\"name\":\"SecurityEvent\",\"kind\":\"object\",\"type\":\"SecurityEvent\",\"relationName\":\"SecurityEventToUser\"},{\"name\":\"isActive\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"deactivatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"termsAcceptedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"privacyPolicyAcceptedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"apiTokens\",\"kind\":\"object\",\"type\":\"ApiToken\",\"relationName\":\"User_hasMany_APITokens\"},{\"name\":\"oAuthAccounts\",\"kind\":\"object\",\"type\":\"OAuthAccount\",\"relationName\":\"User_hasMany_OAuthAccounts\"}],\"dbName\":null},\"UserPreference\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"UserToUserPreference\"},{\"name\":\"key\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"value\",\"kind\":\"scalar\",\"type\":\"String\"}],\"dbName\":null},\"UserSession\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"lastActiveAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"UserToUserSession\"},{\"name\":\"deviceInfo\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"ipAddress\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"isValid\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"twoFactorVerified\",\"kind\":\"scalar\",\"type\":\"Boolean\"}],\"dbName\":null}},\"enums\":{},\"types\":{}}")
+defineDmmfProperty(exports.Prisma, config.runtimeDataModel)
+config.engineWasm = {
+  getRuntime: async () => require('./query_engine_bg.js'),
+  getQueryEngineWasmModule: async () => {
+    const loader = (await import('#wasm-engine-loader')).default
+    const engine = (await loader).default
+    return engine
   }
 }
+config.compilerWasm = undefined
 
+config.injectableEdgeEnv = () => ({
+  parsed: {
+    DATABASE_URL: typeof globalThis !== 'undefined' && globalThis['DATABASE_URL'] || typeof process !== 'undefined' && process.env && process.env.DATABASE_URL || undefined
+  }
+})
+
+if (typeof globalThis !== 'undefined' && globalThis['DEBUG'] || typeof process !== 'undefined' && process.env && process.env.DEBUG || undefined) {
+  Debug.enable(typeof globalThis !== 'undefined' && globalThis['DEBUG'] || typeof process !== 'undefined' && process.env && process.env.DEBUG || undefined)
+}
+
+const PrismaClient = getPrismaClient(config)
 exports.PrismaClient = PrismaClient
-
 Object.assign(exports, Prisma)
+

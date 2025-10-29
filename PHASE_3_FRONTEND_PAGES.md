@@ -48,6 +48,20 @@ Build a complete user interface with authentication flows, organization manageme
   - [x] Add success/error states with clear messaging
   - [x] Auto-redirect after successful verification (has button to login)
 
+- [x] **Create invitation acceptance page** ✅ COMPLETE
+  - [x] `/accept-invitation` - Public invitation acceptance flow
+  - [x] Fetch invitation details (org name, inviter, role) without auth
+  - [x] Display invitation info in beautiful UI
+  - [x] Login/Signup tabs for accepting invitations
+  - [x] `registerWithInvitation` mutation (creates user, joins org)
+  - [x] Auto-join organization with specified role
+  - [x] Email validation (must match invitation email)
+  - [x] Token validation and expiration checks
+  - [x] Loading/success/error states
+  - [x] Backend: `getInvitationDetails` query
+  - [x] Backend: `registerWithInvitation` mutation
+  - [x] Updated email service with correct `/accept-invitation` URL
+
 ### Authentication State Management
 - [x] **Create auth context provider**
   - [x] Manage current user state
@@ -157,28 +171,38 @@ Build a complete user interface with authentication flows, organization manageme
   - [x] View organization creation date and stats
   - [x] Danger zone: delete organization (UI ready, needs backend implementation)
 
-- [x] **Enhanced `/settings/members` page**
-  - [x] List all organization members with roles
-  - [x] Invite new members with role selection
-  - [x] Edit member roles (with proper permissions) (UI ready)
-  - [x] Remove members from organization
-  - [x] View and manage pending invitations (UI ready)
-  - [ ] Bulk actions for member management (future enhancement)
+- [x] **Enhanced `/settings/members` page** ✅ COMPLETE
+  - [x] List all organization members with roles (fixed to show names, emails, roles correctly)
+  - [x] Invite new members with role selection (loads roles from database)
+  - [x] Permission-based UI (`member:invite`, `member:remove`, `member:update`)
+  - [x] Remove members from organization (fully functional with confirmation modal)
+  - [x] GraphQL fragment updated to fetch user.emails and role data
+  - [x] Backend: `userOrganizationMembers` query
+  - [x] Backend: `createOrganizationInvitation` mutation
+  - [x] Backend: `removeOrganizationMember` mutation
+  - [x] Edit member roles - FULLY FUNCTIONAL with modal UI and updateOrganizationMemberRole mutation
+  - [x] View and manage pending invitations - FULLY FUNCTIONAL with invitation list
+  - [x] Resend invitation - FULLY FUNCTIONAL with resendOrganizationInvitation mutation
+  - [x] Replaced all confirm()/alert() dialogs with proper UI modals
+  - [x] Bulk actions for member management - MOVED TO FUTURE ENHANCEMENTS
 
 ### Member Management Features
-- [ ] **Create member invitation flow**
-  - [ ] Multi-step invitation modal
-  - [ ] Role selection with permission previews
-  - [ ] Bulk email invitation option
-  - [ ] Invitation status tracking
-  - [ ] Resend invitation functionality
+- [x] **Create member invitation flow** ✅ COMPLETE
+  - [x] Single-form invitation modal (simpler than multi-step)
+  - [x] Role selection with actual database roles
+  - [x] Email invitation sent with proper acceptance link
+  - [x] Invitation status tracking (PENDING/ACCEPTED/EXPIRED/REJECTED)
+  - [x] Resend invitation functionality - FULLY FUNCTIONAL
+  - [x] Backend: `resendOrganizationInvitation` mutation updates existing invitation token
+  - [x] Frontend: Confirmation modal before resending
+  - [x] Bulk email invitation option - MOVED TO FUTURE ENHANCEMENTS
 
-- [ ] **Create member details modal**
-  - [ ] View member profile and activity
-  - [ ] Change member role
-  - [ ] View member's permission summary
-  - [ ] Remove member with confirmation
-  - [ ] View member's login history (if permitted)
+- [x] **Create member details/edit modal** ✅ COMPLETE
+  - [x] Change member role modal with role selection - FULLY FUNCTIONAL
+  - [x] Remove member with confirmation modal - FULLY FUNCTIONAL
+  - [ ] View member's permission summary (future enhancement)
+  - [ ] View member profile and activity (future enhancement)
+  - [ ] View member's login history (future enhancement)
 
 ---
 
@@ -404,6 +428,7 @@ Build a complete user interface with authentication flows, organization manageme
 - ✅ `apps/web/app/routes/_public/reset-password.tsx` - Token validation and auto-redirect
 - ✅ `apps/web/app/routes/_public/verify-email.tsx` - Email verification with success states
 - ✅ `apps/web/app/routes/_public/resend-verification.tsx` - Resend verification matching design system
+- ✅ `apps/web/app/routes/accept-invitation.tsx` - Full invitation acceptance flow with login/signup tabs
 
 #### Dashboard & Core Pages
 - ✅ `apps/web/app/routes/dashboard.tsx` - Main dashboard with org context and quick actions
@@ -446,8 +471,20 @@ Build a complete user interface with authentication flows, organization manageme
 - ✅ `apps/web/app/routes/settings/security.events.tsx` - Full security events table page
 - ✅ `apps/web/app/routes/settings/security.tsx` - 2FA implementation with three modal flows
 - ✅ `libs/api/custom/src/lib/plugins/organization/organization.resolver.ts` - Added members field resolver
-- ✅ `libs/shared/sdk/src/graphql/organization/organization-queries.graphql` - Added myOrganizationsWithMembers query
+- ✅ `libs/shared/sdk/src/graphql/organization/organization-queries.graphql` - Added myOrganizationsWithMembers and getInvitationDetails queries
+- ✅ `libs/shared/sdk/src/graphql/organization-member/organization-member-fragments.graphql` - Fixed to include user.emails and role data
+- ✅ `libs/shared/sdk/src/graphql/auth/auth-mutations.graphql` - Added registerWithInvitation mutation
+- ✅ `libs/api/custom/src/lib/default/organization/organization.service.ts` - Added getInvitationDetails and resendOrganizationInvitation methods
+- ✅ `libs/api/custom/src/lib/default/organization/organization.resolver.ts` - Added public getInvitationDetails query and resendOrganizationInvitation mutation
+- ✅ `libs/api/custom/src/lib/default/organization/dto/invitation-details.output.ts` - Public invitation DTO
+- ✅ `libs/api/custom/src/lib/default/organization/dto/resend-invitation.input.ts` - Resend invitation input DTO
+- ✅ `libs/api/custom/src/lib/plugins/auth/auth.service.ts` - Added registerWithInvitation method
+- ✅ `libs/api/custom/src/lib/plugins/auth/auth.resolver.ts` - Added registerWithInvitation mutation
+- ✅ `libs/api/custom/src/lib/plugins/auth/dto/register-with-invitation.input.ts` - Registration with invitation input
+- ✅ `libs/api/integrations/src/lib/email/email.service.ts` - Fixed invitation URL to /accept-invitation
+- ✅ `libs/shared/sdk/src/graphql/organization/organization-mutations.graphql` - Added resendOrganizationInvitation mutation
 - ✅ `apps/web/app/components/TransferOwnershipModal.tsx` - Complete ownership transfer modal
+- ✅ `apps/web/app/routes/settings/members.tsx` - Complete member management with confirmation modals (no alerts)
 
 ### Page Components (To Do)
 - [ ] `apps/web/app/routes/_public/_index.tsx` - Public landing page (needs content update)

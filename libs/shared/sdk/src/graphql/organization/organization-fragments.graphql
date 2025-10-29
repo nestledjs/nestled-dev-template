@@ -29,6 +29,12 @@ fragment OrganizationDetails on Organization {
     role {
       id
       name
+      permissions {
+        id
+        action
+        subject
+        description
+      }
     }
   }
   roles {

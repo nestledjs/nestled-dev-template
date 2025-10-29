@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { useLoaderData } from 'react-router'
 import {
+  ArrowPathIcon,
   EnvelopeIcon,
   PencilIcon,
   PlusIcon,
@@ -14,25 +15,28 @@ import { apolloLoader } from '@nestled-template/shared/apollo'
 import {
   MeDocument,
   MeQuery,
-  MyOrganizationsDocument,
-  MyOrganizationsQuery,
+  MyOrganizationsWithMembersDocument,
+  MyOrganizationsWithMembersQuery,
   useAddOrganizationMemberMutation,
   useCreateOrganizationInvitationMutation,
+  useResendOrganizationInvitationMutation,
   useRemoveOrganizationMemberMutation,
   useUpdateOrganizationMemberRoleMutation,
   useUserOrganizationMembersQuery,
+  useOrganizationRolesQuery,
+  useOrganizationInvitationsQuery,
 } from '@nestled-template/shared/sdk'
 import { QueryRef, useReadQuery } from '@apollo/client'
 
-const loader = apolloLoader()(({ preloadQuery }) => {
-  const myOrganizationsQueryRef = preloadQuery<MyOrganizationsQuery>(MyOrganizationsDocument)
+export const loader = apolloLoader()(({ preloadQuery }) => {
+  const myOrganizationsQueryRef = preloadQuery<MyOrganizationsWithMembersQuery>(MyOrganizationsWithMembersDocument)
   const meQueryRef = preloadQuery<MeQuery>(MeDocument)
   return { myOrganizationsQueryRef, meQueryRef }
 })
 
 export default function MembersSettings() {
   const loaderData = useLoaderData() as {
-    myOrganizationsQueryRef: QueryRef<MyOrganizationsQuery>
+    myOrganizationsQueryRef: QueryRef<MyOrganizationsWithMembersQuery>
     meQueryRef: QueryRef<MeQuery>
   }
   const { data: orgData } = useReadQuery(loaderData.myOrganizationsQueryRef)
@@ -45,8 +49,16 @@ export default function MembersSettings() {
   const [showInviteForm, setShowInviteForm] = useState(false)
   const [formError, setFormError] = useState<string | null>(null)
   const [formSuccess, setFormSuccess] = useState<string | null>(null)
+  const [editingMember, setEditingMember] = useState<any | null>(null)
+  const [confirmModal, setConfirmModal] = useState<{
+    isOpen: boolean
+    title: string
+    message: string
+    onConfirm: () => void
+  } | null>(null)
 
   const [inviteMember] = useCreateOrganizationInvitationMutation()
+  const [resendInvitation] = useResendOrganizationInvitationMutation()
   const [addMember] = useAddOrganizationMemberMutation()
   const [removeMember] = useRemoveOrganizationMemberMutation()
   const [updateMemberRole] = useUpdateOrganizationMemberRoleMutation()
@@ -58,7 +70,23 @@ export default function MembersSettings() {
     skip: !activeOrganization?.id,
   })
 
+  const { data: rolesData } = useOrganizationRolesQuery({
+    variables: {
+      organizationId: activeOrganization?.id || '',
+    },
+    skip: !activeOrganization?.id,
+  })
+
+  const { data: invitationsData, loading: invitationsLoading, refetch: refetchInvitations } = useOrganizationInvitationsQuery({
+    variables: {
+      organizationId: activeOrganization?.id || '',
+    },
+    skip: !activeOrganization?.id,
+  })
+
   const members = data?.userOrganizationMembers || []
+  const roles = rolesData?.organizationRoles || []
+  const invitations = invitationsData?.organizationInvitations?.filter((inv: any) => inv.status === 'PENDING') || []
 
   async function handleInviteMember(input: { email: string; roleId: string }) {
     setFormError(null)
@@ -78,33 +106,91 @@ export default function MembersSettings() {
       setFormSuccess('Invitation sent successfully!')
       setShowInviteForm(false)
       refetch()
+      refetchInvitations()
     } catch (error) {
       setFormError((error as Error)?.message ?? 'Failed to send invitation')
     }
   }
 
+  async function handleResendInvitation(invitationId: string, email: string) {
+    setConfirmModal({
+      isOpen: true,
+      title: 'Resend Invitation',
+      message: `Are you sure you want to resend the invitation to ${email}?`,
+      onConfirm: async () => {
+        setConfirmModal(null)
+        setFormError(null)
+        setFormSuccess(null)
+
+        try {
+          await resendInvitation({
+            variables: {
+              input: {
+                invitationId,
+              },
+            },
+          })
+
+          setFormSuccess(`Invitation resent to ${email}`)
+          refetchInvitations()
+        } catch (error) {
+          setFormError((error as Error)?.message ?? 'Failed to resend invitation')
+        }
+      },
+    })
+  }
+
   async function handleRemoveMember(userId: string, memberName: string) {
-    if (!confirm(`Are you sure you want to remove ${memberName} from the organization?`)) {
-      return
-    }
+    setConfirmModal({
+      isOpen: true,
+      title: 'Remove Member',
+      message: `Are you sure you want to remove ${memberName} from the organization? This action cannot be undone.`,
+      onConfirm: async () => {
+        setConfirmModal(null)
+        setFormError(null)
+        setFormSuccess(null)
+
+        try {
+          await removeMember({
+            variables: {
+              input: {
+                organizationId: activeOrganization!.id,
+                userId: userId,
+              },
+            },
+          })
+
+          setFormSuccess('Member removed successfully!')
+          refetch()
+        } catch (error) {
+          setFormError((error as Error)?.message ?? 'Failed to remove member')
+        }
+      },
+    })
+  }
+
+  async function handleUpdateMemberRole(newRoleId: string) {
+    if (!editingMember) return
 
     setFormError(null)
     setFormSuccess(null)
 
     try {
-      await removeMember({
+      await updateMemberRole({
         variables: {
           input: {
             organizationId: activeOrganization!.id,
-            userId: userId,
+            userId: editingMember.user.id,
+            roleId: newRoleId,
           },
         },
       })
 
-      setFormSuccess('Member removed successfully!')
+      setFormSuccess(`Role updated successfully for ${editingMember.user.firstName} ${editingMember.user.lastName}`)
+      setEditingMember(null)
       refetch()
     } catch (error) {
-      setFormError((error as Error)?.message ?? 'Failed to remove member')
+      setFormError((error as Error)?.message ?? 'Failed to update member role')
     }
   }
 
@@ -119,9 +205,10 @@ export default function MembersSettings() {
       required: true,
       options: [
         { value: '', label: 'Select a role...' },
-        { value: 'member', label: 'Member' },
-        { value: 'admin', label: 'Admin' },
-        { value: 'owner', label: 'Owner' },
+        ...roles.map((role: any) => ({
+          value: role.id,
+          label: role.name,
+        })),
       ],
     }),
     FormFieldClass.button('submit', {
@@ -168,7 +255,7 @@ export default function MembersSettings() {
               </div>
             </div>
 
-            <RequirePermission permission="member:create" fallback={null}>
+            <RequirePermission permission="member:invite" fallback={null}>
               <button
                 onClick={() => setShowInviteForm(!showInviteForm)}
                 className="flex items-center gap-2 px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg text-sm font-medium transition-colors"
@@ -189,6 +276,94 @@ export default function MembersSettings() {
         {formSuccess && (
           <div className="rounded-lg text-sm text-emerald-300 bg-emerald-500/10 border border-emerald-500/20 p-3">
             {formSuccess}
+          </div>
+        )}
+
+        {/* Confirmation Modal */}
+        {confirmModal?.isOpen && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+            <div className="rounded-xl border border-zinc-200 dark:border-white/10 bg-white dark:bg-white/5 p-6 backdrop-blur shadow-xl max-w-md w-full">
+              <h3 className="text-lg font-semibold text-zinc-900 dark:text-white mb-4">
+                {confirmModal.title}
+              </h3>
+              <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-6">
+                {confirmModal.message}
+              </p>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setConfirmModal(null)}
+                  className="flex-1 px-4 py-2 bg-zinc-200 dark:bg-zinc-800 text-zinc-900 dark:text-white rounded-lg text-sm font-medium hover:bg-zinc-300 dark:hover:bg-zinc-700 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={confirmModal.onConfirm}
+                  className="flex-1 px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg text-sm font-medium transition-colors"
+                >
+                  Confirm
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Edit Member Role Modal */}
+        {editingMember && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+            <div className="rounded-xl border border-zinc-200 dark:border-white/10 bg-white dark:bg-white/5 p-6 backdrop-blur shadow-xl max-w-md w-full">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="rounded-lg bg-sky-100 dark:bg-sky-500/10 p-2">
+                  <PencilIcon className="h-5 w-5 text-sky-600 dark:text-sky-400" />
+                </div>
+                <h3 className="text-lg font-semibold text-zinc-900 dark:text-white">
+                  Edit Member Role
+                </h3>
+              </div>
+
+              <div className="mb-4">
+                <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-2">
+                  Update the role for{' '}
+                  <strong className="text-zinc-900 dark:text-white">
+                    {editingMember.user?.firstName} {editingMember.user?.lastName}
+                  </strong>
+                </p>
+                <p className="text-xs text-zinc-500 dark:text-zinc-500">
+                  {editingMember.user?.emails?.find((e: any) => e.primary)?.email ||
+                    editingMember.user?.emails?.[0]?.email}
+                </p>
+              </div>
+
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
+                  Select New Role
+                </label>
+                <select
+                  defaultValue={editingMember.role?.id}
+                  onChange={(e) => {
+                    if (e.target.value) {
+                      handleUpdateMemberRole(e.target.value)
+                    }
+                  }}
+                  className="w-full px-3 py-2 bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 rounded-lg text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-sky-500"
+                >
+                  <option value="">Select a role...</option>
+                  {roles.map((role: any) => (
+                    <option key={role.id} value={role.id}>
+                      {role.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setEditingMember(null)}
+                  className="flex-1 px-4 py-2 bg-zinc-200 dark:bg-zinc-800 text-zinc-900 dark:text-white rounded-lg text-sm font-medium hover:bg-zinc-300 dark:hover:bg-zinc-700 transition-colors"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
           </div>
         )}
 
@@ -270,7 +445,7 @@ export default function MembersSettings() {
                         )}
                       </h4>
                       <p className="text-xs text-zinc-600 dark:text-zinc-400">
-                        {member.user?.email}
+                        {member.user?.emails?.find((e: any) => e.primary)?.email || member.user?.emails?.[0]?.email}
                       </p>
                     </div>
                   </div>
@@ -283,9 +458,7 @@ export default function MembersSettings() {
                     <RequirePermission permission="member:update" fallback={null}>
                       {member.id !== activeOrganizationMember?.id && (
                         <button
-                          onClick={() => {
-                            alert(`Edit role for ${member.user?.firstName}`)
-                          }}
+                          onClick={() => setEditingMember(member)}
                           className="p-1.5 rounded text-sky-600 dark:text-sky-400 hover:bg-sky-100 dark:hover:bg-sky-500/10"
                           title="Edit role"
                         >
@@ -294,7 +467,7 @@ export default function MembersSettings() {
                       )}
                     </RequirePermission>
 
-                    <RequirePermission permission="member:delete" fallback={null}>
+                    <RequirePermission permission="member:remove" fallback={null}>
                       {member.id !== activeOrganizationMember?.id && (
                         <button
                           onClick={() =>
@@ -320,13 +493,64 @@ export default function MembersSettings() {
         {/* Pending Invitations */}
         <div className="rounded-xl border border-zinc-200 dark:border-white/10 bg-white dark:bg-white/5 p-6 backdrop-blur">
           <h3 className="text-lg font-semibold text-zinc-900 dark:text-white mb-4">
-            Pending Invitations
+            Pending Invitations ({invitations.length})
           </h3>
 
-          <div className="text-center py-6">
-            <EnvelopeIcon className="h-10 w-10 mx-auto text-zinc-400 dark:text-zinc-600 mb-2" />
-            <p className="text-sm text-zinc-600 dark:text-zinc-400">No pending invitations</p>
-          </div>
+          {invitationsLoading && (
+            <div className="text-center py-8">
+              <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-sky-500 border-r-transparent"></div>
+              <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">Loading invitations...</p>
+            </div>
+          )}
+
+          {!invitationsLoading && invitations.length === 0 && (
+            <div className="text-center py-6">
+              <EnvelopeIcon className="h-10 w-10 mx-auto text-zinc-400 dark:text-zinc-600 mb-2" />
+              <p className="text-sm text-zinc-600 dark:text-zinc-400">No pending invitations</p>
+            </div>
+          )}
+
+          {!invitationsLoading && invitations.length > 0 && (
+            <div className="space-y-3">
+              {invitations.map((invitation: any) => (
+                <div
+                  key={invitation.id}
+                  className="flex items-center justify-between p-4 rounded-lg bg-zinc-50 dark:bg-white/5 border border-zinc-200 dark:border-white/10"
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="h-10 w-10 rounded-full bg-gradient-to-br from-sky-400 to-purple-500 flex items-center justify-center text-white font-semibold">
+                      <EnvelopeIcon className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-medium text-zinc-900 dark:text-white">
+                        {invitation.email}
+                      </h4>
+                      <p className="text-xs text-zinc-600 dark:text-zinc-400">
+                        Invited by {invitation.inviter?.firstName} {invitation.inviter?.lastName} •
+                        Expires {new Date(invitation.expiresAt).toLocaleDateString()}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <span className="px-3 py-1 bg-sky-100 dark:bg-sky-500/10 text-sky-700 dark:text-sky-400 rounded-full text-xs font-medium">
+                      {invitation.role?.name || 'Member'}
+                    </span>
+
+                    <RequirePermission permission="member:invite" fallback={null}>
+                      <button
+                        onClick={() => handleResendInvitation(invitation.id, invitation.email)}
+                        className="p-1.5 rounded text-sky-600 dark:text-sky-400 hover:bg-sky-100 dark:hover:bg-sky-500/10"
+                        title="Resend invitation"
+                      >
+                        <ArrowPathIcon className="h-4 w-4" />
+                      </button>
+                    </RequirePermission>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Member Roles Info */}
