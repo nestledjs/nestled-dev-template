@@ -693,8 +693,8 @@ export namespace Prisma {
   export import Exact = $Public.Exact
 
   /**
-   * Prisma Client JS version: 6.14.0
-   * Query Engine version: 717184b7b35ea05dfa71a3236b7af656013e1e49
+   * Prisma Client JS version: 6.18.0
+   * Query Engine version: 34b5a692b7bd79939a9a2c3ef97d816e749cda2f
    */
   export type PrismaVersion = {
     client: string
@@ -707,6 +707,7 @@ export namespace Prisma {
    */
 
 
+  export import Bytes = runtime.Bytes
   export import JsonObject = runtime.JsonObject
   export import JsonArray = runtime.JsonArray
   export import JsonValue = runtime.JsonValue
@@ -2897,6 +2898,10 @@ export namespace Prisma {
       timeout?: number
       isolationLevel?: Prisma.TransactionIsolationLevel
     }
+    /**
+     * Instance of a Driver Adapter, e.g., like one provided by `@prisma/adapter-planetscale`
+     */
+    adapter?: runtime.SqlDriverAdapterFactory | null
     /**
      * Global configuration for omitting model fields by default.
      * 
@@ -18461,76 +18466,112 @@ export namespace Prisma {
 
   export type PlanAvgAggregateOutputType = {
     price: Decimal | null
+    trialPeriodDays: number | null
   }
 
   export type PlanSumAggregateOutputType = {
     price: Decimal | null
+    trialPeriodDays: number | null
   }
 
   export type PlanMinAggregateOutputType = {
     id: string | null
     createdAt: Date | null
+    updatedAt: Date | null
     name: string | null
+    description: string | null
     price: Decimal | null
     interval: string | null
     active: boolean | null
+    stripeProductId: string | null
+    stripePriceId: string | null
+    trialPeriodDays: number | null
   }
 
   export type PlanMaxAggregateOutputType = {
     id: string | null
     createdAt: Date | null
+    updatedAt: Date | null
     name: string | null
+    description: string | null
     price: Decimal | null
     interval: string | null
     active: boolean | null
+    stripeProductId: string | null
+    stripePriceId: string | null
+    trialPeriodDays: number | null
   }
 
   export type PlanCountAggregateOutputType = {
     id: number
     createdAt: number
+    updatedAt: number
     name: number
+    description: number
     price: number
     interval: number
     features: number
+    limits: number
     active: number
+    stripeProductId: number
+    stripePriceId: number
+    trialPeriodDays: number
     _all: number
   }
 
 
   export type PlanAvgAggregateInputType = {
     price?: true
+    trialPeriodDays?: true
   }
 
   export type PlanSumAggregateInputType = {
     price?: true
+    trialPeriodDays?: true
   }
 
   export type PlanMinAggregateInputType = {
     id?: true
     createdAt?: true
+    updatedAt?: true
     name?: true
+    description?: true
     price?: true
     interval?: true
     active?: true
+    stripeProductId?: true
+    stripePriceId?: true
+    trialPeriodDays?: true
   }
 
   export type PlanMaxAggregateInputType = {
     id?: true
     createdAt?: true
+    updatedAt?: true
     name?: true
+    description?: true
     price?: true
     interval?: true
     active?: true
+    stripeProductId?: true
+    stripePriceId?: true
+    trialPeriodDays?: true
   }
 
   export type PlanCountAggregateInputType = {
     id?: true
     createdAt?: true
+    updatedAt?: true
     name?: true
+    description?: true
     price?: true
     interval?: true
     features?: true
+    limits?: true
     active?: true
+    stripeProductId?: true
+    stripePriceId?: true
+    trialPeriodDays?: true
     _all?: true
   }
 
@@ -18623,11 +18664,17 @@ export namespace Prisma {
   export type PlanGroupByOutputType = {
     id: string
     createdAt: Date
+    updatedAt: Date
     name: string
+    description: string | null
     price: Decimal
     interval: string
     features: JsonValue | null
+    limits: JsonValue | null
     active: boolean
+    stripeProductId: string | null
+    stripePriceId: string | null
+    trialPeriodDays: number | null
     _count: PlanCountAggregateOutputType | null
     _avg: PlanAvgAggregateOutputType | null
     _sum: PlanSumAggregateOutputType | null
@@ -18652,11 +18699,17 @@ export namespace Prisma {
   export type PlanSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     createdAt?: boolean
+    updatedAt?: boolean
     name?: boolean
+    description?: boolean
     price?: boolean
     interval?: boolean
     features?: boolean
+    limits?: boolean
     active?: boolean
+    stripeProductId?: boolean
+    stripePriceId?: boolean
+    trialPeriodDays?: boolean
     subscriptions?: boolean | Plan$subscriptionsArgs<ExtArgs>
     _count?: boolean | PlanCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["plan"]>
@@ -18664,34 +18717,52 @@ export namespace Prisma {
   export type PlanSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     createdAt?: boolean
+    updatedAt?: boolean
     name?: boolean
+    description?: boolean
     price?: boolean
     interval?: boolean
     features?: boolean
+    limits?: boolean
     active?: boolean
+    stripeProductId?: boolean
+    stripePriceId?: boolean
+    trialPeriodDays?: boolean
   }, ExtArgs["result"]["plan"]>
 
   export type PlanSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     createdAt?: boolean
+    updatedAt?: boolean
     name?: boolean
+    description?: boolean
     price?: boolean
     interval?: boolean
     features?: boolean
+    limits?: boolean
     active?: boolean
+    stripeProductId?: boolean
+    stripePriceId?: boolean
+    trialPeriodDays?: boolean
   }, ExtArgs["result"]["plan"]>
 
   export type PlanSelectScalar = {
     id?: boolean
     createdAt?: boolean
+    updatedAt?: boolean
     name?: boolean
+    description?: boolean
     price?: boolean
     interval?: boolean
     features?: boolean
+    limits?: boolean
     active?: boolean
+    stripeProductId?: boolean
+    stripePriceId?: boolean
+    trialPeriodDays?: boolean
   }
 
-  export type PlanOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "createdAt" | "name" | "price" | "interval" | "features" | "active", ExtArgs["result"]["plan"]>
+  export type PlanOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "createdAt" | "updatedAt" | "name" | "description" | "price" | "interval" | "features" | "limits" | "active" | "stripeProductId" | "stripePriceId" | "trialPeriodDays", ExtArgs["result"]["plan"]>
   export type PlanInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     subscriptions?: boolean | Plan$subscriptionsArgs<ExtArgs>
     _count?: boolean | PlanCountOutputTypeDefaultArgs<ExtArgs>
@@ -18707,11 +18778,17 @@ export namespace Prisma {
     scalars: $Extensions.GetPayloadResult<{
       id: string
       createdAt: Date
+      updatedAt: Date
       name: string
+      description: string | null
       price: Prisma.Decimal
       interval: string
       features: Prisma.JsonValue | null
+      limits: Prisma.JsonValue | null
       active: boolean
+      stripeProductId: string | null
+      stripePriceId: string | null
+      trialPeriodDays: number | null
     }, ExtArgs["result"]["plan"]>
     composites: {}
   }
@@ -19138,11 +19215,17 @@ export namespace Prisma {
   interface PlanFieldRefs {
     readonly id: FieldRef<"Plan", 'String'>
     readonly createdAt: FieldRef<"Plan", 'DateTime'>
+    readonly updatedAt: FieldRef<"Plan", 'DateTime'>
     readonly name: FieldRef<"Plan", 'String'>
+    readonly description: FieldRef<"Plan", 'String'>
     readonly price: FieldRef<"Plan", 'Decimal'>
     readonly interval: FieldRef<"Plan", 'String'>
     readonly features: FieldRef<"Plan", 'Json'>
+    readonly limits: FieldRef<"Plan", 'Json'>
     readonly active: FieldRef<"Plan", 'Boolean'>
+    readonly stripeProductId: FieldRef<"Plan", 'String'>
+    readonly stripePriceId: FieldRef<"Plan", 'String'>
+    readonly trialPeriodDays: FieldRef<"Plan", 'Int'>
   }
     
 
@@ -21864,6 +21947,11 @@ export namespace Prisma {
     stripeSubscriptionId: string | null
     stripePriceId: string | null
     stripeCurrentPeriodEnd: Date | null
+    trialStart: Date | null
+    trialEnd: Date | null
+    cancelAt: Date | null
+    canceledAt: Date | null
+    cancelAtPeriodEnd: boolean | null
     status: $Enums.SubscriptionStatus | null
   }
 
@@ -21877,6 +21965,11 @@ export namespace Prisma {
     stripeSubscriptionId: string | null
     stripePriceId: string | null
     stripeCurrentPeriodEnd: Date | null
+    trialStart: Date | null
+    trialEnd: Date | null
+    cancelAt: Date | null
+    canceledAt: Date | null
+    cancelAtPeriodEnd: boolean | null
     status: $Enums.SubscriptionStatus | null
   }
 
@@ -21890,6 +21983,11 @@ export namespace Prisma {
     stripeSubscriptionId: number
     stripePriceId: number
     stripeCurrentPeriodEnd: number
+    trialStart: number
+    trialEnd: number
+    cancelAt: number
+    canceledAt: number
+    cancelAtPeriodEnd: number
     status: number
     _all: number
   }
@@ -21905,6 +22003,11 @@ export namespace Prisma {
     stripeSubscriptionId?: true
     stripePriceId?: true
     stripeCurrentPeriodEnd?: true
+    trialStart?: true
+    trialEnd?: true
+    cancelAt?: true
+    canceledAt?: true
+    cancelAtPeriodEnd?: true
     status?: true
   }
 
@@ -21918,6 +22021,11 @@ export namespace Prisma {
     stripeSubscriptionId?: true
     stripePriceId?: true
     stripeCurrentPeriodEnd?: true
+    trialStart?: true
+    trialEnd?: true
+    cancelAt?: true
+    canceledAt?: true
+    cancelAtPeriodEnd?: true
     status?: true
   }
 
@@ -21931,6 +22039,11 @@ export namespace Prisma {
     stripeSubscriptionId?: true
     stripePriceId?: true
     stripeCurrentPeriodEnd?: true
+    trialStart?: true
+    trialEnd?: true
+    cancelAt?: true
+    canceledAt?: true
+    cancelAtPeriodEnd?: true
     status?: true
     _all?: true
   }
@@ -22017,6 +22130,11 @@ export namespace Prisma {
     stripeSubscriptionId: string | null
     stripePriceId: string | null
     stripeCurrentPeriodEnd: Date | null
+    trialStart: Date | null
+    trialEnd: Date | null
+    cancelAt: Date | null
+    canceledAt: Date | null
+    cancelAtPeriodEnd: boolean
     status: $Enums.SubscriptionStatus
     _count: SubscriptionCountAggregateOutputType | null
     _min: SubscriptionMinAggregateOutputType | null
@@ -22047,6 +22165,11 @@ export namespace Prisma {
     stripeSubscriptionId?: boolean
     stripePriceId?: boolean
     stripeCurrentPeriodEnd?: boolean
+    trialStart?: boolean
+    trialEnd?: boolean
+    cancelAt?: boolean
+    canceledAt?: boolean
+    cancelAtPeriodEnd?: boolean
     status?: boolean
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
     plan?: boolean | PlanDefaultArgs<ExtArgs>
@@ -22062,6 +22185,11 @@ export namespace Prisma {
     stripeSubscriptionId?: boolean
     stripePriceId?: boolean
     stripeCurrentPeriodEnd?: boolean
+    trialStart?: boolean
+    trialEnd?: boolean
+    cancelAt?: boolean
+    canceledAt?: boolean
+    cancelAtPeriodEnd?: boolean
     status?: boolean
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
     plan?: boolean | PlanDefaultArgs<ExtArgs>
@@ -22077,6 +22205,11 @@ export namespace Prisma {
     stripeSubscriptionId?: boolean
     stripePriceId?: boolean
     stripeCurrentPeriodEnd?: boolean
+    trialStart?: boolean
+    trialEnd?: boolean
+    cancelAt?: boolean
+    canceledAt?: boolean
+    cancelAtPeriodEnd?: boolean
     status?: boolean
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
     plan?: boolean | PlanDefaultArgs<ExtArgs>
@@ -22092,10 +22225,15 @@ export namespace Prisma {
     stripeSubscriptionId?: boolean
     stripePriceId?: boolean
     stripeCurrentPeriodEnd?: boolean
+    trialStart?: boolean
+    trialEnd?: boolean
+    cancelAt?: boolean
+    canceledAt?: boolean
+    cancelAtPeriodEnd?: boolean
     status?: boolean
   }
 
-  export type SubscriptionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "createdAt" | "updatedAt" | "organizationId" | "planId" | "stripeCustomerId" | "stripeSubscriptionId" | "stripePriceId" | "stripeCurrentPeriodEnd" | "status", ExtArgs["result"]["subscription"]>
+  export type SubscriptionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "createdAt" | "updatedAt" | "organizationId" | "planId" | "stripeCustomerId" | "stripeSubscriptionId" | "stripePriceId" | "stripeCurrentPeriodEnd" | "trialStart" | "trialEnd" | "cancelAt" | "canceledAt" | "cancelAtPeriodEnd" | "status", ExtArgs["result"]["subscription"]>
   export type SubscriptionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
     plan?: boolean | PlanDefaultArgs<ExtArgs>
@@ -22125,6 +22263,11 @@ export namespace Prisma {
       stripeSubscriptionId: string | null
       stripePriceId: string | null
       stripeCurrentPeriodEnd: Date | null
+      trialStart: Date | null
+      trialEnd: Date | null
+      cancelAt: Date | null
+      canceledAt: Date | null
+      cancelAtPeriodEnd: boolean
       status: $Enums.SubscriptionStatus
     }, ExtArgs["result"]["subscription"]>
     composites: {}
@@ -22560,6 +22703,11 @@ export namespace Prisma {
     readonly stripeSubscriptionId: FieldRef<"Subscription", 'String'>
     readonly stripePriceId: FieldRef<"Subscription", 'String'>
     readonly stripeCurrentPeriodEnd: FieldRef<"Subscription", 'DateTime'>
+    readonly trialStart: FieldRef<"Subscription", 'DateTime'>
+    readonly trialEnd: FieldRef<"Subscription", 'DateTime'>
+    readonly cancelAt: FieldRef<"Subscription", 'DateTime'>
+    readonly canceledAt: FieldRef<"Subscription", 'DateTime'>
+    readonly cancelAtPeriodEnd: FieldRef<"Subscription", 'Boolean'>
     readonly status: FieldRef<"Subscription", 'SubscriptionStatus'>
   }
     
@@ -30627,11 +30775,17 @@ export namespace Prisma {
   export const PlanScalarFieldEnum: {
     id: 'id',
     createdAt: 'createdAt',
+    updatedAt: 'updatedAt',
     name: 'name',
+    description: 'description',
     price: 'price',
     interval: 'interval',
     features: 'features',
-    active: 'active'
+    limits: 'limits',
+    active: 'active',
+    stripeProductId: 'stripeProductId',
+    stripePriceId: 'stripePriceId',
+    trialPeriodDays: 'trialPeriodDays'
   };
 
   export type PlanScalarFieldEnum = (typeof PlanScalarFieldEnum)[keyof typeof PlanScalarFieldEnum]
@@ -30671,6 +30825,11 @@ export namespace Prisma {
     stripeSubscriptionId: 'stripeSubscriptionId',
     stripePriceId: 'stripePriceId',
     stripeCurrentPeriodEnd: 'stripeCurrentPeriodEnd',
+    trialStart: 'trialStart',
+    trialEnd: 'trialEnd',
+    cancelAt: 'cancelAt',
+    canceledAt: 'canceledAt',
+    cancelAtPeriodEnd: 'cancelAtPeriodEnd',
     status: 'status'
   };
 
@@ -30964,6 +31123,20 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'Int'
+   */
+  export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
+    
+
+
+  /**
+   * Reference to a field of type 'Int[]'
+   */
+  export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
+    
+
+
+  /**
    * Reference to a field of type 'SecurityEventType'
    */
   export type EnumSecurityEventTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SecurityEventType'>
@@ -31002,20 +31175,6 @@ export namespace Prisma {
    * Reference to a field of type 'StorageProvider[]'
    */
   export type ListEnumStorageProviderFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'StorageProvider[]'>
-    
-
-
-  /**
-   * Reference to a field of type 'Int'
-   */
-  export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
-    
-
-
-  /**
-   * Reference to a field of type 'Int[]'
-   */
-  export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
     
 
 
@@ -32068,47 +32227,71 @@ export namespace Prisma {
     NOT?: PlanWhereInput | PlanWhereInput[]
     id?: StringFilter<"Plan"> | string
     createdAt?: DateTimeFilter<"Plan"> | Date | string
+    updatedAt?: DateTimeFilter<"Plan"> | Date | string
     name?: StringFilter<"Plan"> | string
+    description?: StringNullableFilter<"Plan"> | string | null
     price?: DecimalFilter<"Plan"> | Decimal | DecimalJsLike | number | string
     interval?: StringFilter<"Plan"> | string
     features?: JsonNullableFilter<"Plan">
+    limits?: JsonNullableFilter<"Plan">
     active?: BoolFilter<"Plan"> | boolean
+    stripeProductId?: StringNullableFilter<"Plan"> | string | null
+    stripePriceId?: StringNullableFilter<"Plan"> | string | null
+    trialPeriodDays?: IntNullableFilter<"Plan"> | number | null
     subscriptions?: SubscriptionListRelationFilter
   }
 
   export type PlanOrderByWithRelationInput = {
     id?: SortOrder
     createdAt?: SortOrder
+    updatedAt?: SortOrder
     name?: SortOrder
+    description?: SortOrderInput | SortOrder
     price?: SortOrder
     interval?: SortOrder
     features?: SortOrderInput | SortOrder
+    limits?: SortOrderInput | SortOrder
     active?: SortOrder
+    stripeProductId?: SortOrderInput | SortOrder
+    stripePriceId?: SortOrderInput | SortOrder
+    trialPeriodDays?: SortOrderInput | SortOrder
     subscriptions?: SubscriptionOrderByRelationAggregateInput
   }
 
   export type PlanWhereUniqueInput = Prisma.AtLeast<{
     id?: string
     name?: string
+    stripeProductId?: string
+    stripePriceId?: string
     AND?: PlanWhereInput | PlanWhereInput[]
     OR?: PlanWhereInput[]
     NOT?: PlanWhereInput | PlanWhereInput[]
     createdAt?: DateTimeFilter<"Plan"> | Date | string
+    updatedAt?: DateTimeFilter<"Plan"> | Date | string
+    description?: StringNullableFilter<"Plan"> | string | null
     price?: DecimalFilter<"Plan"> | Decimal | DecimalJsLike | number | string
     interval?: StringFilter<"Plan"> | string
     features?: JsonNullableFilter<"Plan">
+    limits?: JsonNullableFilter<"Plan">
     active?: BoolFilter<"Plan"> | boolean
+    trialPeriodDays?: IntNullableFilter<"Plan"> | number | null
     subscriptions?: SubscriptionListRelationFilter
-  }, "id" | "name">
+  }, "id" | "name" | "stripeProductId" | "stripePriceId">
 
   export type PlanOrderByWithAggregationInput = {
     id?: SortOrder
     createdAt?: SortOrder
+    updatedAt?: SortOrder
     name?: SortOrder
+    description?: SortOrderInput | SortOrder
     price?: SortOrder
     interval?: SortOrder
     features?: SortOrderInput | SortOrder
+    limits?: SortOrderInput | SortOrder
     active?: SortOrder
+    stripeProductId?: SortOrderInput | SortOrder
+    stripePriceId?: SortOrderInput | SortOrder
+    trialPeriodDays?: SortOrderInput | SortOrder
     _count?: PlanCountOrderByAggregateInput
     _avg?: PlanAvgOrderByAggregateInput
     _max?: PlanMaxOrderByAggregateInput
@@ -32122,11 +32305,17 @@ export namespace Prisma {
     NOT?: PlanScalarWhereWithAggregatesInput | PlanScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"Plan"> | string
     createdAt?: DateTimeWithAggregatesFilter<"Plan"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"Plan"> | Date | string
     name?: StringWithAggregatesFilter<"Plan"> | string
+    description?: StringNullableWithAggregatesFilter<"Plan"> | string | null
     price?: DecimalWithAggregatesFilter<"Plan"> | Decimal | DecimalJsLike | number | string
     interval?: StringWithAggregatesFilter<"Plan"> | string
     features?: JsonNullableWithAggregatesFilter<"Plan">
+    limits?: JsonNullableWithAggregatesFilter<"Plan">
     active?: BoolWithAggregatesFilter<"Plan"> | boolean
+    stripeProductId?: StringNullableWithAggregatesFilter<"Plan"> | string | null
+    stripePriceId?: StringNullableWithAggregatesFilter<"Plan"> | string | null
+    trialPeriodDays?: IntNullableWithAggregatesFilter<"Plan"> | number | null
   }
 
   export type RoleWhereInput = {
@@ -32275,6 +32464,11 @@ export namespace Prisma {
     stripeSubscriptionId?: StringNullableFilter<"Subscription"> | string | null
     stripePriceId?: StringNullableFilter<"Subscription"> | string | null
     stripeCurrentPeriodEnd?: DateTimeNullableFilter<"Subscription"> | Date | string | null
+    trialStart?: DateTimeNullableFilter<"Subscription"> | Date | string | null
+    trialEnd?: DateTimeNullableFilter<"Subscription"> | Date | string | null
+    cancelAt?: DateTimeNullableFilter<"Subscription"> | Date | string | null
+    canceledAt?: DateTimeNullableFilter<"Subscription"> | Date | string | null
+    cancelAtPeriodEnd?: BoolFilter<"Subscription"> | boolean
     status?: EnumSubscriptionStatusFilter<"Subscription"> | $Enums.SubscriptionStatus
     organization?: XOR<OrganizationScalarRelationFilter, OrganizationWhereInput>
     plan?: XOR<PlanScalarRelationFilter, PlanWhereInput>
@@ -32290,6 +32484,11 @@ export namespace Prisma {
     stripeSubscriptionId?: SortOrderInput | SortOrder
     stripePriceId?: SortOrderInput | SortOrder
     stripeCurrentPeriodEnd?: SortOrderInput | SortOrder
+    trialStart?: SortOrderInput | SortOrder
+    trialEnd?: SortOrderInput | SortOrder
+    cancelAt?: SortOrderInput | SortOrder
+    canceledAt?: SortOrderInput | SortOrder
+    cancelAtPeriodEnd?: SortOrder
     status?: SortOrder
     organization?: OrganizationOrderByWithRelationInput
     plan?: PlanOrderByWithRelationInput
@@ -32308,6 +32507,11 @@ export namespace Prisma {
     planId?: StringFilter<"Subscription"> | string
     stripePriceId?: StringNullableFilter<"Subscription"> | string | null
     stripeCurrentPeriodEnd?: DateTimeNullableFilter<"Subscription"> | Date | string | null
+    trialStart?: DateTimeNullableFilter<"Subscription"> | Date | string | null
+    trialEnd?: DateTimeNullableFilter<"Subscription"> | Date | string | null
+    cancelAt?: DateTimeNullableFilter<"Subscription"> | Date | string | null
+    canceledAt?: DateTimeNullableFilter<"Subscription"> | Date | string | null
+    cancelAtPeriodEnd?: BoolFilter<"Subscription"> | boolean
     status?: EnumSubscriptionStatusFilter<"Subscription"> | $Enums.SubscriptionStatus
     organization?: XOR<OrganizationScalarRelationFilter, OrganizationWhereInput>
     plan?: XOR<PlanScalarRelationFilter, PlanWhereInput>
@@ -32323,6 +32527,11 @@ export namespace Prisma {
     stripeSubscriptionId?: SortOrderInput | SortOrder
     stripePriceId?: SortOrderInput | SortOrder
     stripeCurrentPeriodEnd?: SortOrderInput | SortOrder
+    trialStart?: SortOrderInput | SortOrder
+    trialEnd?: SortOrderInput | SortOrder
+    cancelAt?: SortOrderInput | SortOrder
+    canceledAt?: SortOrderInput | SortOrder
+    cancelAtPeriodEnd?: SortOrder
     status?: SortOrder
     _count?: SubscriptionCountOrderByAggregateInput
     _max?: SubscriptionMaxOrderByAggregateInput
@@ -32342,6 +32551,11 @@ export namespace Prisma {
     stripeSubscriptionId?: StringNullableWithAggregatesFilter<"Subscription"> | string | null
     stripePriceId?: StringNullableWithAggregatesFilter<"Subscription"> | string | null
     stripeCurrentPeriodEnd?: DateTimeNullableWithAggregatesFilter<"Subscription"> | Date | string | null
+    trialStart?: DateTimeNullableWithAggregatesFilter<"Subscription"> | Date | string | null
+    trialEnd?: DateTimeNullableWithAggregatesFilter<"Subscription"> | Date | string | null
+    cancelAt?: DateTimeNullableWithAggregatesFilter<"Subscription"> | Date | string | null
+    canceledAt?: DateTimeNullableWithAggregatesFilter<"Subscription"> | Date | string | null
+    cancelAtPeriodEnd?: BoolWithAggregatesFilter<"Subscription"> | boolean
     status?: EnumSubscriptionStatusWithAggregatesFilter<"Subscription"> | $Enums.SubscriptionStatus
   }
 
@@ -34031,75 +34245,117 @@ export namespace Prisma {
   export type PlanCreateInput = {
     id?: string
     createdAt?: Date | string
+    updatedAt?: Date | string
     name: string
+    description?: string | null
     price: Decimal | DecimalJsLike | number | string
     interval: string
     features?: NullableJsonNullValueInput | InputJsonValue
+    limits?: NullableJsonNullValueInput | InputJsonValue
     active?: boolean
+    stripeProductId?: string | null
+    stripePriceId?: string | null
+    trialPeriodDays?: number | null
     subscriptions?: SubscriptionCreateNestedManyWithoutPlanInput
   }
 
   export type PlanUncheckedCreateInput = {
     id?: string
     createdAt?: Date | string
+    updatedAt?: Date | string
     name: string
+    description?: string | null
     price: Decimal | DecimalJsLike | number | string
     interval: string
     features?: NullableJsonNullValueInput | InputJsonValue
+    limits?: NullableJsonNullValueInput | InputJsonValue
     active?: boolean
+    stripeProductId?: string | null
+    stripePriceId?: string | null
+    trialPeriodDays?: number | null
     subscriptions?: SubscriptionUncheckedCreateNestedManyWithoutPlanInput
   }
 
   export type PlanUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     interval?: StringFieldUpdateOperationsInput | string
     features?: NullableJsonNullValueInput | InputJsonValue
+    limits?: NullableJsonNullValueInput | InputJsonValue
     active?: BoolFieldUpdateOperationsInput | boolean
+    stripeProductId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripePriceId?: NullableStringFieldUpdateOperationsInput | string | null
+    trialPeriodDays?: NullableIntFieldUpdateOperationsInput | number | null
     subscriptions?: SubscriptionUpdateManyWithoutPlanNestedInput
   }
 
   export type PlanUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     interval?: StringFieldUpdateOperationsInput | string
     features?: NullableJsonNullValueInput | InputJsonValue
+    limits?: NullableJsonNullValueInput | InputJsonValue
     active?: BoolFieldUpdateOperationsInput | boolean
+    stripeProductId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripePriceId?: NullableStringFieldUpdateOperationsInput | string | null
+    trialPeriodDays?: NullableIntFieldUpdateOperationsInput | number | null
     subscriptions?: SubscriptionUncheckedUpdateManyWithoutPlanNestedInput
   }
 
   export type PlanCreateManyInput = {
     id?: string
     createdAt?: Date | string
+    updatedAt?: Date | string
     name: string
+    description?: string | null
     price: Decimal | DecimalJsLike | number | string
     interval: string
     features?: NullableJsonNullValueInput | InputJsonValue
+    limits?: NullableJsonNullValueInput | InputJsonValue
     active?: boolean
+    stripeProductId?: string | null
+    stripePriceId?: string | null
+    trialPeriodDays?: number | null
   }
 
   export type PlanUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     interval?: StringFieldUpdateOperationsInput | string
     features?: NullableJsonNullValueInput | InputJsonValue
+    limits?: NullableJsonNullValueInput | InputJsonValue
     active?: BoolFieldUpdateOperationsInput | boolean
+    stripeProductId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripePriceId?: NullableStringFieldUpdateOperationsInput | string | null
+    trialPeriodDays?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
   export type PlanUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     interval?: StringFieldUpdateOperationsInput | string
     features?: NullableJsonNullValueInput | InputJsonValue
+    limits?: NullableJsonNullValueInput | InputJsonValue
     active?: BoolFieldUpdateOperationsInput | boolean
+    stripeProductId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripePriceId?: NullableStringFieldUpdateOperationsInput | string | null
+    trialPeriodDays?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
   export type RoleCreateInput = {
@@ -34250,6 +34506,11 @@ export namespace Prisma {
     stripeSubscriptionId?: string | null
     stripePriceId?: string | null
     stripeCurrentPeriodEnd?: Date | string | null
+    trialStart?: Date | string | null
+    trialEnd?: Date | string | null
+    cancelAt?: Date | string | null
+    canceledAt?: Date | string | null
+    cancelAtPeriodEnd?: boolean
     status?: $Enums.SubscriptionStatus
     organization: OrganizationCreateNestedOneWithoutSubscriptionInput
     plan: PlanCreateNestedOneWithoutSubscriptionsInput
@@ -34265,6 +34526,11 @@ export namespace Prisma {
     stripeSubscriptionId?: string | null
     stripePriceId?: string | null
     stripeCurrentPeriodEnd?: Date | string | null
+    trialStart?: Date | string | null
+    trialEnd?: Date | string | null
+    cancelAt?: Date | string | null
+    canceledAt?: Date | string | null
+    cancelAtPeriodEnd?: boolean
     status?: $Enums.SubscriptionStatus
   }
 
@@ -34276,6 +34542,11 @@ export namespace Prisma {
     stripeSubscriptionId?: NullableStringFieldUpdateOperationsInput | string | null
     stripePriceId?: NullableStringFieldUpdateOperationsInput | string | null
     stripeCurrentPeriodEnd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialStart?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialEnd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cancelAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    canceledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cancelAtPeriodEnd?: BoolFieldUpdateOperationsInput | boolean
     status?: EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
     organization?: OrganizationUpdateOneRequiredWithoutSubscriptionNestedInput
     plan?: PlanUpdateOneRequiredWithoutSubscriptionsNestedInput
@@ -34291,6 +34562,11 @@ export namespace Prisma {
     stripeSubscriptionId?: NullableStringFieldUpdateOperationsInput | string | null
     stripePriceId?: NullableStringFieldUpdateOperationsInput | string | null
     stripeCurrentPeriodEnd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialStart?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialEnd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cancelAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    canceledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cancelAtPeriodEnd?: BoolFieldUpdateOperationsInput | boolean
     status?: EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
   }
 
@@ -34304,6 +34580,11 @@ export namespace Prisma {
     stripeSubscriptionId?: string | null
     stripePriceId?: string | null
     stripeCurrentPeriodEnd?: Date | string | null
+    trialStart?: Date | string | null
+    trialEnd?: Date | string | null
+    cancelAt?: Date | string | null
+    canceledAt?: Date | string | null
+    cancelAtPeriodEnd?: boolean
     status?: $Enums.SubscriptionStatus
   }
 
@@ -34315,6 +34596,11 @@ export namespace Prisma {
     stripeSubscriptionId?: NullableStringFieldUpdateOperationsInput | string | null
     stripePriceId?: NullableStringFieldUpdateOperationsInput | string | null
     stripeCurrentPeriodEnd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialStart?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialEnd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cancelAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    canceledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cancelAtPeriodEnd?: BoolFieldUpdateOperationsInput | boolean
     status?: EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
   }
 
@@ -34328,6 +34614,11 @@ export namespace Prisma {
     stripeSubscriptionId?: NullableStringFieldUpdateOperationsInput | string | null
     stripePriceId?: NullableStringFieldUpdateOperationsInput | string | null
     stripeCurrentPeriodEnd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialStart?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialEnd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cancelAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    canceledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cancelAtPeriodEnd?: BoolFieldUpdateOperationsInput | boolean
     status?: EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
   }
 
@@ -35890,6 +36181,17 @@ export namespace Prisma {
     not?: NestedDecimalFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string
   }
 
+  export type IntNullableFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableFilter<$PrismaModel> | number | null
+  }
+
   export type SubscriptionListRelationFilter = {
     every?: SubscriptionWhereInput
     some?: SubscriptionWhereInput
@@ -35903,37 +36205,55 @@ export namespace Prisma {
   export type PlanCountOrderByAggregateInput = {
     id?: SortOrder
     createdAt?: SortOrder
+    updatedAt?: SortOrder
     name?: SortOrder
+    description?: SortOrder
     price?: SortOrder
     interval?: SortOrder
     features?: SortOrder
+    limits?: SortOrder
     active?: SortOrder
+    stripeProductId?: SortOrder
+    stripePriceId?: SortOrder
+    trialPeriodDays?: SortOrder
   }
 
   export type PlanAvgOrderByAggregateInput = {
     price?: SortOrder
+    trialPeriodDays?: SortOrder
   }
 
   export type PlanMaxOrderByAggregateInput = {
     id?: SortOrder
     createdAt?: SortOrder
+    updatedAt?: SortOrder
     name?: SortOrder
+    description?: SortOrder
     price?: SortOrder
     interval?: SortOrder
     active?: SortOrder
+    stripeProductId?: SortOrder
+    stripePriceId?: SortOrder
+    trialPeriodDays?: SortOrder
   }
 
   export type PlanMinOrderByAggregateInput = {
     id?: SortOrder
     createdAt?: SortOrder
+    updatedAt?: SortOrder
     name?: SortOrder
+    description?: SortOrder
     price?: SortOrder
     interval?: SortOrder
     active?: SortOrder
+    stripeProductId?: SortOrder
+    stripePriceId?: SortOrder
+    trialPeriodDays?: SortOrder
   }
 
   export type PlanSumOrderByAggregateInput = {
     price?: SortOrder
+    trialPeriodDays?: SortOrder
   }
 
   export type DecimalWithAggregatesFilter<$PrismaModel = never> = {
@@ -35950,6 +36270,22 @@ export namespace Prisma {
     _sum?: NestedDecimalFilter<$PrismaModel>
     _min?: NestedDecimalFilter<$PrismaModel>
     _max?: NestedDecimalFilter<$PrismaModel>
+  }
+
+  export type IntNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedIntNullableFilter<$PrismaModel>
+    _max?: NestedIntNullableFilter<$PrismaModel>
   }
 
   export type PermissionListRelationFilter = {
@@ -36068,6 +36404,11 @@ export namespace Prisma {
     stripeSubscriptionId?: SortOrder
     stripePriceId?: SortOrder
     stripeCurrentPeriodEnd?: SortOrder
+    trialStart?: SortOrder
+    trialEnd?: SortOrder
+    cancelAt?: SortOrder
+    canceledAt?: SortOrder
+    cancelAtPeriodEnd?: SortOrder
     status?: SortOrder
   }
 
@@ -36081,6 +36422,11 @@ export namespace Prisma {
     stripeSubscriptionId?: SortOrder
     stripePriceId?: SortOrder
     stripeCurrentPeriodEnd?: SortOrder
+    trialStart?: SortOrder
+    trialEnd?: SortOrder
+    cancelAt?: SortOrder
+    canceledAt?: SortOrder
+    cancelAtPeriodEnd?: SortOrder
     status?: SortOrder
   }
 
@@ -36094,6 +36440,11 @@ export namespace Prisma {
     stripeSubscriptionId?: SortOrder
     stripePriceId?: SortOrder
     stripeCurrentPeriodEnd?: SortOrder
+    trialStart?: SortOrder
+    trialEnd?: SortOrder
+    cancelAt?: SortOrder
+    canceledAt?: SortOrder
+    cancelAtPeriodEnd?: SortOrder
     status?: SortOrder
   }
 
@@ -36182,17 +36533,6 @@ export namespace Prisma {
     gt?: number | IntFieldRefInput<$PrismaModel>
     gte?: number | IntFieldRefInput<$PrismaModel>
     not?: NestedIntFilter<$PrismaModel> | number
-  }
-
-  export type IntNullableFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntNullableFilter<$PrismaModel> | number | null
   }
 
   export type StoredFileCountOrderByAggregateInput = {
@@ -36289,22 +36629,6 @@ export namespace Prisma {
     _sum?: NestedIntFilter<$PrismaModel>
     _min?: NestedIntFilter<$PrismaModel>
     _max?: NestedIntFilter<$PrismaModel>
-  }
-
-  export type IntNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _avg?: NestedFloatNullableFilter<$PrismaModel>
-    _sum?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedIntNullableFilter<$PrismaModel>
-    _max?: NestedIntNullableFilter<$PrismaModel>
   }
 
   export type StringNullableListFilter<$PrismaModel = never> = {
@@ -37454,6 +37778,14 @@ export namespace Prisma {
     divide?: Decimal | DecimalJsLike | number | string
   }
 
+  export type NullableIntFieldUpdateOperationsInput = {
+    set?: number | null
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
   export type SubscriptionUpdateManyWithoutPlanNestedInput = {
     create?: XOR<SubscriptionCreateWithoutPlanInput, SubscriptionUncheckedCreateWithoutPlanInput> | SubscriptionCreateWithoutPlanInput[] | SubscriptionUncheckedCreateWithoutPlanInput[]
     connectOrCreate?: SubscriptionCreateOrConnectWithoutPlanInput | SubscriptionCreateOrConnectWithoutPlanInput[]
@@ -37828,14 +38160,6 @@ export namespace Prisma {
 
   export type IntFieldUpdateOperationsInput = {
     set?: number
-    increment?: number
-    decrement?: number
-    multiply?: number
-    divide?: number
-  }
-
-  export type NullableIntFieldUpdateOperationsInput = {
-    set?: number | null
     increment?: number
     decrement?: number
     multiply?: number
@@ -38815,6 +39139,33 @@ export namespace Prisma {
     _max?: NestedDecimalFilter<$PrismaModel>
   }
 
+  export type NestedIntNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedIntNullableFilter<$PrismaModel>
+    _max?: NestedIntNullableFilter<$PrismaModel>
+  }
+
+  export type NestedFloatNullableFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
+  }
+
   export type NestedEnumSecurityEventTypeFilter<$PrismaModel = never> = {
     equals?: $Enums.SecurityEventType | EnumSecurityEventTypeFieldRefInput<$PrismaModel>
     in?: $Enums.SecurityEventType[] | ListEnumSecurityEventTypeFieldRefInput<$PrismaModel>
@@ -38891,33 +39242,6 @@ export namespace Prisma {
     gt?: number | FloatFieldRefInput<$PrismaModel>
     gte?: number | FloatFieldRefInput<$PrismaModel>
     not?: NestedFloatFilter<$PrismaModel> | number
-  }
-
-  export type NestedIntNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _avg?: NestedFloatNullableFilter<$PrismaModel>
-    _sum?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedIntNullableFilter<$PrismaModel>
-    _max?: NestedIntNullableFilter<$PrismaModel>
-  }
-
-  export type NestedFloatNullableFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
   }
 
   export type NestedEnumTwoFactorMethodFilter<$PrismaModel = never> = {
@@ -41420,6 +41744,11 @@ export namespace Prisma {
     stripeSubscriptionId?: string | null
     stripePriceId?: string | null
     stripeCurrentPeriodEnd?: Date | string | null
+    trialStart?: Date | string | null
+    trialEnd?: Date | string | null
+    cancelAt?: Date | string | null
+    canceledAt?: Date | string | null
+    cancelAtPeriodEnd?: boolean
     status?: $Enums.SubscriptionStatus
     plan: PlanCreateNestedOneWithoutSubscriptionsInput
   }
@@ -41433,6 +41762,11 @@ export namespace Prisma {
     stripeSubscriptionId?: string | null
     stripePriceId?: string | null
     stripeCurrentPeriodEnd?: Date | string | null
+    trialStart?: Date | string | null
+    trialEnd?: Date | string | null
+    cancelAt?: Date | string | null
+    canceledAt?: Date | string | null
+    cancelAtPeriodEnd?: boolean
     status?: $Enums.SubscriptionStatus
   }
 
@@ -41757,6 +42091,11 @@ export namespace Prisma {
     stripeSubscriptionId?: NullableStringFieldUpdateOperationsInput | string | null
     stripePriceId?: NullableStringFieldUpdateOperationsInput | string | null
     stripeCurrentPeriodEnd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialStart?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialEnd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cancelAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    canceledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cancelAtPeriodEnd?: BoolFieldUpdateOperationsInput | boolean
     status?: EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
     plan?: PlanUpdateOneRequiredWithoutSubscriptionsNestedInput
   }
@@ -41770,6 +42109,11 @@ export namespace Prisma {
     stripeSubscriptionId?: NullableStringFieldUpdateOperationsInput | string | null
     stripePriceId?: NullableStringFieldUpdateOperationsInput | string | null
     stripeCurrentPeriodEnd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialStart?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialEnd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cancelAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    canceledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cancelAtPeriodEnd?: BoolFieldUpdateOperationsInput | boolean
     status?: EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
   }
 
@@ -42456,6 +42800,11 @@ export namespace Prisma {
     stripeSubscriptionId?: string | null
     stripePriceId?: string | null
     stripeCurrentPeriodEnd?: Date | string | null
+    trialStart?: Date | string | null
+    trialEnd?: Date | string | null
+    cancelAt?: Date | string | null
+    canceledAt?: Date | string | null
+    cancelAtPeriodEnd?: boolean
     status?: $Enums.SubscriptionStatus
     organization: OrganizationCreateNestedOneWithoutSubscriptionInput
   }
@@ -42469,6 +42818,11 @@ export namespace Prisma {
     stripeSubscriptionId?: string | null
     stripePriceId?: string | null
     stripeCurrentPeriodEnd?: Date | string | null
+    trialStart?: Date | string | null
+    trialEnd?: Date | string | null
+    cancelAt?: Date | string | null
+    canceledAt?: Date | string | null
+    cancelAtPeriodEnd?: boolean
     status?: $Enums.SubscriptionStatus
   }
 
@@ -42511,6 +42865,11 @@ export namespace Prisma {
     stripeSubscriptionId?: StringNullableFilter<"Subscription"> | string | null
     stripePriceId?: StringNullableFilter<"Subscription"> | string | null
     stripeCurrentPeriodEnd?: DateTimeNullableFilter<"Subscription"> | Date | string | null
+    trialStart?: DateTimeNullableFilter<"Subscription"> | Date | string | null
+    trialEnd?: DateTimeNullableFilter<"Subscription"> | Date | string | null
+    cancelAt?: DateTimeNullableFilter<"Subscription"> | Date | string | null
+    canceledAt?: DateTimeNullableFilter<"Subscription"> | Date | string | null
+    cancelAtPeriodEnd?: BoolFilter<"Subscription"> | boolean
     status?: EnumSubscriptionStatusFilter<"Subscription"> | $Enums.SubscriptionStatus
   }
 
@@ -43023,21 +43382,33 @@ export namespace Prisma {
   export type PlanCreateWithoutSubscriptionsInput = {
     id?: string
     createdAt?: Date | string
+    updatedAt?: Date | string
     name: string
+    description?: string | null
     price: Decimal | DecimalJsLike | number | string
     interval: string
     features?: NullableJsonNullValueInput | InputJsonValue
+    limits?: NullableJsonNullValueInput | InputJsonValue
     active?: boolean
+    stripeProductId?: string | null
+    stripePriceId?: string | null
+    trialPeriodDays?: number | null
   }
 
   export type PlanUncheckedCreateWithoutSubscriptionsInput = {
     id?: string
     createdAt?: Date | string
+    updatedAt?: Date | string
     name: string
+    description?: string | null
     price: Decimal | DecimalJsLike | number | string
     interval: string
     features?: NullableJsonNullValueInput | InputJsonValue
+    limits?: NullableJsonNullValueInput | InputJsonValue
     active?: boolean
+    stripeProductId?: string | null
+    stripePriceId?: string | null
+    trialPeriodDays?: number | null
   }
 
   export type PlanCreateOrConnectWithoutSubscriptionsInput = {
@@ -43104,21 +43475,33 @@ export namespace Prisma {
   export type PlanUpdateWithoutSubscriptionsInput = {
     id?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     interval?: StringFieldUpdateOperationsInput | string
     features?: NullableJsonNullValueInput | InputJsonValue
+    limits?: NullableJsonNullValueInput | InputJsonValue
     active?: BoolFieldUpdateOperationsInput | boolean
+    stripeProductId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripePriceId?: NullableStringFieldUpdateOperationsInput | string | null
+    trialPeriodDays?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
   export type PlanUncheckedUpdateWithoutSubscriptionsInput = {
     id?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     interval?: StringFieldUpdateOperationsInput | string
     features?: NullableJsonNullValueInput | InputJsonValue
+    limits?: NullableJsonNullValueInput | InputJsonValue
     active?: BoolFieldUpdateOperationsInput | boolean
+    stripeProductId?: NullableStringFieldUpdateOperationsInput | string | null
+    stripePriceId?: NullableStringFieldUpdateOperationsInput | string | null
+    trialPeriodDays?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
   export type OrganizationCreateWithoutTeamInput = {
@@ -45567,6 +45950,11 @@ export namespace Prisma {
     stripeSubscriptionId?: string | null
     stripePriceId?: string | null
     stripeCurrentPeriodEnd?: Date | string | null
+    trialStart?: Date | string | null
+    trialEnd?: Date | string | null
+    cancelAt?: Date | string | null
+    canceledAt?: Date | string | null
+    cancelAtPeriodEnd?: boolean
     status?: $Enums.SubscriptionStatus
   }
 
@@ -45578,6 +45966,11 @@ export namespace Prisma {
     stripeSubscriptionId?: NullableStringFieldUpdateOperationsInput | string | null
     stripePriceId?: NullableStringFieldUpdateOperationsInput | string | null
     stripeCurrentPeriodEnd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialStart?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialEnd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cancelAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    canceledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cancelAtPeriodEnd?: BoolFieldUpdateOperationsInput | boolean
     status?: EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
     organization?: OrganizationUpdateOneRequiredWithoutSubscriptionNestedInput
   }
@@ -45591,6 +45984,11 @@ export namespace Prisma {
     stripeSubscriptionId?: NullableStringFieldUpdateOperationsInput | string | null
     stripePriceId?: NullableStringFieldUpdateOperationsInput | string | null
     stripeCurrentPeriodEnd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialStart?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialEnd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cancelAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    canceledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cancelAtPeriodEnd?: BoolFieldUpdateOperationsInput | boolean
     status?: EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
   }
 
@@ -45603,6 +46001,11 @@ export namespace Prisma {
     stripeSubscriptionId?: NullableStringFieldUpdateOperationsInput | string | null
     stripePriceId?: NullableStringFieldUpdateOperationsInput | string | null
     stripeCurrentPeriodEnd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialStart?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    trialEnd?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cancelAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    canceledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cancelAtPeriodEnd?: BoolFieldUpdateOperationsInput | boolean
     status?: EnumSubscriptionStatusFieldUpdateOperationsInput | $Enums.SubscriptionStatus
   }
 

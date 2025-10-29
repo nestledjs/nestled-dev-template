@@ -46,3 +46,14 @@ query userOrganizationMembers($organizationId: String!) {
     ...OrganizationMemberList
   }
 }
+
+query getInvitationDetails($token: String!) {
+  getInvitationDetails(token: $token) {
+    id
+    email
+    organizationName
+    roleName
+    inviterName
+    expiresAt
+  }
+}

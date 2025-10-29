@@ -1263,8 +1263,14 @@ export class CreatePlanInput {
   @Field(() => Date, { nullable: true })
   createdAt?: Date
 
+  @Field(() => Date, { nullable: true })
+  updatedAt?: Date
+
   @Field({ nullable: false })
   name!: string
+
+  @Field({ nullable: true })
+  description?: string
 
   @Field(() => Float, { nullable: false })
   price!: number
@@ -1275,8 +1281,20 @@ export class CreatePlanInput {
   @Field(() => GraphQLJSON, { nullable: true })
   features?: typeof GraphQLJSON
 
+  @Field(() => GraphQLJSON, { nullable: true })
+  limits?: typeof GraphQLJSON
+
   @Field({ nullable: true })
   active?: boolean
+
+  @Field({ nullable: true })
+  stripeProductId?: string
+
+  @Field({ nullable: true })
+  stripePriceId?: string
+
+  @Field(() => Int, { nullable: true })
+  trialPeriodDays?: number
 
   @Field(() => [String], { nullable: true })
   subscriptionsIds?: string[]
@@ -1290,8 +1308,14 @@ export class UpdatePlanInput {
   @Field(() => Date, { nullable: true })
   createdAt?: Date
 
+  @Field(() => Date, { nullable: true })
+  updatedAt?: Date
+
   @Field({ nullable: true })
   name?: string
+
+  @Field({ nullable: true })
+  description?: string
 
   @Field(() => Float, { nullable: true })
   price?: number
@@ -1302,8 +1326,20 @@ export class UpdatePlanInput {
   @Field(() => GraphQLJSON, { nullable: true })
   features?: typeof GraphQLJSON
 
+  @Field(() => GraphQLJSON, { nullable: true })
+  limits?: typeof GraphQLJSON
+
   @Field({ nullable: true })
   active?: boolean
+
+  @Field({ nullable: true })
+  stripeProductId?: string
+
+  @Field({ nullable: true })
+  stripePriceId?: string
+
+  @Field(() => Int, { nullable: true })
+  trialPeriodDays?: number
 
   @Field(() => [String], { nullable: true })
   subscriptionsIds?: string[]
@@ -1317,8 +1353,14 @@ export class ListPlanInput extends CorePagingInput {
   @Field(() => Date, { nullable: true })
   createdAt?: Date
 
+  @Field(() => Date, { nullable: true })
+  updatedAt?: Date
+
   @Field({ nullable: true })
   name?: string
+
+  @Field({ nullable: true })
+  description?: string
 
   @Field(() => Float, { nullable: true })
   price?: number
@@ -1329,8 +1371,20 @@ export class ListPlanInput extends CorePagingInput {
   @Field(() => GraphQLJSON, { nullable: true })
   features?: typeof GraphQLJSON
 
+  @Field(() => GraphQLJSON, { nullable: true })
+  limits?: typeof GraphQLJSON
+
   @Field({ nullable: true })
   active?: boolean
+
+  @Field({ nullable: true })
+  stripeProductId?: string
+
+  @Field({ nullable: true })
+  stripePriceId?: string
+
+  @Field(() => Int, { nullable: true })
+  trialPeriodDays?: number
 
   @Field(() => [String], { nullable: true })
   subscriptionsIds?: string[]
@@ -1527,6 +1581,21 @@ export class CreateSubscriptionInput {
   @Field(() => Date, { nullable: true })
   stripeCurrentPeriodEnd?: Date
 
+  @Field(() => Date, { nullable: true })
+  trialStart?: Date
+
+  @Field(() => Date, { nullable: true })
+  trialEnd?: Date
+
+  @Field(() => Date, { nullable: true })
+  cancelAt?: Date
+
+  @Field(() => Date, { nullable: true })
+  canceledAt?: Date
+
+  @Field({ nullable: true })
+  cancelAtPeriodEnd?: boolean
+
   @Field(() => SubscriptionStatus, { nullable: true })
   status?: SubscriptionStatus
 }
@@ -1560,6 +1629,21 @@ export class UpdateSubscriptionInput {
   @Field(() => Date, { nullable: true })
   stripeCurrentPeriodEnd?: Date
 
+  @Field(() => Date, { nullable: true })
+  trialStart?: Date
+
+  @Field(() => Date, { nullable: true })
+  trialEnd?: Date
+
+  @Field(() => Date, { nullable: true })
+  cancelAt?: Date
+
+  @Field(() => Date, { nullable: true })
+  canceledAt?: Date
+
+  @Field({ nullable: true })
+  cancelAtPeriodEnd?: boolean
+
   @Field(() => SubscriptionStatus, { nullable: true })
   status?: SubscriptionStatus
 }
@@ -1592,6 +1676,21 @@ export class ListSubscriptionInput extends CorePagingInput {
 
   @Field(() => Date, { nullable: true })
   stripeCurrentPeriodEnd?: Date
+
+  @Field(() => Date, { nullable: true })
+  trialStart?: Date
+
+  @Field(() => Date, { nullable: true })
+  trialEnd?: Date
+
+  @Field(() => Date, { nullable: true })
+  cancelAt?: Date
+
+  @Field(() => Date, { nullable: true })
+  canceledAt?: Date
+
+  @Field({ nullable: true })
+  cancelAtPeriodEnd?: boolean
 
   @Field(() => SubscriptionStatus, { nullable: true })
   status?: SubscriptionStatus

@@ -500,8 +500,14 @@ export class Plan {
   @Field(() => Date)
   createdAt!: Date;
 
+  @Field(() => Date)
+  updatedAt!: Date;
+
   @Field(() => String)
   name!: string;
+
+  @Field(() => String, { nullable: true })
+  description?: string | null;
 
   @Field(() => GraphQLDecimal)
   price!: Decimal;
@@ -512,8 +518,20 @@ export class Plan {
   @Field(() => GraphQLJSONObject, { nullable: true })
   features?: Prisma.JsonValue | null;
 
+  @Field(() => GraphQLJSONObject, { nullable: true })
+  limits?: Prisma.JsonValue | null;
+
   @Field(() => Boolean)
   active!: boolean;
+
+  @Field(() => String, { nullable: true })
+  stripeProductId?: string | null;
+
+  @Field(() => String, { nullable: true })
+  stripePriceId?: string | null;
+
+  @Field(() => Int, { nullable: true })
+  trialPeriodDays?: number | null;
 
   @Field(() => [Subscription], { nullable: true })
   subscriptions?: Partial<Subscription>[] | null;
@@ -616,6 +634,21 @@ export class Subscription {
 
   @Field(() => Date, { nullable: true })
   stripeCurrentPeriodEnd?: Date | null;
+
+  @Field(() => Date, { nullable: true })
+  trialStart?: Date | null;
+
+  @Field(() => Date, { nullable: true })
+  trialEnd?: Date | null;
+
+  @Field(() => Date, { nullable: true })
+  cancelAt?: Date | null;
+
+  @Field(() => Date, { nullable: true })
+  canceledAt?: Date | null;
+
+  @Field(() => Boolean)
+  cancelAtPeriodEnd!: boolean;
 
   @Field(() => SubscriptionStatus)
   status!: SubscriptionStatus;

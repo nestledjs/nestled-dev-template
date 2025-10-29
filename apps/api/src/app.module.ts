@@ -4,6 +4,7 @@ import {
   ApiTokensModule,
   AuditLogModule,
   AuthModule,
+  BillingModule,
   ContactMailerModule,
   CountryModule,
   EmailModule,
@@ -30,11 +31,13 @@ import {
   UserPreferenceModule,
   UserSessionModule,
 } from '@nestled-template/api/custom'
+import { StripeModule } from '@nestled-template/api/integrations'
 import { ApiCoreFeatureModule } from '@nestled-template/api/core/feature'
 import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common'
 import { LoggerMiddleware } from './applogger.middleware'
 import { ConfigModule } from '@nestjs/config'
 import { configuration, validationSchema } from '@nestled-template/api/config'
+import { StripeWebhookController } from './webhooks/stripe-webhook.controller'
 
 // Auto-generated modules with special functions,
 export const coreModules = [
@@ -77,6 +80,8 @@ export const pluginModules = [
   ApiTokensModule,
   StoragePluginModule,
   TenancyModule,
+  StripeModule,
+  BillingModule,
 ]
 // Combined modules used in the app
 export const appModules = [...coreModules, ...defaultModules, ...pluginModules]
@@ -94,6 +99,7 @@ export const appModules = [...coreModules, ...defaultModules, ...pluginModules]
     }),
     ...appModules,
   ],
+  controllers: [StripeWebhookController],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer): void {

@@ -18,6 +18,10 @@ mutation createOrganizationInvitation($input: CreateInvitationInput!) {
   createOrganizationInvitation(input: $input)
 }
 
+mutation resendOrganizationInvitation($input: ResendInvitationInput!) {
+  resendOrganizationInvitation(input: $input)
+}
+
 mutation acceptOrganizationInvitation($input: AcceptInvitationInput!) {
   acceptOrganizationInvitation(input: $input) {
     ...OrganizationDetails

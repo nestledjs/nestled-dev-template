@@ -2,7 +2,7 @@ import { BadRequestException, Injectable, Logger, NotFoundException } from '@nes
 import { JwtService } from '@nestjs/jwt'
 import { ApiCoreDataAccessService } from '@nestled-template/api/core/data-access'
 import { EmailType, User } from '@nestled-template/api/core/models'
-import { ChangePasswordInput, EmulateUserInput, LoginInput, RegisterInput, UserCreateInput } from './dto'
+import { ChangePasswordInput, EmulateUserInput, LoginInput, RegisterInput, RegisterWithInvitationInput, UserCreateInput } from './dto'
 import { ApiCoreFeatureService } from '@nestled-template/api/core/feature'
 import { Response } from 'express'
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library'
@@ -211,6 +211,99 @@ export class AuthService {
       })
 
       Logger.log(`✓ User registered: ${primaryEmail} (SuperAdmin: ${user.isSuperAdmin}, Org: ${organization.name})`)
+
+      return this.signUser(user, false, undefined, sessionInfo)
+    }
+    return null
+  }
+
+  /**
+   * Register a new user via invitation (does not create an organization)
+   */
+  async registerWithInvitation(payload: RegisterWithInvitationInput, sessionInfo?: SessionInfo) {
+    // First, verify the invitation exists and is valid
+    const invite = await this.data.invite.findUnique({
+      where: { token: payload.invitationToken },
+      include: { organization: true, role: true }
+    })
+
+    if (!invite) {
+      throw new BadRequestException('Invalid invitation token')
+    }
+
+    if (invite.status !== 'PENDING') {
+      throw new BadRequestException('This invitation has already been used or expired')
+    }
+
+    if (invite.expiresAt < new Date()) {
+      await this.data.invite.update({
+        where: { id: invite.id },
+        data: { status: 'EXPIRED' }
+      })
+      throw new BadRequestException('This invitation has expired')
+    }
+
+    // Verify email matches the invitation
+    const cleanEmail = payload.email?.trim()?.toLowerCase()
+    if (cleanEmail !== invite.email.toLowerCase()) {
+      throw new BadRequestException('Email address does not match the invitation')
+    }
+
+    // Create the user (no organization)
+    const user = await this.createUser({
+      email: payload.email,
+      firstName: payload.firstName,
+      lastName: payload.lastName,
+      password: payload.password,
+      phone: payload.phone,
+      avatarUrl: payload.avatarUrl,
+    })
+
+    if (user) {
+      // Add user to the organization from the invitation
+      await this.data.organizationMember.create({
+        data: {
+          userId: user.id,
+          organizationId: invite.organizationId,
+          roleId: invite.roleId!
+        }
+      })
+
+      // Set as active organization
+      await this.data.user.update({
+        where: { id: user.id },
+        data: { activeOrganizationId: invite.organizationId }
+      })
+
+      // Mark invitation as accepted
+      await this.data.invite.update({
+        where: { id: invite.id },
+        data: { status: 'ACCEPTED' }
+      })
+
+      // Send verification email
+      const validateEmailToken = generateToken()
+      const validateEmailTokenExpires = generateExpireDate()
+      await this.data.user.update({
+        where: { id: user.id },
+        data: { validateEmailToken, validateEmailTokenExpires },
+      })
+
+      const appName = this.config.get('app.name')
+      const siteUrl = this.config.get('siteUrl')
+      const verificationUrl = `${siteUrl}/verify-email?token=${validateEmailToken}`
+
+      await this.emailService.sendTemplate(cleanEmail, {
+        templateId: 'email-verification',
+        variables: {
+          userName: user?.firstName || 'there',
+          verificationUrl,
+          appName,
+          expirationHours: 24
+        }
+      })
+
+      Logger.log(`✓ User registered via invitation: ${cleanEmail} joined ${invite.organization.name}`)
 
       return this.signUser(user, false, undefined, sessionInfo)
     }
@@ -806,6 +899,7 @@ export class AuthService {
       include: {
         emails: true,
         phoneNumbers: true,
+        images: true,
       },
     })
   }
@@ -817,6 +911,7 @@ export class AuthService {
       include: {
         emails: true,
         phoneNumbers: true,
+        images: true,
       },
     })
   }

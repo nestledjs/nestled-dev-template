@@ -20,7 +20,7 @@ import App from './app'
 
 export const meta: MetaFunction = () => [
   {
-    title: 'Biz to Biz Now',
+    title: 'Demo Site',
   },
 ]
 
@@ -130,7 +130,7 @@ export function Layout({ children }: Readonly<{ children: ReactNode }>) {
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>Biz to Biz Now</title>
+        <title>Demo Site</title>
         <Meta />
         <Links />
         <script
@@ -184,7 +184,7 @@ export function ErrorBoundary({ error }: Readonly<{ error: Error }>) {
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>Biz to Biz Now - Error</title>
+        <title>Demo Site - Error</title>
         <script
           dangerouslySetInnerHTML={{
             __html: `

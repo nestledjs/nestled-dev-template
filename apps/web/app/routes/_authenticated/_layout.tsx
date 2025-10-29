@@ -2,11 +2,11 @@ import { Navigate, Outlet, useLoaderData, useLocation } from 'react-router'
 import { GlobalContextProvider, useGlobalCtx } from '@nestled-template/web'
 import { WebUiFooter, WebUiHeader } from '@nestled-template/web-ui'
 import { apolloLoader } from '@nestled-template/shared/apollo'
-import { MyOrganizationsDocument, MyOrganizationsQuery } from '@nestled-template/shared/sdk'
+import { MyOrganizationsWithMembersDocument, MyOrganizationsWithMembersQuery } from '@nestled-template/shared/sdk'
 import { useReadQuery } from '@apollo/client'
 
 export const loader = apolloLoader()(({ preloadQuery }) => {
-  const myOrganizationsQueryRef = preloadQuery<MyOrganizationsQuery>(MyOrganizationsDocument, {
+  const myOrganizationsQueryRef = preloadQuery<MyOrganizationsWithMembersQuery>(MyOrganizationsWithMembersDocument, {
     fetchPolicy: 'network-only', // Always fetch fresh data, bypass cache
   })
   return { myOrganizationsQueryRef }
@@ -18,7 +18,7 @@ export default function AuthenticatedLayout() {
   const loaderData = useLoaderData()
 
   // Read organizations from preloaded query
-  const { data: orgsData } = useReadQuery<MyOrganizationsQuery>(loaderData.myOrganizationsQueryRef)
+  const { data: orgsData } = useReadQuery<MyOrganizationsWithMembersQuery>(loaderData.myOrganizationsQueryRef)
 
   // Redirect to login if not authenticated
   if (!user) {

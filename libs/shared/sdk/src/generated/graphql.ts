@@ -314,12 +314,18 @@ export type CreatePhoneNumberInput = {
 export type CreatePlanInput = {
   active?: InputMaybe<Scalars['Boolean']['input']>
   createdAt?: InputMaybe<Scalars['Timestamp']['input']>
+  description?: InputMaybe<Scalars['String']['input']>
   features?: InputMaybe<Scalars['JSON']['input']>
   id?: InputMaybe<Scalars['String']['input']>
   interval: Scalars['String']['input']
+  limits?: InputMaybe<Scalars['JSON']['input']>
   name: Scalars['String']['input']
   price: Scalars['Float']['input']
+  stripePriceId?: InputMaybe<Scalars['String']['input']>
+  stripeProductId?: InputMaybe<Scalars['String']['input']>
   subscriptionsIds?: InputMaybe<Array<Scalars['String']['input']>>
+  trialPeriodDays?: InputMaybe<Scalars['Int']['input']>
+  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
 }
 
 export type CreateRoleInput = {
@@ -365,6 +371,9 @@ export type CreateStoredFileInput = {
 }
 
 export type CreateSubscriptionInput = {
+  cancelAt?: InputMaybe<Scalars['Timestamp']['input']>
+  cancelAtPeriodEnd?: InputMaybe<Scalars['Boolean']['input']>
+  canceledAt?: InputMaybe<Scalars['Timestamp']['input']>
   createdAt?: InputMaybe<Scalars['Timestamp']['input']>
   id?: InputMaybe<Scalars['String']['input']>
   organizationId: Scalars['String']['input']
@@ -374,6 +383,8 @@ export type CreateSubscriptionInput = {
   stripeCustomerId?: InputMaybe<Scalars['String']['input']>
   stripePriceId?: InputMaybe<Scalars['String']['input']>
   stripeSubscriptionId?: InputMaybe<Scalars['String']['input']>
+  trialEnd?: InputMaybe<Scalars['Timestamp']['input']>
+  trialStart?: InputMaybe<Scalars['Timestamp']['input']>
   updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
 }
 
@@ -530,6 +541,16 @@ export type GenerateApiTokenOutput = {
   __typename?: 'GenerateApiTokenOutput'
   apiToken: ApiToken
   token: Scalars['String']['output']
+}
+
+export type InvitationDetails = {
+  __typename?: 'InvitationDetails'
+  email: Scalars['String']['output']
+  expiresAt: Scalars['Timestamp']['output']
+  id: Scalars['String']['output']
+  inviterName: Scalars['String']['output']
+  organizationName: Scalars['String']['output']
+  roleName: Scalars['String']['output']
 }
 
 export type Invite = {
@@ -833,10 +854,12 @@ export type ListPhoneNumberInput = {
 export type ListPlanInput = {
   active?: InputMaybe<Scalars['Boolean']['input']>
   createdAt?: InputMaybe<Scalars['Timestamp']['input']>
+  description?: InputMaybe<Scalars['String']['input']>
   features?: InputMaybe<Scalars['JSON']['input']>
   filters?: InputMaybe<Scalars['JSONObject']['input']>
   id?: InputMaybe<Scalars['String']['input']>
   interval?: InputMaybe<Scalars['String']['input']>
+  limits?: InputMaybe<Scalars['JSON']['input']>
   name?: InputMaybe<Scalars['String']['input']>
   orderBy?: InputMaybe<Scalars['String']['input']>
   orderDirection?: InputMaybe<Scalars['String']['input']>
@@ -844,8 +867,12 @@ export type ListPlanInput = {
   search?: InputMaybe<Scalars['String']['input']>
   searchFields?: InputMaybe<Array<Scalars['String']['input']>>
   skip?: InputMaybe<Scalars['Float']['input']>
+  stripePriceId?: InputMaybe<Scalars['String']['input']>
+  stripeProductId?: InputMaybe<Scalars['String']['input']>
   subscriptionsIds?: InputMaybe<Array<Scalars['String']['input']>>
   take?: InputMaybe<Scalars['Float']['input']>
+  trialPeriodDays?: InputMaybe<Scalars['Int']['input']>
+  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
 }
 
 export type ListRoleInput = {
@@ -912,6 +939,9 @@ export type ListStoredFileInput = {
 }
 
 export type ListSubscriptionInput = {
+  cancelAt?: InputMaybe<Scalars['Timestamp']['input']>
+  cancelAtPeriodEnd?: InputMaybe<Scalars['Boolean']['input']>
+  canceledAt?: InputMaybe<Scalars['Timestamp']['input']>
   createdAt?: InputMaybe<Scalars['Timestamp']['input']>
   filters?: InputMaybe<Scalars['JSONObject']['input']>
   id?: InputMaybe<Scalars['String']['input']>
@@ -928,6 +958,8 @@ export type ListSubscriptionInput = {
   stripePriceId?: InputMaybe<Scalars['String']['input']>
   stripeSubscriptionId?: InputMaybe<Scalars['String']['input']>
   take?: InputMaybe<Scalars['Float']['input']>
+  trialEnd?: InputMaybe<Scalars['Timestamp']['input']>
+  trialStart?: InputMaybe<Scalars['Timestamp']['input']>
   updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
 }
 
@@ -1076,12 +1108,14 @@ export type Mutation = {
   __typename?: 'Mutation'
   acceptOrganizationInvitation: Organization
   addOrganizationMember: Scalars['Boolean']['output']
+  cancelSubscription: Subscription
   changeEmail: Scalars['Boolean']['output']
   changePassword: Scalars['Boolean']['output']
   complete2FALogin?: Maybe<UserToken>
   createAddress?: Maybe<Address>
   createApiToken?: Maybe<ApiToken>
   createAuditLog?: Maybe<AuditLog>
+  createCheckoutSession: Scalars['String']['output']
   createCountry?: Maybe<Country>
   createEmail?: Maybe<Email>
   createInvite?: Maybe<Invite>
@@ -1094,6 +1128,7 @@ export type Mutation = {
   createPermission?: Maybe<Permission>
   createPhoneNumber?: Maybe<PhoneNumber>
   createPlan?: Maybe<Plan>
+  createPortalSession: Scalars['String']['output']
   createRole?: Maybe<Role>
   createSecurityEvent?: Maybe<SecurityEvent>
   createStoredFile?: Maybe<StoredFile>
@@ -1140,14 +1175,21 @@ export type Mutation = {
   login?: Maybe<UserToken>
   logout?: Maybe<Scalars['Boolean']['output']>
   register?: Maybe<UserToken>
+  registerWithInvitation?: Maybe<UserToken>
   rejectOrganizationInvitation: Scalars['Boolean']['output']
   removeOrganizationMember: Scalars['Boolean']['output']
+  resendOrganizationInvitation: Scalars['Boolean']['output']
   resendVerificationEmail: Scalars['Boolean']['output']
   resetPassword?: Maybe<User>
   revokeApiToken: ApiToken
   rotateApiToken: GenerateApiTokenOutput
   setup2FA: Setup2FaOutput
   switchActiveOrganization: User
+  syncStripePrice: Scalars['Boolean']['output']
+  syncStripePrices: Scalars['Boolean']['output']
+  syncStripeProduct: Scalars['Boolean']['output']
+  syncStripeProducts: Scalars['Boolean']['output']
+  syncStripeSubscription: Scalars['Boolean']['output']
   transferOrganizationOwnership: Scalars['Boolean']['output']
   unlinkOAuthAccount: Scalars['Boolean']['output']
   unlockAccount: User
@@ -1220,6 +1262,10 @@ export type MutationCreateApiTokenArgs = {
 
 export type MutationCreateAuditLogArgs = {
   input: CreateAuditLogInput
+}
+
+export type MutationCreateCheckoutSessionArgs = {
+  priceId: Scalars['String']['input']
 }
 
 export type MutationCreateCountryArgs = {
@@ -1438,12 +1484,20 @@ export type MutationRegisterArgs = {
   input: RegisterInput
 }
 
+export type MutationRegisterWithInvitationArgs = {
+  input: RegisterWithInvitationInput
+}
+
 export type MutationRejectOrganizationInvitationArgs = {
   input: RejectInvitationInput
 }
 
 export type MutationRemoveOrganizationMemberArgs = {
   input: RemoveOrganizationMemberInput
+}
+
+export type MutationResendOrganizationInvitationArgs = {
+  input: ResendInvitationInput
 }
 
 export type MutationResendVerificationEmailArgs = {
@@ -1464,6 +1518,18 @@ export type MutationRotateApiTokenArgs = {
 
 export type MutationSwitchActiveOrganizationArgs = {
   input: SwitchOrganizationInput
+}
+
+export type MutationSyncStripePriceArgs = {
+  priceId: Scalars['String']['input']
+}
+
+export type MutationSyncStripeProductArgs = {
+  productId: Scalars['String']['input']
+}
+
+export type MutationSyncStripeSubscriptionArgs = {
+  subscriptionId: Scalars['String']['input']
 }
 
 export type MutationTransferOrganizationOwnershipArgs = {
@@ -1739,12 +1805,18 @@ export type Plan = {
   __typename?: 'Plan'
   active: Scalars['Boolean']['output']
   createdAt: Scalars['Timestamp']['output']
+  description?: Maybe<Scalars['String']['output']>
   features?: Maybe<Scalars['JSONObject']['output']>
   id: Scalars['String']['output']
   interval: Scalars['String']['output']
+  limits?: Maybe<Scalars['JSONObject']['output']>
   name: Scalars['String']['output']
   price: Scalars['Decimal']['output']
+  stripePriceId?: Maybe<Scalars['String']['output']>
+  stripeProductId?: Maybe<Scalars['String']['output']>
   subscriptions?: Maybe<Array<Subscription>>
+  trialPeriodDays?: Maybe<Scalars['Int']['output']>
+  updatedAt: Scalars['Timestamp']['output']
 }
 
 export type Query = {
@@ -1759,13 +1831,18 @@ export type Query = {
   auditLogs?: Maybe<Array<AuditLog>>
   auditLogsCount?: Maybe<CorePaging>
   availableOAuthProviders: Array<OAuthProviderInfo>
+  availablePlans: Array<Plan>
   countries?: Maybe<Array<Country>>
   countriesCount?: Maybe<CorePaging>
   country?: Maybe<Country>
+  currentPlan?: Maybe<Plan>
+  currentSubscription?: Maybe<Subscription>
+  currentUsage: Scalars['String']['output']
   email?: Maybe<Email>
   emails?: Maybe<Array<Email>>
   emailsCount?: Maybe<CorePaging>
   exportUserData: ExportUserDataOutput
+  getInvitationDetails: InvitationDetails
   getSignedUrl: Scalars['String']['output']
   getUserSessions: Array<UserSessionOutput>
   invite?: Maybe<Invite>
@@ -1897,6 +1974,10 @@ export type QueryEmailsArgs = {
 
 export type QueryEmailsCountArgs = {
   input?: InputMaybe<ListEmailInput>
+}
+
+export type QueryGetInvitationDetailsArgs = {
+  token: Scalars['String']['input']
 }
 
 export type QueryGetSignedUrlArgs = {
@@ -2171,6 +2252,16 @@ export type RegisterInput = {
   username?: InputMaybe<Scalars['String']['input']>
 }
 
+export type RegisterWithInvitationInput = {
+  avatarUrl?: InputMaybe<Scalars['String']['input']>
+  email: Scalars['String']['input']
+  firstName: Scalars['String']['input']
+  invitationToken: Scalars['String']['input']
+  lastName: Scalars['String']['input']
+  password: Scalars['String']['input']
+  phone?: InputMaybe<Scalars['String']['input']>
+}
+
 export type RejectInvitationInput = {
   token: Scalars['String']['input']
 }
@@ -2178,6 +2269,10 @@ export type RejectInvitationInput = {
 export type RemoveOrganizationMemberInput = {
   organizationId: Scalars['String']['input']
   userId: Scalars['String']['input']
+}
+
+export type ResendInvitationInput = {
+  invitationId: Scalars['String']['input']
 }
 
 export type ResetPasswordInput = {
@@ -2290,6 +2385,9 @@ export type StoredFile = {
 
 export type Subscription = {
   __typename?: 'Subscription'
+  cancelAt?: Maybe<Scalars['Timestamp']['output']>
+  cancelAtPeriodEnd: Scalars['Boolean']['output']
+  canceledAt?: Maybe<Scalars['Timestamp']['output']>
   createdAt: Scalars['Timestamp']['output']
   id: Scalars['String']['output']
   organization?: Maybe<Organization>
@@ -2301,6 +2399,8 @@ export type Subscription = {
   stripeCustomerId?: Maybe<Scalars['String']['output']>
   stripePriceId?: Maybe<Scalars['String']['output']>
   stripeSubscriptionId?: Maybe<Scalars['String']['output']>
+  trialEnd?: Maybe<Scalars['Timestamp']['output']>
+  trialStart?: Maybe<Scalars['Timestamp']['output']>
   updatedAt: Scalars['Timestamp']['output']
 }
 
@@ -2531,12 +2631,18 @@ export type UpdatePhoneNumberInput = {
 export type UpdatePlanInput = {
   active?: InputMaybe<Scalars['Boolean']['input']>
   createdAt?: InputMaybe<Scalars['Timestamp']['input']>
+  description?: InputMaybe<Scalars['String']['input']>
   features?: InputMaybe<Scalars['JSON']['input']>
   id?: InputMaybe<Scalars['String']['input']>
   interval?: InputMaybe<Scalars['String']['input']>
+  limits?: InputMaybe<Scalars['JSON']['input']>
   name?: InputMaybe<Scalars['String']['input']>
   price?: InputMaybe<Scalars['Float']['input']>
+  stripePriceId?: InputMaybe<Scalars['String']['input']>
+  stripeProductId?: InputMaybe<Scalars['String']['input']>
   subscriptionsIds?: InputMaybe<Array<Scalars['String']['input']>>
+  trialPeriodDays?: InputMaybe<Scalars['Int']['input']>
+  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
 }
 
 export type UpdateRoleInput = {
@@ -2582,6 +2688,9 @@ export type UpdateStoredFileInput = {
 }
 
 export type UpdateSubscriptionInput = {
+  cancelAt?: InputMaybe<Scalars['Timestamp']['input']>
+  cancelAtPeriodEnd?: InputMaybe<Scalars['Boolean']['input']>
+  canceledAt?: InputMaybe<Scalars['Timestamp']['input']>
   createdAt?: InputMaybe<Scalars['Timestamp']['input']>
   id?: InputMaybe<Scalars['String']['input']>
   organizationId?: InputMaybe<Scalars['String']['input']>
@@ -2591,6 +2700,8 @@ export type UpdateSubscriptionInput = {
   stripeCustomerId?: InputMaybe<Scalars['String']['input']>
   stripePriceId?: InputMaybe<Scalars['String']['input']>
   stripeSubscriptionId?: InputMaybe<Scalars['String']['input']>
+  trialEnd?: InputMaybe<Scalars['Timestamp']['input']>
+  trialStart?: InputMaybe<Scalars['Timestamp']['input']>
   updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
 }
 
@@ -4826,22 +4937,34 @@ export type AdminPlanListFragment = {
   __typename?: 'Plan'
   id: string
   createdAt: any
+  updatedAt: any
   name: string
+  description?: string | null
   price: any
   interval: string
   features?: any | null
+  limits?: any | null
   active: boolean
+  stripeProductId?: string | null
+  stripePriceId?: string | null
+  trialPeriodDays?: number | null
 }
 
 export type AdminPlanDetailsFragment = {
   __typename?: 'Plan'
   id: string
   createdAt: any
+  updatedAt: any
   name: string
+  description?: string | null
   price: any
   interval: string
   features?: any | null
+  limits?: any | null
   active: boolean
+  stripeProductId?: string | null
+  stripePriceId?: string | null
+  trialPeriodDays?: number | null
 }
 
 export type AdminCreatePlanMutationVariables = Exact<{
@@ -4854,11 +4977,17 @@ export type AdminCreatePlanMutation = {
     __typename?: 'Plan'
     id: string
     createdAt: any
+    updatedAt: any
     name: string
+    description?: string | null
     price: any
     interval: string
     features?: any | null
+    limits?: any | null
     active: boolean
+    stripeProductId?: string | null
+    stripePriceId?: string | null
+    trialPeriodDays?: number | null
   } | null
 }
 
@@ -4882,11 +5011,17 @@ export type AdminUpdatePlanMutation = {
     __typename?: 'Plan'
     id: string
     createdAt: any
+    updatedAt: any
     name: string
+    description?: string | null
     price: any
     interval: string
     features?: any | null
+    limits?: any | null
     active: boolean
+    stripeProductId?: string | null
+    stripePriceId?: string | null
+    trialPeriodDays?: number | null
   } | null
 }
 
@@ -4900,11 +5035,17 @@ export type AdminPlanQuery = {
     __typename?: 'Plan'
     id: string
     createdAt: any
+    updatedAt: any
     name: string
+    description?: string | null
     price: any
     interval: string
     features?: any | null
+    limits?: any | null
     active: boolean
+    stripeProductId?: string | null
+    stripePriceId?: string | null
+    trialPeriodDays?: number | null
   } | null
 }
 
@@ -4918,11 +5059,17 @@ export type AdminPlansQuery = {
     __typename?: 'Plan'
     id: string
     createdAt: any
+    updatedAt: any
     name: string
+    description?: string | null
     price: any
     interval: string
     features?: any | null
+    limits?: any | null
     active: boolean
+    stripeProductId?: string | null
+    stripePriceId?: string | null
+    trialPeriodDays?: number | null
   }> | null
   counters?: {
     __typename?: 'CorePaging'
@@ -5449,6 +5596,11 @@ export type AdminSubscriptionListFragment = {
   stripeSubscriptionId?: string | null
   stripePriceId?: string | null
   stripeCurrentPeriodEnd?: any | null
+  trialStart?: any | null
+  trialEnd?: any | null
+  cancelAt?: any | null
+  canceledAt?: any | null
+  cancelAtPeriodEnd: boolean
   status: SubscriptionStatus
   organization?: { __typename?: 'Organization'; id: string } | null
   plan?: { __typename?: 'Plan'; id: string } | null
@@ -5465,6 +5617,11 @@ export type AdminSubscriptionDetailsFragment = {
   stripeSubscriptionId?: string | null
   stripePriceId?: string | null
   stripeCurrentPeriodEnd?: any | null
+  trialStart?: any | null
+  trialEnd?: any | null
+  cancelAt?: any | null
+  canceledAt?: any | null
+  cancelAtPeriodEnd: boolean
   status: SubscriptionStatus
   organization?: { __typename?: 'Organization'; id: string } | null
   plan?: { __typename?: 'Plan'; id: string } | null
@@ -5487,6 +5644,11 @@ export type AdminCreateSubscriptionMutation = {
     stripeSubscriptionId?: string | null
     stripePriceId?: string | null
     stripeCurrentPeriodEnd?: any | null
+    trialStart?: any | null
+    trialEnd?: any | null
+    cancelAt?: any | null
+    canceledAt?: any | null
+    cancelAtPeriodEnd: boolean
     status: SubscriptionStatus
     organization?: { __typename?: 'Organization'; id: string } | null
     plan?: { __typename?: 'Plan'; id: string } | null
@@ -5520,6 +5682,11 @@ export type AdminUpdateSubscriptionMutation = {
     stripeSubscriptionId?: string | null
     stripePriceId?: string | null
     stripeCurrentPeriodEnd?: any | null
+    trialStart?: any | null
+    trialEnd?: any | null
+    cancelAt?: any | null
+    canceledAt?: any | null
+    cancelAtPeriodEnd: boolean
     status: SubscriptionStatus
     organization?: { __typename?: 'Organization'; id: string } | null
     plan?: { __typename?: 'Plan'; id: string } | null
@@ -5543,6 +5710,11 @@ export type AdminSubscriptionQuery = {
     stripeSubscriptionId?: string | null
     stripePriceId?: string | null
     stripeCurrentPeriodEnd?: any | null
+    trialStart?: any | null
+    trialEnd?: any | null
+    cancelAt?: any | null
+    canceledAt?: any | null
+    cancelAtPeriodEnd: boolean
     status: SubscriptionStatus
     organization?: { __typename?: 'Organization'; id: string } | null
     plan?: { __typename?: 'Plan'; id: string } | null
@@ -5566,6 +5738,11 @@ export type AdminSubscriptionsQuery = {
     stripeSubscriptionId?: string | null
     stripePriceId?: string | null
     stripeCurrentPeriodEnd?: any | null
+    trialStart?: any | null
+    trialEnd?: any | null
+    cancelAt?: any | null
+    canceledAt?: any | null
+    cancelAtPeriodEnd: boolean
     status: SubscriptionStatus
     organization?: { __typename?: 'Organization'; id: string } | null
     plan?: { __typename?: 'Plan'; id: string } | null
@@ -7098,6 +7275,57 @@ export type RegisterMutation = {
   } | null
 }
 
+export type RegisterWithInvitationMutationVariables = Exact<{
+  input: RegisterWithInvitationInput
+}>
+
+export type RegisterWithInvitationMutation = {
+  __typename?: 'Mutation'
+  registerWithInvitation?: {
+    __typename?: 'UserToken'
+    token?: string | null
+    requires2FA?: boolean | null
+    tempToken?: string | null
+    user?: {
+      __typename?: 'User'
+      id: string
+      firstName?: string | null
+      lastName?: string | null
+      displayName?: string | null
+      bio?: string | null
+      isSuperAdmin: boolean
+      emailValidated: boolean
+      twoFactorEnabled: boolean
+      createdAt: any
+      updatedAt: any
+      emails?: Array<{
+        __typename?: 'Email'
+        id: string
+        email: string
+        primary: boolean
+        verified: boolean
+      }> | null
+      phoneNumbers?: Array<{
+        __typename?: 'PhoneNumber'
+        id: string
+        phone: string
+        primary: boolean
+      }> | null
+      images?: Array<{
+        __typename?: 'StoredFile'
+        id: string
+        url: string
+        publicUrl?: string | null
+        filename: string
+        mimeType: string
+        metadata?: any | null
+        folder?: string | null
+        createdAt: any
+      }> | null
+    } | null
+  } | null
+}
+
 export type LogoutMutationVariables = Exact<{ [key: string]: never }>
 
 export type LogoutMutation = { __typename?: 'Mutation'; logout?: boolean | null }
@@ -8366,6 +8594,22 @@ export type OrganizationMemberListFragment = {
   id: string
   createdAt: any
   updatedAt: any
+  userId: string
+  roleId: string
+  user?: {
+    __typename?: 'User'
+    id: string
+    firstName?: string | null
+    lastName?: string | null
+    emails?: Array<{
+      __typename?: 'Email'
+      id: string
+      email: string
+      primary: boolean
+      verified: boolean
+    }> | null
+  } | null
+  role?: { __typename?: 'Role'; id: string; name: string; description?: string | null } | null
 }
 
 export type OrganizationMemberDetailsFragment = {
@@ -8373,6 +8617,22 @@ export type OrganizationMemberDetailsFragment = {
   id: string
   createdAt: any
   updatedAt: any
+  userId: string
+  roleId: string
+  user?: {
+    __typename?: 'User'
+    id: string
+    firstName?: string | null
+    lastName?: string | null
+    emails?: Array<{
+      __typename?: 'Email'
+      id: string
+      email: string
+      primary: boolean
+      verified: boolean
+    }> | null
+  } | null
+  role?: { __typename?: 'Role'; id: string; name: string; description?: string | null } | null
 }
 
 export type CreateOrganizationMemberMutationVariables = Exact<{
@@ -8386,6 +8646,22 @@ export type CreateOrganizationMemberMutation = {
     id: string
     createdAt: any
     updatedAt: any
+    userId: string
+    roleId: string
+    user?: {
+      __typename?: 'User'
+      id: string
+      firstName?: string | null
+      lastName?: string | null
+      emails?: Array<{
+        __typename?: 'Email'
+        id: string
+        email: string
+        primary: boolean
+        verified: boolean
+      }> | null
+    } | null
+    role?: { __typename?: 'Role'; id: string; name: string; description?: string | null } | null
   } | null
 }
 
@@ -8410,6 +8686,22 @@ export type UpdateOrganizationMemberMutation = {
     id: string
     createdAt: any
     updatedAt: any
+    userId: string
+    roleId: string
+    user?: {
+      __typename?: 'User'
+      id: string
+      firstName?: string | null
+      lastName?: string | null
+      emails?: Array<{
+        __typename?: 'Email'
+        id: string
+        email: string
+        primary: boolean
+        verified: boolean
+      }> | null
+    } | null
+    role?: { __typename?: 'Role'; id: string; name: string; description?: string | null } | null
   } | null
 }
 
@@ -8424,6 +8716,22 @@ export type OrganizationMemberQuery = {
     id: string
     createdAt: any
     updatedAt: any
+    userId: string
+    roleId: string
+    user?: {
+      __typename?: 'User'
+      id: string
+      firstName?: string | null
+      lastName?: string | null
+      emails?: Array<{
+        __typename?: 'Email'
+        id: string
+        email: string
+        primary: boolean
+        verified: boolean
+      }> | null
+    } | null
+    role?: { __typename?: 'Role'; id: string; name: string; description?: string | null } | null
   } | null
 }
 
@@ -8438,6 +8746,22 @@ export type OrganizationMembersQuery = {
     id: string
     createdAt: any
     updatedAt: any
+    userId: string
+    roleId: string
+    user?: {
+      __typename?: 'User'
+      id: string
+      firstName?: string | null
+      lastName?: string | null
+      emails?: Array<{
+        __typename?: 'Email'
+        id: string
+        email: string
+        primary: boolean
+        verified: boolean
+      }> | null
+    } | null
+    role?: { __typename?: 'Role'; id: string; name: string; description?: string | null } | null
   }> | null
 }
 
@@ -8497,7 +8821,18 @@ export type OrganizationDetailsFragment = {
       firstName?: string | null
       lastName?: string | null
     } | null
-    role?: { __typename?: 'Role'; id: string; name: string } | null
+    role?: {
+      __typename?: 'Role'
+      id: string
+      name: string
+      permissions?: Array<{
+        __typename?: 'Permission'
+        id: string
+        action: string
+        subject: string
+        description?: string | null
+      }> | null
+    } | null
   }> | null
   roles?: Array<{
     __typename?: 'Role'
@@ -8541,7 +8876,18 @@ export type UserCreateOrganizationMutation = {
         firstName?: string | null
         lastName?: string | null
       } | null
-      role?: { __typename?: 'Role'; id: string; name: string } | null
+      role?: {
+        __typename?: 'Role'
+        id: string
+        name: string
+        permissions?: Array<{
+          __typename?: 'Permission'
+          id: string
+          action: string
+          subject: string
+          description?: string | null
+        }> | null
+      } | null
     }> | null
     roles?: Array<{
       __typename?: 'Role'
@@ -8596,7 +8942,18 @@ export type UserUpdateOrganizationMutation = {
         firstName?: string | null
         lastName?: string | null
       } | null
-      role?: { __typename?: 'Role'; id: string; name: string } | null
+      role?: {
+        __typename?: 'Role'
+        id: string
+        name: string
+        permissions?: Array<{
+          __typename?: 'Permission'
+          id: string
+          action: string
+          subject: string
+          description?: string | null
+        }> | null
+      } | null
     }> | null
     roles?: Array<{
       __typename?: 'Role'
@@ -8627,6 +8984,15 @@ export type CreateOrganizationInvitationMutation = {
   createOrganizationInvitation: string
 }
 
+export type ResendOrganizationInvitationMutationVariables = Exact<{
+  input: ResendInvitationInput
+}>
+
+export type ResendOrganizationInvitationMutation = {
+  __typename?: 'Mutation'
+  resendOrganizationInvitation: boolean
+}
+
 export type AcceptOrganizationInvitationMutationVariables = Exact<{
   input: AcceptInvitationInput
 }>
@@ -8650,7 +9016,18 @@ export type AcceptOrganizationInvitationMutation = {
         firstName?: string | null
         lastName?: string | null
       } | null
-      role?: { __typename?: 'Role'; id: string; name: string } | null
+      role?: {
+        __typename?: 'Role'
+        id: string
+        name: string
+        permissions?: Array<{
+          __typename?: 'Permission'
+          id: string
+          action: string
+          subject: string
+          description?: string | null
+        }> | null
+      } | null
     }> | null
     roles?: Array<{
       __typename?: 'Role'
@@ -8808,7 +9185,18 @@ export type MyOrganizationsWithMembersQuery = {
         firstName?: string | null
         lastName?: string | null
       } | null
-      role?: { __typename?: 'Role'; id: string; name: string } | null
+      role?: {
+        __typename?: 'Role'
+        id: string
+        name: string
+        permissions?: Array<{
+          __typename?: 'Permission'
+          id: string
+          action: string
+          subject: string
+          description?: string | null
+        }> | null
+      } | null
     }> | null
     roles?: Array<{
       __typename?: 'Role'
@@ -8841,7 +9229,40 @@ export type UserOrganizationMembersQuery = {
     id: string
     createdAt: any
     updatedAt: any
+    userId: string
+    roleId: string
+    user?: {
+      __typename?: 'User'
+      id: string
+      firstName?: string | null
+      lastName?: string | null
+      emails?: Array<{
+        __typename?: 'Email'
+        id: string
+        email: string
+        primary: boolean
+        verified: boolean
+      }> | null
+    } | null
+    role?: { __typename?: 'Role'; id: string; name: string; description?: string | null } | null
   }>
+}
+
+export type GetInvitationDetailsQueryVariables = Exact<{
+  token: Scalars['String']['input']
+}>
+
+export type GetInvitationDetailsQuery = {
+  __typename?: 'Query'
+  getInvitationDetails: {
+    __typename?: 'InvitationDetails'
+    id: string
+    email: string
+    organizationName: string
+    roleName: string
+    inviterName: string
+    expiresAt: any
+  }
 }
 
 export type PermissionListFragment = {
@@ -10902,11 +11323,17 @@ export const AdminPlanListFragmentDoc = gql`
   fragment AdminPlanList on Plan {
     id
     createdAt
+    updatedAt
     name
+    description
     price
     interval
     features
+    limits
     active
+    stripeProductId
+    stripePriceId
+    trialPeriodDays
   }
 `
 export const AdminPlanDetailsFragmentDoc = gql`
@@ -10997,6 +11424,11 @@ export const AdminSubscriptionListFragmentDoc = gql`
     stripeSubscriptionId
     stripePriceId
     stripeCurrentPeriodEnd
+    trialStart
+    trialEnd
+    cancelAt
+    canceledAt
+    cancelAtPeriodEnd
     status
     organization {
       id
@@ -11376,6 +11808,24 @@ export const OrganizationMemberListFragmentDoc = gql`
     id
     createdAt
     updatedAt
+    userId
+    roleId
+    user {
+      id
+      firstName
+      lastName
+      emails {
+        id
+        email
+        primary
+        verified
+      }
+    }
+    role {
+      id
+      name
+      description
+    }
   }
 `
 export const OrganizationMemberDetailsFragmentDoc = gql`
@@ -11417,6 +11867,12 @@ export const OrganizationDetailsFragmentDoc = gql`
       role {
         id
         name
+        permissions {
+          id
+          action
+          subject
+          description
+        }
       }
     }
     roles {
@@ -21054,6 +21510,57 @@ export type RegisterMutationOptions = Apollo.BaseMutationOptions<
   RegisterMutation,
   RegisterMutationVariables
 >
+export const RegisterWithInvitationDocument = gql`
+  mutation RegisterWithInvitation($input: RegisterWithInvitationInput!) {
+    registerWithInvitation(input: $input) {
+      ...UserTokenDetails
+    }
+  }
+  ${UserTokenDetailsFragmentDoc}
+`
+export type RegisterWithInvitationMutationFn = Apollo.MutationFunction<
+  RegisterWithInvitationMutation,
+  RegisterWithInvitationMutationVariables
+>
+
+/**
+ * __useRegisterWithInvitationMutation__
+ *
+ * To run a mutation, you first call `useRegisterWithInvitationMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRegisterWithInvitationMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [registerWithInvitationMutation, { data, loading, error }] = useRegisterWithInvitationMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useRegisterWithInvitationMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    RegisterWithInvitationMutation,
+    RegisterWithInvitationMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<
+    RegisterWithInvitationMutation,
+    RegisterWithInvitationMutationVariables
+  >(RegisterWithInvitationDocument, options)
+}
+export type RegisterWithInvitationMutationHookResult = ReturnType<
+  typeof useRegisterWithInvitationMutation
+>
+export type RegisterWithInvitationMutationResult =
+  Apollo.MutationResult<RegisterWithInvitationMutation>
+export type RegisterWithInvitationMutationOptions = Apollo.BaseMutationOptions<
+  RegisterWithInvitationMutation,
+  RegisterWithInvitationMutationVariables
+>
 export const LogoutDocument = gql`
   mutation Logout {
     logout
@@ -24569,6 +25076,54 @@ export type CreateOrganizationInvitationMutationOptions = Apollo.BaseMutationOpt
   CreateOrganizationInvitationMutation,
   CreateOrganizationInvitationMutationVariables
 >
+export const ResendOrganizationInvitationDocument = gql`
+  mutation resendOrganizationInvitation($input: ResendInvitationInput!) {
+    resendOrganizationInvitation(input: $input)
+  }
+`
+export type ResendOrganizationInvitationMutationFn = Apollo.MutationFunction<
+  ResendOrganizationInvitationMutation,
+  ResendOrganizationInvitationMutationVariables
+>
+
+/**
+ * __useResendOrganizationInvitationMutation__
+ *
+ * To run a mutation, you first call `useResendOrganizationInvitationMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useResendOrganizationInvitationMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [resendOrganizationInvitationMutation, { data, loading, error }] = useResendOrganizationInvitationMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useResendOrganizationInvitationMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    ResendOrganizationInvitationMutation,
+    ResendOrganizationInvitationMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<
+    ResendOrganizationInvitationMutation,
+    ResendOrganizationInvitationMutationVariables
+  >(ResendOrganizationInvitationDocument, options)
+}
+export type ResendOrganizationInvitationMutationHookResult = ReturnType<
+  typeof useResendOrganizationInvitationMutation
+>
+export type ResendOrganizationInvitationMutationResult =
+  Apollo.MutationResult<ResendOrganizationInvitationMutation>
+export type ResendOrganizationInvitationMutationOptions = Apollo.BaseMutationOptions<
+  ResendOrganizationInvitationMutation,
+  ResendOrganizationInvitationMutationVariables
+>
 export const AcceptOrganizationInvitationDocument = gql`
   mutation acceptOrganizationInvitation($input: AcceptInvitationInput!) {
     acceptOrganizationInvitation(input: $input) {
@@ -25242,6 +25797,86 @@ export type UserOrganizationMembersSuspenseQueryHookResult = ReturnType<
 export type UserOrganizationMembersQueryResult = Apollo.QueryResult<
   UserOrganizationMembersQuery,
   UserOrganizationMembersQueryVariables
+>
+export const GetInvitationDetailsDocument = gql`
+  query getInvitationDetails($token: String!) {
+    getInvitationDetails(token: $token) {
+      id
+      email
+      organizationName
+      roleName
+      inviterName
+      expiresAt
+    }
+  }
+`
+
+/**
+ * __useGetInvitationDetailsQuery__
+ *
+ * To run a query within a React component, call `useGetInvitationDetailsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetInvitationDetailsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetInvitationDetailsQuery({
+ *   variables: {
+ *      token: // value for 'token'
+ *   },
+ * });
+ */
+export function useGetInvitationDetailsQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    GetInvitationDetailsQuery,
+    GetInvitationDetailsQueryVariables
+  > &
+    ({ variables: GetInvitationDetailsQueryVariables; skip?: boolean } | { skip: boolean }),
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<GetInvitationDetailsQuery, GetInvitationDetailsQueryVariables>(
+    GetInvitationDetailsDocument,
+    options,
+  )
+}
+export function useGetInvitationDetailsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetInvitationDetailsQuery,
+    GetInvitationDetailsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<GetInvitationDetailsQuery, GetInvitationDetailsQueryVariables>(
+    GetInvitationDetailsDocument,
+    options,
+  )
+}
+export function useGetInvitationDetailsSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<
+        GetInvitationDetailsQuery,
+        GetInvitationDetailsQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<GetInvitationDetailsQuery, GetInvitationDetailsQueryVariables>(
+    GetInvitationDetailsDocument,
+    options,
+  )
+}
+export type GetInvitationDetailsQueryHookResult = ReturnType<typeof useGetInvitationDetailsQuery>
+export type GetInvitationDetailsLazyQueryHookResult = ReturnType<
+  typeof useGetInvitationDetailsLazyQuery
+>
+export type GetInvitationDetailsSuspenseQueryHookResult = ReturnType<
+  typeof useGetInvitationDetailsSuspenseQuery
+>
+export type GetInvitationDetailsQueryResult = Apollo.QueryResult<
+  GetInvitationDetailsQuery,
+  GetInvitationDetailsQueryVariables
 >
 export const CreatePermissionDocument = gql`
   mutation createPermission($input: CreatePermissionInput!) {

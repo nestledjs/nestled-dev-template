@@ -10,6 +10,12 @@ mutation Register($input: RegisterInput!) {
   }
 }
 
+mutation RegisterWithInvitation($input: RegisterWithInvitationInput!) {
+  registerWithInvitation(input: $input) {
+    ...UserTokenDetails
+  }
+}
+
 mutation Logout {
   logout
 }

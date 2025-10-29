@@ -8,6 +8,11 @@ fragment AdminSubscriptionList on Subscription {
   stripeSubscriptionId
   stripePriceId
   stripeCurrentPeriodEnd
+  trialStart
+  trialEnd
+  cancelAt
+  canceledAt
+  cancelAtPeriodEnd
   status
   organization {
     id

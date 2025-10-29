@@ -83,4 +83,13 @@ export class ConfigService {
       fromNumber: this.config.get('twilio.fromNumber'),
     }
   }
+
+  get stripe() {
+    return {
+      secretKey: this.config.get<string>('STRIPE_SECRET_KEY') || '',
+      publishableKey: this.config.get<string>('STRIPE_PUBLISHABLE_KEY') || '',
+      webhookSecret: this.config.get<string>('STRIPE_WEBHOOK_SECRET') || '',
+      currency: this.config.get<string>('STRIPE_CURRENCY') || 'usd',
+    }
+  }
 }

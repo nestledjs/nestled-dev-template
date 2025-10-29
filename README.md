@@ -78,6 +78,53 @@ pnpm nx graph
 
 ---
 
+## Billing & Stripe Setup
+
+This template includes Stripe integration for subscriptions and payments. To enable billing:
+
+### 1. Configure Stripe API Keys
+
+1. Sign up or log in to [Stripe](https://dashboard.stripe.com)
+2. Get your API keys from [https://dashboard.stripe.com/test/apikeys](https://dashboard.stripe.com/test/apikeys)
+3. Add them to your `.env` file:
+
+```bash
+## STRIPE BILLING ##
+STRIPE_SECRET_KEY=sk_test_your_key_here
+STRIPE_PUBLISHABLE_KEY=pk_test_your_key_here
+STRIPE_WEBHOOK_SECRET=whsec_your_webhook_secret_here
+STRIPE_CURRENCY=usd
+```
+
+### 2. Set Up Webhook Endpoint
+
+1. In [Stripe Dashboard > Developers > Webhooks](https://dashboard.stripe.com/test/webhooks), click "Add endpoint"
+2. Enter your webhook URL: `https://your-domain.com/webhooks/stripe` (use ngrok for local testing)
+3. Select events to listen for (recommended: select all, or at minimum):
+   - `checkout.session.completed`
+   - `customer.subscription.created`
+   - `customer.subscription.updated`
+   - `customer.subscription.deleted`
+   - `invoice.paid`
+   - `invoice.payment_failed`
+4. Copy the "Signing secret" (starts with `whsec_`) to `STRIPE_WEBHOOK_SECRET` in your `.env`
+
+### 3. Create Products & Sync
+
+1. Create products and prices in [Stripe Dashboard > Products](https://dashboard.stripe.com/test/products)
+2. After restarting your API server, sync them to your database via GraphQL:
+
+```graphql
+mutation {
+  syncStripeProducts
+  syncStripePrices
+}
+```
+
+Note: For local development, use [Stripe CLI](https://stripe.com/docs/stripe-cli) or [ngrok](https://ngrok.com) to forward webhooks to your local server.
+
+---
+
 ## Conventions
 
 - TypeScript strict, descriptive naming, early returns, small functions

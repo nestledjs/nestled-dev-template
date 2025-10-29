@@ -278,12 +278,18 @@ input CreatePhoneNumberInput {
 input CreatePlanInput {
   active: Boolean
   createdAt: Timestamp
+  description: String
   features: JSON
   id: String
   interval: String!
+  limits: JSON
   name: String!
   price: Float!
+  stripePriceId: String
+  stripeProductId: String
   subscriptionsIds: [String!]
+  trialPeriodDays: Int
+  updatedAt: Timestamp
 }
 
 input CreateRoleInput {
@@ -329,6 +335,9 @@ input CreateStoredFileInput {
 }
 
 input CreateSubscriptionInput {
+  cancelAt: Timestamp
+  cancelAtPeriodEnd: Boolean
+  canceledAt: Timestamp
   createdAt: Timestamp
   id: String
   organizationId: String!
@@ -338,6 +347,8 @@ input CreateSubscriptionInput {
   stripeCustomerId: String
   stripePriceId: String
   stripeSubscriptionId: String
+  trialEnd: Timestamp
+  trialStart: Timestamp
   updatedAt: Timestamp
 }
 
@@ -498,6 +509,15 @@ input GenerateApiTokenInput {
 type GenerateApiTokenOutput {
   apiToken: ApiToken!
   token: String!
+}
+
+type InvitationDetails {
+  email: String!
+  expiresAt: Timestamp!
+  id: String!
+  inviterName: String!
+  organizationName: String!
+  roleName: String!
 }
 
 type Invite {
@@ -810,10 +830,12 @@ input ListPhoneNumberInput {
 input ListPlanInput {
   active: Boolean
   createdAt: Timestamp
+  description: String
   features: JSON
   filters: JSONObject
   id: String
   interval: String
+  limits: JSON
   name: String
   orderBy: String
   orderDirection: String
@@ -821,8 +843,12 @@ input ListPlanInput {
   search: String
   searchFields: [String!]
   skip: Float = 0
+  stripePriceId: String
+  stripeProductId: String
   subscriptionsIds: [String!]
   take: Float = 20
+  trialPeriodDays: Int
+  updatedAt: Timestamp
 }
 
 input ListRoleInput {
@@ -889,6 +915,9 @@ input ListStoredFileInput {
 }
 
 input ListSubscriptionInput {
+  cancelAt: Timestamp
+  cancelAtPeriodEnd: Boolean
+  canceledAt: Timestamp
   createdAt: Timestamp
   filters: JSONObject
   id: String
@@ -905,6 +934,8 @@ input ListSubscriptionInput {
   stripePriceId: String
   stripeSubscriptionId: String
   take: Float = 20
+  trialEnd: Timestamp
+  trialStart: Timestamp
   updatedAt: Timestamp
 }
 
@@ -1051,12 +1082,14 @@ input LoginInput {
 type Mutation {
   acceptOrganizationInvitation(input: AcceptInvitationInput!): Organization!
   addOrganizationMember(input: AddOrganizationMemberInput!): Boolean!
+  cancelSubscription: Subscription!
   changeEmail(input: ChangeEmailInput!): Boolean!
   changePassword(input: ChangePasswordInput!): Boolean!
   complete2FALogin(code: String!, tempToken: String!): UserToken
   createAddress(input: CreateAddressInput!): Address
   createApiToken(input: CreateApiTokenInput!): ApiToken
   createAuditLog(input: CreateAuditLogInput!): AuditLog
+  createCheckoutSession(priceId: String!): String!
   createCountry(input: CreateCountryInput!): Country
   createEmail(input: CreateEmailInput!): Email
   createInvite(input: CreateInviteInput!): Invite
@@ -1069,6 +1102,7 @@ type Mutation {
   createPermission(input: CreatePermissionInput!): Permission
   createPhoneNumber(input: CreatePhoneNumberInput!): PhoneNumber
   createPlan(input: CreatePlanInput!): Plan
+  createPortalSession: String!
   createRole(input: CreateRoleInput!): Role
   createSecurityEvent(input: CreateSecurityEventInput!): SecurityEvent
   createStoredFile(input: CreateStoredFileInput!): StoredFile
@@ -1115,14 +1149,21 @@ type Mutation {
   login(input: LoginInput!): UserToken
   logout: Boolean
   register(input: RegisterInput!): UserToken
+  registerWithInvitation(input: RegisterWithInvitationInput!): UserToken
   rejectOrganizationInvitation(input: RejectInvitationInput!): Boolean!
   removeOrganizationMember(input: RemoveOrganizationMemberInput!): Boolean!
+  resendOrganizationInvitation(input: ResendInvitationInput!): Boolean!
   resendVerificationEmail(email: String!): Boolean!
   resetPassword(input: ResetPasswordInput!): User
   revokeApiToken(tokenId: String!): ApiToken!
   rotateApiToken(input: RotateApiTokenInput!): GenerateApiTokenOutput!
   setup2FA: Setup2FAOutput!
   switchActiveOrganization(input: SwitchOrganizationInput!): User!
+  syncStripePrice(priceId: String!): Boolean!
+  syncStripePrices: Boolean!
+  syncStripeProduct(productId: String!): Boolean!
+  syncStripeProducts: Boolean!
+  syncStripeSubscription(subscriptionId: String!): Boolean!
   transferOrganizationOwnership(input: TransferOwnershipInput!): Boolean!
   unlinkOAuthAccount(input: UnlinkOAuthInput!): Boolean!
   unlockAccount(userId: String!): User!
@@ -1247,12 +1288,18 @@ enum PhoneType {
 type Plan {
   active: Boolean!
   createdAt: Timestamp!
+  description: String
   features: JSONObject
   id: String!
   interval: String!
+  limits: JSONObject
   name: String!
   price: Decimal!
+  stripePriceId: String
+  stripeProductId: String
   subscriptions: [Subscription!]
+  trialPeriodDays: Int
+  updatedAt: Timestamp!
 }
 
 type Query {
@@ -1266,13 +1313,18 @@ type Query {
   auditLogs(input: ListAuditLogInput): [AuditLog!]
   auditLogsCount(input: ListAuditLogInput): CorePaging
   availableOAuthProviders: [OAuthProviderInfo!]!
+  availablePlans: [Plan!]!
   countries(input: ListCountryInput): [Country!]
   countriesCount(input: ListCountryInput): CorePaging
   country(countryId: String!): Country
+  currentPlan: Plan
+  currentSubscription: Subscription
+  currentUsage: String!
   email(emailId: String!): Email
   emails(input: ListEmailInput): [Email!]
   emailsCount(input: ListEmailInput): CorePaging
   exportUserData: ExportUserDataOutput!
+  getInvitationDetails(token: String!): InvitationDetails!
   getSignedUrl(expiresIn: Int, uploadId: String!): String!
   getUserSessions: [UserSessionOutput!]!
   invite(inviteId: String!): Invite
@@ -1357,6 +1409,16 @@ input RegisterInput {
   username: String
 }
 
+input RegisterWithInvitationInput {
+  avatarUrl: String
+  email: String!
+  firstName: String!
+  invitationToken: String!
+  lastName: String!
+  password: String!
+  phone: String
+}
+
 input RejectInvitationInput {
   token: String!
 }
@@ -1364,6 +1426,10 @@ input RejectInvitationInput {
 input RemoveOrganizationMemberInput {
   organizationId: String!
   userId: String!
+}
+
+input ResendInvitationInput {
+  invitationId: String!
 }
 
 input ResetPasswordInput {
@@ -1470,6 +1536,9 @@ type StoredFile {
 }
 
 type Subscription {
+  cancelAt: Timestamp
+  cancelAtPeriodEnd: Boolean!
+  canceledAt: Timestamp
   createdAt: Timestamp!
   id: String!
   organization: Organization
@@ -1481,6 +1550,8 @@ type Subscription {
   stripeCustomerId: String
   stripePriceId: String
   stripeSubscriptionId: String
+  trialEnd: Timestamp
+  trialStart: Timestamp
   updatedAt: Timestamp!
 }
 
@@ -1714,12 +1785,18 @@ input UpdatePhoneNumberInput {
 input UpdatePlanInput {
   active: Boolean
   createdAt: Timestamp
+  description: String
   features: JSON
   id: String
   interval: String
+  limits: JSON
   name: String
   price: Float
+  stripePriceId: String
+  stripeProductId: String
   subscriptionsIds: [String!]
+  trialPeriodDays: Int
+  updatedAt: Timestamp
 }
 
 input UpdateRoleInput {
@@ -1765,6 +1842,9 @@ input UpdateStoredFileInput {
 }
 
 input UpdateSubscriptionInput {
+  cancelAt: Timestamp
+  cancelAtPeriodEnd: Boolean
+  canceledAt: Timestamp
   createdAt: Timestamp
   id: String
   organizationId: String
@@ -1774,6 +1854,8 @@ input UpdateSubscriptionInput {
   stripeCustomerId: String
   stripePriceId: String
   stripeSubscriptionId: String
+  trialEnd: Timestamp
+  trialStart: Timestamp
   updatedAt: Timestamp
 }
 

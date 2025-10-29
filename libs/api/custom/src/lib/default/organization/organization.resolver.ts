@@ -14,10 +14,12 @@ import {
   RemoveOrganizationMemberInput,
   UpdateMemberRoleInput,
   CreateInvitationInput,
+  ResendInvitationInput,
   AcceptInvitationInput,
   RejectInvitationInput,
   SwitchOrganizationInput,
-  TransferOrganizationOwnershipInput
+  TransferOrganizationOwnershipInput,
+  InvitationDetails
 } from './dto'
 
 @Resolver(() => Organization)
@@ -100,6 +102,15 @@ export class OrganizationResolver extends GeneratedOrganizationResolver {
     return this.customService.createOrganizationInvitation(user.id, input)
   }
 
+  @Mutation(() => Boolean)
+  @UseGuards(GqlAuthGuard)
+  async resendOrganizationInvitation(
+    @CtxUser() user: User,
+    @Args('input') input: ResendInvitationInput
+  ): Promise<boolean> {
+    return this.customService.resendOrganizationInvitation(user.id, input)
+  }
+
   @Mutation(() => Organization)
   @UseGuards(GqlAuthGuard)
   async acceptOrganizationInvitation(
@@ -173,6 +184,13 @@ export class OrganizationResolver extends GeneratedOrganizationResolver {
     @Args('organizationId') organizationId: string
   ) {
     return this.customService.getOrganizationRoles(user.id, organizationId)
+  }
+
+  // Public queries (no authentication required)
+
+  @Query(() => InvitationDetails)
+  async getInvitationDetails(@Args('token') token: string): Promise<InvitationDetails> {
+    return this.customService.getInvitationDetails(token)
   }
 
   // Field resolvers

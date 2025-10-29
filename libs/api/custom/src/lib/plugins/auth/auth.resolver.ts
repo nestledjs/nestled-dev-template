@@ -16,7 +16,7 @@ import { GraphQLResolveInfo } from 'graphql/type'
 import { CtxUser, GqlAuthGuard, NestContextType } from '@nestled-template/api/utils'
 import { UserToken } from './models'
 import { User } from '@nestled-template/api/core/models'
-import { ChangeEmailInput, ChangePasswordInput, Disable2FAInput, EmulateUserInput, Enable2FAOutput, ForgotPasswordInput, LoginInput, RegisterInput, ResetPasswordInput, Setup2FAOutput, VerifyEmailInput, Verify2FAInput, OAuthProviderInfo, LinkOAuthInput, UnlinkOAuthInput, OAuthProvider, UserSessionOutput, ExportUserDataOutput, TransferOwnershipInput } from './dto'
+import { ChangeEmailInput, ChangePasswordInput, Disable2FAInput, EmulateUserInput, Enable2FAOutput, ForgotPasswordInput, LoginInput, RegisterInput, RegisterWithInvitationInput, ResetPasswordInput, Setup2FAOutput, VerifyEmailInput, Verify2FAInput, OAuthProviderInfo, LinkOAuthInput, UnlinkOAuthInput, OAuthProvider, UserSessionOutput, ExportUserDataOutput, TransferOwnershipInput } from './dto'
 import { ConfigService } from '@nestjs/config'
 
 
@@ -122,6 +122,19 @@ export class AuthResolver {
     const userToken = await this.service.register(input, sessionInfo)
     if (!userToken?.token) {
       throw new Error('Unable to register')
+    }
+    this.service.setCookie(context.res, userToken.token)
+    return userToken
+  }
+
+  @Mutation(() => UserToken, { nullable: true })
+  async registerWithInvitation(@Context() context: NestContextType, @Args('input') input: RegisterWithInvitationInput) {
+    // Extract session info from request
+    const sessionInfo = this.sessionService.extractSessionInfo(context.req)
+
+    const userToken = await this.service.registerWithInvitation(input, sessionInfo)
+    if (!userToken?.token) {
+      throw new Error('Unable to register with invitation')
     }
     this.service.setCookie(context.res, userToken.token)
     return userToken

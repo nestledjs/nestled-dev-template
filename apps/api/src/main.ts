@@ -2,6 +2,9 @@ import { Logger } from '@nestjs/common'
 import { NestFactory } from '@nestjs/core'
 import { ConfigService } from '@nestled-template/api/config'
 import cookieParser from 'cookie-parser'
+import { graphqlUploadExpress } from 'graphql-upload-minimal'
+import * as express from 'express'
+import * as path from 'path'
 
 import { AppModule } from './app.module'
 
@@ -46,6 +49,14 @@ async function bootstrap() {
     },
   })
   app.use(cookieParser(configService.cookie.secret || 'secret'))
+
+  // Serve uploaded files from local storage
+  const uploadsPath = configService.config.get<string>('LOCAL_STORAGE_PATH') || './uploads'
+  app.use('/uploads', express.static(path.resolve(uploadsPath)))
+  Logger.log(`📁 Serving static files from: ${path.resolve(uploadsPath)}`)
+
+  // Configure graphql-upload middleware to handle multipart requests
+  app.use('/graphql', graphqlUploadExpress({ maxFileSize: 10000000, maxFiles: 10 }))
 
   await app.listen(port, host, () => {
     Logger.log(`Listening at http://${host}:${port}/${prefix}`)
