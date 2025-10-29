@@ -8,6 +8,7 @@ import { AuthService } from './auth.service'
 import { SessionService } from './session.service'
 import { JwtStrategy } from './strategies/jwt.strategy'
 import { AuthResolver } from './auth.resolver'
+import { UserExtensionResolver } from './user-extension.resolver'
 import { OAuthService } from './oauth.service'
 import { OAuthController } from './oauth.controller'
 import { EmailIntegrationModule } from '@nestled-template/api/integrations'
@@ -28,7 +29,7 @@ import { SecurityEventsModule } from '../security'
     }),
   ],
   exports: [AuthService, OAuthService, SessionService],
-  providers: [AuthService, SessionService, OAuthService, AuthResolver, JwtStrategy],
+  providers: [AuthService, SessionService, OAuthService, AuthResolver, UserExtensionResolver, JwtStrategy],
   controllers: [OAuthController],
 })
 export class AuthModule {}

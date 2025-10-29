@@ -71,6 +71,31 @@ export enum AddressType {
   Work = 'WORK',
 }
 
+export type AdminUserFiltersInput = {
+  accountLocked?: InputMaybe<Scalars['Boolean']['input']>
+  emailVerified?: InputMaybe<Scalars['Boolean']['input']>
+  isSuperAdmin?: InputMaybe<Scalars['Boolean']['input']>
+  lastLoginAfter?: InputMaybe<Scalars['Timestamp']['input']>
+  lastLoginBefore?: InputMaybe<Scalars['Timestamp']['input']>
+  organizationId?: InputMaybe<Scalars['String']['input']>
+  registeredAfter?: InputMaybe<Scalars['Timestamp']['input']>
+  registeredBefore?: InputMaybe<Scalars['Timestamp']['input']>
+  search?: InputMaybe<Scalars['String']['input']>
+  skip?: InputMaybe<Scalars['Float']['input']>
+  sortBy?: InputMaybe<Scalars['String']['input']>
+  sortOrder?: InputMaybe<Scalars['String']['input']>
+  take?: InputMaybe<Scalars['Float']['input']>
+  twoFactorEnabled?: InputMaybe<Scalars['Boolean']['input']>
+}
+
+export type AdminUsersResponse = {
+  __typename?: 'AdminUsersResponse'
+  skip: Scalars['Int']['output']
+  take: Scalars['Int']['output']
+  total: Scalars['Int']['output']
+  users: Array<User>
+}
+
 export type ApiToken = {
   __typename?: 'ApiToken'
   createdAt: Scalars['Timestamp']['output']
@@ -1824,6 +1849,8 @@ export type Query = {
   address?: Maybe<Address>
   addresses?: Maybe<Array<Address>>
   addressesCount?: Maybe<CorePaging>
+  adminUserDetails: User
+  adminUsers: AdminUsersResponse
   apiToken?: Maybe<ApiToken>
   apiTokens?: Maybe<Array<ApiToken>>
   apiTokensCount?: Maybe<CorePaging>
@@ -1926,6 +1953,14 @@ export type QueryAddressesArgs = {
 
 export type QueryAddressesCountArgs = {
   input?: InputMaybe<ListAddressInput>
+}
+
+export type QueryAdminUserDetailsArgs = {
+  userId: Scalars['String']['input']
+}
+
+export type QueryAdminUsersArgs = {
+  filters?: InputMaybe<AdminUserFiltersInput>
 }
 
 export type QueryApiTokenArgs = {
@@ -2833,6 +2868,7 @@ export type User = {
   images?: Maybe<Array<StoredFile>>
   invitesSent?: Maybe<Array<Invite>>
   isActive: Scalars['Boolean']['output']
+  isEmulating?: Maybe<Scalars['Boolean']['output']>
   isSuperAdmin: Scalars['Boolean']['output']
   lastFailedLogin?: Maybe<Scalars['Timestamp']['output']>
   lastName?: Maybe<Scalars['String']['output']>
@@ -2842,6 +2878,7 @@ export type User = {
   loginAttempts?: Maybe<Array<LoginAttempt>>
   oAuthAccounts?: Maybe<Array<OAuthAccount>>
   organizations?: Maybe<Array<OrganizationMember>>
+  originalAdminId?: Maybe<Scalars['String']['output']>
   password?: Maybe<Scalars['String']['output']>
   passwordResetExpires?: Maybe<Scalars['Timestamp']['output']>
   passwordResetToken?: Maybe<Scalars['String']['output']>
@@ -6753,6 +6790,109 @@ export type AddressPaginationQuery = {
   } | null
 }
 
+export type AdminUserManagementQueryVariables = Exact<{
+  filters?: InputMaybe<AdminUserFiltersInput>
+}>
+
+export type AdminUserManagementQuery = {
+  __typename?: 'Query'
+  adminUsers: {
+    __typename?: 'AdminUsersResponse'
+    total: number
+    skip: number
+    take: number
+    users: Array<{
+      __typename?: 'User'
+      id: string
+      firstName?: string | null
+      lastName?: string | null
+      isSuperAdmin: boolean
+      createdAt: any
+      lastSuccessfulLogin?: any | null
+      twoFactorEnabled: boolean
+      lockedUntil?: any | null
+      emails?: Array<{
+        __typename?: 'Email'
+        email: string
+        verified: boolean
+        primary: boolean
+      }> | null
+      organizations?: Array<{
+        __typename?: 'OrganizationMember'
+        organization?: { __typename?: 'Organization'; id: string; name: string } | null
+        role?: { __typename?: 'Role'; name: string } | null
+      }> | null
+    }>
+  }
+}
+
+export type AdminUserManagementDetailsQueryVariables = Exact<{
+  userId: Scalars['String']['input']
+}>
+
+export type AdminUserManagementDetailsQuery = {
+  __typename?: 'Query'
+  adminUserDetails: {
+    __typename?: 'User'
+    id: string
+    firstName?: string | null
+    lastName?: string | null
+    isSuperAdmin: boolean
+    createdAt: any
+    updatedAt: any
+    lastSuccessfulLogin?: any | null
+    twoFactorEnabled: boolean
+    lockedUntil?: any | null
+    failedLoginCount: number
+    emails?: Array<{
+      __typename?: 'Email'
+      id: string
+      email: string
+      verified: boolean
+      primary: boolean
+    }> | null
+    organizations?: Array<{
+      __typename?: 'OrganizationMember'
+      id: string
+      organization?: {
+        __typename?: 'Organization'
+        id: string
+        name: string
+        createdAt: any
+      } | null
+      role?: {
+        __typename?: 'Role'
+        id: string
+        name: string
+        permissions?: Array<{ __typename?: 'Permission'; action: string; subject: string }> | null
+      } | null
+    }> | null
+    TeamMember?: Array<{
+      __typename?: 'TeamMember'
+      id: string
+      team?: { __typename?: 'Team'; id: string; name: string } | null
+      role?: { __typename?: 'Role'; name: string } | null
+    }> | null
+    activeSessions?: Array<{
+      __typename?: 'UserSession'
+      id: string
+      ipAddress?: string | null
+      deviceInfo?: string | null
+      lastActiveAt: any
+      isValid: boolean
+    }> | null
+    AuditLog?: Array<{
+      __typename?: 'AuditLog'
+      id: string
+      action: string
+      entityType: string
+      entityId: string
+      changes?: any | null
+      createdAt: any
+    }> | null
+  }
+}
+
 export type ApiTokenListFragment = {
   __typename?: 'ApiToken'
   id: string
@@ -7108,6 +7248,8 @@ export type UserTokenDetailsFragment = {
     twoFactorEnabled: boolean
     createdAt: any
     updatedAt: any
+    isEmulating?: boolean | null
+    originalAdminId?: string | null
     emails?: Array<{
       __typename?: 'Email'
       id: string
@@ -7147,6 +7289,8 @@ export type AuthUserDetailsFragment = {
   twoFactorEnabled: boolean
   createdAt: any
   updatedAt: any
+  isEmulating?: boolean | null
+  originalAdminId?: string | null
   emails?: Array<{
     __typename?: 'Email'
     id: string
@@ -7196,6 +7340,8 @@ export type LoginMutation = {
       twoFactorEnabled: boolean
       createdAt: any
       updatedAt: any
+      isEmulating?: boolean | null
+      originalAdminId?: string | null
       emails?: Array<{
         __typename?: 'Email'
         id: string
@@ -7247,6 +7393,8 @@ export type RegisterMutation = {
       twoFactorEnabled: boolean
       createdAt: any
       updatedAt: any
+      isEmulating?: boolean | null
+      originalAdminId?: string | null
       emails?: Array<{
         __typename?: 'Email'
         id: string
@@ -7298,6 +7446,8 @@ export type RegisterWithInvitationMutation = {
       twoFactorEnabled: boolean
       createdAt: any
       updatedAt: any
+      isEmulating?: boolean | null
+      originalAdminId?: string | null
       emails?: Array<{
         __typename?: 'Email'
         id: string
@@ -7354,6 +7504,8 @@ export type ResetPasswordMutation = {
     twoFactorEnabled: boolean
     createdAt: any
     updatedAt: any
+    isEmulating?: boolean | null
+    originalAdminId?: string | null
     emails?: Array<{
       __typename?: 'Email'
       id: string
@@ -7399,6 +7551,8 @@ export type VerifyEmailMutation = {
     twoFactorEnabled: boolean
     createdAt: any
     updatedAt: any
+    isEmulating?: boolean | null
+    originalAdminId?: string | null
     emails?: Array<{
       __typename?: 'Email'
       id: string
@@ -7458,6 +7612,59 @@ export type EmulateUserMutation = {
       twoFactorEnabled: boolean
       createdAt: any
       updatedAt: any
+      isEmulating?: boolean | null
+      originalAdminId?: string | null
+      emails?: Array<{
+        __typename?: 'Email'
+        id: string
+        email: string
+        primary: boolean
+        verified: boolean
+      }> | null
+      phoneNumbers?: Array<{
+        __typename?: 'PhoneNumber'
+        id: string
+        phone: string
+        primary: boolean
+      }> | null
+      images?: Array<{
+        __typename?: 'StoredFile'
+        id: string
+        url: string
+        publicUrl?: string | null
+        filename: string
+        mimeType: string
+        metadata?: any | null
+        folder?: string | null
+        createdAt: any
+      }> | null
+    } | null
+  } | null
+}
+
+export type EndEmulationMutationVariables = Exact<{ [key: string]: never }>
+
+export type EndEmulationMutation = {
+  __typename?: 'Mutation'
+  endEmulation?: {
+    __typename?: 'UserToken'
+    token?: string | null
+    requires2FA?: boolean | null
+    tempToken?: string | null
+    user?: {
+      __typename?: 'User'
+      id: string
+      firstName?: string | null
+      lastName?: string | null
+      displayName?: string | null
+      bio?: string | null
+      isSuperAdmin: boolean
+      emailValidated: boolean
+      twoFactorEnabled: boolean
+      createdAt: any
+      updatedAt: any
+      isEmulating?: boolean | null
+      originalAdminId?: string | null
       emails?: Array<{
         __typename?: 'Email'
         id: string
@@ -7510,6 +7717,8 @@ export type VerifyEmailChangeMutation = {
     twoFactorEnabled: boolean
     createdAt: any
     updatedAt: any
+    isEmulating?: boolean | null
+    originalAdminId?: string | null
     emails?: Array<{
       __typename?: 'Email'
       id: string
@@ -7584,6 +7793,8 @@ export type MeQuery = {
     twoFactorEnabled: boolean
     createdAt: any
     updatedAt: any
+    isEmulating?: boolean | null
+    originalAdminId?: string | null
     emails?: Array<{
       __typename?: 'Email'
       id: string
@@ -7704,6 +7915,8 @@ export type Complete2FaLoginMutation = {
       twoFactorEnabled: boolean
       createdAt: any
       updatedAt: any
+      isEmulating?: boolean | null
+      originalAdminId?: string | null
       emails?: Array<{
         __typename?: 'Email'
         id: string
@@ -9512,10 +9725,15 @@ export type PlanListFragment = {
   id: string
   createdAt: any
   name: string
+  description?: string | null
   price: any
   interval: string
   features?: any | null
+  limits?: any | null
   active: boolean
+  trialPeriodDays?: number | null
+  stripeProductId?: string | null
+  stripePriceId?: string | null
 }
 
 export type PlanDetailsFragment = {
@@ -9523,10 +9741,15 @@ export type PlanDetailsFragment = {
   id: string
   createdAt: any
   name: string
+  description?: string | null
   price: any
   interval: string
   features?: any | null
+  limits?: any | null
   active: boolean
+  trialPeriodDays?: number | null
+  stripeProductId?: string | null
+  stripePriceId?: string | null
 }
 
 export type CreatePlanMutationVariables = Exact<{
@@ -9540,10 +9763,15 @@ export type CreatePlanMutation = {
     id: string
     createdAt: any
     name: string
+    description?: string | null
     price: any
     interval: string
     features?: any | null
+    limits?: any | null
     active: boolean
+    trialPeriodDays?: number | null
+    stripeProductId?: string | null
+    stripePriceId?: string | null
   } | null
 }
 
@@ -9568,10 +9796,15 @@ export type UpdatePlanMutation = {
     id: string
     createdAt: any
     name: string
+    description?: string | null
     price: any
     interval: string
     features?: any | null
+    limits?: any | null
     active: boolean
+    trialPeriodDays?: number | null
+    stripeProductId?: string | null
+    stripePriceId?: string | null
   } | null
 }
 
@@ -9586,10 +9819,15 @@ export type PlanQuery = {
     id: string
     createdAt: any
     name: string
+    description?: string | null
     price: any
     interval: string
     features?: any | null
+    limits?: any | null
     active: boolean
+    trialPeriodDays?: number | null
+    stripeProductId?: string | null
+    stripePriceId?: string | null
   } | null
 }
 
@@ -9604,10 +9842,15 @@ export type PlansQuery = {
     id: string
     createdAt: any
     name: string
+    description?: string | null
     price: any
     interval: string
     features?: any | null
+    limits?: any | null
     active: boolean
+    trialPeriodDays?: number | null
+    stripeProductId?: string | null
+    stripePriceId?: string | null
   }> | null
   counters?: {
     __typename?: 'CorePaging'
@@ -9641,6 +9884,27 @@ export type PlanPaginationQuery = {
     hasNext?: boolean | null
     hasPrev?: boolean | null
   } | null
+}
+
+export type ActivePlansQueryVariables = Exact<{ [key: string]: never }>
+
+export type ActivePlansQuery = {
+  __typename?: 'Query'
+  plans?: Array<{
+    __typename?: 'Plan'
+    id: string
+    createdAt: any
+    name: string
+    description?: string | null
+    price: any
+    interval: string
+    features?: any | null
+    limits?: any | null
+    active: boolean
+    trialPeriodDays?: number | null
+    stripeProductId?: string | null
+    stripePriceId?: string | null
+  }> | null
 }
 
 export type RoleListFragment = {
@@ -10206,7 +10470,29 @@ export type SubscriptionListFragment = {
   id: string
   createdAt: any
   updatedAt: any
+  organizationId: string
+  planId: string
+  stripeCustomerId?: string | null
+  stripeSubscriptionId?: string | null
+  stripePriceId?: string | null
   stripeCurrentPeriodEnd?: any | null
+  trialStart?: any | null
+  trialEnd?: any | null
+  cancelAt?: any | null
+  canceledAt?: any | null
+  cancelAtPeriodEnd: boolean
+  status: SubscriptionStatus
+  plan?: {
+    __typename?: 'Plan'
+    id: string
+    name: string
+    price: any
+    interval: string
+    features?: any | null
+    limits?: any | null
+    active: boolean
+    trialPeriodDays?: number | null
+  } | null
 }
 
 export type SubscriptionDetailsFragment = {
@@ -10214,7 +10500,30 @@ export type SubscriptionDetailsFragment = {
   id: string
   createdAt: any
   updatedAt: any
+  organizationId: string
+  planId: string
+  stripeCustomerId?: string | null
+  stripeSubscriptionId?: string | null
+  stripePriceId?: string | null
   stripeCurrentPeriodEnd?: any | null
+  trialStart?: any | null
+  trialEnd?: any | null
+  cancelAt?: any | null
+  canceledAt?: any | null
+  cancelAtPeriodEnd: boolean
+  status: SubscriptionStatus
+  organization?: { __typename?: 'Organization'; id: string; name: string } | null
+  plan?: {
+    __typename?: 'Plan'
+    id: string
+    name: string
+    price: any
+    interval: string
+    features?: any | null
+    limits?: any | null
+    active: boolean
+    trialPeriodDays?: number | null
+  } | null
 }
 
 export type CreateSubscriptionMutationVariables = Exact<{
@@ -10228,7 +10537,30 @@ export type CreateSubscriptionMutation = {
     id: string
     createdAt: any
     updatedAt: any
+    organizationId: string
+    planId: string
+    stripeCustomerId?: string | null
+    stripeSubscriptionId?: string | null
+    stripePriceId?: string | null
     stripeCurrentPeriodEnd?: any | null
+    trialStart?: any | null
+    trialEnd?: any | null
+    cancelAt?: any | null
+    canceledAt?: any | null
+    cancelAtPeriodEnd: boolean
+    status: SubscriptionStatus
+    organization?: { __typename?: 'Organization'; id: string; name: string } | null
+    plan?: {
+      __typename?: 'Plan'
+      id: string
+      name: string
+      price: any
+      interval: string
+      features?: any | null
+      limits?: any | null
+      active: boolean
+      trialPeriodDays?: number | null
+    } | null
   } | null
 }
 
@@ -10253,7 +10585,30 @@ export type UpdateSubscriptionMutation = {
     id: string
     createdAt: any
     updatedAt: any
+    organizationId: string
+    planId: string
+    stripeCustomerId?: string | null
+    stripeSubscriptionId?: string | null
+    stripePriceId?: string | null
     stripeCurrentPeriodEnd?: any | null
+    trialStart?: any | null
+    trialEnd?: any | null
+    cancelAt?: any | null
+    canceledAt?: any | null
+    cancelAtPeriodEnd: boolean
+    status: SubscriptionStatus
+    organization?: { __typename?: 'Organization'; id: string; name: string } | null
+    plan?: {
+      __typename?: 'Plan'
+      id: string
+      name: string
+      price: any
+      interval: string
+      features?: any | null
+      limits?: any | null
+      active: boolean
+      trialPeriodDays?: number | null
+    } | null
   } | null
 }
 
@@ -10268,7 +10623,30 @@ export type SubscriptionQuery = {
     id: string
     createdAt: any
     updatedAt: any
+    organizationId: string
+    planId: string
+    stripeCustomerId?: string | null
+    stripeSubscriptionId?: string | null
+    stripePriceId?: string | null
     stripeCurrentPeriodEnd?: any | null
+    trialStart?: any | null
+    trialEnd?: any | null
+    cancelAt?: any | null
+    canceledAt?: any | null
+    cancelAtPeriodEnd: boolean
+    status: SubscriptionStatus
+    organization?: { __typename?: 'Organization'; id: string; name: string } | null
+    plan?: {
+      __typename?: 'Plan'
+      id: string
+      name: string
+      price: any
+      interval: string
+      features?: any | null
+      limits?: any | null
+      active: boolean
+      trialPeriodDays?: number | null
+    } | null
   } | null
 }
 
@@ -10283,7 +10661,29 @@ export type SubscriptionsQuery = {
     id: string
     createdAt: any
     updatedAt: any
+    organizationId: string
+    planId: string
+    stripeCustomerId?: string | null
+    stripeSubscriptionId?: string | null
+    stripePriceId?: string | null
     stripeCurrentPeriodEnd?: any | null
+    trialStart?: any | null
+    trialEnd?: any | null
+    cancelAt?: any | null
+    canceledAt?: any | null
+    cancelAtPeriodEnd: boolean
+    status: SubscriptionStatus
+    plan?: {
+      __typename?: 'Plan'
+      id: string
+      name: string
+      price: any
+      interval: string
+      features?: any | null
+      limits?: any | null
+      active: boolean
+      trialPeriodDays?: number | null
+    } | null
   }> | null
   counters?: {
     __typename?: 'CorePaging'
@@ -10317,6 +10717,91 @@ export type SubscriptionPaginationQuery = {
     hasNext?: boolean | null
     hasPrev?: boolean | null
   } | null
+}
+
+export type CurrentSubscriptionQueryVariables = Exact<{ [key: string]: never }>
+
+export type CurrentSubscriptionQuery = {
+  __typename?: 'Query'
+  currentSubscription?: {
+    __typename?: 'Subscription'
+    id: string
+    createdAt: any
+    updatedAt: any
+    organizationId: string
+    planId: string
+    stripeCustomerId?: string | null
+    stripeSubscriptionId?: string | null
+    stripePriceId?: string | null
+    stripeCurrentPeriodEnd?: any | null
+    trialStart?: any | null
+    trialEnd?: any | null
+    cancelAt?: any | null
+    canceledAt?: any | null
+    cancelAtPeriodEnd: boolean
+    status: SubscriptionStatus
+    organization?: { __typename?: 'Organization'; id: string; name: string } | null
+    plan?: {
+      __typename?: 'Plan'
+      id: string
+      name: string
+      price: any
+      interval: string
+      features?: any | null
+      limits?: any | null
+      active: boolean
+      trialPeriodDays?: number | null
+    } | null
+  } | null
+}
+
+export type CreateCheckoutSessionMutationVariables = Exact<{
+  priceId: Scalars['String']['input']
+}>
+
+export type CreateCheckoutSessionMutation = {
+  __typename?: 'Mutation'
+  createCheckoutSession: string
+}
+
+export type CreatePortalSessionMutationVariables = Exact<{ [key: string]: never }>
+
+export type CreatePortalSessionMutation = { __typename?: 'Mutation'; createPortalSession: string }
+
+export type CancelSubscriptionMutationVariables = Exact<{ [key: string]: never }>
+
+export type CancelSubscriptionMutation = {
+  __typename?: 'Mutation'
+  cancelSubscription: {
+    __typename?: 'Subscription'
+    id: string
+    createdAt: any
+    updatedAt: any
+    organizationId: string
+    planId: string
+    stripeCustomerId?: string | null
+    stripeSubscriptionId?: string | null
+    stripePriceId?: string | null
+    stripeCurrentPeriodEnd?: any | null
+    trialStart?: any | null
+    trialEnd?: any | null
+    cancelAt?: any | null
+    canceledAt?: any | null
+    cancelAtPeriodEnd: boolean
+    status: SubscriptionStatus
+    organization?: { __typename?: 'Organization'; id: string; name: string } | null
+    plan?: {
+      __typename?: 'Plan'
+      id: string
+      name: string
+      price: any
+      interval: string
+      features?: any | null
+      limits?: any | null
+      active: boolean
+      trialPeriodDays?: number | null
+    } | null
+  }
 }
 
 export type TeamMemberListFragment = {
@@ -11638,6 +12123,8 @@ export const AuthUserDetailsFragmentDoc = gql`
     twoFactorEnabled
     createdAt
     updatedAt
+    isEmulating
+    originalAdminId
     emails {
       id
       email
@@ -11917,10 +12404,15 @@ export const PlanListFragmentDoc = gql`
     id
     createdAt
     name
+    description
     price
     interval
     features
+    limits
     active
+    trialPeriodDays
+    stripeProductId
+    stripePriceId
   }
 `
 export const PlanDetailsFragmentDoc = gql`
@@ -11987,12 +12479,37 @@ export const SubscriptionListFragmentDoc = gql`
     id
     createdAt
     updatedAt
+    organizationId
+    planId
+    plan {
+      id
+      name
+      price
+      interval
+      features
+      limits
+      active
+      trialPeriodDays
+    }
+    stripeCustomerId
+    stripeSubscriptionId
+    stripePriceId
     stripeCurrentPeriodEnd
+    trialStart
+    trialEnd
+    cancelAt
+    canceledAt
+    cancelAtPeriodEnd
+    status
   }
 `
 export const SubscriptionDetailsFragmentDoc = gql`
   fragment SubscriptionDetails on Subscription {
     ...SubscriptionList
+    organization {
+      id
+      name
+    }
   }
   ${SubscriptionListFragmentDoc}
 `
@@ -20588,6 +21105,236 @@ export type AddressPaginationQueryResult = Apollo.QueryResult<
   AddressPaginationQuery,
   AddressPaginationQueryVariables
 >
+export const AdminUserManagementDocument = gql`
+  query AdminUserManagement($filters: AdminUserFiltersInput) {
+    adminUsers(filters: $filters) {
+      users {
+        id
+        firstName
+        lastName
+        isSuperAdmin
+        createdAt
+        lastSuccessfulLogin
+        twoFactorEnabled
+        lockedUntil
+        emails {
+          email
+          verified
+          primary
+        }
+        organizations {
+          organization {
+            id
+            name
+          }
+          role {
+            name
+          }
+        }
+      }
+      total
+      skip
+      take
+    }
+  }
+`
+
+/**
+ * __useAdminUserManagementQuery__
+ *
+ * To run a query within a React component, call `useAdminUserManagementQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAdminUserManagementQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAdminUserManagementQuery({
+ *   variables: {
+ *      filters: // value for 'filters'
+ *   },
+ * });
+ */
+export function useAdminUserManagementQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    AdminUserManagementQuery,
+    AdminUserManagementQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<AdminUserManagementQuery, AdminUserManagementQueryVariables>(
+    AdminUserManagementDocument,
+    options,
+  )
+}
+export function useAdminUserManagementLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    AdminUserManagementQuery,
+    AdminUserManagementQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<AdminUserManagementQuery, AdminUserManagementQueryVariables>(
+    AdminUserManagementDocument,
+    options,
+  )
+}
+export function useAdminUserManagementSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<AdminUserManagementQuery, AdminUserManagementQueryVariables>,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<AdminUserManagementQuery, AdminUserManagementQueryVariables>(
+    AdminUserManagementDocument,
+    options,
+  )
+}
+export type AdminUserManagementQueryHookResult = ReturnType<typeof useAdminUserManagementQuery>
+export type AdminUserManagementLazyQueryHookResult = ReturnType<
+  typeof useAdminUserManagementLazyQuery
+>
+export type AdminUserManagementSuspenseQueryHookResult = ReturnType<
+  typeof useAdminUserManagementSuspenseQuery
+>
+export type AdminUserManagementQueryResult = Apollo.QueryResult<
+  AdminUserManagementQuery,
+  AdminUserManagementQueryVariables
+>
+export const AdminUserManagementDetailsDocument = gql`
+  query AdminUserManagementDetails($userId: String!) {
+    adminUserDetails(userId: $userId) {
+      id
+      firstName
+      lastName
+      isSuperAdmin
+      createdAt
+      updatedAt
+      lastSuccessfulLogin
+      twoFactorEnabled
+      lockedUntil
+      failedLoginCount
+      emails {
+        id
+        email
+        verified
+        primary
+      }
+      organizations {
+        id
+        organization {
+          id
+          name
+          createdAt
+        }
+        role {
+          id
+          name
+          permissions {
+            action
+            subject
+          }
+        }
+      }
+      TeamMember {
+        id
+        team {
+          id
+          name
+        }
+        role {
+          name
+        }
+      }
+      activeSessions {
+        id
+        ipAddress
+        deviceInfo
+        lastActiveAt
+        isValid
+      }
+      AuditLog {
+        id
+        action
+        entityType
+        entityId
+        changes
+        createdAt
+      }
+    }
+  }
+`
+
+/**
+ * __useAdminUserManagementDetailsQuery__
+ *
+ * To run a query within a React component, call `useAdminUserManagementDetailsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAdminUserManagementDetailsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAdminUserManagementDetailsQuery({
+ *   variables: {
+ *      userId: // value for 'userId'
+ *   },
+ * });
+ */
+export function useAdminUserManagementDetailsQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    AdminUserManagementDetailsQuery,
+    AdminUserManagementDetailsQueryVariables
+  > &
+    ({ variables: AdminUserManagementDetailsQueryVariables; skip?: boolean } | { skip: boolean }),
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<AdminUserManagementDetailsQuery, AdminUserManagementDetailsQueryVariables>(
+    AdminUserManagementDetailsDocument,
+    options,
+  )
+}
+export function useAdminUserManagementDetailsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    AdminUserManagementDetailsQuery,
+    AdminUserManagementDetailsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<
+    AdminUserManagementDetailsQuery,
+    AdminUserManagementDetailsQueryVariables
+  >(AdminUserManagementDetailsDocument, options)
+}
+export function useAdminUserManagementDetailsSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<
+        AdminUserManagementDetailsQuery,
+        AdminUserManagementDetailsQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<
+    AdminUserManagementDetailsQuery,
+    AdminUserManagementDetailsQueryVariables
+  >(AdminUserManagementDetailsDocument, options)
+}
+export type AdminUserManagementDetailsQueryHookResult = ReturnType<
+  typeof useAdminUserManagementDetailsQuery
+>
+export type AdminUserManagementDetailsLazyQueryHookResult = ReturnType<
+  typeof useAdminUserManagementDetailsLazyQuery
+>
+export type AdminUserManagementDetailsSuspenseQueryHookResult = ReturnType<
+  typeof useAdminUserManagementDetailsSuspenseQuery
+>
+export type AdminUserManagementDetailsQueryResult = Apollo.QueryResult<
+  AdminUserManagementDetailsQuery,
+  AdminUserManagementDetailsQueryVariables
+>
 export const GenerateApiTokenDocument = gql`
   mutation GenerateApiToken($input: GenerateApiTokenInput!) {
     generateApiToken(input: $input) {
@@ -21820,6 +22567,50 @@ export type EmulateUserMutationResult = Apollo.MutationResult<EmulateUserMutatio
 export type EmulateUserMutationOptions = Apollo.BaseMutationOptions<
   EmulateUserMutation,
   EmulateUserMutationVariables
+>
+export const EndEmulationDocument = gql`
+  mutation EndEmulation {
+    endEmulation {
+      ...UserTokenDetails
+    }
+  }
+  ${UserTokenDetailsFragmentDoc}
+`
+export type EndEmulationMutationFn = Apollo.MutationFunction<
+  EndEmulationMutation,
+  EndEmulationMutationVariables
+>
+
+/**
+ * __useEndEmulationMutation__
+ *
+ * To run a mutation, you first call `useEndEmulationMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useEndEmulationMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [endEmulationMutation, { data, loading, error }] = useEndEmulationMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useEndEmulationMutation(
+  baseOptions?: Apollo.MutationHookOptions<EndEmulationMutation, EndEmulationMutationVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<EndEmulationMutation, EndEmulationMutationVariables>(
+    EndEmulationDocument,
+    options,
+  )
+}
+export type EndEmulationMutationHookResult = ReturnType<typeof useEndEmulationMutation>
+export type EndEmulationMutationResult = Apollo.MutationResult<EndEmulationMutation>
+export type EndEmulationMutationOptions = Apollo.BaseMutationOptions<
+  EndEmulationMutation,
+  EndEmulationMutationVariables
 >
 export const ChangeEmailDocument = gql`
   mutation ChangeEmail($input: ChangeEmailInput!) {
@@ -26853,6 +27644,61 @@ export type PlanPaginationQueryResult = Apollo.QueryResult<
   PlanPaginationQuery,
   PlanPaginationQueryVariables
 >
+export const ActivePlansDocument = gql`
+  query ActivePlans {
+    plans(input: { active: true }) {
+      ...PlanList
+    }
+  }
+  ${PlanListFragmentDoc}
+`
+
+/**
+ * __useActivePlansQuery__
+ *
+ * To run a query within a React component, call `useActivePlansQuery` and pass it any options that fit your needs.
+ * When your component renders, `useActivePlansQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useActivePlansQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useActivePlansQuery(
+  baseOptions?: Apollo.QueryHookOptions<ActivePlansQuery, ActivePlansQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<ActivePlansQuery, ActivePlansQueryVariables>(ActivePlansDocument, options)
+}
+export function useActivePlansLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<ActivePlansQuery, ActivePlansQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<ActivePlansQuery, ActivePlansQueryVariables>(
+    ActivePlansDocument,
+    options,
+  )
+}
+export function useActivePlansSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<ActivePlansQuery, ActivePlansQueryVariables>,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<ActivePlansQuery, ActivePlansQueryVariables>(
+    ActivePlansDocument,
+    options,
+  )
+}
+export type ActivePlansQueryHookResult = ReturnType<typeof useActivePlansQuery>
+export type ActivePlansLazyQueryHookResult = ReturnType<typeof useActivePlansLazyQuery>
+export type ActivePlansSuspenseQueryHookResult = ReturnType<typeof useActivePlansSuspenseQuery>
+export type ActivePlansQueryResult = Apollo.QueryResult<ActivePlansQuery, ActivePlansQueryVariables>
 export const CreateRoleDocument = gql`
   mutation createRole($input: CreateRoleInput!) {
     createRole(input: $input) {
@@ -28682,6 +29528,218 @@ export type SubscriptionPaginationSuspenseQueryHookResult = ReturnType<
 export type SubscriptionPaginationQueryResult = Apollo.QueryResult<
   SubscriptionPaginationQuery,
   SubscriptionPaginationQueryVariables
+>
+export const CurrentSubscriptionDocument = gql`
+  query CurrentSubscription {
+    currentSubscription {
+      ...SubscriptionDetails
+    }
+  }
+  ${SubscriptionDetailsFragmentDoc}
+`
+
+/**
+ * __useCurrentSubscriptionQuery__
+ *
+ * To run a query within a React component, call `useCurrentSubscriptionQuery` and pass it any options that fit your needs.
+ * When your component renders, `useCurrentSubscriptionQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useCurrentSubscriptionQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useCurrentSubscriptionQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    CurrentSubscriptionQuery,
+    CurrentSubscriptionQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<CurrentSubscriptionQuery, CurrentSubscriptionQueryVariables>(
+    CurrentSubscriptionDocument,
+    options,
+  )
+}
+export function useCurrentSubscriptionLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    CurrentSubscriptionQuery,
+    CurrentSubscriptionQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<CurrentSubscriptionQuery, CurrentSubscriptionQueryVariables>(
+    CurrentSubscriptionDocument,
+    options,
+  )
+}
+export function useCurrentSubscriptionSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<CurrentSubscriptionQuery, CurrentSubscriptionQueryVariables>,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<CurrentSubscriptionQuery, CurrentSubscriptionQueryVariables>(
+    CurrentSubscriptionDocument,
+    options,
+  )
+}
+export type CurrentSubscriptionQueryHookResult = ReturnType<typeof useCurrentSubscriptionQuery>
+export type CurrentSubscriptionLazyQueryHookResult = ReturnType<
+  typeof useCurrentSubscriptionLazyQuery
+>
+export type CurrentSubscriptionSuspenseQueryHookResult = ReturnType<
+  typeof useCurrentSubscriptionSuspenseQuery
+>
+export type CurrentSubscriptionQueryResult = Apollo.QueryResult<
+  CurrentSubscriptionQuery,
+  CurrentSubscriptionQueryVariables
+>
+export const CreateCheckoutSessionDocument = gql`
+  mutation CreateCheckoutSession($priceId: String!) {
+    createCheckoutSession(priceId: $priceId)
+  }
+`
+export type CreateCheckoutSessionMutationFn = Apollo.MutationFunction<
+  CreateCheckoutSessionMutation,
+  CreateCheckoutSessionMutationVariables
+>
+
+/**
+ * __useCreateCheckoutSessionMutation__
+ *
+ * To run a mutation, you first call `useCreateCheckoutSessionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateCheckoutSessionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createCheckoutSessionMutation, { data, loading, error }] = useCreateCheckoutSessionMutation({
+ *   variables: {
+ *      priceId: // value for 'priceId'
+ *   },
+ * });
+ */
+export function useCreateCheckoutSessionMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    CreateCheckoutSessionMutation,
+    CreateCheckoutSessionMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<CreateCheckoutSessionMutation, CreateCheckoutSessionMutationVariables>(
+    CreateCheckoutSessionDocument,
+    options,
+  )
+}
+export type CreateCheckoutSessionMutationHookResult = ReturnType<
+  typeof useCreateCheckoutSessionMutation
+>
+export type CreateCheckoutSessionMutationResult =
+  Apollo.MutationResult<CreateCheckoutSessionMutation>
+export type CreateCheckoutSessionMutationOptions = Apollo.BaseMutationOptions<
+  CreateCheckoutSessionMutation,
+  CreateCheckoutSessionMutationVariables
+>
+export const CreatePortalSessionDocument = gql`
+  mutation CreatePortalSession {
+    createPortalSession
+  }
+`
+export type CreatePortalSessionMutationFn = Apollo.MutationFunction<
+  CreatePortalSessionMutation,
+  CreatePortalSessionMutationVariables
+>
+
+/**
+ * __useCreatePortalSessionMutation__
+ *
+ * To run a mutation, you first call `useCreatePortalSessionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreatePortalSessionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createPortalSessionMutation, { data, loading, error }] = useCreatePortalSessionMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useCreatePortalSessionMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    CreatePortalSessionMutation,
+    CreatePortalSessionMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<CreatePortalSessionMutation, CreatePortalSessionMutationVariables>(
+    CreatePortalSessionDocument,
+    options,
+  )
+}
+export type CreatePortalSessionMutationHookResult = ReturnType<
+  typeof useCreatePortalSessionMutation
+>
+export type CreatePortalSessionMutationResult = Apollo.MutationResult<CreatePortalSessionMutation>
+export type CreatePortalSessionMutationOptions = Apollo.BaseMutationOptions<
+  CreatePortalSessionMutation,
+  CreatePortalSessionMutationVariables
+>
+export const CancelSubscriptionDocument = gql`
+  mutation CancelSubscription {
+    cancelSubscription {
+      ...SubscriptionDetails
+    }
+  }
+  ${SubscriptionDetailsFragmentDoc}
+`
+export type CancelSubscriptionMutationFn = Apollo.MutationFunction<
+  CancelSubscriptionMutation,
+  CancelSubscriptionMutationVariables
+>
+
+/**
+ * __useCancelSubscriptionMutation__
+ *
+ * To run a mutation, you first call `useCancelSubscriptionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCancelSubscriptionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [cancelSubscriptionMutation, { data, loading, error }] = useCancelSubscriptionMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useCancelSubscriptionMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    CancelSubscriptionMutation,
+    CancelSubscriptionMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<CancelSubscriptionMutation, CancelSubscriptionMutationVariables>(
+    CancelSubscriptionDocument,
+    options,
+  )
+}
+export type CancelSubscriptionMutationHookResult = ReturnType<typeof useCancelSubscriptionMutation>
+export type CancelSubscriptionMutationResult = Apollo.MutationResult<CancelSubscriptionMutation>
+export type CancelSubscriptionMutationOptions = Apollo.BaseMutationOptions<
+  CancelSubscriptionMutation,
+  CancelSubscriptionMutationVariables
 >
 export const CreateTeamMemberDocument = gql`
   mutation createTeamMember($input: CreateTeamMemberInput!) {

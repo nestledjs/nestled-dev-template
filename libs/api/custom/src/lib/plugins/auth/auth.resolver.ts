@@ -13,7 +13,7 @@ import {
 } from '@nestjs/graphql'
 import { Logger, UseGuards } from '@nestjs/common'
 import { GraphQLResolveInfo } from 'graphql/type'
-import { CtxUser, GqlAuthGuard, NestContextType } from '@nestled-template/api/utils'
+import { CtxUser, GqlAuthGuard, GqlAuthAdminGuard, NestContextType } from '@nestled-template/api/utils'
 import { UserToken } from './models'
 import { User } from '@nestled-template/api/core/models'
 import { ChangeEmailInput, ChangePasswordInput, Disable2FAInput, EmulateUserInput, Enable2FAOutput, ForgotPasswordInput, LoginInput, RegisterInput, RegisterWithInvitationInput, ResetPasswordInput, Setup2FAOutput, VerifyEmailInput, Verify2FAInput, OAuthProviderInfo, LinkOAuthInput, UnlinkOAuthInput, OAuthProvider, UserSessionOutput, ExportUserDataOutput, TransferOwnershipInput } from './dto'
@@ -32,7 +32,21 @@ export class AuthResolver {
   @Query(() => User, { nullable: true })
   @UseGuards(GqlAuthGuard)
   async me(@CtxUser() user: User, @Info() info: GraphQLResolveInfo) {
-    return this.service.validateUser(user.id)
+    const validatedUser = await this.service.validateUser(user.id)
+
+    // The user object from @CtxUser() already has emulation fields attached by JwtStrategy
+    // Preserve them in the validated user
+    const userWithEmulation = user as any
+    if (userWithEmulation.isEmulating && userWithEmulation.originalAdminId) {
+      Logger.log(`[ME Query] 🎭 Emulation detected: admin ${userWithEmulation.originalAdminId} emulating user ${user.id}`)
+      return {
+        ...validatedUser,
+        isEmulating: true,
+        originalAdminId: userWithEmulation.originalAdminId,
+      }
+    }
+
+    return validatedUser
   }
 
   @Mutation(() => UserToken, { nullable: true })
@@ -169,7 +183,7 @@ export class AuthResolver {
   }
 
   @Mutation(() => UserToken, { nullable: true })
-  @UseGuards(GqlAuthGuard)
+  @UseGuards(GqlAuthAdminGuard)
   async emulateUser(
     @Context() context: NestContextType,
     @CtxUser() admin: User,
@@ -211,8 +225,16 @@ export class AuthResolver {
   }
 
   @Mutation(() => UserToken, { nullable: true })
-  @UseGuards(GqlAuthGuard)
-  async endEmulation(@Context() context: NestContextType): Promise<UserToken> {
+  @UseGuards(GqlAuthGuard)  // Changed from GqlAuthAdminGuard - we need to check JWT payload instead
+  async endEmulation(@CtxUser() user: User, @Context() context: NestContextType): Promise<UserToken> {
+    // Check if current session is actually an emulation
+    const userWithEmulation = user as any
+    if (!userWithEmulation.isEmulating || !userWithEmulation.originalAdminId) {
+      throw new Error('Not currently emulating a user')
+    }
+
+    Logger.log(`[EndEmulation] Admin ${userWithEmulation.originalAdminId} ending emulation of user ${user.id}`)
+
     // Get token from cookie
     const token = context.req.cookies?.[this.service.getCookieName()]
     if (!token) {

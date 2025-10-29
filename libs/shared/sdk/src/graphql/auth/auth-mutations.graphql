@@ -46,6 +46,12 @@ mutation EmulateUser($input: EmulateUserInput!) {
   }
 }
 
+mutation EndEmulation {
+  endEmulation {
+    ...UserTokenDetails
+  }
+}
+
 mutation ChangeEmail($input: ChangeEmailInput!) {
   changeEmail(input: $input)
 }
