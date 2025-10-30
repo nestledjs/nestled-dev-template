@@ -1,7 +1,7 @@
 import { Args, Field, InputType, Int, ObjectType, Query, Resolver } from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
 import { GqlAuthAdminGuard } from '@nestled-template/api/utils'
-import { SecurityEvent, AuditLog, User, SecurityEventType } from '@nestled-template/api/core/models'
+import { SecurityEvent, AuditLog, User, Organization, SecurityEventType } from '@nestled-template/api/core/models'
 import { AdminService } from './admin.service'
 import { AdminUserFiltersInput, AdminUsersResponse } from './dto'
 
@@ -104,6 +104,33 @@ export class AdminDashboardStats {
   activeSubscriptions!: number
 }
 
+@InputType()
+export class AdminOrganizationFiltersInput {
+  @Field({ nullable: true })
+  search?: string
+
+  @Field(() => Int, { nullable: true })
+  skip?: number
+
+  @Field(() => Int, { nullable: true })
+  take?: number
+}
+
+@ObjectType()
+export class AdminOrganizationsResponse {
+  @Field(() => [Organization])
+  organizations!: Organization[]
+
+  @Field(() => Int)
+  total!: number
+
+  @Field(() => Int)
+  skip!: number
+
+  @Field(() => Int)
+  take!: number
+}
+
 @Resolver(() => User)
 export class AdminResolver {
   constructor(private readonly service: AdminService) {}
@@ -131,6 +158,19 @@ export class AdminResolver {
     @Args('userId', { type: () => String }) userId: string,
   ): Promise<any> {
     return this.service.getUserDetails(userId)
+  }
+
+  /**
+   * Get paginated and filtered list of organizations
+   * Super admin only
+   */
+  @Query(() => AdminOrganizationsResponse)
+  @UseGuards(GqlAuthAdminGuard)
+  async adminOrganizations(
+    @Args('filters', { type: () => AdminOrganizationFiltersInput, nullable: true })
+    filters?: AdminOrganizationFiltersInput,
+  ): Promise<AdminOrganizationsResponse> {
+    return this.service.getOrganizations(filters || {})
   }
 
   /**
