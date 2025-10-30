@@ -85,6 +85,7 @@ export default [
         route('organizations', './routes/admin/organizations/_index.tsx'),
         route('security-events', './routes/admin/security-events/_index.tsx'),
         route('audit-logs', './routes/admin/audit-logs/_index.tsx'),
+        route('settings', './routes/admin/settings/_index.tsx'),
         route('billing', './routes/admin/billing/_index.tsx'),
         route('billing/plans', './routes/admin/billing/plans.tsx'),
         route('billing/subscriptions', './routes/admin/billing/subscriptions.tsx'),
