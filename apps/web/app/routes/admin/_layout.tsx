@@ -1,212 +1,213 @@
-import { Link, Outlet, useMatches } from 'react-router'
+import React from 'react'
+import { Link, Navigate, Outlet, useLocation } from 'react-router'
+import {
+  ChartBarSquareIcon,
+  Cog6ToothIcon,
+  HomeIcon,
+  MegaphoneIcon,
+  ShieldCheckIcon,
+  TableCellsIcon,
+  UsersIcon,
+  BuildingOfficeIcon,
+  DocumentMagnifyingGlassIcon,
+  LifebuoyIcon,
+} from '@heroicons/react/24/outline'
 import { useGlobalCtx } from '@nestled-template/web'
-import { Fragment } from 'react'
-import { Menu, Transition } from '@headlessui/react'
-import { ChartPieIcon, ChevronDownIcon, CogIcon, HomeIcon, UsersIcon } from '@heroicons/react/24/outline'
 import { clsx } from 'clsx'
 
-export async function loader({ request }: { request: Request }) {
-  // Auth is handled in the root loader, which means if we reach this point,
-  // the user is already authenticated. The user data will be available through
-  // the global context via the Apollo Me query.
-
-  // We don't need to check cookies here - just return a simple indicator
-  // that we've reached the admin loader. The component will get user data
-  // from the global context and check admin role there.
-
-  console.log('[Admin Layout] Loader called - user is authenticated')
-
-  return { isAdminRoute: true }
+interface NavItem {
+  name: string
+  href: string
+  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>
+  description: string
 }
 
-function AdminTopNav() {
-  const matches = useMatches()
-  const currentPath = matches.slice(-1)[0].pathname
-
-  const reportsItems = [
-    { name: 'Overview', href: '/admin/reports' },
-    { name: 'Biz Reports', href: '/admin/reports/biz' },
-    { name: 'Power Hours', href: '/admin/reports/power-hours' },
-    { name: 'Referrals', href: '/admin/reports/referrals' },
-    { name: 'Top Users by Power Hours', href: '/admin/reports/top-users-by-power-hours' },
-    { name: 'Top Users by Referrals', href: '/admin/reports/top-users-by-referrals' },
-  ]
-
-  const actionItems = [
-    { name: 'Terminate Member', href: '/admin/terminate-member' },
-    { name: 'Register Payment', href: '/admin/register-payment' },
-  ]
-
-  return (
-    <nav className="bg-white border-b border-gray-200 shadow-sm">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
-          <div className="flex items-center space-x-8">
-            {/* Dashboard Link */}
-            <Link
-              to="/admin"
-              className={clsx(
-                'inline-flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors',
-                currentPath === '/admin'
-                  ? 'text-blue-600 bg-blue-50'
-                  : 'text-gray-700 hover:text-blue-600 hover:bg-gray-50',
-              )}
-            >
-              <HomeIcon className="h-5 w-5 mr-2" />
-              Dashboard
-            </Link>
-
-            {/* Users Link */}
-            <Link
-              to="/admin/users"
-              className={clsx(
-                'inline-flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors',
-                currentPath.startsWith('/admin/users')
-                  ? 'text-blue-600 bg-blue-50'
-                  : 'text-gray-700 hover:text-blue-600 hover:bg-gray-50',
-              )}
-            >
-              <UsersIcon className="h-5 w-5 mr-2" />
-              Users
-            </Link>
-
-            {/* Reports Dropdown */}
-            <Menu as="div" className="relative">
-              <Menu.Button
-                className={clsx(
-                  'inline-flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors',
-                  currentPath.includes('/admin/reports')
-                    ? 'text-blue-600 bg-blue-50'
-                    : 'text-gray-700 hover:text-blue-600 hover:bg-gray-50',
-                )}
-              >
-                <ChartPieIcon className="h-5 w-5 mr-2" />
-                Reports
-                <ChevronDownIcon className="h-4 w-4 ml-1" />
-              </Menu.Button>
-              <Transition
-                as={Fragment}
-                enter="transition ease-out duration-100"
-                enterFrom="transform opacity-0 scale-95"
-                enterTo="transform opacity-100 scale-100"
-                leave="transition ease-in duration-75"
-                leaveFrom="transform opacity-100 scale-100"
-                leaveTo="transform opacity-0 scale-95"
-              >
-                <Menu.Items className="absolute left-0 z-50 mt-2 w-56 origin-top-left rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                  <div className="py-1">
-                    {reportsItems.map(item => (
-                      <Menu.Item key={item.name}>
-                        {({ active }) => (
-                          <Link
-                            to={item.href}
-                            className={clsx(
-                              active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
-                              'block px-4 py-2 text-sm',
-                            )}
-                          >
-                            {item.name}
-                          </Link>
-                        )}
-                      </Menu.Item>
-                    ))}
-                  </div>
-                </Menu.Items>
-              </Transition>
-            </Menu>
-
-            {/* Actions Dropdown */}
-            <Menu as="div" className="relative">
-              <Menu.Button
-                className={clsx(
-                  'inline-flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors',
-                  currentPath.includes('/admin/terminate-member') ||
-                    currentPath.includes('/admin/register-payment')
-                    ? 'text-blue-600 bg-blue-50'
-                    : 'text-gray-700 hover:text-blue-600 hover:bg-gray-50',
-                )}
-              >
-                <CogIcon className="h-5 w-5 mr-2" />
-                Actions
-                <ChevronDownIcon className="h-4 w-4 ml-1" />
-              </Menu.Button>
-              <Transition
-                as={Fragment}
-                enter="transition ease-out duration-100"
-                enterFrom="transform opacity-0 scale-95"
-                enterTo="transform opacity-100 scale-100"
-                leave="transition ease-in duration-75"
-                leaveFrom="transform opacity-100 scale-100"
-                leaveTo="transform opacity-0 scale-95"
-              >
-                <Menu.Items className="absolute left-0 z-50 mt-2 w-48 origin-top-left rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                  <div className="py-1">
-                    {actionItems.map(item => (
-                      <Menu.Item key={item.name}>
-                        {({ active }) => (
-                          <Link
-                            to={item.href}
-                            className={clsx(
-                              active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
-                              'block px-4 py-2 text-sm',
-                            )}
-                          >
-                            {item.name}
-                          </Link>
-                        )}
-                      </Menu.Item>
-                    ))}
-                  </div>
-                </Menu.Items>
-              </Transition>
-            </Menu>
-          </div>
-        </div>
-      </div>
-    </nav>
-  )
+interface NavSection {
+  name: string
+  items: NavItem[]
 }
 
-export default function AdminContentLayout() {
+export default function AdminLayout() {
+  const location = useLocation()
   const { user } = useGlobalCtx()
 
-  // Show loading if no user data yet from Apollo
+  // Show loading if no user data yet
   if (!user) {
-    return null // Or loading component
-  }
-
-  // Check if user has super admin access
-  const hasAccess = user.isSuperAdmin
-
-  console.log('[Admin Layout] Super admin check:', {
-    userId: user.id,
-    isSuperAdmin: user.isSuperAdmin,
-    hasAccess,
-  })
-
-  // Show access denied if user doesn't have super admin access
-  if (!hasAccess) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="max-w-md w-full space-y-8 text-center">
-          <h2 className="text-2xl font-bold text-gray-900">Access Denied</h2>
-          <p className="text-gray-600">Super admin access required.</p>
-          <a href="/members/dashboard" className="text-blue-600 hover:underline">
-            Go to Dashboard
-          </a>
-        </div>
+      <div className="flex-1 flex items-center justify-center bg-gradient-to-b from-zinc-50 to-zinc-100 dark:from-zinc-900 dark:to-zinc-950">
+        <div className="text-zinc-500 dark:text-zinc-400">Loading...</div>
       </div>
     )
   }
 
+  // Redirect non-super admins
+  if (!user.isSuperAdmin) {
+    return <Navigate to="/members/dashboard" replace />
+  }
+
+  const navigationSections: NavSection[] = [
+    {
+      name: 'Admin Operations',
+      items: [
+        {
+          name: 'Dashboard',
+          href: '/admin',
+          icon: HomeIcon,
+          description: 'Overview and key metrics',
+        },
+        {
+          name: 'Users',
+          href: '/admin/users',
+          icon: UsersIcon,
+          description: 'User management and emulation',
+        },
+        {
+          name: 'Organizations',
+          href: '/admin/organizations',
+          icon: BuildingOfficeIcon,
+          description: 'Organization management',
+        },
+        {
+          name: 'Security Events',
+          href: '/admin/security-events',
+          icon: ShieldCheckIcon,
+          description: 'Login attempts and 2FA',
+        },
+        {
+          name: 'Audit Logs',
+          href: '/admin/audit-logs',
+          icon: DocumentMagnifyingGlassIcon,
+          description: 'Activity and event tracking',
+        },
+      ],
+    },
+    {
+      name: 'Support & Communication',
+      items: [
+        {
+          name: 'Support',
+          href: '/admin/support',
+          icon: LifebuoyIcon,
+          description: 'Contact messages and tickets',
+        },
+        {
+          name: 'Announcements',
+          href: '/admin/announcements',
+          icon: MegaphoneIcon,
+          description: 'Broadcast to users',
+        },
+      ],
+    },
+    {
+      name: 'System Administration',
+      items: [
+        {
+          name: 'Data Browser',
+          href: '/admin/data',
+          icon: TableCellsIcon,
+          description: 'Database query tool',
+        },
+        {
+          name: 'Analytics',
+          href: '/admin/analytics',
+          icon: ChartBarSquareIcon,
+          description: 'Platform metrics and reporting',
+        },
+      ],
+    },
+  ]
+
+  const isActive = (href: string) => {
+    if (href === '/admin') {
+      return location.pathname === '/admin'
+    }
+    return location.pathname.startsWith(href)
+  }
+
   return (
-    <div className="min-h-screen bg-gray-50 w-full">
-      <AdminTopNav />
-      <main className="py-8">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <Outlet />
+    <div className="flex-1 bg-gradient-to-b from-zinc-50 to-zinc-100 dark:from-zinc-900 dark:to-zinc-950">
+      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        <div className="mb-8">
+          <h1 className="text-3xl font-extrabold tracking-tight text-zinc-900 dark:text-white">
+            Admin Panel
+          </h1>
+          <p className="mt-2 text-zinc-600 dark:text-zinc-400">
+            Platform administration and management
+          </p>
         </div>
-      </main>
+
+        <div className="flex flex-col lg:flex-row gap-8">
+          {/* Sidebar Navigation */}
+          <nav className="lg:w-64 flex-shrink-0">
+            <div className="rounded-xl border border-zinc-200 dark:border-white/10 bg-white dark:bg-white/5 p-4 backdrop-blur space-y-6">
+              {/* Quick Link to Settings */}
+              <Link
+                to="/settings/admin/billing"
+                className="flex items-center gap-3 p-2 rounded-lg bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 hover:bg-emerald-100 dark:hover:bg-emerald-500/20 transition-colors"
+              >
+                <Cog6ToothIcon className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+                <div className="flex-1 min-w-0">
+                  <div className="text-sm font-medium text-emerald-900 dark:text-emerald-100">
+                    System Settings
+                  </div>
+                  <div className="text-xs text-emerald-700 dark:text-emerald-300">
+                    Billing, preferences, config
+                  </div>
+                </div>
+              </Link>
+
+              {/* Navigation Sections */}
+              {navigationSections.map((section, sectionIdx) => (
+                <div key={section.name}>
+                  {sectionIdx > 0 && (
+                    <div className="border-t border-zinc-200 dark:border-white/10 mb-4" />
+                  )}
+                  <div className="mb-3">
+                    <h3 className="text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
+                      {section.name}
+                    </h3>
+                  </div>
+                  <ul className="space-y-1">
+                    {section.items.map((item) => (
+                      <li key={item.name}>
+                        <Link
+                          to={item.href}
+                          className={clsx(
+                            'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+                            isActive(item.href)
+                              ? 'bg-emerald-500 text-white'
+                              : 'text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-white/10',
+                          )}
+                        >
+                          <item.icon className="h-5 w-5 flex-shrink-0" />
+                          <div className="flex-1 min-w-0">
+                            <div className="truncate">{item.name}</div>
+                            <div
+                              className={clsx(
+                                'text-xs truncate',
+                                isActive(item.href)
+                                  ? 'text-emerald-100'
+                                  : 'text-zinc-500 dark:text-zinc-400',
+                              )}
+                            >
+                              {item.description}
+                            </div>
+                          </div>
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </nav>
+
+          {/* Main Content Area */}
+          <div className="flex-1 min-w-0">
+            <Outlet />
+          </div>
+        </div>
+      </div>
     </div>
   )
 }
