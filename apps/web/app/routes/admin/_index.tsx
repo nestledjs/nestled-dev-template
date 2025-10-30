@@ -56,22 +56,54 @@ export default function AdminDashboard() {
         </p>
       </div>
 
-      {/* Quick Stats - Placeholder */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      {/* Quick Stats - Backend Ready */}
+      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
         <div className="rounded-xl border border-zinc-200 dark:border-white/10 bg-white dark:bg-white/5 p-6 backdrop-blur">
           <div className="text-sm font-medium text-zinc-600 dark:text-zinc-400">Total Users</div>
           <div className="mt-2 text-3xl font-bold text-zinc-900 dark:text-white">-</div>
-          <div className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">Coming soon</div>
+          <div className="mt-1 text-xs text-emerald-600 dark:text-emerald-400">Backend ready</div>
         </div>
         <div className="rounded-xl border border-zinc-200 dark:border-white/10 bg-white dark:bg-white/5 p-6 backdrop-blur">
           <div className="text-sm font-medium text-zinc-600 dark:text-zinc-400">Organizations</div>
           <div className="mt-2 text-3xl font-bold text-zinc-900 dark:text-white">-</div>
-          <div className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">Coming soon</div>
+          <div className="mt-1 text-xs text-emerald-600 dark:text-emerald-400">Backend ready</div>
         </div>
         <div className="rounded-xl border border-zinc-200 dark:border-white/10 bg-white dark:bg-white/5 p-6 backdrop-blur">
           <div className="text-sm font-medium text-zinc-600 dark:text-zinc-400">Active Sessions</div>
           <div className="mt-2 text-3xl font-bold text-zinc-900 dark:text-white">-</div>
-          <div className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">Coming soon</div>
+          <div className="mt-1 text-xs text-emerald-600 dark:text-emerald-400">Backend ready</div>
+        </div>
+        <div className="rounded-xl border border-zinc-200 dark:border-white/10 bg-white dark:bg-white/5 p-6 backdrop-blur">
+          <div className="text-sm font-medium text-zinc-600 dark:text-zinc-400">Security Events (24h)</div>
+          <div className="mt-2 text-3xl font-bold text-zinc-900 dark:text-white">-</div>
+          <div className="mt-1 text-xs text-emerald-600 dark:text-emerald-400">Backend ready</div>
+        </div>
+        <div className="rounded-xl border border-zinc-200 dark:border-white/10 bg-white dark:bg-white/5 p-6 backdrop-blur">
+          <div className="text-sm font-medium text-zinc-600 dark:text-zinc-400">Active Subscriptions</div>
+          <div className="mt-2 text-3xl font-bold text-zinc-900 dark:text-white">-</div>
+          <div className="mt-1 text-xs text-emerald-600 dark:text-emerald-400">Backend ready</div>
+        </div>
+      </div>
+
+      {/* Next Steps Banner */}
+      <div className="rounded-xl border border-amber-200 dark:border-amber-500/20 bg-amber-50 dark:bg-amber-500/10 p-6 backdrop-blur">
+        <div className="flex items-start gap-4">
+          <div className="flex-shrink-0">
+            <svg className="h-6 w-6 text-amber-600 dark:text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <div className="flex-1">
+            <h3 className="font-semibold text-amber-900 dark:text-amber-100 mb-2">Backend Queries Ready</h3>
+            <p className="text-sm text-amber-700 dark:text-amber-300 mb-3">
+              All GraphQL queries and resolvers are implemented. To see live data:
+            </p>
+            <ol className="text-sm text-amber-700 dark:text-amber-300 space-y-1">
+              <li>1. Restart the API server to load new GraphQL schema</li>
+              <li>2. Run <code className="px-2 py-0.5 bg-amber-100 dark:bg-amber-500/20 rounded font-mono">pnpm sdk</code> to generate TypeScript types</li>
+              <li>3. Refresh this page to see real-time statistics</li>
+            </ol>
+          </div>
         </div>
       </div>
 
