@@ -99,6 +99,20 @@ export type AdminDashboardStats = {
   totalUsers: Scalars['Int']['output']
 }
 
+export type AdminOrganizationFiltersInput = {
+  search?: InputMaybe<Scalars['String']['input']>
+  skip?: InputMaybe<Scalars['Int']['input']>
+  take?: InputMaybe<Scalars['Int']['input']>
+}
+
+export type AdminOrganizationsResponse = {
+  __typename?: 'AdminOrganizationsResponse'
+  organizations: Array<Organization>
+  skip: Scalars['Int']['output']
+  take: Scalars['Int']['output']
+  total: Scalars['Int']['output']
+}
+
 export type AdminSecurityEventFiltersInput = {
   endDate?: InputMaybe<Scalars['Timestamp']['input']>
   eventType?: InputMaybe<SecurityEventType>
@@ -1897,6 +1911,7 @@ export type Query = {
   addressesCount?: Maybe<CorePaging>
   adminAuditLogs: AdminAuditLogsResponse
   adminDashboardStats: AdminDashboardStats
+  adminOrganizations: AdminOrganizationsResponse
   adminSecurityEvents: AdminSecurityEventsResponse
   adminUserDetails: User
   adminUsers: AdminUsersResponse
@@ -2006,6 +2021,10 @@ export type QueryAddressesCountArgs = {
 
 export type QueryAdminAuditLogsArgs = {
   filters?: InputMaybe<AdminAuditLogFiltersInput>
+}
+
+export type QueryAdminOrganizationsArgs = {
+  filters?: InputMaybe<AdminOrganizationFiltersInput>
 }
 
 export type QueryAdminSecurityEventsArgs = {
@@ -6845,6 +6864,39 @@ export type AddressPaginationQuery = {
     hasNext?: boolean | null
     hasPrev?: boolean | null
   } | null
+}
+
+export type AdminPlatformOrganizationsQueryVariables = Exact<{
+  filters?: InputMaybe<AdminOrganizationFiltersInput>
+}>
+
+export type AdminPlatformOrganizationsQuery = {
+  __typename?: 'Query'
+  adminOrganizations: {
+    __typename?: 'AdminOrganizationsResponse'
+    total: number
+    skip: number
+    take: number
+    organizations: Array<{
+      __typename?: 'Organization'
+      id: string
+      name: string
+      createdAt: any
+      updatedAt: any
+      members?: Array<{
+        __typename?: 'OrganizationMember'
+        id: string
+        userId: string
+        role?: { __typename?: 'Role'; name: string } | null
+      }> | null
+      subscription?: {
+        __typename?: 'Subscription'
+        id: string
+        status: SubscriptionStatus
+        plan?: { __typename?: 'Plan'; name: string; price: any } | null
+      } | null
+    }>
+  }
 }
 
 export type AdminUserManagementQueryVariables = Exact<{
@@ -21236,6 +21288,105 @@ export type AddressPaginationSuspenseQueryHookResult = ReturnType<
 export type AddressPaginationQueryResult = Apollo.QueryResult<
   AddressPaginationQuery,
   AddressPaginationQueryVariables
+>
+export const AdminPlatformOrganizationsDocument = gql`
+  query AdminPlatformOrganizations($filters: AdminOrganizationFiltersInput) {
+    adminOrganizations(filters: $filters) {
+      organizations {
+        id
+        name
+        createdAt
+        updatedAt
+        members {
+          id
+          userId
+          role {
+            name
+          }
+        }
+        subscription {
+          id
+          status
+          plan {
+            name
+            price
+          }
+        }
+      }
+      total
+      skip
+      take
+    }
+  }
+`
+
+/**
+ * __useAdminPlatformOrganizationsQuery__
+ *
+ * To run a query within a React component, call `useAdminPlatformOrganizationsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAdminPlatformOrganizationsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAdminPlatformOrganizationsQuery({
+ *   variables: {
+ *      filters: // value for 'filters'
+ *   },
+ * });
+ */
+export function useAdminPlatformOrganizationsQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    AdminPlatformOrganizationsQuery,
+    AdminPlatformOrganizationsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<AdminPlatformOrganizationsQuery, AdminPlatformOrganizationsQueryVariables>(
+    AdminPlatformOrganizationsDocument,
+    options,
+  )
+}
+export function useAdminPlatformOrganizationsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    AdminPlatformOrganizationsQuery,
+    AdminPlatformOrganizationsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<
+    AdminPlatformOrganizationsQuery,
+    AdminPlatformOrganizationsQueryVariables
+  >(AdminPlatformOrganizationsDocument, options)
+}
+export function useAdminPlatformOrganizationsSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<
+        AdminPlatformOrganizationsQuery,
+        AdminPlatformOrganizationsQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<
+    AdminPlatformOrganizationsQuery,
+    AdminPlatformOrganizationsQueryVariables
+  >(AdminPlatformOrganizationsDocument, options)
+}
+export type AdminPlatformOrganizationsQueryHookResult = ReturnType<
+  typeof useAdminPlatformOrganizationsQuery
+>
+export type AdminPlatformOrganizationsLazyQueryHookResult = ReturnType<
+  typeof useAdminPlatformOrganizationsLazyQuery
+>
+export type AdminPlatformOrganizationsSuspenseQueryHookResult = ReturnType<
+  typeof useAdminPlatformOrganizationsSuspenseQuery
+>
+export type AdminPlatformOrganizationsQueryResult = Apollo.QueryResult<
+  AdminPlatformOrganizationsQuery,
+  AdminPlatformOrganizationsQueryVariables
 >
 export const AdminUserManagementDocument = gql`
   query AdminUserManagement($filters: AdminUserFiltersInput) {

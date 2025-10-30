@@ -1,4 +1,4 @@
-query AdminOrganizations($filters: AdminOrganizationFiltersInput) {
+query AdminPlatformOrganizations($filters: AdminOrganizationFiltersInput) {
   adminOrganizations(filters: $filters) {
     organizations {
       id
