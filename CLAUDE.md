@@ -190,6 +190,73 @@ export class MyService {
 }
 ```
 
+## Route Registration - CRITICAL WORKFLOW STEP
+
+**CRITICAL RULE**: Every time you create or move a page component, you MUST update the route configuration in `/apps/web/app/routes.tsx`.
+
+### When to Update routes.tsx
+
+**ALWAYS update routes.tsx when:**
+1. Creating a new page component
+2. Moving an existing page to a different path
+3. Renaming a page file
+4. Creating nested route structures
+
+### Route Configuration Pattern
+
+The project uses React Router v7 with type-safe route configuration:
+
+```typescript
+// apps/web/app/routes.tsx
+import { index, route, type RouteConfig } from '@react-router/dev/routes'
+
+export default [
+  route('', './routes/_layout.tsx', [
+    // Authenticated routes
+    route('', './routes/_authenticated/_layout.tsx', [
+      // Admin panel
+      route('admin', './routes/admin/_layout.tsx', [
+        index('./routes/admin/_index.tsx'),
+        route('users', './routes/admin/users/_index.tsx'),
+        route('organizations', './routes/admin/organizations/_index.tsx'),
+        route('security-events', './routes/admin/security-events/_index.tsx'),
+      ]),
+    ]),
+  ]),
+] satisfies RouteConfig
+```
+
+### Example: Adding a New Admin Page
+
+**Step 1**: Create the page component
+```
+apps/web/app/routes/admin/audit-logs/_index.tsx
+```
+
+**Step 2**: Register in routes.tsx
+```typescript
+route('admin', './routes/admin/_layout.tsx', [
+  index('./routes/admin/_index.tsx'),
+  route('users', './routes/admin/users/_index.tsx'),
+  route('audit-logs', './routes/admin/audit-logs/_index.tsx'), // ← ADD THIS
+]),
+```
+
+### Why This Matters
+
+- Routes are NOT automatically discovered from the file system
+- Without route registration, pages will 404 even if the file exists
+- The route path (e.g., `'audit-logs'`) determines the URL
+- The file path (e.g., `'./routes/admin/audit-logs/_index.tsx'`) determines which component renders
+
+### Verification Checklist
+
+After creating/moving pages:
+- [ ] Route registered in `/apps/web/app/routes.tsx`
+- [ ] File path in route config matches actual file location
+- [ ] URL path matches intended navigation structure
+- [ ] Nested routes use proper parent-child hierarchy
+
 ## Code Generation Workflow
 
 After making changes to the Prisma schema:
