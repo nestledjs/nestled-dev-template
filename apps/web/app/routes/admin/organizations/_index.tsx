@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useQuery } from '@apollo/client'
-import { AdminOrganizationsDocument } from '@nestled-template/shared/sdk'
+import { AdminPlatformOrganizationsDocument } from '@nestled-template/shared/sdk'
 import { MagnifyingGlassIcon, BuildingOfficeIcon, UsersIcon, CreditCardIcon, CheckCircleIcon, XCircleIcon } from '@heroicons/react/24/outline'
 import { clsx } from 'clsx'
 import { Link } from 'react-router'
@@ -10,7 +10,7 @@ export default function AdminOrganizationsPage() {
   const [page, setPage] = useState(0)
   const pageSize = 50
 
-  const { data, loading, error } = useQuery(AdminOrganizationsDocument, {
+  const { data, loading, error } = useQuery(AdminPlatformOrganizationsDocument, {
     variables: {
       filters: {
         take: pageSize,
