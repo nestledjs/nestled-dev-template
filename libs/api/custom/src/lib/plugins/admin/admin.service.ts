@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common'
 import { ApiCoreDataAccessService } from '@nestled-template/api/core/data-access'
 import { AdminUserFiltersInput, AdminUsersResponse } from './dto'
+import { SecurityEventType } from '@nestled-template/api/core/models'
 
 @Injectable()
 export class AdminService {
@@ -199,6 +200,164 @@ export class AdminService {
       totalAuditLogs: auditLogCount,
       organizationCount,
       teamCount,
+    }
+  }
+
+  /**
+   * Get security events for admin monitoring (platform-wide)
+   */
+  async getSecurityEvents(filters: {
+    userId?: string
+    eventType?: SecurityEventType
+    ipAddress?: string
+    startDate?: Date
+    endDate?: Date
+    skip?: number
+    take?: number
+  }) {
+    const { userId, eventType, ipAddress, startDate, endDate, skip = 0, take = 50 } = filters
+
+    const where: any = {}
+
+    if (userId) where.userId = userId
+    if (eventType) where.eventType = eventType
+    if (ipAddress) where.ipAddress = { contains: ipAddress }
+    if (startDate || endDate) {
+      where.createdAt = {}
+      if (startDate) where.createdAt.gte = startDate
+      if (endDate) where.createdAt.lte = endDate
+    }
+
+    const [events, total] = await Promise.all([
+      this.prisma.securityEvent.findMany({
+        where,
+        skip,
+        take,
+        orderBy: { createdAt: 'desc' },
+        include: {
+          user: {
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+              emails: { where: { primary: true }, select: { email: true } },
+            },
+          },
+        },
+      }),
+      this.prisma.securityEvent.count({ where }),
+    ])
+
+    this.logger.log(`Admin security events query returned ${events.length} of ${total} events`)
+
+    return { events, total, skip, take }
+  }
+
+  /**
+   * Get audit logs for admin monitoring (platform-wide)
+   */
+  async getAuditLogs(filters: {
+    userId?: string
+    organizationId?: string
+    action?: string
+    resourceType?: string
+    startDate?: Date
+    endDate?: Date
+    skip?: number
+    take?: number
+  }) {
+    const {
+      userId,
+      organizationId,
+      action,
+      resourceType,
+      startDate,
+      endDate,
+      skip = 0,
+      take = 50,
+    } = filters
+
+    const where: any = {}
+
+    if (userId) where.userId = userId
+    if (organizationId) where.organizationId = organizationId
+    if (action) where.action = { contains: action, mode: 'insensitive' }
+    if (resourceType) where.resourceType = { contains: resourceType, mode: 'insensitive' }
+    if (startDate || endDate) {
+      where.createdAt = {}
+      if (startDate) where.createdAt.gte = startDate
+      if (endDate) where.createdAt.lte = endDate
+    }
+
+    const [logs, total] = await Promise.all([
+      this.prisma.auditLog.findMany({
+        where,
+        skip,
+        take,
+        orderBy: { createdAt: 'desc' },
+        include: {
+          user: {
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+              emails: { where: { primary: true }, select: { email: true } },
+            },
+          },
+          organization: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+        },
+      }),
+      this.prisma.auditLog.count({ where }),
+    ])
+
+    this.logger.log(`Admin audit logs query returned ${logs.length} of ${total} logs`)
+
+    return { logs, total, skip, take }
+  }
+
+  /**
+   * Get dashboard statistics for admin
+   */
+  async getDashboardStats() {
+    const [
+      totalUsers,
+      totalOrganizations,
+      activeSessions,
+      recentSecurityEvents,
+      activeSubscriptions,
+    ] = await Promise.all([
+      this.prisma.user.count(),
+      this.prisma.organization.count(),
+      this.prisma.userSession.count({
+        where: {
+          expiresAt: { gt: new Date() },
+        },
+      }),
+      this.prisma.securityEvent.count({
+        where: {
+          createdAt: {
+            gte: new Date(Date.now() - 24 * 60 * 60 * 1000), // Last 24 hours
+          },
+        },
+      }),
+      this.prisma.subscription.count({
+        where: {
+          status: 'ACTIVE',
+        },
+      }),
+    ])
+
+    return {
+      totalUsers,
+      totalOrganizations,
+      activeSessions,
+      recentSecurityEvents,
+      activeSubscriptions,
     }
   }
 }
