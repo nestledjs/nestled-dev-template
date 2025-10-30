@@ -2,15 +2,13 @@ import { useMutation } from '@apollo/client'
 import { EndEmulationDocument } from '@nestled-template/shared/sdk'
 import { ShieldExclamationIcon, XMarkIcon, ExclamationTriangleIcon } from '@heroicons/react/24/solid'
 import { useGlobalCtx } from '../global-context'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
 /**
  * Banner shown at the top of the page when admin is emulating a user
  * Allows the admin to exit emulation and return to their own session
  */
 export function EmulationBanner() {
-  console.log('[EmulationBanner] Component rendering...')
-
   const { user } = useGlobalCtx()
   const [showConfirm, setShowConfirm] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
@@ -18,13 +16,6 @@ export function EmulationBanner() {
   // Check emulation status from user object (set server-side)
   const isEmulating = !!(user as any)?.isEmulating
   const originalAdminId = (user as any)?.originalAdminId || null
-
-  // Debug logging
-  useEffect(() => {
-    console.log('[EmulationBanner] User:', user)
-    console.log('[EmulationBanner] isEmulating:', isEmulating)
-    console.log('[EmulationBanner] originalAdminId:', originalAdminId)
-  }, [user, isEmulating, originalAdminId])
 
   const [endEmulation, { loading }] = useMutation(EndEmulationDocument, {
     onCompleted: () => {
@@ -40,8 +31,6 @@ export function EmulationBanner() {
   if (!isEmulating) {
     return null
   }
-
-  console.log('[EmulationBanner] Rendering banner - admin:', originalAdminId, 'emulating user:', user?.id)
 
   const handleEndEmulation = () => {
     setShowConfirm(true)
