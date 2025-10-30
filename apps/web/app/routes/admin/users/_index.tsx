@@ -79,27 +79,27 @@ export default function AdminUsersPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900">User Management</h1>
-        <p className="mt-1 text-sm text-gray-500">
+      <div className="rounded-xl border border-zinc-200 dark:border-white/10 bg-white dark:bg-white/5 p-6 backdrop-blur">
+        <h2 className="text-2xl font-bold text-zinc-900 dark:text-white">User Management</h2>
+        <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
           Manage users, view activity, and emulate user sessions
         </p>
       </div>
 
       {/* Search and Filters */}
-      <div className="rounded-xl border border-white/10 bg-white p-6 shadow-sm">
+      <div className="rounded-xl border border-zinc-200 dark:border-white/10 bg-white dark:bg-white/5 p-6 backdrop-blur">
         <div className="space-y-4">
           {/* Search */}
           <div className="relative">
             <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-              <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" />
+              <MagnifyingGlassIcon className="h-5 w-5 text-zinc-400 dark:text-zinc-500" />
             </div>
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search by email, name, or ID..."
-              className="block w-full rounded-lg border border-gray-300 bg-white py-2 pl-10 pr-3 text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="block w-full rounded-lg border border-zinc-300 dark:border-white/10 bg-white dark:bg-white/5 py-2 pl-10 pr-3 text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
             />
           </div>
 
@@ -112,8 +112,8 @@ export default function AdminUsersPage() {
               className={clsx(
                 'inline-flex items-center gap-2 rounded-lg border px-3 py-1.5 text-sm font-medium transition',
                 filters.isSuperAdmin === true
-                  ? 'border-blue-500 bg-blue-50 text-blue-700'
-                  : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50'
+                  ? 'border-emerald-500 dark:border-emerald-400 bg-emerald-50 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300'
+                  : 'border-zinc-300 dark:border-white/10 bg-white dark:bg-white/5 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-white/10'
               )}
             >
               <ShieldCheckIcon className="h-4 w-4" />
@@ -130,8 +130,8 @@ export default function AdminUsersPage() {
               className={clsx(
                 'inline-flex items-center gap-2 rounded-lg border px-3 py-1.5 text-sm font-medium transition',
                 filters.emailVerified === true
-                  ? 'border-green-500 bg-green-50 text-green-700'
-                  : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50'
+                  ? 'border-emerald-500 dark:border-emerald-400 bg-emerald-50 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300'
+                  : 'border-zinc-300 dark:border-white/10 bg-white dark:bg-white/5 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-white/10'
               )}
             >
               <CheckCircleIcon className="h-4 w-4" />
@@ -148,8 +148,8 @@ export default function AdminUsersPage() {
               className={clsx(
                 'inline-flex items-center gap-2 rounded-lg border px-3 py-1.5 text-sm font-medium transition',
                 filters.twoFactorEnabled === true
-                  ? 'border-purple-500 bg-purple-50 text-purple-700'
-                  : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50'
+                  ? 'border-emerald-500 dark:border-emerald-400 bg-emerald-50 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300'
+                  : 'border-zinc-300 dark:border-white/10 bg-white dark:bg-white/5 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-white/10'
               )}
             >
               <ShieldCheckIcon className="h-4 w-4" />
@@ -166,8 +166,8 @@ export default function AdminUsersPage() {
               className={clsx(
                 'inline-flex items-center gap-2 rounded-lg border px-3 py-1.5 text-sm font-medium transition',
                 filters.accountLocked === true
-                  ? 'border-red-500 bg-red-50 text-red-700'
-                  : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50'
+                  ? 'border-red-500 dark:border-red-400 bg-red-50 dark:bg-red-500/20 text-red-700 dark:text-red-300'
+                  : 'border-zinc-300 dark:border-white/10 bg-white dark:bg-white/5 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-white/10'
               )}
             >
               <LockClosedIcon className="h-4 w-4" />
@@ -185,7 +185,7 @@ export default function AdminUsersPage() {
                     accountLocked: undefined,
                   })
                 }}
-                className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                className="inline-flex items-center gap-2 rounded-lg border border-zinc-300 dark:border-white/10 bg-white dark:bg-white/5 px-3 py-1.5 text-sm font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-white/10"
               >
                 <XCircleIcon className="h-4 w-4" />
                 Clear All
@@ -196,95 +196,95 @@ export default function AdminUsersPage() {
       </div>
 
       {/* Results Count */}
-      <div className="text-sm text-gray-600">
+      <div className="text-sm text-zinc-600 dark:text-zinc-400">
         Showing {users.length} of {total} users
       </div>
 
       {/* Users Table */}
-      <div className="rounded-xl border border-gray-200 bg-white shadow-sm overflow-hidden">
+      <div className="rounded-xl border border-zinc-200 dark:border-white/10 bg-white dark:bg-white/5 shadow-sm overflow-hidden backdrop-blur">
         {loading ? (
           <div className="p-12 text-center">
-            <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-blue-600 border-r-transparent"></div>
-            <p className="mt-4 text-sm text-gray-600">Loading users...</p>
+            <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-emerald-600 dark:border-emerald-400 border-r-transparent"></div>
+            <p className="mt-4 text-sm text-zinc-600 dark:text-zinc-400">Loading users...</p>
           </div>
         ) : error ? (
           <div className="p-12 text-center">
-            <p className="text-red-600">Error loading users: {error.message}</p>
+            <p className="text-red-600 dark:text-red-400">Error loading users: {error.message}</p>
           </div>
         ) : users.length === 0 ? (
-          <div className="p-12 text-center text-gray-500">
+          <div className="p-12 text-center text-zinc-500 dark:text-zinc-400">
             No users found matching your criteria
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+            <table className="min-w-full divide-y divide-zinc-200 dark:divide-white/10">
+              <thead className="bg-zinc-50 dark:bg-white/5">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
                     User
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
                     Status
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
                     Organizations
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
                     Last Login
                   </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
                     Actions
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200 bg-white">
+              <tbody className="divide-y divide-zinc-200 dark:divide-white/10 bg-white dark:bg-white/5">
                 {users.map((user) => {
                   const email = user.emails?.find((e) => e.primary)?.email || 'No email'
                   const emailVerified = user.emails?.find((e) => e.primary)?.verified || false
                   const isLocked = user.lockedUntil ? new Date(user.lockedUntil) > new Date() : false
 
                   return (
-                    <tr key={user.id} className="hover:bg-gray-50 transition">
+                    <tr key={user.id} className="hover:bg-zinc-50 dark:hover:bg-white/5 transition">
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
                           <div>
                             <div className="flex items-center gap-2">
-                              <div className="text-sm font-medium text-gray-900">
+                              <div className="text-sm font-medium text-zinc-900 dark:text-white">
                                 {user.firstName} {user.lastName}
                               </div>
                               {user.isSuperAdmin && (
-                                <span className="inline-flex items-center rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-800">
+                                <span className="inline-flex items-center rounded-full bg-emerald-100 dark:bg-emerald-500/20 px-2 py-0.5 text-xs font-medium text-emerald-800 dark:text-emerald-300">
                                   <ShieldCheckIcon className="mr-1 h-3 w-3" />
                                   Super Admin
                                 </span>
                               )}
                             </div>
-                            <div className="text-sm text-gray-500">{email}</div>
-                            <div className="text-xs text-gray-400">ID: {user.id.slice(0, 8)}...</div>
+                            <div className="text-sm text-zinc-500 dark:text-zinc-400">{email}</div>
+                            <div className="text-xs text-zinc-400 dark:text-zinc-500">ID: {user.id.slice(0, 8)}...</div>
                           </div>
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex flex-col gap-1">
                           {emailVerified ? (
-                            <span className="inline-flex items-center text-xs text-green-700">
+                            <span className="inline-flex items-center text-xs text-green-700 dark:text-green-400">
                               <CheckCircleIcon className="mr-1 h-3 w-3" />
                               Verified
                             </span>
                           ) : (
-                            <span className="inline-flex items-center text-xs text-gray-500">
+                            <span className="inline-flex items-center text-xs text-zinc-500 dark:text-zinc-400">
                               <XCircleIcon className="mr-1 h-3 w-3" />
                               Not Verified
                             </span>
                           )}
                           {user.twoFactorEnabled && (
-                            <span className="inline-flex items-center text-xs text-purple-700">
+                            <span className="inline-flex items-center text-xs text-purple-700 dark:text-purple-400">
                               <ShieldCheckIcon className="mr-1 h-3 w-3" />
                               2FA
                             </span>
                           )}
                           {isLocked && (
-                            <span className="inline-flex items-center text-xs text-red-700">
+                            <span className="inline-flex items-center text-xs text-red-700 dark:text-red-400">
                               <LockClosedIcon className="mr-1 h-3 w-3" />
                               Locked
                             </span>
@@ -296,26 +296,26 @@ export default function AdminUsersPage() {
                           {user.organizations?.slice(0, 2).map((org) => (
                             <span
                               key={org.id}
-                              className="inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-700"
+                              className="inline-flex items-center rounded-full bg-zinc-100 dark:bg-white/10 px-2 py-0.5 text-xs text-zinc-700 dark:text-zinc-300"
                             >
                               {org.organization.name}
                             </span>
                           ))}
                           {(user.organizations?.length || 0) > 2 && (
-                            <span className="inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-700">
+                            <span className="inline-flex items-center rounded-full bg-zinc-100 dark:bg-white/10 px-2 py-0.5 text-xs text-zinc-700 dark:text-zinc-300">
                               +{(user.organizations?.length || 0) - 2} more
                             </span>
                           )}
                         </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-zinc-500 dark:text-zinc-400">
                         {formatDate(user.lastSuccessfulLogin)}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                         <button
                           onClick={() => handleEmulate(user.id, email)}
                           disabled={emulating}
-                          className="inline-flex items-center gap-1 rounded-lg bg-blue-600 px-3 py-1.5 text-sm font-medium text-white shadow-sm hover:bg-blue-700 disabled:opacity-50 transition"
+                          className="inline-flex items-center gap-1 rounded-lg bg-emerald-600 px-3 py-1.5 text-sm font-medium text-white shadow-sm hover:bg-emerald-500 disabled:opacity-50 transition"
                         >
                           Emulate
                         </button>
@@ -332,21 +332,21 @@ export default function AdminUsersPage() {
       {/* Pagination */}
       {totalPages > 1 && (
         <div className="flex items-center justify-between">
-          <div className="text-sm text-gray-700">
+          <div className="text-sm text-zinc-700 dark:text-zinc-300">
             Page {page + 1} of {totalPages}
           </div>
           <div className="flex gap-2">
             <button
               onClick={() => setPage((p) => Math.max(0, p - 1))}
               disabled={page === 0}
-              className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition"
+              className="rounded-lg border border-zinc-300 dark:border-white/10 bg-white dark:bg-white/5 px-4 py-2 text-sm font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed transition"
             >
               Previous
             </button>
             <button
               onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
               disabled={page >= totalPages - 1}
-              className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition"
+              className="rounded-lg border border-zinc-300 dark:border-white/10 bg-white dark:bg-white/5 px-4 py-2 text-sm font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed transition"
             >
               Next
             </button>
@@ -356,37 +356,37 @@ export default function AdminUsersPage() {
 
       {/* Confirmation Dialog */}
       {confirmEmulation && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4 border border-gray-200">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <div className="bg-white dark:bg-zinc-900 rounded-lg shadow-xl max-w-md w-full mx-4 border border-zinc-200 dark:border-white/10">
             <div className="p-6">
               <div className="flex items-start gap-4">
                 <div className="flex-shrink-0">
-                  <ExclamationTriangleIcon className="h-6 w-6 text-amber-500" />
+                  <ExclamationTriangleIcon className="h-6 w-6 text-amber-500 dark:text-amber-400" />
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                  <h3 className="text-lg font-semibold text-zinc-900 dark:text-white mb-2">
                     Emulate User?
                   </h3>
-                  <p className="text-sm text-gray-600 mb-2">
-                    You are about to emulate: <span className="font-medium">{confirmEmulation.userEmail}</span>
+                  <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-2">
+                    You are about to emulate: <span className="font-medium text-zinc-900 dark:text-white">{confirmEmulation.userEmail}</span>
                   </p>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-zinc-600 dark:text-zinc-400">
                     This will log you in as this user. You can return to your admin account at any time using the banner at the top.
                   </p>
                 </div>
               </div>
             </div>
-            <div className="bg-gray-50 px-6 py-4 flex gap-3 justify-end rounded-b-lg">
+            <div className="bg-zinc-50 dark:bg-zinc-800/50 px-6 py-4 flex gap-3 justify-end rounded-b-lg border-t border-zinc-200 dark:border-white/10">
               <button
                 onClick={cancelEmulation}
-                className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 bg-white hover:bg-gray-100 border border-gray-300 rounded-lg transition"
+                className="px-4 py-2 text-sm font-medium text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white bg-white dark:bg-white/5 hover:bg-zinc-100 dark:hover:bg-white/10 border border-zinc-300 dark:border-white/10 rounded-lg transition"
               >
                 Cancel
               </button>
               <button
                 onClick={confirmEmulationAction}
                 disabled={emulating}
-                className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-4 py-2 text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-500 rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {emulating ? 'Emulating...' : 'Start Emulation'}
               </button>
@@ -398,16 +398,16 @@ export default function AdminUsersPage() {
       {/* Error Notification */}
       {errorMessage && (
         <div className="fixed top-4 right-4 z-50 max-w-md">
-          <div className="bg-red-50 border border-red-200 rounded-lg shadow-xl p-4">
+          <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg shadow-xl p-4 backdrop-blur">
             <div className="flex items-start gap-3">
-              <ExclamationTriangleIcon className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
+              <ExclamationTriangleIcon className="h-5 w-5 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" />
               <div className="flex-1">
-                <h4 className="text-sm font-semibold text-red-900 mb-1">Failed to Emulate User</h4>
-                <p className="text-sm text-red-700">{errorMessage}</p>
+                <h4 className="text-sm font-semibold text-red-900 dark:text-red-200 mb-1">Failed to Emulate User</h4>
+                <p className="text-sm text-red-700 dark:text-red-300">{errorMessage}</p>
               </div>
               <button
                 onClick={() => setErrorMessage(null)}
-                className="text-red-600 hover:text-red-800 transition"
+                className="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 transition"
               >
                 <XCircleIcon className="h-5 w-5" />
               </button>
