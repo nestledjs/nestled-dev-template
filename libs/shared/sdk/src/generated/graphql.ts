@@ -71,6 +71,52 @@ export enum AddressType {
   Work = 'WORK',
 }
 
+export type AdminAuditLogFiltersInput = {
+  action?: InputMaybe<Scalars['String']['input']>
+  endDate?: InputMaybe<Scalars['Timestamp']['input']>
+  entityType?: InputMaybe<Scalars['String']['input']>
+  organizationId?: InputMaybe<Scalars['String']['input']>
+  skip?: InputMaybe<Scalars['Int']['input']>
+  startDate?: InputMaybe<Scalars['Timestamp']['input']>
+  take?: InputMaybe<Scalars['Int']['input']>
+  userId?: InputMaybe<Scalars['String']['input']>
+}
+
+export type AdminAuditLogsResponse = {
+  __typename?: 'AdminAuditLogsResponse'
+  logs: Array<AuditLog>
+  skip: Scalars['Int']['output']
+  take: Scalars['Int']['output']
+  total: Scalars['Int']['output']
+}
+
+export type AdminDashboardStats = {
+  __typename?: 'AdminDashboardStats'
+  activeSessions: Scalars['Int']['output']
+  activeSubscriptions: Scalars['Int']['output']
+  recentSecurityEvents: Scalars['Int']['output']
+  totalOrganizations: Scalars['Int']['output']
+  totalUsers: Scalars['Int']['output']
+}
+
+export type AdminSecurityEventFiltersInput = {
+  endDate?: InputMaybe<Scalars['Timestamp']['input']>
+  eventType?: InputMaybe<SecurityEventType>
+  ipAddress?: InputMaybe<Scalars['String']['input']>
+  skip?: InputMaybe<Scalars['Int']['input']>
+  startDate?: InputMaybe<Scalars['Timestamp']['input']>
+  take?: InputMaybe<Scalars['Int']['input']>
+  userId?: InputMaybe<Scalars['String']['input']>
+}
+
+export type AdminSecurityEventsResponse = {
+  __typename?: 'AdminSecurityEventsResponse'
+  events: Array<SecurityEvent>
+  skip: Scalars['Int']['output']
+  take: Scalars['Int']['output']
+  total: Scalars['Int']['output']
+}
+
 export type AdminUserFiltersInput = {
   accountLocked?: InputMaybe<Scalars['Boolean']['input']>
   emailVerified?: InputMaybe<Scalars['Boolean']['input']>
@@ -1849,6 +1895,9 @@ export type Query = {
   address?: Maybe<Address>
   addresses?: Maybe<Array<Address>>
   addressesCount?: Maybe<CorePaging>
+  adminAuditLogs: AdminAuditLogsResponse
+  adminDashboardStats: AdminDashboardStats
+  adminSecurityEvents: AdminSecurityEventsResponse
   adminUserDetails: User
   adminUsers: AdminUsersResponse
   apiToken?: Maybe<ApiToken>
@@ -1953,6 +2002,14 @@ export type QueryAddressesArgs = {
 
 export type QueryAddressesCountArgs = {
   input?: InputMaybe<ListAddressInput>
+}
+
+export type QueryAdminAuditLogsArgs = {
+  filters?: InputMaybe<AdminAuditLogFiltersInput>
+}
+
+export type QueryAdminSecurityEventsArgs = {
+  filters?: InputMaybe<AdminSecurityEventFiltersInput>
 }
 
 export type QueryAdminUserDetailsArgs = {
@@ -6890,6 +6947,81 @@ export type AdminUserManagementDetailsQuery = {
       changes?: any | null
       createdAt: any
     }> | null
+  }
+}
+
+export type AdminPlatformSecurityEventsQueryVariables = Exact<{
+  filters?: InputMaybe<AdminSecurityEventFiltersInput>
+}>
+
+export type AdminPlatformSecurityEventsQuery = {
+  __typename?: 'Query'
+  adminSecurityEvents: {
+    __typename?: 'AdminSecurityEventsResponse'
+    total: number
+    skip: number
+    take: number
+    events: Array<{
+      __typename?: 'SecurityEvent'
+      id: string
+      eventType: SecurityEventType
+      ipAddress?: string | null
+      userAgent?: string | null
+      metadata?: any | null
+      createdAt: any
+      user?: {
+        __typename?: 'User'
+        id: string
+        firstName?: string | null
+        lastName?: string | null
+        emails?: Array<{ __typename?: 'Email'; email: string }> | null
+      } | null
+    }>
+  }
+}
+
+export type AdminPlatformAuditLogsQueryVariables = Exact<{
+  filters?: InputMaybe<AdminAuditLogFiltersInput>
+}>
+
+export type AdminPlatformAuditLogsQuery = {
+  __typename?: 'Query'
+  adminAuditLogs: {
+    __typename?: 'AdminAuditLogsResponse'
+    total: number
+    skip: number
+    take: number
+    logs: Array<{
+      __typename?: 'AuditLog'
+      id: string
+      action: string
+      entityType: string
+      entityId: string
+      changes?: any | null
+      createdAt: any
+      user?: {
+        __typename?: 'User'
+        id: string
+        firstName?: string | null
+        lastName?: string | null
+        emails?: Array<{ __typename?: 'Email'; email: string }> | null
+      } | null
+      organization?: { __typename?: 'Organization'; id: string; name: string } | null
+    }>
+  }
+}
+
+export type AdminDashboardStatsQueryVariables = Exact<{ [key: string]: never }>
+
+export type AdminDashboardStatsQuery = {
+  __typename?: 'Query'
+  adminDashboardStats: {
+    __typename?: 'AdminDashboardStats'
+    totalUsers: number
+    totalOrganizations: number
+    activeSessions: number
+    recentSecurityEvents: number
+    activeSubscriptions: number
   }
 }
 
@@ -21334,6 +21466,272 @@ export type AdminUserManagementDetailsSuspenseQueryHookResult = ReturnType<
 export type AdminUserManagementDetailsQueryResult = Apollo.QueryResult<
   AdminUserManagementDetailsQuery,
   AdminUserManagementDetailsQueryVariables
+>
+export const AdminPlatformSecurityEventsDocument = gql`
+  query AdminPlatformSecurityEvents($filters: AdminSecurityEventFiltersInput) {
+    adminSecurityEvents(filters: $filters) {
+      events {
+        id
+        eventType
+        ipAddress
+        userAgent
+        metadata
+        createdAt
+        user {
+          id
+          firstName
+          lastName
+          emails {
+            email
+          }
+        }
+      }
+      total
+      skip
+      take
+    }
+  }
+`
+
+/**
+ * __useAdminPlatformSecurityEventsQuery__
+ *
+ * To run a query within a React component, call `useAdminPlatformSecurityEventsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAdminPlatformSecurityEventsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAdminPlatformSecurityEventsQuery({
+ *   variables: {
+ *      filters: // value for 'filters'
+ *   },
+ * });
+ */
+export function useAdminPlatformSecurityEventsQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    AdminPlatformSecurityEventsQuery,
+    AdminPlatformSecurityEventsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<
+    AdminPlatformSecurityEventsQuery,
+    AdminPlatformSecurityEventsQueryVariables
+  >(AdminPlatformSecurityEventsDocument, options)
+}
+export function useAdminPlatformSecurityEventsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    AdminPlatformSecurityEventsQuery,
+    AdminPlatformSecurityEventsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<
+    AdminPlatformSecurityEventsQuery,
+    AdminPlatformSecurityEventsQueryVariables
+  >(AdminPlatformSecurityEventsDocument, options)
+}
+export function useAdminPlatformSecurityEventsSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<
+        AdminPlatformSecurityEventsQuery,
+        AdminPlatformSecurityEventsQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<
+    AdminPlatformSecurityEventsQuery,
+    AdminPlatformSecurityEventsQueryVariables
+  >(AdminPlatformSecurityEventsDocument, options)
+}
+export type AdminPlatformSecurityEventsQueryHookResult = ReturnType<
+  typeof useAdminPlatformSecurityEventsQuery
+>
+export type AdminPlatformSecurityEventsLazyQueryHookResult = ReturnType<
+  typeof useAdminPlatformSecurityEventsLazyQuery
+>
+export type AdminPlatformSecurityEventsSuspenseQueryHookResult = ReturnType<
+  typeof useAdminPlatformSecurityEventsSuspenseQuery
+>
+export type AdminPlatformSecurityEventsQueryResult = Apollo.QueryResult<
+  AdminPlatformSecurityEventsQuery,
+  AdminPlatformSecurityEventsQueryVariables
+>
+export const AdminPlatformAuditLogsDocument = gql`
+  query AdminPlatformAuditLogs($filters: AdminAuditLogFiltersInput) {
+    adminAuditLogs(filters: $filters) {
+      logs {
+        id
+        action
+        entityType
+        entityId
+        changes
+        createdAt
+        user {
+          id
+          firstName
+          lastName
+          emails {
+            email
+          }
+        }
+        organization {
+          id
+          name
+        }
+      }
+      total
+      skip
+      take
+    }
+  }
+`
+
+/**
+ * __useAdminPlatformAuditLogsQuery__
+ *
+ * To run a query within a React component, call `useAdminPlatformAuditLogsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAdminPlatformAuditLogsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAdminPlatformAuditLogsQuery({
+ *   variables: {
+ *      filters: // value for 'filters'
+ *   },
+ * });
+ */
+export function useAdminPlatformAuditLogsQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    AdminPlatformAuditLogsQuery,
+    AdminPlatformAuditLogsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<AdminPlatformAuditLogsQuery, AdminPlatformAuditLogsQueryVariables>(
+    AdminPlatformAuditLogsDocument,
+    options,
+  )
+}
+export function useAdminPlatformAuditLogsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    AdminPlatformAuditLogsQuery,
+    AdminPlatformAuditLogsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<AdminPlatformAuditLogsQuery, AdminPlatformAuditLogsQueryVariables>(
+    AdminPlatformAuditLogsDocument,
+    options,
+  )
+}
+export function useAdminPlatformAuditLogsSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<
+        AdminPlatformAuditLogsQuery,
+        AdminPlatformAuditLogsQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<AdminPlatformAuditLogsQuery, AdminPlatformAuditLogsQueryVariables>(
+    AdminPlatformAuditLogsDocument,
+    options,
+  )
+}
+export type AdminPlatformAuditLogsQueryHookResult = ReturnType<
+  typeof useAdminPlatformAuditLogsQuery
+>
+export type AdminPlatformAuditLogsLazyQueryHookResult = ReturnType<
+  typeof useAdminPlatformAuditLogsLazyQuery
+>
+export type AdminPlatformAuditLogsSuspenseQueryHookResult = ReturnType<
+  typeof useAdminPlatformAuditLogsSuspenseQuery
+>
+export type AdminPlatformAuditLogsQueryResult = Apollo.QueryResult<
+  AdminPlatformAuditLogsQuery,
+  AdminPlatformAuditLogsQueryVariables
+>
+export const AdminDashboardStatsDocument = gql`
+  query AdminDashboardStats {
+    adminDashboardStats {
+      totalUsers
+      totalOrganizations
+      activeSessions
+      recentSecurityEvents
+      activeSubscriptions
+    }
+  }
+`
+
+/**
+ * __useAdminDashboardStatsQuery__
+ *
+ * To run a query within a React component, call `useAdminDashboardStatsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAdminDashboardStatsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAdminDashboardStatsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useAdminDashboardStatsQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    AdminDashboardStatsQuery,
+    AdminDashboardStatsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<AdminDashboardStatsQuery, AdminDashboardStatsQueryVariables>(
+    AdminDashboardStatsDocument,
+    options,
+  )
+}
+export function useAdminDashboardStatsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    AdminDashboardStatsQuery,
+    AdminDashboardStatsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<AdminDashboardStatsQuery, AdminDashboardStatsQueryVariables>(
+    AdminDashboardStatsDocument,
+    options,
+  )
+}
+export function useAdminDashboardStatsSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<AdminDashboardStatsQuery, AdminDashboardStatsQueryVariables>,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<AdminDashboardStatsQuery, AdminDashboardStatsQueryVariables>(
+    AdminDashboardStatsDocument,
+    options,
+  )
+}
+export type AdminDashboardStatsQueryHookResult = ReturnType<typeof useAdminDashboardStatsQuery>
+export type AdminDashboardStatsLazyQueryHookResult = ReturnType<
+  typeof useAdminDashboardStatsLazyQuery
+>
+export type AdminDashboardStatsSuspenseQueryHookResult = ReturnType<
+  typeof useAdminDashboardStatsSuspenseQuery
+>
+export type AdminDashboardStatsQueryResult = Apollo.QueryResult<
+  AdminDashboardStatsQuery,
+  AdminDashboardStatsQueryVariables
 >
 export const GenerateApiTokenDocument = gql`
   mutation GenerateApiToken($input: GenerateApiTokenInput!) {

@@ -274,7 +274,7 @@ function SidebarProfileSection({
     <ul className="-mx-2 space-y-1">
       <li>
         <Link
-          to={'/members/my-profile'}
+          to={'/settings/profile'}
           className={clsx(
             'flex items-center gap-x-4 px-6 py-3 text-sm font-semibold leading-6 text-white hover:bg-zinc-800',
             sidebarExpanded ? '' : 'justify-center',
@@ -632,7 +632,7 @@ export function WebSidebar(props: Readonly<WebUiSidebarProps>) {
         </button>
         <div className="flex-1 text-sm font-semibold leading-6 text-white">{headerText}</div>
         {isClient ? (
-          <a href="/members/my-profile">
+          <a href="/settings/profile">
             {props?.userAvatar ? (
               <img
                 className="h-8 w-8 rounded-full bg-zinc-800"

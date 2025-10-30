@@ -5,8 +5,6 @@ query AdminPlatformSecurityEvents($filters: AdminSecurityEventFiltersInput) {
       eventType
       ipAddress
       userAgent
-      success
-      reason
       metadata
       createdAt
       user {
@@ -29,11 +27,9 @@ query AdminPlatformAuditLogs($filters: AdminAuditLogFiltersInput) {
     logs {
       id
       action
-      resourceType
-      resourceId
+      entityType
+      entityId
       changes
-      ipAddress
-      userAgent
       createdAt
       user {
         id

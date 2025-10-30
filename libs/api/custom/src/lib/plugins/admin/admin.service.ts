@@ -260,7 +260,7 @@ export class AdminService {
     userId?: string
     organizationId?: string
     action?: string
-    resourceType?: string
+    entityType?: string
     startDate?: Date
     endDate?: Date
     skip?: number
@@ -270,7 +270,7 @@ export class AdminService {
       userId,
       organizationId,
       action,
-      resourceType,
+      entityType,
       startDate,
       endDate,
       skip = 0,
@@ -282,7 +282,7 @@ export class AdminService {
     if (userId) where.userId = userId
     if (organizationId) where.organizationId = organizationId
     if (action) where.action = { contains: action, mode: 'insensitive' }
-    if (resourceType) where.resourceType = { contains: resourceType, mode: 'insensitive' }
+    if (entityType) where.entityType = { contains: entityType, mode: 'insensitive' }
     if (startDate || endDate) {
       where.createdAt = {}
       if (startDate) where.createdAt.gte = startDate
