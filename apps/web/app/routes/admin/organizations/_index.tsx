@@ -1,62 +1,28 @@
 import { useState } from 'react'
 import { useQuery } from '@apollo/client'
-import { gql } from '@apollo/client'
+import { AdminOrganizationsDocument } from '@nestled-template/shared/sdk'
 import { MagnifyingGlassIcon, BuildingOfficeIcon, UsersIcon, CreditCardIcon, CheckCircleIcon, XCircleIcon } from '@heroicons/react/24/outline'
 import { clsx } from 'clsx'
 import { Link } from 'react-router'
-
-const ADMIN_ORGANIZATIONS_QUERY = gql`
-  query AdminOrganizations($take: Int, $skip: Int, $search: String) {
-    organizations(
-      take: $take
-      skip: $skip
-      where: {
-        OR: [
-          { name: { contains: $search, mode: insensitive } }
-        ]
-      }
-      orderBy: { createdAt: desc }
-    ) {
-      id
-      name
-      createdAt
-      updatedAt
-      members {
-        id
-        userId
-        role {
-          name
-        }
-      }
-      subscriptions {
-        id
-        status
-        plan {
-          name
-          price
-        }
-      }
-    }
-    organizationsCount
-  }
-`
 
 export default function AdminOrganizationsPage() {
   const [search, setSearch] = useState('')
   const [page, setPage] = useState(0)
   const pageSize = 50
 
-  const { data, loading, error } = useQuery(ADMIN_ORGANIZATIONS_QUERY, {
+  const { data, loading, error } = useQuery(AdminOrganizationsDocument, {
     variables: {
-      take: pageSize,
-      skip: page * pageSize,
-      search: search || undefined,
+      filters: {
+        take: pageSize,
+        skip: page * pageSize,
+        search: search || undefined,
+      },
     },
     fetchPolicy: 'network-only',
   })
 
-  const organizations = data?.organizations || []
-  const total = data?.organizationsCount || 0
+  const organizations = data?.adminOrganizations?.organizations || []
+  const total = data?.adminOrganizations?.total || 0
   const totalPages = Math.ceil(total / pageSize)
 
   const formatDate = (date: string | null) => {
@@ -69,12 +35,12 @@ export default function AdminOrganizationsPage() {
   }
 
   const getSubscriptionStatus = (org: any) => {
-    const activeSub = org.subscriptions?.find((s: any) => s.status === 'ACTIVE')
-    if (activeSub) {
+    const subscription = org.subscription
+    if (subscription && subscription.status === 'ACTIVE') {
       return {
         status: 'Active',
-        plan: activeSub.plan?.name || 'Unknown',
-        price: activeSub.plan?.price || '0',
+        plan: subscription.plan?.name || 'Unknown',
+        price: subscription.plan?.price || '0',
         color: 'emerald',
       }
     }

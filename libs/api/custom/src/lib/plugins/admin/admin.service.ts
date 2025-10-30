@@ -128,6 +128,60 @@ export class AdminService {
   }
 
   /**
+   * Get filtered and paginated list of organizations for admin panel
+   */
+  async getOrganizations(filters: { search?: string; skip?: number; take?: number }) {
+    const { search, skip = 0, take = 50 } = filters
+
+    // Build where clause
+    const where: any = {}
+
+    // Text search across name
+    if (search) {
+      where.name = { contains: search, mode: 'insensitive' }
+    }
+
+    // Execute queries
+    const [organizations, total] = await Promise.all([
+      this.prisma.organization.findMany({
+        where,
+        skip,
+        take,
+        orderBy: { createdAt: 'desc' },
+        include: {
+          members: {
+            include: {
+              role: { select: { name: true } },
+            },
+          },
+          subscription: {
+            select: {
+              id: true,
+              status: true,
+              plan: {
+                select: {
+                  name: true,
+                  price: true,
+                },
+              },
+            },
+          },
+        },
+      }),
+      this.prisma.organization.count({ where }),
+    ])
+
+    this.logger.log(`Admin query returned ${organizations.length} of ${total} organizations`)
+
+    return {
+      organizations,
+      total,
+      skip,
+      take,
+    }
+  }
+
+  /**
    * Get detailed user information for admin view
    */
   async getUserDetails(userId: string) {
