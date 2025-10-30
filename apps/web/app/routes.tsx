@@ -89,6 +89,9 @@ export default [
       route('admin', './routes/admin/_layout.tsx', [
         index('./routes/admin/_index.tsx'),
         route('users', './routes/admin/users/_index.tsx'),
+        route('organizations', './routes/admin/organizations/_index.tsx'),
+        route('security-events', './routes/admin/security-events/_index.tsx'),
+        route('audit-logs', './routes/admin/audit-logs/_index.tsx'),
         route('data', './routes/admin/data/_layout.tsx', [
           index('./routes/admin/data/index.tsx'),
           route(':dataTypePlural', './routes/admin/data/$dataTypePlural.tsx'),
