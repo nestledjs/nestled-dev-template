@@ -335,7 +335,7 @@ export class AdminService {
       this.prisma.organization.count(),
       this.prisma.userSession.count({
         where: {
-          expiresAt: { gt: new Date() },
+          isValid: true,
         },
       }),
       this.prisma.securityEvent.count({
