@@ -195,23 +195,6 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      {/* System Settings Link */}
-      <div className="rounded-xl border border-emerald-200 dark:border-emerald-500/20 bg-emerald-50 dark:bg-emerald-500/10 p-6 backdrop-blur">
-        <div className="flex items-center justify-between">
-          <div>
-            <h3 className="font-semibold text-emerald-900 dark:text-emerald-100">System Settings</h3>
-            <p className="mt-1 text-sm text-emerald-700 dark:text-emerald-300">
-              Configure billing, preferences, and application settings
-            </p>
-          </div>
-          <Link
-            to="/settings/admin/billing"
-            className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-500 transition"
-          >
-            Go to Settings
-          </Link>
-        </div>
-      </div>
     </div>
   )
 }

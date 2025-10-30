@@ -76,13 +76,6 @@ export default [
         route('security/events', './routes/settings/security.events.tsx'),
         route('notifications', './routes/settings/notifications.tsx'),
         route('preferences', './routes/settings/preferences.tsx'),
-
-        // Application-wide admin settings (super admin only)
-        route('admin', './routes/settings/admin/_layout.tsx', [
-          route('billing', './routes/settings/admin/billing/_index.tsx'),
-          route('billing/plans', './routes/settings/admin/billing/plans.tsx'),
-          route('billing/subscriptions', './routes/settings/admin/billing/subscriptions.tsx'),
-        ]),
       ]),
 
       // Admin panel - super admin only
@@ -92,6 +85,9 @@ export default [
         route('organizations', './routes/admin/organizations/_index.tsx'),
         route('security-events', './routes/admin/security-events/_index.tsx'),
         route('audit-logs', './routes/admin/audit-logs/_index.tsx'),
+        route('billing', './routes/admin/billing/_index.tsx'),
+        route('billing/plans', './routes/admin/billing/plans.tsx'),
+        route('billing/subscriptions', './routes/admin/billing/subscriptions.tsx'),
         route('data', './routes/admin/data/_layout.tsx', [
           index('./routes/admin/data/index.tsx'),
           route(':dataTypePlural', './routes/admin/data/$dataTypePlural.tsx'),
