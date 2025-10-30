@@ -56,7 +56,7 @@ export class AdminAuditLogFiltersInput {
   action?: string
 
   @Field({ nullable: true })
-  resourceType?: string
+  entityType?: string
 
   @Field({ nullable: true })
   startDate?: Date

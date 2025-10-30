@@ -18,3 +18,9 @@ query PlanPagination($input: ListPlanInput) {
     ...CorePagingDetails
   }
 }
+
+query ActivePlans {
+  plans(input: { active: true }) {
+    ...PlanList
+  }
+}

@@ -705,13 +705,18 @@ export class AuthService {
   }
 
   async emulateUser(input: EmulateUserInput, adminId: string) {
+    Logger.log(`🎭 EmulateUser called: adminId=${adminId}, targetUserId=${input?.userId}`)
+
     const user = await this.data.user.findUnique({
       where: { id: input?.userId },
       include: { emails: true }
     })
     if (!user) {
+      Logger.error(`❌ EmulateUser failed: No user found for id: ${input?.userId}`)
       throw new NotFoundException(`No user found for id: ${input?.userId}`)
     }
+
+    Logger.log(`✅ EmulateUser: User found - ${user.firstName} ${user.lastName}`)
 
     // Log emulation start to AuditLog
     await this.data.auditLog.create({
@@ -731,7 +736,9 @@ export class AuthService {
     Logger.log(`Admin ${adminId} started emulating user ${user.id}`)
 
     // Sign user with emulation flag
-    return this.signUser(user, false, adminId)
+    const result = this.signUser(user, false, adminId)
+    Logger.log(`🎭 EmulateUser: Returning token with emulation flag`)
+    return result
   }
 
   async endEmulation(token: string): Promise<UserToken> {
@@ -874,9 +881,13 @@ export class AuthService {
     const payload: any = { userId: user?.id }
 
     // If emulating, add emulation data to JWT
+    Logger.log(`🔍 signUser called with emulatingAdminId: ${emulatingAdminId}`)
     if (emulatingAdminId) {
       payload.isEmulating = true
       payload.originalAdminId = emulatingAdminId
+      Logger.log(`🎭 Emulation JWT created: userId=${user?.id}, adminId=${emulatingAdminId}`)
+    } else {
+      Logger.log(`⚠️ No emulatingAdminId provided - creating normal JWT`)
     }
 
     // Create session if session info is provided
@@ -889,6 +900,7 @@ export class AuthService {
       payload.sessionId = sessionId
     }
 
+    Logger.log(`📦 Final JWT payload before signing:`, JSON.stringify(payload))
     const token = this.jwtService.sign(payload, { expiresIn })
     return { token, user }
   }
@@ -949,6 +961,15 @@ export class AuthService {
 
   public getCookieName(): string {
     return this.core.cookie.name
+  }
+
+  public decodeToken(token: string): any {
+    try {
+      return this.jwtService.decode(token)
+    } catch (error) {
+      Logger.error('Failed to decode JWT token:', error)
+      return null
+    }
   }
 
   /**
@@ -1081,7 +1102,7 @@ export class AuthService {
     if (primaryEmail) {
       const appName = this.config.get('app.name')
       const siteUrl = this.config.get('siteUrl')
-      const securityUrl = `${siteUrl}/members/my-profile/edit`
+      const securityUrl = `${siteUrl}/settings/security`
 
       await this.emailService.sendTemplate(primaryEmail, {
         templateId: 'twofa-enabled',

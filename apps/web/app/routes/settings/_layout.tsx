@@ -3,14 +3,16 @@ import { Link, Outlet, useLocation } from 'react-router'
 import {
   BellIcon,
   BuildingOfficeIcon,
+  ChartBarSquareIcon,
   Cog6ToothIcon,
+  Cog8ToothIcon,
   CreditCardIcon,
   ShieldCheckIcon,
   UserCircleIcon,
   UsersIcon,
 } from '@heroicons/react/24/outline'
 import { useGlobalCtx } from '@nestled-template/web'
-import { useMyOrganizationsQuery } from '@nestled-template/shared/sdk'
+import { useMyOrganizationsWithMembersQuery } from '@nestled-template/shared/sdk'
 import { Avatar } from '@nestled-template/web-ui'
 import { clsx } from 'clsx'
 
@@ -27,8 +29,8 @@ export default function SettingsLayout() {
   const location = useLocation()
   const { user } = useGlobalCtx()
 
-  // Fetch user's organizations
-  const { data: orgsData } = useMyOrganizationsQuery()
+  // Fetch user's organizations with member data
+  const { data: orgsData } = useMyOrganizationsWithMembersQuery()
   const organizations = orgsData?.myOrganizations || []
   const activeOrganization =
     organizations.find(org => org.id === user?.activeOrganizationId) || organizations[0] || null
@@ -53,13 +55,6 @@ export default function SettingsLayout() {
       href: '/settings/notifications',
       icon: BellIcon,
       description: 'Email and notification preferences',
-    },
-    {
-      name: 'Preferences',
-      href: '/settings/preferences',
-      icon: Cog6ToothIcon,
-      superAdminOnly: true,
-      description: 'Application preferences',
     },
   ]
 
@@ -87,6 +82,23 @@ export default function SettingsLayout() {
     },
   ]
 
+  const applicationSettings: NavItem[] = [
+    {
+      name: 'Billing Management',
+      href: '/settings/admin/billing',
+      icon: ChartBarSquareIcon,
+      superAdminOnly: true,
+      description: 'Manage plans and subscriptions',
+    },
+    {
+      name: 'Preferences',
+      href: '/settings/preferences',
+      icon: Cog6ToothIcon,
+      superAdminOnly: true,
+      description: 'Application preferences',
+    },
+  ]
+
   const isActive = (href: string) => {
     return location.pathname === href || location.pathname.startsWith(`${href}/`)
   }
@@ -104,6 +116,9 @@ export default function SettingsLayout() {
 
     // Only restrict update permissions if we have member data
     if (permission === 'organization:update') {
+      // Super admins can always update (bypass role check)
+      if (user?.isSuperAdmin) return true
+
       if (!activeOrganizationMember) return false // Need member data for update permissions
       return (
         activeOrganizationMember?.role?.name === 'Owner' ||
@@ -271,6 +286,60 @@ export default function SettingsLayout() {
                   })}
                 </ul>
               </div>
+
+              {/* Application Settings Section */}
+              {user?.isSuperAdmin && (
+                <div className="mt-6 pt-6 border-t border-zinc-200 dark:border-white/10">
+                  <div className="flex items-center gap-3 mb-4 p-2 rounded-lg bg-zinc-50 dark:bg-white/5">
+                    <Cog8ToothIcon className="h-5 w-5 text-zinc-500 dark:text-zinc-400" />
+                    <div className="flex-1 min-w-0">
+                      <div className="text-sm font-medium text-zinc-900 dark:text-white truncate">
+                        Application
+                      </div>
+                      <div className="text-xs text-zinc-500 dark:text-zinc-400">
+                        System-wide Settings
+                      </div>
+                    </div>
+                  </div>
+                  <ul className="space-y-1">
+                    {applicationSettings.map(item => {
+                      // Skip super admin only items for non-super admins
+                      if (item.superAdminOnly && !user?.isSuperAdmin) {
+                        return null
+                      }
+
+                      return (
+                        <li key={item.name}>
+                          <Link
+                            to={item.href}
+                            className={clsx(
+                              'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+                              isActive(item.href)
+                                ? 'bg-emerald-500 text-white'
+                                : 'text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-white/10',
+                            )}
+                          >
+                            <item.icon className="h-5 w-5 flex-shrink-0" />
+                            <div className="flex-1 min-w-0">
+                              <div className="truncate">{item.name}</div>
+                              <div
+                                className={clsx(
+                                  'text-xs truncate',
+                                  isActive(item.href)
+                                    ? 'text-emerald-100'
+                                    : 'text-zinc-500 dark:text-zinc-400',
+                                )}
+                              >
+                                {item.description}
+                              </div>
+                            </div>
+                          </Link>
+                        </li>
+                      )
+                    })}
+                  </ul>
+                </div>
+              )}
             </div>
           </nav>
 

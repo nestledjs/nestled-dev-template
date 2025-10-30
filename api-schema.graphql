@@ -39,6 +39,49 @@ enum AddressType {
   WORK
 }
 
+input AdminAuditLogFiltersInput {
+  action: String
+  endDate: Timestamp
+  entityType: String
+  organizationId: String
+  skip: Int
+  startDate: Timestamp
+  take: Int
+  userId: String
+}
+
+type AdminAuditLogsResponse {
+  logs: [AuditLog!]!
+  skip: Int!
+  take: Int!
+  total: Int!
+}
+
+type AdminDashboardStats {
+  activeSessions: Int!
+  activeSubscriptions: Int!
+  recentSecurityEvents: Int!
+  totalOrganizations: Int!
+  totalUsers: Int!
+}
+
+input AdminSecurityEventFiltersInput {
+  endDate: Timestamp
+  eventType: SecurityEventType
+  ipAddress: String
+  skip: Int
+  startDate: Timestamp
+  take: Int
+  userId: String
+}
+
+type AdminSecurityEventsResponse {
+  events: [SecurityEvent!]!
+  skip: Int!
+  take: Int!
+  total: Int!
+}
+
 input AdminUserFiltersInput {
   accountLocked: Boolean
   emailVerified: Boolean
@@ -1330,6 +1373,9 @@ type Query {
   address(addressId: String!): Address
   addresses(input: ListAddressInput): [Address!]
   addressesCount(input: ListAddressInput): CorePaging
+  adminAuditLogs(filters: AdminAuditLogFiltersInput): AdminAuditLogsResponse!
+  adminDashboardStats: AdminDashboardStats!
+  adminSecurityEvents(filters: AdminSecurityEventFiltersInput): AdminSecurityEventsResponse!
   adminUserDetails(userId: String!): User!
   adminUsers(filters: AdminUserFiltersInput): AdminUsersResponse!
   apiToken(apiTokenId: String!): ApiToken

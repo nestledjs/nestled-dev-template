@@ -18,3 +18,9 @@ query SubscriptionPagination($input: ListSubscriptionInput) {
     ...CorePagingDetails
   }
 }
+
+query CurrentSubscription {
+  currentSubscription {
+    ...SubscriptionDetails
+  }
+}
