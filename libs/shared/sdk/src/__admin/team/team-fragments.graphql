@@ -1,0 +1,15 @@
+fragment __AdminTeamList on Team {
+  id
+  createdAt
+  updatedAt
+  name
+  description
+  organizationId
+  organization {
+    id
+  }
+}
+
+fragment __AdminTeamDetails on Team {
+  ...__AdminTeamList
+}

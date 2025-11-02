@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useQuery, useMutation } from '@apollo/client'
-import { AdminUserManagementDocument, EmulateUserDocument } from '@nestled-template/shared/sdk'
-import { MagnifyingGlassIcon, ShieldCheckIcon, LockClosedIcon, CheckCircleIcon, XCircleIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline'
+import { AdminUserManagementDocument, EmulateUserDocument, AdminUserManagementDetailsDocument } from '@nestled-template/shared/sdk'
+import { MagnifyingGlassIcon, ShieldCheckIcon, LockClosedIcon, CheckCircleIcon, XCircleIcon, ExclamationTriangleIcon, EyeIcon } from '@heroicons/react/24/outline'
 import { clsx } from 'clsx'
 import { useNavigate } from 'react-router'
 
@@ -20,6 +20,7 @@ export default function AdminUsersPage() {
   // UI state for confirmation dialog and error messages
   const [confirmEmulation, setConfirmEmulation] = useState<{ userId: string; userEmail: string } | null>(null)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const [selectedUserId, setSelectedUserId] = useState<string | null>(null)
 
   // Query users
   const { data, loading, error, refetch } = useQuery(AdminUserManagementDocument, {
@@ -33,6 +34,15 @@ export default function AdminUsersPage() {
     },
     fetchPolicy: 'network-only',
   })
+
+  // Query user details
+  const { data: detailsData, loading: loadingDetails } = useQuery(AdminUserManagementDetailsDocument, {
+    variables: { userId: selectedUserId! },
+    skip: !selectedUserId,
+    fetchPolicy: 'network-only',
+  })
+
+  const userDetails = detailsData?.adminUserDetails
 
   // Emulate user mutation
   const [emulateUser, { loading: emulating }] = useMutation(EmulateUserDocument, {
@@ -312,13 +322,22 @@ export default function AdminUsersPage() {
                         {formatDate(user.lastSuccessfulLogin)}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <button
-                          onClick={() => handleEmulate(user.id, email)}
-                          disabled={emulating}
-                          className="inline-flex items-center gap-1 rounded-lg bg-emerald-600 px-3 py-1.5 text-sm font-medium text-white shadow-sm hover:bg-emerald-500 disabled:opacity-50 transition"
-                        >
-                          Emulate
-                        </button>
+                        <div className="flex items-center justify-end gap-2">
+                          <button
+                            onClick={() => setSelectedUserId(user.id)}
+                            className="inline-flex items-center gap-1 rounded-lg bg-zinc-600 dark:bg-white/10 px-3 py-1.5 text-sm font-medium text-white hover:bg-zinc-500 dark:hover:bg-white/20 transition"
+                          >
+                            <EyeIcon className="h-4 w-4" />
+                            View
+                          </button>
+                          <button
+                            onClick={() => handleEmulate(user.id, email)}
+                            disabled={emulating}
+                            className="inline-flex items-center gap-1 rounded-lg bg-emerald-600 px-3 py-1.5 text-sm font-medium text-white shadow-sm hover:bg-emerald-500 disabled:opacity-50 transition"
+                          >
+                            Emulate
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   )
@@ -410,6 +429,231 @@ export default function AdminUsersPage() {
                 className="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 transition"
               >
                 <XCircleIcon className="h-5 w-5" />
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* User Details Modal */}
+      {selectedUserId && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm overflow-y-auto p-4">
+          <div className="bg-white dark:bg-zinc-900 rounded-lg shadow-xl max-w-4xl w-full my-8 border border-zinc-200 dark:border-white/10">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between p-6 border-b border-zinc-200 dark:border-white/10">
+              <h2 className="text-2xl font-bold text-zinc-900 dark:text-white">User Details</h2>
+              <button
+                onClick={() => setSelectedUserId(null)}
+                className="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 transition"
+              >
+                <XCircleIcon className="h-6 w-6" />
+              </button>
+            </div>
+
+            {/* Modal Content */}
+            <div className="p-6">
+              {loadingDetails ? (
+                <div className="flex items-center justify-center py-12">
+                  <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-emerald-600 dark:border-emerald-400 border-r-transparent"></div>
+                </div>
+              ) : userDetails ? (
+                <div className="space-y-6">
+                  {/* Basic Info */}
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-sm font-medium text-zinc-500 dark:text-zinc-400">Name</label>
+                      <p className="mt-1 text-base font-medium text-zinc-900 dark:text-white">
+                        {userDetails.firstName} {userDetails.lastName}
+                      </p>
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium text-zinc-500 dark:text-zinc-400">User ID</label>
+                      <p className="mt-1 text-sm text-zinc-900 dark:text-white font-mono">{userDetails.id}</p>
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium text-zinc-500 dark:text-zinc-400">Created</label>
+                      <p className="mt-1 text-sm text-zinc-900 dark:text-white">{formatDate(userDetails.createdAt)}</p>
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium text-zinc-500 dark:text-zinc-400">Last Login</label>
+                      <p className="mt-1 text-sm text-zinc-900 dark:text-white">
+                        {formatDate(userDetails.lastSuccessfulLogin)}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Emails */}
+                  <div>
+                    <label className="text-sm font-medium text-zinc-500 dark:text-zinc-400">Email Addresses</label>
+                    <div className="mt-2 space-y-2">
+                      {userDetails.emails?.map((email) => (
+                        <div
+                          key={email.id}
+                          className="flex items-center justify-between rounded-lg border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-white/5 px-4 py-2"
+                        >
+                          <span className="text-sm text-zinc-900 dark:text-white">{email.email}</span>
+                          <div className="flex items-center gap-2">
+                            {email.primary && (
+                              <span className="inline-flex items-center rounded-full bg-emerald-100 dark:bg-emerald-500/20 px-2 py-0.5 text-xs font-medium text-emerald-800 dark:text-emerald-300">
+                                Primary
+                              </span>
+                            )}
+                            {email.verified ? (
+                              <span className="inline-flex items-center text-xs text-green-700 dark:text-green-400">
+                                <CheckCircleIcon className="mr-1 h-3 w-3" />
+                                Verified
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center text-xs text-zinc-500 dark:text-zinc-400">
+                                <XCircleIcon className="mr-1 h-3 w-3" />
+                                Not Verified
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Security Status */}
+                  <div>
+                    <label className="text-sm font-medium text-zinc-500 dark:text-zinc-400">Security Status</label>
+                    <div className="mt-2 grid grid-cols-2 gap-4">
+                      <div className="flex items-center justify-between rounded-lg border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-white/5 px-4 py-3">
+                        <span className="text-sm text-zinc-700 dark:text-zinc-300">Two-Factor Auth</span>
+                        {userDetails.twoFactorEnabled ? (
+                          <span className="inline-flex items-center text-sm text-green-700 dark:text-green-400 font-medium">
+                            <CheckCircleIcon className="mr-1 h-4 w-4" />
+                            Enabled
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center text-sm text-zinc-500 dark:text-zinc-400">
+                            Disabled
+                          </span>
+                        )}
+                      </div>
+                      <div className="flex items-center justify-between rounded-lg border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-white/5 px-4 py-3">
+                        <span className="text-sm text-zinc-700 dark:text-zinc-300">Account Status</span>
+                        {userDetails.lockedUntil && new Date(userDetails.lockedUntil) > new Date() ? (
+                          <span className="inline-flex items-center text-sm text-red-700 dark:text-red-400 font-medium">
+                            <LockClosedIcon className="mr-1 h-4 w-4" />
+                            Locked
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center text-sm text-green-700 dark:text-green-400 font-medium">
+                            Active
+                          </span>
+                        )}
+                      </div>
+                      {userDetails.isSuperAdmin && (
+                        <div className="col-span-2 flex items-center justify-center rounded-lg border border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-500/20 px-4 py-3">
+                          <span className="inline-flex items-center text-sm text-emerald-700 dark:text-emerald-300 font-medium">
+                            <ShieldCheckIcon className="mr-2 h-5 w-5" />
+                            Super Administrator
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Organizations */}
+                  {userDetails.organizations && userDetails.organizations.length > 0 && (
+                    <div>
+                      <label className="text-sm font-medium text-zinc-500 dark:text-zinc-400">Organizations</label>
+                      <div className="mt-2 space-y-2">
+                        {userDetails.organizations.map((org) => (
+                          <div
+                            key={org.id}
+                            className="flex items-center justify-between rounded-lg border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-white/5 px-4 py-3"
+                          >
+                            <div>
+                              <p className="text-sm font-medium text-zinc-900 dark:text-white">
+                                {org.organization.name}
+                              </p>
+                              <p className="text-xs text-zinc-500 dark:text-zinc-400">
+                                Joined {formatDate(org.organization.createdAt)}
+                              </p>
+                            </div>
+                            <span className="inline-flex items-center rounded-full bg-zinc-100 dark:bg-white/10 px-2 py-0.5 text-xs font-medium text-zinc-700 dark:text-zinc-300">
+                              {org.role.name}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Active Sessions */}
+                  {userDetails.activeSessions && userDetails.activeSessions.length > 0 && (
+                    <div>
+                      <label className="text-sm font-medium text-zinc-500 dark:text-zinc-400">
+                        Active Sessions ({userDetails.activeSessions.filter((s) => s.isValid).length})
+                      </label>
+                      <div className="mt-2 space-y-2">
+                        {userDetails.activeSessions
+                          .filter((s) => s.isValid)
+                          .slice(0, 5)
+                          .map((session) => (
+                            <div
+                              key={session.id}
+                              className="flex items-center justify-between rounded-lg border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-white/5 px-4 py-2 text-sm"
+                            >
+                              <div>
+                                <p className="text-zinc-900 dark:text-white font-medium">
+                                  {session.deviceInfo || 'Unknown Device'}
+                                </p>
+                                <p className="text-xs text-zinc-500 dark:text-zinc-400">{session.ipAddress}</p>
+                              </div>
+                              <span className="text-xs text-zinc-500 dark:text-zinc-400">
+                                {formatDate(session.lastActiveAt)}
+                              </span>
+                            </div>
+                          ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Recent Activity */}
+                  {userDetails.AuditLog && userDetails.AuditLog.length > 0 && (
+                    <div>
+                      <label className="text-sm font-medium text-zinc-500 dark:text-zinc-400">Recent Activity</label>
+                      <div className="mt-2 space-y-2 max-h-64 overflow-y-auto">
+                        {userDetails.AuditLog.slice(0, 10).map((log) => (
+                          <div
+                            key={log.id}
+                            className="rounded-lg border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-white/5 px-4 py-2"
+                          >
+                            <div className="flex items-start justify-between">
+                              <div>
+                                <p className="text-sm font-medium text-zinc-900 dark:text-white">{log.action}</p>
+                                <p className="text-xs text-zinc-500 dark:text-zinc-400">
+                                  {log.entityType} · {log.entityId.slice(0, 8)}
+                                </p>
+                              </div>
+                              <span className="text-xs text-zinc-500 dark:text-zinc-400">
+                                {formatDate(log.createdAt)}
+                              </span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="text-center py-8 text-zinc-500 dark:text-zinc-400">
+                  Failed to load user details
+                </div>
+              )}
+            </div>
+
+            {/* Modal Footer */}
+            <div className="flex items-center justify-end gap-3 px-6 py-4 bg-zinc-50 dark:bg-zinc-800/50 border-t border-zinc-200 dark:border-white/10 rounded-b-lg">
+              <button
+                onClick={() => setSelectedUserId(null)}
+                className="px-4 py-2 text-sm font-medium text-zinc-700 dark:text-zinc-300 bg-white dark:bg-white/5 hover:bg-zinc-100 dark:hover:bg-white/10 border border-zinc-300 dark:border-white/10 rounded-lg transition"
+              >
+                Close
               </button>
             </div>
           </div>

@@ -1,0 +1,21 @@
+fragment __AdminAuditLogList on AuditLog {
+  id
+  createdAt
+  updatedAt
+  entityId
+  entityType
+  action
+  userId
+  organizationId
+  changes
+  user {
+    id
+  }
+  organization {
+    id
+  }
+}
+
+fragment __AdminAuditLogDetails on AuditLog {
+  ...__AdminAuditLogList
+}

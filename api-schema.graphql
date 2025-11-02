@@ -1162,6 +1162,10 @@ input LoginInput {
 type Mutation {
   acceptOrganizationInvitation(input: AcceptInvitationInput!): Organization!
   addOrganizationMember(input: AddOrganizationMemberInput!): Boolean!
+  adminActivateUser(userId: String!): User!
+  adminDeactivateUser(userId: String!): User!
+  adminForcePasswordReset(userId: String!): User!
+  adminVerifyEmail(emailId: String!, userId: String!): User!
   cancelSubscription: Subscription!
   changeEmail(input: ChangeEmailInput!): Boolean!
   changePassword(input: ChangePasswordInput!): Boolean!

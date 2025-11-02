@@ -414,4 +414,118 @@ export class AdminService {
       activeSubscriptions,
     }
   }
+
+  /**
+   * Deactivate a user account
+   */
+  async deactivateUser(userId: string) {
+    const user = await this.prisma.user.update({
+      where: { id: userId },
+      data: {
+        isActive: false,
+        deactivatedAt: new Date(),
+      },
+      include: {
+        emails: true,
+      },
+    })
+
+    this.logger.log(`Admin deactivated user: ${userId}`)
+    return user
+  }
+
+  /**
+   * Activate a user account
+   */
+  async activateUser(userId: string) {
+    const user = await this.prisma.user.update({
+      where: { id: userId },
+      data: {
+        isActive: true,
+        deactivatedAt: null,
+      },
+      include: {
+        emails: true,
+      },
+    })
+
+    this.logger.log(`Admin activated user: ${userId}`)
+    return user
+  }
+
+  /**
+   * Manually verify a user's email
+   */
+  async verifyEmail(userId: string, emailId: string) {
+    // Verify the email
+    await this.prisma.email.update({
+      where: { id: emailId },
+      data: {
+        verified: true,
+        verifyToken: null,
+        verifyExpires: null,
+      },
+    })
+
+    // Update emailValidated flag on user if this is their primary email
+    const email = await this.prisma.email.findUnique({
+      where: { id: emailId },
+    })
+
+    if (email?.primary) {
+      await this.prisma.user.update({
+        where: { id: userId },
+        data: { emailValidated: true },
+      })
+    }
+
+    // Fetch and return the updated user
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      include: {
+        emails: true,
+      },
+    })
+
+    this.logger.log(`Admin verified email ${emailId} for user ${userId}`)
+    return user!
+  }
+
+  /**
+   * Force a password reset for a user
+   * Invalidates all sessions and sets a password reset token
+   */
+  async forcePasswordReset(userId: string) {
+    // Generate a reset token
+    const crypto = await import('crypto')
+    const resetToken = crypto.randomBytes(32).toString('hex')
+    const resetExpires = new Date(Date.now() + 3600000) // 1 hour
+
+    // Update user with reset token and invalidate all sessions
+    const [user] = await Promise.all([
+      this.prisma.user.update({
+        where: { id: userId },
+        data: {
+          passwordResetToken: resetToken,
+          passwordResetExpires: resetExpires,
+        },
+        include: {
+          emails: true,
+        },
+      }),
+      // Invalidate all active sessions
+      this.prisma.userSession.updateMany({
+        where: {
+          userId,
+          isValid: true,
+        },
+        data: {
+          isValid: false,
+        },
+      }),
+    ])
+
+    this.logger.log(`Admin forced password reset for user: ${userId}`)
+    return user
+  }
 }

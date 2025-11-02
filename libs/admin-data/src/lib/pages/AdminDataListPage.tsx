@@ -228,7 +228,8 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
     // Search fields (per model), sanitized to valid fields
     const storedSearch = AdminLocalStorage.getSearchFields(model.name)
     const defaults = getDefaultSearchFields(searchableFieldNames)
-    const filteredSearch = (storedSearch || defaults).filter((f: string) => searchableFieldNames.includes(f)).slice(0, 2)
+    // Don't limit stored preferences - user may have selected more than 2 fields
+    const filteredSearch = (storedSearch || defaults).filter((f: string) => searchableFieldNames.includes(f))
     setSearchFields(filteredSearch)
 
     // Clear per-model transient state
@@ -304,7 +305,7 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
   }
 
   // Main GraphQL query with comprehensive error handling
-  const { data, loading, error, networkStatus, refetch } = useQuery(query ?? Sdk.UsersDocument, {
+  const { data, loading, error, networkStatus, refetch } = useQuery(query ?? (Sdk as any).__AdminUsersDocument, {
     variables,
     skip: !model || !query,
     errorPolicy: 'all', // Continue processing even if there are GraphQL errors
