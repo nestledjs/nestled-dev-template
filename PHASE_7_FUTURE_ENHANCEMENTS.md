@@ -48,6 +48,13 @@ This phase contains optional features that can be added in the future to enhance
   - [ ] Visual distinction (different color scheme)
   - [ ] Emulation activity logging display
 
+- [ ] **Time-limited emulation sessions** (from Phase 5)
+  - [ ] Add `emulationExpiresAt` to JWT payload
+  - [ ] Auto-expire emulation after 1-2 hours
+  - [ ] Check expiration in auth middleware
+  - [ ] Auto-exit when expired
+  - [ ] Warning notification before expiration
+
 ### Advanced Authentication Features
 - [ ] **WebAuthn / Passkey support**
   - [ ] Hardware security key registration

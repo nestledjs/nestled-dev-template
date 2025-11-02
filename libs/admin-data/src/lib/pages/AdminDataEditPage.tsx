@@ -3,6 +3,7 @@ import { loadDevMessages, loadErrorMessages } from '@apollo/client/dev'
 import { CheckCircleIcon, ExclamationCircleIcon } from '@heroicons/react/24/outline'
 import { TrashIcon } from '@heroicons/react/24/solid'
 import { DATABASE_MODELS } from '@nestled-template/shared/sdk'
+import { formTheme } from '@nestled-template/shared/styles'
 // Helper functions for admin data management
 function findModelByName(name: string) {
   return DATABASE_MODELS.find(model => model.name === name)
@@ -109,13 +110,13 @@ export function AdminDataEditPage() {
   // Render error states
   if (shouldShowUnauthorized) {
     return (
-      <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-        <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-          <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+      <div className="flex flex-col justify-center py-12">
+        <div className="mt-8 mx-auto w-full max-w-md">
+          <div className="bg-white dark:bg-gray-800 py-8 px-4 shadow sm:rounded-lg sm:px-10">
             <div className="text-center">
               <ExclamationCircleIcon className="mx-auto h-12 w-12 text-red-400" />
-              <h2 className="mt-4 text-lg font-medium text-gray-900">Unauthorized</h2>
-              <p className="mt-2 text-sm text-gray-600">
+              <h2 className="mt-4 text-lg font-medium text-gray-900 dark:text-gray-100">Unauthorized</h2>
+              <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
                 Invalid data type, ID, or insufficient permissions.
               </p>
               <div className="mt-6">
@@ -135,13 +136,13 @@ export function AdminDataEditPage() {
 
   if (shouldShowModelNotFound) {
     return (
-      <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-        <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-          <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+      <div className="flex flex-col justify-center py-12">
+        <div className="mt-8 mx-auto w-full max-w-md">
+          <div className="bg-white dark:bg-gray-800 py-8 px-4 shadow sm:rounded-lg sm:px-10">
             <div className="text-center">
               <ExclamationCircleIcon className="mx-auto h-12 w-12 text-yellow-400" />
-              <h2 className="mt-4 text-lg font-medium text-gray-900">Model Not Found</h2>
-              <p className="mt-2 text-sm text-gray-600">
+              <h2 className="mt-4 text-lg font-medium text-gray-900 dark:text-gray-100">Model Not Found</h2>
+              <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
                 The data model for "{validatedDataType}" could not be found.
               </p>
               <div className="mt-6">
@@ -295,13 +296,13 @@ function AdminDataEditPageContent({ model, id }: Readonly<{ model: any; id: stri
   // Early returns after ALL hooks are called
   if (!documents || !QUERY || !UPDATE_MUTATION || !DELETE_MUTATION) {
     return (
-      <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-        <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-2xl">
-          <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+      <div className="flex flex-col justify-center py-12">
+        <div className="mt-8 mx-auto w-full max-w-2xl">
+          <div className="bg-white dark:bg-gray-800 py-8 px-4 shadow sm:rounded-lg sm:px-10">
             <div className="text-center">
               <ExclamationCircleIcon className="mx-auto h-12 w-12 text-red-400" />
-              <h2 className="mt-4 text-lg font-medium text-gray-900">GraphQL Schema Error</h2>
-              <p className="mt-2 text-sm text-gray-600">
+              <h2 className="mt-4 text-lg font-medium text-gray-900 dark:text-gray-100">GraphQL Schema Error</h2>
+              <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
                 Unable to load GraphQL documents for this model. Please ensure the API server is
                 running and the GraphQL schema is up to date.
               </p>
@@ -323,13 +324,13 @@ function AdminDataEditPageContent({ model, id }: Readonly<{ model: any; id: stri
   // Handle query errors
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-        <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-          <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+      <div className="flex flex-col justify-center py-12">
+        <div className="mt-8 mx-auto w-full max-w-md">
+          <div className="bg-white dark:bg-gray-800 py-8 px-4 shadow sm:rounded-lg sm:px-10">
             <div className="text-center">
               <ExclamationCircleIcon className="mx-auto h-12 w-12 text-red-400" />
-              <h2 className="mt-4 text-lg font-medium text-gray-900">Error Loading Data</h2>
-              <p className="mt-2 text-sm text-gray-600">{error.message}</p>
+              <h2 className="mt-4 text-lg font-medium text-gray-900 dark:text-gray-100">Error Loading Data</h2>
+              <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">{error.message}</p>
               <div className="mt-6 space-y-3">
                 <button
                   onClick={() => refetch()}
@@ -354,13 +355,13 @@ function AdminDataEditPageContent({ model, id }: Readonly<{ model: any; id: stri
   // Show loading state
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-        <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-          <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+      <div className="flex flex-col justify-center py-12">
+        <div className="mt-8 mx-auto w-full max-w-md">
+          <div className="bg-white dark:bg-gray-800 py-8 px-4 shadow sm:rounded-lg sm:px-10">
             <div className="text-center">
               <div className="mx-auto h-12 w-12 border-4 border-green-web border-t-transparent rounded-full animate-spin" />
-              <h2 className="mt-4 text-lg font-medium text-gray-900">Loading...</h2>
-              <p className="mt-2 text-sm text-gray-600">
+              <h2 className="mt-4 text-lg font-medium text-gray-900 dark:text-gray-100">Loading...</h2>
+              <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
                 Loading {toReadableText(model.name)} data...
               </p>
             </div>
@@ -375,13 +376,13 @@ function AdminDataEditPageContent({ model, id }: Readonly<{ model: any; id: stri
 
   if (!item) {
     return (
-      <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-        <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-          <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+      <div className="flex flex-col justify-center py-12">
+        <div className="mt-8 mx-auto w-full max-w-md">
+          <div className="bg-white dark:bg-gray-800 py-8 px-4 shadow sm:rounded-lg sm:px-10">
             <div className="text-center">
               <ExclamationCircleIcon className="mx-auto h-12 w-12 text-yellow-400" />
-              <h2 className="mt-4 text-lg font-medium text-gray-900">Not Found</h2>
-              <p className="mt-2 text-sm text-gray-600">
+              <h2 className="mt-4 text-lg font-medium text-gray-900 dark:text-gray-100">Not Found</h2>
+              <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
                 The {toReadableText(model.name)} you're looking for doesn't exist or has been
                 deleted.
               </p>
@@ -400,8 +401,8 @@ function AdminDataEditPageContent({ model, id }: Readonly<{ model: any; id: stri
     )
   }
 
-  // Build form fields with initial values
-  const formFields = buildFormFields(model, 'update', item)
+  // Build form fields without values (we'll use defaultValues prop instead)
+  const formFields = buildFormFields(model, 'update')
 
   // Extract initial values for the Form component
   const initialValues: Record<string, any> = {}
@@ -422,11 +423,39 @@ function AdminDataEditPageContent({ model, id }: Readonly<{ model: any; id: stri
       if (field.relationName && !field.isList) {
         const relationFieldName = field.relationFromFields?.[0] || field.name
         value = item[relationFieldName]
-        if (value && typeof value === 'object' && value.id) {
-          value = value.id
+
+        // Extract ID from object, or convert to empty string if it's still an object
+        if (value && typeof value === 'object') {
+          value = value.id || ''
         }
+
         initialValues[relationFieldName] = value || ''
       } else {
+        // Convert Date objects and timestamps to proper format for date/datetime fields
+        if (field.type.toLowerCase() === 'datetime' || field.type.toLowerCase() === 'date') {
+          if (value !== null && value !== undefined && value !== '') {
+            try {
+              // Handle Date objects, ISO strings, and timestamps
+              const dateValue = value instanceof Date ? value : new Date(value)
+
+              if (field.type.toLowerCase() === 'date') {
+                // Date fields: YYYY-MM-DD format
+                value = dateValue.toISOString().split('T')[0]
+              } else {
+                // DateTime fields: YYYY-MM-DDTHH:mm format (for datetime-local input)
+                const isoString = dateValue.toISOString()
+                // Extract YYYY-MM-DDTHH:mm (remove seconds and timezone)
+                value = isoString.substring(0, 16)
+              }
+            } catch (e) {
+              console.warn(`Failed to convert date value for field ${field.name}:`, e)
+              value = ''
+            }
+          } else {
+            value = ''
+          }
+        }
+
         // Convert null to empty string for form fields
         if (value === null && field.type.toLowerCase() !== 'boolean') {
           value = ''
@@ -435,9 +464,65 @@ function AdminDataEditPageContent({ model, id }: Readonly<{ model: any; id: stri
         if (field.type.toLowerCase() === 'boolean') {
           value = Boolean(value)
         }
+
+        // Safety check: convert any remaining non-primitive values to strings
+        if (value !== null && typeof value === 'object') {
+          console.warn(`Field ${field.name} has object value, converting to string:`, value)
+          // If it's an object with an id, use the id
+          if (typeof value === 'object' && 'id' in value) {
+            value = (value as any).id
+          } else {
+            value = ''
+          }
+        }
+
         initialValues[field.name] = value
       }
     })
+
+    // Final safety check: convert undefined and remaining objects
+    for (const [key, value] of Object.entries(initialValues)) {
+      // Convert undefined to empty string (form library can't handle undefined)
+      if (value === undefined) {
+        console.warn(`[AdminDataEditPage] Found undefined value for field ${key}, converting to empty string`)
+        initialValues[key] = ''
+        continue
+      }
+
+      // Skip null values - forms can handle null
+      if (value === null) {
+        continue
+      }
+
+      // Skip primitives - they're already in the correct format
+      if (typeof value !== 'object') {
+        continue
+      }
+
+      // Convert any remaining objects to primitives
+      console.warn(`[AdminDataEditPage] Found non-primitive value for field ${key}, converting:`, value)
+      if ('id' in value && typeof (value as any).id === 'string') {
+        initialValues[key] = (value as any).id
+      } else if (value instanceof Date) {
+        // This shouldn't happen if date conversion above worked, but handle it just in case
+        const field = model.fields.find((f: any) => f.name === key)
+        initialValues[key] = field?.type.toLowerCase() === 'date'
+          ? value.toISOString().split('T')[0]
+          : value.toISOString()
+      } else {
+        // Convert everything else to empty string for safety
+        initialValues[key] = ''
+      }
+    }
+
+    // Debug: Log the final initialValues to see what we're passing to the form
+    console.log('[AdminDataEditPage] Final initialValues:', initialValues)
+    console.log('[AdminDataEditPage] Value types:', Object.entries(initialValues).map(([key, val]) => ({
+      key,
+      type: typeof val,
+      isDate: val instanceof Date,
+      value: val
+    })))
   }
 
   // Handle form submission
@@ -520,21 +605,20 @@ function AdminDataEditPageContent({ model, id }: Readonly<{ model: any; id: stri
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-6 pb-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-3xl mx-auto">
-        {/* Header */}
-        <div className="mb-8">
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="mb-8">
           <nav className="flex mb-6" aria-label="Breadcrumb">
             <ol className="flex items-center space-x-4">
               <li>
-                <Link to="/admin/data" className="text-gray-400 hover:text-gray-500">
+                <Link to="/admin/data" className="text-gray-400 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-400">
                   Data Browser
                 </Link>
               </li>
               <li>
                 <div className="flex items-center">
                   <svg
-                    className="flex-shrink-0 h-5 w-5 text-gray-300"
+                    className="flex-shrink-0 h-5 w-5 text-gray-300 dark:text-gray-600"
                     fill="currentColor"
                     viewBox="0 0 20 20"
                   >
@@ -546,7 +630,7 @@ function AdminDataEditPageContent({ model, id }: Readonly<{ model: any; id: stri
                   </svg>
                   <Link
                     to={`/admin/data/${toKebabCase(model.pluralName)}`}
-                    className="ml-4 text-gray-400 hover:text-gray-500"
+                    className="ml-4 text-gray-400 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-400"
                   >
                     {toReadableText(model.pluralName)}
                   </Link>
@@ -555,7 +639,7 @@ function AdminDataEditPageContent({ model, id }: Readonly<{ model: any; id: stri
               <li>
                 <div className="flex items-center">
                   <svg
-                    className="flex-shrink-0 h-5 w-5 text-gray-300"
+                    className="flex-shrink-0 h-5 w-5 text-gray-300 dark:text-gray-600"
                     fill="currentColor"
                     viewBox="0 0 20 20"
                   >
@@ -565,13 +649,13 @@ function AdminDataEditPageContent({ model, id }: Readonly<{ model: any; id: stri
                       clipRule="evenodd"
                     />
                   </svg>
-                  <span className="ml-4 text-gray-500">Edit</span>
+                  <span className="ml-4 text-gray-500 dark:text-gray-400">Edit</span>
                 </div>
               </li>
             </ol>
           </nav>
           <div className="flex items-center justify-between">
-            <h1 className="text-3xl font-bold text-gray-900">Edit {toReadableText(model.name)}</h1>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Edit {toReadableText(model.name)}</h1>
             <button
               onClick={() => setShowDeleteConfirm(true)}
               disabled={deleteState.status === 'loading'}
@@ -585,18 +669,18 @@ function AdminDataEditPageContent({ model, id }: Readonly<{ model: any; id: stri
 
         {/* Delete Confirmation Modal */}
         {showDeleteConfirm && (
-          <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50 flex items-center justify-center">
-            <div className="bg-white p-6 rounded-lg shadow-xl max-w-md w-full mx-4">
+          <div className="fixed inset-0 bg-gray-600 dark:bg-gray-900 bg-opacity-50 dark:bg-opacity-75 overflow-y-auto h-full w-full z-50 flex items-center justify-center">
+            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl max-w-md w-full mx-4">
               <div className="flex items-center">
                 <div className="flex-shrink-0">
                   <ExclamationCircleIcon className="h-6 w-6 text-red-600" />
                 </div>
                 <div className="ml-3">
-                  <h3 className="text-lg font-medium text-gray-900">
+                  <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
                     Delete {toReadableText(model.name)}
                   </h3>
                   <div className="mt-2">
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
                       Are you sure you want to delete this{' '}
                       {toReadableText(model.name).toLowerCase()}? This action cannot be undone.
                     </p>
@@ -666,7 +750,7 @@ function AdminDataEditPageContent({ model, id }: Readonly<{ model: any; id: stri
         )}
 
         {/* Form */}
-        <div className="bg-white shadow-sm rounded-lg">
+        <div className="bg-white dark:bg-gray-800 shadow-sm rounded-lg">
           <div className="px-6 py-8">
             <Form
               id={`edit-${model.name.toLowerCase()}-form`}
@@ -674,10 +758,10 @@ function AdminDataEditPageContent({ model, id }: Readonly<{ model: any; id: stri
               submit={handleSubmit}
               disabled={submissionState.status === 'loading' || deleteState.status === 'loading'}
               defaultValues={initialValues}
+              theme={formTheme}
             />
           </div>
         </div>
-      </div>
     </div>
   )
 }

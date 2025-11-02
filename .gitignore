@@ -49,6 +49,8 @@ vite.config.*.timestamp*
 vitest.config.*.timestamp*
 !/apps/web/.react-router/
 
+# Prisma generated files
+prisma-generated
 
 storybook-static
 /nestled-templatenow/

@@ -19,6 +19,7 @@ export function isViteCacheError(error: Error | unknown): boolean {
     'Cannot read properties of null',
     'Invariant failed',
     'License expired',
+    '.split is not a function', // Form library errors with invalid data types
   ]
   if (nonViteRenderErrors.some((msg) => errorMessage.includes(msg))) {
     return false

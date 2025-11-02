@@ -164,9 +164,10 @@ export const SecureAdminLocalStorage = {
   setColumnVisibility: (modelName: string, visibleColumns: string[]): boolean => {
     const sanitizedModelName = sanitizeString(modelName)
     const sanitizedColumns = sanitizeArray(visibleColumns)
-    
-    if (!sanitizedModelName || sanitizedColumns.length === 0) return false
-    
+
+    // Allow empty arrays - it's a valid preference (no columns selected)
+    if (!sanitizedModelName) return false
+
     const config = SecureAdminLocalStorage.getConfig()
     if (!config.models[sanitizedModelName]) {
       config.models[sanitizedModelName] = {}
@@ -214,9 +215,10 @@ export const SecureAdminLocalStorage = {
   setSearchFields: (modelName: string, searchFields: string[]): boolean => {
     const sanitizedModelName = sanitizeString(modelName)
     const sanitizedFields = sanitizeArray(searchFields)
-    
-    if (!sanitizedModelName || sanitizedFields.length === 0) return false
-    
+
+    // Allow empty arrays - it's a valid preference (no search fields selected)
+    if (!sanitizedModelName) return false
+
     const config = SecureAdminLocalStorage.getConfig()
     if (!config.models[sanitizedModelName]) {
       config.models[sanitizedModelName] = {}

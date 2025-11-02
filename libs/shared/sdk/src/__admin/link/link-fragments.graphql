@@ -1,0 +1,19 @@
+fragment __AdminLinkList on Link {
+  id
+  createdAt
+  updatedAt
+  name
+  url
+  userId
+  organizationId
+  user {
+    id
+  }
+  organization {
+    id
+  }
+}
+
+fragment __AdminLinkDetails on Link {
+  ...__AdminLinkList
+}

@@ -59,12 +59,12 @@ export function getAdminDocuments(model: DatabaseModel) {
   const normalizedModelName = normalizeModelNameForDocument(model.name)
   const normalizedPluralName = normalizeModelNameForDocument(getPluralName(model.name))
 
-  // Expected document names in the SDK
-  const singleQueryDocumentName = `Admin${normalizedModelName}Document` // Single item query
-  const listQueryDocumentName = `Admin${normalizedPluralName}Document` // List query
-  const updateDocumentName = `AdminUpdate${normalizedModelName}Document`
-  const deleteDocumentName = `AdminDelete${normalizedModelName}Document`
-  const createDocumentName = `AdminCreate${normalizedModelName}Document`
+  // Expected document names in the SDK (with __ prefix for admin operations)
+  const singleQueryDocumentName = `__Admin${normalizedModelName}Document` // Single item query
+  const listQueryDocumentName = `__Admin${normalizedPluralName}Document` // List query
+  const updateDocumentName = `__AdminUpdate${normalizedModelName}Document`
+  const deleteDocumentName = `__AdminDelete${normalizedModelName}Document`
+  const createDocumentName = `__AdminCreate${normalizedModelName}Document`
 
   const documents = {
     query: (Sdk as Record<string, any>)[singleQueryDocumentName], // For single item
@@ -157,6 +157,38 @@ export function buildFormFields(
     // Get initial value from currentItem for update operations
     let initialValue = currentItem && operation === 'update' ? currentItem[field.name] : undefined
 
+    // Convert Date objects to proper format for date/datetime fields
+    if (field.type.toLowerCase() === 'datetime' || field.type.toLowerCase() === 'date') {
+      if (initialValue instanceof Date || (initialValue && typeof initialValue === 'string')) {
+        try {
+          const dateValue = initialValue instanceof Date ? initialValue : new Date(initialValue)
+
+          if (field.type.toLowerCase() === 'date') {
+            // Date fields: YYYY-MM-DD format
+            initialValue = dateValue.toISOString().split('T')[0]
+          } else {
+            // DateTime fields: YYYY-MM-DDTHH:mm format (for datetime-local input)
+            const isoString = dateValue.toISOString()
+            // Extract YYYY-MM-DDTHH:mm (remove seconds and timezone)
+            initialValue = isoString.substring(0, 16)
+          }
+        } catch (e) {
+          console.warn(`Failed to convert date value for field ${field.name}:`, e)
+          initialValue = ''
+        }
+      }
+    }
+
+    // Convert relation objects to their ID strings
+    if (initialValue && typeof initialValue === 'object' && !Array.isArray(initialValue) && field.relationName) {
+      const relationObj = initialValue as Record<string, unknown>
+      if (relationObj.id && typeof relationObj.id === 'string') {
+        initialValue = relationObj.id
+      } else {
+        initialValue = ''
+      }
+    }
+
     // Convert null to empty string for form fields (except boolean fields)
     if (initialValue === null && field.type.toLowerCase() !== 'boolean') {
       initialValue = ''
@@ -210,6 +242,8 @@ export function buildFormFields(
       }
 
       case 'datetime':
+        return FormFieldClass.dateTimePicker(field.name, options)
+
       case 'date':
         return FormFieldClass.datePicker(field.name, options)
 
@@ -249,9 +283,9 @@ export function buildFormFields(
           }
 
           // Use Apollo-powered select for relationships
-          // Try to get the Admin GraphQL document for the relation type
-          const adminDocumentName = `Admin${field.type}sDocument` // e.g., AdminCoursesDocument
-          const regularDocumentName = `${field.type}sDocument` // e.g., CoursesDocument
+          // Try to get the Admin GraphQL document for the relation type (with __ prefix)
+          const adminDocumentName = `__Admin${field.type}sDocument` // e.g., __AdminCoursesDocument
+          const regularDocumentName = `${field.type}sDocument` // e.g., CoursesDocument (fallback)
           const relationDocument =
             (Sdk as any)[adminDocumentName] || (Sdk as any)[regularDocumentName]
 
@@ -388,12 +422,24 @@ function shouldSkipValue(key: string, value: unknown): boolean {
 }
 
 /**
- * Convert string values to appropriate types (number, boolean, null)
+ * Convert string values to appropriate types (number, boolean, null, datetime)
  */
-function convertStringValue(value: string): string | number | boolean | null {
+function convertStringValue(value: string, field?: any): string | number | boolean | null {
   // Convert empty strings to null for optional fields
   if (value === '') {
     return null
+  }
+
+  // Handle datetime-local format (YYYY-MM-DDTHH:mm) - convert to ISO string
+  if (field?.type.toLowerCase() === 'datetime' && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(value)) {
+    try {
+      // datetime-local values are in local time, convert to ISO string
+      const date = new Date(value)
+      return date.toISOString()
+    } catch (e) {
+      console.warn(`Failed to convert datetime-local value: ${value}`)
+      return value
+    }
   }
 
   // Handle boolean strings
@@ -456,7 +502,9 @@ export function cleanFormInput(
 
     // Handle string values with type conversion
     if (typeof value === 'string') {
-      const convertedValue = convertStringValue(value)
+      // Find the field definition to help with type conversion
+      const field = model?.fields?.find((f: any) => f.name === key)
+      const convertedValue = convertStringValue(value, field)
       if (convertedValue !== null) {
         cleaned[key] = convertedValue
       }

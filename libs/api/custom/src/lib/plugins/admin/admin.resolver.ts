@@ -1,4 +1,4 @@
-import { Args, Field, InputType, Int, ObjectType, Query, Resolver } from '@nestjs/graphql'
+import { Args, Field, InputType, Int, ObjectType, Query, Resolver, Mutation } from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
 import { GqlAuthAdminGuard } from '@nestled-template/api/utils'
 import { SecurityEvent, AuditLog, User, Organization, SecurityEventType } from '@nestled-template/api/core/models'
@@ -207,5 +207,54 @@ export class AdminResolver {
   @UseGuards(GqlAuthAdminGuard)
   async adminDashboardStats(): Promise<AdminDashboardStats> {
     return this.service.getDashboardStats()
+  }
+
+  /**
+   * Deactivate a user account
+   * Super admin only
+   */
+  @Mutation(() => User)
+  @UseGuards(GqlAuthAdminGuard)
+  async adminDeactivateUser(
+    @Args('userId', { type: () => String }) userId: string,
+  ): Promise<User> {
+    return this.service.deactivateUser(userId)
+  }
+
+  /**
+   * Activate a user account
+   * Super admin only
+   */
+  @Mutation(() => User)
+  @UseGuards(GqlAuthAdminGuard)
+  async adminActivateUser(
+    @Args('userId', { type: () => String }) userId: string,
+  ): Promise<User> {
+    return this.service.activateUser(userId)
+  }
+
+  /**
+   * Manually verify a user's email
+   * Super admin only
+   */
+  @Mutation(() => User)
+  @UseGuards(GqlAuthAdminGuard)
+  async adminVerifyEmail(
+    @Args('userId', { type: () => String }) userId: string,
+    @Args('emailId', { type: () => String }) emailId: string,
+  ): Promise<User> {
+    return this.service.verifyEmail(userId, emailId)
+  }
+
+  /**
+   * Force a password reset for a user
+   * Super admin only
+   */
+  @Mutation(() => User)
+  @UseGuards(GqlAuthAdminGuard)
+  async adminForcePasswordReset(
+    @Args('userId', { type: () => String }) userId: string,
+  ): Promise<User> {
+    return this.service.forcePasswordReset(userId)
   }
 }

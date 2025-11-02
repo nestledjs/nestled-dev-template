@@ -10,6 +10,7 @@ import {
   DocumentDuplicateIcon,
   EyeIcon,
   EyeSlashIcon,
+  PencilIcon,
 } from '@heroicons/react/24/outline'
 import dayjs from 'dayjs'
 
@@ -30,6 +31,7 @@ export interface WebUiDataTableProps {
 
 export function WebUiDataTable(props: WebUiDataTableProps) {
   const [visibleIds, setVisibleIds] = useState<Set<string>>(new Set())
+  const [copiedId, setCopiedId] = useState<string | null>(null)
 
   const toggleIdVisibility = useCallback((rowId: string) => {
     setVisibleIds((prev) => {
@@ -44,6 +46,8 @@ export function WebUiDataTable(props: WebUiDataTableProps) {
     try {
       if (typeof navigator !== 'undefined' && navigator?.clipboard?.writeText) {
         await navigator.clipboard.writeText(value)
+        setCopiedId(value)
+        setTimeout(() => setCopiedId(null), 2000)
       }
     } catch {
       // ignore
@@ -222,9 +226,9 @@ export function WebUiDataTable(props: WebUiDataTableProps) {
                   <tr key={item.id}>
                     {/* Edit cell moved to far left */}
                     <td className="whitespace-nowrap py-4 pl-4 pr-3 text-left text-sm font-medium sm:pl-6">
-                      <Link to={`${props.path}/${item.id}`} className="text-blue-600 hover:text-blue-900">
-                        Edit
-                        <span className="sr-only">, {String(item.id)}</span>
+                      <Link to={`${props.path}/${item.id}`} className="text-blue-600 hover:text-blue-900" title="Edit">
+                        <PencilIcon className="w-5 h-5" />
+                        <span className="sr-only">Edit {String(item.id)}</span>
                       </Link>
                     </td>
                     {props.fields.map((field, index) => {
@@ -239,15 +243,22 @@ export function WebUiDataTable(props: WebUiDataTableProps) {
                               {/* Special handling for ID field: show copy + eye icons instead of raw ID */}
                               {field.toLowerCase() === 'id' ? (
                                 <div className="flex items-center gap-3">
-                                  <button
-                                    type="button"
-                                    className="text-gray-600 hover:text-gray-900"
-                                    onClick={() => copyToClipboard(String(item.id))}
-                                    title="Copy ID"
-                                    aria-label="Copy ID"
-                                  >
-                                    <DocumentDuplicateIcon className="w-5 h-5" />
-                                  </button>
+                                  <div className="relative">
+                                    <button
+                                      type="button"
+                                      className="text-gray-600 hover:text-gray-900"
+                                      onClick={() => copyToClipboard(String(item.id))}
+                                      title="Copy ID"
+                                      aria-label="Copy ID"
+                                    >
+                                      <DocumentDuplicateIcon className="w-5 h-5" />
+                                    </button>
+                                    {copiedId === String(item.id) && (
+                                      <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-xs px-2 py-1 rounded whitespace-nowrap">
+                                        Copied!
+                                      </div>
+                                    )}
+                                  </div>
                                   <button
                                     type="button"
                                     className="text-gray-600 hover:text-gray-900"

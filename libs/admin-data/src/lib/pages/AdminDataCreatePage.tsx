@@ -1,6 +1,7 @@
 import { gql, useMutation } from '@apollo/client'
 import { CheckCircleIcon, ExclamationCircleIcon } from '@heroicons/react/24/outline'
 import { DATABASE_MODELS } from '@nestled-template/shared/sdk'
+import { formTheme } from '@nestled-template/shared/styles'
 // Helper functions for admin data management
 function findModelByName(name: string) {
   return DATABASE_MODELS.find(model => model.name === name)
@@ -82,13 +83,13 @@ export function AdminDataCreatePage() {
   // Render error states
   if (shouldShowUnauthorized) {
     return (
-      <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-        <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-          <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+      <div className="flex flex-col justify-center py-12">
+        <div className="mt-8 mx-auto w-full max-w-md">
+          <div className="bg-white dark:bg-gray-800 py-8 px-4 shadow sm:rounded-lg sm:px-10">
             <div className="text-center">
               <ExclamationCircleIcon className="mx-auto h-12 w-12 text-red-400" />
-              <h2 className="mt-4 text-lg font-medium text-gray-900">Unauthorized</h2>
-              <p className="mt-2 text-sm text-gray-600">
+              <h2 className="mt-4 text-lg font-medium text-gray-900 dark:text-gray-100">Unauthorized</h2>
+              <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
                 Invalid data type or insufficient permissions.
               </p>
               <div className="mt-6">
@@ -108,13 +109,13 @@ export function AdminDataCreatePage() {
 
   if (shouldShowAccessDenied) {
     return (
-      <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-        <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-          <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+      <div className="flex flex-col justify-center py-12">
+        <div className="mt-8 mx-auto w-full max-w-md">
+          <div className="bg-white dark:bg-gray-800 py-8 px-4 shadow sm:rounded-lg sm:px-10">
             <div className="text-center">
               <ExclamationCircleIcon className="mx-auto h-12 w-12 text-red-400" />
-              <h2 className="mt-4 text-lg font-medium text-gray-900">Access Denied</h2>
-              <p className="mt-2 text-sm text-gray-600">
+              <h2 className="mt-4 text-lg font-medium text-gray-900 dark:text-gray-100">Access Denied</h2>
+              <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
                 You don't have permission to create {toReadableText(validatedDataType!)} records.
               </p>
               <div className="mt-6">
@@ -134,13 +135,13 @@ export function AdminDataCreatePage() {
 
   if (shouldShowModelNotFound) {
     return (
-      <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-        <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-          <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+      <div className="flex flex-col justify-center py-12">
+        <div className="mt-8 mx-auto w-full max-w-md">
+          <div className="bg-white dark:bg-gray-800 py-8 px-4 shadow sm:rounded-lg sm:px-10">
             <div className="text-center">
               <ExclamationCircleIcon className="mx-auto h-12 w-12 text-yellow-400" />
-              <h2 className="mt-4 text-lg font-medium text-gray-900">Model Not Found</h2>
-              <p className="mt-2 text-sm text-gray-600">
+              <h2 className="mt-4 text-lg font-medium text-gray-900 dark:text-gray-100">Model Not Found</h2>
+              <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
                 The data model for "{validatedDataType}" could not be found.
               </p>
               <div className="mt-6">
@@ -213,13 +214,13 @@ function AdminDataCreatePageContent({ model }: Readonly<{ model: any }>) {
   // Early return AFTER all hooks are called
   if (!documents || !CREATE_MUTATION) {
     return (
-      <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
         <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-2xl">
-          <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+          <div className="bg-white dark:bg-gray-800 py-8 px-4 shadow sm:rounded-lg sm:px-10">
             <div className="text-center">
               <ExclamationCircleIcon className="mx-auto h-12 w-12 text-red-400" />
-              <h2 className="mt-4 text-lg font-medium text-gray-900">GraphQL Schema Error</h2>
-              <p className="mt-2 text-sm text-gray-600">
+              <h2 className="mt-4 text-lg font-medium text-gray-900 dark:text-gray-100">GraphQL Schema Error</h2>
+              <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
                 Unable to load GraphQL documents for this model. Please ensure the API server is
                 running and the GraphQL schema is up to date.
               </p>
@@ -294,21 +295,20 @@ function AdminDataCreatePageContent({ model }: Readonly<{ model: any }>) {
   }, [submissionState.status])
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-6 pb-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-3xl mx-auto">
-        {/* Header */}
-        <div className="mb-8">
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="mb-8">
           <nav className="flex mb-6" aria-label="Breadcrumb">
             <ol className="flex items-center space-x-4">
               <li>
-                <Link to="/admin/data" className="text-gray-400 hover:text-gray-500">
+                <Link to="/admin/data" className="text-gray-400 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-400">
                   Data Browser
                 </Link>
               </li>
               <li>
                 <div className="flex items-center">
                   <svg
-                    className="flex-shrink-0 h-5 w-5 text-gray-300"
+                    className="flex-shrink-0 h-5 w-5 text-gray-300 dark:text-gray-600"
                     fill="currentColor"
                     viewBox="0 0 20 20"
                   >
@@ -320,7 +320,7 @@ function AdminDataCreatePageContent({ model }: Readonly<{ model: any }>) {
                   </svg>
                   <Link
                     to={`/admin/data/${toKebabCase(model.pluralName)}`}
-                    className="ml-4 text-gray-400 hover:text-gray-500"
+                    className="ml-4 text-gray-400 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-400"
                   >
                     {toReadableText(model.pluralName)}
                   </Link>
@@ -329,7 +329,7 @@ function AdminDataCreatePageContent({ model }: Readonly<{ model: any }>) {
               <li>
                 <div className="flex items-center">
                   <svg
-                    className="flex-shrink-0 h-5 w-5 text-gray-300"
+                    className="flex-shrink-0 h-5 w-5 text-gray-300 dark:text-gray-600"
                     fill="currentColor"
                     viewBox="0 0 20 20"
                   >
@@ -339,12 +339,12 @@ function AdminDataCreatePageContent({ model }: Readonly<{ model: any }>) {
                       clipRule="evenodd"
                     />
                   </svg>
-                  <span className="ml-4 text-gray-500">Create New</span>
+                  <span className="ml-4 text-gray-500 dark:text-gray-400">Create New</span>
                 </div>
               </li>
             </ol>
           </nav>
-          <h1 className="mt-4 text-3xl font-bold text-gray-900">
+          <h1 className="mt-4 text-3xl font-bold text-gray-900 dark:text-gray-100">
             Create {toReadableText(model.name)}
           </h1>
         </div>
@@ -390,17 +390,17 @@ function AdminDataCreatePageContent({ model }: Readonly<{ model: any }>) {
         )}
 
         {/* Form */}
-        <div className="bg-white shadow-sm rounded-lg">
+        <div className="bg-white dark:bg-gray-800 shadow-sm rounded-lg">
           <div className="px-6 py-8">
             <Form
               id={`create-${model.name.toLowerCase()}-form`}
               fields={formFields}
               submit={handleSubmit}
               disabled={submissionState.status === 'loading'}
+              theme={formTheme}
             />
           </div>
         </div>
-      </div>
     </div>
   )
 }

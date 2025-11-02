@@ -1193,6 +1193,10 @@ export type Mutation = {
   __typename?: 'Mutation'
   acceptOrganizationInvitation: Organization
   addOrganizationMember: Scalars['Boolean']['output']
+  adminActivateUser: User
+  adminDeactivateUser: User
+  adminForcePasswordReset: User
+  adminVerifyEmail: User
   cancelSubscription: Subscription
   changeEmail: Scalars['Boolean']['output']
   changePassword: Scalars['Boolean']['output']
@@ -1322,6 +1326,23 @@ export type MutationAcceptOrganizationInvitationArgs = {
 
 export type MutationAddOrganizationMemberArgs = {
   input: AddOrganizationMemberInput
+}
+
+export type MutationAdminActivateUserArgs = {
+  userId: Scalars['String']['input']
+}
+
+export type MutationAdminDeactivateUserArgs = {
+  userId: Scalars['String']['input']
+}
+
+export type MutationAdminForcePasswordResetArgs = {
+  userId: Scalars['String']['input']
+}
+
+export type MutationAdminVerifyEmailArgs = {
+  emailId: Scalars['String']['input']
+  userId: Scalars['String']['input']
 }
 
 export type MutationChangeEmailArgs = {
@@ -3026,7 +3047,7 @@ export type VerifyEmailInput = {
   token: Scalars['String']['input']
 }
 
-export type AdminAddressListFragment = {
+export type __AdminAddressListFragment = {
   __typename?: 'Address'
   id: string
   createdAt: any
@@ -3046,7 +3067,7 @@ export type AdminAddressListFragment = {
   organization?: { __typename?: 'Organization'; id: string } | null
 }
 
-export type AdminAddressDetailsFragment = {
+export type __AdminAddressDetailsFragment = {
   __typename?: 'Address'
   id: string
   createdAt: any
@@ -3066,11 +3087,11 @@ export type AdminAddressDetailsFragment = {
   organization?: { __typename?: 'Organization'; id: string } | null
 }
 
-export type AdminCreateAddressMutationVariables = Exact<{
+export type __AdminCreateAddressMutationVariables = Exact<{
   input: CreateAddressInput
 }>
 
-export type AdminCreateAddressMutation = {
+export type __AdminCreateAddressMutation = {
   __typename?: 'Mutation'
   createAddress?: {
     __typename?: 'Address'
@@ -3093,21 +3114,21 @@ export type AdminCreateAddressMutation = {
   } | null
 }
 
-export type AdminDeleteAddressMutationVariables = Exact<{
+export type __AdminDeleteAddressMutationVariables = Exact<{
   addressId: Scalars['String']['input']
 }>
 
-export type AdminDeleteAddressMutation = {
+export type __AdminDeleteAddressMutation = {
   __typename?: 'Mutation'
   deleteAddress?: { __typename?: 'Address'; id: string } | null
 }
 
-export type AdminUpdateAddressMutationVariables = Exact<{
+export type __AdminUpdateAddressMutationVariables = Exact<{
   addressId: Scalars['String']['input']
   input: UpdateAddressInput
 }>
 
-export type AdminUpdateAddressMutation = {
+export type __AdminUpdateAddressMutation = {
   __typename?: 'Mutation'
   updateAddress?: {
     __typename?: 'Address'
@@ -3130,11 +3151,11 @@ export type AdminUpdateAddressMutation = {
   } | null
 }
 
-export type AdminAddressQueryVariables = Exact<{
+export type __AdminAddressQueryVariables = Exact<{
   addressId: Scalars['String']['input']
 }>
 
-export type AdminAddressQuery = {
+export type __AdminAddressQuery = {
   __typename?: 'Query'
   address?: {
     __typename?: 'Address'
@@ -3157,11 +3178,11 @@ export type AdminAddressQuery = {
   } | null
 }
 
-export type AdminAddressesQueryVariables = Exact<{
+export type __AdminAddressesQueryVariables = Exact<{
   input?: InputMaybe<ListAddressInput>
 }>
 
-export type AdminAddressesQuery = {
+export type __AdminAddressesQuery = {
   __typename?: 'Query'
   addresses?: Array<{
     __typename?: 'Address'
@@ -3196,11 +3217,11 @@ export type AdminAddressesQuery = {
   } | null
 }
 
-export type AdminAddressPaginationQueryVariables = Exact<{
+export type __AdminAddressPaginationQueryVariables = Exact<{
   input?: InputMaybe<ListAddressInput>
 }>
 
-export type AdminAddressPaginationQuery = {
+export type __AdminAddressPaginationQuery = {
   __typename?: 'Query'
   counters?: {
     __typename?: 'CorePaging'
@@ -3216,7 +3237,7 @@ export type AdminAddressPaginationQuery = {
   } | null
 }
 
-export type AdminApiTokenListFragment = {
+export type __AdminApiTokenListFragment = {
   __typename?: 'ApiToken'
   id: string
   createdAt: any
@@ -3230,7 +3251,7 @@ export type AdminApiTokenListFragment = {
   user?: { __typename?: 'User'; id: string } | null
 }
 
-export type AdminApiTokenDetailsFragment = {
+export type __AdminApiTokenDetailsFragment = {
   __typename?: 'ApiToken'
   id: string
   createdAt: any
@@ -3244,11 +3265,11 @@ export type AdminApiTokenDetailsFragment = {
   user?: { __typename?: 'User'; id: string } | null
 }
 
-export type AdminCreateApiTokenMutationVariables = Exact<{
+export type __AdminCreateApiTokenMutationVariables = Exact<{
   input: CreateApiTokenInput
 }>
 
-export type AdminCreateApiTokenMutation = {
+export type __AdminCreateApiTokenMutation = {
   __typename?: 'Mutation'
   createApiToken?: {
     __typename?: 'ApiToken'
@@ -3265,21 +3286,21 @@ export type AdminCreateApiTokenMutation = {
   } | null
 }
 
-export type AdminDeleteApiTokenMutationVariables = Exact<{
+export type __AdminDeleteApiTokenMutationVariables = Exact<{
   apiTokenId: Scalars['String']['input']
 }>
 
-export type AdminDeleteApiTokenMutation = {
+export type __AdminDeleteApiTokenMutation = {
   __typename?: 'Mutation'
   deleteApiToken?: { __typename?: 'ApiToken'; id: string } | null
 }
 
-export type AdminUpdateApiTokenMutationVariables = Exact<{
+export type __AdminUpdateApiTokenMutationVariables = Exact<{
   apiTokenId: Scalars['String']['input']
   input: UpdateApiTokenInput
 }>
 
-export type AdminUpdateApiTokenMutation = {
+export type __AdminUpdateApiTokenMutation = {
   __typename?: 'Mutation'
   updateApiToken?: {
     __typename?: 'ApiToken'
@@ -3296,11 +3317,11 @@ export type AdminUpdateApiTokenMutation = {
   } | null
 }
 
-export type AdminApiTokenQueryVariables = Exact<{
+export type __AdminApiTokenQueryVariables = Exact<{
   apiTokenId: Scalars['String']['input']
 }>
 
-export type AdminApiTokenQuery = {
+export type __AdminApiTokenQuery = {
   __typename?: 'Query'
   apiToken?: {
     __typename?: 'ApiToken'
@@ -3317,11 +3338,11 @@ export type AdminApiTokenQuery = {
   } | null
 }
 
-export type AdminApiTokensQueryVariables = Exact<{
+export type __AdminApiTokensQueryVariables = Exact<{
   input?: InputMaybe<ListApiTokenInput>
 }>
 
-export type AdminApiTokensQuery = {
+export type __AdminApiTokensQuery = {
   __typename?: 'Query'
   apiTokens?: Array<{
     __typename?: 'ApiToken'
@@ -3350,11 +3371,11 @@ export type AdminApiTokensQuery = {
   } | null
 }
 
-export type AdminApiTokenPaginationQueryVariables = Exact<{
+export type __AdminApiTokenPaginationQueryVariables = Exact<{
   input?: InputMaybe<ListApiTokenInput>
 }>
 
-export type AdminApiTokenPaginationQuery = {
+export type __AdminApiTokenPaginationQuery = {
   __typename?: 'Query'
   counters?: {
     __typename?: 'CorePaging'
@@ -3370,7 +3391,7 @@ export type AdminApiTokenPaginationQuery = {
   } | null
 }
 
-export type AdminAuditLogListFragment = {
+export type __AdminAuditLogListFragment = {
   __typename?: 'AuditLog'
   id: string
   createdAt: any
@@ -3385,7 +3406,7 @@ export type AdminAuditLogListFragment = {
   organization?: { __typename?: 'Organization'; id: string } | null
 }
 
-export type AdminAuditLogDetailsFragment = {
+export type __AdminAuditLogDetailsFragment = {
   __typename?: 'AuditLog'
   id: string
   createdAt: any
@@ -3400,11 +3421,11 @@ export type AdminAuditLogDetailsFragment = {
   organization?: { __typename?: 'Organization'; id: string } | null
 }
 
-export type AdminCreateAuditLogMutationVariables = Exact<{
+export type __AdminCreateAuditLogMutationVariables = Exact<{
   input: CreateAuditLogInput
 }>
 
-export type AdminCreateAuditLogMutation = {
+export type __AdminCreateAuditLogMutation = {
   __typename?: 'Mutation'
   createAuditLog?: {
     __typename?: 'AuditLog'
@@ -3422,21 +3443,21 @@ export type AdminCreateAuditLogMutation = {
   } | null
 }
 
-export type AdminDeleteAuditLogMutationVariables = Exact<{
+export type __AdminDeleteAuditLogMutationVariables = Exact<{
   auditLogId: Scalars['String']['input']
 }>
 
-export type AdminDeleteAuditLogMutation = {
+export type __AdminDeleteAuditLogMutation = {
   __typename?: 'Mutation'
   deleteAuditLog?: { __typename?: 'AuditLog'; id: string } | null
 }
 
-export type AdminUpdateAuditLogMutationVariables = Exact<{
+export type __AdminUpdateAuditLogMutationVariables = Exact<{
   auditLogId: Scalars['String']['input']
   input: UpdateAuditLogInput
 }>
 
-export type AdminUpdateAuditLogMutation = {
+export type __AdminUpdateAuditLogMutation = {
   __typename?: 'Mutation'
   updateAuditLog?: {
     __typename?: 'AuditLog'
@@ -3454,11 +3475,11 @@ export type AdminUpdateAuditLogMutation = {
   } | null
 }
 
-export type AdminAuditLogQueryVariables = Exact<{
+export type __AdminAuditLogQueryVariables = Exact<{
   auditLogId: Scalars['String']['input']
 }>
 
-export type AdminAuditLogQuery = {
+export type __AdminAuditLogQuery = {
   __typename?: 'Query'
   auditLog?: {
     __typename?: 'AuditLog'
@@ -3476,11 +3497,11 @@ export type AdminAuditLogQuery = {
   } | null
 }
 
-export type AdminAuditLogsQueryVariables = Exact<{
+export type __AdminAuditLogsQueryVariables = Exact<{
   input?: InputMaybe<ListAuditLogInput>
 }>
 
-export type AdminAuditLogsQuery = {
+export type __AdminAuditLogsQuery = {
   __typename?: 'Query'
   auditLogs?: Array<{
     __typename?: 'AuditLog'
@@ -3510,11 +3531,11 @@ export type AdminAuditLogsQuery = {
   } | null
 }
 
-export type AdminAuditLogPaginationQueryVariables = Exact<{
+export type __AdminAuditLogPaginationQueryVariables = Exact<{
   input?: InputMaybe<ListAuditLogInput>
 }>
 
-export type AdminAuditLogPaginationQuery = {
+export type __AdminAuditLogPaginationQuery = {
   __typename?: 'Query'
   counters?: {
     __typename?: 'CorePaging'
@@ -3530,7 +3551,7 @@ export type AdminAuditLogPaginationQuery = {
   } | null
 }
 
-export type AdminCountryListFragment = {
+export type __AdminCountryListFragment = {
   __typename?: 'Country'
   id: string
   createdAt: any
@@ -3548,7 +3569,7 @@ export type AdminCountryListFragment = {
   intermediateRegionCode: string
 }
 
-export type AdminCountryDetailsFragment = {
+export type __AdminCountryDetailsFragment = {
   __typename?: 'Country'
   id: string
   createdAt: any
@@ -3566,11 +3587,11 @@ export type AdminCountryDetailsFragment = {
   intermediateRegionCode: string
 }
 
-export type AdminCreateCountryMutationVariables = Exact<{
+export type __AdminCreateCountryMutationVariables = Exact<{
   input: CreateCountryInput
 }>
 
-export type AdminCreateCountryMutation = {
+export type __AdminCreateCountryMutation = {
   __typename?: 'Mutation'
   createCountry?: {
     __typename?: 'Country'
@@ -3591,21 +3612,21 @@ export type AdminCreateCountryMutation = {
   } | null
 }
 
-export type AdminDeleteCountryMutationVariables = Exact<{
+export type __AdminDeleteCountryMutationVariables = Exact<{
   countryId: Scalars['String']['input']
 }>
 
-export type AdminDeleteCountryMutation = {
+export type __AdminDeleteCountryMutation = {
   __typename?: 'Mutation'
   deleteCountry?: { __typename?: 'Country'; id: string } | null
 }
 
-export type AdminUpdateCountryMutationVariables = Exact<{
+export type __AdminUpdateCountryMutationVariables = Exact<{
   countryId: Scalars['String']['input']
   input: UpdateCountryInput
 }>
 
-export type AdminUpdateCountryMutation = {
+export type __AdminUpdateCountryMutation = {
   __typename?: 'Mutation'
   updateCountry?: {
     __typename?: 'Country'
@@ -3626,11 +3647,11 @@ export type AdminUpdateCountryMutation = {
   } | null
 }
 
-export type AdminCountryQueryVariables = Exact<{
+export type __AdminCountryQueryVariables = Exact<{
   countryId: Scalars['String']['input']
 }>
 
-export type AdminCountryQuery = {
+export type __AdminCountryQuery = {
   __typename?: 'Query'
   country?: {
     __typename?: 'Country'
@@ -3651,11 +3672,11 @@ export type AdminCountryQuery = {
   } | null
 }
 
-export type AdminCountriesQueryVariables = Exact<{
+export type __AdminCountriesQueryVariables = Exact<{
   input?: InputMaybe<ListCountryInput>
 }>
 
-export type AdminCountriesQuery = {
+export type __AdminCountriesQuery = {
   __typename?: 'Query'
   countries?: Array<{
     __typename?: 'Country'
@@ -3688,11 +3709,11 @@ export type AdminCountriesQuery = {
   } | null
 }
 
-export type AdminCountryPaginationQueryVariables = Exact<{
+export type __AdminCountryPaginationQueryVariables = Exact<{
   input?: InputMaybe<ListCountryInput>
 }>
 
-export type AdminCountryPaginationQuery = {
+export type __AdminCountryPaginationQuery = {
   __typename?: 'Query'
   counters?: {
     __typename?: 'CorePaging'
@@ -3708,7 +3729,7 @@ export type AdminCountryPaginationQuery = {
   } | null
 }
 
-export type AdminEmailListFragment = {
+export type __AdminEmailListFragment = {
   __typename?: 'Email'
   id: string
   createdAt: any
@@ -3726,7 +3747,7 @@ export type AdminEmailListFragment = {
   organization?: { __typename?: 'Organization'; id: string } | null
 }
 
-export type AdminEmailDetailsFragment = {
+export type __AdminEmailDetailsFragment = {
   __typename?: 'Email'
   id: string
   createdAt: any
@@ -3744,11 +3765,11 @@ export type AdminEmailDetailsFragment = {
   organization?: { __typename?: 'Organization'; id: string } | null
 }
 
-export type AdminCreateEmailMutationVariables = Exact<{
+export type __AdminCreateEmailMutationVariables = Exact<{
   input: CreateEmailInput
 }>
 
-export type AdminCreateEmailMutation = {
+export type __AdminCreateEmailMutation = {
   __typename?: 'Mutation'
   createEmail?: {
     __typename?: 'Email'
@@ -3769,21 +3790,21 @@ export type AdminCreateEmailMutation = {
   } | null
 }
 
-export type AdminDeleteEmailMutationVariables = Exact<{
+export type __AdminDeleteEmailMutationVariables = Exact<{
   emailId: Scalars['String']['input']
 }>
 
-export type AdminDeleteEmailMutation = {
+export type __AdminDeleteEmailMutation = {
   __typename?: 'Mutation'
   deleteEmail?: { __typename?: 'Email'; id: string } | null
 }
 
-export type AdminUpdateEmailMutationVariables = Exact<{
+export type __AdminUpdateEmailMutationVariables = Exact<{
   emailId: Scalars['String']['input']
   input: UpdateEmailInput
 }>
 
-export type AdminUpdateEmailMutation = {
+export type __AdminUpdateEmailMutation = {
   __typename?: 'Mutation'
   updateEmail?: {
     __typename?: 'Email'
@@ -3804,11 +3825,11 @@ export type AdminUpdateEmailMutation = {
   } | null
 }
 
-export type AdminEmailQueryVariables = Exact<{
+export type __AdminEmailQueryVariables = Exact<{
   emailId: Scalars['String']['input']
 }>
 
-export type AdminEmailQuery = {
+export type __AdminEmailQuery = {
   __typename?: 'Query'
   email?: {
     __typename?: 'Email'
@@ -3829,11 +3850,11 @@ export type AdminEmailQuery = {
   } | null
 }
 
-export type AdminEmailsQueryVariables = Exact<{
+export type __AdminEmailsQueryVariables = Exact<{
   input?: InputMaybe<ListEmailInput>
 }>
 
-export type AdminEmailsQuery = {
+export type __AdminEmailsQuery = {
   __typename?: 'Query'
   emails?: Array<{
     __typename?: 'Email'
@@ -3866,11 +3887,11 @@ export type AdminEmailsQuery = {
   } | null
 }
 
-export type AdminEmailPaginationQueryVariables = Exact<{
+export type __AdminEmailPaginationQueryVariables = Exact<{
   input?: InputMaybe<ListEmailInput>
 }>
 
-export type AdminEmailPaginationQuery = {
+export type __AdminEmailPaginationQuery = {
   __typename?: 'Query'
   counters?: {
     __typename?: 'CorePaging'
@@ -3886,7 +3907,7 @@ export type AdminEmailPaginationQuery = {
   } | null
 }
 
-export type AdminInviteListFragment = {
+export type __AdminInviteListFragment = {
   __typename?: 'Invite'
   id: string
   createdAt: any
@@ -3903,7 +3924,7 @@ export type AdminInviteListFragment = {
   role?: { __typename?: 'Role'; id: string } | null
 }
 
-export type AdminInviteDetailsFragment = {
+export type __AdminInviteDetailsFragment = {
   __typename?: 'Invite'
   id: string
   createdAt: any
@@ -3920,11 +3941,11 @@ export type AdminInviteDetailsFragment = {
   role?: { __typename?: 'Role'; id: string } | null
 }
 
-export type AdminCreateInviteMutationVariables = Exact<{
+export type __AdminCreateInviteMutationVariables = Exact<{
   input: CreateInviteInput
 }>
 
-export type AdminCreateInviteMutation = {
+export type __AdminCreateInviteMutation = {
   __typename?: 'Mutation'
   createInvite?: {
     __typename?: 'Invite'
@@ -3944,21 +3965,21 @@ export type AdminCreateInviteMutation = {
   } | null
 }
 
-export type AdminDeleteInviteMutationVariables = Exact<{
+export type __AdminDeleteInviteMutationVariables = Exact<{
   inviteId: Scalars['String']['input']
 }>
 
-export type AdminDeleteInviteMutation = {
+export type __AdminDeleteInviteMutation = {
   __typename?: 'Mutation'
   deleteInvite?: { __typename?: 'Invite'; id: string } | null
 }
 
-export type AdminUpdateInviteMutationVariables = Exact<{
+export type __AdminUpdateInviteMutationVariables = Exact<{
   inviteId: Scalars['String']['input']
   input: UpdateInviteInput
 }>
 
-export type AdminUpdateInviteMutation = {
+export type __AdminUpdateInviteMutation = {
   __typename?: 'Mutation'
   updateInvite?: {
     __typename?: 'Invite'
@@ -3978,11 +3999,11 @@ export type AdminUpdateInviteMutation = {
   } | null
 }
 
-export type AdminInviteQueryVariables = Exact<{
+export type __AdminInviteQueryVariables = Exact<{
   inviteId: Scalars['String']['input']
 }>
 
-export type AdminInviteQuery = {
+export type __AdminInviteQuery = {
   __typename?: 'Query'
   invite?: {
     __typename?: 'Invite'
@@ -4002,11 +4023,11 @@ export type AdminInviteQuery = {
   } | null
 }
 
-export type AdminInvitesQueryVariables = Exact<{
+export type __AdminInvitesQueryVariables = Exact<{
   input?: InputMaybe<ListInviteInput>
 }>
 
-export type AdminInvitesQuery = {
+export type __AdminInvitesQuery = {
   __typename?: 'Query'
   invites?: Array<{
     __typename?: 'Invite'
@@ -4038,11 +4059,11 @@ export type AdminInvitesQuery = {
   } | null
 }
 
-export type AdminInvitePaginationQueryVariables = Exact<{
+export type __AdminInvitePaginationQueryVariables = Exact<{
   input?: InputMaybe<ListInviteInput>
 }>
 
-export type AdminInvitePaginationQuery = {
+export type __AdminInvitePaginationQuery = {
   __typename?: 'Query'
   counters?: {
     __typename?: 'CorePaging'
@@ -4058,7 +4079,7 @@ export type AdminInvitePaginationQuery = {
   } | null
 }
 
-export type AdminLinkListFragment = {
+export type __AdminLinkListFragment = {
   __typename?: 'Link'
   id: string
   createdAt: any
@@ -4071,7 +4092,7 @@ export type AdminLinkListFragment = {
   organization?: { __typename?: 'Organization'; id: string } | null
 }
 
-export type AdminLinkDetailsFragment = {
+export type __AdminLinkDetailsFragment = {
   __typename?: 'Link'
   id: string
   createdAt: any
@@ -4084,11 +4105,11 @@ export type AdminLinkDetailsFragment = {
   organization?: { __typename?: 'Organization'; id: string } | null
 }
 
-export type AdminCreateLinkMutationVariables = Exact<{
+export type __AdminCreateLinkMutationVariables = Exact<{
   input: CreateLinkInput
 }>
 
-export type AdminCreateLinkMutation = {
+export type __AdminCreateLinkMutation = {
   __typename?: 'Mutation'
   createLink?: {
     __typename?: 'Link'
@@ -4104,21 +4125,21 @@ export type AdminCreateLinkMutation = {
   } | null
 }
 
-export type AdminDeleteLinkMutationVariables = Exact<{
+export type __AdminDeleteLinkMutationVariables = Exact<{
   linkId: Scalars['String']['input']
 }>
 
-export type AdminDeleteLinkMutation = {
+export type __AdminDeleteLinkMutation = {
   __typename?: 'Mutation'
   deleteLink?: { __typename?: 'Link'; id: string } | null
 }
 
-export type AdminUpdateLinkMutationVariables = Exact<{
+export type __AdminUpdateLinkMutationVariables = Exact<{
   linkId: Scalars['String']['input']
   input: UpdateLinkInput
 }>
 
-export type AdminUpdateLinkMutation = {
+export type __AdminUpdateLinkMutation = {
   __typename?: 'Mutation'
   updateLink?: {
     __typename?: 'Link'
@@ -4134,11 +4155,11 @@ export type AdminUpdateLinkMutation = {
   } | null
 }
 
-export type AdminLinkQueryVariables = Exact<{
+export type __AdminLinkQueryVariables = Exact<{
   linkId: Scalars['String']['input']
 }>
 
-export type AdminLinkQuery = {
+export type __AdminLinkQuery = {
   __typename?: 'Query'
   link?: {
     __typename?: 'Link'
@@ -4154,11 +4175,11 @@ export type AdminLinkQuery = {
   } | null
 }
 
-export type AdminLinksQueryVariables = Exact<{
+export type __AdminLinksQueryVariables = Exact<{
   input?: InputMaybe<ListLinkInput>
 }>
 
-export type AdminLinksQuery = {
+export type __AdminLinksQuery = {
   __typename?: 'Query'
   links?: Array<{
     __typename?: 'Link'
@@ -4186,11 +4207,11 @@ export type AdminLinksQuery = {
   } | null
 }
 
-export type AdminLinkPaginationQueryVariables = Exact<{
+export type __AdminLinkPaginationQueryVariables = Exact<{
   input?: InputMaybe<ListLinkInput>
 }>
 
-export type AdminLinkPaginationQuery = {
+export type __AdminLinkPaginationQuery = {
   __typename?: 'Query'
   counters?: {
     __typename?: 'CorePaging'
@@ -4206,7 +4227,7 @@ export type AdminLinkPaginationQuery = {
   } | null
 }
 
-export type AdminLoginAttemptListFragment = {
+export type __AdminLoginAttemptListFragment = {
   __typename?: 'LoginAttempt'
   id: string
   createdAt: any
@@ -4221,7 +4242,7 @@ export type AdminLoginAttemptListFragment = {
   user?: { __typename?: 'User'; id: string } | null
 }
 
-export type AdminLoginAttemptDetailsFragment = {
+export type __AdminLoginAttemptDetailsFragment = {
   __typename?: 'LoginAttempt'
   id: string
   createdAt: any
@@ -4236,11 +4257,11 @@ export type AdminLoginAttemptDetailsFragment = {
   user?: { __typename?: 'User'; id: string } | null
 }
 
-export type AdminCreateLoginAttemptMutationVariables = Exact<{
+export type __AdminCreateLoginAttemptMutationVariables = Exact<{
   input: CreateLoginAttemptInput
 }>
 
-export type AdminCreateLoginAttemptMutation = {
+export type __AdminCreateLoginAttemptMutation = {
   __typename?: 'Mutation'
   createLoginAttempt?: {
     __typename?: 'LoginAttempt'
@@ -4258,21 +4279,21 @@ export type AdminCreateLoginAttemptMutation = {
   } | null
 }
 
-export type AdminDeleteLoginAttemptMutationVariables = Exact<{
+export type __AdminDeleteLoginAttemptMutationVariables = Exact<{
   loginAttemptId: Scalars['String']['input']
 }>
 
-export type AdminDeleteLoginAttemptMutation = {
+export type __AdminDeleteLoginAttemptMutation = {
   __typename?: 'Mutation'
   deleteLoginAttempt?: { __typename?: 'LoginAttempt'; id: string } | null
 }
 
-export type AdminUpdateLoginAttemptMutationVariables = Exact<{
+export type __AdminUpdateLoginAttemptMutationVariables = Exact<{
   loginAttemptId: Scalars['String']['input']
   input: UpdateLoginAttemptInput
 }>
 
-export type AdminUpdateLoginAttemptMutation = {
+export type __AdminUpdateLoginAttemptMutation = {
   __typename?: 'Mutation'
   updateLoginAttempt?: {
     __typename?: 'LoginAttempt'
@@ -4290,11 +4311,11 @@ export type AdminUpdateLoginAttemptMutation = {
   } | null
 }
 
-export type AdminLoginAttemptQueryVariables = Exact<{
+export type __AdminLoginAttemptQueryVariables = Exact<{
   loginAttemptId: Scalars['String']['input']
 }>
 
-export type AdminLoginAttemptQuery = {
+export type __AdminLoginAttemptQuery = {
   __typename?: 'Query'
   loginAttempt?: {
     __typename?: 'LoginAttempt'
@@ -4312,11 +4333,11 @@ export type AdminLoginAttemptQuery = {
   } | null
 }
 
-export type AdminLoginAttemptsQueryVariables = Exact<{
+export type __AdminLoginAttemptsQueryVariables = Exact<{
   input?: InputMaybe<ListLoginAttemptInput>
 }>
 
-export type AdminLoginAttemptsQuery = {
+export type __AdminLoginAttemptsQuery = {
   __typename?: 'Query'
   loginAttempts?: Array<{
     __typename?: 'LoginAttempt'
@@ -4346,11 +4367,11 @@ export type AdminLoginAttemptsQuery = {
   } | null
 }
 
-export type AdminLoginAttemptPaginationQueryVariables = Exact<{
+export type __AdminLoginAttemptPaginationQueryVariables = Exact<{
   input?: InputMaybe<ListLoginAttemptInput>
 }>
 
-export type AdminLoginAttemptPaginationQuery = {
+export type __AdminLoginAttemptPaginationQuery = {
   __typename?: 'Query'
   counters?: {
     __typename?: 'CorePaging'
@@ -4366,7 +4387,7 @@ export type AdminLoginAttemptPaginationQuery = {
   } | null
 }
 
-export type AdminOAuthAccountListFragment = {
+export type __AdminOAuthAccountListFragment = {
   __typename?: 'OAuthAccount'
   id: string
   createdAt: any
@@ -4377,7 +4398,7 @@ export type AdminOAuthAccountListFragment = {
   user?: { __typename?: 'User'; id: string } | null
 }
 
-export type AdminOAuthAccountDetailsFragment = {
+export type __AdminOAuthAccountDetailsFragment = {
   __typename?: 'OAuthAccount'
   id: string
   createdAt: any
@@ -4388,11 +4409,11 @@ export type AdminOAuthAccountDetailsFragment = {
   user?: { __typename?: 'User'; id: string } | null
 }
 
-export type AdminCreateOAuthAccountMutationVariables = Exact<{
+export type __AdminCreateOAuthAccountMutationVariables = Exact<{
   input: CreateOAuthAccountInput
 }>
 
-export type AdminCreateOAuthAccountMutation = {
+export type __AdminCreateOAuthAccountMutation = {
   __typename?: 'Mutation'
   createOAuthAccount?: {
     __typename?: 'OAuthAccount'
@@ -4406,21 +4427,21 @@ export type AdminCreateOAuthAccountMutation = {
   } | null
 }
 
-export type AdminDeleteOAuthAccountMutationVariables = Exact<{
+export type __AdminDeleteOAuthAccountMutationVariables = Exact<{
   oAuthAccountId: Scalars['String']['input']
 }>
 
-export type AdminDeleteOAuthAccountMutation = {
+export type __AdminDeleteOAuthAccountMutation = {
   __typename?: 'Mutation'
   deleteOAuthAccount?: { __typename?: 'OAuthAccount'; id: string } | null
 }
 
-export type AdminUpdateOAuthAccountMutationVariables = Exact<{
+export type __AdminUpdateOAuthAccountMutationVariables = Exact<{
   oAuthAccountId: Scalars['String']['input']
   input: UpdateOAuthAccountInput
 }>
 
-export type AdminUpdateOAuthAccountMutation = {
+export type __AdminUpdateOAuthAccountMutation = {
   __typename?: 'Mutation'
   updateOAuthAccount?: {
     __typename?: 'OAuthAccount'
@@ -4434,11 +4455,11 @@ export type AdminUpdateOAuthAccountMutation = {
   } | null
 }
 
-export type AdminOAuthAccountQueryVariables = Exact<{
+export type __AdminOAuthAccountQueryVariables = Exact<{
   oAuthAccountId: Scalars['String']['input']
 }>
 
-export type AdminOAuthAccountQuery = {
+export type __AdminOAuthAccountQuery = {
   __typename?: 'Query'
   oAuthAccount?: {
     __typename?: 'OAuthAccount'
@@ -4452,11 +4473,11 @@ export type AdminOAuthAccountQuery = {
   } | null
 }
 
-export type AdminOAuthAccountsQueryVariables = Exact<{
+export type __AdminOAuthAccountsQueryVariables = Exact<{
   input?: InputMaybe<ListOAuthAccountInput>
 }>
 
-export type AdminOAuthAccountsQuery = {
+export type __AdminOAuthAccountsQuery = {
   __typename?: 'Query'
   oAuthAccounts?: Array<{
     __typename?: 'OAuthAccount'
@@ -4482,11 +4503,11 @@ export type AdminOAuthAccountsQuery = {
   } | null
 }
 
-export type AdminOAuthAccountPaginationQueryVariables = Exact<{
+export type __AdminOAuthAccountPaginationQueryVariables = Exact<{
   input?: InputMaybe<ListOAuthAccountInput>
 }>
 
-export type AdminOAuthAccountPaginationQuery = {
+export type __AdminOAuthAccountPaginationQuery = {
   __typename?: 'Query'
   counters?: {
     __typename?: 'CorePaging'
@@ -4502,7 +4523,7 @@ export type AdminOAuthAccountPaginationQuery = {
   } | null
 }
 
-export type AdminOrganizationMemberListFragment = {
+export type __AdminOrganizationMemberListFragment = {
   __typename?: 'OrganizationMember'
   id: string
   createdAt: any
@@ -4515,7 +4536,7 @@ export type AdminOrganizationMemberListFragment = {
   organization?: { __typename?: 'Organization'; id: string } | null
 }
 
-export type AdminOrganizationMemberDetailsFragment = {
+export type __AdminOrganizationMemberDetailsFragment = {
   __typename?: 'OrganizationMember'
   id: string
   createdAt: any
@@ -4528,11 +4549,11 @@ export type AdminOrganizationMemberDetailsFragment = {
   organization?: { __typename?: 'Organization'; id: string } | null
 }
 
-export type AdminCreateOrganizationMemberMutationVariables = Exact<{
+export type __AdminCreateOrganizationMemberMutationVariables = Exact<{
   input: CreateOrganizationMemberInput
 }>
 
-export type AdminCreateOrganizationMemberMutation = {
+export type __AdminCreateOrganizationMemberMutation = {
   __typename?: 'Mutation'
   createOrganizationMember?: {
     __typename?: 'OrganizationMember'
@@ -4548,21 +4569,21 @@ export type AdminCreateOrganizationMemberMutation = {
   } | null
 }
 
-export type AdminDeleteOrganizationMemberMutationVariables = Exact<{
+export type __AdminDeleteOrganizationMemberMutationVariables = Exact<{
   organizationMemberId: Scalars['String']['input']
 }>
 
-export type AdminDeleteOrganizationMemberMutation = {
+export type __AdminDeleteOrganizationMemberMutation = {
   __typename?: 'Mutation'
   deleteOrganizationMember?: { __typename?: 'OrganizationMember'; id: string } | null
 }
 
-export type AdminUpdateOrganizationMemberMutationVariables = Exact<{
+export type __AdminUpdateOrganizationMemberMutationVariables = Exact<{
   organizationMemberId: Scalars['String']['input']
   input: UpdateOrganizationMemberInput
 }>
 
-export type AdminUpdateOrganizationMemberMutation = {
+export type __AdminUpdateOrganizationMemberMutation = {
   __typename?: 'Mutation'
   updateOrganizationMember?: {
     __typename?: 'OrganizationMember'
@@ -4578,11 +4599,11 @@ export type AdminUpdateOrganizationMemberMutation = {
   } | null
 }
 
-export type AdminOrganizationMemberQueryVariables = Exact<{
+export type __AdminOrganizationMemberQueryVariables = Exact<{
   organizationMemberId: Scalars['String']['input']
 }>
 
-export type AdminOrganizationMemberQuery = {
+export type __AdminOrganizationMemberQuery = {
   __typename?: 'Query'
   organizationMember?: {
     __typename?: 'OrganizationMember'
@@ -4598,11 +4619,11 @@ export type AdminOrganizationMemberQuery = {
   } | null
 }
 
-export type AdminOrganizationMembersQueryVariables = Exact<{
+export type __AdminOrganizationMembersQueryVariables = Exact<{
   input?: InputMaybe<ListOrganizationMemberInput>
 }>
 
-export type AdminOrganizationMembersQuery = {
+export type __AdminOrganizationMembersQuery = {
   __typename?: 'Query'
   organizationMembers?: Array<{
     __typename?: 'OrganizationMember'
@@ -4630,11 +4651,11 @@ export type AdminOrganizationMembersQuery = {
   } | null
 }
 
-export type AdminOrganizationMemberPaginationQueryVariables = Exact<{
+export type __AdminOrganizationMemberPaginationQueryVariables = Exact<{
   input?: InputMaybe<ListOrganizationMemberInput>
 }>
 
-export type AdminOrganizationMemberPaginationQuery = {
+export type __AdminOrganizationMemberPaginationQuery = {
   __typename?: 'Query'
   counters?: {
     __typename?: 'CorePaging'
@@ -4650,7 +4671,7 @@ export type AdminOrganizationMemberPaginationQuery = {
   } | null
 }
 
-export type AdminOrganizationListFragment = {
+export type __AdminOrganizationListFragment = {
   __typename?: 'Organization'
   id: string
   createdAt: any
@@ -4659,7 +4680,7 @@ export type AdminOrganizationListFragment = {
   subscription?: { __typename?: 'Subscription'; id: string } | null
 }
 
-export type AdminOrganizationDetailsFragment = {
+export type __AdminOrganizationDetailsFragment = {
   __typename?: 'Organization'
   id: string
   createdAt: any
@@ -4668,11 +4689,11 @@ export type AdminOrganizationDetailsFragment = {
   subscription?: { __typename?: 'Subscription'; id: string } | null
 }
 
-export type AdminCreateOrganizationMutationVariables = Exact<{
+export type __AdminCreateOrganizationMutationVariables = Exact<{
   input: CreateOrganizationInput
 }>
 
-export type AdminCreateOrganizationMutation = {
+export type __AdminCreateOrganizationMutation = {
   __typename?: 'Mutation'
   createOrganization?: {
     __typename?: 'Organization'
@@ -4684,21 +4705,21 @@ export type AdminCreateOrganizationMutation = {
   } | null
 }
 
-export type AdminDeleteOrganizationMutationVariables = Exact<{
+export type __AdminDeleteOrganizationMutationVariables = Exact<{
   organizationId: Scalars['String']['input']
 }>
 
-export type AdminDeleteOrganizationMutation = {
+export type __AdminDeleteOrganizationMutation = {
   __typename?: 'Mutation'
   deleteOrganization?: { __typename?: 'Organization'; id: string } | null
 }
 
-export type AdminUpdateOrganizationMutationVariables = Exact<{
+export type __AdminUpdateOrganizationMutationVariables = Exact<{
   organizationId: Scalars['String']['input']
   input: UpdateOrganizationInput
 }>
 
-export type AdminUpdateOrganizationMutation = {
+export type __AdminUpdateOrganizationMutation = {
   __typename?: 'Mutation'
   updateOrganization?: {
     __typename?: 'Organization'
@@ -4710,11 +4731,11 @@ export type AdminUpdateOrganizationMutation = {
   } | null
 }
 
-export type AdminOrganizationQueryVariables = Exact<{
+export type __AdminOrganizationQueryVariables = Exact<{
   organizationId: Scalars['String']['input']
 }>
 
-export type AdminOrganizationQuery = {
+export type __AdminOrganizationQuery = {
   __typename?: 'Query'
   organization?: {
     __typename?: 'Organization'
@@ -4726,11 +4747,11 @@ export type AdminOrganizationQuery = {
   } | null
 }
 
-export type AdminOrganizationsQueryVariables = Exact<{
+export type __AdminOrganizationsQueryVariables = Exact<{
   input?: InputMaybe<ListOrganizationInput>
 }>
 
-export type AdminOrganizationsQuery = {
+export type __AdminOrganizationsQuery = {
   __typename?: 'Query'
   organizations?: Array<{
     __typename?: 'Organization'
@@ -4754,11 +4775,11 @@ export type AdminOrganizationsQuery = {
   } | null
 }
 
-export type AdminOrganizationPaginationQueryVariables = Exact<{
+export type __AdminOrganizationPaginationQueryVariables = Exact<{
   input?: InputMaybe<ListOrganizationInput>
 }>
 
-export type AdminOrganizationPaginationQuery = {
+export type __AdminOrganizationPaginationQuery = {
   __typename?: 'Query'
   counters?: {
     __typename?: 'CorePaging'
@@ -4774,7 +4795,7 @@ export type AdminOrganizationPaginationQuery = {
   } | null
 }
 
-export type AdminPermissionListFragment = {
+export type __AdminPermissionListFragment = {
   __typename?: 'Permission'
   id: string
   action: string
@@ -4782,7 +4803,7 @@ export type AdminPermissionListFragment = {
   description?: string | null
 }
 
-export type AdminPermissionDetailsFragment = {
+export type __AdminPermissionDetailsFragment = {
   __typename?: 'Permission'
   id: string
   action: string
@@ -4790,11 +4811,11 @@ export type AdminPermissionDetailsFragment = {
   description?: string | null
 }
 
-export type AdminCreatePermissionMutationVariables = Exact<{
+export type __AdminCreatePermissionMutationVariables = Exact<{
   input: CreatePermissionInput
 }>
 
-export type AdminCreatePermissionMutation = {
+export type __AdminCreatePermissionMutation = {
   __typename?: 'Mutation'
   createPermission?: {
     __typename?: 'Permission'
@@ -4805,21 +4826,21 @@ export type AdminCreatePermissionMutation = {
   } | null
 }
 
-export type AdminDeletePermissionMutationVariables = Exact<{
+export type __AdminDeletePermissionMutationVariables = Exact<{
   permissionId: Scalars['String']['input']
 }>
 
-export type AdminDeletePermissionMutation = {
+export type __AdminDeletePermissionMutation = {
   __typename?: 'Mutation'
   deletePermission?: { __typename?: 'Permission'; id: string } | null
 }
 
-export type AdminUpdatePermissionMutationVariables = Exact<{
+export type __AdminUpdatePermissionMutationVariables = Exact<{
   permissionId: Scalars['String']['input']
   input: UpdatePermissionInput
 }>
 
-export type AdminUpdatePermissionMutation = {
+export type __AdminUpdatePermissionMutation = {
   __typename?: 'Mutation'
   updatePermission?: {
     __typename?: 'Permission'
@@ -4830,11 +4851,11 @@ export type AdminUpdatePermissionMutation = {
   } | null
 }
 
-export type AdminPermissionQueryVariables = Exact<{
+export type __AdminPermissionQueryVariables = Exact<{
   permissionId: Scalars['String']['input']
 }>
 
-export type AdminPermissionQuery = {
+export type __AdminPermissionQuery = {
   __typename?: 'Query'
   permission?: {
     __typename?: 'Permission'
@@ -4845,11 +4866,11 @@ export type AdminPermissionQuery = {
   } | null
 }
 
-export type AdminPermissionsQueryVariables = Exact<{
+export type __AdminPermissionsQueryVariables = Exact<{
   input?: InputMaybe<ListPermissionInput>
 }>
 
-export type AdminPermissionsQuery = {
+export type __AdminPermissionsQuery = {
   __typename?: 'Query'
   permissions?: Array<{
     __typename?: 'Permission'
@@ -4872,11 +4893,11 @@ export type AdminPermissionsQuery = {
   } | null
 }
 
-export type AdminPermissionPaginationQueryVariables = Exact<{
+export type __AdminPermissionPaginationQueryVariables = Exact<{
   input?: InputMaybe<ListPermissionInput>
 }>
 
-export type AdminPermissionPaginationQuery = {
+export type __AdminPermissionPaginationQuery = {
   __typename?: 'Query'
   counters?: {
     __typename?: 'CorePaging'
@@ -4892,7 +4913,7 @@ export type AdminPermissionPaginationQuery = {
   } | null
 }
 
-export type AdminPhoneNumberListFragment = {
+export type __AdminPhoneNumberListFragment = {
   __typename?: 'PhoneNumber'
   id: string
   createdAt: any
@@ -4906,7 +4927,7 @@ export type AdminPhoneNumberListFragment = {
   organization?: { __typename?: 'Organization'; id: string } | null
 }
 
-export type AdminPhoneNumberDetailsFragment = {
+export type __AdminPhoneNumberDetailsFragment = {
   __typename?: 'PhoneNumber'
   id: string
   createdAt: any
@@ -4920,11 +4941,11 @@ export type AdminPhoneNumberDetailsFragment = {
   organization?: { __typename?: 'Organization'; id: string } | null
 }
 
-export type AdminCreatePhoneNumberMutationVariables = Exact<{
+export type __AdminCreatePhoneNumberMutationVariables = Exact<{
   input: CreatePhoneNumberInput
 }>
 
-export type AdminCreatePhoneNumberMutation = {
+export type __AdminCreatePhoneNumberMutation = {
   __typename?: 'Mutation'
   createPhoneNumber?: {
     __typename?: 'PhoneNumber'
@@ -4941,21 +4962,21 @@ export type AdminCreatePhoneNumberMutation = {
   } | null
 }
 
-export type AdminDeletePhoneNumberMutationVariables = Exact<{
+export type __AdminDeletePhoneNumberMutationVariables = Exact<{
   phoneNumberId: Scalars['String']['input']
 }>
 
-export type AdminDeletePhoneNumberMutation = {
+export type __AdminDeletePhoneNumberMutation = {
   __typename?: 'Mutation'
   deletePhoneNumber?: { __typename?: 'PhoneNumber'; id: string } | null
 }
 
-export type AdminUpdatePhoneNumberMutationVariables = Exact<{
+export type __AdminUpdatePhoneNumberMutationVariables = Exact<{
   phoneNumberId: Scalars['String']['input']
   input: UpdatePhoneNumberInput
 }>
 
-export type AdminUpdatePhoneNumberMutation = {
+export type __AdminUpdatePhoneNumberMutation = {
   __typename?: 'Mutation'
   updatePhoneNumber?: {
     __typename?: 'PhoneNumber'
@@ -4972,11 +4993,11 @@ export type AdminUpdatePhoneNumberMutation = {
   } | null
 }
 
-export type AdminPhoneNumberQueryVariables = Exact<{
+export type __AdminPhoneNumberQueryVariables = Exact<{
   phoneNumberId: Scalars['String']['input']
 }>
 
-export type AdminPhoneNumberQuery = {
+export type __AdminPhoneNumberQuery = {
   __typename?: 'Query'
   phoneNumber?: {
     __typename?: 'PhoneNumber'
@@ -4993,11 +5014,11 @@ export type AdminPhoneNumberQuery = {
   } | null
 }
 
-export type AdminPhoneNumbersQueryVariables = Exact<{
+export type __AdminPhoneNumbersQueryVariables = Exact<{
   input?: InputMaybe<ListPhoneNumberInput>
 }>
 
-export type AdminPhoneNumbersQuery = {
+export type __AdminPhoneNumbersQuery = {
   __typename?: 'Query'
   phoneNumbers?: Array<{
     __typename?: 'PhoneNumber'
@@ -5026,11 +5047,11 @@ export type AdminPhoneNumbersQuery = {
   } | null
 }
 
-export type AdminPhoneNumberPaginationQueryVariables = Exact<{
+export type __AdminPhoneNumberPaginationQueryVariables = Exact<{
   input?: InputMaybe<ListPhoneNumberInput>
 }>
 
-export type AdminPhoneNumberPaginationQuery = {
+export type __AdminPhoneNumberPaginationQuery = {
   __typename?: 'Query'
   counters?: {
     __typename?: 'CorePaging'
@@ -5046,7 +5067,7 @@ export type AdminPhoneNumberPaginationQuery = {
   } | null
 }
 
-export type AdminPlanListFragment = {
+export type __AdminPlanListFragment = {
   __typename?: 'Plan'
   id: string
   createdAt: any
@@ -5063,7 +5084,7 @@ export type AdminPlanListFragment = {
   trialPeriodDays?: number | null
 }
 
-export type AdminPlanDetailsFragment = {
+export type __AdminPlanDetailsFragment = {
   __typename?: 'Plan'
   id: string
   createdAt: any
@@ -5080,11 +5101,11 @@ export type AdminPlanDetailsFragment = {
   trialPeriodDays?: number | null
 }
 
-export type AdminCreatePlanMutationVariables = Exact<{
+export type __AdminCreatePlanMutationVariables = Exact<{
   input: CreatePlanInput
 }>
 
-export type AdminCreatePlanMutation = {
+export type __AdminCreatePlanMutation = {
   __typename?: 'Mutation'
   createPlan?: {
     __typename?: 'Plan'
@@ -5104,21 +5125,21 @@ export type AdminCreatePlanMutation = {
   } | null
 }
 
-export type AdminDeletePlanMutationVariables = Exact<{
+export type __AdminDeletePlanMutationVariables = Exact<{
   planId: Scalars['String']['input']
 }>
 
-export type AdminDeletePlanMutation = {
+export type __AdminDeletePlanMutation = {
   __typename?: 'Mutation'
   deletePlan?: { __typename?: 'Plan'; id: string } | null
 }
 
-export type AdminUpdatePlanMutationVariables = Exact<{
+export type __AdminUpdatePlanMutationVariables = Exact<{
   planId: Scalars['String']['input']
   input: UpdatePlanInput
 }>
 
-export type AdminUpdatePlanMutation = {
+export type __AdminUpdatePlanMutation = {
   __typename?: 'Mutation'
   updatePlan?: {
     __typename?: 'Plan'
@@ -5138,11 +5159,11 @@ export type AdminUpdatePlanMutation = {
   } | null
 }
 
-export type AdminPlanQueryVariables = Exact<{
+export type __AdminPlanQueryVariables = Exact<{
   planId: Scalars['String']['input']
 }>
 
-export type AdminPlanQuery = {
+export type __AdminPlanQuery = {
   __typename?: 'Query'
   plan?: {
     __typename?: 'Plan'
@@ -5162,11 +5183,11 @@ export type AdminPlanQuery = {
   } | null
 }
 
-export type AdminPlansQueryVariables = Exact<{
+export type __AdminPlansQueryVariables = Exact<{
   input?: InputMaybe<ListPlanInput>
 }>
 
-export type AdminPlansQuery = {
+export type __AdminPlansQuery = {
   __typename?: 'Query'
   plans?: Array<{
     __typename?: 'Plan'
@@ -5198,11 +5219,11 @@ export type AdminPlansQuery = {
   } | null
 }
 
-export type AdminPlanPaginationQueryVariables = Exact<{
+export type __AdminPlanPaginationQueryVariables = Exact<{
   input?: InputMaybe<ListPlanInput>
 }>
 
-export type AdminPlanPaginationQuery = {
+export type __AdminPlanPaginationQuery = {
   __typename?: 'Query'
   counters?: {
     __typename?: 'CorePaging'
@@ -5218,7 +5239,7 @@ export type AdminPlanPaginationQuery = {
   } | null
 }
 
-export type AdminRoleListFragment = {
+export type __AdminRoleListFragment = {
   __typename?: 'Role'
   id: string
   name: string
@@ -5227,7 +5248,7 @@ export type AdminRoleListFragment = {
   organization?: { __typename?: 'Organization'; id: string } | null
 }
 
-export type AdminRoleDetailsFragment = {
+export type __AdminRoleDetailsFragment = {
   __typename?: 'Role'
   id: string
   name: string
@@ -5236,11 +5257,11 @@ export type AdminRoleDetailsFragment = {
   organization?: { __typename?: 'Organization'; id: string } | null
 }
 
-export type AdminCreateRoleMutationVariables = Exact<{
+export type __AdminCreateRoleMutationVariables = Exact<{
   input: CreateRoleInput
 }>
 
-export type AdminCreateRoleMutation = {
+export type __AdminCreateRoleMutation = {
   __typename?: 'Mutation'
   createRole?: {
     __typename?: 'Role'
@@ -5252,21 +5273,21 @@ export type AdminCreateRoleMutation = {
   } | null
 }
 
-export type AdminDeleteRoleMutationVariables = Exact<{
+export type __AdminDeleteRoleMutationVariables = Exact<{
   roleId: Scalars['String']['input']
 }>
 
-export type AdminDeleteRoleMutation = {
+export type __AdminDeleteRoleMutation = {
   __typename?: 'Mutation'
   deleteRole?: { __typename?: 'Role'; id: string } | null
 }
 
-export type AdminUpdateRoleMutationVariables = Exact<{
+export type __AdminUpdateRoleMutationVariables = Exact<{
   roleId: Scalars['String']['input']
   input: UpdateRoleInput
 }>
 
-export type AdminUpdateRoleMutation = {
+export type __AdminUpdateRoleMutation = {
   __typename?: 'Mutation'
   updateRole?: {
     __typename?: 'Role'
@@ -5278,11 +5299,11 @@ export type AdminUpdateRoleMutation = {
   } | null
 }
 
-export type AdminRoleQueryVariables = Exact<{
+export type __AdminRoleQueryVariables = Exact<{
   roleId: Scalars['String']['input']
 }>
 
-export type AdminRoleQuery = {
+export type __AdminRoleQuery = {
   __typename?: 'Query'
   role?: {
     __typename?: 'Role'
@@ -5294,11 +5315,11 @@ export type AdminRoleQuery = {
   } | null
 }
 
-export type AdminRolesQueryVariables = Exact<{
+export type __AdminRolesQueryVariables = Exact<{
   input?: InputMaybe<ListRoleInput>
 }>
 
-export type AdminRolesQuery = {
+export type __AdminRolesQuery = {
   __typename?: 'Query'
   roles?: Array<{
     __typename?: 'Role'
@@ -5322,11 +5343,11 @@ export type AdminRolesQuery = {
   } | null
 }
 
-export type AdminRolePaginationQueryVariables = Exact<{
+export type __AdminRolePaginationQueryVariables = Exact<{
   input?: InputMaybe<ListRoleInput>
 }>
 
-export type AdminRolePaginationQuery = {
+export type __AdminRolePaginationQuery = {
   __typename?: 'Query'
   counters?: {
     __typename?: 'CorePaging'
@@ -5342,7 +5363,7 @@ export type AdminRolePaginationQuery = {
   } | null
 }
 
-export type AdminSecurityEventListFragment = {
+export type __AdminSecurityEventListFragment = {
   __typename?: 'SecurityEvent'
   id: string
   createdAt: any
@@ -5355,7 +5376,7 @@ export type AdminSecurityEventListFragment = {
   user?: { __typename?: 'User'; id: string } | null
 }
 
-export type AdminSecurityEventDetailsFragment = {
+export type __AdminSecurityEventDetailsFragment = {
   __typename?: 'SecurityEvent'
   id: string
   createdAt: any
@@ -5368,11 +5389,11 @@ export type AdminSecurityEventDetailsFragment = {
   user?: { __typename?: 'User'; id: string } | null
 }
 
-export type AdminCreateSecurityEventMutationVariables = Exact<{
+export type __AdminCreateSecurityEventMutationVariables = Exact<{
   input: CreateSecurityEventInput
 }>
 
-export type AdminCreateSecurityEventMutation = {
+export type __AdminCreateSecurityEventMutation = {
   __typename?: 'Mutation'
   createSecurityEvent?: {
     __typename?: 'SecurityEvent'
@@ -5388,21 +5409,21 @@ export type AdminCreateSecurityEventMutation = {
   } | null
 }
 
-export type AdminDeleteSecurityEventMutationVariables = Exact<{
+export type __AdminDeleteSecurityEventMutationVariables = Exact<{
   securityEventId: Scalars['String']['input']
 }>
 
-export type AdminDeleteSecurityEventMutation = {
+export type __AdminDeleteSecurityEventMutation = {
   __typename?: 'Mutation'
   deleteSecurityEvent?: { __typename?: 'SecurityEvent'; id: string } | null
 }
 
-export type AdminUpdateSecurityEventMutationVariables = Exact<{
+export type __AdminUpdateSecurityEventMutationVariables = Exact<{
   securityEventId: Scalars['String']['input']
   input: UpdateSecurityEventInput
 }>
 
-export type AdminUpdateSecurityEventMutation = {
+export type __AdminUpdateSecurityEventMutation = {
   __typename?: 'Mutation'
   updateSecurityEvent?: {
     __typename?: 'SecurityEvent'
@@ -5418,11 +5439,11 @@ export type AdminUpdateSecurityEventMutation = {
   } | null
 }
 
-export type AdminSecurityEventQueryVariables = Exact<{
+export type __AdminSecurityEventQueryVariables = Exact<{
   securityEventId: Scalars['String']['input']
 }>
 
-export type AdminSecurityEventQuery = {
+export type __AdminSecurityEventQuery = {
   __typename?: 'Query'
   securityEvent?: {
     __typename?: 'SecurityEvent'
@@ -5438,11 +5459,11 @@ export type AdminSecurityEventQuery = {
   } | null
 }
 
-export type AdminSecurityEventsQueryVariables = Exact<{
+export type __AdminSecurityEventsQueryVariables = Exact<{
   input?: InputMaybe<ListSecurityEventInput>
 }>
 
-export type AdminSecurityEventsQuery = {
+export type __AdminSecurityEventsQuery = {
   __typename?: 'Query'
   securityEvents?: Array<{
     __typename?: 'SecurityEvent'
@@ -5470,11 +5491,11 @@ export type AdminSecurityEventsQuery = {
   } | null
 }
 
-export type AdminSecurityEventPaginationQueryVariables = Exact<{
+export type __AdminSecurityEventPaginationQueryVariables = Exact<{
   input?: InputMaybe<ListSecurityEventInput>
 }>
 
-export type AdminSecurityEventPaginationQuery = {
+export type __AdminSecurityEventPaginationQuery = {
   __typename?: 'Query'
   counters?: {
     __typename?: 'CorePaging'
@@ -5490,7 +5511,7 @@ export type AdminSecurityEventPaginationQuery = {
   } | null
 }
 
-export type AdminStoredFileListFragment = {
+export type __AdminStoredFileListFragment = {
   __typename?: 'StoredFile'
   id: string
   createdAt: any
@@ -5513,7 +5534,7 @@ export type AdminStoredFileListFragment = {
   organization?: { __typename?: 'Organization'; id: string } | null
 }
 
-export type AdminStoredFileDetailsFragment = {
+export type __AdminStoredFileDetailsFragment = {
   __typename?: 'StoredFile'
   id: string
   createdAt: any
@@ -5536,11 +5557,11 @@ export type AdminStoredFileDetailsFragment = {
   organization?: { __typename?: 'Organization'; id: string } | null
 }
 
-export type AdminCreateStoredFileMutationVariables = Exact<{
+export type __AdminCreateStoredFileMutationVariables = Exact<{
   input: CreateStoredFileInput
 }>
 
-export type AdminCreateStoredFileMutation = {
+export type __AdminCreateStoredFileMutation = {
   __typename?: 'Mutation'
   createStoredFile?: {
     __typename?: 'StoredFile'
@@ -5566,21 +5587,21 @@ export type AdminCreateStoredFileMutation = {
   } | null
 }
 
-export type AdminDeleteStoredFileMutationVariables = Exact<{
+export type __AdminDeleteStoredFileMutationVariables = Exact<{
   storedFileId: Scalars['String']['input']
 }>
 
-export type AdminDeleteStoredFileMutation = {
+export type __AdminDeleteStoredFileMutation = {
   __typename?: 'Mutation'
   deleteStoredFile?: { __typename?: 'StoredFile'; id: string } | null
 }
 
-export type AdminUpdateStoredFileMutationVariables = Exact<{
+export type __AdminUpdateStoredFileMutationVariables = Exact<{
   storedFileId: Scalars['String']['input']
   input: UpdateStoredFileInput
 }>
 
-export type AdminUpdateStoredFileMutation = {
+export type __AdminUpdateStoredFileMutation = {
   __typename?: 'Mutation'
   updateStoredFile?: {
     __typename?: 'StoredFile'
@@ -5606,11 +5627,11 @@ export type AdminUpdateStoredFileMutation = {
   } | null
 }
 
-export type AdminStoredFileQueryVariables = Exact<{
+export type __AdminStoredFileQueryVariables = Exact<{
   storedFileId: Scalars['String']['input']
 }>
 
-export type AdminStoredFileQuery = {
+export type __AdminStoredFileQuery = {
   __typename?: 'Query'
   storedFile?: {
     __typename?: 'StoredFile'
@@ -5636,11 +5657,11 @@ export type AdminStoredFileQuery = {
   } | null
 }
 
-export type AdminStoredFilesQueryVariables = Exact<{
+export type __AdminStoredFilesQueryVariables = Exact<{
   input?: InputMaybe<ListStoredFileInput>
 }>
 
-export type AdminStoredFilesQuery = {
+export type __AdminStoredFilesQuery = {
   __typename?: 'Query'
   storedFiles?: Array<{
     __typename?: 'StoredFile'
@@ -5678,11 +5699,11 @@ export type AdminStoredFilesQuery = {
   } | null
 }
 
-export type AdminStoredFilePaginationQueryVariables = Exact<{
+export type __AdminStoredFilePaginationQueryVariables = Exact<{
   input?: InputMaybe<ListStoredFileInput>
 }>
 
-export type AdminStoredFilePaginationQuery = {
+export type __AdminStoredFilePaginationQuery = {
   __typename?: 'Query'
   counters?: {
     __typename?: 'CorePaging'
@@ -5698,7 +5719,7 @@ export type AdminStoredFilePaginationQuery = {
   } | null
 }
 
-export type AdminSubscriptionListFragment = {
+export type __AdminSubscriptionListFragment = {
   __typename?: 'Subscription'
   id: string
   createdAt: any
@@ -5719,7 +5740,7 @@ export type AdminSubscriptionListFragment = {
   plan?: { __typename?: 'Plan'; id: string } | null
 }
 
-export type AdminSubscriptionDetailsFragment = {
+export type __AdminSubscriptionDetailsFragment = {
   __typename?: 'Subscription'
   id: string
   createdAt: any
@@ -5740,11 +5761,11 @@ export type AdminSubscriptionDetailsFragment = {
   plan?: { __typename?: 'Plan'; id: string } | null
 }
 
-export type AdminCreateSubscriptionMutationVariables = Exact<{
+export type __AdminCreateSubscriptionMutationVariables = Exact<{
   input: CreateSubscriptionInput
 }>
 
-export type AdminCreateSubscriptionMutation = {
+export type __AdminCreateSubscriptionMutation = {
   __typename?: 'Mutation'
   createSubscription?: {
     __typename?: 'Subscription'
@@ -5768,21 +5789,21 @@ export type AdminCreateSubscriptionMutation = {
   } | null
 }
 
-export type AdminDeleteSubscriptionMutationVariables = Exact<{
+export type __AdminDeleteSubscriptionMutationVariables = Exact<{
   subscriptionId: Scalars['String']['input']
 }>
 
-export type AdminDeleteSubscriptionMutation = {
+export type __AdminDeleteSubscriptionMutation = {
   __typename?: 'Mutation'
   deleteSubscription?: { __typename?: 'Subscription'; id: string } | null
 }
 
-export type AdminUpdateSubscriptionMutationVariables = Exact<{
+export type __AdminUpdateSubscriptionMutationVariables = Exact<{
   subscriptionId: Scalars['String']['input']
   input: UpdateSubscriptionInput
 }>
 
-export type AdminUpdateSubscriptionMutation = {
+export type __AdminUpdateSubscriptionMutation = {
   __typename?: 'Mutation'
   updateSubscription?: {
     __typename?: 'Subscription'
@@ -5806,11 +5827,11 @@ export type AdminUpdateSubscriptionMutation = {
   } | null
 }
 
-export type AdminSubscriptionQueryVariables = Exact<{
+export type __AdminSubscriptionQueryVariables = Exact<{
   subscriptionId: Scalars['String']['input']
 }>
 
-export type AdminSubscriptionQuery = {
+export type __AdminSubscriptionQuery = {
   __typename?: 'Query'
   subscription?: {
     __typename?: 'Subscription'
@@ -5834,11 +5855,11 @@ export type AdminSubscriptionQuery = {
   } | null
 }
 
-export type AdminSubscriptionsQueryVariables = Exact<{
+export type __AdminSubscriptionsQueryVariables = Exact<{
   input?: InputMaybe<ListSubscriptionInput>
 }>
 
-export type AdminSubscriptionsQuery = {
+export type __AdminSubscriptionsQuery = {
   __typename?: 'Query'
   subscriptions?: Array<{
     __typename?: 'Subscription'
@@ -5874,11 +5895,11 @@ export type AdminSubscriptionsQuery = {
   } | null
 }
 
-export type AdminSubscriptionPaginationQueryVariables = Exact<{
+export type __AdminSubscriptionPaginationQueryVariables = Exact<{
   input?: InputMaybe<ListSubscriptionInput>
 }>
 
-export type AdminSubscriptionPaginationQuery = {
+export type __AdminSubscriptionPaginationQuery = {
   __typename?: 'Query'
   counters?: {
     __typename?: 'CorePaging'
@@ -5894,7 +5915,7 @@ export type AdminSubscriptionPaginationQuery = {
   } | null
 }
 
-export type AdminTeamMemberListFragment = {
+export type __AdminTeamMemberListFragment = {
   __typename?: 'TeamMember'
   id: string
   createdAt: any
@@ -5907,7 +5928,7 @@ export type AdminTeamMemberListFragment = {
   role?: { __typename?: 'Role'; id: string } | null
 }
 
-export type AdminTeamMemberDetailsFragment = {
+export type __AdminTeamMemberDetailsFragment = {
   __typename?: 'TeamMember'
   id: string
   createdAt: any
@@ -5920,11 +5941,11 @@ export type AdminTeamMemberDetailsFragment = {
   role?: { __typename?: 'Role'; id: string } | null
 }
 
-export type AdminCreateTeamMemberMutationVariables = Exact<{
+export type __AdminCreateTeamMemberMutationVariables = Exact<{
   input: CreateTeamMemberInput
 }>
 
-export type AdminCreateTeamMemberMutation = {
+export type __AdminCreateTeamMemberMutation = {
   __typename?: 'Mutation'
   createTeamMember?: {
     __typename?: 'TeamMember'
@@ -5940,21 +5961,21 @@ export type AdminCreateTeamMemberMutation = {
   } | null
 }
 
-export type AdminDeleteTeamMemberMutationVariables = Exact<{
+export type __AdminDeleteTeamMemberMutationVariables = Exact<{
   teamMemberId: Scalars['String']['input']
 }>
 
-export type AdminDeleteTeamMemberMutation = {
+export type __AdminDeleteTeamMemberMutation = {
   __typename?: 'Mutation'
   deleteTeamMember?: { __typename?: 'TeamMember'; id: string } | null
 }
 
-export type AdminUpdateTeamMemberMutationVariables = Exact<{
+export type __AdminUpdateTeamMemberMutationVariables = Exact<{
   teamMemberId: Scalars['String']['input']
   input: UpdateTeamMemberInput
 }>
 
-export type AdminUpdateTeamMemberMutation = {
+export type __AdminUpdateTeamMemberMutation = {
   __typename?: 'Mutation'
   updateTeamMember?: {
     __typename?: 'TeamMember'
@@ -5970,11 +5991,11 @@ export type AdminUpdateTeamMemberMutation = {
   } | null
 }
 
-export type AdminTeamMemberQueryVariables = Exact<{
+export type __AdminTeamMemberQueryVariables = Exact<{
   teamMemberId: Scalars['String']['input']
 }>
 
-export type AdminTeamMemberQuery = {
+export type __AdminTeamMemberQuery = {
   __typename?: 'Query'
   teamMember?: {
     __typename?: 'TeamMember'
@@ -5990,11 +6011,11 @@ export type AdminTeamMemberQuery = {
   } | null
 }
 
-export type AdminTeamMembersQueryVariables = Exact<{
+export type __AdminTeamMembersQueryVariables = Exact<{
   input?: InputMaybe<ListTeamMemberInput>
 }>
 
-export type AdminTeamMembersQuery = {
+export type __AdminTeamMembersQuery = {
   __typename?: 'Query'
   teamMembers?: Array<{
     __typename?: 'TeamMember'
@@ -6022,11 +6043,11 @@ export type AdminTeamMembersQuery = {
   } | null
 }
 
-export type AdminTeamMemberPaginationQueryVariables = Exact<{
+export type __AdminTeamMemberPaginationQueryVariables = Exact<{
   input?: InputMaybe<ListTeamMemberInput>
 }>
 
-export type AdminTeamMemberPaginationQuery = {
+export type __AdminTeamMemberPaginationQuery = {
   __typename?: 'Query'
   counters?: {
     __typename?: 'CorePaging'
@@ -6042,7 +6063,7 @@ export type AdminTeamMemberPaginationQuery = {
   } | null
 }
 
-export type AdminTeamListFragment = {
+export type __AdminTeamListFragment = {
   __typename?: 'Team'
   id: string
   createdAt: any
@@ -6053,7 +6074,7 @@ export type AdminTeamListFragment = {
   organization?: { __typename?: 'Organization'; id: string } | null
 }
 
-export type AdminTeamDetailsFragment = {
+export type __AdminTeamDetailsFragment = {
   __typename?: 'Team'
   id: string
   createdAt: any
@@ -6064,11 +6085,11 @@ export type AdminTeamDetailsFragment = {
   organization?: { __typename?: 'Organization'; id: string } | null
 }
 
-export type AdminCreateTeamMutationVariables = Exact<{
+export type __AdminCreateTeamMutationVariables = Exact<{
   input: CreateTeamInput
 }>
 
-export type AdminCreateTeamMutation = {
+export type __AdminCreateTeamMutation = {
   __typename?: 'Mutation'
   createTeam?: {
     __typename?: 'Team'
@@ -6082,21 +6103,21 @@ export type AdminCreateTeamMutation = {
   } | null
 }
 
-export type AdminDeleteTeamMutationVariables = Exact<{
+export type __AdminDeleteTeamMutationVariables = Exact<{
   teamId: Scalars['String']['input']
 }>
 
-export type AdminDeleteTeamMutation = {
+export type __AdminDeleteTeamMutation = {
   __typename?: 'Mutation'
   deleteTeam?: { __typename?: 'Team'; id: string } | null
 }
 
-export type AdminUpdateTeamMutationVariables = Exact<{
+export type __AdminUpdateTeamMutationVariables = Exact<{
   teamId: Scalars['String']['input']
   input: UpdateTeamInput
 }>
 
-export type AdminUpdateTeamMutation = {
+export type __AdminUpdateTeamMutation = {
   __typename?: 'Mutation'
   updateTeam?: {
     __typename?: 'Team'
@@ -6110,11 +6131,11 @@ export type AdminUpdateTeamMutation = {
   } | null
 }
 
-export type AdminTeamQueryVariables = Exact<{
+export type __AdminTeamQueryVariables = Exact<{
   teamId: Scalars['String']['input']
 }>
 
-export type AdminTeamQuery = {
+export type __AdminTeamQuery = {
   __typename?: 'Query'
   team?: {
     __typename?: 'Team'
@@ -6128,11 +6149,11 @@ export type AdminTeamQuery = {
   } | null
 }
 
-export type AdminTeamsQueryVariables = Exact<{
+export type __AdminTeamsQueryVariables = Exact<{
   input?: InputMaybe<ListTeamInput>
 }>
 
-export type AdminTeamsQuery = {
+export type __AdminTeamsQuery = {
   __typename?: 'Query'
   teams?: Array<{
     __typename?: 'Team'
@@ -6158,11 +6179,11 @@ export type AdminTeamsQuery = {
   } | null
 }
 
-export type AdminTeamPaginationQueryVariables = Exact<{
+export type __AdminTeamPaginationQueryVariables = Exact<{
   input?: InputMaybe<ListTeamInput>
 }>
 
-export type AdminTeamPaginationQuery = {
+export type __AdminTeamPaginationQuery = {
   __typename?: 'Query'
   counters?: {
     __typename?: 'CorePaging'
@@ -6178,7 +6199,7 @@ export type AdminTeamPaginationQuery = {
   } | null
 }
 
-export type AdminUserPreferenceListFragment = {
+export type __AdminUserPreferenceListFragment = {
   __typename?: 'UserPreference'
   id: string
   createdAt: any
@@ -6189,7 +6210,7 @@ export type AdminUserPreferenceListFragment = {
   user?: { __typename?: 'User'; id: string } | null
 }
 
-export type AdminUserPreferenceDetailsFragment = {
+export type __AdminUserPreferenceDetailsFragment = {
   __typename?: 'UserPreference'
   id: string
   createdAt: any
@@ -6200,11 +6221,11 @@ export type AdminUserPreferenceDetailsFragment = {
   user?: { __typename?: 'User'; id: string } | null
 }
 
-export type AdminCreateUserPreferenceMutationVariables = Exact<{
+export type __AdminCreateUserPreferenceMutationVariables = Exact<{
   input: CreateUserPreferenceInput
 }>
 
-export type AdminCreateUserPreferenceMutation = {
+export type __AdminCreateUserPreferenceMutation = {
   __typename?: 'Mutation'
   createUserPreference?: {
     __typename?: 'UserPreference'
@@ -6218,21 +6239,21 @@ export type AdminCreateUserPreferenceMutation = {
   } | null
 }
 
-export type AdminDeleteUserPreferenceMutationVariables = Exact<{
+export type __AdminDeleteUserPreferenceMutationVariables = Exact<{
   userPreferenceId: Scalars['String']['input']
 }>
 
-export type AdminDeleteUserPreferenceMutation = {
+export type __AdminDeleteUserPreferenceMutation = {
   __typename?: 'Mutation'
   deleteUserPreference?: { __typename?: 'UserPreference'; id: string } | null
 }
 
-export type AdminUpdateUserPreferenceMutationVariables = Exact<{
+export type __AdminUpdateUserPreferenceMutationVariables = Exact<{
   userPreferenceId: Scalars['String']['input']
   input: UpdateUserPreferenceInput
 }>
 
-export type AdminUpdateUserPreferenceMutation = {
+export type __AdminUpdateUserPreferenceMutation = {
   __typename?: 'Mutation'
   updateUserPreference?: {
     __typename?: 'UserPreference'
@@ -6246,11 +6267,11 @@ export type AdminUpdateUserPreferenceMutation = {
   } | null
 }
 
-export type AdminUserPreferenceQueryVariables = Exact<{
+export type __AdminUserPreferenceQueryVariables = Exact<{
   userPreferenceId: Scalars['String']['input']
 }>
 
-export type AdminUserPreferenceQuery = {
+export type __AdminUserPreferenceQuery = {
   __typename?: 'Query'
   userPreference?: {
     __typename?: 'UserPreference'
@@ -6264,11 +6285,11 @@ export type AdminUserPreferenceQuery = {
   } | null
 }
 
-export type AdminUserPreferencesQueryVariables = Exact<{
+export type __AdminUserPreferencesQueryVariables = Exact<{
   input?: InputMaybe<ListUserPreferenceInput>
 }>
 
-export type AdminUserPreferencesQuery = {
+export type __AdminUserPreferencesQuery = {
   __typename?: 'Query'
   userPreferences?: Array<{
     __typename?: 'UserPreference'
@@ -6294,11 +6315,11 @@ export type AdminUserPreferencesQuery = {
   } | null
 }
 
-export type AdminUserPreferencePaginationQueryVariables = Exact<{
+export type __AdminUserPreferencePaginationQueryVariables = Exact<{
   input?: InputMaybe<ListUserPreferenceInput>
 }>
 
-export type AdminUserPreferencePaginationQuery = {
+export type __AdminUserPreferencePaginationQuery = {
   __typename?: 'Query'
   counters?: {
     __typename?: 'CorePaging'
@@ -6314,7 +6335,7 @@ export type AdminUserPreferencePaginationQuery = {
   } | null
 }
 
-export type AdminUserSessionListFragment = {
+export type __AdminUserSessionListFragment = {
   __typename?: 'UserSession'
   id: string
   createdAt: any
@@ -6328,7 +6349,7 @@ export type AdminUserSessionListFragment = {
   user?: { __typename?: 'User'; id: string } | null
 }
 
-export type AdminUserSessionDetailsFragment = {
+export type __AdminUserSessionDetailsFragment = {
   __typename?: 'UserSession'
   id: string
   createdAt: any
@@ -6342,11 +6363,11 @@ export type AdminUserSessionDetailsFragment = {
   user?: { __typename?: 'User'; id: string } | null
 }
 
-export type AdminCreateUserSessionMutationVariables = Exact<{
+export type __AdminCreateUserSessionMutationVariables = Exact<{
   input: CreateUserSessionInput
 }>
 
-export type AdminCreateUserSessionMutation = {
+export type __AdminCreateUserSessionMutation = {
   __typename?: 'Mutation'
   createUserSession?: {
     __typename?: 'UserSession'
@@ -6363,21 +6384,21 @@ export type AdminCreateUserSessionMutation = {
   } | null
 }
 
-export type AdminDeleteUserSessionMutationVariables = Exact<{
+export type __AdminDeleteUserSessionMutationVariables = Exact<{
   userSessionId: Scalars['String']['input']
 }>
 
-export type AdminDeleteUserSessionMutation = {
+export type __AdminDeleteUserSessionMutation = {
   __typename?: 'Mutation'
   deleteUserSession?: { __typename?: 'UserSession'; id: string } | null
 }
 
-export type AdminUpdateUserSessionMutationVariables = Exact<{
+export type __AdminUpdateUserSessionMutationVariables = Exact<{
   userSessionId: Scalars['String']['input']
   input: UpdateUserSessionInput
 }>
 
-export type AdminUpdateUserSessionMutation = {
+export type __AdminUpdateUserSessionMutation = {
   __typename?: 'Mutation'
   updateUserSession?: {
     __typename?: 'UserSession'
@@ -6394,11 +6415,11 @@ export type AdminUpdateUserSessionMutation = {
   } | null
 }
 
-export type AdminUserSessionQueryVariables = Exact<{
+export type __AdminUserSessionQueryVariables = Exact<{
   userSessionId: Scalars['String']['input']
 }>
 
-export type AdminUserSessionQuery = {
+export type __AdminUserSessionQuery = {
   __typename?: 'Query'
   userSession?: {
     __typename?: 'UserSession'
@@ -6415,11 +6436,11 @@ export type AdminUserSessionQuery = {
   } | null
 }
 
-export type AdminUserSessionsQueryVariables = Exact<{
+export type __AdminUserSessionsQueryVariables = Exact<{
   input?: InputMaybe<ListUserSessionInput>
 }>
 
-export type AdminUserSessionsQuery = {
+export type __AdminUserSessionsQuery = {
   __typename?: 'Query'
   userSessions?: Array<{
     __typename?: 'UserSession'
@@ -6448,11 +6469,11 @@ export type AdminUserSessionsQuery = {
   } | null
 }
 
-export type AdminUserSessionPaginationQueryVariables = Exact<{
+export type __AdminUserSessionPaginationQueryVariables = Exact<{
   input?: InputMaybe<ListUserSessionInput>
 }>
 
-export type AdminUserSessionPaginationQuery = {
+export type __AdminUserSessionPaginationQuery = {
   __typename?: 'Query'
   counters?: {
     __typename?: 'CorePaging'
@@ -6468,7 +6489,7 @@ export type AdminUserSessionPaginationQuery = {
   } | null
 }
 
-export type AdminUserListFragment = {
+export type __AdminUserListFragment = {
   __typename?: 'User'
   id: string
   createdAt: any
@@ -6498,7 +6519,7 @@ export type AdminUserListFragment = {
   privacyPolicyAcceptedAt?: any | null
 }
 
-export type AdminUserDetailsFragment = {
+export type __AdminUserDetailsFragment = {
   __typename?: 'User'
   id: string
   createdAt: any
@@ -6528,11 +6549,11 @@ export type AdminUserDetailsFragment = {
   privacyPolicyAcceptedAt?: any | null
 }
 
-export type AdminCreateUserMutationVariables = Exact<{
+export type __AdminCreateUserMutationVariables = Exact<{
   input: CreateUserInput
 }>
 
-export type AdminCreateUserMutation = {
+export type __AdminCreateUserMutation = {
   __typename?: 'Mutation'
   createUser?: {
     __typename?: 'User'
@@ -6565,21 +6586,21 @@ export type AdminCreateUserMutation = {
   } | null
 }
 
-export type AdminDeleteUserMutationVariables = Exact<{
+export type __AdminDeleteUserMutationVariables = Exact<{
   userId: Scalars['String']['input']
 }>
 
-export type AdminDeleteUserMutation = {
+export type __AdminDeleteUserMutation = {
   __typename?: 'Mutation'
   deleteUser?: { __typename?: 'User'; id: string } | null
 }
 
-export type AdminUpdateUserMutationVariables = Exact<{
+export type __AdminUpdateUserMutationVariables = Exact<{
   userId: Scalars['String']['input']
   input: UpdateUserInput
 }>
 
-export type AdminUpdateUserMutation = {
+export type __AdminUpdateUserMutation = {
   __typename?: 'Mutation'
   updateUser?: {
     __typename?: 'User'
@@ -6612,11 +6633,11 @@ export type AdminUpdateUserMutation = {
   } | null
 }
 
-export type AdminUserQueryVariables = Exact<{
+export type __AdminUserQueryVariables = Exact<{
   userId: Scalars['String']['input']
 }>
 
-export type AdminUserQuery = {
+export type __AdminUserQuery = {
   __typename?: 'Query'
   user?: {
     __typename?: 'User'
@@ -6649,11 +6670,11 @@ export type AdminUserQuery = {
   } | null
 }
 
-export type AdminUsersQueryVariables = Exact<{
+export type __AdminUsersQueryVariables = Exact<{
   input?: InputMaybe<ListUserInput>
 }>
 
-export type AdminUsersQuery = {
+export type __AdminUsersQuery = {
   __typename?: 'Query'
   users?: Array<{
     __typename?: 'User'
@@ -6698,11 +6719,11 @@ export type AdminUsersQuery = {
   } | null
 }
 
-export type AdminUserPaginationQueryVariables = Exact<{
+export type __AdminUserPaginationQueryVariables = Exact<{
   input?: InputMaybe<ListUserInput>
 }>
 
-export type AdminUserPaginationQuery = {
+export type __AdminUserPaginationQuery = {
   __typename?: 'Query'
   counters?: {
     __typename?: 'CorePaging'
@@ -6864,6 +6885,69 @@ export type AddressPaginationQuery = {
     hasNext?: boolean | null
     hasPrev?: boolean | null
   } | null
+}
+
+export type AdminDeactivateUserMutationVariables = Exact<{
+  userId: Scalars['String']['input']
+}>
+
+export type AdminDeactivateUserMutation = {
+  __typename?: 'Mutation'
+  adminDeactivateUser: {
+    __typename?: 'User'
+    id: string
+    isActive: boolean
+    deactivatedAt?: any | null
+  }
+}
+
+export type AdminActivateUserMutationVariables = Exact<{
+  userId: Scalars['String']['input']
+}>
+
+export type AdminActivateUserMutation = {
+  __typename?: 'Mutation'
+  adminActivateUser: {
+    __typename?: 'User'
+    id: string
+    isActive: boolean
+    deactivatedAt?: any | null
+  }
+}
+
+export type AdminVerifyEmailMutationVariables = Exact<{
+  userId: Scalars['String']['input']
+  emailId: Scalars['String']['input']
+}>
+
+export type AdminVerifyEmailMutation = {
+  __typename?: 'Mutation'
+  adminVerifyEmail: {
+    __typename?: 'User'
+    id: string
+    emailValidated: boolean
+    emails?: Array<{
+      __typename?: 'Email'
+      id: string
+      email: string
+      verified: boolean
+      primary: boolean
+    }> | null
+  }
+}
+
+export type AdminForcePasswordResetMutationVariables = Exact<{
+  userId: Scalars['String']['input']
+}>
+
+export type AdminForcePasswordResetMutation = {
+  __typename?: 'Mutation'
+  adminForcePasswordReset: {
+    __typename?: 'User'
+    id: string
+    passwordResetToken?: string | null
+    passwordResetExpires?: any | null
+  }
 }
 
 export type AdminPlatformOrganizationsQueryVariables = Exact<{
@@ -11683,8 +11767,8 @@ export type UserPaginationQuery = {
   } | null
 }
 
-export const AdminAddressListFragmentDoc = gql`
-  fragment AdminAddressList on Address {
+export const __AdminAddressListFragmentDoc = gql`
+  fragment __AdminAddressList on Address {
     id
     createdAt
     updatedAt
@@ -11709,14 +11793,14 @@ export const AdminAddressListFragmentDoc = gql`
     }
   }
 `
-export const AdminAddressDetailsFragmentDoc = gql`
-  fragment AdminAddressDetails on Address {
-    ...AdminAddressList
+export const __AdminAddressDetailsFragmentDoc = gql`
+  fragment __AdminAddressDetails on Address {
+    ...__AdminAddressList
   }
-  ${AdminAddressListFragmentDoc}
+  ${__AdminAddressListFragmentDoc}
 `
-export const AdminApiTokenListFragmentDoc = gql`
-  fragment AdminApiTokenList on ApiToken {
+export const __AdminApiTokenListFragmentDoc = gql`
+  fragment __AdminApiTokenList on ApiToken {
     id
     createdAt
     updatedAt
@@ -11731,14 +11815,14 @@ export const AdminApiTokenListFragmentDoc = gql`
     }
   }
 `
-export const AdminApiTokenDetailsFragmentDoc = gql`
-  fragment AdminApiTokenDetails on ApiToken {
-    ...AdminApiTokenList
+export const __AdminApiTokenDetailsFragmentDoc = gql`
+  fragment __AdminApiTokenDetails on ApiToken {
+    ...__AdminApiTokenList
   }
-  ${AdminApiTokenListFragmentDoc}
+  ${__AdminApiTokenListFragmentDoc}
 `
-export const AdminAuditLogListFragmentDoc = gql`
-  fragment AdminAuditLogList on AuditLog {
+export const __AdminAuditLogListFragmentDoc = gql`
+  fragment __AdminAuditLogList on AuditLog {
     id
     createdAt
     updatedAt
@@ -11756,14 +11840,14 @@ export const AdminAuditLogListFragmentDoc = gql`
     }
   }
 `
-export const AdminAuditLogDetailsFragmentDoc = gql`
-  fragment AdminAuditLogDetails on AuditLog {
-    ...AdminAuditLogList
+export const __AdminAuditLogDetailsFragmentDoc = gql`
+  fragment __AdminAuditLogDetails on AuditLog {
+    ...__AdminAuditLogList
   }
-  ${AdminAuditLogListFragmentDoc}
+  ${__AdminAuditLogListFragmentDoc}
 `
-export const AdminCountryListFragmentDoc = gql`
-  fragment AdminCountryList on Country {
+export const __AdminCountryListFragmentDoc = gql`
+  fragment __AdminCountryList on Country {
     id
     createdAt
     updatedAt
@@ -11780,14 +11864,14 @@ export const AdminCountryListFragmentDoc = gql`
     intermediateRegionCode
   }
 `
-export const AdminCountryDetailsFragmentDoc = gql`
-  fragment AdminCountryDetails on Country {
-    ...AdminCountryList
+export const __AdminCountryDetailsFragmentDoc = gql`
+  fragment __AdminCountryDetails on Country {
+    ...__AdminCountryList
   }
-  ${AdminCountryListFragmentDoc}
+  ${__AdminCountryListFragmentDoc}
 `
-export const AdminEmailListFragmentDoc = gql`
-  fragment AdminEmailList on Email {
+export const __AdminEmailListFragmentDoc = gql`
+  fragment __AdminEmailList on Email {
     id
     createdAt
     updatedAt
@@ -11808,14 +11892,14 @@ export const AdminEmailListFragmentDoc = gql`
     }
   }
 `
-export const AdminEmailDetailsFragmentDoc = gql`
-  fragment AdminEmailDetails on Email {
-    ...AdminEmailList
+export const __AdminEmailDetailsFragmentDoc = gql`
+  fragment __AdminEmailDetails on Email {
+    ...__AdminEmailList
   }
-  ${AdminEmailListFragmentDoc}
+  ${__AdminEmailListFragmentDoc}
 `
-export const AdminInviteListFragmentDoc = gql`
-  fragment AdminInviteList on Invite {
+export const __AdminInviteListFragmentDoc = gql`
+  fragment __AdminInviteList on Invite {
     id
     createdAt
     updatedAt
@@ -11837,14 +11921,14 @@ export const AdminInviteListFragmentDoc = gql`
     }
   }
 `
-export const AdminInviteDetailsFragmentDoc = gql`
-  fragment AdminInviteDetails on Invite {
-    ...AdminInviteList
+export const __AdminInviteDetailsFragmentDoc = gql`
+  fragment __AdminInviteDetails on Invite {
+    ...__AdminInviteList
   }
-  ${AdminInviteListFragmentDoc}
+  ${__AdminInviteListFragmentDoc}
 `
-export const AdminLinkListFragmentDoc = gql`
-  fragment AdminLinkList on Link {
+export const __AdminLinkListFragmentDoc = gql`
+  fragment __AdminLinkList on Link {
     id
     createdAt
     updatedAt
@@ -11860,14 +11944,14 @@ export const AdminLinkListFragmentDoc = gql`
     }
   }
 `
-export const AdminLinkDetailsFragmentDoc = gql`
-  fragment AdminLinkDetails on Link {
-    ...AdminLinkList
+export const __AdminLinkDetailsFragmentDoc = gql`
+  fragment __AdminLinkDetails on Link {
+    ...__AdminLinkList
   }
-  ${AdminLinkListFragmentDoc}
+  ${__AdminLinkListFragmentDoc}
 `
-export const AdminLoginAttemptListFragmentDoc = gql`
-  fragment AdminLoginAttemptList on LoginAttempt {
+export const __AdminLoginAttemptListFragmentDoc = gql`
+  fragment __AdminLoginAttemptList on LoginAttempt {
     id
     createdAt
     updatedAt
@@ -11883,14 +11967,14 @@ export const AdminLoginAttemptListFragmentDoc = gql`
     }
   }
 `
-export const AdminLoginAttemptDetailsFragmentDoc = gql`
-  fragment AdminLoginAttemptDetails on LoginAttempt {
-    ...AdminLoginAttemptList
+export const __AdminLoginAttemptDetailsFragmentDoc = gql`
+  fragment __AdminLoginAttemptDetails on LoginAttempt {
+    ...__AdminLoginAttemptList
   }
-  ${AdminLoginAttemptListFragmentDoc}
+  ${__AdminLoginAttemptListFragmentDoc}
 `
-export const AdminOAuthAccountListFragmentDoc = gql`
-  fragment AdminOAuthAccountList on OAuthAccount {
+export const __AdminOAuthAccountListFragmentDoc = gql`
+  fragment __AdminOAuthAccountList on OAuthAccount {
     id
     createdAt
     updatedAt
@@ -11902,14 +11986,14 @@ export const AdminOAuthAccountListFragmentDoc = gql`
     }
   }
 `
-export const AdminOAuthAccountDetailsFragmentDoc = gql`
-  fragment AdminOAuthAccountDetails on OAuthAccount {
-    ...AdminOAuthAccountList
+export const __AdminOAuthAccountDetailsFragmentDoc = gql`
+  fragment __AdminOAuthAccountDetails on OAuthAccount {
+    ...__AdminOAuthAccountList
   }
-  ${AdminOAuthAccountListFragmentDoc}
+  ${__AdminOAuthAccountListFragmentDoc}
 `
-export const AdminOrganizationMemberListFragmentDoc = gql`
-  fragment AdminOrganizationMemberList on OrganizationMember {
+export const __AdminOrganizationMemberListFragmentDoc = gql`
+  fragment __AdminOrganizationMemberList on OrganizationMember {
     id
     createdAt
     updatedAt
@@ -11927,14 +12011,14 @@ export const AdminOrganizationMemberListFragmentDoc = gql`
     }
   }
 `
-export const AdminOrganizationMemberDetailsFragmentDoc = gql`
-  fragment AdminOrganizationMemberDetails on OrganizationMember {
-    ...AdminOrganizationMemberList
+export const __AdminOrganizationMemberDetailsFragmentDoc = gql`
+  fragment __AdminOrganizationMemberDetails on OrganizationMember {
+    ...__AdminOrganizationMemberList
   }
-  ${AdminOrganizationMemberListFragmentDoc}
+  ${__AdminOrganizationMemberListFragmentDoc}
 `
-export const AdminOrganizationListFragmentDoc = gql`
-  fragment AdminOrganizationList on Organization {
+export const __AdminOrganizationListFragmentDoc = gql`
+  fragment __AdminOrganizationList on Organization {
     id
     createdAt
     updatedAt
@@ -11944,28 +12028,28 @@ export const AdminOrganizationListFragmentDoc = gql`
     }
   }
 `
-export const AdminOrganizationDetailsFragmentDoc = gql`
-  fragment AdminOrganizationDetails on Organization {
-    ...AdminOrganizationList
+export const __AdminOrganizationDetailsFragmentDoc = gql`
+  fragment __AdminOrganizationDetails on Organization {
+    ...__AdminOrganizationList
   }
-  ${AdminOrganizationListFragmentDoc}
+  ${__AdminOrganizationListFragmentDoc}
 `
-export const AdminPermissionListFragmentDoc = gql`
-  fragment AdminPermissionList on Permission {
+export const __AdminPermissionListFragmentDoc = gql`
+  fragment __AdminPermissionList on Permission {
     id
     action
     subject
     description
   }
 `
-export const AdminPermissionDetailsFragmentDoc = gql`
-  fragment AdminPermissionDetails on Permission {
-    ...AdminPermissionList
+export const __AdminPermissionDetailsFragmentDoc = gql`
+  fragment __AdminPermissionDetails on Permission {
+    ...__AdminPermissionList
   }
-  ${AdminPermissionListFragmentDoc}
+  ${__AdminPermissionListFragmentDoc}
 `
-export const AdminPhoneNumberListFragmentDoc = gql`
-  fragment AdminPhoneNumberList on PhoneNumber {
+export const __AdminPhoneNumberListFragmentDoc = gql`
+  fragment __AdminPhoneNumberList on PhoneNumber {
     id
     createdAt
     updatedAt
@@ -11982,14 +12066,14 @@ export const AdminPhoneNumberListFragmentDoc = gql`
     }
   }
 `
-export const AdminPhoneNumberDetailsFragmentDoc = gql`
-  fragment AdminPhoneNumberDetails on PhoneNumber {
-    ...AdminPhoneNumberList
+export const __AdminPhoneNumberDetailsFragmentDoc = gql`
+  fragment __AdminPhoneNumberDetails on PhoneNumber {
+    ...__AdminPhoneNumberList
   }
-  ${AdminPhoneNumberListFragmentDoc}
+  ${__AdminPhoneNumberListFragmentDoc}
 `
-export const AdminPlanListFragmentDoc = gql`
-  fragment AdminPlanList on Plan {
+export const __AdminPlanListFragmentDoc = gql`
+  fragment __AdminPlanList on Plan {
     id
     createdAt
     updatedAt
@@ -12005,14 +12089,14 @@ export const AdminPlanListFragmentDoc = gql`
     trialPeriodDays
   }
 `
-export const AdminPlanDetailsFragmentDoc = gql`
-  fragment AdminPlanDetails on Plan {
-    ...AdminPlanList
+export const __AdminPlanDetailsFragmentDoc = gql`
+  fragment __AdminPlanDetails on Plan {
+    ...__AdminPlanList
   }
-  ${AdminPlanListFragmentDoc}
+  ${__AdminPlanListFragmentDoc}
 `
-export const AdminRoleListFragmentDoc = gql`
-  fragment AdminRoleList on Role {
+export const __AdminRoleListFragmentDoc = gql`
+  fragment __AdminRoleList on Role {
     id
     name
     description
@@ -12022,14 +12106,14 @@ export const AdminRoleListFragmentDoc = gql`
     }
   }
 `
-export const AdminRoleDetailsFragmentDoc = gql`
-  fragment AdminRoleDetails on Role {
-    ...AdminRoleList
+export const __AdminRoleDetailsFragmentDoc = gql`
+  fragment __AdminRoleDetails on Role {
+    ...__AdminRoleList
   }
-  ${AdminRoleListFragmentDoc}
+  ${__AdminRoleListFragmentDoc}
 `
-export const AdminSecurityEventListFragmentDoc = gql`
-  fragment AdminSecurityEventList on SecurityEvent {
+export const __AdminSecurityEventListFragmentDoc = gql`
+  fragment __AdminSecurityEventList on SecurityEvent {
     id
     createdAt
     updatedAt
@@ -12043,14 +12127,14 @@ export const AdminSecurityEventListFragmentDoc = gql`
     }
   }
 `
-export const AdminSecurityEventDetailsFragmentDoc = gql`
-  fragment AdminSecurityEventDetails on SecurityEvent {
-    ...AdminSecurityEventList
+export const __AdminSecurityEventDetailsFragmentDoc = gql`
+  fragment __AdminSecurityEventDetails on SecurityEvent {
+    ...__AdminSecurityEventList
   }
-  ${AdminSecurityEventListFragmentDoc}
+  ${__AdminSecurityEventListFragmentDoc}
 `
-export const AdminStoredFileListFragmentDoc = gql`
-  fragment AdminStoredFileList on StoredFile {
+export const __AdminStoredFileListFragmentDoc = gql`
+  fragment __AdminStoredFileList on StoredFile {
     id
     createdAt
     updatedAt
@@ -12076,14 +12160,14 @@ export const AdminStoredFileListFragmentDoc = gql`
     }
   }
 `
-export const AdminStoredFileDetailsFragmentDoc = gql`
-  fragment AdminStoredFileDetails on StoredFile {
-    ...AdminStoredFileList
+export const __AdminStoredFileDetailsFragmentDoc = gql`
+  fragment __AdminStoredFileDetails on StoredFile {
+    ...__AdminStoredFileList
   }
-  ${AdminStoredFileListFragmentDoc}
+  ${__AdminStoredFileListFragmentDoc}
 `
-export const AdminSubscriptionListFragmentDoc = gql`
-  fragment AdminSubscriptionList on Subscription {
+export const __AdminSubscriptionListFragmentDoc = gql`
+  fragment __AdminSubscriptionList on Subscription {
     id
     createdAt
     updatedAt
@@ -12107,14 +12191,14 @@ export const AdminSubscriptionListFragmentDoc = gql`
     }
   }
 `
-export const AdminSubscriptionDetailsFragmentDoc = gql`
-  fragment AdminSubscriptionDetails on Subscription {
-    ...AdminSubscriptionList
+export const __AdminSubscriptionDetailsFragmentDoc = gql`
+  fragment __AdminSubscriptionDetails on Subscription {
+    ...__AdminSubscriptionList
   }
-  ${AdminSubscriptionListFragmentDoc}
+  ${__AdminSubscriptionListFragmentDoc}
 `
-export const AdminTeamMemberListFragmentDoc = gql`
-  fragment AdminTeamMemberList on TeamMember {
+export const __AdminTeamMemberListFragmentDoc = gql`
+  fragment __AdminTeamMemberList on TeamMember {
     id
     createdAt
     updatedAt
@@ -12132,14 +12216,14 @@ export const AdminTeamMemberListFragmentDoc = gql`
     }
   }
 `
-export const AdminTeamMemberDetailsFragmentDoc = gql`
-  fragment AdminTeamMemberDetails on TeamMember {
-    ...AdminTeamMemberList
+export const __AdminTeamMemberDetailsFragmentDoc = gql`
+  fragment __AdminTeamMemberDetails on TeamMember {
+    ...__AdminTeamMemberList
   }
-  ${AdminTeamMemberListFragmentDoc}
+  ${__AdminTeamMemberListFragmentDoc}
 `
-export const AdminTeamListFragmentDoc = gql`
-  fragment AdminTeamList on Team {
+export const __AdminTeamListFragmentDoc = gql`
+  fragment __AdminTeamList on Team {
     id
     createdAt
     updatedAt
@@ -12151,14 +12235,14 @@ export const AdminTeamListFragmentDoc = gql`
     }
   }
 `
-export const AdminTeamDetailsFragmentDoc = gql`
-  fragment AdminTeamDetails on Team {
-    ...AdminTeamList
+export const __AdminTeamDetailsFragmentDoc = gql`
+  fragment __AdminTeamDetails on Team {
+    ...__AdminTeamList
   }
-  ${AdminTeamListFragmentDoc}
+  ${__AdminTeamListFragmentDoc}
 `
-export const AdminUserPreferenceListFragmentDoc = gql`
-  fragment AdminUserPreferenceList on UserPreference {
+export const __AdminUserPreferenceListFragmentDoc = gql`
+  fragment __AdminUserPreferenceList on UserPreference {
     id
     createdAt
     updatedAt
@@ -12170,14 +12254,14 @@ export const AdminUserPreferenceListFragmentDoc = gql`
     }
   }
 `
-export const AdminUserPreferenceDetailsFragmentDoc = gql`
-  fragment AdminUserPreferenceDetails on UserPreference {
-    ...AdminUserPreferenceList
+export const __AdminUserPreferenceDetailsFragmentDoc = gql`
+  fragment __AdminUserPreferenceDetails on UserPreference {
+    ...__AdminUserPreferenceList
   }
-  ${AdminUserPreferenceListFragmentDoc}
+  ${__AdminUserPreferenceListFragmentDoc}
 `
-export const AdminUserSessionListFragmentDoc = gql`
-  fragment AdminUserSessionList on UserSession {
+export const __AdminUserSessionListFragmentDoc = gql`
+  fragment __AdminUserSessionList on UserSession {
     id
     createdAt
     updatedAt
@@ -12192,14 +12276,14 @@ export const AdminUserSessionListFragmentDoc = gql`
     }
   }
 `
-export const AdminUserSessionDetailsFragmentDoc = gql`
-  fragment AdminUserSessionDetails on UserSession {
-    ...AdminUserSessionList
+export const __AdminUserSessionDetailsFragmentDoc = gql`
+  fragment __AdminUserSessionDetails on UserSession {
+    ...__AdminUserSessionList
   }
-  ${AdminUserSessionListFragmentDoc}
+  ${__AdminUserSessionListFragmentDoc}
 `
-export const AdminUserListFragmentDoc = gql`
-  fragment AdminUserList on User {
+export const __AdminUserListFragmentDoc = gql`
+  fragment __AdminUserList on User {
     id
     createdAt
     updatedAt
@@ -12228,11 +12312,11 @@ export const AdminUserListFragmentDoc = gql`
     privacyPolicyAcceptedAt
   }
 `
-export const AdminUserDetailsFragmentDoc = gql`
-  fragment AdminUserDetails on User {
-    ...AdminUserList
+export const __AdminUserDetailsFragmentDoc = gql`
+  fragment __AdminUserDetails on User {
+    ...__AdminUserList
   }
-  ${AdminUserListFragmentDoc}
+  ${__AdminUserListFragmentDoc}
 `
 export const AddressListFragmentDoc = gql`
   fragment AddressList on Address {
@@ -12791,283 +12875,291 @@ export const UserDetailsFragmentDoc = gql`
   }
   ${UserListFragmentDoc}
 `
-export const AdminCreateAddressDocument = gql`
-  mutation AdminCreateAddress($input: CreateAddressInput!) {
+export const __AdminCreateAddressDocument = gql`
+  mutation __AdminCreateAddress($input: CreateAddressInput!) {
     createAddress(input: $input) {
-      ...AdminAddressDetails
+      ...__AdminAddressDetails
     }
   }
-  ${AdminAddressDetailsFragmentDoc}
+  ${__AdminAddressDetailsFragmentDoc}
 `
-export type AdminCreateAddressMutationFn = Apollo.MutationFunction<
-  AdminCreateAddressMutation,
-  AdminCreateAddressMutationVariables
+export type __AdminCreateAddressMutationFn = Apollo.MutationFunction<
+  __AdminCreateAddressMutation,
+  __AdminCreateAddressMutationVariables
 >
 
 /**
- * __useAdminCreateAddressMutation__
+ * __use__AdminCreateAddressMutation__
  *
- * To run a mutation, you first call `useAdminCreateAddressMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAdminCreateAddressMutation` returns a tuple that includes:
+ * To run a mutation, you first call `use__AdminCreateAddressMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `use__AdminCreateAddressMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [adminCreateAddressMutation, { data, loading, error }] = useAdminCreateAddressMutation({
+ * const [adminCreateAddressMutation, { data, loading, error }] = use__AdminCreateAddressMutation({
  *   variables: {
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useAdminCreateAddressMutation(
+export function use__AdminCreateAddressMutation(
   baseOptions?: Apollo.MutationHookOptions<
-    AdminCreateAddressMutation,
-    AdminCreateAddressMutationVariables
+    __AdminCreateAddressMutation,
+    __AdminCreateAddressMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<AdminCreateAddressMutation, AdminCreateAddressMutationVariables>(
-    AdminCreateAddressDocument,
+  return Apollo.useMutation<__AdminCreateAddressMutation, __AdminCreateAddressMutationVariables>(
+    __AdminCreateAddressDocument,
     options,
   )
 }
-export type AdminCreateAddressMutationHookResult = ReturnType<typeof useAdminCreateAddressMutation>
-export type AdminCreateAddressMutationResult = Apollo.MutationResult<AdminCreateAddressMutation>
-export type AdminCreateAddressMutationOptions = Apollo.BaseMutationOptions<
-  AdminCreateAddressMutation,
-  AdminCreateAddressMutationVariables
+export type __AdminCreateAddressMutationHookResult = ReturnType<
+  typeof use__AdminCreateAddressMutation
 >
-export const AdminDeleteAddressDocument = gql`
-  mutation AdminDeleteAddress($addressId: String!) {
+export type __AdminCreateAddressMutationResult = Apollo.MutationResult<__AdminCreateAddressMutation>
+export type __AdminCreateAddressMutationOptions = Apollo.BaseMutationOptions<
+  __AdminCreateAddressMutation,
+  __AdminCreateAddressMutationVariables
+>
+export const __AdminDeleteAddressDocument = gql`
+  mutation __AdminDeleteAddress($addressId: String!) {
     deleteAddress(addressId: $addressId) {
       id
     }
   }
 `
-export type AdminDeleteAddressMutationFn = Apollo.MutationFunction<
-  AdminDeleteAddressMutation,
-  AdminDeleteAddressMutationVariables
+export type __AdminDeleteAddressMutationFn = Apollo.MutationFunction<
+  __AdminDeleteAddressMutation,
+  __AdminDeleteAddressMutationVariables
 >
 
 /**
- * __useAdminDeleteAddressMutation__
+ * __use__AdminDeleteAddressMutation__
  *
- * To run a mutation, you first call `useAdminDeleteAddressMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAdminDeleteAddressMutation` returns a tuple that includes:
+ * To run a mutation, you first call `use__AdminDeleteAddressMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `use__AdminDeleteAddressMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [adminDeleteAddressMutation, { data, loading, error }] = useAdminDeleteAddressMutation({
+ * const [adminDeleteAddressMutation, { data, loading, error }] = use__AdminDeleteAddressMutation({
  *   variables: {
  *      addressId: // value for 'addressId'
  *   },
  * });
  */
-export function useAdminDeleteAddressMutation(
+export function use__AdminDeleteAddressMutation(
   baseOptions?: Apollo.MutationHookOptions<
-    AdminDeleteAddressMutation,
-    AdminDeleteAddressMutationVariables
+    __AdminDeleteAddressMutation,
+    __AdminDeleteAddressMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<AdminDeleteAddressMutation, AdminDeleteAddressMutationVariables>(
-    AdminDeleteAddressDocument,
+  return Apollo.useMutation<__AdminDeleteAddressMutation, __AdminDeleteAddressMutationVariables>(
+    __AdminDeleteAddressDocument,
     options,
   )
 }
-export type AdminDeleteAddressMutationHookResult = ReturnType<typeof useAdminDeleteAddressMutation>
-export type AdminDeleteAddressMutationResult = Apollo.MutationResult<AdminDeleteAddressMutation>
-export type AdminDeleteAddressMutationOptions = Apollo.BaseMutationOptions<
-  AdminDeleteAddressMutation,
-  AdminDeleteAddressMutationVariables
+export type __AdminDeleteAddressMutationHookResult = ReturnType<
+  typeof use__AdminDeleteAddressMutation
 >
-export const AdminUpdateAddressDocument = gql`
-  mutation AdminUpdateAddress($addressId: String!, $input: UpdateAddressInput!) {
+export type __AdminDeleteAddressMutationResult = Apollo.MutationResult<__AdminDeleteAddressMutation>
+export type __AdminDeleteAddressMutationOptions = Apollo.BaseMutationOptions<
+  __AdminDeleteAddressMutation,
+  __AdminDeleteAddressMutationVariables
+>
+export const __AdminUpdateAddressDocument = gql`
+  mutation __AdminUpdateAddress($addressId: String!, $input: UpdateAddressInput!) {
     updateAddress(addressId: $addressId, input: $input) {
-      ...AdminAddressDetails
+      ...__AdminAddressDetails
     }
   }
-  ${AdminAddressDetailsFragmentDoc}
+  ${__AdminAddressDetailsFragmentDoc}
 `
-export type AdminUpdateAddressMutationFn = Apollo.MutationFunction<
-  AdminUpdateAddressMutation,
-  AdminUpdateAddressMutationVariables
+export type __AdminUpdateAddressMutationFn = Apollo.MutationFunction<
+  __AdminUpdateAddressMutation,
+  __AdminUpdateAddressMutationVariables
 >
 
 /**
- * __useAdminUpdateAddressMutation__
+ * __use__AdminUpdateAddressMutation__
  *
- * To run a mutation, you first call `useAdminUpdateAddressMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAdminUpdateAddressMutation` returns a tuple that includes:
+ * To run a mutation, you first call `use__AdminUpdateAddressMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `use__AdminUpdateAddressMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [adminUpdateAddressMutation, { data, loading, error }] = useAdminUpdateAddressMutation({
+ * const [adminUpdateAddressMutation, { data, loading, error }] = use__AdminUpdateAddressMutation({
  *   variables: {
  *      addressId: // value for 'addressId'
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useAdminUpdateAddressMutation(
+export function use__AdminUpdateAddressMutation(
   baseOptions?: Apollo.MutationHookOptions<
-    AdminUpdateAddressMutation,
-    AdminUpdateAddressMutationVariables
+    __AdminUpdateAddressMutation,
+    __AdminUpdateAddressMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<AdminUpdateAddressMutation, AdminUpdateAddressMutationVariables>(
-    AdminUpdateAddressDocument,
+  return Apollo.useMutation<__AdminUpdateAddressMutation, __AdminUpdateAddressMutationVariables>(
+    __AdminUpdateAddressDocument,
     options,
   )
 }
-export type AdminUpdateAddressMutationHookResult = ReturnType<typeof useAdminUpdateAddressMutation>
-export type AdminUpdateAddressMutationResult = Apollo.MutationResult<AdminUpdateAddressMutation>
-export type AdminUpdateAddressMutationOptions = Apollo.BaseMutationOptions<
-  AdminUpdateAddressMutation,
-  AdminUpdateAddressMutationVariables
+export type __AdminUpdateAddressMutationHookResult = ReturnType<
+  typeof use__AdminUpdateAddressMutation
 >
-export const AdminAddressDocument = gql`
-  query AdminAddress($addressId: String!) {
+export type __AdminUpdateAddressMutationResult = Apollo.MutationResult<__AdminUpdateAddressMutation>
+export type __AdminUpdateAddressMutationOptions = Apollo.BaseMutationOptions<
+  __AdminUpdateAddressMutation,
+  __AdminUpdateAddressMutationVariables
+>
+export const __AdminAddressDocument = gql`
+  query __AdminAddress($addressId: String!) {
     address(addressId: $addressId) {
-      ...AdminAddressDetails
+      ...__AdminAddressDetails
     }
   }
-  ${AdminAddressDetailsFragmentDoc}
+  ${__AdminAddressDetailsFragmentDoc}
 `
 
 /**
- * __useAdminAddressQuery__
+ * __use__AdminAddressQuery__
  *
- * To run a query within a React component, call `useAdminAddressQuery` and pass it any options that fit your needs.
- * When your component renders, `useAdminAddressQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `use__AdminAddressQuery` and pass it any options that fit your needs.
+ * When your component renders, `use__AdminAddressQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useAdminAddressQuery({
+ * const { data, loading, error } = use__AdminAddressQuery({
  *   variables: {
  *      addressId: // value for 'addressId'
  *   },
  * });
  */
-export function useAdminAddressQuery(
-  baseOptions: Apollo.QueryHookOptions<AdminAddressQuery, AdminAddressQueryVariables> &
-    ({ variables: AdminAddressQueryVariables; skip?: boolean } | { skip: boolean }),
+export function use__AdminAddressQuery(
+  baseOptions: Apollo.QueryHookOptions<__AdminAddressQuery, __AdminAddressQueryVariables> &
+    ({ variables: __AdminAddressQueryVariables; skip?: boolean } | { skip: boolean }),
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<AdminAddressQuery, AdminAddressQueryVariables>(
-    AdminAddressDocument,
+  return Apollo.useQuery<__AdminAddressQuery, __AdminAddressQueryVariables>(
+    __AdminAddressDocument,
     options,
   )
 }
-export function useAdminAddressLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<AdminAddressQuery, AdminAddressQueryVariables>,
+export function use__AdminAddressLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<__AdminAddressQuery, __AdminAddressQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<AdminAddressQuery, AdminAddressQueryVariables>(
-    AdminAddressDocument,
+  return Apollo.useLazyQuery<__AdminAddressQuery, __AdminAddressQueryVariables>(
+    __AdminAddressDocument,
     options,
   )
 }
-export function useAdminAddressSuspenseQuery(
+export function use__AdminAddressSuspenseQuery(
   baseOptions?:
     | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<AdminAddressQuery, AdminAddressQueryVariables>,
+    | Apollo.SuspenseQueryHookOptions<__AdminAddressQuery, __AdminAddressQueryVariables>,
 ) {
   const options =
     baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<AdminAddressQuery, AdminAddressQueryVariables>(
-    AdminAddressDocument,
+  return Apollo.useSuspenseQuery<__AdminAddressQuery, __AdminAddressQueryVariables>(
+    __AdminAddressDocument,
     options,
   )
 }
-export type AdminAddressQueryHookResult = ReturnType<typeof useAdminAddressQuery>
-export type AdminAddressLazyQueryHookResult = ReturnType<typeof useAdminAddressLazyQuery>
-export type AdminAddressSuspenseQueryHookResult = ReturnType<typeof useAdminAddressSuspenseQuery>
-export type AdminAddressQueryResult = Apollo.QueryResult<
-  AdminAddressQuery,
-  AdminAddressQueryVariables
+export type __AdminAddressQueryHookResult = ReturnType<typeof use__AdminAddressQuery>
+export type __AdminAddressLazyQueryHookResult = ReturnType<typeof use__AdminAddressLazyQuery>
+export type __AdminAddressSuspenseQueryHookResult = ReturnType<
+  typeof use__AdminAddressSuspenseQuery
 >
-export const AdminAddressesDocument = gql`
-  query AdminAddresses($input: ListAddressInput) {
+export type __AdminAddressQueryResult = Apollo.QueryResult<
+  __AdminAddressQuery,
+  __AdminAddressQueryVariables
+>
+export const __AdminAddressesDocument = gql`
+  query __AdminAddresses($input: ListAddressInput) {
     addresses(input: $input) {
-      ...AdminAddressList
+      ...__AdminAddressList
     }
     counters: addressesCount(input: $input) {
       ...CorePagingDetails
     }
   }
-  ${AdminAddressListFragmentDoc}
+  ${__AdminAddressListFragmentDoc}
   ${CorePagingDetailsFragmentDoc}
 `
 
 /**
- * __useAdminAddressesQuery__
+ * __use__AdminAddressesQuery__
  *
- * To run a query within a React component, call `useAdminAddressesQuery` and pass it any options that fit your needs.
- * When your component renders, `useAdminAddressesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `use__AdminAddressesQuery` and pass it any options that fit your needs.
+ * When your component renders, `use__AdminAddressesQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useAdminAddressesQuery({
+ * const { data, loading, error } = use__AdminAddressesQuery({
  *   variables: {
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useAdminAddressesQuery(
-  baseOptions?: Apollo.QueryHookOptions<AdminAddressesQuery, AdminAddressesQueryVariables>,
+export function use__AdminAddressesQuery(
+  baseOptions?: Apollo.QueryHookOptions<__AdminAddressesQuery, __AdminAddressesQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<AdminAddressesQuery, AdminAddressesQueryVariables>(
-    AdminAddressesDocument,
+  return Apollo.useQuery<__AdminAddressesQuery, __AdminAddressesQueryVariables>(
+    __AdminAddressesDocument,
     options,
   )
 }
-export function useAdminAddressesLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<AdminAddressesQuery, AdminAddressesQueryVariables>,
+export function use__AdminAddressesLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<__AdminAddressesQuery, __AdminAddressesQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<AdminAddressesQuery, AdminAddressesQueryVariables>(
-    AdminAddressesDocument,
+  return Apollo.useLazyQuery<__AdminAddressesQuery, __AdminAddressesQueryVariables>(
+    __AdminAddressesDocument,
     options,
   )
 }
-export function useAdminAddressesSuspenseQuery(
+export function use__AdminAddressesSuspenseQuery(
   baseOptions?:
     | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<AdminAddressesQuery, AdminAddressesQueryVariables>,
+    | Apollo.SuspenseQueryHookOptions<__AdminAddressesQuery, __AdminAddressesQueryVariables>,
 ) {
   const options =
     baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<AdminAddressesQuery, AdminAddressesQueryVariables>(
-    AdminAddressesDocument,
+  return Apollo.useSuspenseQuery<__AdminAddressesQuery, __AdminAddressesQueryVariables>(
+    __AdminAddressesDocument,
     options,
   )
 }
-export type AdminAddressesQueryHookResult = ReturnType<typeof useAdminAddressesQuery>
-export type AdminAddressesLazyQueryHookResult = ReturnType<typeof useAdminAddressesLazyQuery>
-export type AdminAddressesSuspenseQueryHookResult = ReturnType<
-  typeof useAdminAddressesSuspenseQuery
+export type __AdminAddressesQueryHookResult = ReturnType<typeof use__AdminAddressesQuery>
+export type __AdminAddressesLazyQueryHookResult = ReturnType<typeof use__AdminAddressesLazyQuery>
+export type __AdminAddressesSuspenseQueryHookResult = ReturnType<
+  typeof use__AdminAddressesSuspenseQuery
 >
-export type AdminAddressesQueryResult = Apollo.QueryResult<
-  AdminAddressesQuery,
-  AdminAddressesQueryVariables
+export type __AdminAddressesQueryResult = Apollo.QueryResult<
+  __AdminAddressesQuery,
+  __AdminAddressesQueryVariables
 >
-export const AdminAddressPaginationDocument = gql`
-  query AdminAddressPagination($input: ListAddressInput) {
+export const __AdminAddressPaginationDocument = gql`
+  query __AdminAddressPagination($input: ListAddressInput) {
     counters: addressesCount(input: $input) {
       ...CorePagingDetails
     }
@@ -13076,356 +13168,361 @@ export const AdminAddressPaginationDocument = gql`
 `
 
 /**
- * __useAdminAddressPaginationQuery__
+ * __use__AdminAddressPaginationQuery__
  *
- * To run a query within a React component, call `useAdminAddressPaginationQuery` and pass it any options that fit your needs.
- * When your component renders, `useAdminAddressPaginationQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `use__AdminAddressPaginationQuery` and pass it any options that fit your needs.
+ * When your component renders, `use__AdminAddressPaginationQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useAdminAddressPaginationQuery({
+ * const { data, loading, error } = use__AdminAddressPaginationQuery({
  *   variables: {
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useAdminAddressPaginationQuery(
+export function use__AdminAddressPaginationQuery(
   baseOptions?: Apollo.QueryHookOptions<
-    AdminAddressPaginationQuery,
-    AdminAddressPaginationQueryVariables
+    __AdminAddressPaginationQuery,
+    __AdminAddressPaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<AdminAddressPaginationQuery, AdminAddressPaginationQueryVariables>(
-    AdminAddressPaginationDocument,
+  return Apollo.useQuery<__AdminAddressPaginationQuery, __AdminAddressPaginationQueryVariables>(
+    __AdminAddressPaginationDocument,
     options,
   )
 }
-export function useAdminAddressPaginationLazyQuery(
+export function use__AdminAddressPaginationLazyQuery(
   baseOptions?: Apollo.LazyQueryHookOptions<
-    AdminAddressPaginationQuery,
-    AdminAddressPaginationQueryVariables
+    __AdminAddressPaginationQuery,
+    __AdminAddressPaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<AdminAddressPaginationQuery, AdminAddressPaginationQueryVariables>(
-    AdminAddressPaginationDocument,
+  return Apollo.useLazyQuery<__AdminAddressPaginationQuery, __AdminAddressPaginationQueryVariables>(
+    __AdminAddressPaginationDocument,
     options,
   )
 }
-export function useAdminAddressPaginationSuspenseQuery(
+export function use__AdminAddressPaginationSuspenseQuery(
   baseOptions?:
     | Apollo.SkipToken
     | Apollo.SuspenseQueryHookOptions<
-        AdminAddressPaginationQuery,
-        AdminAddressPaginationQueryVariables
+        __AdminAddressPaginationQuery,
+        __AdminAddressPaginationQueryVariables
       >,
 ) {
   const options =
     baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<AdminAddressPaginationQuery, AdminAddressPaginationQueryVariables>(
-    AdminAddressPaginationDocument,
-    options,
-  )
+  return Apollo.useSuspenseQuery<
+    __AdminAddressPaginationQuery,
+    __AdminAddressPaginationQueryVariables
+  >(__AdminAddressPaginationDocument, options)
 }
-export type AdminAddressPaginationQueryHookResult = ReturnType<
-  typeof useAdminAddressPaginationQuery
+export type __AdminAddressPaginationQueryHookResult = ReturnType<
+  typeof use__AdminAddressPaginationQuery
 >
-export type AdminAddressPaginationLazyQueryHookResult = ReturnType<
-  typeof useAdminAddressPaginationLazyQuery
+export type __AdminAddressPaginationLazyQueryHookResult = ReturnType<
+  typeof use__AdminAddressPaginationLazyQuery
 >
-export type AdminAddressPaginationSuspenseQueryHookResult = ReturnType<
-  typeof useAdminAddressPaginationSuspenseQuery
+export type __AdminAddressPaginationSuspenseQueryHookResult = ReturnType<
+  typeof use__AdminAddressPaginationSuspenseQuery
 >
-export type AdminAddressPaginationQueryResult = Apollo.QueryResult<
-  AdminAddressPaginationQuery,
-  AdminAddressPaginationQueryVariables
+export type __AdminAddressPaginationQueryResult = Apollo.QueryResult<
+  __AdminAddressPaginationQuery,
+  __AdminAddressPaginationQueryVariables
 >
-export const AdminCreateApiTokenDocument = gql`
-  mutation AdminCreateApiToken($input: CreateApiTokenInput!) {
+export const __AdminCreateApiTokenDocument = gql`
+  mutation __AdminCreateApiToken($input: CreateApiTokenInput!) {
     createApiToken(input: $input) {
-      ...AdminApiTokenDetails
+      ...__AdminApiTokenDetails
     }
   }
-  ${AdminApiTokenDetailsFragmentDoc}
+  ${__AdminApiTokenDetailsFragmentDoc}
 `
-export type AdminCreateApiTokenMutationFn = Apollo.MutationFunction<
-  AdminCreateApiTokenMutation,
-  AdminCreateApiTokenMutationVariables
+export type __AdminCreateApiTokenMutationFn = Apollo.MutationFunction<
+  __AdminCreateApiTokenMutation,
+  __AdminCreateApiTokenMutationVariables
 >
 
 /**
- * __useAdminCreateApiTokenMutation__
+ * __use__AdminCreateApiTokenMutation__
  *
- * To run a mutation, you first call `useAdminCreateApiTokenMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAdminCreateApiTokenMutation` returns a tuple that includes:
+ * To run a mutation, you first call `use__AdminCreateApiTokenMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `use__AdminCreateApiTokenMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [adminCreateApiTokenMutation, { data, loading, error }] = useAdminCreateApiTokenMutation({
+ * const [adminCreateApiTokenMutation, { data, loading, error }] = use__AdminCreateApiTokenMutation({
  *   variables: {
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useAdminCreateApiTokenMutation(
+export function use__AdminCreateApiTokenMutation(
   baseOptions?: Apollo.MutationHookOptions<
-    AdminCreateApiTokenMutation,
-    AdminCreateApiTokenMutationVariables
+    __AdminCreateApiTokenMutation,
+    __AdminCreateApiTokenMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<AdminCreateApiTokenMutation, AdminCreateApiTokenMutationVariables>(
-    AdminCreateApiTokenDocument,
+  return Apollo.useMutation<__AdminCreateApiTokenMutation, __AdminCreateApiTokenMutationVariables>(
+    __AdminCreateApiTokenDocument,
     options,
   )
 }
-export type AdminCreateApiTokenMutationHookResult = ReturnType<
-  typeof useAdminCreateApiTokenMutation
+export type __AdminCreateApiTokenMutationHookResult = ReturnType<
+  typeof use__AdminCreateApiTokenMutation
 >
-export type AdminCreateApiTokenMutationResult = Apollo.MutationResult<AdminCreateApiTokenMutation>
-export type AdminCreateApiTokenMutationOptions = Apollo.BaseMutationOptions<
-  AdminCreateApiTokenMutation,
-  AdminCreateApiTokenMutationVariables
+export type __AdminCreateApiTokenMutationResult =
+  Apollo.MutationResult<__AdminCreateApiTokenMutation>
+export type __AdminCreateApiTokenMutationOptions = Apollo.BaseMutationOptions<
+  __AdminCreateApiTokenMutation,
+  __AdminCreateApiTokenMutationVariables
 >
-export const AdminDeleteApiTokenDocument = gql`
-  mutation AdminDeleteApiToken($apiTokenId: String!) {
+export const __AdminDeleteApiTokenDocument = gql`
+  mutation __AdminDeleteApiToken($apiTokenId: String!) {
     deleteApiToken(apiTokenId: $apiTokenId) {
       id
     }
   }
 `
-export type AdminDeleteApiTokenMutationFn = Apollo.MutationFunction<
-  AdminDeleteApiTokenMutation,
-  AdminDeleteApiTokenMutationVariables
+export type __AdminDeleteApiTokenMutationFn = Apollo.MutationFunction<
+  __AdminDeleteApiTokenMutation,
+  __AdminDeleteApiTokenMutationVariables
 >
 
 /**
- * __useAdminDeleteApiTokenMutation__
+ * __use__AdminDeleteApiTokenMutation__
  *
- * To run a mutation, you first call `useAdminDeleteApiTokenMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAdminDeleteApiTokenMutation` returns a tuple that includes:
+ * To run a mutation, you first call `use__AdminDeleteApiTokenMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `use__AdminDeleteApiTokenMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [adminDeleteApiTokenMutation, { data, loading, error }] = useAdminDeleteApiTokenMutation({
+ * const [adminDeleteApiTokenMutation, { data, loading, error }] = use__AdminDeleteApiTokenMutation({
  *   variables: {
  *      apiTokenId: // value for 'apiTokenId'
  *   },
  * });
  */
-export function useAdminDeleteApiTokenMutation(
+export function use__AdminDeleteApiTokenMutation(
   baseOptions?: Apollo.MutationHookOptions<
-    AdminDeleteApiTokenMutation,
-    AdminDeleteApiTokenMutationVariables
+    __AdminDeleteApiTokenMutation,
+    __AdminDeleteApiTokenMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<AdminDeleteApiTokenMutation, AdminDeleteApiTokenMutationVariables>(
-    AdminDeleteApiTokenDocument,
+  return Apollo.useMutation<__AdminDeleteApiTokenMutation, __AdminDeleteApiTokenMutationVariables>(
+    __AdminDeleteApiTokenDocument,
     options,
   )
 }
-export type AdminDeleteApiTokenMutationHookResult = ReturnType<
-  typeof useAdminDeleteApiTokenMutation
+export type __AdminDeleteApiTokenMutationHookResult = ReturnType<
+  typeof use__AdminDeleteApiTokenMutation
 >
-export type AdminDeleteApiTokenMutationResult = Apollo.MutationResult<AdminDeleteApiTokenMutation>
-export type AdminDeleteApiTokenMutationOptions = Apollo.BaseMutationOptions<
-  AdminDeleteApiTokenMutation,
-  AdminDeleteApiTokenMutationVariables
+export type __AdminDeleteApiTokenMutationResult =
+  Apollo.MutationResult<__AdminDeleteApiTokenMutation>
+export type __AdminDeleteApiTokenMutationOptions = Apollo.BaseMutationOptions<
+  __AdminDeleteApiTokenMutation,
+  __AdminDeleteApiTokenMutationVariables
 >
-export const AdminUpdateApiTokenDocument = gql`
-  mutation AdminUpdateApiToken($apiTokenId: String!, $input: UpdateApiTokenInput!) {
+export const __AdminUpdateApiTokenDocument = gql`
+  mutation __AdminUpdateApiToken($apiTokenId: String!, $input: UpdateApiTokenInput!) {
     updateApiToken(apiTokenId: $apiTokenId, input: $input) {
-      ...AdminApiTokenDetails
+      ...__AdminApiTokenDetails
     }
   }
-  ${AdminApiTokenDetailsFragmentDoc}
+  ${__AdminApiTokenDetailsFragmentDoc}
 `
-export type AdminUpdateApiTokenMutationFn = Apollo.MutationFunction<
-  AdminUpdateApiTokenMutation,
-  AdminUpdateApiTokenMutationVariables
+export type __AdminUpdateApiTokenMutationFn = Apollo.MutationFunction<
+  __AdminUpdateApiTokenMutation,
+  __AdminUpdateApiTokenMutationVariables
 >
 
 /**
- * __useAdminUpdateApiTokenMutation__
+ * __use__AdminUpdateApiTokenMutation__
  *
- * To run a mutation, you first call `useAdminUpdateApiTokenMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAdminUpdateApiTokenMutation` returns a tuple that includes:
+ * To run a mutation, you first call `use__AdminUpdateApiTokenMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `use__AdminUpdateApiTokenMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [adminUpdateApiTokenMutation, { data, loading, error }] = useAdminUpdateApiTokenMutation({
+ * const [adminUpdateApiTokenMutation, { data, loading, error }] = use__AdminUpdateApiTokenMutation({
  *   variables: {
  *      apiTokenId: // value for 'apiTokenId'
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useAdminUpdateApiTokenMutation(
+export function use__AdminUpdateApiTokenMutation(
   baseOptions?: Apollo.MutationHookOptions<
-    AdminUpdateApiTokenMutation,
-    AdminUpdateApiTokenMutationVariables
+    __AdminUpdateApiTokenMutation,
+    __AdminUpdateApiTokenMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<AdminUpdateApiTokenMutation, AdminUpdateApiTokenMutationVariables>(
-    AdminUpdateApiTokenDocument,
+  return Apollo.useMutation<__AdminUpdateApiTokenMutation, __AdminUpdateApiTokenMutationVariables>(
+    __AdminUpdateApiTokenDocument,
     options,
   )
 }
-export type AdminUpdateApiTokenMutationHookResult = ReturnType<
-  typeof useAdminUpdateApiTokenMutation
+export type __AdminUpdateApiTokenMutationHookResult = ReturnType<
+  typeof use__AdminUpdateApiTokenMutation
 >
-export type AdminUpdateApiTokenMutationResult = Apollo.MutationResult<AdminUpdateApiTokenMutation>
-export type AdminUpdateApiTokenMutationOptions = Apollo.BaseMutationOptions<
-  AdminUpdateApiTokenMutation,
-  AdminUpdateApiTokenMutationVariables
+export type __AdminUpdateApiTokenMutationResult =
+  Apollo.MutationResult<__AdminUpdateApiTokenMutation>
+export type __AdminUpdateApiTokenMutationOptions = Apollo.BaseMutationOptions<
+  __AdminUpdateApiTokenMutation,
+  __AdminUpdateApiTokenMutationVariables
 >
-export const AdminApiTokenDocument = gql`
-  query AdminApiToken($apiTokenId: String!) {
+export const __AdminApiTokenDocument = gql`
+  query __AdminApiToken($apiTokenId: String!) {
     apiToken(apiTokenId: $apiTokenId) {
-      ...AdminApiTokenDetails
+      ...__AdminApiTokenDetails
     }
   }
-  ${AdminApiTokenDetailsFragmentDoc}
+  ${__AdminApiTokenDetailsFragmentDoc}
 `
 
 /**
- * __useAdminApiTokenQuery__
+ * __use__AdminApiTokenQuery__
  *
- * To run a query within a React component, call `useAdminApiTokenQuery` and pass it any options that fit your needs.
- * When your component renders, `useAdminApiTokenQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `use__AdminApiTokenQuery` and pass it any options that fit your needs.
+ * When your component renders, `use__AdminApiTokenQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useAdminApiTokenQuery({
+ * const { data, loading, error } = use__AdminApiTokenQuery({
  *   variables: {
  *      apiTokenId: // value for 'apiTokenId'
  *   },
  * });
  */
-export function useAdminApiTokenQuery(
-  baseOptions: Apollo.QueryHookOptions<AdminApiTokenQuery, AdminApiTokenQueryVariables> &
-    ({ variables: AdminApiTokenQueryVariables; skip?: boolean } | { skip: boolean }),
+export function use__AdminApiTokenQuery(
+  baseOptions: Apollo.QueryHookOptions<__AdminApiTokenQuery, __AdminApiTokenQueryVariables> &
+    ({ variables: __AdminApiTokenQueryVariables; skip?: boolean } | { skip: boolean }),
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<AdminApiTokenQuery, AdminApiTokenQueryVariables>(
-    AdminApiTokenDocument,
+  return Apollo.useQuery<__AdminApiTokenQuery, __AdminApiTokenQueryVariables>(
+    __AdminApiTokenDocument,
     options,
   )
 }
-export function useAdminApiTokenLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<AdminApiTokenQuery, AdminApiTokenQueryVariables>,
+export function use__AdminApiTokenLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<__AdminApiTokenQuery, __AdminApiTokenQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<AdminApiTokenQuery, AdminApiTokenQueryVariables>(
-    AdminApiTokenDocument,
+  return Apollo.useLazyQuery<__AdminApiTokenQuery, __AdminApiTokenQueryVariables>(
+    __AdminApiTokenDocument,
     options,
   )
 }
-export function useAdminApiTokenSuspenseQuery(
+export function use__AdminApiTokenSuspenseQuery(
   baseOptions?:
     | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<AdminApiTokenQuery, AdminApiTokenQueryVariables>,
+    | Apollo.SuspenseQueryHookOptions<__AdminApiTokenQuery, __AdminApiTokenQueryVariables>,
 ) {
   const options =
     baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<AdminApiTokenQuery, AdminApiTokenQueryVariables>(
-    AdminApiTokenDocument,
+  return Apollo.useSuspenseQuery<__AdminApiTokenQuery, __AdminApiTokenQueryVariables>(
+    __AdminApiTokenDocument,
     options,
   )
 }
-export type AdminApiTokenQueryHookResult = ReturnType<typeof useAdminApiTokenQuery>
-export type AdminApiTokenLazyQueryHookResult = ReturnType<typeof useAdminApiTokenLazyQuery>
-export type AdminApiTokenSuspenseQueryHookResult = ReturnType<typeof useAdminApiTokenSuspenseQuery>
-export type AdminApiTokenQueryResult = Apollo.QueryResult<
-  AdminApiTokenQuery,
-  AdminApiTokenQueryVariables
+export type __AdminApiTokenQueryHookResult = ReturnType<typeof use__AdminApiTokenQuery>
+export type __AdminApiTokenLazyQueryHookResult = ReturnType<typeof use__AdminApiTokenLazyQuery>
+export type __AdminApiTokenSuspenseQueryHookResult = ReturnType<
+  typeof use__AdminApiTokenSuspenseQuery
 >
-export const AdminApiTokensDocument = gql`
-  query AdminApiTokens($input: ListApiTokenInput) {
+export type __AdminApiTokenQueryResult = Apollo.QueryResult<
+  __AdminApiTokenQuery,
+  __AdminApiTokenQueryVariables
+>
+export const __AdminApiTokensDocument = gql`
+  query __AdminApiTokens($input: ListApiTokenInput) {
     apiTokens(input: $input) {
-      ...AdminApiTokenList
+      ...__AdminApiTokenList
     }
     counters: apiTokensCount(input: $input) {
       ...CorePagingDetails
     }
   }
-  ${AdminApiTokenListFragmentDoc}
+  ${__AdminApiTokenListFragmentDoc}
   ${CorePagingDetailsFragmentDoc}
 `
 
 /**
- * __useAdminApiTokensQuery__
+ * __use__AdminApiTokensQuery__
  *
- * To run a query within a React component, call `useAdminApiTokensQuery` and pass it any options that fit your needs.
- * When your component renders, `useAdminApiTokensQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `use__AdminApiTokensQuery` and pass it any options that fit your needs.
+ * When your component renders, `use__AdminApiTokensQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useAdminApiTokensQuery({
+ * const { data, loading, error } = use__AdminApiTokensQuery({
  *   variables: {
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useAdminApiTokensQuery(
-  baseOptions?: Apollo.QueryHookOptions<AdminApiTokensQuery, AdminApiTokensQueryVariables>,
+export function use__AdminApiTokensQuery(
+  baseOptions?: Apollo.QueryHookOptions<__AdminApiTokensQuery, __AdminApiTokensQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<AdminApiTokensQuery, AdminApiTokensQueryVariables>(
-    AdminApiTokensDocument,
+  return Apollo.useQuery<__AdminApiTokensQuery, __AdminApiTokensQueryVariables>(
+    __AdminApiTokensDocument,
     options,
   )
 }
-export function useAdminApiTokensLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<AdminApiTokensQuery, AdminApiTokensQueryVariables>,
+export function use__AdminApiTokensLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<__AdminApiTokensQuery, __AdminApiTokensQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<AdminApiTokensQuery, AdminApiTokensQueryVariables>(
-    AdminApiTokensDocument,
+  return Apollo.useLazyQuery<__AdminApiTokensQuery, __AdminApiTokensQueryVariables>(
+    __AdminApiTokensDocument,
     options,
   )
 }
-export function useAdminApiTokensSuspenseQuery(
+export function use__AdminApiTokensSuspenseQuery(
   baseOptions?:
     | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<AdminApiTokensQuery, AdminApiTokensQueryVariables>,
+    | Apollo.SuspenseQueryHookOptions<__AdminApiTokensQuery, __AdminApiTokensQueryVariables>,
 ) {
   const options =
     baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<AdminApiTokensQuery, AdminApiTokensQueryVariables>(
-    AdminApiTokensDocument,
+  return Apollo.useSuspenseQuery<__AdminApiTokensQuery, __AdminApiTokensQueryVariables>(
+    __AdminApiTokensDocument,
     options,
   )
 }
-export type AdminApiTokensQueryHookResult = ReturnType<typeof useAdminApiTokensQuery>
-export type AdminApiTokensLazyQueryHookResult = ReturnType<typeof useAdminApiTokensLazyQuery>
-export type AdminApiTokensSuspenseQueryHookResult = ReturnType<
-  typeof useAdminApiTokensSuspenseQuery
+export type __AdminApiTokensQueryHookResult = ReturnType<typeof use__AdminApiTokensQuery>
+export type __AdminApiTokensLazyQueryHookResult = ReturnType<typeof use__AdminApiTokensLazyQuery>
+export type __AdminApiTokensSuspenseQueryHookResult = ReturnType<
+  typeof use__AdminApiTokensSuspenseQuery
 >
-export type AdminApiTokensQueryResult = Apollo.QueryResult<
-  AdminApiTokensQuery,
-  AdminApiTokensQueryVariables
+export type __AdminApiTokensQueryResult = Apollo.QueryResult<
+  __AdminApiTokensQuery,
+  __AdminApiTokensQueryVariables
 >
-export const AdminApiTokenPaginationDocument = gql`
-  query AdminApiTokenPagination($input: ListApiTokenInput) {
+export const __AdminApiTokenPaginationDocument = gql`
+  query __AdminApiTokenPagination($input: ListApiTokenInput) {
     counters: apiTokensCount(input: $input) {
       ...CorePagingDetails
     }
@@ -13434,356 +13531,361 @@ export const AdminApiTokenPaginationDocument = gql`
 `
 
 /**
- * __useAdminApiTokenPaginationQuery__
+ * __use__AdminApiTokenPaginationQuery__
  *
- * To run a query within a React component, call `useAdminApiTokenPaginationQuery` and pass it any options that fit your needs.
- * When your component renders, `useAdminApiTokenPaginationQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `use__AdminApiTokenPaginationQuery` and pass it any options that fit your needs.
+ * When your component renders, `use__AdminApiTokenPaginationQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useAdminApiTokenPaginationQuery({
+ * const { data, loading, error } = use__AdminApiTokenPaginationQuery({
  *   variables: {
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useAdminApiTokenPaginationQuery(
+export function use__AdminApiTokenPaginationQuery(
   baseOptions?: Apollo.QueryHookOptions<
-    AdminApiTokenPaginationQuery,
-    AdminApiTokenPaginationQueryVariables
+    __AdminApiTokenPaginationQuery,
+    __AdminApiTokenPaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<AdminApiTokenPaginationQuery, AdminApiTokenPaginationQueryVariables>(
-    AdminApiTokenPaginationDocument,
+  return Apollo.useQuery<__AdminApiTokenPaginationQuery, __AdminApiTokenPaginationQueryVariables>(
+    __AdminApiTokenPaginationDocument,
     options,
   )
 }
-export function useAdminApiTokenPaginationLazyQuery(
+export function use__AdminApiTokenPaginationLazyQuery(
   baseOptions?: Apollo.LazyQueryHookOptions<
-    AdminApiTokenPaginationQuery,
-    AdminApiTokenPaginationQueryVariables
+    __AdminApiTokenPaginationQuery,
+    __AdminApiTokenPaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<AdminApiTokenPaginationQuery, AdminApiTokenPaginationQueryVariables>(
-    AdminApiTokenPaginationDocument,
-    options,
-  )
+  return Apollo.useLazyQuery<
+    __AdminApiTokenPaginationQuery,
+    __AdminApiTokenPaginationQueryVariables
+  >(__AdminApiTokenPaginationDocument, options)
 }
-export function useAdminApiTokenPaginationSuspenseQuery(
+export function use__AdminApiTokenPaginationSuspenseQuery(
   baseOptions?:
     | Apollo.SkipToken
     | Apollo.SuspenseQueryHookOptions<
-        AdminApiTokenPaginationQuery,
-        AdminApiTokenPaginationQueryVariables
+        __AdminApiTokenPaginationQuery,
+        __AdminApiTokenPaginationQueryVariables
       >,
 ) {
   const options =
     baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
   return Apollo.useSuspenseQuery<
-    AdminApiTokenPaginationQuery,
-    AdminApiTokenPaginationQueryVariables
-  >(AdminApiTokenPaginationDocument, options)
+    __AdminApiTokenPaginationQuery,
+    __AdminApiTokenPaginationQueryVariables
+  >(__AdminApiTokenPaginationDocument, options)
 }
-export type AdminApiTokenPaginationQueryHookResult = ReturnType<
-  typeof useAdminApiTokenPaginationQuery
+export type __AdminApiTokenPaginationQueryHookResult = ReturnType<
+  typeof use__AdminApiTokenPaginationQuery
 >
-export type AdminApiTokenPaginationLazyQueryHookResult = ReturnType<
-  typeof useAdminApiTokenPaginationLazyQuery
+export type __AdminApiTokenPaginationLazyQueryHookResult = ReturnType<
+  typeof use__AdminApiTokenPaginationLazyQuery
 >
-export type AdminApiTokenPaginationSuspenseQueryHookResult = ReturnType<
-  typeof useAdminApiTokenPaginationSuspenseQuery
+export type __AdminApiTokenPaginationSuspenseQueryHookResult = ReturnType<
+  typeof use__AdminApiTokenPaginationSuspenseQuery
 >
-export type AdminApiTokenPaginationQueryResult = Apollo.QueryResult<
-  AdminApiTokenPaginationQuery,
-  AdminApiTokenPaginationQueryVariables
+export type __AdminApiTokenPaginationQueryResult = Apollo.QueryResult<
+  __AdminApiTokenPaginationQuery,
+  __AdminApiTokenPaginationQueryVariables
 >
-export const AdminCreateAuditLogDocument = gql`
-  mutation AdminCreateAuditLog($input: CreateAuditLogInput!) {
+export const __AdminCreateAuditLogDocument = gql`
+  mutation __AdminCreateAuditLog($input: CreateAuditLogInput!) {
     createAuditLog(input: $input) {
-      ...AdminAuditLogDetails
+      ...__AdminAuditLogDetails
     }
   }
-  ${AdminAuditLogDetailsFragmentDoc}
+  ${__AdminAuditLogDetailsFragmentDoc}
 `
-export type AdminCreateAuditLogMutationFn = Apollo.MutationFunction<
-  AdminCreateAuditLogMutation,
-  AdminCreateAuditLogMutationVariables
+export type __AdminCreateAuditLogMutationFn = Apollo.MutationFunction<
+  __AdminCreateAuditLogMutation,
+  __AdminCreateAuditLogMutationVariables
 >
 
 /**
- * __useAdminCreateAuditLogMutation__
+ * __use__AdminCreateAuditLogMutation__
  *
- * To run a mutation, you first call `useAdminCreateAuditLogMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAdminCreateAuditLogMutation` returns a tuple that includes:
+ * To run a mutation, you first call `use__AdminCreateAuditLogMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `use__AdminCreateAuditLogMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [adminCreateAuditLogMutation, { data, loading, error }] = useAdminCreateAuditLogMutation({
+ * const [adminCreateAuditLogMutation, { data, loading, error }] = use__AdminCreateAuditLogMutation({
  *   variables: {
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useAdminCreateAuditLogMutation(
+export function use__AdminCreateAuditLogMutation(
   baseOptions?: Apollo.MutationHookOptions<
-    AdminCreateAuditLogMutation,
-    AdminCreateAuditLogMutationVariables
+    __AdminCreateAuditLogMutation,
+    __AdminCreateAuditLogMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<AdminCreateAuditLogMutation, AdminCreateAuditLogMutationVariables>(
-    AdminCreateAuditLogDocument,
+  return Apollo.useMutation<__AdminCreateAuditLogMutation, __AdminCreateAuditLogMutationVariables>(
+    __AdminCreateAuditLogDocument,
     options,
   )
 }
-export type AdminCreateAuditLogMutationHookResult = ReturnType<
-  typeof useAdminCreateAuditLogMutation
+export type __AdminCreateAuditLogMutationHookResult = ReturnType<
+  typeof use__AdminCreateAuditLogMutation
 >
-export type AdminCreateAuditLogMutationResult = Apollo.MutationResult<AdminCreateAuditLogMutation>
-export type AdminCreateAuditLogMutationOptions = Apollo.BaseMutationOptions<
-  AdminCreateAuditLogMutation,
-  AdminCreateAuditLogMutationVariables
+export type __AdminCreateAuditLogMutationResult =
+  Apollo.MutationResult<__AdminCreateAuditLogMutation>
+export type __AdminCreateAuditLogMutationOptions = Apollo.BaseMutationOptions<
+  __AdminCreateAuditLogMutation,
+  __AdminCreateAuditLogMutationVariables
 >
-export const AdminDeleteAuditLogDocument = gql`
-  mutation AdminDeleteAuditLog($auditLogId: String!) {
+export const __AdminDeleteAuditLogDocument = gql`
+  mutation __AdminDeleteAuditLog($auditLogId: String!) {
     deleteAuditLog(auditLogId: $auditLogId) {
       id
     }
   }
 `
-export type AdminDeleteAuditLogMutationFn = Apollo.MutationFunction<
-  AdminDeleteAuditLogMutation,
-  AdminDeleteAuditLogMutationVariables
+export type __AdminDeleteAuditLogMutationFn = Apollo.MutationFunction<
+  __AdminDeleteAuditLogMutation,
+  __AdminDeleteAuditLogMutationVariables
 >
 
 /**
- * __useAdminDeleteAuditLogMutation__
+ * __use__AdminDeleteAuditLogMutation__
  *
- * To run a mutation, you first call `useAdminDeleteAuditLogMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAdminDeleteAuditLogMutation` returns a tuple that includes:
+ * To run a mutation, you first call `use__AdminDeleteAuditLogMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `use__AdminDeleteAuditLogMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [adminDeleteAuditLogMutation, { data, loading, error }] = useAdminDeleteAuditLogMutation({
+ * const [adminDeleteAuditLogMutation, { data, loading, error }] = use__AdminDeleteAuditLogMutation({
  *   variables: {
  *      auditLogId: // value for 'auditLogId'
  *   },
  * });
  */
-export function useAdminDeleteAuditLogMutation(
+export function use__AdminDeleteAuditLogMutation(
   baseOptions?: Apollo.MutationHookOptions<
-    AdminDeleteAuditLogMutation,
-    AdminDeleteAuditLogMutationVariables
+    __AdminDeleteAuditLogMutation,
+    __AdminDeleteAuditLogMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<AdminDeleteAuditLogMutation, AdminDeleteAuditLogMutationVariables>(
-    AdminDeleteAuditLogDocument,
+  return Apollo.useMutation<__AdminDeleteAuditLogMutation, __AdminDeleteAuditLogMutationVariables>(
+    __AdminDeleteAuditLogDocument,
     options,
   )
 }
-export type AdminDeleteAuditLogMutationHookResult = ReturnType<
-  typeof useAdminDeleteAuditLogMutation
+export type __AdminDeleteAuditLogMutationHookResult = ReturnType<
+  typeof use__AdminDeleteAuditLogMutation
 >
-export type AdminDeleteAuditLogMutationResult = Apollo.MutationResult<AdminDeleteAuditLogMutation>
-export type AdminDeleteAuditLogMutationOptions = Apollo.BaseMutationOptions<
-  AdminDeleteAuditLogMutation,
-  AdminDeleteAuditLogMutationVariables
+export type __AdminDeleteAuditLogMutationResult =
+  Apollo.MutationResult<__AdminDeleteAuditLogMutation>
+export type __AdminDeleteAuditLogMutationOptions = Apollo.BaseMutationOptions<
+  __AdminDeleteAuditLogMutation,
+  __AdminDeleteAuditLogMutationVariables
 >
-export const AdminUpdateAuditLogDocument = gql`
-  mutation AdminUpdateAuditLog($auditLogId: String!, $input: UpdateAuditLogInput!) {
+export const __AdminUpdateAuditLogDocument = gql`
+  mutation __AdminUpdateAuditLog($auditLogId: String!, $input: UpdateAuditLogInput!) {
     updateAuditLog(auditLogId: $auditLogId, input: $input) {
-      ...AdminAuditLogDetails
+      ...__AdminAuditLogDetails
     }
   }
-  ${AdminAuditLogDetailsFragmentDoc}
+  ${__AdminAuditLogDetailsFragmentDoc}
 `
-export type AdminUpdateAuditLogMutationFn = Apollo.MutationFunction<
-  AdminUpdateAuditLogMutation,
-  AdminUpdateAuditLogMutationVariables
+export type __AdminUpdateAuditLogMutationFn = Apollo.MutationFunction<
+  __AdminUpdateAuditLogMutation,
+  __AdminUpdateAuditLogMutationVariables
 >
 
 /**
- * __useAdminUpdateAuditLogMutation__
+ * __use__AdminUpdateAuditLogMutation__
  *
- * To run a mutation, you first call `useAdminUpdateAuditLogMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAdminUpdateAuditLogMutation` returns a tuple that includes:
+ * To run a mutation, you first call `use__AdminUpdateAuditLogMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `use__AdminUpdateAuditLogMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [adminUpdateAuditLogMutation, { data, loading, error }] = useAdminUpdateAuditLogMutation({
+ * const [adminUpdateAuditLogMutation, { data, loading, error }] = use__AdminUpdateAuditLogMutation({
  *   variables: {
  *      auditLogId: // value for 'auditLogId'
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useAdminUpdateAuditLogMutation(
+export function use__AdminUpdateAuditLogMutation(
   baseOptions?: Apollo.MutationHookOptions<
-    AdminUpdateAuditLogMutation,
-    AdminUpdateAuditLogMutationVariables
+    __AdminUpdateAuditLogMutation,
+    __AdminUpdateAuditLogMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<AdminUpdateAuditLogMutation, AdminUpdateAuditLogMutationVariables>(
-    AdminUpdateAuditLogDocument,
+  return Apollo.useMutation<__AdminUpdateAuditLogMutation, __AdminUpdateAuditLogMutationVariables>(
+    __AdminUpdateAuditLogDocument,
     options,
   )
 }
-export type AdminUpdateAuditLogMutationHookResult = ReturnType<
-  typeof useAdminUpdateAuditLogMutation
+export type __AdminUpdateAuditLogMutationHookResult = ReturnType<
+  typeof use__AdminUpdateAuditLogMutation
 >
-export type AdminUpdateAuditLogMutationResult = Apollo.MutationResult<AdminUpdateAuditLogMutation>
-export type AdminUpdateAuditLogMutationOptions = Apollo.BaseMutationOptions<
-  AdminUpdateAuditLogMutation,
-  AdminUpdateAuditLogMutationVariables
+export type __AdminUpdateAuditLogMutationResult =
+  Apollo.MutationResult<__AdminUpdateAuditLogMutation>
+export type __AdminUpdateAuditLogMutationOptions = Apollo.BaseMutationOptions<
+  __AdminUpdateAuditLogMutation,
+  __AdminUpdateAuditLogMutationVariables
 >
-export const AdminAuditLogDocument = gql`
-  query AdminAuditLog($auditLogId: String!) {
+export const __AdminAuditLogDocument = gql`
+  query __AdminAuditLog($auditLogId: String!) {
     auditLog(auditLogId: $auditLogId) {
-      ...AdminAuditLogDetails
+      ...__AdminAuditLogDetails
     }
   }
-  ${AdminAuditLogDetailsFragmentDoc}
+  ${__AdminAuditLogDetailsFragmentDoc}
 `
 
 /**
- * __useAdminAuditLogQuery__
+ * __use__AdminAuditLogQuery__
  *
- * To run a query within a React component, call `useAdminAuditLogQuery` and pass it any options that fit your needs.
- * When your component renders, `useAdminAuditLogQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `use__AdminAuditLogQuery` and pass it any options that fit your needs.
+ * When your component renders, `use__AdminAuditLogQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useAdminAuditLogQuery({
+ * const { data, loading, error } = use__AdminAuditLogQuery({
  *   variables: {
  *      auditLogId: // value for 'auditLogId'
  *   },
  * });
  */
-export function useAdminAuditLogQuery(
-  baseOptions: Apollo.QueryHookOptions<AdminAuditLogQuery, AdminAuditLogQueryVariables> &
-    ({ variables: AdminAuditLogQueryVariables; skip?: boolean } | { skip: boolean }),
+export function use__AdminAuditLogQuery(
+  baseOptions: Apollo.QueryHookOptions<__AdminAuditLogQuery, __AdminAuditLogQueryVariables> &
+    ({ variables: __AdminAuditLogQueryVariables; skip?: boolean } | { skip: boolean }),
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<AdminAuditLogQuery, AdminAuditLogQueryVariables>(
-    AdminAuditLogDocument,
+  return Apollo.useQuery<__AdminAuditLogQuery, __AdminAuditLogQueryVariables>(
+    __AdminAuditLogDocument,
     options,
   )
 }
-export function useAdminAuditLogLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<AdminAuditLogQuery, AdminAuditLogQueryVariables>,
+export function use__AdminAuditLogLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<__AdminAuditLogQuery, __AdminAuditLogQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<AdminAuditLogQuery, AdminAuditLogQueryVariables>(
-    AdminAuditLogDocument,
+  return Apollo.useLazyQuery<__AdminAuditLogQuery, __AdminAuditLogQueryVariables>(
+    __AdminAuditLogDocument,
     options,
   )
 }
-export function useAdminAuditLogSuspenseQuery(
+export function use__AdminAuditLogSuspenseQuery(
   baseOptions?:
     | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<AdminAuditLogQuery, AdminAuditLogQueryVariables>,
+    | Apollo.SuspenseQueryHookOptions<__AdminAuditLogQuery, __AdminAuditLogQueryVariables>,
 ) {
   const options =
     baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<AdminAuditLogQuery, AdminAuditLogQueryVariables>(
-    AdminAuditLogDocument,
+  return Apollo.useSuspenseQuery<__AdminAuditLogQuery, __AdminAuditLogQueryVariables>(
+    __AdminAuditLogDocument,
     options,
   )
 }
-export type AdminAuditLogQueryHookResult = ReturnType<typeof useAdminAuditLogQuery>
-export type AdminAuditLogLazyQueryHookResult = ReturnType<typeof useAdminAuditLogLazyQuery>
-export type AdminAuditLogSuspenseQueryHookResult = ReturnType<typeof useAdminAuditLogSuspenseQuery>
-export type AdminAuditLogQueryResult = Apollo.QueryResult<
-  AdminAuditLogQuery,
-  AdminAuditLogQueryVariables
+export type __AdminAuditLogQueryHookResult = ReturnType<typeof use__AdminAuditLogQuery>
+export type __AdminAuditLogLazyQueryHookResult = ReturnType<typeof use__AdminAuditLogLazyQuery>
+export type __AdminAuditLogSuspenseQueryHookResult = ReturnType<
+  typeof use__AdminAuditLogSuspenseQuery
 >
-export const AdminAuditLogsDocument = gql`
-  query AdminAuditLogs($input: ListAuditLogInput) {
+export type __AdminAuditLogQueryResult = Apollo.QueryResult<
+  __AdminAuditLogQuery,
+  __AdminAuditLogQueryVariables
+>
+export const __AdminAuditLogsDocument = gql`
+  query __AdminAuditLogs($input: ListAuditLogInput) {
     auditLogs(input: $input) {
-      ...AdminAuditLogList
+      ...__AdminAuditLogList
     }
     counters: auditLogsCount(input: $input) {
       ...CorePagingDetails
     }
   }
-  ${AdminAuditLogListFragmentDoc}
+  ${__AdminAuditLogListFragmentDoc}
   ${CorePagingDetailsFragmentDoc}
 `
 
 /**
- * __useAdminAuditLogsQuery__
+ * __use__AdminAuditLogsQuery__
  *
- * To run a query within a React component, call `useAdminAuditLogsQuery` and pass it any options that fit your needs.
- * When your component renders, `useAdminAuditLogsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `use__AdminAuditLogsQuery` and pass it any options that fit your needs.
+ * When your component renders, `use__AdminAuditLogsQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useAdminAuditLogsQuery({
+ * const { data, loading, error } = use__AdminAuditLogsQuery({
  *   variables: {
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useAdminAuditLogsQuery(
-  baseOptions?: Apollo.QueryHookOptions<AdminAuditLogsQuery, AdminAuditLogsQueryVariables>,
+export function use__AdminAuditLogsQuery(
+  baseOptions?: Apollo.QueryHookOptions<__AdminAuditLogsQuery, __AdminAuditLogsQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<AdminAuditLogsQuery, AdminAuditLogsQueryVariables>(
-    AdminAuditLogsDocument,
+  return Apollo.useQuery<__AdminAuditLogsQuery, __AdminAuditLogsQueryVariables>(
+    __AdminAuditLogsDocument,
     options,
   )
 }
-export function useAdminAuditLogsLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<AdminAuditLogsQuery, AdminAuditLogsQueryVariables>,
+export function use__AdminAuditLogsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<__AdminAuditLogsQuery, __AdminAuditLogsQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<AdminAuditLogsQuery, AdminAuditLogsQueryVariables>(
-    AdminAuditLogsDocument,
+  return Apollo.useLazyQuery<__AdminAuditLogsQuery, __AdminAuditLogsQueryVariables>(
+    __AdminAuditLogsDocument,
     options,
   )
 }
-export function useAdminAuditLogsSuspenseQuery(
+export function use__AdminAuditLogsSuspenseQuery(
   baseOptions?:
     | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<AdminAuditLogsQuery, AdminAuditLogsQueryVariables>,
+    | Apollo.SuspenseQueryHookOptions<__AdminAuditLogsQuery, __AdminAuditLogsQueryVariables>,
 ) {
   const options =
     baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<AdminAuditLogsQuery, AdminAuditLogsQueryVariables>(
-    AdminAuditLogsDocument,
+  return Apollo.useSuspenseQuery<__AdminAuditLogsQuery, __AdminAuditLogsQueryVariables>(
+    __AdminAuditLogsDocument,
     options,
   )
 }
-export type AdminAuditLogsQueryHookResult = ReturnType<typeof useAdminAuditLogsQuery>
-export type AdminAuditLogsLazyQueryHookResult = ReturnType<typeof useAdminAuditLogsLazyQuery>
-export type AdminAuditLogsSuspenseQueryHookResult = ReturnType<
-  typeof useAdminAuditLogsSuspenseQuery
+export type __AdminAuditLogsQueryHookResult = ReturnType<typeof use__AdminAuditLogsQuery>
+export type __AdminAuditLogsLazyQueryHookResult = ReturnType<typeof use__AdminAuditLogsLazyQuery>
+export type __AdminAuditLogsSuspenseQueryHookResult = ReturnType<
+  typeof use__AdminAuditLogsSuspenseQuery
 >
-export type AdminAuditLogsQueryResult = Apollo.QueryResult<
-  AdminAuditLogsQuery,
-  AdminAuditLogsQueryVariables
+export type __AdminAuditLogsQueryResult = Apollo.QueryResult<
+  __AdminAuditLogsQuery,
+  __AdminAuditLogsQueryVariables
 >
-export const AdminAuditLogPaginationDocument = gql`
-  query AdminAuditLogPagination($input: ListAuditLogInput) {
+export const __AdminAuditLogPaginationDocument = gql`
+  query __AdminAuditLogPagination($input: ListAuditLogInput) {
     counters: auditLogsCount(input: $input) {
       ...CorePagingDetails
     }
@@ -13792,350 +13894,358 @@ export const AdminAuditLogPaginationDocument = gql`
 `
 
 /**
- * __useAdminAuditLogPaginationQuery__
+ * __use__AdminAuditLogPaginationQuery__
  *
- * To run a query within a React component, call `useAdminAuditLogPaginationQuery` and pass it any options that fit your needs.
- * When your component renders, `useAdminAuditLogPaginationQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `use__AdminAuditLogPaginationQuery` and pass it any options that fit your needs.
+ * When your component renders, `use__AdminAuditLogPaginationQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useAdminAuditLogPaginationQuery({
+ * const { data, loading, error } = use__AdminAuditLogPaginationQuery({
  *   variables: {
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useAdminAuditLogPaginationQuery(
+export function use__AdminAuditLogPaginationQuery(
   baseOptions?: Apollo.QueryHookOptions<
-    AdminAuditLogPaginationQuery,
-    AdminAuditLogPaginationQueryVariables
+    __AdminAuditLogPaginationQuery,
+    __AdminAuditLogPaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<AdminAuditLogPaginationQuery, AdminAuditLogPaginationQueryVariables>(
-    AdminAuditLogPaginationDocument,
+  return Apollo.useQuery<__AdminAuditLogPaginationQuery, __AdminAuditLogPaginationQueryVariables>(
+    __AdminAuditLogPaginationDocument,
     options,
   )
 }
-export function useAdminAuditLogPaginationLazyQuery(
+export function use__AdminAuditLogPaginationLazyQuery(
   baseOptions?: Apollo.LazyQueryHookOptions<
-    AdminAuditLogPaginationQuery,
-    AdminAuditLogPaginationQueryVariables
+    __AdminAuditLogPaginationQuery,
+    __AdminAuditLogPaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<AdminAuditLogPaginationQuery, AdminAuditLogPaginationQueryVariables>(
-    AdminAuditLogPaginationDocument,
-    options,
-  )
+  return Apollo.useLazyQuery<
+    __AdminAuditLogPaginationQuery,
+    __AdminAuditLogPaginationQueryVariables
+  >(__AdminAuditLogPaginationDocument, options)
 }
-export function useAdminAuditLogPaginationSuspenseQuery(
+export function use__AdminAuditLogPaginationSuspenseQuery(
   baseOptions?:
     | Apollo.SkipToken
     | Apollo.SuspenseQueryHookOptions<
-        AdminAuditLogPaginationQuery,
-        AdminAuditLogPaginationQueryVariables
+        __AdminAuditLogPaginationQuery,
+        __AdminAuditLogPaginationQueryVariables
       >,
 ) {
   const options =
     baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
   return Apollo.useSuspenseQuery<
-    AdminAuditLogPaginationQuery,
-    AdminAuditLogPaginationQueryVariables
-  >(AdminAuditLogPaginationDocument, options)
+    __AdminAuditLogPaginationQuery,
+    __AdminAuditLogPaginationQueryVariables
+  >(__AdminAuditLogPaginationDocument, options)
 }
-export type AdminAuditLogPaginationQueryHookResult = ReturnType<
-  typeof useAdminAuditLogPaginationQuery
+export type __AdminAuditLogPaginationQueryHookResult = ReturnType<
+  typeof use__AdminAuditLogPaginationQuery
 >
-export type AdminAuditLogPaginationLazyQueryHookResult = ReturnType<
-  typeof useAdminAuditLogPaginationLazyQuery
+export type __AdminAuditLogPaginationLazyQueryHookResult = ReturnType<
+  typeof use__AdminAuditLogPaginationLazyQuery
 >
-export type AdminAuditLogPaginationSuspenseQueryHookResult = ReturnType<
-  typeof useAdminAuditLogPaginationSuspenseQuery
+export type __AdminAuditLogPaginationSuspenseQueryHookResult = ReturnType<
+  typeof use__AdminAuditLogPaginationSuspenseQuery
 >
-export type AdminAuditLogPaginationQueryResult = Apollo.QueryResult<
-  AdminAuditLogPaginationQuery,
-  AdminAuditLogPaginationQueryVariables
+export type __AdminAuditLogPaginationQueryResult = Apollo.QueryResult<
+  __AdminAuditLogPaginationQuery,
+  __AdminAuditLogPaginationQueryVariables
 >
-export const AdminCreateCountryDocument = gql`
-  mutation AdminCreateCountry($input: CreateCountryInput!) {
+export const __AdminCreateCountryDocument = gql`
+  mutation __AdminCreateCountry($input: CreateCountryInput!) {
     createCountry(input: $input) {
-      ...AdminCountryDetails
+      ...__AdminCountryDetails
     }
   }
-  ${AdminCountryDetailsFragmentDoc}
+  ${__AdminCountryDetailsFragmentDoc}
 `
-export type AdminCreateCountryMutationFn = Apollo.MutationFunction<
-  AdminCreateCountryMutation,
-  AdminCreateCountryMutationVariables
+export type __AdminCreateCountryMutationFn = Apollo.MutationFunction<
+  __AdminCreateCountryMutation,
+  __AdminCreateCountryMutationVariables
 >
 
 /**
- * __useAdminCreateCountryMutation__
+ * __use__AdminCreateCountryMutation__
  *
- * To run a mutation, you first call `useAdminCreateCountryMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAdminCreateCountryMutation` returns a tuple that includes:
+ * To run a mutation, you first call `use__AdminCreateCountryMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `use__AdminCreateCountryMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [adminCreateCountryMutation, { data, loading, error }] = useAdminCreateCountryMutation({
+ * const [adminCreateCountryMutation, { data, loading, error }] = use__AdminCreateCountryMutation({
  *   variables: {
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useAdminCreateCountryMutation(
+export function use__AdminCreateCountryMutation(
   baseOptions?: Apollo.MutationHookOptions<
-    AdminCreateCountryMutation,
-    AdminCreateCountryMutationVariables
+    __AdminCreateCountryMutation,
+    __AdminCreateCountryMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<AdminCreateCountryMutation, AdminCreateCountryMutationVariables>(
-    AdminCreateCountryDocument,
+  return Apollo.useMutation<__AdminCreateCountryMutation, __AdminCreateCountryMutationVariables>(
+    __AdminCreateCountryDocument,
     options,
   )
 }
-export type AdminCreateCountryMutationHookResult = ReturnType<typeof useAdminCreateCountryMutation>
-export type AdminCreateCountryMutationResult = Apollo.MutationResult<AdminCreateCountryMutation>
-export type AdminCreateCountryMutationOptions = Apollo.BaseMutationOptions<
-  AdminCreateCountryMutation,
-  AdminCreateCountryMutationVariables
+export type __AdminCreateCountryMutationHookResult = ReturnType<
+  typeof use__AdminCreateCountryMutation
 >
-export const AdminDeleteCountryDocument = gql`
-  mutation AdminDeleteCountry($countryId: String!) {
+export type __AdminCreateCountryMutationResult = Apollo.MutationResult<__AdminCreateCountryMutation>
+export type __AdminCreateCountryMutationOptions = Apollo.BaseMutationOptions<
+  __AdminCreateCountryMutation,
+  __AdminCreateCountryMutationVariables
+>
+export const __AdminDeleteCountryDocument = gql`
+  mutation __AdminDeleteCountry($countryId: String!) {
     deleteCountry(countryId: $countryId) {
       id
     }
   }
 `
-export type AdminDeleteCountryMutationFn = Apollo.MutationFunction<
-  AdminDeleteCountryMutation,
-  AdminDeleteCountryMutationVariables
+export type __AdminDeleteCountryMutationFn = Apollo.MutationFunction<
+  __AdminDeleteCountryMutation,
+  __AdminDeleteCountryMutationVariables
 >
 
 /**
- * __useAdminDeleteCountryMutation__
+ * __use__AdminDeleteCountryMutation__
  *
- * To run a mutation, you first call `useAdminDeleteCountryMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAdminDeleteCountryMutation` returns a tuple that includes:
+ * To run a mutation, you first call `use__AdminDeleteCountryMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `use__AdminDeleteCountryMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [adminDeleteCountryMutation, { data, loading, error }] = useAdminDeleteCountryMutation({
+ * const [adminDeleteCountryMutation, { data, loading, error }] = use__AdminDeleteCountryMutation({
  *   variables: {
  *      countryId: // value for 'countryId'
  *   },
  * });
  */
-export function useAdminDeleteCountryMutation(
+export function use__AdminDeleteCountryMutation(
   baseOptions?: Apollo.MutationHookOptions<
-    AdminDeleteCountryMutation,
-    AdminDeleteCountryMutationVariables
+    __AdminDeleteCountryMutation,
+    __AdminDeleteCountryMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<AdminDeleteCountryMutation, AdminDeleteCountryMutationVariables>(
-    AdminDeleteCountryDocument,
+  return Apollo.useMutation<__AdminDeleteCountryMutation, __AdminDeleteCountryMutationVariables>(
+    __AdminDeleteCountryDocument,
     options,
   )
 }
-export type AdminDeleteCountryMutationHookResult = ReturnType<typeof useAdminDeleteCountryMutation>
-export type AdminDeleteCountryMutationResult = Apollo.MutationResult<AdminDeleteCountryMutation>
-export type AdminDeleteCountryMutationOptions = Apollo.BaseMutationOptions<
-  AdminDeleteCountryMutation,
-  AdminDeleteCountryMutationVariables
+export type __AdminDeleteCountryMutationHookResult = ReturnType<
+  typeof use__AdminDeleteCountryMutation
 >
-export const AdminUpdateCountryDocument = gql`
-  mutation AdminUpdateCountry($countryId: String!, $input: UpdateCountryInput!) {
+export type __AdminDeleteCountryMutationResult = Apollo.MutationResult<__AdminDeleteCountryMutation>
+export type __AdminDeleteCountryMutationOptions = Apollo.BaseMutationOptions<
+  __AdminDeleteCountryMutation,
+  __AdminDeleteCountryMutationVariables
+>
+export const __AdminUpdateCountryDocument = gql`
+  mutation __AdminUpdateCountry($countryId: String!, $input: UpdateCountryInput!) {
     updateCountry(countryId: $countryId, input: $input) {
-      ...AdminCountryDetails
+      ...__AdminCountryDetails
     }
   }
-  ${AdminCountryDetailsFragmentDoc}
+  ${__AdminCountryDetailsFragmentDoc}
 `
-export type AdminUpdateCountryMutationFn = Apollo.MutationFunction<
-  AdminUpdateCountryMutation,
-  AdminUpdateCountryMutationVariables
+export type __AdminUpdateCountryMutationFn = Apollo.MutationFunction<
+  __AdminUpdateCountryMutation,
+  __AdminUpdateCountryMutationVariables
 >
 
 /**
- * __useAdminUpdateCountryMutation__
+ * __use__AdminUpdateCountryMutation__
  *
- * To run a mutation, you first call `useAdminUpdateCountryMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAdminUpdateCountryMutation` returns a tuple that includes:
+ * To run a mutation, you first call `use__AdminUpdateCountryMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `use__AdminUpdateCountryMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [adminUpdateCountryMutation, { data, loading, error }] = useAdminUpdateCountryMutation({
+ * const [adminUpdateCountryMutation, { data, loading, error }] = use__AdminUpdateCountryMutation({
  *   variables: {
  *      countryId: // value for 'countryId'
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useAdminUpdateCountryMutation(
+export function use__AdminUpdateCountryMutation(
   baseOptions?: Apollo.MutationHookOptions<
-    AdminUpdateCountryMutation,
-    AdminUpdateCountryMutationVariables
+    __AdminUpdateCountryMutation,
+    __AdminUpdateCountryMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<AdminUpdateCountryMutation, AdminUpdateCountryMutationVariables>(
-    AdminUpdateCountryDocument,
+  return Apollo.useMutation<__AdminUpdateCountryMutation, __AdminUpdateCountryMutationVariables>(
+    __AdminUpdateCountryDocument,
     options,
   )
 }
-export type AdminUpdateCountryMutationHookResult = ReturnType<typeof useAdminUpdateCountryMutation>
-export type AdminUpdateCountryMutationResult = Apollo.MutationResult<AdminUpdateCountryMutation>
-export type AdminUpdateCountryMutationOptions = Apollo.BaseMutationOptions<
-  AdminUpdateCountryMutation,
-  AdminUpdateCountryMutationVariables
+export type __AdminUpdateCountryMutationHookResult = ReturnType<
+  typeof use__AdminUpdateCountryMutation
 >
-export const AdminCountryDocument = gql`
-  query AdminCountry($countryId: String!) {
+export type __AdminUpdateCountryMutationResult = Apollo.MutationResult<__AdminUpdateCountryMutation>
+export type __AdminUpdateCountryMutationOptions = Apollo.BaseMutationOptions<
+  __AdminUpdateCountryMutation,
+  __AdminUpdateCountryMutationVariables
+>
+export const __AdminCountryDocument = gql`
+  query __AdminCountry($countryId: String!) {
     country(countryId: $countryId) {
-      ...AdminCountryDetails
+      ...__AdminCountryDetails
     }
   }
-  ${AdminCountryDetailsFragmentDoc}
+  ${__AdminCountryDetailsFragmentDoc}
 `
 
 /**
- * __useAdminCountryQuery__
+ * __use__AdminCountryQuery__
  *
- * To run a query within a React component, call `useAdminCountryQuery` and pass it any options that fit your needs.
- * When your component renders, `useAdminCountryQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `use__AdminCountryQuery` and pass it any options that fit your needs.
+ * When your component renders, `use__AdminCountryQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useAdminCountryQuery({
+ * const { data, loading, error } = use__AdminCountryQuery({
  *   variables: {
  *      countryId: // value for 'countryId'
  *   },
  * });
  */
-export function useAdminCountryQuery(
-  baseOptions: Apollo.QueryHookOptions<AdminCountryQuery, AdminCountryQueryVariables> &
-    ({ variables: AdminCountryQueryVariables; skip?: boolean } | { skip: boolean }),
+export function use__AdminCountryQuery(
+  baseOptions: Apollo.QueryHookOptions<__AdminCountryQuery, __AdminCountryQueryVariables> &
+    ({ variables: __AdminCountryQueryVariables; skip?: boolean } | { skip: boolean }),
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<AdminCountryQuery, AdminCountryQueryVariables>(
-    AdminCountryDocument,
+  return Apollo.useQuery<__AdminCountryQuery, __AdminCountryQueryVariables>(
+    __AdminCountryDocument,
     options,
   )
 }
-export function useAdminCountryLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<AdminCountryQuery, AdminCountryQueryVariables>,
+export function use__AdminCountryLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<__AdminCountryQuery, __AdminCountryQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<AdminCountryQuery, AdminCountryQueryVariables>(
-    AdminCountryDocument,
+  return Apollo.useLazyQuery<__AdminCountryQuery, __AdminCountryQueryVariables>(
+    __AdminCountryDocument,
     options,
   )
 }
-export function useAdminCountrySuspenseQuery(
+export function use__AdminCountrySuspenseQuery(
   baseOptions?:
     | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<AdminCountryQuery, AdminCountryQueryVariables>,
+    | Apollo.SuspenseQueryHookOptions<__AdminCountryQuery, __AdminCountryQueryVariables>,
 ) {
   const options =
     baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<AdminCountryQuery, AdminCountryQueryVariables>(
-    AdminCountryDocument,
+  return Apollo.useSuspenseQuery<__AdminCountryQuery, __AdminCountryQueryVariables>(
+    __AdminCountryDocument,
     options,
   )
 }
-export type AdminCountryQueryHookResult = ReturnType<typeof useAdminCountryQuery>
-export type AdminCountryLazyQueryHookResult = ReturnType<typeof useAdminCountryLazyQuery>
-export type AdminCountrySuspenseQueryHookResult = ReturnType<typeof useAdminCountrySuspenseQuery>
-export type AdminCountryQueryResult = Apollo.QueryResult<
-  AdminCountryQuery,
-  AdminCountryQueryVariables
+export type __AdminCountryQueryHookResult = ReturnType<typeof use__AdminCountryQuery>
+export type __AdminCountryLazyQueryHookResult = ReturnType<typeof use__AdminCountryLazyQuery>
+export type __AdminCountrySuspenseQueryHookResult = ReturnType<
+  typeof use__AdminCountrySuspenseQuery
 >
-export const AdminCountriesDocument = gql`
-  query AdminCountries($input: ListCountryInput) {
+export type __AdminCountryQueryResult = Apollo.QueryResult<
+  __AdminCountryQuery,
+  __AdminCountryQueryVariables
+>
+export const __AdminCountriesDocument = gql`
+  query __AdminCountries($input: ListCountryInput) {
     countries(input: $input) {
-      ...AdminCountryList
+      ...__AdminCountryList
     }
     counters: countriesCount(input: $input) {
       ...CorePagingDetails
     }
   }
-  ${AdminCountryListFragmentDoc}
+  ${__AdminCountryListFragmentDoc}
   ${CorePagingDetailsFragmentDoc}
 `
 
 /**
- * __useAdminCountriesQuery__
+ * __use__AdminCountriesQuery__
  *
- * To run a query within a React component, call `useAdminCountriesQuery` and pass it any options that fit your needs.
- * When your component renders, `useAdminCountriesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `use__AdminCountriesQuery` and pass it any options that fit your needs.
+ * When your component renders, `use__AdminCountriesQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useAdminCountriesQuery({
+ * const { data, loading, error } = use__AdminCountriesQuery({
  *   variables: {
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useAdminCountriesQuery(
-  baseOptions?: Apollo.QueryHookOptions<AdminCountriesQuery, AdminCountriesQueryVariables>,
+export function use__AdminCountriesQuery(
+  baseOptions?: Apollo.QueryHookOptions<__AdminCountriesQuery, __AdminCountriesQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<AdminCountriesQuery, AdminCountriesQueryVariables>(
-    AdminCountriesDocument,
+  return Apollo.useQuery<__AdminCountriesQuery, __AdminCountriesQueryVariables>(
+    __AdminCountriesDocument,
     options,
   )
 }
-export function useAdminCountriesLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<AdminCountriesQuery, AdminCountriesQueryVariables>,
+export function use__AdminCountriesLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<__AdminCountriesQuery, __AdminCountriesQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<AdminCountriesQuery, AdminCountriesQueryVariables>(
-    AdminCountriesDocument,
+  return Apollo.useLazyQuery<__AdminCountriesQuery, __AdminCountriesQueryVariables>(
+    __AdminCountriesDocument,
     options,
   )
 }
-export function useAdminCountriesSuspenseQuery(
+export function use__AdminCountriesSuspenseQuery(
   baseOptions?:
     | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<AdminCountriesQuery, AdminCountriesQueryVariables>,
+    | Apollo.SuspenseQueryHookOptions<__AdminCountriesQuery, __AdminCountriesQueryVariables>,
 ) {
   const options =
     baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<AdminCountriesQuery, AdminCountriesQueryVariables>(
-    AdminCountriesDocument,
+  return Apollo.useSuspenseQuery<__AdminCountriesQuery, __AdminCountriesQueryVariables>(
+    __AdminCountriesDocument,
     options,
   )
 }
-export type AdminCountriesQueryHookResult = ReturnType<typeof useAdminCountriesQuery>
-export type AdminCountriesLazyQueryHookResult = ReturnType<typeof useAdminCountriesLazyQuery>
-export type AdminCountriesSuspenseQueryHookResult = ReturnType<
-  typeof useAdminCountriesSuspenseQuery
+export type __AdminCountriesQueryHookResult = ReturnType<typeof use__AdminCountriesQuery>
+export type __AdminCountriesLazyQueryHookResult = ReturnType<typeof use__AdminCountriesLazyQuery>
+export type __AdminCountriesSuspenseQueryHookResult = ReturnType<
+  typeof use__AdminCountriesSuspenseQuery
 >
-export type AdminCountriesQueryResult = Apollo.QueryResult<
-  AdminCountriesQuery,
-  AdminCountriesQueryVariables
+export type __AdminCountriesQueryResult = Apollo.QueryResult<
+  __AdminCountriesQuery,
+  __AdminCountriesQueryVariables
 >
-export const AdminCountryPaginationDocument = gql`
-  query AdminCountryPagination($input: ListCountryInput) {
+export const __AdminCountryPaginationDocument = gql`
+  query __AdminCountryPagination($input: ListCountryInput) {
     counters: countriesCount(input: $input) {
       ...CorePagingDetails
     }
@@ -14144,333 +14254,348 @@ export const AdminCountryPaginationDocument = gql`
 `
 
 /**
- * __useAdminCountryPaginationQuery__
+ * __use__AdminCountryPaginationQuery__
  *
- * To run a query within a React component, call `useAdminCountryPaginationQuery` and pass it any options that fit your needs.
- * When your component renders, `useAdminCountryPaginationQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `use__AdminCountryPaginationQuery` and pass it any options that fit your needs.
+ * When your component renders, `use__AdminCountryPaginationQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useAdminCountryPaginationQuery({
+ * const { data, loading, error } = use__AdminCountryPaginationQuery({
  *   variables: {
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useAdminCountryPaginationQuery(
+export function use__AdminCountryPaginationQuery(
   baseOptions?: Apollo.QueryHookOptions<
-    AdminCountryPaginationQuery,
-    AdminCountryPaginationQueryVariables
+    __AdminCountryPaginationQuery,
+    __AdminCountryPaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<AdminCountryPaginationQuery, AdminCountryPaginationQueryVariables>(
-    AdminCountryPaginationDocument,
+  return Apollo.useQuery<__AdminCountryPaginationQuery, __AdminCountryPaginationQueryVariables>(
+    __AdminCountryPaginationDocument,
     options,
   )
 }
-export function useAdminCountryPaginationLazyQuery(
+export function use__AdminCountryPaginationLazyQuery(
   baseOptions?: Apollo.LazyQueryHookOptions<
-    AdminCountryPaginationQuery,
-    AdminCountryPaginationQueryVariables
+    __AdminCountryPaginationQuery,
+    __AdminCountryPaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<AdminCountryPaginationQuery, AdminCountryPaginationQueryVariables>(
-    AdminCountryPaginationDocument,
+  return Apollo.useLazyQuery<__AdminCountryPaginationQuery, __AdminCountryPaginationQueryVariables>(
+    __AdminCountryPaginationDocument,
     options,
   )
 }
-export function useAdminCountryPaginationSuspenseQuery(
+export function use__AdminCountryPaginationSuspenseQuery(
   baseOptions?:
     | Apollo.SkipToken
     | Apollo.SuspenseQueryHookOptions<
-        AdminCountryPaginationQuery,
-        AdminCountryPaginationQueryVariables
+        __AdminCountryPaginationQuery,
+        __AdminCountryPaginationQueryVariables
       >,
 ) {
   const options =
     baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<AdminCountryPaginationQuery, AdminCountryPaginationQueryVariables>(
-    AdminCountryPaginationDocument,
-    options,
-  )
+  return Apollo.useSuspenseQuery<
+    __AdminCountryPaginationQuery,
+    __AdminCountryPaginationQueryVariables
+  >(__AdminCountryPaginationDocument, options)
 }
-export type AdminCountryPaginationQueryHookResult = ReturnType<
-  typeof useAdminCountryPaginationQuery
+export type __AdminCountryPaginationQueryHookResult = ReturnType<
+  typeof use__AdminCountryPaginationQuery
 >
-export type AdminCountryPaginationLazyQueryHookResult = ReturnType<
-  typeof useAdminCountryPaginationLazyQuery
+export type __AdminCountryPaginationLazyQueryHookResult = ReturnType<
+  typeof use__AdminCountryPaginationLazyQuery
 >
-export type AdminCountryPaginationSuspenseQueryHookResult = ReturnType<
-  typeof useAdminCountryPaginationSuspenseQuery
+export type __AdminCountryPaginationSuspenseQueryHookResult = ReturnType<
+  typeof use__AdminCountryPaginationSuspenseQuery
 >
-export type AdminCountryPaginationQueryResult = Apollo.QueryResult<
-  AdminCountryPaginationQuery,
-  AdminCountryPaginationQueryVariables
+export type __AdminCountryPaginationQueryResult = Apollo.QueryResult<
+  __AdminCountryPaginationQuery,
+  __AdminCountryPaginationQueryVariables
 >
-export const AdminCreateEmailDocument = gql`
-  mutation AdminCreateEmail($input: CreateEmailInput!) {
+export const __AdminCreateEmailDocument = gql`
+  mutation __AdminCreateEmail($input: CreateEmailInput!) {
     createEmail(input: $input) {
-      ...AdminEmailDetails
+      ...__AdminEmailDetails
     }
   }
-  ${AdminEmailDetailsFragmentDoc}
+  ${__AdminEmailDetailsFragmentDoc}
 `
-export type AdminCreateEmailMutationFn = Apollo.MutationFunction<
-  AdminCreateEmailMutation,
-  AdminCreateEmailMutationVariables
+export type __AdminCreateEmailMutationFn = Apollo.MutationFunction<
+  __AdminCreateEmailMutation,
+  __AdminCreateEmailMutationVariables
 >
 
 /**
- * __useAdminCreateEmailMutation__
+ * __use__AdminCreateEmailMutation__
  *
- * To run a mutation, you first call `useAdminCreateEmailMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAdminCreateEmailMutation` returns a tuple that includes:
+ * To run a mutation, you first call `use__AdminCreateEmailMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `use__AdminCreateEmailMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [adminCreateEmailMutation, { data, loading, error }] = useAdminCreateEmailMutation({
+ * const [adminCreateEmailMutation, { data, loading, error }] = use__AdminCreateEmailMutation({
  *   variables: {
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useAdminCreateEmailMutation(
+export function use__AdminCreateEmailMutation(
   baseOptions?: Apollo.MutationHookOptions<
-    AdminCreateEmailMutation,
-    AdminCreateEmailMutationVariables
+    __AdminCreateEmailMutation,
+    __AdminCreateEmailMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<AdminCreateEmailMutation, AdminCreateEmailMutationVariables>(
-    AdminCreateEmailDocument,
+  return Apollo.useMutation<__AdminCreateEmailMutation, __AdminCreateEmailMutationVariables>(
+    __AdminCreateEmailDocument,
     options,
   )
 }
-export type AdminCreateEmailMutationHookResult = ReturnType<typeof useAdminCreateEmailMutation>
-export type AdminCreateEmailMutationResult = Apollo.MutationResult<AdminCreateEmailMutation>
-export type AdminCreateEmailMutationOptions = Apollo.BaseMutationOptions<
-  AdminCreateEmailMutation,
-  AdminCreateEmailMutationVariables
+export type __AdminCreateEmailMutationHookResult = ReturnType<typeof use__AdminCreateEmailMutation>
+export type __AdminCreateEmailMutationResult = Apollo.MutationResult<__AdminCreateEmailMutation>
+export type __AdminCreateEmailMutationOptions = Apollo.BaseMutationOptions<
+  __AdminCreateEmailMutation,
+  __AdminCreateEmailMutationVariables
 >
-export const AdminDeleteEmailDocument = gql`
-  mutation AdminDeleteEmail($emailId: String!) {
+export const __AdminDeleteEmailDocument = gql`
+  mutation __AdminDeleteEmail($emailId: String!) {
     deleteEmail(emailId: $emailId) {
       id
     }
   }
 `
-export type AdminDeleteEmailMutationFn = Apollo.MutationFunction<
-  AdminDeleteEmailMutation,
-  AdminDeleteEmailMutationVariables
+export type __AdminDeleteEmailMutationFn = Apollo.MutationFunction<
+  __AdminDeleteEmailMutation,
+  __AdminDeleteEmailMutationVariables
 >
 
 /**
- * __useAdminDeleteEmailMutation__
+ * __use__AdminDeleteEmailMutation__
  *
- * To run a mutation, you first call `useAdminDeleteEmailMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAdminDeleteEmailMutation` returns a tuple that includes:
+ * To run a mutation, you first call `use__AdminDeleteEmailMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `use__AdminDeleteEmailMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [adminDeleteEmailMutation, { data, loading, error }] = useAdminDeleteEmailMutation({
+ * const [adminDeleteEmailMutation, { data, loading, error }] = use__AdminDeleteEmailMutation({
  *   variables: {
  *      emailId: // value for 'emailId'
  *   },
  * });
  */
-export function useAdminDeleteEmailMutation(
+export function use__AdminDeleteEmailMutation(
   baseOptions?: Apollo.MutationHookOptions<
-    AdminDeleteEmailMutation,
-    AdminDeleteEmailMutationVariables
+    __AdminDeleteEmailMutation,
+    __AdminDeleteEmailMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<AdminDeleteEmailMutation, AdminDeleteEmailMutationVariables>(
-    AdminDeleteEmailDocument,
+  return Apollo.useMutation<__AdminDeleteEmailMutation, __AdminDeleteEmailMutationVariables>(
+    __AdminDeleteEmailDocument,
     options,
   )
 }
-export type AdminDeleteEmailMutationHookResult = ReturnType<typeof useAdminDeleteEmailMutation>
-export type AdminDeleteEmailMutationResult = Apollo.MutationResult<AdminDeleteEmailMutation>
-export type AdminDeleteEmailMutationOptions = Apollo.BaseMutationOptions<
-  AdminDeleteEmailMutation,
-  AdminDeleteEmailMutationVariables
+export type __AdminDeleteEmailMutationHookResult = ReturnType<typeof use__AdminDeleteEmailMutation>
+export type __AdminDeleteEmailMutationResult = Apollo.MutationResult<__AdminDeleteEmailMutation>
+export type __AdminDeleteEmailMutationOptions = Apollo.BaseMutationOptions<
+  __AdminDeleteEmailMutation,
+  __AdminDeleteEmailMutationVariables
 >
-export const AdminUpdateEmailDocument = gql`
-  mutation AdminUpdateEmail($emailId: String!, $input: UpdateEmailInput!) {
+export const __AdminUpdateEmailDocument = gql`
+  mutation __AdminUpdateEmail($emailId: String!, $input: UpdateEmailInput!) {
     updateEmail(emailId: $emailId, input: $input) {
-      ...AdminEmailDetails
+      ...__AdminEmailDetails
     }
   }
-  ${AdminEmailDetailsFragmentDoc}
+  ${__AdminEmailDetailsFragmentDoc}
 `
-export type AdminUpdateEmailMutationFn = Apollo.MutationFunction<
-  AdminUpdateEmailMutation,
-  AdminUpdateEmailMutationVariables
+export type __AdminUpdateEmailMutationFn = Apollo.MutationFunction<
+  __AdminUpdateEmailMutation,
+  __AdminUpdateEmailMutationVariables
 >
 
 /**
- * __useAdminUpdateEmailMutation__
+ * __use__AdminUpdateEmailMutation__
  *
- * To run a mutation, you first call `useAdminUpdateEmailMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAdminUpdateEmailMutation` returns a tuple that includes:
+ * To run a mutation, you first call `use__AdminUpdateEmailMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `use__AdminUpdateEmailMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [adminUpdateEmailMutation, { data, loading, error }] = useAdminUpdateEmailMutation({
+ * const [adminUpdateEmailMutation, { data, loading, error }] = use__AdminUpdateEmailMutation({
  *   variables: {
  *      emailId: // value for 'emailId'
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useAdminUpdateEmailMutation(
+export function use__AdminUpdateEmailMutation(
   baseOptions?: Apollo.MutationHookOptions<
-    AdminUpdateEmailMutation,
-    AdminUpdateEmailMutationVariables
+    __AdminUpdateEmailMutation,
+    __AdminUpdateEmailMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<AdminUpdateEmailMutation, AdminUpdateEmailMutationVariables>(
-    AdminUpdateEmailDocument,
+  return Apollo.useMutation<__AdminUpdateEmailMutation, __AdminUpdateEmailMutationVariables>(
+    __AdminUpdateEmailDocument,
     options,
   )
 }
-export type AdminUpdateEmailMutationHookResult = ReturnType<typeof useAdminUpdateEmailMutation>
-export type AdminUpdateEmailMutationResult = Apollo.MutationResult<AdminUpdateEmailMutation>
-export type AdminUpdateEmailMutationOptions = Apollo.BaseMutationOptions<
-  AdminUpdateEmailMutation,
-  AdminUpdateEmailMutationVariables
+export type __AdminUpdateEmailMutationHookResult = ReturnType<typeof use__AdminUpdateEmailMutation>
+export type __AdminUpdateEmailMutationResult = Apollo.MutationResult<__AdminUpdateEmailMutation>
+export type __AdminUpdateEmailMutationOptions = Apollo.BaseMutationOptions<
+  __AdminUpdateEmailMutation,
+  __AdminUpdateEmailMutationVariables
 >
-export const AdminEmailDocument = gql`
-  query AdminEmail($emailId: String!) {
+export const __AdminEmailDocument = gql`
+  query __AdminEmail($emailId: String!) {
     email(emailId: $emailId) {
-      ...AdminEmailDetails
+      ...__AdminEmailDetails
     }
   }
-  ${AdminEmailDetailsFragmentDoc}
+  ${__AdminEmailDetailsFragmentDoc}
 `
 
 /**
- * __useAdminEmailQuery__
+ * __use__AdminEmailQuery__
  *
- * To run a query within a React component, call `useAdminEmailQuery` and pass it any options that fit your needs.
- * When your component renders, `useAdminEmailQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `use__AdminEmailQuery` and pass it any options that fit your needs.
+ * When your component renders, `use__AdminEmailQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useAdminEmailQuery({
+ * const { data, loading, error } = use__AdminEmailQuery({
  *   variables: {
  *      emailId: // value for 'emailId'
  *   },
  * });
  */
-export function useAdminEmailQuery(
-  baseOptions: Apollo.QueryHookOptions<AdminEmailQuery, AdminEmailQueryVariables> &
-    ({ variables: AdminEmailQueryVariables; skip?: boolean } | { skip: boolean }),
+export function use__AdminEmailQuery(
+  baseOptions: Apollo.QueryHookOptions<__AdminEmailQuery, __AdminEmailQueryVariables> &
+    ({ variables: __AdminEmailQueryVariables; skip?: boolean } | { skip: boolean }),
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<AdminEmailQuery, AdminEmailQueryVariables>(AdminEmailDocument, options)
-}
-export function useAdminEmailLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<AdminEmailQuery, AdminEmailQueryVariables>,
-) {
-  const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<AdminEmailQuery, AdminEmailQueryVariables>(AdminEmailDocument, options)
-}
-export function useAdminEmailSuspenseQuery(
-  baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<AdminEmailQuery, AdminEmailQueryVariables>,
-) {
-  const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<AdminEmailQuery, AdminEmailQueryVariables>(
-    AdminEmailDocument,
+  return Apollo.useQuery<__AdminEmailQuery, __AdminEmailQueryVariables>(
+    __AdminEmailDocument,
     options,
   )
 }
-export type AdminEmailQueryHookResult = ReturnType<typeof useAdminEmailQuery>
-export type AdminEmailLazyQueryHookResult = ReturnType<typeof useAdminEmailLazyQuery>
-export type AdminEmailSuspenseQueryHookResult = ReturnType<typeof useAdminEmailSuspenseQuery>
-export type AdminEmailQueryResult = Apollo.QueryResult<AdminEmailQuery, AdminEmailQueryVariables>
-export const AdminEmailsDocument = gql`
-  query AdminEmails($input: ListEmailInput) {
+export function use__AdminEmailLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<__AdminEmailQuery, __AdminEmailQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<__AdminEmailQuery, __AdminEmailQueryVariables>(
+    __AdminEmailDocument,
+    options,
+  )
+}
+export function use__AdminEmailSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<__AdminEmailQuery, __AdminEmailQueryVariables>,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<__AdminEmailQuery, __AdminEmailQueryVariables>(
+    __AdminEmailDocument,
+    options,
+  )
+}
+export type __AdminEmailQueryHookResult = ReturnType<typeof use__AdminEmailQuery>
+export type __AdminEmailLazyQueryHookResult = ReturnType<typeof use__AdminEmailLazyQuery>
+export type __AdminEmailSuspenseQueryHookResult = ReturnType<typeof use__AdminEmailSuspenseQuery>
+export type __AdminEmailQueryResult = Apollo.QueryResult<
+  __AdminEmailQuery,
+  __AdminEmailQueryVariables
+>
+export const __AdminEmailsDocument = gql`
+  query __AdminEmails($input: ListEmailInput) {
     emails(input: $input) {
-      ...AdminEmailList
+      ...__AdminEmailList
     }
     counters: emailsCount(input: $input) {
       ...CorePagingDetails
     }
   }
-  ${AdminEmailListFragmentDoc}
+  ${__AdminEmailListFragmentDoc}
   ${CorePagingDetailsFragmentDoc}
 `
 
 /**
- * __useAdminEmailsQuery__
+ * __use__AdminEmailsQuery__
  *
- * To run a query within a React component, call `useAdminEmailsQuery` and pass it any options that fit your needs.
- * When your component renders, `useAdminEmailsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `use__AdminEmailsQuery` and pass it any options that fit your needs.
+ * When your component renders, `use__AdminEmailsQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useAdminEmailsQuery({
+ * const { data, loading, error } = use__AdminEmailsQuery({
  *   variables: {
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useAdminEmailsQuery(
-  baseOptions?: Apollo.QueryHookOptions<AdminEmailsQuery, AdminEmailsQueryVariables>,
+export function use__AdminEmailsQuery(
+  baseOptions?: Apollo.QueryHookOptions<__AdminEmailsQuery, __AdminEmailsQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<AdminEmailsQuery, AdminEmailsQueryVariables>(AdminEmailsDocument, options)
-}
-export function useAdminEmailsLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<AdminEmailsQuery, AdminEmailsQueryVariables>,
-) {
-  const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<AdminEmailsQuery, AdminEmailsQueryVariables>(
-    AdminEmailsDocument,
+  return Apollo.useQuery<__AdminEmailsQuery, __AdminEmailsQueryVariables>(
+    __AdminEmailsDocument,
     options,
   )
 }
-export function useAdminEmailsSuspenseQuery(
+export function use__AdminEmailsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<__AdminEmailsQuery, __AdminEmailsQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<__AdminEmailsQuery, __AdminEmailsQueryVariables>(
+    __AdminEmailsDocument,
+    options,
+  )
+}
+export function use__AdminEmailsSuspenseQuery(
   baseOptions?:
     | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<AdminEmailsQuery, AdminEmailsQueryVariables>,
+    | Apollo.SuspenseQueryHookOptions<__AdminEmailsQuery, __AdminEmailsQueryVariables>,
 ) {
   const options =
     baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<AdminEmailsQuery, AdminEmailsQueryVariables>(
-    AdminEmailsDocument,
+  return Apollo.useSuspenseQuery<__AdminEmailsQuery, __AdminEmailsQueryVariables>(
+    __AdminEmailsDocument,
     options,
   )
 }
-export type AdminEmailsQueryHookResult = ReturnType<typeof useAdminEmailsQuery>
-export type AdminEmailsLazyQueryHookResult = ReturnType<typeof useAdminEmailsLazyQuery>
-export type AdminEmailsSuspenseQueryHookResult = ReturnType<typeof useAdminEmailsSuspenseQuery>
-export type AdminEmailsQueryResult = Apollo.QueryResult<AdminEmailsQuery, AdminEmailsQueryVariables>
-export const AdminEmailPaginationDocument = gql`
-  query AdminEmailPagination($input: ListEmailInput) {
+export type __AdminEmailsQueryHookResult = ReturnType<typeof use__AdminEmailsQuery>
+export type __AdminEmailsLazyQueryHookResult = ReturnType<typeof use__AdminEmailsLazyQuery>
+export type __AdminEmailsSuspenseQueryHookResult = ReturnType<typeof use__AdminEmailsSuspenseQuery>
+export type __AdminEmailsQueryResult = Apollo.QueryResult<
+  __AdminEmailsQuery,
+  __AdminEmailsQueryVariables
+>
+export const __AdminEmailPaginationDocument = gql`
+  query __AdminEmailPagination($input: ListEmailInput) {
     counters: emailsCount(input: $input) {
       ...CorePagingDetails
     }
@@ -14479,340 +14604,356 @@ export const AdminEmailPaginationDocument = gql`
 `
 
 /**
- * __useAdminEmailPaginationQuery__
+ * __use__AdminEmailPaginationQuery__
  *
- * To run a query within a React component, call `useAdminEmailPaginationQuery` and pass it any options that fit your needs.
- * When your component renders, `useAdminEmailPaginationQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `use__AdminEmailPaginationQuery` and pass it any options that fit your needs.
+ * When your component renders, `use__AdminEmailPaginationQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useAdminEmailPaginationQuery({
+ * const { data, loading, error } = use__AdminEmailPaginationQuery({
  *   variables: {
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useAdminEmailPaginationQuery(
+export function use__AdminEmailPaginationQuery(
   baseOptions?: Apollo.QueryHookOptions<
-    AdminEmailPaginationQuery,
-    AdminEmailPaginationQueryVariables
+    __AdminEmailPaginationQuery,
+    __AdminEmailPaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<AdminEmailPaginationQuery, AdminEmailPaginationQueryVariables>(
-    AdminEmailPaginationDocument,
+  return Apollo.useQuery<__AdminEmailPaginationQuery, __AdminEmailPaginationQueryVariables>(
+    __AdminEmailPaginationDocument,
     options,
   )
 }
-export function useAdminEmailPaginationLazyQuery(
+export function use__AdminEmailPaginationLazyQuery(
   baseOptions?: Apollo.LazyQueryHookOptions<
-    AdminEmailPaginationQuery,
-    AdminEmailPaginationQueryVariables
+    __AdminEmailPaginationQuery,
+    __AdminEmailPaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<AdminEmailPaginationQuery, AdminEmailPaginationQueryVariables>(
-    AdminEmailPaginationDocument,
+  return Apollo.useLazyQuery<__AdminEmailPaginationQuery, __AdminEmailPaginationQueryVariables>(
+    __AdminEmailPaginationDocument,
     options,
   )
 }
-export function useAdminEmailPaginationSuspenseQuery(
+export function use__AdminEmailPaginationSuspenseQuery(
   baseOptions?:
     | Apollo.SkipToken
     | Apollo.SuspenseQueryHookOptions<
-        AdminEmailPaginationQuery,
-        AdminEmailPaginationQueryVariables
+        __AdminEmailPaginationQuery,
+        __AdminEmailPaginationQueryVariables
       >,
 ) {
   const options =
     baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<AdminEmailPaginationQuery, AdminEmailPaginationQueryVariables>(
-    AdminEmailPaginationDocument,
+  return Apollo.useSuspenseQuery<__AdminEmailPaginationQuery, __AdminEmailPaginationQueryVariables>(
+    __AdminEmailPaginationDocument,
     options,
   )
 }
-export type AdminEmailPaginationQueryHookResult = ReturnType<typeof useAdminEmailPaginationQuery>
-export type AdminEmailPaginationLazyQueryHookResult = ReturnType<
-  typeof useAdminEmailPaginationLazyQuery
+export type __AdminEmailPaginationQueryHookResult = ReturnType<
+  typeof use__AdminEmailPaginationQuery
 >
-export type AdminEmailPaginationSuspenseQueryHookResult = ReturnType<
-  typeof useAdminEmailPaginationSuspenseQuery
+export type __AdminEmailPaginationLazyQueryHookResult = ReturnType<
+  typeof use__AdminEmailPaginationLazyQuery
 >
-export type AdminEmailPaginationQueryResult = Apollo.QueryResult<
-  AdminEmailPaginationQuery,
-  AdminEmailPaginationQueryVariables
+export type __AdminEmailPaginationSuspenseQueryHookResult = ReturnType<
+  typeof use__AdminEmailPaginationSuspenseQuery
 >
-export const AdminCreateInviteDocument = gql`
-  mutation AdminCreateInvite($input: CreateInviteInput!) {
+export type __AdminEmailPaginationQueryResult = Apollo.QueryResult<
+  __AdminEmailPaginationQuery,
+  __AdminEmailPaginationQueryVariables
+>
+export const __AdminCreateInviteDocument = gql`
+  mutation __AdminCreateInvite($input: CreateInviteInput!) {
     createInvite(input: $input) {
-      ...AdminInviteDetails
+      ...__AdminInviteDetails
     }
   }
-  ${AdminInviteDetailsFragmentDoc}
+  ${__AdminInviteDetailsFragmentDoc}
 `
-export type AdminCreateInviteMutationFn = Apollo.MutationFunction<
-  AdminCreateInviteMutation,
-  AdminCreateInviteMutationVariables
+export type __AdminCreateInviteMutationFn = Apollo.MutationFunction<
+  __AdminCreateInviteMutation,
+  __AdminCreateInviteMutationVariables
 >
 
 /**
- * __useAdminCreateInviteMutation__
+ * __use__AdminCreateInviteMutation__
  *
- * To run a mutation, you first call `useAdminCreateInviteMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAdminCreateInviteMutation` returns a tuple that includes:
+ * To run a mutation, you first call `use__AdminCreateInviteMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `use__AdminCreateInviteMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [adminCreateInviteMutation, { data, loading, error }] = useAdminCreateInviteMutation({
+ * const [adminCreateInviteMutation, { data, loading, error }] = use__AdminCreateInviteMutation({
  *   variables: {
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useAdminCreateInviteMutation(
+export function use__AdminCreateInviteMutation(
   baseOptions?: Apollo.MutationHookOptions<
-    AdminCreateInviteMutation,
-    AdminCreateInviteMutationVariables
+    __AdminCreateInviteMutation,
+    __AdminCreateInviteMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<AdminCreateInviteMutation, AdminCreateInviteMutationVariables>(
-    AdminCreateInviteDocument,
+  return Apollo.useMutation<__AdminCreateInviteMutation, __AdminCreateInviteMutationVariables>(
+    __AdminCreateInviteDocument,
     options,
   )
 }
-export type AdminCreateInviteMutationHookResult = ReturnType<typeof useAdminCreateInviteMutation>
-export type AdminCreateInviteMutationResult = Apollo.MutationResult<AdminCreateInviteMutation>
-export type AdminCreateInviteMutationOptions = Apollo.BaseMutationOptions<
-  AdminCreateInviteMutation,
-  AdminCreateInviteMutationVariables
+export type __AdminCreateInviteMutationHookResult = ReturnType<
+  typeof use__AdminCreateInviteMutation
 >
-export const AdminDeleteInviteDocument = gql`
-  mutation AdminDeleteInvite($inviteId: String!) {
+export type __AdminCreateInviteMutationResult = Apollo.MutationResult<__AdminCreateInviteMutation>
+export type __AdminCreateInviteMutationOptions = Apollo.BaseMutationOptions<
+  __AdminCreateInviteMutation,
+  __AdminCreateInviteMutationVariables
+>
+export const __AdminDeleteInviteDocument = gql`
+  mutation __AdminDeleteInvite($inviteId: String!) {
     deleteInvite(inviteId: $inviteId) {
       id
     }
   }
 `
-export type AdminDeleteInviteMutationFn = Apollo.MutationFunction<
-  AdminDeleteInviteMutation,
-  AdminDeleteInviteMutationVariables
+export type __AdminDeleteInviteMutationFn = Apollo.MutationFunction<
+  __AdminDeleteInviteMutation,
+  __AdminDeleteInviteMutationVariables
 >
 
 /**
- * __useAdminDeleteInviteMutation__
+ * __use__AdminDeleteInviteMutation__
  *
- * To run a mutation, you first call `useAdminDeleteInviteMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAdminDeleteInviteMutation` returns a tuple that includes:
+ * To run a mutation, you first call `use__AdminDeleteInviteMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `use__AdminDeleteInviteMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [adminDeleteInviteMutation, { data, loading, error }] = useAdminDeleteInviteMutation({
+ * const [adminDeleteInviteMutation, { data, loading, error }] = use__AdminDeleteInviteMutation({
  *   variables: {
  *      inviteId: // value for 'inviteId'
  *   },
  * });
  */
-export function useAdminDeleteInviteMutation(
+export function use__AdminDeleteInviteMutation(
   baseOptions?: Apollo.MutationHookOptions<
-    AdminDeleteInviteMutation,
-    AdminDeleteInviteMutationVariables
+    __AdminDeleteInviteMutation,
+    __AdminDeleteInviteMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<AdminDeleteInviteMutation, AdminDeleteInviteMutationVariables>(
-    AdminDeleteInviteDocument,
+  return Apollo.useMutation<__AdminDeleteInviteMutation, __AdminDeleteInviteMutationVariables>(
+    __AdminDeleteInviteDocument,
     options,
   )
 }
-export type AdminDeleteInviteMutationHookResult = ReturnType<typeof useAdminDeleteInviteMutation>
-export type AdminDeleteInviteMutationResult = Apollo.MutationResult<AdminDeleteInviteMutation>
-export type AdminDeleteInviteMutationOptions = Apollo.BaseMutationOptions<
-  AdminDeleteInviteMutation,
-  AdminDeleteInviteMutationVariables
+export type __AdminDeleteInviteMutationHookResult = ReturnType<
+  typeof use__AdminDeleteInviteMutation
 >
-export const AdminUpdateInviteDocument = gql`
-  mutation AdminUpdateInvite($inviteId: String!, $input: UpdateInviteInput!) {
+export type __AdminDeleteInviteMutationResult = Apollo.MutationResult<__AdminDeleteInviteMutation>
+export type __AdminDeleteInviteMutationOptions = Apollo.BaseMutationOptions<
+  __AdminDeleteInviteMutation,
+  __AdminDeleteInviteMutationVariables
+>
+export const __AdminUpdateInviteDocument = gql`
+  mutation __AdminUpdateInvite($inviteId: String!, $input: UpdateInviteInput!) {
     updateInvite(inviteId: $inviteId, input: $input) {
-      ...AdminInviteDetails
+      ...__AdminInviteDetails
     }
   }
-  ${AdminInviteDetailsFragmentDoc}
+  ${__AdminInviteDetailsFragmentDoc}
 `
-export type AdminUpdateInviteMutationFn = Apollo.MutationFunction<
-  AdminUpdateInviteMutation,
-  AdminUpdateInviteMutationVariables
+export type __AdminUpdateInviteMutationFn = Apollo.MutationFunction<
+  __AdminUpdateInviteMutation,
+  __AdminUpdateInviteMutationVariables
 >
 
 /**
- * __useAdminUpdateInviteMutation__
+ * __use__AdminUpdateInviteMutation__
  *
- * To run a mutation, you first call `useAdminUpdateInviteMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAdminUpdateInviteMutation` returns a tuple that includes:
+ * To run a mutation, you first call `use__AdminUpdateInviteMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `use__AdminUpdateInviteMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [adminUpdateInviteMutation, { data, loading, error }] = useAdminUpdateInviteMutation({
+ * const [adminUpdateInviteMutation, { data, loading, error }] = use__AdminUpdateInviteMutation({
  *   variables: {
  *      inviteId: // value for 'inviteId'
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useAdminUpdateInviteMutation(
+export function use__AdminUpdateInviteMutation(
   baseOptions?: Apollo.MutationHookOptions<
-    AdminUpdateInviteMutation,
-    AdminUpdateInviteMutationVariables
+    __AdminUpdateInviteMutation,
+    __AdminUpdateInviteMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<AdminUpdateInviteMutation, AdminUpdateInviteMutationVariables>(
-    AdminUpdateInviteDocument,
+  return Apollo.useMutation<__AdminUpdateInviteMutation, __AdminUpdateInviteMutationVariables>(
+    __AdminUpdateInviteDocument,
     options,
   )
 }
-export type AdminUpdateInviteMutationHookResult = ReturnType<typeof useAdminUpdateInviteMutation>
-export type AdminUpdateInviteMutationResult = Apollo.MutationResult<AdminUpdateInviteMutation>
-export type AdminUpdateInviteMutationOptions = Apollo.BaseMutationOptions<
-  AdminUpdateInviteMutation,
-  AdminUpdateInviteMutationVariables
+export type __AdminUpdateInviteMutationHookResult = ReturnType<
+  typeof use__AdminUpdateInviteMutation
 >
-export const AdminInviteDocument = gql`
-  query AdminInvite($inviteId: String!) {
+export type __AdminUpdateInviteMutationResult = Apollo.MutationResult<__AdminUpdateInviteMutation>
+export type __AdminUpdateInviteMutationOptions = Apollo.BaseMutationOptions<
+  __AdminUpdateInviteMutation,
+  __AdminUpdateInviteMutationVariables
+>
+export const __AdminInviteDocument = gql`
+  query __AdminInvite($inviteId: String!) {
     invite(inviteId: $inviteId) {
-      ...AdminInviteDetails
+      ...__AdminInviteDetails
     }
   }
-  ${AdminInviteDetailsFragmentDoc}
+  ${__AdminInviteDetailsFragmentDoc}
 `
 
 /**
- * __useAdminInviteQuery__
+ * __use__AdminInviteQuery__
  *
- * To run a query within a React component, call `useAdminInviteQuery` and pass it any options that fit your needs.
- * When your component renders, `useAdminInviteQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `use__AdminInviteQuery` and pass it any options that fit your needs.
+ * When your component renders, `use__AdminInviteQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useAdminInviteQuery({
+ * const { data, loading, error } = use__AdminInviteQuery({
  *   variables: {
  *      inviteId: // value for 'inviteId'
  *   },
  * });
  */
-export function useAdminInviteQuery(
-  baseOptions: Apollo.QueryHookOptions<AdminInviteQuery, AdminInviteQueryVariables> &
-    ({ variables: AdminInviteQueryVariables; skip?: boolean } | { skip: boolean }),
+export function use__AdminInviteQuery(
+  baseOptions: Apollo.QueryHookOptions<__AdminInviteQuery, __AdminInviteQueryVariables> &
+    ({ variables: __AdminInviteQueryVariables; skip?: boolean } | { skip: boolean }),
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<AdminInviteQuery, AdminInviteQueryVariables>(AdminInviteDocument, options)
-}
-export function useAdminInviteLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<AdminInviteQuery, AdminInviteQueryVariables>,
-) {
-  const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<AdminInviteQuery, AdminInviteQueryVariables>(
-    AdminInviteDocument,
+  return Apollo.useQuery<__AdminInviteQuery, __AdminInviteQueryVariables>(
+    __AdminInviteDocument,
     options,
   )
 }
-export function useAdminInviteSuspenseQuery(
+export function use__AdminInviteLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<__AdminInviteQuery, __AdminInviteQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<__AdminInviteQuery, __AdminInviteQueryVariables>(
+    __AdminInviteDocument,
+    options,
+  )
+}
+export function use__AdminInviteSuspenseQuery(
   baseOptions?:
     | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<AdminInviteQuery, AdminInviteQueryVariables>,
+    | Apollo.SuspenseQueryHookOptions<__AdminInviteQuery, __AdminInviteQueryVariables>,
 ) {
   const options =
     baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<AdminInviteQuery, AdminInviteQueryVariables>(
-    AdminInviteDocument,
+  return Apollo.useSuspenseQuery<__AdminInviteQuery, __AdminInviteQueryVariables>(
+    __AdminInviteDocument,
     options,
   )
 }
-export type AdminInviteQueryHookResult = ReturnType<typeof useAdminInviteQuery>
-export type AdminInviteLazyQueryHookResult = ReturnType<typeof useAdminInviteLazyQuery>
-export type AdminInviteSuspenseQueryHookResult = ReturnType<typeof useAdminInviteSuspenseQuery>
-export type AdminInviteQueryResult = Apollo.QueryResult<AdminInviteQuery, AdminInviteQueryVariables>
-export const AdminInvitesDocument = gql`
-  query AdminInvites($input: ListInviteInput) {
-    invites(input: $input) {
-      ...AdminInviteList
-    }
-    counters: invitesCount(input: $input) {
-      ...CorePagingDetails
-    }
-  }
-  ${AdminInviteListFragmentDoc}
-  ${CorePagingDetailsFragmentDoc}
-`
-
-/**
- * __useAdminInvitesQuery__
- *
- * To run a query within a React component, call `useAdminInvitesQuery` and pass it any options that fit your needs.
- * When your component renders, `useAdminInvitesQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useAdminInvitesQuery({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useAdminInvitesQuery(
-  baseOptions?: Apollo.QueryHookOptions<AdminInvitesQuery, AdminInvitesQueryVariables>,
-) {
-  const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<AdminInvitesQuery, AdminInvitesQueryVariables>(
-    AdminInvitesDocument,
-    options,
-  )
-}
-export function useAdminInvitesLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<AdminInvitesQuery, AdminInvitesQueryVariables>,
-) {
-  const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<AdminInvitesQuery, AdminInvitesQueryVariables>(
-    AdminInvitesDocument,
-    options,
-  )
-}
-export function useAdminInvitesSuspenseQuery(
-  baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<AdminInvitesQuery, AdminInvitesQueryVariables>,
-) {
-  const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<AdminInvitesQuery, AdminInvitesQueryVariables>(
-    AdminInvitesDocument,
-    options,
-  )
-}
-export type AdminInvitesQueryHookResult = ReturnType<typeof useAdminInvitesQuery>
-export type AdminInvitesLazyQueryHookResult = ReturnType<typeof useAdminInvitesLazyQuery>
-export type AdminInvitesSuspenseQueryHookResult = ReturnType<typeof useAdminInvitesSuspenseQuery>
-export type AdminInvitesQueryResult = Apollo.QueryResult<
-  AdminInvitesQuery,
-  AdminInvitesQueryVariables
+export type __AdminInviteQueryHookResult = ReturnType<typeof use__AdminInviteQuery>
+export type __AdminInviteLazyQueryHookResult = ReturnType<typeof use__AdminInviteLazyQuery>
+export type __AdminInviteSuspenseQueryHookResult = ReturnType<typeof use__AdminInviteSuspenseQuery>
+export type __AdminInviteQueryResult = Apollo.QueryResult<
+  __AdminInviteQuery,
+  __AdminInviteQueryVariables
 >
-export const AdminInvitePaginationDocument = gql`
-  query AdminInvitePagination($input: ListInviteInput) {
+export const __AdminInvitesDocument = gql`
+  query __AdminInvites($input: ListInviteInput) {
+    invites(input: $input) {
+      ...__AdminInviteList
+    }
+    counters: invitesCount(input: $input) {
+      ...CorePagingDetails
+    }
+  }
+  ${__AdminInviteListFragmentDoc}
+  ${CorePagingDetailsFragmentDoc}
+`
+
+/**
+ * __use__AdminInvitesQuery__
+ *
+ * To run a query within a React component, call `use__AdminInvitesQuery` and pass it any options that fit your needs.
+ * When your component renders, `use__AdminInvitesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = use__AdminInvitesQuery({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function use__AdminInvitesQuery(
+  baseOptions?: Apollo.QueryHookOptions<__AdminInvitesQuery, __AdminInvitesQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<__AdminInvitesQuery, __AdminInvitesQueryVariables>(
+    __AdminInvitesDocument,
+    options,
+  )
+}
+export function use__AdminInvitesLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<__AdminInvitesQuery, __AdminInvitesQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<__AdminInvitesQuery, __AdminInvitesQueryVariables>(
+    __AdminInvitesDocument,
+    options,
+  )
+}
+export function use__AdminInvitesSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<__AdminInvitesQuery, __AdminInvitesQueryVariables>,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<__AdminInvitesQuery, __AdminInvitesQueryVariables>(
+    __AdminInvitesDocument,
+    options,
+  )
+}
+export type __AdminInvitesQueryHookResult = ReturnType<typeof use__AdminInvitesQuery>
+export type __AdminInvitesLazyQueryHookResult = ReturnType<typeof use__AdminInvitesLazyQuery>
+export type __AdminInvitesSuspenseQueryHookResult = ReturnType<
+  typeof use__AdminInvitesSuspenseQuery
+>
+export type __AdminInvitesQueryResult = Apollo.QueryResult<
+  __AdminInvitesQuery,
+  __AdminInvitesQueryVariables
+>
+export const __AdminInvitePaginationDocument = gql`
+  query __AdminInvitePagination($input: ListInviteInput) {
     counters: invitesCount(input: $input) {
       ...CorePagingDetails
     }
@@ -14821,328 +14962,342 @@ export const AdminInvitePaginationDocument = gql`
 `
 
 /**
- * __useAdminInvitePaginationQuery__
+ * __use__AdminInvitePaginationQuery__
  *
- * To run a query within a React component, call `useAdminInvitePaginationQuery` and pass it any options that fit your needs.
- * When your component renders, `useAdminInvitePaginationQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `use__AdminInvitePaginationQuery` and pass it any options that fit your needs.
+ * When your component renders, `use__AdminInvitePaginationQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useAdminInvitePaginationQuery({
+ * const { data, loading, error } = use__AdminInvitePaginationQuery({
  *   variables: {
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useAdminInvitePaginationQuery(
+export function use__AdminInvitePaginationQuery(
   baseOptions?: Apollo.QueryHookOptions<
-    AdminInvitePaginationQuery,
-    AdminInvitePaginationQueryVariables
+    __AdminInvitePaginationQuery,
+    __AdminInvitePaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<AdminInvitePaginationQuery, AdminInvitePaginationQueryVariables>(
-    AdminInvitePaginationDocument,
+  return Apollo.useQuery<__AdminInvitePaginationQuery, __AdminInvitePaginationQueryVariables>(
+    __AdminInvitePaginationDocument,
     options,
   )
 }
-export function useAdminInvitePaginationLazyQuery(
+export function use__AdminInvitePaginationLazyQuery(
   baseOptions?: Apollo.LazyQueryHookOptions<
-    AdminInvitePaginationQuery,
-    AdminInvitePaginationQueryVariables
+    __AdminInvitePaginationQuery,
+    __AdminInvitePaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<AdminInvitePaginationQuery, AdminInvitePaginationQueryVariables>(
-    AdminInvitePaginationDocument,
+  return Apollo.useLazyQuery<__AdminInvitePaginationQuery, __AdminInvitePaginationQueryVariables>(
+    __AdminInvitePaginationDocument,
     options,
   )
 }
-export function useAdminInvitePaginationSuspenseQuery(
+export function use__AdminInvitePaginationSuspenseQuery(
   baseOptions?:
     | Apollo.SkipToken
     | Apollo.SuspenseQueryHookOptions<
-        AdminInvitePaginationQuery,
-        AdminInvitePaginationQueryVariables
+        __AdminInvitePaginationQuery,
+        __AdminInvitePaginationQueryVariables
       >,
 ) {
   const options =
     baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<AdminInvitePaginationQuery, AdminInvitePaginationQueryVariables>(
-    AdminInvitePaginationDocument,
-    options,
-  )
+  return Apollo.useSuspenseQuery<
+    __AdminInvitePaginationQuery,
+    __AdminInvitePaginationQueryVariables
+  >(__AdminInvitePaginationDocument, options)
 }
-export type AdminInvitePaginationQueryHookResult = ReturnType<typeof useAdminInvitePaginationQuery>
-export type AdminInvitePaginationLazyQueryHookResult = ReturnType<
-  typeof useAdminInvitePaginationLazyQuery
+export type __AdminInvitePaginationQueryHookResult = ReturnType<
+  typeof use__AdminInvitePaginationQuery
 >
-export type AdminInvitePaginationSuspenseQueryHookResult = ReturnType<
-  typeof useAdminInvitePaginationSuspenseQuery
+export type __AdminInvitePaginationLazyQueryHookResult = ReturnType<
+  typeof use__AdminInvitePaginationLazyQuery
 >
-export type AdminInvitePaginationQueryResult = Apollo.QueryResult<
-  AdminInvitePaginationQuery,
-  AdminInvitePaginationQueryVariables
+export type __AdminInvitePaginationSuspenseQueryHookResult = ReturnType<
+  typeof use__AdminInvitePaginationSuspenseQuery
 >
-export const AdminCreateLinkDocument = gql`
-  mutation AdminCreateLink($input: CreateLinkInput!) {
+export type __AdminInvitePaginationQueryResult = Apollo.QueryResult<
+  __AdminInvitePaginationQuery,
+  __AdminInvitePaginationQueryVariables
+>
+export const __AdminCreateLinkDocument = gql`
+  mutation __AdminCreateLink($input: CreateLinkInput!) {
     createLink(input: $input) {
-      ...AdminLinkDetails
+      ...__AdminLinkDetails
     }
   }
-  ${AdminLinkDetailsFragmentDoc}
+  ${__AdminLinkDetailsFragmentDoc}
 `
-export type AdminCreateLinkMutationFn = Apollo.MutationFunction<
-  AdminCreateLinkMutation,
-  AdminCreateLinkMutationVariables
+export type __AdminCreateLinkMutationFn = Apollo.MutationFunction<
+  __AdminCreateLinkMutation,
+  __AdminCreateLinkMutationVariables
 >
 
 /**
- * __useAdminCreateLinkMutation__
+ * __use__AdminCreateLinkMutation__
  *
- * To run a mutation, you first call `useAdminCreateLinkMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAdminCreateLinkMutation` returns a tuple that includes:
+ * To run a mutation, you first call `use__AdminCreateLinkMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `use__AdminCreateLinkMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [adminCreateLinkMutation, { data, loading, error }] = useAdminCreateLinkMutation({
+ * const [adminCreateLinkMutation, { data, loading, error }] = use__AdminCreateLinkMutation({
  *   variables: {
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useAdminCreateLinkMutation(
+export function use__AdminCreateLinkMutation(
   baseOptions?: Apollo.MutationHookOptions<
-    AdminCreateLinkMutation,
-    AdminCreateLinkMutationVariables
+    __AdminCreateLinkMutation,
+    __AdminCreateLinkMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<AdminCreateLinkMutation, AdminCreateLinkMutationVariables>(
-    AdminCreateLinkDocument,
+  return Apollo.useMutation<__AdminCreateLinkMutation, __AdminCreateLinkMutationVariables>(
+    __AdminCreateLinkDocument,
     options,
   )
 }
-export type AdminCreateLinkMutationHookResult = ReturnType<typeof useAdminCreateLinkMutation>
-export type AdminCreateLinkMutationResult = Apollo.MutationResult<AdminCreateLinkMutation>
-export type AdminCreateLinkMutationOptions = Apollo.BaseMutationOptions<
-  AdminCreateLinkMutation,
-  AdminCreateLinkMutationVariables
+export type __AdminCreateLinkMutationHookResult = ReturnType<typeof use__AdminCreateLinkMutation>
+export type __AdminCreateLinkMutationResult = Apollo.MutationResult<__AdminCreateLinkMutation>
+export type __AdminCreateLinkMutationOptions = Apollo.BaseMutationOptions<
+  __AdminCreateLinkMutation,
+  __AdminCreateLinkMutationVariables
 >
-export const AdminDeleteLinkDocument = gql`
-  mutation AdminDeleteLink($linkId: String!) {
+export const __AdminDeleteLinkDocument = gql`
+  mutation __AdminDeleteLink($linkId: String!) {
     deleteLink(linkId: $linkId) {
       id
     }
   }
 `
-export type AdminDeleteLinkMutationFn = Apollo.MutationFunction<
-  AdminDeleteLinkMutation,
-  AdminDeleteLinkMutationVariables
+export type __AdminDeleteLinkMutationFn = Apollo.MutationFunction<
+  __AdminDeleteLinkMutation,
+  __AdminDeleteLinkMutationVariables
 >
 
 /**
- * __useAdminDeleteLinkMutation__
+ * __use__AdminDeleteLinkMutation__
  *
- * To run a mutation, you first call `useAdminDeleteLinkMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAdminDeleteLinkMutation` returns a tuple that includes:
+ * To run a mutation, you first call `use__AdminDeleteLinkMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `use__AdminDeleteLinkMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [adminDeleteLinkMutation, { data, loading, error }] = useAdminDeleteLinkMutation({
+ * const [adminDeleteLinkMutation, { data, loading, error }] = use__AdminDeleteLinkMutation({
  *   variables: {
  *      linkId: // value for 'linkId'
  *   },
  * });
  */
-export function useAdminDeleteLinkMutation(
+export function use__AdminDeleteLinkMutation(
   baseOptions?: Apollo.MutationHookOptions<
-    AdminDeleteLinkMutation,
-    AdminDeleteLinkMutationVariables
+    __AdminDeleteLinkMutation,
+    __AdminDeleteLinkMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<AdminDeleteLinkMutation, AdminDeleteLinkMutationVariables>(
-    AdminDeleteLinkDocument,
+  return Apollo.useMutation<__AdminDeleteLinkMutation, __AdminDeleteLinkMutationVariables>(
+    __AdminDeleteLinkDocument,
     options,
   )
 }
-export type AdminDeleteLinkMutationHookResult = ReturnType<typeof useAdminDeleteLinkMutation>
-export type AdminDeleteLinkMutationResult = Apollo.MutationResult<AdminDeleteLinkMutation>
-export type AdminDeleteLinkMutationOptions = Apollo.BaseMutationOptions<
-  AdminDeleteLinkMutation,
-  AdminDeleteLinkMutationVariables
+export type __AdminDeleteLinkMutationHookResult = ReturnType<typeof use__AdminDeleteLinkMutation>
+export type __AdminDeleteLinkMutationResult = Apollo.MutationResult<__AdminDeleteLinkMutation>
+export type __AdminDeleteLinkMutationOptions = Apollo.BaseMutationOptions<
+  __AdminDeleteLinkMutation,
+  __AdminDeleteLinkMutationVariables
 >
-export const AdminUpdateLinkDocument = gql`
-  mutation AdminUpdateLink($linkId: String!, $input: UpdateLinkInput!) {
+export const __AdminUpdateLinkDocument = gql`
+  mutation __AdminUpdateLink($linkId: String!, $input: UpdateLinkInput!) {
     updateLink(linkId: $linkId, input: $input) {
-      ...AdminLinkDetails
+      ...__AdminLinkDetails
     }
   }
-  ${AdminLinkDetailsFragmentDoc}
+  ${__AdminLinkDetailsFragmentDoc}
 `
-export type AdminUpdateLinkMutationFn = Apollo.MutationFunction<
-  AdminUpdateLinkMutation,
-  AdminUpdateLinkMutationVariables
+export type __AdminUpdateLinkMutationFn = Apollo.MutationFunction<
+  __AdminUpdateLinkMutation,
+  __AdminUpdateLinkMutationVariables
 >
 
 /**
- * __useAdminUpdateLinkMutation__
+ * __use__AdminUpdateLinkMutation__
  *
- * To run a mutation, you first call `useAdminUpdateLinkMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAdminUpdateLinkMutation` returns a tuple that includes:
+ * To run a mutation, you first call `use__AdminUpdateLinkMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `use__AdminUpdateLinkMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [adminUpdateLinkMutation, { data, loading, error }] = useAdminUpdateLinkMutation({
+ * const [adminUpdateLinkMutation, { data, loading, error }] = use__AdminUpdateLinkMutation({
  *   variables: {
  *      linkId: // value for 'linkId'
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useAdminUpdateLinkMutation(
+export function use__AdminUpdateLinkMutation(
   baseOptions?: Apollo.MutationHookOptions<
-    AdminUpdateLinkMutation,
-    AdminUpdateLinkMutationVariables
+    __AdminUpdateLinkMutation,
+    __AdminUpdateLinkMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<AdminUpdateLinkMutation, AdminUpdateLinkMutationVariables>(
-    AdminUpdateLinkDocument,
+  return Apollo.useMutation<__AdminUpdateLinkMutation, __AdminUpdateLinkMutationVariables>(
+    __AdminUpdateLinkDocument,
     options,
   )
 }
-export type AdminUpdateLinkMutationHookResult = ReturnType<typeof useAdminUpdateLinkMutation>
-export type AdminUpdateLinkMutationResult = Apollo.MutationResult<AdminUpdateLinkMutation>
-export type AdminUpdateLinkMutationOptions = Apollo.BaseMutationOptions<
-  AdminUpdateLinkMutation,
-  AdminUpdateLinkMutationVariables
+export type __AdminUpdateLinkMutationHookResult = ReturnType<typeof use__AdminUpdateLinkMutation>
+export type __AdminUpdateLinkMutationResult = Apollo.MutationResult<__AdminUpdateLinkMutation>
+export type __AdminUpdateLinkMutationOptions = Apollo.BaseMutationOptions<
+  __AdminUpdateLinkMutation,
+  __AdminUpdateLinkMutationVariables
 >
-export const AdminLinkDocument = gql`
-  query AdminLink($linkId: String!) {
+export const __AdminLinkDocument = gql`
+  query __AdminLink($linkId: String!) {
     link(linkId: $linkId) {
-      ...AdminLinkDetails
+      ...__AdminLinkDetails
     }
   }
-  ${AdminLinkDetailsFragmentDoc}
+  ${__AdminLinkDetailsFragmentDoc}
 `
 
 /**
- * __useAdminLinkQuery__
+ * __use__AdminLinkQuery__
  *
- * To run a query within a React component, call `useAdminLinkQuery` and pass it any options that fit your needs.
- * When your component renders, `useAdminLinkQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `use__AdminLinkQuery` and pass it any options that fit your needs.
+ * When your component renders, `use__AdminLinkQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useAdminLinkQuery({
+ * const { data, loading, error } = use__AdminLinkQuery({
  *   variables: {
  *      linkId: // value for 'linkId'
  *   },
  * });
  */
-export function useAdminLinkQuery(
-  baseOptions: Apollo.QueryHookOptions<AdminLinkQuery, AdminLinkQueryVariables> &
-    ({ variables: AdminLinkQueryVariables; skip?: boolean } | { skip: boolean }),
+export function use__AdminLinkQuery(
+  baseOptions: Apollo.QueryHookOptions<__AdminLinkQuery, __AdminLinkQueryVariables> &
+    ({ variables: __AdminLinkQueryVariables; skip?: boolean } | { skip: boolean }),
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<AdminLinkQuery, AdminLinkQueryVariables>(AdminLinkDocument, options)
+  return Apollo.useQuery<__AdminLinkQuery, __AdminLinkQueryVariables>(__AdminLinkDocument, options)
 }
-export function useAdminLinkLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<AdminLinkQuery, AdminLinkQueryVariables>,
+export function use__AdminLinkLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<__AdminLinkQuery, __AdminLinkQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<AdminLinkQuery, AdminLinkQueryVariables>(AdminLinkDocument, options)
-}
-export function useAdminLinkSuspenseQuery(
-  baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<AdminLinkQuery, AdminLinkQueryVariables>,
-) {
-  const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<AdminLinkQuery, AdminLinkQueryVariables>(
-    AdminLinkDocument,
+  return Apollo.useLazyQuery<__AdminLinkQuery, __AdminLinkQueryVariables>(
+    __AdminLinkDocument,
     options,
   )
 }
-export type AdminLinkQueryHookResult = ReturnType<typeof useAdminLinkQuery>
-export type AdminLinkLazyQueryHookResult = ReturnType<typeof useAdminLinkLazyQuery>
-export type AdminLinkSuspenseQueryHookResult = ReturnType<typeof useAdminLinkSuspenseQuery>
-export type AdminLinkQueryResult = Apollo.QueryResult<AdminLinkQuery, AdminLinkQueryVariables>
-export const AdminLinksDocument = gql`
-  query AdminLinks($input: ListLinkInput) {
+export function use__AdminLinkSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<__AdminLinkQuery, __AdminLinkQueryVariables>,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<__AdminLinkQuery, __AdminLinkQueryVariables>(
+    __AdminLinkDocument,
+    options,
+  )
+}
+export type __AdminLinkQueryHookResult = ReturnType<typeof use__AdminLinkQuery>
+export type __AdminLinkLazyQueryHookResult = ReturnType<typeof use__AdminLinkLazyQuery>
+export type __AdminLinkSuspenseQueryHookResult = ReturnType<typeof use__AdminLinkSuspenseQuery>
+export type __AdminLinkQueryResult = Apollo.QueryResult<__AdminLinkQuery, __AdminLinkQueryVariables>
+export const __AdminLinksDocument = gql`
+  query __AdminLinks($input: ListLinkInput) {
     links(input: $input) {
-      ...AdminLinkList
+      ...__AdminLinkList
     }
     counters: linksCount(input: $input) {
       ...CorePagingDetails
     }
   }
-  ${AdminLinkListFragmentDoc}
+  ${__AdminLinkListFragmentDoc}
   ${CorePagingDetailsFragmentDoc}
 `
 
 /**
- * __useAdminLinksQuery__
+ * __use__AdminLinksQuery__
  *
- * To run a query within a React component, call `useAdminLinksQuery` and pass it any options that fit your needs.
- * When your component renders, `useAdminLinksQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `use__AdminLinksQuery` and pass it any options that fit your needs.
+ * When your component renders, `use__AdminLinksQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useAdminLinksQuery({
+ * const { data, loading, error } = use__AdminLinksQuery({
  *   variables: {
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useAdminLinksQuery(
-  baseOptions?: Apollo.QueryHookOptions<AdminLinksQuery, AdminLinksQueryVariables>,
+export function use__AdminLinksQuery(
+  baseOptions?: Apollo.QueryHookOptions<__AdminLinksQuery, __AdminLinksQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<AdminLinksQuery, AdminLinksQueryVariables>(AdminLinksDocument, options)
-}
-export function useAdminLinksLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<AdminLinksQuery, AdminLinksQueryVariables>,
-) {
-  const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<AdminLinksQuery, AdminLinksQueryVariables>(AdminLinksDocument, options)
-}
-export function useAdminLinksSuspenseQuery(
-  baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<AdminLinksQuery, AdminLinksQueryVariables>,
-) {
-  const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<AdminLinksQuery, AdminLinksQueryVariables>(
-    AdminLinksDocument,
+  return Apollo.useQuery<__AdminLinksQuery, __AdminLinksQueryVariables>(
+    __AdminLinksDocument,
     options,
   )
 }
-export type AdminLinksQueryHookResult = ReturnType<typeof useAdminLinksQuery>
-export type AdminLinksLazyQueryHookResult = ReturnType<typeof useAdminLinksLazyQuery>
-export type AdminLinksSuspenseQueryHookResult = ReturnType<typeof useAdminLinksSuspenseQuery>
-export type AdminLinksQueryResult = Apollo.QueryResult<AdminLinksQuery, AdminLinksQueryVariables>
-export const AdminLinkPaginationDocument = gql`
-  query AdminLinkPagination($input: ListLinkInput) {
+export function use__AdminLinksLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<__AdminLinksQuery, __AdminLinksQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<__AdminLinksQuery, __AdminLinksQueryVariables>(
+    __AdminLinksDocument,
+    options,
+  )
+}
+export function use__AdminLinksSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<__AdminLinksQuery, __AdminLinksQueryVariables>,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<__AdminLinksQuery, __AdminLinksQueryVariables>(
+    __AdminLinksDocument,
+    options,
+  )
+}
+export type __AdminLinksQueryHookResult = ReturnType<typeof use__AdminLinksQuery>
+export type __AdminLinksLazyQueryHookResult = ReturnType<typeof use__AdminLinksLazyQuery>
+export type __AdminLinksSuspenseQueryHookResult = ReturnType<typeof use__AdminLinksSuspenseQuery>
+export type __AdminLinksQueryResult = Apollo.QueryResult<
+  __AdminLinksQuery,
+  __AdminLinksQueryVariables
+>
+export const __AdminLinkPaginationDocument = gql`
+  query __AdminLinkPagination($input: ListLinkInput) {
     counters: linksCount(input: $input) {
       ...CorePagingDetails
     }
@@ -15151,364 +15306,378 @@ export const AdminLinkPaginationDocument = gql`
 `
 
 /**
- * __useAdminLinkPaginationQuery__
+ * __use__AdminLinkPaginationQuery__
  *
- * To run a query within a React component, call `useAdminLinkPaginationQuery` and pass it any options that fit your needs.
- * When your component renders, `useAdminLinkPaginationQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `use__AdminLinkPaginationQuery` and pass it any options that fit your needs.
+ * When your component renders, `use__AdminLinkPaginationQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useAdminLinkPaginationQuery({
+ * const { data, loading, error } = use__AdminLinkPaginationQuery({
  *   variables: {
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useAdminLinkPaginationQuery(
+export function use__AdminLinkPaginationQuery(
   baseOptions?: Apollo.QueryHookOptions<
-    AdminLinkPaginationQuery,
-    AdminLinkPaginationQueryVariables
+    __AdminLinkPaginationQuery,
+    __AdminLinkPaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<AdminLinkPaginationQuery, AdminLinkPaginationQueryVariables>(
-    AdminLinkPaginationDocument,
+  return Apollo.useQuery<__AdminLinkPaginationQuery, __AdminLinkPaginationQueryVariables>(
+    __AdminLinkPaginationDocument,
     options,
   )
 }
-export function useAdminLinkPaginationLazyQuery(
+export function use__AdminLinkPaginationLazyQuery(
   baseOptions?: Apollo.LazyQueryHookOptions<
-    AdminLinkPaginationQuery,
-    AdminLinkPaginationQueryVariables
+    __AdminLinkPaginationQuery,
+    __AdminLinkPaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<AdminLinkPaginationQuery, AdminLinkPaginationQueryVariables>(
-    AdminLinkPaginationDocument,
+  return Apollo.useLazyQuery<__AdminLinkPaginationQuery, __AdminLinkPaginationQueryVariables>(
+    __AdminLinkPaginationDocument,
     options,
   )
 }
-export function useAdminLinkPaginationSuspenseQuery(
+export function use__AdminLinkPaginationSuspenseQuery(
   baseOptions?:
     | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<AdminLinkPaginationQuery, AdminLinkPaginationQueryVariables>,
+    | Apollo.SuspenseQueryHookOptions<
+        __AdminLinkPaginationQuery,
+        __AdminLinkPaginationQueryVariables
+      >,
 ) {
   const options =
     baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<AdminLinkPaginationQuery, AdminLinkPaginationQueryVariables>(
-    AdminLinkPaginationDocument,
+  return Apollo.useSuspenseQuery<__AdminLinkPaginationQuery, __AdminLinkPaginationQueryVariables>(
+    __AdminLinkPaginationDocument,
     options,
   )
 }
-export type AdminLinkPaginationQueryHookResult = ReturnType<typeof useAdminLinkPaginationQuery>
-export type AdminLinkPaginationLazyQueryHookResult = ReturnType<
-  typeof useAdminLinkPaginationLazyQuery
+export type __AdminLinkPaginationQueryHookResult = ReturnType<typeof use__AdminLinkPaginationQuery>
+export type __AdminLinkPaginationLazyQueryHookResult = ReturnType<
+  typeof use__AdminLinkPaginationLazyQuery
 >
-export type AdminLinkPaginationSuspenseQueryHookResult = ReturnType<
-  typeof useAdminLinkPaginationSuspenseQuery
+export type __AdminLinkPaginationSuspenseQueryHookResult = ReturnType<
+  typeof use__AdminLinkPaginationSuspenseQuery
 >
-export type AdminLinkPaginationQueryResult = Apollo.QueryResult<
-  AdminLinkPaginationQuery,
-  AdminLinkPaginationQueryVariables
+export type __AdminLinkPaginationQueryResult = Apollo.QueryResult<
+  __AdminLinkPaginationQuery,
+  __AdminLinkPaginationQueryVariables
 >
-export const AdminCreateLoginAttemptDocument = gql`
-  mutation AdminCreateLoginAttempt($input: CreateLoginAttemptInput!) {
+export const __AdminCreateLoginAttemptDocument = gql`
+  mutation __AdminCreateLoginAttempt($input: CreateLoginAttemptInput!) {
     createLoginAttempt(input: $input) {
-      ...AdminLoginAttemptDetails
+      ...__AdminLoginAttemptDetails
     }
   }
-  ${AdminLoginAttemptDetailsFragmentDoc}
+  ${__AdminLoginAttemptDetailsFragmentDoc}
 `
-export type AdminCreateLoginAttemptMutationFn = Apollo.MutationFunction<
-  AdminCreateLoginAttemptMutation,
-  AdminCreateLoginAttemptMutationVariables
+export type __AdminCreateLoginAttemptMutationFn = Apollo.MutationFunction<
+  __AdminCreateLoginAttemptMutation,
+  __AdminCreateLoginAttemptMutationVariables
 >
 
 /**
- * __useAdminCreateLoginAttemptMutation__
+ * __use__AdminCreateLoginAttemptMutation__
  *
- * To run a mutation, you first call `useAdminCreateLoginAttemptMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAdminCreateLoginAttemptMutation` returns a tuple that includes:
+ * To run a mutation, you first call `use__AdminCreateLoginAttemptMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `use__AdminCreateLoginAttemptMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [adminCreateLoginAttemptMutation, { data, loading, error }] = useAdminCreateLoginAttemptMutation({
+ * const [adminCreateLoginAttemptMutation, { data, loading, error }] = use__AdminCreateLoginAttemptMutation({
  *   variables: {
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useAdminCreateLoginAttemptMutation(
+export function use__AdminCreateLoginAttemptMutation(
   baseOptions?: Apollo.MutationHookOptions<
-    AdminCreateLoginAttemptMutation,
-    AdminCreateLoginAttemptMutationVariables
+    __AdminCreateLoginAttemptMutation,
+    __AdminCreateLoginAttemptMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
   return Apollo.useMutation<
-    AdminCreateLoginAttemptMutation,
-    AdminCreateLoginAttemptMutationVariables
-  >(AdminCreateLoginAttemptDocument, options)
+    __AdminCreateLoginAttemptMutation,
+    __AdminCreateLoginAttemptMutationVariables
+  >(__AdminCreateLoginAttemptDocument, options)
 }
-export type AdminCreateLoginAttemptMutationHookResult = ReturnType<
-  typeof useAdminCreateLoginAttemptMutation
+export type __AdminCreateLoginAttemptMutationHookResult = ReturnType<
+  typeof use__AdminCreateLoginAttemptMutation
 >
-export type AdminCreateLoginAttemptMutationResult =
-  Apollo.MutationResult<AdminCreateLoginAttemptMutation>
-export type AdminCreateLoginAttemptMutationOptions = Apollo.BaseMutationOptions<
-  AdminCreateLoginAttemptMutation,
-  AdminCreateLoginAttemptMutationVariables
+export type __AdminCreateLoginAttemptMutationResult =
+  Apollo.MutationResult<__AdminCreateLoginAttemptMutation>
+export type __AdminCreateLoginAttemptMutationOptions = Apollo.BaseMutationOptions<
+  __AdminCreateLoginAttemptMutation,
+  __AdminCreateLoginAttemptMutationVariables
 >
-export const AdminDeleteLoginAttemptDocument = gql`
-  mutation AdminDeleteLoginAttempt($loginAttemptId: String!) {
+export const __AdminDeleteLoginAttemptDocument = gql`
+  mutation __AdminDeleteLoginAttempt($loginAttemptId: String!) {
     deleteLoginAttempt(loginAttemptId: $loginAttemptId) {
       id
     }
   }
 `
-export type AdminDeleteLoginAttemptMutationFn = Apollo.MutationFunction<
-  AdminDeleteLoginAttemptMutation,
-  AdminDeleteLoginAttemptMutationVariables
+export type __AdminDeleteLoginAttemptMutationFn = Apollo.MutationFunction<
+  __AdminDeleteLoginAttemptMutation,
+  __AdminDeleteLoginAttemptMutationVariables
 >
 
 /**
- * __useAdminDeleteLoginAttemptMutation__
+ * __use__AdminDeleteLoginAttemptMutation__
  *
- * To run a mutation, you first call `useAdminDeleteLoginAttemptMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAdminDeleteLoginAttemptMutation` returns a tuple that includes:
+ * To run a mutation, you first call `use__AdminDeleteLoginAttemptMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `use__AdminDeleteLoginAttemptMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [adminDeleteLoginAttemptMutation, { data, loading, error }] = useAdminDeleteLoginAttemptMutation({
+ * const [adminDeleteLoginAttemptMutation, { data, loading, error }] = use__AdminDeleteLoginAttemptMutation({
  *   variables: {
  *      loginAttemptId: // value for 'loginAttemptId'
  *   },
  * });
  */
-export function useAdminDeleteLoginAttemptMutation(
+export function use__AdminDeleteLoginAttemptMutation(
   baseOptions?: Apollo.MutationHookOptions<
-    AdminDeleteLoginAttemptMutation,
-    AdminDeleteLoginAttemptMutationVariables
+    __AdminDeleteLoginAttemptMutation,
+    __AdminDeleteLoginAttemptMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
   return Apollo.useMutation<
-    AdminDeleteLoginAttemptMutation,
-    AdminDeleteLoginAttemptMutationVariables
-  >(AdminDeleteLoginAttemptDocument, options)
+    __AdminDeleteLoginAttemptMutation,
+    __AdminDeleteLoginAttemptMutationVariables
+  >(__AdminDeleteLoginAttemptDocument, options)
 }
-export type AdminDeleteLoginAttemptMutationHookResult = ReturnType<
-  typeof useAdminDeleteLoginAttemptMutation
+export type __AdminDeleteLoginAttemptMutationHookResult = ReturnType<
+  typeof use__AdminDeleteLoginAttemptMutation
 >
-export type AdminDeleteLoginAttemptMutationResult =
-  Apollo.MutationResult<AdminDeleteLoginAttemptMutation>
-export type AdminDeleteLoginAttemptMutationOptions = Apollo.BaseMutationOptions<
-  AdminDeleteLoginAttemptMutation,
-  AdminDeleteLoginAttemptMutationVariables
+export type __AdminDeleteLoginAttemptMutationResult =
+  Apollo.MutationResult<__AdminDeleteLoginAttemptMutation>
+export type __AdminDeleteLoginAttemptMutationOptions = Apollo.BaseMutationOptions<
+  __AdminDeleteLoginAttemptMutation,
+  __AdminDeleteLoginAttemptMutationVariables
 >
-export const AdminUpdateLoginAttemptDocument = gql`
-  mutation AdminUpdateLoginAttempt($loginAttemptId: String!, $input: UpdateLoginAttemptInput!) {
+export const __AdminUpdateLoginAttemptDocument = gql`
+  mutation __AdminUpdateLoginAttempt($loginAttemptId: String!, $input: UpdateLoginAttemptInput!) {
     updateLoginAttempt(loginAttemptId: $loginAttemptId, input: $input) {
-      ...AdminLoginAttemptDetails
+      ...__AdminLoginAttemptDetails
     }
   }
-  ${AdminLoginAttemptDetailsFragmentDoc}
+  ${__AdminLoginAttemptDetailsFragmentDoc}
 `
-export type AdminUpdateLoginAttemptMutationFn = Apollo.MutationFunction<
-  AdminUpdateLoginAttemptMutation,
-  AdminUpdateLoginAttemptMutationVariables
+export type __AdminUpdateLoginAttemptMutationFn = Apollo.MutationFunction<
+  __AdminUpdateLoginAttemptMutation,
+  __AdminUpdateLoginAttemptMutationVariables
 >
 
 /**
- * __useAdminUpdateLoginAttemptMutation__
+ * __use__AdminUpdateLoginAttemptMutation__
  *
- * To run a mutation, you first call `useAdminUpdateLoginAttemptMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAdminUpdateLoginAttemptMutation` returns a tuple that includes:
+ * To run a mutation, you first call `use__AdminUpdateLoginAttemptMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `use__AdminUpdateLoginAttemptMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [adminUpdateLoginAttemptMutation, { data, loading, error }] = useAdminUpdateLoginAttemptMutation({
+ * const [adminUpdateLoginAttemptMutation, { data, loading, error }] = use__AdminUpdateLoginAttemptMutation({
  *   variables: {
  *      loginAttemptId: // value for 'loginAttemptId'
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useAdminUpdateLoginAttemptMutation(
+export function use__AdminUpdateLoginAttemptMutation(
   baseOptions?: Apollo.MutationHookOptions<
-    AdminUpdateLoginAttemptMutation,
-    AdminUpdateLoginAttemptMutationVariables
+    __AdminUpdateLoginAttemptMutation,
+    __AdminUpdateLoginAttemptMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
   return Apollo.useMutation<
-    AdminUpdateLoginAttemptMutation,
-    AdminUpdateLoginAttemptMutationVariables
-  >(AdminUpdateLoginAttemptDocument, options)
+    __AdminUpdateLoginAttemptMutation,
+    __AdminUpdateLoginAttemptMutationVariables
+  >(__AdminUpdateLoginAttemptDocument, options)
 }
-export type AdminUpdateLoginAttemptMutationHookResult = ReturnType<
-  typeof useAdminUpdateLoginAttemptMutation
+export type __AdminUpdateLoginAttemptMutationHookResult = ReturnType<
+  typeof use__AdminUpdateLoginAttemptMutation
 >
-export type AdminUpdateLoginAttemptMutationResult =
-  Apollo.MutationResult<AdminUpdateLoginAttemptMutation>
-export type AdminUpdateLoginAttemptMutationOptions = Apollo.BaseMutationOptions<
-  AdminUpdateLoginAttemptMutation,
-  AdminUpdateLoginAttemptMutationVariables
+export type __AdminUpdateLoginAttemptMutationResult =
+  Apollo.MutationResult<__AdminUpdateLoginAttemptMutation>
+export type __AdminUpdateLoginAttemptMutationOptions = Apollo.BaseMutationOptions<
+  __AdminUpdateLoginAttemptMutation,
+  __AdminUpdateLoginAttemptMutationVariables
 >
-export const AdminLoginAttemptDocument = gql`
-  query AdminLoginAttempt($loginAttemptId: String!) {
+export const __AdminLoginAttemptDocument = gql`
+  query __AdminLoginAttempt($loginAttemptId: String!) {
     loginAttempt(loginAttemptId: $loginAttemptId) {
-      ...AdminLoginAttemptDetails
+      ...__AdminLoginAttemptDetails
     }
   }
-  ${AdminLoginAttemptDetailsFragmentDoc}
+  ${__AdminLoginAttemptDetailsFragmentDoc}
 `
 
 /**
- * __useAdminLoginAttemptQuery__
+ * __use__AdminLoginAttemptQuery__
  *
- * To run a query within a React component, call `useAdminLoginAttemptQuery` and pass it any options that fit your needs.
- * When your component renders, `useAdminLoginAttemptQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `use__AdminLoginAttemptQuery` and pass it any options that fit your needs.
+ * When your component renders, `use__AdminLoginAttemptQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useAdminLoginAttemptQuery({
+ * const { data, loading, error } = use__AdminLoginAttemptQuery({
  *   variables: {
  *      loginAttemptId: // value for 'loginAttemptId'
  *   },
  * });
  */
-export function useAdminLoginAttemptQuery(
-  baseOptions: Apollo.QueryHookOptions<AdminLoginAttemptQuery, AdminLoginAttemptQueryVariables> &
-    ({ variables: AdminLoginAttemptQueryVariables; skip?: boolean } | { skip: boolean }),
+export function use__AdminLoginAttemptQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    __AdminLoginAttemptQuery,
+    __AdminLoginAttemptQueryVariables
+  > &
+    ({ variables: __AdminLoginAttemptQueryVariables; skip?: boolean } | { skip: boolean }),
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<AdminLoginAttemptQuery, AdminLoginAttemptQueryVariables>(
-    AdminLoginAttemptDocument,
+  return Apollo.useQuery<__AdminLoginAttemptQuery, __AdminLoginAttemptQueryVariables>(
+    __AdminLoginAttemptDocument,
     options,
   )
 }
-export function useAdminLoginAttemptLazyQuery(
+export function use__AdminLoginAttemptLazyQuery(
   baseOptions?: Apollo.LazyQueryHookOptions<
-    AdminLoginAttemptQuery,
-    AdminLoginAttemptQueryVariables
+    __AdminLoginAttemptQuery,
+    __AdminLoginAttemptQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<AdminLoginAttemptQuery, AdminLoginAttemptQueryVariables>(
-    AdminLoginAttemptDocument,
+  return Apollo.useLazyQuery<__AdminLoginAttemptQuery, __AdminLoginAttemptQueryVariables>(
+    __AdminLoginAttemptDocument,
     options,
   )
 }
-export function useAdminLoginAttemptSuspenseQuery(
+export function use__AdminLoginAttemptSuspenseQuery(
   baseOptions?:
     | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<AdminLoginAttemptQuery, AdminLoginAttemptQueryVariables>,
+    | Apollo.SuspenseQueryHookOptions<__AdminLoginAttemptQuery, __AdminLoginAttemptQueryVariables>,
 ) {
   const options =
     baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<AdminLoginAttemptQuery, AdminLoginAttemptQueryVariables>(
-    AdminLoginAttemptDocument,
+  return Apollo.useSuspenseQuery<__AdminLoginAttemptQuery, __AdminLoginAttemptQueryVariables>(
+    __AdminLoginAttemptDocument,
     options,
   )
 }
-export type AdminLoginAttemptQueryHookResult = ReturnType<typeof useAdminLoginAttemptQuery>
-export type AdminLoginAttemptLazyQueryHookResult = ReturnType<typeof useAdminLoginAttemptLazyQuery>
-export type AdminLoginAttemptSuspenseQueryHookResult = ReturnType<
-  typeof useAdminLoginAttemptSuspenseQuery
+export type __AdminLoginAttemptQueryHookResult = ReturnType<typeof use__AdminLoginAttemptQuery>
+export type __AdminLoginAttemptLazyQueryHookResult = ReturnType<
+  typeof use__AdminLoginAttemptLazyQuery
 >
-export type AdminLoginAttemptQueryResult = Apollo.QueryResult<
-  AdminLoginAttemptQuery,
-  AdminLoginAttemptQueryVariables
+export type __AdminLoginAttemptSuspenseQueryHookResult = ReturnType<
+  typeof use__AdminLoginAttemptSuspenseQuery
 >
-export const AdminLoginAttemptsDocument = gql`
-  query AdminLoginAttempts($input: ListLoginAttemptInput) {
+export type __AdminLoginAttemptQueryResult = Apollo.QueryResult<
+  __AdminLoginAttemptQuery,
+  __AdminLoginAttemptQueryVariables
+>
+export const __AdminLoginAttemptsDocument = gql`
+  query __AdminLoginAttempts($input: ListLoginAttemptInput) {
     loginAttempts(input: $input) {
-      ...AdminLoginAttemptList
+      ...__AdminLoginAttemptList
     }
     counters: loginAttemptsCount(input: $input) {
       ...CorePagingDetails
     }
   }
-  ${AdminLoginAttemptListFragmentDoc}
+  ${__AdminLoginAttemptListFragmentDoc}
   ${CorePagingDetailsFragmentDoc}
 `
 
 /**
- * __useAdminLoginAttemptsQuery__
+ * __use__AdminLoginAttemptsQuery__
  *
- * To run a query within a React component, call `useAdminLoginAttemptsQuery` and pass it any options that fit your needs.
- * When your component renders, `useAdminLoginAttemptsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `use__AdminLoginAttemptsQuery` and pass it any options that fit your needs.
+ * When your component renders, `use__AdminLoginAttemptsQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useAdminLoginAttemptsQuery({
+ * const { data, loading, error } = use__AdminLoginAttemptsQuery({
  *   variables: {
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useAdminLoginAttemptsQuery(
-  baseOptions?: Apollo.QueryHookOptions<AdminLoginAttemptsQuery, AdminLoginAttemptsQueryVariables>,
-) {
-  const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<AdminLoginAttemptsQuery, AdminLoginAttemptsQueryVariables>(
-    AdminLoginAttemptsDocument,
-    options,
-  )
-}
-export function useAdminLoginAttemptsLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
-    AdminLoginAttemptsQuery,
-    AdminLoginAttemptsQueryVariables
+export function use__AdminLoginAttemptsQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    __AdminLoginAttemptsQuery,
+    __AdminLoginAttemptsQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<AdminLoginAttemptsQuery, AdminLoginAttemptsQueryVariables>(
-    AdminLoginAttemptsDocument,
+  return Apollo.useQuery<__AdminLoginAttemptsQuery, __AdminLoginAttemptsQueryVariables>(
+    __AdminLoginAttemptsDocument,
     options,
   )
 }
-export function useAdminLoginAttemptsSuspenseQuery(
+export function use__AdminLoginAttemptsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    __AdminLoginAttemptsQuery,
+    __AdminLoginAttemptsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<__AdminLoginAttemptsQuery, __AdminLoginAttemptsQueryVariables>(
+    __AdminLoginAttemptsDocument,
+    options,
+  )
+}
+export function use__AdminLoginAttemptsSuspenseQuery(
   baseOptions?:
     | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<AdminLoginAttemptsQuery, AdminLoginAttemptsQueryVariables>,
+    | Apollo.SuspenseQueryHookOptions<
+        __AdminLoginAttemptsQuery,
+        __AdminLoginAttemptsQueryVariables
+      >,
 ) {
   const options =
     baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<AdminLoginAttemptsQuery, AdminLoginAttemptsQueryVariables>(
-    AdminLoginAttemptsDocument,
+  return Apollo.useSuspenseQuery<__AdminLoginAttemptsQuery, __AdminLoginAttemptsQueryVariables>(
+    __AdminLoginAttemptsDocument,
     options,
   )
 }
-export type AdminLoginAttemptsQueryHookResult = ReturnType<typeof useAdminLoginAttemptsQuery>
-export type AdminLoginAttemptsLazyQueryHookResult = ReturnType<
-  typeof useAdminLoginAttemptsLazyQuery
+export type __AdminLoginAttemptsQueryHookResult = ReturnType<typeof use__AdminLoginAttemptsQuery>
+export type __AdminLoginAttemptsLazyQueryHookResult = ReturnType<
+  typeof use__AdminLoginAttemptsLazyQuery
 >
-export type AdminLoginAttemptsSuspenseQueryHookResult = ReturnType<
-  typeof useAdminLoginAttemptsSuspenseQuery
+export type __AdminLoginAttemptsSuspenseQueryHookResult = ReturnType<
+  typeof use__AdminLoginAttemptsSuspenseQuery
 >
-export type AdminLoginAttemptsQueryResult = Apollo.QueryResult<
-  AdminLoginAttemptsQuery,
-  AdminLoginAttemptsQueryVariables
+export type __AdminLoginAttemptsQueryResult = Apollo.QueryResult<
+  __AdminLoginAttemptsQuery,
+  __AdminLoginAttemptsQueryVariables
 >
-export const AdminLoginAttemptPaginationDocument = gql`
-  query AdminLoginAttemptPagination($input: ListLoginAttemptInput) {
+export const __AdminLoginAttemptPaginationDocument = gql`
+  query __AdminLoginAttemptPagination($input: ListLoginAttemptInput) {
     counters: loginAttemptsCount(input: $input) {
       ...CorePagingDetails
     }
@@ -15517,369 +15686,380 @@ export const AdminLoginAttemptPaginationDocument = gql`
 `
 
 /**
- * __useAdminLoginAttemptPaginationQuery__
+ * __use__AdminLoginAttemptPaginationQuery__
  *
- * To run a query within a React component, call `useAdminLoginAttemptPaginationQuery` and pass it any options that fit your needs.
- * When your component renders, `useAdminLoginAttemptPaginationQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `use__AdminLoginAttemptPaginationQuery` and pass it any options that fit your needs.
+ * When your component renders, `use__AdminLoginAttemptPaginationQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useAdminLoginAttemptPaginationQuery({
+ * const { data, loading, error } = use__AdminLoginAttemptPaginationQuery({
  *   variables: {
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useAdminLoginAttemptPaginationQuery(
+export function use__AdminLoginAttemptPaginationQuery(
   baseOptions?: Apollo.QueryHookOptions<
-    AdminLoginAttemptPaginationQuery,
-    AdminLoginAttemptPaginationQueryVariables
+    __AdminLoginAttemptPaginationQuery,
+    __AdminLoginAttemptPaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
   return Apollo.useQuery<
-    AdminLoginAttemptPaginationQuery,
-    AdminLoginAttemptPaginationQueryVariables
-  >(AdminLoginAttemptPaginationDocument, options)
+    __AdminLoginAttemptPaginationQuery,
+    __AdminLoginAttemptPaginationQueryVariables
+  >(__AdminLoginAttemptPaginationDocument, options)
 }
-export function useAdminLoginAttemptPaginationLazyQuery(
+export function use__AdminLoginAttemptPaginationLazyQuery(
   baseOptions?: Apollo.LazyQueryHookOptions<
-    AdminLoginAttemptPaginationQuery,
-    AdminLoginAttemptPaginationQueryVariables
+    __AdminLoginAttemptPaginationQuery,
+    __AdminLoginAttemptPaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
   return Apollo.useLazyQuery<
-    AdminLoginAttemptPaginationQuery,
-    AdminLoginAttemptPaginationQueryVariables
-  >(AdminLoginAttemptPaginationDocument, options)
+    __AdminLoginAttemptPaginationQuery,
+    __AdminLoginAttemptPaginationQueryVariables
+  >(__AdminLoginAttemptPaginationDocument, options)
 }
-export function useAdminLoginAttemptPaginationSuspenseQuery(
+export function use__AdminLoginAttemptPaginationSuspenseQuery(
   baseOptions?:
     | Apollo.SkipToken
     | Apollo.SuspenseQueryHookOptions<
-        AdminLoginAttemptPaginationQuery,
-        AdminLoginAttemptPaginationQueryVariables
+        __AdminLoginAttemptPaginationQuery,
+        __AdminLoginAttemptPaginationQueryVariables
       >,
 ) {
   const options =
     baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
   return Apollo.useSuspenseQuery<
-    AdminLoginAttemptPaginationQuery,
-    AdminLoginAttemptPaginationQueryVariables
-  >(AdminLoginAttemptPaginationDocument, options)
+    __AdminLoginAttemptPaginationQuery,
+    __AdminLoginAttemptPaginationQueryVariables
+  >(__AdminLoginAttemptPaginationDocument, options)
 }
-export type AdminLoginAttemptPaginationQueryHookResult = ReturnType<
-  typeof useAdminLoginAttemptPaginationQuery
+export type __AdminLoginAttemptPaginationQueryHookResult = ReturnType<
+  typeof use__AdminLoginAttemptPaginationQuery
 >
-export type AdminLoginAttemptPaginationLazyQueryHookResult = ReturnType<
-  typeof useAdminLoginAttemptPaginationLazyQuery
+export type __AdminLoginAttemptPaginationLazyQueryHookResult = ReturnType<
+  typeof use__AdminLoginAttemptPaginationLazyQuery
 >
-export type AdminLoginAttemptPaginationSuspenseQueryHookResult = ReturnType<
-  typeof useAdminLoginAttemptPaginationSuspenseQuery
+export type __AdminLoginAttemptPaginationSuspenseQueryHookResult = ReturnType<
+  typeof use__AdminLoginAttemptPaginationSuspenseQuery
 >
-export type AdminLoginAttemptPaginationQueryResult = Apollo.QueryResult<
-  AdminLoginAttemptPaginationQuery,
-  AdminLoginAttemptPaginationQueryVariables
+export type __AdminLoginAttemptPaginationQueryResult = Apollo.QueryResult<
+  __AdminLoginAttemptPaginationQuery,
+  __AdminLoginAttemptPaginationQueryVariables
 >
-export const AdminCreateOAuthAccountDocument = gql`
-  mutation AdminCreateOAuthAccount($input: CreateOAuthAccountInput!) {
+export const __AdminCreateOAuthAccountDocument = gql`
+  mutation __AdminCreateOAuthAccount($input: CreateOAuthAccountInput!) {
     createOAuthAccount(input: $input) {
-      ...AdminOAuthAccountDetails
+      ...__AdminOAuthAccountDetails
     }
   }
-  ${AdminOAuthAccountDetailsFragmentDoc}
+  ${__AdminOAuthAccountDetailsFragmentDoc}
 `
-export type AdminCreateOAuthAccountMutationFn = Apollo.MutationFunction<
-  AdminCreateOAuthAccountMutation,
-  AdminCreateOAuthAccountMutationVariables
+export type __AdminCreateOAuthAccountMutationFn = Apollo.MutationFunction<
+  __AdminCreateOAuthAccountMutation,
+  __AdminCreateOAuthAccountMutationVariables
 >
 
 /**
- * __useAdminCreateOAuthAccountMutation__
+ * __use__AdminCreateOAuthAccountMutation__
  *
- * To run a mutation, you first call `useAdminCreateOAuthAccountMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAdminCreateOAuthAccountMutation` returns a tuple that includes:
+ * To run a mutation, you first call `use__AdminCreateOAuthAccountMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `use__AdminCreateOAuthAccountMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [adminCreateOAuthAccountMutation, { data, loading, error }] = useAdminCreateOAuthAccountMutation({
+ * const [adminCreateOAuthAccountMutation, { data, loading, error }] = use__AdminCreateOAuthAccountMutation({
  *   variables: {
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useAdminCreateOAuthAccountMutation(
+export function use__AdminCreateOAuthAccountMutation(
   baseOptions?: Apollo.MutationHookOptions<
-    AdminCreateOAuthAccountMutation,
-    AdminCreateOAuthAccountMutationVariables
+    __AdminCreateOAuthAccountMutation,
+    __AdminCreateOAuthAccountMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
   return Apollo.useMutation<
-    AdminCreateOAuthAccountMutation,
-    AdminCreateOAuthAccountMutationVariables
-  >(AdminCreateOAuthAccountDocument, options)
+    __AdminCreateOAuthAccountMutation,
+    __AdminCreateOAuthAccountMutationVariables
+  >(__AdminCreateOAuthAccountDocument, options)
 }
-export type AdminCreateOAuthAccountMutationHookResult = ReturnType<
-  typeof useAdminCreateOAuthAccountMutation
+export type __AdminCreateOAuthAccountMutationHookResult = ReturnType<
+  typeof use__AdminCreateOAuthAccountMutation
 >
-export type AdminCreateOAuthAccountMutationResult =
-  Apollo.MutationResult<AdminCreateOAuthAccountMutation>
-export type AdminCreateOAuthAccountMutationOptions = Apollo.BaseMutationOptions<
-  AdminCreateOAuthAccountMutation,
-  AdminCreateOAuthAccountMutationVariables
+export type __AdminCreateOAuthAccountMutationResult =
+  Apollo.MutationResult<__AdminCreateOAuthAccountMutation>
+export type __AdminCreateOAuthAccountMutationOptions = Apollo.BaseMutationOptions<
+  __AdminCreateOAuthAccountMutation,
+  __AdminCreateOAuthAccountMutationVariables
 >
-export const AdminDeleteOAuthAccountDocument = gql`
-  mutation AdminDeleteOAuthAccount($oAuthAccountId: String!) {
+export const __AdminDeleteOAuthAccountDocument = gql`
+  mutation __AdminDeleteOAuthAccount($oAuthAccountId: String!) {
     deleteOAuthAccount(oAuthAccountId: $oAuthAccountId) {
       id
     }
   }
 `
-export type AdminDeleteOAuthAccountMutationFn = Apollo.MutationFunction<
-  AdminDeleteOAuthAccountMutation,
-  AdminDeleteOAuthAccountMutationVariables
+export type __AdminDeleteOAuthAccountMutationFn = Apollo.MutationFunction<
+  __AdminDeleteOAuthAccountMutation,
+  __AdminDeleteOAuthAccountMutationVariables
 >
 
 /**
- * __useAdminDeleteOAuthAccountMutation__
+ * __use__AdminDeleteOAuthAccountMutation__
  *
- * To run a mutation, you first call `useAdminDeleteOAuthAccountMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAdminDeleteOAuthAccountMutation` returns a tuple that includes:
+ * To run a mutation, you first call `use__AdminDeleteOAuthAccountMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `use__AdminDeleteOAuthAccountMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [adminDeleteOAuthAccountMutation, { data, loading, error }] = useAdminDeleteOAuthAccountMutation({
+ * const [adminDeleteOAuthAccountMutation, { data, loading, error }] = use__AdminDeleteOAuthAccountMutation({
  *   variables: {
  *      oAuthAccountId: // value for 'oAuthAccountId'
  *   },
  * });
  */
-export function useAdminDeleteOAuthAccountMutation(
+export function use__AdminDeleteOAuthAccountMutation(
   baseOptions?: Apollo.MutationHookOptions<
-    AdminDeleteOAuthAccountMutation,
-    AdminDeleteOAuthAccountMutationVariables
+    __AdminDeleteOAuthAccountMutation,
+    __AdminDeleteOAuthAccountMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
   return Apollo.useMutation<
-    AdminDeleteOAuthAccountMutation,
-    AdminDeleteOAuthAccountMutationVariables
-  >(AdminDeleteOAuthAccountDocument, options)
+    __AdminDeleteOAuthAccountMutation,
+    __AdminDeleteOAuthAccountMutationVariables
+  >(__AdminDeleteOAuthAccountDocument, options)
 }
-export type AdminDeleteOAuthAccountMutationHookResult = ReturnType<
-  typeof useAdminDeleteOAuthAccountMutation
+export type __AdminDeleteOAuthAccountMutationHookResult = ReturnType<
+  typeof use__AdminDeleteOAuthAccountMutation
 >
-export type AdminDeleteOAuthAccountMutationResult =
-  Apollo.MutationResult<AdminDeleteOAuthAccountMutation>
-export type AdminDeleteOAuthAccountMutationOptions = Apollo.BaseMutationOptions<
-  AdminDeleteOAuthAccountMutation,
-  AdminDeleteOAuthAccountMutationVariables
+export type __AdminDeleteOAuthAccountMutationResult =
+  Apollo.MutationResult<__AdminDeleteOAuthAccountMutation>
+export type __AdminDeleteOAuthAccountMutationOptions = Apollo.BaseMutationOptions<
+  __AdminDeleteOAuthAccountMutation,
+  __AdminDeleteOAuthAccountMutationVariables
 >
-export const AdminUpdateOAuthAccountDocument = gql`
-  mutation AdminUpdateOAuthAccount($oAuthAccountId: String!, $input: UpdateOAuthAccountInput!) {
+export const __AdminUpdateOAuthAccountDocument = gql`
+  mutation __AdminUpdateOAuthAccount($oAuthAccountId: String!, $input: UpdateOAuthAccountInput!) {
     updateOAuthAccount(oAuthAccountId: $oAuthAccountId, input: $input) {
-      ...AdminOAuthAccountDetails
+      ...__AdminOAuthAccountDetails
     }
   }
-  ${AdminOAuthAccountDetailsFragmentDoc}
+  ${__AdminOAuthAccountDetailsFragmentDoc}
 `
-export type AdminUpdateOAuthAccountMutationFn = Apollo.MutationFunction<
-  AdminUpdateOAuthAccountMutation,
-  AdminUpdateOAuthAccountMutationVariables
+export type __AdminUpdateOAuthAccountMutationFn = Apollo.MutationFunction<
+  __AdminUpdateOAuthAccountMutation,
+  __AdminUpdateOAuthAccountMutationVariables
 >
 
 /**
- * __useAdminUpdateOAuthAccountMutation__
+ * __use__AdminUpdateOAuthAccountMutation__
  *
- * To run a mutation, you first call `useAdminUpdateOAuthAccountMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAdminUpdateOAuthAccountMutation` returns a tuple that includes:
+ * To run a mutation, you first call `use__AdminUpdateOAuthAccountMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `use__AdminUpdateOAuthAccountMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [adminUpdateOAuthAccountMutation, { data, loading, error }] = useAdminUpdateOAuthAccountMutation({
+ * const [adminUpdateOAuthAccountMutation, { data, loading, error }] = use__AdminUpdateOAuthAccountMutation({
  *   variables: {
  *      oAuthAccountId: // value for 'oAuthAccountId'
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useAdminUpdateOAuthAccountMutation(
+export function use__AdminUpdateOAuthAccountMutation(
   baseOptions?: Apollo.MutationHookOptions<
-    AdminUpdateOAuthAccountMutation,
-    AdminUpdateOAuthAccountMutationVariables
+    __AdminUpdateOAuthAccountMutation,
+    __AdminUpdateOAuthAccountMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
   return Apollo.useMutation<
-    AdminUpdateOAuthAccountMutation,
-    AdminUpdateOAuthAccountMutationVariables
-  >(AdminUpdateOAuthAccountDocument, options)
+    __AdminUpdateOAuthAccountMutation,
+    __AdminUpdateOAuthAccountMutationVariables
+  >(__AdminUpdateOAuthAccountDocument, options)
 }
-export type AdminUpdateOAuthAccountMutationHookResult = ReturnType<
-  typeof useAdminUpdateOAuthAccountMutation
+export type __AdminUpdateOAuthAccountMutationHookResult = ReturnType<
+  typeof use__AdminUpdateOAuthAccountMutation
 >
-export type AdminUpdateOAuthAccountMutationResult =
-  Apollo.MutationResult<AdminUpdateOAuthAccountMutation>
-export type AdminUpdateOAuthAccountMutationOptions = Apollo.BaseMutationOptions<
-  AdminUpdateOAuthAccountMutation,
-  AdminUpdateOAuthAccountMutationVariables
+export type __AdminUpdateOAuthAccountMutationResult =
+  Apollo.MutationResult<__AdminUpdateOAuthAccountMutation>
+export type __AdminUpdateOAuthAccountMutationOptions = Apollo.BaseMutationOptions<
+  __AdminUpdateOAuthAccountMutation,
+  __AdminUpdateOAuthAccountMutationVariables
 >
-export const AdminOAuthAccountDocument = gql`
-  query AdminOAuthAccount($oAuthAccountId: String!) {
+export const __AdminOAuthAccountDocument = gql`
+  query __AdminOAuthAccount($oAuthAccountId: String!) {
     oAuthAccount(oAuthAccountId: $oAuthAccountId) {
-      ...AdminOAuthAccountDetails
+      ...__AdminOAuthAccountDetails
     }
   }
-  ${AdminOAuthAccountDetailsFragmentDoc}
+  ${__AdminOAuthAccountDetailsFragmentDoc}
 `
 
 /**
- * __useAdminOAuthAccountQuery__
+ * __use__AdminOAuthAccountQuery__
  *
- * To run a query within a React component, call `useAdminOAuthAccountQuery` and pass it any options that fit your needs.
- * When your component renders, `useAdminOAuthAccountQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `use__AdminOAuthAccountQuery` and pass it any options that fit your needs.
+ * When your component renders, `use__AdminOAuthAccountQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useAdminOAuthAccountQuery({
+ * const { data, loading, error } = use__AdminOAuthAccountQuery({
  *   variables: {
  *      oAuthAccountId: // value for 'oAuthAccountId'
  *   },
  * });
  */
-export function useAdminOAuthAccountQuery(
-  baseOptions: Apollo.QueryHookOptions<AdminOAuthAccountQuery, AdminOAuthAccountQueryVariables> &
-    ({ variables: AdminOAuthAccountQueryVariables; skip?: boolean } | { skip: boolean }),
+export function use__AdminOAuthAccountQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    __AdminOAuthAccountQuery,
+    __AdminOAuthAccountQueryVariables
+  > &
+    ({ variables: __AdminOAuthAccountQueryVariables; skip?: boolean } | { skip: boolean }),
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<AdminOAuthAccountQuery, AdminOAuthAccountQueryVariables>(
-    AdminOAuthAccountDocument,
+  return Apollo.useQuery<__AdminOAuthAccountQuery, __AdminOAuthAccountQueryVariables>(
+    __AdminOAuthAccountDocument,
     options,
   )
 }
-export function useAdminOAuthAccountLazyQuery(
+export function use__AdminOAuthAccountLazyQuery(
   baseOptions?: Apollo.LazyQueryHookOptions<
-    AdminOAuthAccountQuery,
-    AdminOAuthAccountQueryVariables
+    __AdminOAuthAccountQuery,
+    __AdminOAuthAccountQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<AdminOAuthAccountQuery, AdminOAuthAccountQueryVariables>(
-    AdminOAuthAccountDocument,
+  return Apollo.useLazyQuery<__AdminOAuthAccountQuery, __AdminOAuthAccountQueryVariables>(
+    __AdminOAuthAccountDocument,
     options,
   )
 }
-export function useAdminOAuthAccountSuspenseQuery(
+export function use__AdminOAuthAccountSuspenseQuery(
   baseOptions?:
     | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<AdminOAuthAccountQuery, AdminOAuthAccountQueryVariables>,
+    | Apollo.SuspenseQueryHookOptions<__AdminOAuthAccountQuery, __AdminOAuthAccountQueryVariables>,
 ) {
   const options =
     baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<AdminOAuthAccountQuery, AdminOAuthAccountQueryVariables>(
-    AdminOAuthAccountDocument,
+  return Apollo.useSuspenseQuery<__AdminOAuthAccountQuery, __AdminOAuthAccountQueryVariables>(
+    __AdminOAuthAccountDocument,
     options,
   )
 }
-export type AdminOAuthAccountQueryHookResult = ReturnType<typeof useAdminOAuthAccountQuery>
-export type AdminOAuthAccountLazyQueryHookResult = ReturnType<typeof useAdminOAuthAccountLazyQuery>
-export type AdminOAuthAccountSuspenseQueryHookResult = ReturnType<
-  typeof useAdminOAuthAccountSuspenseQuery
+export type __AdminOAuthAccountQueryHookResult = ReturnType<typeof use__AdminOAuthAccountQuery>
+export type __AdminOAuthAccountLazyQueryHookResult = ReturnType<
+  typeof use__AdminOAuthAccountLazyQuery
 >
-export type AdminOAuthAccountQueryResult = Apollo.QueryResult<
-  AdminOAuthAccountQuery,
-  AdminOAuthAccountQueryVariables
+export type __AdminOAuthAccountSuspenseQueryHookResult = ReturnType<
+  typeof use__AdminOAuthAccountSuspenseQuery
 >
-export const AdminOAuthAccountsDocument = gql`
-  query AdminOAuthAccounts($input: ListOAuthAccountInput) {
+export type __AdminOAuthAccountQueryResult = Apollo.QueryResult<
+  __AdminOAuthAccountQuery,
+  __AdminOAuthAccountQueryVariables
+>
+export const __AdminOAuthAccountsDocument = gql`
+  query __AdminOAuthAccounts($input: ListOAuthAccountInput) {
     oAuthAccounts(input: $input) {
-      ...AdminOAuthAccountList
+      ...__AdminOAuthAccountList
     }
     counters: oAuthAccountsCount(input: $input) {
       ...CorePagingDetails
     }
   }
-  ${AdminOAuthAccountListFragmentDoc}
+  ${__AdminOAuthAccountListFragmentDoc}
   ${CorePagingDetailsFragmentDoc}
 `
 
 /**
- * __useAdminOAuthAccountsQuery__
+ * __use__AdminOAuthAccountsQuery__
  *
- * To run a query within a React component, call `useAdminOAuthAccountsQuery` and pass it any options that fit your needs.
- * When your component renders, `useAdminOAuthAccountsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `use__AdminOAuthAccountsQuery` and pass it any options that fit your needs.
+ * When your component renders, `use__AdminOAuthAccountsQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useAdminOAuthAccountsQuery({
+ * const { data, loading, error } = use__AdminOAuthAccountsQuery({
  *   variables: {
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useAdminOAuthAccountsQuery(
-  baseOptions?: Apollo.QueryHookOptions<AdminOAuthAccountsQuery, AdminOAuthAccountsQueryVariables>,
-) {
-  const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<AdminOAuthAccountsQuery, AdminOAuthAccountsQueryVariables>(
-    AdminOAuthAccountsDocument,
-    options,
-  )
-}
-export function useAdminOAuthAccountsLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
-    AdminOAuthAccountsQuery,
-    AdminOAuthAccountsQueryVariables
+export function use__AdminOAuthAccountsQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    __AdminOAuthAccountsQuery,
+    __AdminOAuthAccountsQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<AdminOAuthAccountsQuery, AdminOAuthAccountsQueryVariables>(
-    AdminOAuthAccountsDocument,
+  return Apollo.useQuery<__AdminOAuthAccountsQuery, __AdminOAuthAccountsQueryVariables>(
+    __AdminOAuthAccountsDocument,
     options,
   )
 }
-export function useAdminOAuthAccountsSuspenseQuery(
+export function use__AdminOAuthAccountsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    __AdminOAuthAccountsQuery,
+    __AdminOAuthAccountsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<__AdminOAuthAccountsQuery, __AdminOAuthAccountsQueryVariables>(
+    __AdminOAuthAccountsDocument,
+    options,
+  )
+}
+export function use__AdminOAuthAccountsSuspenseQuery(
   baseOptions?:
     | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<AdminOAuthAccountsQuery, AdminOAuthAccountsQueryVariables>,
+    | Apollo.SuspenseQueryHookOptions<
+        __AdminOAuthAccountsQuery,
+        __AdminOAuthAccountsQueryVariables
+      >,
 ) {
   const options =
     baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<AdminOAuthAccountsQuery, AdminOAuthAccountsQueryVariables>(
-    AdminOAuthAccountsDocument,
+  return Apollo.useSuspenseQuery<__AdminOAuthAccountsQuery, __AdminOAuthAccountsQueryVariables>(
+    __AdminOAuthAccountsDocument,
     options,
   )
 }
-export type AdminOAuthAccountsQueryHookResult = ReturnType<typeof useAdminOAuthAccountsQuery>
-export type AdminOAuthAccountsLazyQueryHookResult = ReturnType<
-  typeof useAdminOAuthAccountsLazyQuery
+export type __AdminOAuthAccountsQueryHookResult = ReturnType<typeof use__AdminOAuthAccountsQuery>
+export type __AdminOAuthAccountsLazyQueryHookResult = ReturnType<
+  typeof use__AdminOAuthAccountsLazyQuery
 >
-export type AdminOAuthAccountsSuspenseQueryHookResult = ReturnType<
-  typeof useAdminOAuthAccountsSuspenseQuery
+export type __AdminOAuthAccountsSuspenseQueryHookResult = ReturnType<
+  typeof use__AdminOAuthAccountsSuspenseQuery
 >
-export type AdminOAuthAccountsQueryResult = Apollo.QueryResult<
-  AdminOAuthAccountsQuery,
-  AdminOAuthAccountsQueryVariables
+export type __AdminOAuthAccountsQueryResult = Apollo.QueryResult<
+  __AdminOAuthAccountsQuery,
+  __AdminOAuthAccountsQueryVariables
 >
-export const AdminOAuthAccountPaginationDocument = gql`
-  query AdminOAuthAccountPagination($input: ListOAuthAccountInput) {
+export const __AdminOAuthAccountPaginationDocument = gql`
+  query __AdminOAuthAccountPagination($input: ListOAuthAccountInput) {
     counters: oAuthAccountsCount(input: $input) {
       ...CorePagingDetails
     }
@@ -15888,761 +16068,772 @@ export const AdminOAuthAccountPaginationDocument = gql`
 `
 
 /**
- * __useAdminOAuthAccountPaginationQuery__
+ * __use__AdminOAuthAccountPaginationQuery__
  *
- * To run a query within a React component, call `useAdminOAuthAccountPaginationQuery` and pass it any options that fit your needs.
- * When your component renders, `useAdminOAuthAccountPaginationQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `use__AdminOAuthAccountPaginationQuery` and pass it any options that fit your needs.
+ * When your component renders, `use__AdminOAuthAccountPaginationQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useAdminOAuthAccountPaginationQuery({
+ * const { data, loading, error } = use__AdminOAuthAccountPaginationQuery({
  *   variables: {
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useAdminOAuthAccountPaginationQuery(
+export function use__AdminOAuthAccountPaginationQuery(
   baseOptions?: Apollo.QueryHookOptions<
-    AdminOAuthAccountPaginationQuery,
-    AdminOAuthAccountPaginationQueryVariables
+    __AdminOAuthAccountPaginationQuery,
+    __AdminOAuthAccountPaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
   return Apollo.useQuery<
-    AdminOAuthAccountPaginationQuery,
-    AdminOAuthAccountPaginationQueryVariables
-  >(AdminOAuthAccountPaginationDocument, options)
+    __AdminOAuthAccountPaginationQuery,
+    __AdminOAuthAccountPaginationQueryVariables
+  >(__AdminOAuthAccountPaginationDocument, options)
 }
-export function useAdminOAuthAccountPaginationLazyQuery(
+export function use__AdminOAuthAccountPaginationLazyQuery(
   baseOptions?: Apollo.LazyQueryHookOptions<
-    AdminOAuthAccountPaginationQuery,
-    AdminOAuthAccountPaginationQueryVariables
+    __AdminOAuthAccountPaginationQuery,
+    __AdminOAuthAccountPaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
   return Apollo.useLazyQuery<
-    AdminOAuthAccountPaginationQuery,
-    AdminOAuthAccountPaginationQueryVariables
-  >(AdminOAuthAccountPaginationDocument, options)
+    __AdminOAuthAccountPaginationQuery,
+    __AdminOAuthAccountPaginationQueryVariables
+  >(__AdminOAuthAccountPaginationDocument, options)
 }
-export function useAdminOAuthAccountPaginationSuspenseQuery(
+export function use__AdminOAuthAccountPaginationSuspenseQuery(
   baseOptions?:
     | Apollo.SkipToken
     | Apollo.SuspenseQueryHookOptions<
-        AdminOAuthAccountPaginationQuery,
-        AdminOAuthAccountPaginationQueryVariables
+        __AdminOAuthAccountPaginationQuery,
+        __AdminOAuthAccountPaginationQueryVariables
       >,
 ) {
   const options =
     baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
   return Apollo.useSuspenseQuery<
-    AdminOAuthAccountPaginationQuery,
-    AdminOAuthAccountPaginationQueryVariables
-  >(AdminOAuthAccountPaginationDocument, options)
+    __AdminOAuthAccountPaginationQuery,
+    __AdminOAuthAccountPaginationQueryVariables
+  >(__AdminOAuthAccountPaginationDocument, options)
 }
-export type AdminOAuthAccountPaginationQueryHookResult = ReturnType<
-  typeof useAdminOAuthAccountPaginationQuery
+export type __AdminOAuthAccountPaginationQueryHookResult = ReturnType<
+  typeof use__AdminOAuthAccountPaginationQuery
 >
-export type AdminOAuthAccountPaginationLazyQueryHookResult = ReturnType<
-  typeof useAdminOAuthAccountPaginationLazyQuery
+export type __AdminOAuthAccountPaginationLazyQueryHookResult = ReturnType<
+  typeof use__AdminOAuthAccountPaginationLazyQuery
 >
-export type AdminOAuthAccountPaginationSuspenseQueryHookResult = ReturnType<
-  typeof useAdminOAuthAccountPaginationSuspenseQuery
+export type __AdminOAuthAccountPaginationSuspenseQueryHookResult = ReturnType<
+  typeof use__AdminOAuthAccountPaginationSuspenseQuery
 >
-export type AdminOAuthAccountPaginationQueryResult = Apollo.QueryResult<
-  AdminOAuthAccountPaginationQuery,
-  AdminOAuthAccountPaginationQueryVariables
+export type __AdminOAuthAccountPaginationQueryResult = Apollo.QueryResult<
+  __AdminOAuthAccountPaginationQuery,
+  __AdminOAuthAccountPaginationQueryVariables
 >
-export const AdminCreateOrganizationMemberDocument = gql`
-  mutation AdminCreateOrganizationMember($input: CreateOrganizationMemberInput!) {
+export const __AdminCreateOrganizationMemberDocument = gql`
+  mutation __AdminCreateOrganizationMember($input: CreateOrganizationMemberInput!) {
     createOrganizationMember(input: $input) {
-      ...AdminOrganizationMemberDetails
+      ...__AdminOrganizationMemberDetails
     }
   }
-  ${AdminOrganizationMemberDetailsFragmentDoc}
+  ${__AdminOrganizationMemberDetailsFragmentDoc}
 `
-export type AdminCreateOrganizationMemberMutationFn = Apollo.MutationFunction<
-  AdminCreateOrganizationMemberMutation,
-  AdminCreateOrganizationMemberMutationVariables
+export type __AdminCreateOrganizationMemberMutationFn = Apollo.MutationFunction<
+  __AdminCreateOrganizationMemberMutation,
+  __AdminCreateOrganizationMemberMutationVariables
 >
 
 /**
- * __useAdminCreateOrganizationMemberMutation__
+ * __use__AdminCreateOrganizationMemberMutation__
  *
- * To run a mutation, you first call `useAdminCreateOrganizationMemberMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAdminCreateOrganizationMemberMutation` returns a tuple that includes:
+ * To run a mutation, you first call `use__AdminCreateOrganizationMemberMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `use__AdminCreateOrganizationMemberMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [adminCreateOrganizationMemberMutation, { data, loading, error }] = useAdminCreateOrganizationMemberMutation({
+ * const [adminCreateOrganizationMemberMutation, { data, loading, error }] = use__AdminCreateOrganizationMemberMutation({
  *   variables: {
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useAdminCreateOrganizationMemberMutation(
+export function use__AdminCreateOrganizationMemberMutation(
   baseOptions?: Apollo.MutationHookOptions<
-    AdminCreateOrganizationMemberMutation,
-    AdminCreateOrganizationMemberMutationVariables
+    __AdminCreateOrganizationMemberMutation,
+    __AdminCreateOrganizationMemberMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
   return Apollo.useMutation<
-    AdminCreateOrganizationMemberMutation,
-    AdminCreateOrganizationMemberMutationVariables
-  >(AdminCreateOrganizationMemberDocument, options)
+    __AdminCreateOrganizationMemberMutation,
+    __AdminCreateOrganizationMemberMutationVariables
+  >(__AdminCreateOrganizationMemberDocument, options)
 }
-export type AdminCreateOrganizationMemberMutationHookResult = ReturnType<
-  typeof useAdminCreateOrganizationMemberMutation
+export type __AdminCreateOrganizationMemberMutationHookResult = ReturnType<
+  typeof use__AdminCreateOrganizationMemberMutation
 >
-export type AdminCreateOrganizationMemberMutationResult =
-  Apollo.MutationResult<AdminCreateOrganizationMemberMutation>
-export type AdminCreateOrganizationMemberMutationOptions = Apollo.BaseMutationOptions<
-  AdminCreateOrganizationMemberMutation,
-  AdminCreateOrganizationMemberMutationVariables
+export type __AdminCreateOrganizationMemberMutationResult =
+  Apollo.MutationResult<__AdminCreateOrganizationMemberMutation>
+export type __AdminCreateOrganizationMemberMutationOptions = Apollo.BaseMutationOptions<
+  __AdminCreateOrganizationMemberMutation,
+  __AdminCreateOrganizationMemberMutationVariables
 >
-export const AdminDeleteOrganizationMemberDocument = gql`
-  mutation AdminDeleteOrganizationMember($organizationMemberId: String!) {
+export const __AdminDeleteOrganizationMemberDocument = gql`
+  mutation __AdminDeleteOrganizationMember($organizationMemberId: String!) {
     deleteOrganizationMember(organizationMemberId: $organizationMemberId) {
       id
     }
   }
 `
-export type AdminDeleteOrganizationMemberMutationFn = Apollo.MutationFunction<
-  AdminDeleteOrganizationMemberMutation,
-  AdminDeleteOrganizationMemberMutationVariables
+export type __AdminDeleteOrganizationMemberMutationFn = Apollo.MutationFunction<
+  __AdminDeleteOrganizationMemberMutation,
+  __AdminDeleteOrganizationMemberMutationVariables
 >
 
 /**
- * __useAdminDeleteOrganizationMemberMutation__
+ * __use__AdminDeleteOrganizationMemberMutation__
  *
- * To run a mutation, you first call `useAdminDeleteOrganizationMemberMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAdminDeleteOrganizationMemberMutation` returns a tuple that includes:
+ * To run a mutation, you first call `use__AdminDeleteOrganizationMemberMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `use__AdminDeleteOrganizationMemberMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [adminDeleteOrganizationMemberMutation, { data, loading, error }] = useAdminDeleteOrganizationMemberMutation({
+ * const [adminDeleteOrganizationMemberMutation, { data, loading, error }] = use__AdminDeleteOrganizationMemberMutation({
  *   variables: {
  *      organizationMemberId: // value for 'organizationMemberId'
  *   },
  * });
  */
-export function useAdminDeleteOrganizationMemberMutation(
+export function use__AdminDeleteOrganizationMemberMutation(
   baseOptions?: Apollo.MutationHookOptions<
-    AdminDeleteOrganizationMemberMutation,
-    AdminDeleteOrganizationMemberMutationVariables
+    __AdminDeleteOrganizationMemberMutation,
+    __AdminDeleteOrganizationMemberMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
   return Apollo.useMutation<
-    AdminDeleteOrganizationMemberMutation,
-    AdminDeleteOrganizationMemberMutationVariables
-  >(AdminDeleteOrganizationMemberDocument, options)
+    __AdminDeleteOrganizationMemberMutation,
+    __AdminDeleteOrganizationMemberMutationVariables
+  >(__AdminDeleteOrganizationMemberDocument, options)
 }
-export type AdminDeleteOrganizationMemberMutationHookResult = ReturnType<
-  typeof useAdminDeleteOrganizationMemberMutation
+export type __AdminDeleteOrganizationMemberMutationHookResult = ReturnType<
+  typeof use__AdminDeleteOrganizationMemberMutation
 >
-export type AdminDeleteOrganizationMemberMutationResult =
-  Apollo.MutationResult<AdminDeleteOrganizationMemberMutation>
-export type AdminDeleteOrganizationMemberMutationOptions = Apollo.BaseMutationOptions<
-  AdminDeleteOrganizationMemberMutation,
-  AdminDeleteOrganizationMemberMutationVariables
+export type __AdminDeleteOrganizationMemberMutationResult =
+  Apollo.MutationResult<__AdminDeleteOrganizationMemberMutation>
+export type __AdminDeleteOrganizationMemberMutationOptions = Apollo.BaseMutationOptions<
+  __AdminDeleteOrganizationMemberMutation,
+  __AdminDeleteOrganizationMemberMutationVariables
 >
-export const AdminUpdateOrganizationMemberDocument = gql`
-  mutation AdminUpdateOrganizationMember(
+export const __AdminUpdateOrganizationMemberDocument = gql`
+  mutation __AdminUpdateOrganizationMember(
     $organizationMemberId: String!
     $input: UpdateOrganizationMemberInput!
   ) {
     updateOrganizationMember(organizationMemberId: $organizationMemberId, input: $input) {
-      ...AdminOrganizationMemberDetails
+      ...__AdminOrganizationMemberDetails
     }
   }
-  ${AdminOrganizationMemberDetailsFragmentDoc}
+  ${__AdminOrganizationMemberDetailsFragmentDoc}
 `
-export type AdminUpdateOrganizationMemberMutationFn = Apollo.MutationFunction<
-  AdminUpdateOrganizationMemberMutation,
-  AdminUpdateOrganizationMemberMutationVariables
+export type __AdminUpdateOrganizationMemberMutationFn = Apollo.MutationFunction<
+  __AdminUpdateOrganizationMemberMutation,
+  __AdminUpdateOrganizationMemberMutationVariables
 >
 
 /**
- * __useAdminUpdateOrganizationMemberMutation__
+ * __use__AdminUpdateOrganizationMemberMutation__
  *
- * To run a mutation, you first call `useAdminUpdateOrganizationMemberMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAdminUpdateOrganizationMemberMutation` returns a tuple that includes:
+ * To run a mutation, you first call `use__AdminUpdateOrganizationMemberMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `use__AdminUpdateOrganizationMemberMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [adminUpdateOrganizationMemberMutation, { data, loading, error }] = useAdminUpdateOrganizationMemberMutation({
+ * const [adminUpdateOrganizationMemberMutation, { data, loading, error }] = use__AdminUpdateOrganizationMemberMutation({
  *   variables: {
  *      organizationMemberId: // value for 'organizationMemberId'
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useAdminUpdateOrganizationMemberMutation(
+export function use__AdminUpdateOrganizationMemberMutation(
   baseOptions?: Apollo.MutationHookOptions<
-    AdminUpdateOrganizationMemberMutation,
-    AdminUpdateOrganizationMemberMutationVariables
+    __AdminUpdateOrganizationMemberMutation,
+    __AdminUpdateOrganizationMemberMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
   return Apollo.useMutation<
-    AdminUpdateOrganizationMemberMutation,
-    AdminUpdateOrganizationMemberMutationVariables
-  >(AdminUpdateOrganizationMemberDocument, options)
+    __AdminUpdateOrganizationMemberMutation,
+    __AdminUpdateOrganizationMemberMutationVariables
+  >(__AdminUpdateOrganizationMemberDocument, options)
 }
-export type AdminUpdateOrganizationMemberMutationHookResult = ReturnType<
-  typeof useAdminUpdateOrganizationMemberMutation
+export type __AdminUpdateOrganizationMemberMutationHookResult = ReturnType<
+  typeof use__AdminUpdateOrganizationMemberMutation
 >
-export type AdminUpdateOrganizationMemberMutationResult =
-  Apollo.MutationResult<AdminUpdateOrganizationMemberMutation>
-export type AdminUpdateOrganizationMemberMutationOptions = Apollo.BaseMutationOptions<
-  AdminUpdateOrganizationMemberMutation,
-  AdminUpdateOrganizationMemberMutationVariables
+export type __AdminUpdateOrganizationMemberMutationResult =
+  Apollo.MutationResult<__AdminUpdateOrganizationMemberMutation>
+export type __AdminUpdateOrganizationMemberMutationOptions = Apollo.BaseMutationOptions<
+  __AdminUpdateOrganizationMemberMutation,
+  __AdminUpdateOrganizationMemberMutationVariables
 >
-export const AdminOrganizationMemberDocument = gql`
-  query AdminOrganizationMember($organizationMemberId: String!) {
+export const __AdminOrganizationMemberDocument = gql`
+  query __AdminOrganizationMember($organizationMemberId: String!) {
     organizationMember(organizationMemberId: $organizationMemberId) {
-      ...AdminOrganizationMemberDetails
+      ...__AdminOrganizationMemberDetails
     }
   }
-  ${AdminOrganizationMemberDetailsFragmentDoc}
+  ${__AdminOrganizationMemberDetailsFragmentDoc}
 `
 
 /**
- * __useAdminOrganizationMemberQuery__
+ * __use__AdminOrganizationMemberQuery__
  *
- * To run a query within a React component, call `useAdminOrganizationMemberQuery` and pass it any options that fit your needs.
- * When your component renders, `useAdminOrganizationMemberQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `use__AdminOrganizationMemberQuery` and pass it any options that fit your needs.
+ * When your component renders, `use__AdminOrganizationMemberQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useAdminOrganizationMemberQuery({
+ * const { data, loading, error } = use__AdminOrganizationMemberQuery({
  *   variables: {
  *      organizationMemberId: // value for 'organizationMemberId'
  *   },
  * });
  */
-export function useAdminOrganizationMemberQuery(
+export function use__AdminOrganizationMemberQuery(
   baseOptions: Apollo.QueryHookOptions<
-    AdminOrganizationMemberQuery,
-    AdminOrganizationMemberQueryVariables
+    __AdminOrganizationMemberQuery,
+    __AdminOrganizationMemberQueryVariables
   > &
-    ({ variables: AdminOrganizationMemberQueryVariables; skip?: boolean } | { skip: boolean }),
+    ({ variables: __AdminOrganizationMemberQueryVariables; skip?: boolean } | { skip: boolean }),
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<AdminOrganizationMemberQuery, AdminOrganizationMemberQueryVariables>(
-    AdminOrganizationMemberDocument,
+  return Apollo.useQuery<__AdminOrganizationMemberQuery, __AdminOrganizationMemberQueryVariables>(
+    __AdminOrganizationMemberDocument,
     options,
   )
 }
-export function useAdminOrganizationMemberLazyQuery(
+export function use__AdminOrganizationMemberLazyQuery(
   baseOptions?: Apollo.LazyQueryHookOptions<
-    AdminOrganizationMemberQuery,
-    AdminOrganizationMemberQueryVariables
-  >,
-) {
-  const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<AdminOrganizationMemberQuery, AdminOrganizationMemberQueryVariables>(
-    AdminOrganizationMemberDocument,
-    options,
-  )
-}
-export function useAdminOrganizationMemberSuspenseQuery(
-  baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<
-        AdminOrganizationMemberQuery,
-        AdminOrganizationMemberQueryVariables
-      >,
-) {
-  const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<
-    AdminOrganizationMemberQuery,
-    AdminOrganizationMemberQueryVariables
-  >(AdminOrganizationMemberDocument, options)
-}
-export type AdminOrganizationMemberQueryHookResult = ReturnType<
-  typeof useAdminOrganizationMemberQuery
->
-export type AdminOrganizationMemberLazyQueryHookResult = ReturnType<
-  typeof useAdminOrganizationMemberLazyQuery
->
-export type AdminOrganizationMemberSuspenseQueryHookResult = ReturnType<
-  typeof useAdminOrganizationMemberSuspenseQuery
->
-export type AdminOrganizationMemberQueryResult = Apollo.QueryResult<
-  AdminOrganizationMemberQuery,
-  AdminOrganizationMemberQueryVariables
->
-export const AdminOrganizationMembersDocument = gql`
-  query AdminOrganizationMembers($input: ListOrganizationMemberInput) {
-    organizationMembers(input: $input) {
-      ...AdminOrganizationMemberList
-    }
-    counters: organizationMembersCount(input: $input) {
-      ...CorePagingDetails
-    }
-  }
-  ${AdminOrganizationMemberListFragmentDoc}
-  ${CorePagingDetailsFragmentDoc}
-`
-
-/**
- * __useAdminOrganizationMembersQuery__
- *
- * To run a query within a React component, call `useAdminOrganizationMembersQuery` and pass it any options that fit your needs.
- * When your component renders, `useAdminOrganizationMembersQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useAdminOrganizationMembersQuery({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useAdminOrganizationMembersQuery(
-  baseOptions?: Apollo.QueryHookOptions<
-    AdminOrganizationMembersQuery,
-    AdminOrganizationMembersQueryVariables
-  >,
-) {
-  const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<AdminOrganizationMembersQuery, AdminOrganizationMembersQueryVariables>(
-    AdminOrganizationMembersDocument,
-    options,
-  )
-}
-export function useAdminOrganizationMembersLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
-    AdminOrganizationMembersQuery,
-    AdminOrganizationMembersQueryVariables
-  >,
-) {
-  const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<AdminOrganizationMembersQuery, AdminOrganizationMembersQueryVariables>(
-    AdminOrganizationMembersDocument,
-    options,
-  )
-}
-export function useAdminOrganizationMembersSuspenseQuery(
-  baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<
-        AdminOrganizationMembersQuery,
-        AdminOrganizationMembersQueryVariables
-      >,
-) {
-  const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<
-    AdminOrganizationMembersQuery,
-    AdminOrganizationMembersQueryVariables
-  >(AdminOrganizationMembersDocument, options)
-}
-export type AdminOrganizationMembersQueryHookResult = ReturnType<
-  typeof useAdminOrganizationMembersQuery
->
-export type AdminOrganizationMembersLazyQueryHookResult = ReturnType<
-  typeof useAdminOrganizationMembersLazyQuery
->
-export type AdminOrganizationMembersSuspenseQueryHookResult = ReturnType<
-  typeof useAdminOrganizationMembersSuspenseQuery
->
-export type AdminOrganizationMembersQueryResult = Apollo.QueryResult<
-  AdminOrganizationMembersQuery,
-  AdminOrganizationMembersQueryVariables
->
-export const AdminOrganizationMemberPaginationDocument = gql`
-  query AdminOrganizationMemberPagination($input: ListOrganizationMemberInput) {
-    counters: organizationMembersCount(input: $input) {
-      ...CorePagingDetails
-    }
-  }
-  ${CorePagingDetailsFragmentDoc}
-`
-
-/**
- * __useAdminOrganizationMemberPaginationQuery__
- *
- * To run a query within a React component, call `useAdminOrganizationMemberPaginationQuery` and pass it any options that fit your needs.
- * When your component renders, `useAdminOrganizationMemberPaginationQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useAdminOrganizationMemberPaginationQuery({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useAdminOrganizationMemberPaginationQuery(
-  baseOptions?: Apollo.QueryHookOptions<
-    AdminOrganizationMemberPaginationQuery,
-    AdminOrganizationMemberPaginationQueryVariables
-  >,
-) {
-  const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<
-    AdminOrganizationMemberPaginationQuery,
-    AdminOrganizationMemberPaginationQueryVariables
-  >(AdminOrganizationMemberPaginationDocument, options)
-}
-export function useAdminOrganizationMemberPaginationLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
-    AdminOrganizationMemberPaginationQuery,
-    AdminOrganizationMemberPaginationQueryVariables
+    __AdminOrganizationMemberQuery,
+    __AdminOrganizationMemberQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
   return Apollo.useLazyQuery<
-    AdminOrganizationMemberPaginationQuery,
-    AdminOrganizationMemberPaginationQueryVariables
-  >(AdminOrganizationMemberPaginationDocument, options)
+    __AdminOrganizationMemberQuery,
+    __AdminOrganizationMemberQueryVariables
+  >(__AdminOrganizationMemberDocument, options)
 }
-export function useAdminOrganizationMemberPaginationSuspenseQuery(
+export function use__AdminOrganizationMemberSuspenseQuery(
   baseOptions?:
     | Apollo.SkipToken
     | Apollo.SuspenseQueryHookOptions<
-        AdminOrganizationMemberPaginationQuery,
-        AdminOrganizationMemberPaginationQueryVariables
+        __AdminOrganizationMemberQuery,
+        __AdminOrganizationMemberQueryVariables
       >,
 ) {
   const options =
     baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
   return Apollo.useSuspenseQuery<
-    AdminOrganizationMemberPaginationQuery,
-    AdminOrganizationMemberPaginationQueryVariables
-  >(AdminOrganizationMemberPaginationDocument, options)
+    __AdminOrganizationMemberQuery,
+    __AdminOrganizationMemberQueryVariables
+  >(__AdminOrganizationMemberDocument, options)
 }
-export type AdminOrganizationMemberPaginationQueryHookResult = ReturnType<
-  typeof useAdminOrganizationMemberPaginationQuery
+export type __AdminOrganizationMemberQueryHookResult = ReturnType<
+  typeof use__AdminOrganizationMemberQuery
 >
-export type AdminOrganizationMemberPaginationLazyQueryHookResult = ReturnType<
-  typeof useAdminOrganizationMemberPaginationLazyQuery
+export type __AdminOrganizationMemberLazyQueryHookResult = ReturnType<
+  typeof use__AdminOrganizationMemberLazyQuery
 >
-export type AdminOrganizationMemberPaginationSuspenseQueryHookResult = ReturnType<
-  typeof useAdminOrganizationMemberPaginationSuspenseQuery
+export type __AdminOrganizationMemberSuspenseQueryHookResult = ReturnType<
+  typeof use__AdminOrganizationMemberSuspenseQuery
 >
-export type AdminOrganizationMemberPaginationQueryResult = Apollo.QueryResult<
-  AdminOrganizationMemberPaginationQuery,
-  AdminOrganizationMemberPaginationQueryVariables
+export type __AdminOrganizationMemberQueryResult = Apollo.QueryResult<
+  __AdminOrganizationMemberQuery,
+  __AdminOrganizationMemberQueryVariables
 >
-export const AdminCreateOrganizationDocument = gql`
-  mutation AdminCreateOrganization($input: CreateOrganizationInput!) {
-    createOrganization(input: $input) {
-      ...AdminOrganizationDetails
+export const __AdminOrganizationMembersDocument = gql`
+  query __AdminOrganizationMembers($input: ListOrganizationMemberInput) {
+    organizationMembers(input: $input) {
+      ...__AdminOrganizationMemberList
+    }
+    counters: organizationMembersCount(input: $input) {
+      ...CorePagingDetails
     }
   }
-  ${AdminOrganizationDetailsFragmentDoc}
+  ${__AdminOrganizationMemberListFragmentDoc}
+  ${CorePagingDetailsFragmentDoc}
 `
-export type AdminCreateOrganizationMutationFn = Apollo.MutationFunction<
-  AdminCreateOrganizationMutation,
-  AdminCreateOrganizationMutationVariables
+
+/**
+ * __use__AdminOrganizationMembersQuery__
+ *
+ * To run a query within a React component, call `use__AdminOrganizationMembersQuery` and pass it any options that fit your needs.
+ * When your component renders, `use__AdminOrganizationMembersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = use__AdminOrganizationMembersQuery({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function use__AdminOrganizationMembersQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    __AdminOrganizationMembersQuery,
+    __AdminOrganizationMembersQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<__AdminOrganizationMembersQuery, __AdminOrganizationMembersQueryVariables>(
+    __AdminOrganizationMembersDocument,
+    options,
+  )
+}
+export function use__AdminOrganizationMembersLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    __AdminOrganizationMembersQuery,
+    __AdminOrganizationMembersQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<
+    __AdminOrganizationMembersQuery,
+    __AdminOrganizationMembersQueryVariables
+  >(__AdminOrganizationMembersDocument, options)
+}
+export function use__AdminOrganizationMembersSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<
+        __AdminOrganizationMembersQuery,
+        __AdminOrganizationMembersQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<
+    __AdminOrganizationMembersQuery,
+    __AdminOrganizationMembersQueryVariables
+  >(__AdminOrganizationMembersDocument, options)
+}
+export type __AdminOrganizationMembersQueryHookResult = ReturnType<
+  typeof use__AdminOrganizationMembersQuery
+>
+export type __AdminOrganizationMembersLazyQueryHookResult = ReturnType<
+  typeof use__AdminOrganizationMembersLazyQuery
+>
+export type __AdminOrganizationMembersSuspenseQueryHookResult = ReturnType<
+  typeof use__AdminOrganizationMembersSuspenseQuery
+>
+export type __AdminOrganizationMembersQueryResult = Apollo.QueryResult<
+  __AdminOrganizationMembersQuery,
+  __AdminOrganizationMembersQueryVariables
+>
+export const __AdminOrganizationMemberPaginationDocument = gql`
+  query __AdminOrganizationMemberPagination($input: ListOrganizationMemberInput) {
+    counters: organizationMembersCount(input: $input) {
+      ...CorePagingDetails
+    }
+  }
+  ${CorePagingDetailsFragmentDoc}
+`
+
+/**
+ * __use__AdminOrganizationMemberPaginationQuery__
+ *
+ * To run a query within a React component, call `use__AdminOrganizationMemberPaginationQuery` and pass it any options that fit your needs.
+ * When your component renders, `use__AdminOrganizationMemberPaginationQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = use__AdminOrganizationMemberPaginationQuery({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function use__AdminOrganizationMemberPaginationQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    __AdminOrganizationMemberPaginationQuery,
+    __AdminOrganizationMemberPaginationQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<
+    __AdminOrganizationMemberPaginationQuery,
+    __AdminOrganizationMemberPaginationQueryVariables
+  >(__AdminOrganizationMemberPaginationDocument, options)
+}
+export function use__AdminOrganizationMemberPaginationLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    __AdminOrganizationMemberPaginationQuery,
+    __AdminOrganizationMemberPaginationQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<
+    __AdminOrganizationMemberPaginationQuery,
+    __AdminOrganizationMemberPaginationQueryVariables
+  >(__AdminOrganizationMemberPaginationDocument, options)
+}
+export function use__AdminOrganizationMemberPaginationSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<
+        __AdminOrganizationMemberPaginationQuery,
+        __AdminOrganizationMemberPaginationQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<
+    __AdminOrganizationMemberPaginationQuery,
+    __AdminOrganizationMemberPaginationQueryVariables
+  >(__AdminOrganizationMemberPaginationDocument, options)
+}
+export type __AdminOrganizationMemberPaginationQueryHookResult = ReturnType<
+  typeof use__AdminOrganizationMemberPaginationQuery
+>
+export type __AdminOrganizationMemberPaginationLazyQueryHookResult = ReturnType<
+  typeof use__AdminOrganizationMemberPaginationLazyQuery
+>
+export type __AdminOrganizationMemberPaginationSuspenseQueryHookResult = ReturnType<
+  typeof use__AdminOrganizationMemberPaginationSuspenseQuery
+>
+export type __AdminOrganizationMemberPaginationQueryResult = Apollo.QueryResult<
+  __AdminOrganizationMemberPaginationQuery,
+  __AdminOrganizationMemberPaginationQueryVariables
+>
+export const __AdminCreateOrganizationDocument = gql`
+  mutation __AdminCreateOrganization($input: CreateOrganizationInput!) {
+    createOrganization(input: $input) {
+      ...__AdminOrganizationDetails
+    }
+  }
+  ${__AdminOrganizationDetailsFragmentDoc}
+`
+export type __AdminCreateOrganizationMutationFn = Apollo.MutationFunction<
+  __AdminCreateOrganizationMutation,
+  __AdminCreateOrganizationMutationVariables
 >
 
 /**
- * __useAdminCreateOrganizationMutation__
+ * __use__AdminCreateOrganizationMutation__
  *
- * To run a mutation, you first call `useAdminCreateOrganizationMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAdminCreateOrganizationMutation` returns a tuple that includes:
+ * To run a mutation, you first call `use__AdminCreateOrganizationMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `use__AdminCreateOrganizationMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [adminCreateOrganizationMutation, { data, loading, error }] = useAdminCreateOrganizationMutation({
+ * const [adminCreateOrganizationMutation, { data, loading, error }] = use__AdminCreateOrganizationMutation({
  *   variables: {
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useAdminCreateOrganizationMutation(
+export function use__AdminCreateOrganizationMutation(
   baseOptions?: Apollo.MutationHookOptions<
-    AdminCreateOrganizationMutation,
-    AdminCreateOrganizationMutationVariables
+    __AdminCreateOrganizationMutation,
+    __AdminCreateOrganizationMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
   return Apollo.useMutation<
-    AdminCreateOrganizationMutation,
-    AdminCreateOrganizationMutationVariables
-  >(AdminCreateOrganizationDocument, options)
+    __AdminCreateOrganizationMutation,
+    __AdminCreateOrganizationMutationVariables
+  >(__AdminCreateOrganizationDocument, options)
 }
-export type AdminCreateOrganizationMutationHookResult = ReturnType<
-  typeof useAdminCreateOrganizationMutation
+export type __AdminCreateOrganizationMutationHookResult = ReturnType<
+  typeof use__AdminCreateOrganizationMutation
 >
-export type AdminCreateOrganizationMutationResult =
-  Apollo.MutationResult<AdminCreateOrganizationMutation>
-export type AdminCreateOrganizationMutationOptions = Apollo.BaseMutationOptions<
-  AdminCreateOrganizationMutation,
-  AdminCreateOrganizationMutationVariables
+export type __AdminCreateOrganizationMutationResult =
+  Apollo.MutationResult<__AdminCreateOrganizationMutation>
+export type __AdminCreateOrganizationMutationOptions = Apollo.BaseMutationOptions<
+  __AdminCreateOrganizationMutation,
+  __AdminCreateOrganizationMutationVariables
 >
-export const AdminDeleteOrganizationDocument = gql`
-  mutation AdminDeleteOrganization($organizationId: String!) {
+export const __AdminDeleteOrganizationDocument = gql`
+  mutation __AdminDeleteOrganization($organizationId: String!) {
     deleteOrganization(organizationId: $organizationId) {
       id
     }
   }
 `
-export type AdminDeleteOrganizationMutationFn = Apollo.MutationFunction<
-  AdminDeleteOrganizationMutation,
-  AdminDeleteOrganizationMutationVariables
+export type __AdminDeleteOrganizationMutationFn = Apollo.MutationFunction<
+  __AdminDeleteOrganizationMutation,
+  __AdminDeleteOrganizationMutationVariables
 >
 
 /**
- * __useAdminDeleteOrganizationMutation__
+ * __use__AdminDeleteOrganizationMutation__
  *
- * To run a mutation, you first call `useAdminDeleteOrganizationMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAdminDeleteOrganizationMutation` returns a tuple that includes:
+ * To run a mutation, you first call `use__AdminDeleteOrganizationMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `use__AdminDeleteOrganizationMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [adminDeleteOrganizationMutation, { data, loading, error }] = useAdminDeleteOrganizationMutation({
+ * const [adminDeleteOrganizationMutation, { data, loading, error }] = use__AdminDeleteOrganizationMutation({
  *   variables: {
  *      organizationId: // value for 'organizationId'
  *   },
  * });
  */
-export function useAdminDeleteOrganizationMutation(
+export function use__AdminDeleteOrganizationMutation(
   baseOptions?: Apollo.MutationHookOptions<
-    AdminDeleteOrganizationMutation,
-    AdminDeleteOrganizationMutationVariables
+    __AdminDeleteOrganizationMutation,
+    __AdminDeleteOrganizationMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
   return Apollo.useMutation<
-    AdminDeleteOrganizationMutation,
-    AdminDeleteOrganizationMutationVariables
-  >(AdminDeleteOrganizationDocument, options)
+    __AdminDeleteOrganizationMutation,
+    __AdminDeleteOrganizationMutationVariables
+  >(__AdminDeleteOrganizationDocument, options)
 }
-export type AdminDeleteOrganizationMutationHookResult = ReturnType<
-  typeof useAdminDeleteOrganizationMutation
+export type __AdminDeleteOrganizationMutationHookResult = ReturnType<
+  typeof use__AdminDeleteOrganizationMutation
 >
-export type AdminDeleteOrganizationMutationResult =
-  Apollo.MutationResult<AdminDeleteOrganizationMutation>
-export type AdminDeleteOrganizationMutationOptions = Apollo.BaseMutationOptions<
-  AdminDeleteOrganizationMutation,
-  AdminDeleteOrganizationMutationVariables
+export type __AdminDeleteOrganizationMutationResult =
+  Apollo.MutationResult<__AdminDeleteOrganizationMutation>
+export type __AdminDeleteOrganizationMutationOptions = Apollo.BaseMutationOptions<
+  __AdminDeleteOrganizationMutation,
+  __AdminDeleteOrganizationMutationVariables
 >
-export const AdminUpdateOrganizationDocument = gql`
-  mutation AdminUpdateOrganization($organizationId: String!, $input: UpdateOrganizationInput!) {
+export const __AdminUpdateOrganizationDocument = gql`
+  mutation __AdminUpdateOrganization($organizationId: String!, $input: UpdateOrganizationInput!) {
     updateOrganization(organizationId: $organizationId, input: $input) {
-      ...AdminOrganizationDetails
+      ...__AdminOrganizationDetails
     }
   }
-  ${AdminOrganizationDetailsFragmentDoc}
+  ${__AdminOrganizationDetailsFragmentDoc}
 `
-export type AdminUpdateOrganizationMutationFn = Apollo.MutationFunction<
-  AdminUpdateOrganizationMutation,
-  AdminUpdateOrganizationMutationVariables
+export type __AdminUpdateOrganizationMutationFn = Apollo.MutationFunction<
+  __AdminUpdateOrganizationMutation,
+  __AdminUpdateOrganizationMutationVariables
 >
 
 /**
- * __useAdminUpdateOrganizationMutation__
+ * __use__AdminUpdateOrganizationMutation__
  *
- * To run a mutation, you first call `useAdminUpdateOrganizationMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAdminUpdateOrganizationMutation` returns a tuple that includes:
+ * To run a mutation, you first call `use__AdminUpdateOrganizationMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `use__AdminUpdateOrganizationMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [adminUpdateOrganizationMutation, { data, loading, error }] = useAdminUpdateOrganizationMutation({
+ * const [adminUpdateOrganizationMutation, { data, loading, error }] = use__AdminUpdateOrganizationMutation({
  *   variables: {
  *      organizationId: // value for 'organizationId'
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useAdminUpdateOrganizationMutation(
+export function use__AdminUpdateOrganizationMutation(
   baseOptions?: Apollo.MutationHookOptions<
-    AdminUpdateOrganizationMutation,
-    AdminUpdateOrganizationMutationVariables
+    __AdminUpdateOrganizationMutation,
+    __AdminUpdateOrganizationMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
   return Apollo.useMutation<
-    AdminUpdateOrganizationMutation,
-    AdminUpdateOrganizationMutationVariables
-  >(AdminUpdateOrganizationDocument, options)
+    __AdminUpdateOrganizationMutation,
+    __AdminUpdateOrganizationMutationVariables
+  >(__AdminUpdateOrganizationDocument, options)
 }
-export type AdminUpdateOrganizationMutationHookResult = ReturnType<
-  typeof useAdminUpdateOrganizationMutation
+export type __AdminUpdateOrganizationMutationHookResult = ReturnType<
+  typeof use__AdminUpdateOrganizationMutation
 >
-export type AdminUpdateOrganizationMutationResult =
-  Apollo.MutationResult<AdminUpdateOrganizationMutation>
-export type AdminUpdateOrganizationMutationOptions = Apollo.BaseMutationOptions<
-  AdminUpdateOrganizationMutation,
-  AdminUpdateOrganizationMutationVariables
+export type __AdminUpdateOrganizationMutationResult =
+  Apollo.MutationResult<__AdminUpdateOrganizationMutation>
+export type __AdminUpdateOrganizationMutationOptions = Apollo.BaseMutationOptions<
+  __AdminUpdateOrganizationMutation,
+  __AdminUpdateOrganizationMutationVariables
 >
-export const AdminOrganizationDocument = gql`
-  query AdminOrganization($organizationId: String!) {
+export const __AdminOrganizationDocument = gql`
+  query __AdminOrganization($organizationId: String!) {
     organization(organizationId: $organizationId) {
-      ...AdminOrganizationDetails
+      ...__AdminOrganizationDetails
     }
   }
-  ${AdminOrganizationDetailsFragmentDoc}
+  ${__AdminOrganizationDetailsFragmentDoc}
 `
 
 /**
- * __useAdminOrganizationQuery__
+ * __use__AdminOrganizationQuery__
  *
- * To run a query within a React component, call `useAdminOrganizationQuery` and pass it any options that fit your needs.
- * When your component renders, `useAdminOrganizationQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `use__AdminOrganizationQuery` and pass it any options that fit your needs.
+ * When your component renders, `use__AdminOrganizationQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useAdminOrganizationQuery({
+ * const { data, loading, error } = use__AdminOrganizationQuery({
  *   variables: {
  *      organizationId: // value for 'organizationId'
  *   },
  * });
  */
-export function useAdminOrganizationQuery(
-  baseOptions: Apollo.QueryHookOptions<AdminOrganizationQuery, AdminOrganizationQueryVariables> &
-    ({ variables: AdminOrganizationQueryVariables; skip?: boolean } | { skip: boolean }),
+export function use__AdminOrganizationQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    __AdminOrganizationQuery,
+    __AdminOrganizationQueryVariables
+  > &
+    ({ variables: __AdminOrganizationQueryVariables; skip?: boolean } | { skip: boolean }),
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<AdminOrganizationQuery, AdminOrganizationQueryVariables>(
-    AdminOrganizationDocument,
+  return Apollo.useQuery<__AdminOrganizationQuery, __AdminOrganizationQueryVariables>(
+    __AdminOrganizationDocument,
     options,
   )
 }
-export function useAdminOrganizationLazyQuery(
+export function use__AdminOrganizationLazyQuery(
   baseOptions?: Apollo.LazyQueryHookOptions<
-    AdminOrganizationQuery,
-    AdminOrganizationQueryVariables
+    __AdminOrganizationQuery,
+    __AdminOrganizationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<AdminOrganizationQuery, AdminOrganizationQueryVariables>(
-    AdminOrganizationDocument,
+  return Apollo.useLazyQuery<__AdminOrganizationQuery, __AdminOrganizationQueryVariables>(
+    __AdminOrganizationDocument,
     options,
   )
 }
-export function useAdminOrganizationSuspenseQuery(
+export function use__AdminOrganizationSuspenseQuery(
   baseOptions?:
     | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<AdminOrganizationQuery, AdminOrganizationQueryVariables>,
+    | Apollo.SuspenseQueryHookOptions<__AdminOrganizationQuery, __AdminOrganizationQueryVariables>,
 ) {
   const options =
     baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<AdminOrganizationQuery, AdminOrganizationQueryVariables>(
-    AdminOrganizationDocument,
+  return Apollo.useSuspenseQuery<__AdminOrganizationQuery, __AdminOrganizationQueryVariables>(
+    __AdminOrganizationDocument,
     options,
   )
 }
-export type AdminOrganizationQueryHookResult = ReturnType<typeof useAdminOrganizationQuery>
-export type AdminOrganizationLazyQueryHookResult = ReturnType<typeof useAdminOrganizationLazyQuery>
-export type AdminOrganizationSuspenseQueryHookResult = ReturnType<
-  typeof useAdminOrganizationSuspenseQuery
+export type __AdminOrganizationQueryHookResult = ReturnType<typeof use__AdminOrganizationQuery>
+export type __AdminOrganizationLazyQueryHookResult = ReturnType<
+  typeof use__AdminOrganizationLazyQuery
 >
-export type AdminOrganizationQueryResult = Apollo.QueryResult<
-  AdminOrganizationQuery,
-  AdminOrganizationQueryVariables
+export type __AdminOrganizationSuspenseQueryHookResult = ReturnType<
+  typeof use__AdminOrganizationSuspenseQuery
 >
-export const AdminOrganizationsDocument = gql`
-  query AdminOrganizations($input: ListOrganizationInput) {
+export type __AdminOrganizationQueryResult = Apollo.QueryResult<
+  __AdminOrganizationQuery,
+  __AdminOrganizationQueryVariables
+>
+export const __AdminOrganizationsDocument = gql`
+  query __AdminOrganizations($input: ListOrganizationInput) {
     organizations(input: $input) {
-      ...AdminOrganizationList
+      ...__AdminOrganizationList
     }
     counters: organizationsCount(input: $input) {
       ...CorePagingDetails
     }
   }
-  ${AdminOrganizationListFragmentDoc}
+  ${__AdminOrganizationListFragmentDoc}
   ${CorePagingDetailsFragmentDoc}
 `
 
 /**
- * __useAdminOrganizationsQuery__
+ * __use__AdminOrganizationsQuery__
  *
- * To run a query within a React component, call `useAdminOrganizationsQuery` and pass it any options that fit your needs.
- * When your component renders, `useAdminOrganizationsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `use__AdminOrganizationsQuery` and pass it any options that fit your needs.
+ * When your component renders, `use__AdminOrganizationsQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useAdminOrganizationsQuery({
+ * const { data, loading, error } = use__AdminOrganizationsQuery({
  *   variables: {
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useAdminOrganizationsQuery(
-  baseOptions?: Apollo.QueryHookOptions<AdminOrganizationsQuery, AdminOrganizationsQueryVariables>,
-) {
-  const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<AdminOrganizationsQuery, AdminOrganizationsQueryVariables>(
-    AdminOrganizationsDocument,
-    options,
-  )
-}
-export function useAdminOrganizationsLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
-    AdminOrganizationsQuery,
-    AdminOrganizationsQueryVariables
+export function use__AdminOrganizationsQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    __AdminOrganizationsQuery,
+    __AdminOrganizationsQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<AdminOrganizationsQuery, AdminOrganizationsQueryVariables>(
-    AdminOrganizationsDocument,
+  return Apollo.useQuery<__AdminOrganizationsQuery, __AdminOrganizationsQueryVariables>(
+    __AdminOrganizationsDocument,
     options,
   )
 }
-export function useAdminOrganizationsSuspenseQuery(
+export function use__AdminOrganizationsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    __AdminOrganizationsQuery,
+    __AdminOrganizationsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<__AdminOrganizationsQuery, __AdminOrganizationsQueryVariables>(
+    __AdminOrganizationsDocument,
+    options,
+  )
+}
+export function use__AdminOrganizationsSuspenseQuery(
   baseOptions?:
     | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<AdminOrganizationsQuery, AdminOrganizationsQueryVariables>,
+    | Apollo.SuspenseQueryHookOptions<
+        __AdminOrganizationsQuery,
+        __AdminOrganizationsQueryVariables
+      >,
 ) {
   const options =
     baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<AdminOrganizationsQuery, AdminOrganizationsQueryVariables>(
-    AdminOrganizationsDocument,
+  return Apollo.useSuspenseQuery<__AdminOrganizationsQuery, __AdminOrganizationsQueryVariables>(
+    __AdminOrganizationsDocument,
     options,
   )
 }
-export type AdminOrganizationsQueryHookResult = ReturnType<typeof useAdminOrganizationsQuery>
-export type AdminOrganizationsLazyQueryHookResult = ReturnType<
-  typeof useAdminOrganizationsLazyQuery
+export type __AdminOrganizationsQueryHookResult = ReturnType<typeof use__AdminOrganizationsQuery>
+export type __AdminOrganizationsLazyQueryHookResult = ReturnType<
+  typeof use__AdminOrganizationsLazyQuery
 >
-export type AdminOrganizationsSuspenseQueryHookResult = ReturnType<
-  typeof useAdminOrganizationsSuspenseQuery
+export type __AdminOrganizationsSuspenseQueryHookResult = ReturnType<
+  typeof use__AdminOrganizationsSuspenseQuery
 >
-export type AdminOrganizationsQueryResult = Apollo.QueryResult<
-  AdminOrganizationsQuery,
-  AdminOrganizationsQueryVariables
+export type __AdminOrganizationsQueryResult = Apollo.QueryResult<
+  __AdminOrganizationsQuery,
+  __AdminOrganizationsQueryVariables
 >
-export const AdminOrganizationPaginationDocument = gql`
-  query AdminOrganizationPagination($input: ListOrganizationInput) {
+export const __AdminOrganizationPaginationDocument = gql`
+  query __AdminOrganizationPagination($input: ListOrganizationInput) {
     counters: organizationsCount(input: $input) {
       ...CorePagingDetails
     }
@@ -16651,727 +16842,745 @@ export const AdminOrganizationPaginationDocument = gql`
 `
 
 /**
- * __useAdminOrganizationPaginationQuery__
+ * __use__AdminOrganizationPaginationQuery__
  *
- * To run a query within a React component, call `useAdminOrganizationPaginationQuery` and pass it any options that fit your needs.
- * When your component renders, `useAdminOrganizationPaginationQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `use__AdminOrganizationPaginationQuery` and pass it any options that fit your needs.
+ * When your component renders, `use__AdminOrganizationPaginationQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useAdminOrganizationPaginationQuery({
+ * const { data, loading, error } = use__AdminOrganizationPaginationQuery({
  *   variables: {
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useAdminOrganizationPaginationQuery(
+export function use__AdminOrganizationPaginationQuery(
   baseOptions?: Apollo.QueryHookOptions<
-    AdminOrganizationPaginationQuery,
-    AdminOrganizationPaginationQueryVariables
+    __AdminOrganizationPaginationQuery,
+    __AdminOrganizationPaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
   return Apollo.useQuery<
-    AdminOrganizationPaginationQuery,
-    AdminOrganizationPaginationQueryVariables
-  >(AdminOrganizationPaginationDocument, options)
+    __AdminOrganizationPaginationQuery,
+    __AdminOrganizationPaginationQueryVariables
+  >(__AdminOrganizationPaginationDocument, options)
 }
-export function useAdminOrganizationPaginationLazyQuery(
+export function use__AdminOrganizationPaginationLazyQuery(
   baseOptions?: Apollo.LazyQueryHookOptions<
-    AdminOrganizationPaginationQuery,
-    AdminOrganizationPaginationQueryVariables
+    __AdminOrganizationPaginationQuery,
+    __AdminOrganizationPaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
   return Apollo.useLazyQuery<
-    AdminOrganizationPaginationQuery,
-    AdminOrganizationPaginationQueryVariables
-  >(AdminOrganizationPaginationDocument, options)
+    __AdminOrganizationPaginationQuery,
+    __AdminOrganizationPaginationQueryVariables
+  >(__AdminOrganizationPaginationDocument, options)
 }
-export function useAdminOrganizationPaginationSuspenseQuery(
+export function use__AdminOrganizationPaginationSuspenseQuery(
   baseOptions?:
     | Apollo.SkipToken
     | Apollo.SuspenseQueryHookOptions<
-        AdminOrganizationPaginationQuery,
-        AdminOrganizationPaginationQueryVariables
+        __AdminOrganizationPaginationQuery,
+        __AdminOrganizationPaginationQueryVariables
       >,
 ) {
   const options =
     baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
   return Apollo.useSuspenseQuery<
-    AdminOrganizationPaginationQuery,
-    AdminOrganizationPaginationQueryVariables
-  >(AdminOrganizationPaginationDocument, options)
+    __AdminOrganizationPaginationQuery,
+    __AdminOrganizationPaginationQueryVariables
+  >(__AdminOrganizationPaginationDocument, options)
 }
-export type AdminOrganizationPaginationQueryHookResult = ReturnType<
-  typeof useAdminOrganizationPaginationQuery
+export type __AdminOrganizationPaginationQueryHookResult = ReturnType<
+  typeof use__AdminOrganizationPaginationQuery
 >
-export type AdminOrganizationPaginationLazyQueryHookResult = ReturnType<
-  typeof useAdminOrganizationPaginationLazyQuery
+export type __AdminOrganizationPaginationLazyQueryHookResult = ReturnType<
+  typeof use__AdminOrganizationPaginationLazyQuery
 >
-export type AdminOrganizationPaginationSuspenseQueryHookResult = ReturnType<
-  typeof useAdminOrganizationPaginationSuspenseQuery
+export type __AdminOrganizationPaginationSuspenseQueryHookResult = ReturnType<
+  typeof use__AdminOrganizationPaginationSuspenseQuery
 >
-export type AdminOrganizationPaginationQueryResult = Apollo.QueryResult<
-  AdminOrganizationPaginationQuery,
-  AdminOrganizationPaginationQueryVariables
+export type __AdminOrganizationPaginationQueryResult = Apollo.QueryResult<
+  __AdminOrganizationPaginationQuery,
+  __AdminOrganizationPaginationQueryVariables
 >
-export const AdminCreatePermissionDocument = gql`
-  mutation AdminCreatePermission($input: CreatePermissionInput!) {
+export const __AdminCreatePermissionDocument = gql`
+  mutation __AdminCreatePermission($input: CreatePermissionInput!) {
     createPermission(input: $input) {
-      ...AdminPermissionDetails
+      ...__AdminPermissionDetails
     }
   }
-  ${AdminPermissionDetailsFragmentDoc}
+  ${__AdminPermissionDetailsFragmentDoc}
 `
-export type AdminCreatePermissionMutationFn = Apollo.MutationFunction<
-  AdminCreatePermissionMutation,
-  AdminCreatePermissionMutationVariables
+export type __AdminCreatePermissionMutationFn = Apollo.MutationFunction<
+  __AdminCreatePermissionMutation,
+  __AdminCreatePermissionMutationVariables
 >
 
 /**
- * __useAdminCreatePermissionMutation__
+ * __use__AdminCreatePermissionMutation__
  *
- * To run a mutation, you first call `useAdminCreatePermissionMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAdminCreatePermissionMutation` returns a tuple that includes:
+ * To run a mutation, you first call `use__AdminCreatePermissionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `use__AdminCreatePermissionMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [adminCreatePermissionMutation, { data, loading, error }] = useAdminCreatePermissionMutation({
+ * const [adminCreatePermissionMutation, { data, loading, error }] = use__AdminCreatePermissionMutation({
  *   variables: {
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useAdminCreatePermissionMutation(
+export function use__AdminCreatePermissionMutation(
   baseOptions?: Apollo.MutationHookOptions<
-    AdminCreatePermissionMutation,
-    AdminCreatePermissionMutationVariables
+    __AdminCreatePermissionMutation,
+    __AdminCreatePermissionMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<AdminCreatePermissionMutation, AdminCreatePermissionMutationVariables>(
-    AdminCreatePermissionDocument,
-    options,
-  )
+  return Apollo.useMutation<
+    __AdminCreatePermissionMutation,
+    __AdminCreatePermissionMutationVariables
+  >(__AdminCreatePermissionDocument, options)
 }
-export type AdminCreatePermissionMutationHookResult = ReturnType<
-  typeof useAdminCreatePermissionMutation
+export type __AdminCreatePermissionMutationHookResult = ReturnType<
+  typeof use__AdminCreatePermissionMutation
 >
-export type AdminCreatePermissionMutationResult =
-  Apollo.MutationResult<AdminCreatePermissionMutation>
-export type AdminCreatePermissionMutationOptions = Apollo.BaseMutationOptions<
-  AdminCreatePermissionMutation,
-  AdminCreatePermissionMutationVariables
+export type __AdminCreatePermissionMutationResult =
+  Apollo.MutationResult<__AdminCreatePermissionMutation>
+export type __AdminCreatePermissionMutationOptions = Apollo.BaseMutationOptions<
+  __AdminCreatePermissionMutation,
+  __AdminCreatePermissionMutationVariables
 >
-export const AdminDeletePermissionDocument = gql`
-  mutation AdminDeletePermission($permissionId: String!) {
+export const __AdminDeletePermissionDocument = gql`
+  mutation __AdminDeletePermission($permissionId: String!) {
     deletePermission(permissionId: $permissionId) {
       id
     }
   }
 `
-export type AdminDeletePermissionMutationFn = Apollo.MutationFunction<
-  AdminDeletePermissionMutation,
-  AdminDeletePermissionMutationVariables
+export type __AdminDeletePermissionMutationFn = Apollo.MutationFunction<
+  __AdminDeletePermissionMutation,
+  __AdminDeletePermissionMutationVariables
 >
 
 /**
- * __useAdminDeletePermissionMutation__
+ * __use__AdminDeletePermissionMutation__
  *
- * To run a mutation, you first call `useAdminDeletePermissionMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAdminDeletePermissionMutation` returns a tuple that includes:
+ * To run a mutation, you first call `use__AdminDeletePermissionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `use__AdminDeletePermissionMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [adminDeletePermissionMutation, { data, loading, error }] = useAdminDeletePermissionMutation({
+ * const [adminDeletePermissionMutation, { data, loading, error }] = use__AdminDeletePermissionMutation({
  *   variables: {
  *      permissionId: // value for 'permissionId'
  *   },
  * });
  */
-export function useAdminDeletePermissionMutation(
+export function use__AdminDeletePermissionMutation(
   baseOptions?: Apollo.MutationHookOptions<
-    AdminDeletePermissionMutation,
-    AdminDeletePermissionMutationVariables
+    __AdminDeletePermissionMutation,
+    __AdminDeletePermissionMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<AdminDeletePermissionMutation, AdminDeletePermissionMutationVariables>(
-    AdminDeletePermissionDocument,
-    options,
-  )
+  return Apollo.useMutation<
+    __AdminDeletePermissionMutation,
+    __AdminDeletePermissionMutationVariables
+  >(__AdminDeletePermissionDocument, options)
 }
-export type AdminDeletePermissionMutationHookResult = ReturnType<
-  typeof useAdminDeletePermissionMutation
+export type __AdminDeletePermissionMutationHookResult = ReturnType<
+  typeof use__AdminDeletePermissionMutation
 >
-export type AdminDeletePermissionMutationResult =
-  Apollo.MutationResult<AdminDeletePermissionMutation>
-export type AdminDeletePermissionMutationOptions = Apollo.BaseMutationOptions<
-  AdminDeletePermissionMutation,
-  AdminDeletePermissionMutationVariables
+export type __AdminDeletePermissionMutationResult =
+  Apollo.MutationResult<__AdminDeletePermissionMutation>
+export type __AdminDeletePermissionMutationOptions = Apollo.BaseMutationOptions<
+  __AdminDeletePermissionMutation,
+  __AdminDeletePermissionMutationVariables
 >
-export const AdminUpdatePermissionDocument = gql`
-  mutation AdminUpdatePermission($permissionId: String!, $input: UpdatePermissionInput!) {
+export const __AdminUpdatePermissionDocument = gql`
+  mutation __AdminUpdatePermission($permissionId: String!, $input: UpdatePermissionInput!) {
     updatePermission(permissionId: $permissionId, input: $input) {
-      ...AdminPermissionDetails
+      ...__AdminPermissionDetails
     }
   }
-  ${AdminPermissionDetailsFragmentDoc}
+  ${__AdminPermissionDetailsFragmentDoc}
 `
-export type AdminUpdatePermissionMutationFn = Apollo.MutationFunction<
-  AdminUpdatePermissionMutation,
-  AdminUpdatePermissionMutationVariables
+export type __AdminUpdatePermissionMutationFn = Apollo.MutationFunction<
+  __AdminUpdatePermissionMutation,
+  __AdminUpdatePermissionMutationVariables
 >
 
 /**
- * __useAdminUpdatePermissionMutation__
+ * __use__AdminUpdatePermissionMutation__
  *
- * To run a mutation, you first call `useAdminUpdatePermissionMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAdminUpdatePermissionMutation` returns a tuple that includes:
+ * To run a mutation, you first call `use__AdminUpdatePermissionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `use__AdminUpdatePermissionMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [adminUpdatePermissionMutation, { data, loading, error }] = useAdminUpdatePermissionMutation({
+ * const [adminUpdatePermissionMutation, { data, loading, error }] = use__AdminUpdatePermissionMutation({
  *   variables: {
  *      permissionId: // value for 'permissionId'
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useAdminUpdatePermissionMutation(
+export function use__AdminUpdatePermissionMutation(
   baseOptions?: Apollo.MutationHookOptions<
-    AdminUpdatePermissionMutation,
-    AdminUpdatePermissionMutationVariables
+    __AdminUpdatePermissionMutation,
+    __AdminUpdatePermissionMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<AdminUpdatePermissionMutation, AdminUpdatePermissionMutationVariables>(
-    AdminUpdatePermissionDocument,
-    options,
-  )
+  return Apollo.useMutation<
+    __AdminUpdatePermissionMutation,
+    __AdminUpdatePermissionMutationVariables
+  >(__AdminUpdatePermissionDocument, options)
 }
-export type AdminUpdatePermissionMutationHookResult = ReturnType<
-  typeof useAdminUpdatePermissionMutation
+export type __AdminUpdatePermissionMutationHookResult = ReturnType<
+  typeof use__AdminUpdatePermissionMutation
 >
-export type AdminUpdatePermissionMutationResult =
-  Apollo.MutationResult<AdminUpdatePermissionMutation>
-export type AdminUpdatePermissionMutationOptions = Apollo.BaseMutationOptions<
-  AdminUpdatePermissionMutation,
-  AdminUpdatePermissionMutationVariables
+export type __AdminUpdatePermissionMutationResult =
+  Apollo.MutationResult<__AdminUpdatePermissionMutation>
+export type __AdminUpdatePermissionMutationOptions = Apollo.BaseMutationOptions<
+  __AdminUpdatePermissionMutation,
+  __AdminUpdatePermissionMutationVariables
 >
-export const AdminPermissionDocument = gql`
-  query AdminPermission($permissionId: String!) {
+export const __AdminPermissionDocument = gql`
+  query __AdminPermission($permissionId: String!) {
     permission(permissionId: $permissionId) {
-      ...AdminPermissionDetails
+      ...__AdminPermissionDetails
     }
   }
-  ${AdminPermissionDetailsFragmentDoc}
+  ${__AdminPermissionDetailsFragmentDoc}
 `
 
 /**
- * __useAdminPermissionQuery__
+ * __use__AdminPermissionQuery__
  *
- * To run a query within a React component, call `useAdminPermissionQuery` and pass it any options that fit your needs.
- * When your component renders, `useAdminPermissionQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `use__AdminPermissionQuery` and pass it any options that fit your needs.
+ * When your component renders, `use__AdminPermissionQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useAdminPermissionQuery({
+ * const { data, loading, error } = use__AdminPermissionQuery({
  *   variables: {
  *      permissionId: // value for 'permissionId'
  *   },
  * });
  */
-export function useAdminPermissionQuery(
-  baseOptions: Apollo.QueryHookOptions<AdminPermissionQuery, AdminPermissionQueryVariables> &
-    ({ variables: AdminPermissionQueryVariables; skip?: boolean } | { skip: boolean }),
+export function use__AdminPermissionQuery(
+  baseOptions: Apollo.QueryHookOptions<__AdminPermissionQuery, __AdminPermissionQueryVariables> &
+    ({ variables: __AdminPermissionQueryVariables; skip?: boolean } | { skip: boolean }),
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<AdminPermissionQuery, AdminPermissionQueryVariables>(
-    AdminPermissionDocument,
+  return Apollo.useQuery<__AdminPermissionQuery, __AdminPermissionQueryVariables>(
+    __AdminPermissionDocument,
     options,
   )
 }
-export function useAdminPermissionLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<AdminPermissionQuery, AdminPermissionQueryVariables>,
-) {
-  const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<AdminPermissionQuery, AdminPermissionQueryVariables>(
-    AdminPermissionDocument,
-    options,
-  )
-}
-export function useAdminPermissionSuspenseQuery(
-  baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<AdminPermissionQuery, AdminPermissionQueryVariables>,
-) {
-  const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<AdminPermissionQuery, AdminPermissionQueryVariables>(
-    AdminPermissionDocument,
-    options,
-  )
-}
-export type AdminPermissionQueryHookResult = ReturnType<typeof useAdminPermissionQuery>
-export type AdminPermissionLazyQueryHookResult = ReturnType<typeof useAdminPermissionLazyQuery>
-export type AdminPermissionSuspenseQueryHookResult = ReturnType<
-  typeof useAdminPermissionSuspenseQuery
->
-export type AdminPermissionQueryResult = Apollo.QueryResult<
-  AdminPermissionQuery,
-  AdminPermissionQueryVariables
->
-export const AdminPermissionsDocument = gql`
-  query AdminPermissions($input: ListPermissionInput) {
-    permissions(input: $input) {
-      ...AdminPermissionList
-    }
-    counters: permissionsCount(input: $input) {
-      ...CorePagingDetails
-    }
-  }
-  ${AdminPermissionListFragmentDoc}
-  ${CorePagingDetailsFragmentDoc}
-`
-
-/**
- * __useAdminPermissionsQuery__
- *
- * To run a query within a React component, call `useAdminPermissionsQuery` and pass it any options that fit your needs.
- * When your component renders, `useAdminPermissionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useAdminPermissionsQuery({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useAdminPermissionsQuery(
-  baseOptions?: Apollo.QueryHookOptions<AdminPermissionsQuery, AdminPermissionsQueryVariables>,
-) {
-  const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<AdminPermissionsQuery, AdminPermissionsQueryVariables>(
-    AdminPermissionsDocument,
-    options,
-  )
-}
-export function useAdminPermissionsLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<AdminPermissionsQuery, AdminPermissionsQueryVariables>,
-) {
-  const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<AdminPermissionsQuery, AdminPermissionsQueryVariables>(
-    AdminPermissionsDocument,
-    options,
-  )
-}
-export function useAdminPermissionsSuspenseQuery(
-  baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<AdminPermissionsQuery, AdminPermissionsQueryVariables>,
-) {
-  const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<AdminPermissionsQuery, AdminPermissionsQueryVariables>(
-    AdminPermissionsDocument,
-    options,
-  )
-}
-export type AdminPermissionsQueryHookResult = ReturnType<typeof useAdminPermissionsQuery>
-export type AdminPermissionsLazyQueryHookResult = ReturnType<typeof useAdminPermissionsLazyQuery>
-export type AdminPermissionsSuspenseQueryHookResult = ReturnType<
-  typeof useAdminPermissionsSuspenseQuery
->
-export type AdminPermissionsQueryResult = Apollo.QueryResult<
-  AdminPermissionsQuery,
-  AdminPermissionsQueryVariables
->
-export const AdminPermissionPaginationDocument = gql`
-  query AdminPermissionPagination($input: ListPermissionInput) {
-    counters: permissionsCount(input: $input) {
-      ...CorePagingDetails
-    }
-  }
-  ${CorePagingDetailsFragmentDoc}
-`
-
-/**
- * __useAdminPermissionPaginationQuery__
- *
- * To run a query within a React component, call `useAdminPermissionPaginationQuery` and pass it any options that fit your needs.
- * When your component renders, `useAdminPermissionPaginationQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useAdminPermissionPaginationQuery({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useAdminPermissionPaginationQuery(
-  baseOptions?: Apollo.QueryHookOptions<
-    AdminPermissionPaginationQuery,
-    AdminPermissionPaginationQueryVariables
+export function use__AdminPermissionLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    __AdminPermissionQuery,
+    __AdminPermissionQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<AdminPermissionPaginationQuery, AdminPermissionPaginationQueryVariables>(
-    AdminPermissionPaginationDocument,
+  return Apollo.useLazyQuery<__AdminPermissionQuery, __AdminPermissionQueryVariables>(
+    __AdminPermissionDocument,
     options,
   )
 }
-export function useAdminPermissionPaginationLazyQuery(
+export function use__AdminPermissionSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<__AdminPermissionQuery, __AdminPermissionQueryVariables>,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<__AdminPermissionQuery, __AdminPermissionQueryVariables>(
+    __AdminPermissionDocument,
+    options,
+  )
+}
+export type __AdminPermissionQueryHookResult = ReturnType<typeof use__AdminPermissionQuery>
+export type __AdminPermissionLazyQueryHookResult = ReturnType<typeof use__AdminPermissionLazyQuery>
+export type __AdminPermissionSuspenseQueryHookResult = ReturnType<
+  typeof use__AdminPermissionSuspenseQuery
+>
+export type __AdminPermissionQueryResult = Apollo.QueryResult<
+  __AdminPermissionQuery,
+  __AdminPermissionQueryVariables
+>
+export const __AdminPermissionsDocument = gql`
+  query __AdminPermissions($input: ListPermissionInput) {
+    permissions(input: $input) {
+      ...__AdminPermissionList
+    }
+    counters: permissionsCount(input: $input) {
+      ...CorePagingDetails
+    }
+  }
+  ${__AdminPermissionListFragmentDoc}
+  ${CorePagingDetailsFragmentDoc}
+`
+
+/**
+ * __use__AdminPermissionsQuery__
+ *
+ * To run a query within a React component, call `use__AdminPermissionsQuery` and pass it any options that fit your needs.
+ * When your component renders, `use__AdminPermissionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = use__AdminPermissionsQuery({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function use__AdminPermissionsQuery(
+  baseOptions?: Apollo.QueryHookOptions<__AdminPermissionsQuery, __AdminPermissionsQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<__AdminPermissionsQuery, __AdminPermissionsQueryVariables>(
+    __AdminPermissionsDocument,
+    options,
+  )
+}
+export function use__AdminPermissionsLazyQuery(
   baseOptions?: Apollo.LazyQueryHookOptions<
-    AdminPermissionPaginationQuery,
-    AdminPermissionPaginationQueryVariables
+    __AdminPermissionsQuery,
+    __AdminPermissionsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<__AdminPermissionsQuery, __AdminPermissionsQueryVariables>(
+    __AdminPermissionsDocument,
+    options,
+  )
+}
+export function use__AdminPermissionsSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<__AdminPermissionsQuery, __AdminPermissionsQueryVariables>,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<__AdminPermissionsQuery, __AdminPermissionsQueryVariables>(
+    __AdminPermissionsDocument,
+    options,
+  )
+}
+export type __AdminPermissionsQueryHookResult = ReturnType<typeof use__AdminPermissionsQuery>
+export type __AdminPermissionsLazyQueryHookResult = ReturnType<
+  typeof use__AdminPermissionsLazyQuery
+>
+export type __AdminPermissionsSuspenseQueryHookResult = ReturnType<
+  typeof use__AdminPermissionsSuspenseQuery
+>
+export type __AdminPermissionsQueryResult = Apollo.QueryResult<
+  __AdminPermissionsQuery,
+  __AdminPermissionsQueryVariables
+>
+export const __AdminPermissionPaginationDocument = gql`
+  query __AdminPermissionPagination($input: ListPermissionInput) {
+    counters: permissionsCount(input: $input) {
+      ...CorePagingDetails
+    }
+  }
+  ${CorePagingDetailsFragmentDoc}
+`
+
+/**
+ * __use__AdminPermissionPaginationQuery__
+ *
+ * To run a query within a React component, call `use__AdminPermissionPaginationQuery` and pass it any options that fit your needs.
+ * When your component renders, `use__AdminPermissionPaginationQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = use__AdminPermissionPaginationQuery({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function use__AdminPermissionPaginationQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    __AdminPermissionPaginationQuery,
+    __AdminPermissionPaginationQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<
+    __AdminPermissionPaginationQuery,
+    __AdminPermissionPaginationQueryVariables
+  >(__AdminPermissionPaginationDocument, options)
+}
+export function use__AdminPermissionPaginationLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    __AdminPermissionPaginationQuery,
+    __AdminPermissionPaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
   return Apollo.useLazyQuery<
-    AdminPermissionPaginationQuery,
-    AdminPermissionPaginationQueryVariables
-  >(AdminPermissionPaginationDocument, options)
+    __AdminPermissionPaginationQuery,
+    __AdminPermissionPaginationQueryVariables
+  >(__AdminPermissionPaginationDocument, options)
 }
-export function useAdminPermissionPaginationSuspenseQuery(
+export function use__AdminPermissionPaginationSuspenseQuery(
   baseOptions?:
     | Apollo.SkipToken
     | Apollo.SuspenseQueryHookOptions<
-        AdminPermissionPaginationQuery,
-        AdminPermissionPaginationQueryVariables
+        __AdminPermissionPaginationQuery,
+        __AdminPermissionPaginationQueryVariables
       >,
 ) {
   const options =
     baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
   return Apollo.useSuspenseQuery<
-    AdminPermissionPaginationQuery,
-    AdminPermissionPaginationQueryVariables
-  >(AdminPermissionPaginationDocument, options)
+    __AdminPermissionPaginationQuery,
+    __AdminPermissionPaginationQueryVariables
+  >(__AdminPermissionPaginationDocument, options)
 }
-export type AdminPermissionPaginationQueryHookResult = ReturnType<
-  typeof useAdminPermissionPaginationQuery
+export type __AdminPermissionPaginationQueryHookResult = ReturnType<
+  typeof use__AdminPermissionPaginationQuery
 >
-export type AdminPermissionPaginationLazyQueryHookResult = ReturnType<
-  typeof useAdminPermissionPaginationLazyQuery
+export type __AdminPermissionPaginationLazyQueryHookResult = ReturnType<
+  typeof use__AdminPermissionPaginationLazyQuery
 >
-export type AdminPermissionPaginationSuspenseQueryHookResult = ReturnType<
-  typeof useAdminPermissionPaginationSuspenseQuery
+export type __AdminPermissionPaginationSuspenseQueryHookResult = ReturnType<
+  typeof use__AdminPermissionPaginationSuspenseQuery
 >
-export type AdminPermissionPaginationQueryResult = Apollo.QueryResult<
-  AdminPermissionPaginationQuery,
-  AdminPermissionPaginationQueryVariables
+export type __AdminPermissionPaginationQueryResult = Apollo.QueryResult<
+  __AdminPermissionPaginationQuery,
+  __AdminPermissionPaginationQueryVariables
 >
-export const AdminCreatePhoneNumberDocument = gql`
-  mutation AdminCreatePhoneNumber($input: CreatePhoneNumberInput!) {
+export const __AdminCreatePhoneNumberDocument = gql`
+  mutation __AdminCreatePhoneNumber($input: CreatePhoneNumberInput!) {
     createPhoneNumber(input: $input) {
-      ...AdminPhoneNumberDetails
+      ...__AdminPhoneNumberDetails
     }
   }
-  ${AdminPhoneNumberDetailsFragmentDoc}
+  ${__AdminPhoneNumberDetailsFragmentDoc}
 `
-export type AdminCreatePhoneNumberMutationFn = Apollo.MutationFunction<
-  AdminCreatePhoneNumberMutation,
-  AdminCreatePhoneNumberMutationVariables
+export type __AdminCreatePhoneNumberMutationFn = Apollo.MutationFunction<
+  __AdminCreatePhoneNumberMutation,
+  __AdminCreatePhoneNumberMutationVariables
 >
 
 /**
- * __useAdminCreatePhoneNumberMutation__
+ * __use__AdminCreatePhoneNumberMutation__
  *
- * To run a mutation, you first call `useAdminCreatePhoneNumberMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAdminCreatePhoneNumberMutation` returns a tuple that includes:
+ * To run a mutation, you first call `use__AdminCreatePhoneNumberMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `use__AdminCreatePhoneNumberMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [adminCreatePhoneNumberMutation, { data, loading, error }] = useAdminCreatePhoneNumberMutation({
+ * const [adminCreatePhoneNumberMutation, { data, loading, error }] = use__AdminCreatePhoneNumberMutation({
  *   variables: {
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useAdminCreatePhoneNumberMutation(
+export function use__AdminCreatePhoneNumberMutation(
   baseOptions?: Apollo.MutationHookOptions<
-    AdminCreatePhoneNumberMutation,
-    AdminCreatePhoneNumberMutationVariables
+    __AdminCreatePhoneNumberMutation,
+    __AdminCreatePhoneNumberMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
   return Apollo.useMutation<
-    AdminCreatePhoneNumberMutation,
-    AdminCreatePhoneNumberMutationVariables
-  >(AdminCreatePhoneNumberDocument, options)
+    __AdminCreatePhoneNumberMutation,
+    __AdminCreatePhoneNumberMutationVariables
+  >(__AdminCreatePhoneNumberDocument, options)
 }
-export type AdminCreatePhoneNumberMutationHookResult = ReturnType<
-  typeof useAdminCreatePhoneNumberMutation
+export type __AdminCreatePhoneNumberMutationHookResult = ReturnType<
+  typeof use__AdminCreatePhoneNumberMutation
 >
-export type AdminCreatePhoneNumberMutationResult =
-  Apollo.MutationResult<AdminCreatePhoneNumberMutation>
-export type AdminCreatePhoneNumberMutationOptions = Apollo.BaseMutationOptions<
-  AdminCreatePhoneNumberMutation,
-  AdminCreatePhoneNumberMutationVariables
+export type __AdminCreatePhoneNumberMutationResult =
+  Apollo.MutationResult<__AdminCreatePhoneNumberMutation>
+export type __AdminCreatePhoneNumberMutationOptions = Apollo.BaseMutationOptions<
+  __AdminCreatePhoneNumberMutation,
+  __AdminCreatePhoneNumberMutationVariables
 >
-export const AdminDeletePhoneNumberDocument = gql`
-  mutation AdminDeletePhoneNumber($phoneNumberId: String!) {
+export const __AdminDeletePhoneNumberDocument = gql`
+  mutation __AdminDeletePhoneNumber($phoneNumberId: String!) {
     deletePhoneNumber(phoneNumberId: $phoneNumberId) {
       id
     }
   }
 `
-export type AdminDeletePhoneNumberMutationFn = Apollo.MutationFunction<
-  AdminDeletePhoneNumberMutation,
-  AdminDeletePhoneNumberMutationVariables
+export type __AdminDeletePhoneNumberMutationFn = Apollo.MutationFunction<
+  __AdminDeletePhoneNumberMutation,
+  __AdminDeletePhoneNumberMutationVariables
 >
 
 /**
- * __useAdminDeletePhoneNumberMutation__
+ * __use__AdminDeletePhoneNumberMutation__
  *
- * To run a mutation, you first call `useAdminDeletePhoneNumberMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAdminDeletePhoneNumberMutation` returns a tuple that includes:
+ * To run a mutation, you first call `use__AdminDeletePhoneNumberMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `use__AdminDeletePhoneNumberMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [adminDeletePhoneNumberMutation, { data, loading, error }] = useAdminDeletePhoneNumberMutation({
+ * const [adminDeletePhoneNumberMutation, { data, loading, error }] = use__AdminDeletePhoneNumberMutation({
  *   variables: {
  *      phoneNumberId: // value for 'phoneNumberId'
  *   },
  * });
  */
-export function useAdminDeletePhoneNumberMutation(
+export function use__AdminDeletePhoneNumberMutation(
   baseOptions?: Apollo.MutationHookOptions<
-    AdminDeletePhoneNumberMutation,
-    AdminDeletePhoneNumberMutationVariables
+    __AdminDeletePhoneNumberMutation,
+    __AdminDeletePhoneNumberMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
   return Apollo.useMutation<
-    AdminDeletePhoneNumberMutation,
-    AdminDeletePhoneNumberMutationVariables
-  >(AdminDeletePhoneNumberDocument, options)
+    __AdminDeletePhoneNumberMutation,
+    __AdminDeletePhoneNumberMutationVariables
+  >(__AdminDeletePhoneNumberDocument, options)
 }
-export type AdminDeletePhoneNumberMutationHookResult = ReturnType<
-  typeof useAdminDeletePhoneNumberMutation
+export type __AdminDeletePhoneNumberMutationHookResult = ReturnType<
+  typeof use__AdminDeletePhoneNumberMutation
 >
-export type AdminDeletePhoneNumberMutationResult =
-  Apollo.MutationResult<AdminDeletePhoneNumberMutation>
-export type AdminDeletePhoneNumberMutationOptions = Apollo.BaseMutationOptions<
-  AdminDeletePhoneNumberMutation,
-  AdminDeletePhoneNumberMutationVariables
+export type __AdminDeletePhoneNumberMutationResult =
+  Apollo.MutationResult<__AdminDeletePhoneNumberMutation>
+export type __AdminDeletePhoneNumberMutationOptions = Apollo.BaseMutationOptions<
+  __AdminDeletePhoneNumberMutation,
+  __AdminDeletePhoneNumberMutationVariables
 >
-export const AdminUpdatePhoneNumberDocument = gql`
-  mutation AdminUpdatePhoneNumber($phoneNumberId: String!, $input: UpdatePhoneNumberInput!) {
+export const __AdminUpdatePhoneNumberDocument = gql`
+  mutation __AdminUpdatePhoneNumber($phoneNumberId: String!, $input: UpdatePhoneNumberInput!) {
     updatePhoneNumber(phoneNumberId: $phoneNumberId, input: $input) {
-      ...AdminPhoneNumberDetails
+      ...__AdminPhoneNumberDetails
     }
   }
-  ${AdminPhoneNumberDetailsFragmentDoc}
+  ${__AdminPhoneNumberDetailsFragmentDoc}
 `
-export type AdminUpdatePhoneNumberMutationFn = Apollo.MutationFunction<
-  AdminUpdatePhoneNumberMutation,
-  AdminUpdatePhoneNumberMutationVariables
+export type __AdminUpdatePhoneNumberMutationFn = Apollo.MutationFunction<
+  __AdminUpdatePhoneNumberMutation,
+  __AdminUpdatePhoneNumberMutationVariables
 >
 
 /**
- * __useAdminUpdatePhoneNumberMutation__
+ * __use__AdminUpdatePhoneNumberMutation__
  *
- * To run a mutation, you first call `useAdminUpdatePhoneNumberMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAdminUpdatePhoneNumberMutation` returns a tuple that includes:
+ * To run a mutation, you first call `use__AdminUpdatePhoneNumberMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `use__AdminUpdatePhoneNumberMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [adminUpdatePhoneNumberMutation, { data, loading, error }] = useAdminUpdatePhoneNumberMutation({
+ * const [adminUpdatePhoneNumberMutation, { data, loading, error }] = use__AdminUpdatePhoneNumberMutation({
  *   variables: {
  *      phoneNumberId: // value for 'phoneNumberId'
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useAdminUpdatePhoneNumberMutation(
+export function use__AdminUpdatePhoneNumberMutation(
   baseOptions?: Apollo.MutationHookOptions<
-    AdminUpdatePhoneNumberMutation,
-    AdminUpdatePhoneNumberMutationVariables
+    __AdminUpdatePhoneNumberMutation,
+    __AdminUpdatePhoneNumberMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
   return Apollo.useMutation<
-    AdminUpdatePhoneNumberMutation,
-    AdminUpdatePhoneNumberMutationVariables
-  >(AdminUpdatePhoneNumberDocument, options)
+    __AdminUpdatePhoneNumberMutation,
+    __AdminUpdatePhoneNumberMutationVariables
+  >(__AdminUpdatePhoneNumberDocument, options)
 }
-export type AdminUpdatePhoneNumberMutationHookResult = ReturnType<
-  typeof useAdminUpdatePhoneNumberMutation
+export type __AdminUpdatePhoneNumberMutationHookResult = ReturnType<
+  typeof use__AdminUpdatePhoneNumberMutation
 >
-export type AdminUpdatePhoneNumberMutationResult =
-  Apollo.MutationResult<AdminUpdatePhoneNumberMutation>
-export type AdminUpdatePhoneNumberMutationOptions = Apollo.BaseMutationOptions<
-  AdminUpdatePhoneNumberMutation,
-  AdminUpdatePhoneNumberMutationVariables
+export type __AdminUpdatePhoneNumberMutationResult =
+  Apollo.MutationResult<__AdminUpdatePhoneNumberMutation>
+export type __AdminUpdatePhoneNumberMutationOptions = Apollo.BaseMutationOptions<
+  __AdminUpdatePhoneNumberMutation,
+  __AdminUpdatePhoneNumberMutationVariables
 >
-export const AdminPhoneNumberDocument = gql`
-  query AdminPhoneNumber($phoneNumberId: String!) {
+export const __AdminPhoneNumberDocument = gql`
+  query __AdminPhoneNumber($phoneNumberId: String!) {
     phoneNumber(phoneNumberId: $phoneNumberId) {
-      ...AdminPhoneNumberDetails
+      ...__AdminPhoneNumberDetails
     }
   }
-  ${AdminPhoneNumberDetailsFragmentDoc}
+  ${__AdminPhoneNumberDetailsFragmentDoc}
 `
 
 /**
- * __useAdminPhoneNumberQuery__
+ * __use__AdminPhoneNumberQuery__
  *
- * To run a query within a React component, call `useAdminPhoneNumberQuery` and pass it any options that fit your needs.
- * When your component renders, `useAdminPhoneNumberQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `use__AdminPhoneNumberQuery` and pass it any options that fit your needs.
+ * When your component renders, `use__AdminPhoneNumberQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useAdminPhoneNumberQuery({
+ * const { data, loading, error } = use__AdminPhoneNumberQuery({
  *   variables: {
  *      phoneNumberId: // value for 'phoneNumberId'
  *   },
  * });
  */
-export function useAdminPhoneNumberQuery(
-  baseOptions: Apollo.QueryHookOptions<AdminPhoneNumberQuery, AdminPhoneNumberQueryVariables> &
-    ({ variables: AdminPhoneNumberQueryVariables; skip?: boolean } | { skip: boolean }),
+export function use__AdminPhoneNumberQuery(
+  baseOptions: Apollo.QueryHookOptions<__AdminPhoneNumberQuery, __AdminPhoneNumberQueryVariables> &
+    ({ variables: __AdminPhoneNumberQueryVariables; skip?: boolean } | { skip: boolean }),
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<AdminPhoneNumberQuery, AdminPhoneNumberQueryVariables>(
-    AdminPhoneNumberDocument,
+  return Apollo.useQuery<__AdminPhoneNumberQuery, __AdminPhoneNumberQueryVariables>(
+    __AdminPhoneNumberDocument,
     options,
   )
 }
-export function useAdminPhoneNumberLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<AdminPhoneNumberQuery, AdminPhoneNumberQueryVariables>,
+export function use__AdminPhoneNumberLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    __AdminPhoneNumberQuery,
+    __AdminPhoneNumberQueryVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<AdminPhoneNumberQuery, AdminPhoneNumberQueryVariables>(
-    AdminPhoneNumberDocument,
+  return Apollo.useLazyQuery<__AdminPhoneNumberQuery, __AdminPhoneNumberQueryVariables>(
+    __AdminPhoneNumberDocument,
     options,
   )
 }
-export function useAdminPhoneNumberSuspenseQuery(
+export function use__AdminPhoneNumberSuspenseQuery(
   baseOptions?:
     | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<AdminPhoneNumberQuery, AdminPhoneNumberQueryVariables>,
+    | Apollo.SuspenseQueryHookOptions<__AdminPhoneNumberQuery, __AdminPhoneNumberQueryVariables>,
 ) {
   const options =
     baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<AdminPhoneNumberQuery, AdminPhoneNumberQueryVariables>(
-    AdminPhoneNumberDocument,
+  return Apollo.useSuspenseQuery<__AdminPhoneNumberQuery, __AdminPhoneNumberQueryVariables>(
+    __AdminPhoneNumberDocument,
     options,
   )
 }
-export type AdminPhoneNumberQueryHookResult = ReturnType<typeof useAdminPhoneNumberQuery>
-export type AdminPhoneNumberLazyQueryHookResult = ReturnType<typeof useAdminPhoneNumberLazyQuery>
-export type AdminPhoneNumberSuspenseQueryHookResult = ReturnType<
-  typeof useAdminPhoneNumberSuspenseQuery
+export type __AdminPhoneNumberQueryHookResult = ReturnType<typeof use__AdminPhoneNumberQuery>
+export type __AdminPhoneNumberLazyQueryHookResult = ReturnType<
+  typeof use__AdminPhoneNumberLazyQuery
 >
-export type AdminPhoneNumberQueryResult = Apollo.QueryResult<
-  AdminPhoneNumberQuery,
-  AdminPhoneNumberQueryVariables
+export type __AdminPhoneNumberSuspenseQueryHookResult = ReturnType<
+  typeof use__AdminPhoneNumberSuspenseQuery
 >
-export const AdminPhoneNumbersDocument = gql`
-  query AdminPhoneNumbers($input: ListPhoneNumberInput) {
+export type __AdminPhoneNumberQueryResult = Apollo.QueryResult<
+  __AdminPhoneNumberQuery,
+  __AdminPhoneNumberQueryVariables
+>
+export const __AdminPhoneNumbersDocument = gql`
+  query __AdminPhoneNumbers($input: ListPhoneNumberInput) {
     phoneNumbers(input: $input) {
-      ...AdminPhoneNumberList
+      ...__AdminPhoneNumberList
     }
     counters: phoneNumbersCount(input: $input) {
       ...CorePagingDetails
     }
   }
-  ${AdminPhoneNumberListFragmentDoc}
+  ${__AdminPhoneNumberListFragmentDoc}
   ${CorePagingDetailsFragmentDoc}
 `
 
 /**
- * __useAdminPhoneNumbersQuery__
+ * __use__AdminPhoneNumbersQuery__
  *
- * To run a query within a React component, call `useAdminPhoneNumbersQuery` and pass it any options that fit your needs.
- * When your component renders, `useAdminPhoneNumbersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `use__AdminPhoneNumbersQuery` and pass it any options that fit your needs.
+ * When your component renders, `use__AdminPhoneNumbersQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useAdminPhoneNumbersQuery({
+ * const { data, loading, error } = use__AdminPhoneNumbersQuery({
  *   variables: {
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useAdminPhoneNumbersQuery(
-  baseOptions?: Apollo.QueryHookOptions<AdminPhoneNumbersQuery, AdminPhoneNumbersQueryVariables>,
-) {
-  const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<AdminPhoneNumbersQuery, AdminPhoneNumbersQueryVariables>(
-    AdminPhoneNumbersDocument,
-    options,
-  )
-}
-export function useAdminPhoneNumbersLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
-    AdminPhoneNumbersQuery,
-    AdminPhoneNumbersQueryVariables
+export function use__AdminPhoneNumbersQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    __AdminPhoneNumbersQuery,
+    __AdminPhoneNumbersQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<AdminPhoneNumbersQuery, AdminPhoneNumbersQueryVariables>(
-    AdminPhoneNumbersDocument,
+  return Apollo.useQuery<__AdminPhoneNumbersQuery, __AdminPhoneNumbersQueryVariables>(
+    __AdminPhoneNumbersDocument,
     options,
   )
 }
-export function useAdminPhoneNumbersSuspenseQuery(
+export function use__AdminPhoneNumbersLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    __AdminPhoneNumbersQuery,
+    __AdminPhoneNumbersQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<__AdminPhoneNumbersQuery, __AdminPhoneNumbersQueryVariables>(
+    __AdminPhoneNumbersDocument,
+    options,
+  )
+}
+export function use__AdminPhoneNumbersSuspenseQuery(
   baseOptions?:
     | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<AdminPhoneNumbersQuery, AdminPhoneNumbersQueryVariables>,
+    | Apollo.SuspenseQueryHookOptions<__AdminPhoneNumbersQuery, __AdminPhoneNumbersQueryVariables>,
 ) {
   const options =
     baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<AdminPhoneNumbersQuery, AdminPhoneNumbersQueryVariables>(
-    AdminPhoneNumbersDocument,
+  return Apollo.useSuspenseQuery<__AdminPhoneNumbersQuery, __AdminPhoneNumbersQueryVariables>(
+    __AdminPhoneNumbersDocument,
     options,
   )
 }
-export type AdminPhoneNumbersQueryHookResult = ReturnType<typeof useAdminPhoneNumbersQuery>
-export type AdminPhoneNumbersLazyQueryHookResult = ReturnType<typeof useAdminPhoneNumbersLazyQuery>
-export type AdminPhoneNumbersSuspenseQueryHookResult = ReturnType<
-  typeof useAdminPhoneNumbersSuspenseQuery
+export type __AdminPhoneNumbersQueryHookResult = ReturnType<typeof use__AdminPhoneNumbersQuery>
+export type __AdminPhoneNumbersLazyQueryHookResult = ReturnType<
+  typeof use__AdminPhoneNumbersLazyQuery
 >
-export type AdminPhoneNumbersQueryResult = Apollo.QueryResult<
-  AdminPhoneNumbersQuery,
-  AdminPhoneNumbersQueryVariables
+export type __AdminPhoneNumbersSuspenseQueryHookResult = ReturnType<
+  typeof use__AdminPhoneNumbersSuspenseQuery
 >
-export const AdminPhoneNumberPaginationDocument = gql`
-  query AdminPhoneNumberPagination($input: ListPhoneNumberInput) {
+export type __AdminPhoneNumbersQueryResult = Apollo.QueryResult<
+  __AdminPhoneNumbersQuery,
+  __AdminPhoneNumbersQueryVariables
+>
+export const __AdminPhoneNumberPaginationDocument = gql`
+  query __AdminPhoneNumberPagination($input: ListPhoneNumberInput) {
     counters: phoneNumbersCount(input: $input) {
       ...CorePagingDetails
     }
@@ -17380,330 +17589,342 @@ export const AdminPhoneNumberPaginationDocument = gql`
 `
 
 /**
- * __useAdminPhoneNumberPaginationQuery__
+ * __use__AdminPhoneNumberPaginationQuery__
  *
- * To run a query within a React component, call `useAdminPhoneNumberPaginationQuery` and pass it any options that fit your needs.
- * When your component renders, `useAdminPhoneNumberPaginationQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `use__AdminPhoneNumberPaginationQuery` and pass it any options that fit your needs.
+ * When your component renders, `use__AdminPhoneNumberPaginationQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useAdminPhoneNumberPaginationQuery({
+ * const { data, loading, error } = use__AdminPhoneNumberPaginationQuery({
  *   variables: {
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useAdminPhoneNumberPaginationQuery(
+export function use__AdminPhoneNumberPaginationQuery(
   baseOptions?: Apollo.QueryHookOptions<
-    AdminPhoneNumberPaginationQuery,
-    AdminPhoneNumberPaginationQueryVariables
+    __AdminPhoneNumberPaginationQuery,
+    __AdminPhoneNumberPaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<AdminPhoneNumberPaginationQuery, AdminPhoneNumberPaginationQueryVariables>(
-    AdminPhoneNumberPaginationDocument,
-    options,
-  )
+  return Apollo.useQuery<
+    __AdminPhoneNumberPaginationQuery,
+    __AdminPhoneNumberPaginationQueryVariables
+  >(__AdminPhoneNumberPaginationDocument, options)
 }
-export function useAdminPhoneNumberPaginationLazyQuery(
+export function use__AdminPhoneNumberPaginationLazyQuery(
   baseOptions?: Apollo.LazyQueryHookOptions<
-    AdminPhoneNumberPaginationQuery,
-    AdminPhoneNumberPaginationQueryVariables
+    __AdminPhoneNumberPaginationQuery,
+    __AdminPhoneNumberPaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
   return Apollo.useLazyQuery<
-    AdminPhoneNumberPaginationQuery,
-    AdminPhoneNumberPaginationQueryVariables
-  >(AdminPhoneNumberPaginationDocument, options)
+    __AdminPhoneNumberPaginationQuery,
+    __AdminPhoneNumberPaginationQueryVariables
+  >(__AdminPhoneNumberPaginationDocument, options)
 }
-export function useAdminPhoneNumberPaginationSuspenseQuery(
+export function use__AdminPhoneNumberPaginationSuspenseQuery(
   baseOptions?:
     | Apollo.SkipToken
     | Apollo.SuspenseQueryHookOptions<
-        AdminPhoneNumberPaginationQuery,
-        AdminPhoneNumberPaginationQueryVariables
+        __AdminPhoneNumberPaginationQuery,
+        __AdminPhoneNumberPaginationQueryVariables
       >,
 ) {
   const options =
     baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
   return Apollo.useSuspenseQuery<
-    AdminPhoneNumberPaginationQuery,
-    AdminPhoneNumberPaginationQueryVariables
-  >(AdminPhoneNumberPaginationDocument, options)
+    __AdminPhoneNumberPaginationQuery,
+    __AdminPhoneNumberPaginationQueryVariables
+  >(__AdminPhoneNumberPaginationDocument, options)
 }
-export type AdminPhoneNumberPaginationQueryHookResult = ReturnType<
-  typeof useAdminPhoneNumberPaginationQuery
+export type __AdminPhoneNumberPaginationQueryHookResult = ReturnType<
+  typeof use__AdminPhoneNumberPaginationQuery
 >
-export type AdminPhoneNumberPaginationLazyQueryHookResult = ReturnType<
-  typeof useAdminPhoneNumberPaginationLazyQuery
+export type __AdminPhoneNumberPaginationLazyQueryHookResult = ReturnType<
+  typeof use__AdminPhoneNumberPaginationLazyQuery
 >
-export type AdminPhoneNumberPaginationSuspenseQueryHookResult = ReturnType<
-  typeof useAdminPhoneNumberPaginationSuspenseQuery
+export type __AdminPhoneNumberPaginationSuspenseQueryHookResult = ReturnType<
+  typeof use__AdminPhoneNumberPaginationSuspenseQuery
 >
-export type AdminPhoneNumberPaginationQueryResult = Apollo.QueryResult<
-  AdminPhoneNumberPaginationQuery,
-  AdminPhoneNumberPaginationQueryVariables
+export type __AdminPhoneNumberPaginationQueryResult = Apollo.QueryResult<
+  __AdminPhoneNumberPaginationQuery,
+  __AdminPhoneNumberPaginationQueryVariables
 >
-export const AdminCreatePlanDocument = gql`
-  mutation AdminCreatePlan($input: CreatePlanInput!) {
+export const __AdminCreatePlanDocument = gql`
+  mutation __AdminCreatePlan($input: CreatePlanInput!) {
     createPlan(input: $input) {
-      ...AdminPlanDetails
+      ...__AdminPlanDetails
     }
   }
-  ${AdminPlanDetailsFragmentDoc}
+  ${__AdminPlanDetailsFragmentDoc}
 `
-export type AdminCreatePlanMutationFn = Apollo.MutationFunction<
-  AdminCreatePlanMutation,
-  AdminCreatePlanMutationVariables
+export type __AdminCreatePlanMutationFn = Apollo.MutationFunction<
+  __AdminCreatePlanMutation,
+  __AdminCreatePlanMutationVariables
 >
 
 /**
- * __useAdminCreatePlanMutation__
+ * __use__AdminCreatePlanMutation__
  *
- * To run a mutation, you first call `useAdminCreatePlanMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAdminCreatePlanMutation` returns a tuple that includes:
+ * To run a mutation, you first call `use__AdminCreatePlanMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `use__AdminCreatePlanMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [adminCreatePlanMutation, { data, loading, error }] = useAdminCreatePlanMutation({
+ * const [adminCreatePlanMutation, { data, loading, error }] = use__AdminCreatePlanMutation({
  *   variables: {
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useAdminCreatePlanMutation(
+export function use__AdminCreatePlanMutation(
   baseOptions?: Apollo.MutationHookOptions<
-    AdminCreatePlanMutation,
-    AdminCreatePlanMutationVariables
+    __AdminCreatePlanMutation,
+    __AdminCreatePlanMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<AdminCreatePlanMutation, AdminCreatePlanMutationVariables>(
-    AdminCreatePlanDocument,
+  return Apollo.useMutation<__AdminCreatePlanMutation, __AdminCreatePlanMutationVariables>(
+    __AdminCreatePlanDocument,
     options,
   )
 }
-export type AdminCreatePlanMutationHookResult = ReturnType<typeof useAdminCreatePlanMutation>
-export type AdminCreatePlanMutationResult = Apollo.MutationResult<AdminCreatePlanMutation>
-export type AdminCreatePlanMutationOptions = Apollo.BaseMutationOptions<
-  AdminCreatePlanMutation,
-  AdminCreatePlanMutationVariables
+export type __AdminCreatePlanMutationHookResult = ReturnType<typeof use__AdminCreatePlanMutation>
+export type __AdminCreatePlanMutationResult = Apollo.MutationResult<__AdminCreatePlanMutation>
+export type __AdminCreatePlanMutationOptions = Apollo.BaseMutationOptions<
+  __AdminCreatePlanMutation,
+  __AdminCreatePlanMutationVariables
 >
-export const AdminDeletePlanDocument = gql`
-  mutation AdminDeletePlan($planId: String!) {
+export const __AdminDeletePlanDocument = gql`
+  mutation __AdminDeletePlan($planId: String!) {
     deletePlan(planId: $planId) {
       id
     }
   }
 `
-export type AdminDeletePlanMutationFn = Apollo.MutationFunction<
-  AdminDeletePlanMutation,
-  AdminDeletePlanMutationVariables
+export type __AdminDeletePlanMutationFn = Apollo.MutationFunction<
+  __AdminDeletePlanMutation,
+  __AdminDeletePlanMutationVariables
 >
 
 /**
- * __useAdminDeletePlanMutation__
+ * __use__AdminDeletePlanMutation__
  *
- * To run a mutation, you first call `useAdminDeletePlanMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAdminDeletePlanMutation` returns a tuple that includes:
+ * To run a mutation, you first call `use__AdminDeletePlanMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `use__AdminDeletePlanMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [adminDeletePlanMutation, { data, loading, error }] = useAdminDeletePlanMutation({
+ * const [adminDeletePlanMutation, { data, loading, error }] = use__AdminDeletePlanMutation({
  *   variables: {
  *      planId: // value for 'planId'
  *   },
  * });
  */
-export function useAdminDeletePlanMutation(
+export function use__AdminDeletePlanMutation(
   baseOptions?: Apollo.MutationHookOptions<
-    AdminDeletePlanMutation,
-    AdminDeletePlanMutationVariables
+    __AdminDeletePlanMutation,
+    __AdminDeletePlanMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<AdminDeletePlanMutation, AdminDeletePlanMutationVariables>(
-    AdminDeletePlanDocument,
+  return Apollo.useMutation<__AdminDeletePlanMutation, __AdminDeletePlanMutationVariables>(
+    __AdminDeletePlanDocument,
     options,
   )
 }
-export type AdminDeletePlanMutationHookResult = ReturnType<typeof useAdminDeletePlanMutation>
-export type AdminDeletePlanMutationResult = Apollo.MutationResult<AdminDeletePlanMutation>
-export type AdminDeletePlanMutationOptions = Apollo.BaseMutationOptions<
-  AdminDeletePlanMutation,
-  AdminDeletePlanMutationVariables
+export type __AdminDeletePlanMutationHookResult = ReturnType<typeof use__AdminDeletePlanMutation>
+export type __AdminDeletePlanMutationResult = Apollo.MutationResult<__AdminDeletePlanMutation>
+export type __AdminDeletePlanMutationOptions = Apollo.BaseMutationOptions<
+  __AdminDeletePlanMutation,
+  __AdminDeletePlanMutationVariables
 >
-export const AdminUpdatePlanDocument = gql`
-  mutation AdminUpdatePlan($planId: String!, $input: UpdatePlanInput!) {
+export const __AdminUpdatePlanDocument = gql`
+  mutation __AdminUpdatePlan($planId: String!, $input: UpdatePlanInput!) {
     updatePlan(planId: $planId, input: $input) {
-      ...AdminPlanDetails
+      ...__AdminPlanDetails
     }
   }
-  ${AdminPlanDetailsFragmentDoc}
+  ${__AdminPlanDetailsFragmentDoc}
 `
-export type AdminUpdatePlanMutationFn = Apollo.MutationFunction<
-  AdminUpdatePlanMutation,
-  AdminUpdatePlanMutationVariables
+export type __AdminUpdatePlanMutationFn = Apollo.MutationFunction<
+  __AdminUpdatePlanMutation,
+  __AdminUpdatePlanMutationVariables
 >
 
 /**
- * __useAdminUpdatePlanMutation__
+ * __use__AdminUpdatePlanMutation__
  *
- * To run a mutation, you first call `useAdminUpdatePlanMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAdminUpdatePlanMutation` returns a tuple that includes:
+ * To run a mutation, you first call `use__AdminUpdatePlanMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `use__AdminUpdatePlanMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [adminUpdatePlanMutation, { data, loading, error }] = useAdminUpdatePlanMutation({
+ * const [adminUpdatePlanMutation, { data, loading, error }] = use__AdminUpdatePlanMutation({
  *   variables: {
  *      planId: // value for 'planId'
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useAdminUpdatePlanMutation(
+export function use__AdminUpdatePlanMutation(
   baseOptions?: Apollo.MutationHookOptions<
-    AdminUpdatePlanMutation,
-    AdminUpdatePlanMutationVariables
+    __AdminUpdatePlanMutation,
+    __AdminUpdatePlanMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<AdminUpdatePlanMutation, AdminUpdatePlanMutationVariables>(
-    AdminUpdatePlanDocument,
+  return Apollo.useMutation<__AdminUpdatePlanMutation, __AdminUpdatePlanMutationVariables>(
+    __AdminUpdatePlanDocument,
     options,
   )
 }
-export type AdminUpdatePlanMutationHookResult = ReturnType<typeof useAdminUpdatePlanMutation>
-export type AdminUpdatePlanMutationResult = Apollo.MutationResult<AdminUpdatePlanMutation>
-export type AdminUpdatePlanMutationOptions = Apollo.BaseMutationOptions<
-  AdminUpdatePlanMutation,
-  AdminUpdatePlanMutationVariables
+export type __AdminUpdatePlanMutationHookResult = ReturnType<typeof use__AdminUpdatePlanMutation>
+export type __AdminUpdatePlanMutationResult = Apollo.MutationResult<__AdminUpdatePlanMutation>
+export type __AdminUpdatePlanMutationOptions = Apollo.BaseMutationOptions<
+  __AdminUpdatePlanMutation,
+  __AdminUpdatePlanMutationVariables
 >
-export const AdminPlanDocument = gql`
-  query AdminPlan($planId: String!) {
+export const __AdminPlanDocument = gql`
+  query __AdminPlan($planId: String!) {
     plan(planId: $planId) {
-      ...AdminPlanDetails
+      ...__AdminPlanDetails
     }
   }
-  ${AdminPlanDetailsFragmentDoc}
+  ${__AdminPlanDetailsFragmentDoc}
 `
 
 /**
- * __useAdminPlanQuery__
+ * __use__AdminPlanQuery__
  *
- * To run a query within a React component, call `useAdminPlanQuery` and pass it any options that fit your needs.
- * When your component renders, `useAdminPlanQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `use__AdminPlanQuery` and pass it any options that fit your needs.
+ * When your component renders, `use__AdminPlanQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useAdminPlanQuery({
+ * const { data, loading, error } = use__AdminPlanQuery({
  *   variables: {
  *      planId: // value for 'planId'
  *   },
  * });
  */
-export function useAdminPlanQuery(
-  baseOptions: Apollo.QueryHookOptions<AdminPlanQuery, AdminPlanQueryVariables> &
-    ({ variables: AdminPlanQueryVariables; skip?: boolean } | { skip: boolean }),
+export function use__AdminPlanQuery(
+  baseOptions: Apollo.QueryHookOptions<__AdminPlanQuery, __AdminPlanQueryVariables> &
+    ({ variables: __AdminPlanQueryVariables; skip?: boolean } | { skip: boolean }),
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<AdminPlanQuery, AdminPlanQueryVariables>(AdminPlanDocument, options)
+  return Apollo.useQuery<__AdminPlanQuery, __AdminPlanQueryVariables>(__AdminPlanDocument, options)
 }
-export function useAdminPlanLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<AdminPlanQuery, AdminPlanQueryVariables>,
+export function use__AdminPlanLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<__AdminPlanQuery, __AdminPlanQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<AdminPlanQuery, AdminPlanQueryVariables>(AdminPlanDocument, options)
-}
-export function useAdminPlanSuspenseQuery(
-  baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<AdminPlanQuery, AdminPlanQueryVariables>,
-) {
-  const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<AdminPlanQuery, AdminPlanQueryVariables>(
-    AdminPlanDocument,
+  return Apollo.useLazyQuery<__AdminPlanQuery, __AdminPlanQueryVariables>(
+    __AdminPlanDocument,
     options,
   )
 }
-export type AdminPlanQueryHookResult = ReturnType<typeof useAdminPlanQuery>
-export type AdminPlanLazyQueryHookResult = ReturnType<typeof useAdminPlanLazyQuery>
-export type AdminPlanSuspenseQueryHookResult = ReturnType<typeof useAdminPlanSuspenseQuery>
-export type AdminPlanQueryResult = Apollo.QueryResult<AdminPlanQuery, AdminPlanQueryVariables>
-export const AdminPlansDocument = gql`
-  query AdminPlans($input: ListPlanInput) {
+export function use__AdminPlanSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<__AdminPlanQuery, __AdminPlanQueryVariables>,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<__AdminPlanQuery, __AdminPlanQueryVariables>(
+    __AdminPlanDocument,
+    options,
+  )
+}
+export type __AdminPlanQueryHookResult = ReturnType<typeof use__AdminPlanQuery>
+export type __AdminPlanLazyQueryHookResult = ReturnType<typeof use__AdminPlanLazyQuery>
+export type __AdminPlanSuspenseQueryHookResult = ReturnType<typeof use__AdminPlanSuspenseQuery>
+export type __AdminPlanQueryResult = Apollo.QueryResult<__AdminPlanQuery, __AdminPlanQueryVariables>
+export const __AdminPlansDocument = gql`
+  query __AdminPlans($input: ListPlanInput) {
     plans(input: $input) {
-      ...AdminPlanList
+      ...__AdminPlanList
     }
     counters: plansCount(input: $input) {
       ...CorePagingDetails
     }
   }
-  ${AdminPlanListFragmentDoc}
+  ${__AdminPlanListFragmentDoc}
   ${CorePagingDetailsFragmentDoc}
 `
 
 /**
- * __useAdminPlansQuery__
+ * __use__AdminPlansQuery__
  *
- * To run a query within a React component, call `useAdminPlansQuery` and pass it any options that fit your needs.
- * When your component renders, `useAdminPlansQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `use__AdminPlansQuery` and pass it any options that fit your needs.
+ * When your component renders, `use__AdminPlansQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useAdminPlansQuery({
+ * const { data, loading, error } = use__AdminPlansQuery({
  *   variables: {
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useAdminPlansQuery(
-  baseOptions?: Apollo.QueryHookOptions<AdminPlansQuery, AdminPlansQueryVariables>,
+export function use__AdminPlansQuery(
+  baseOptions?: Apollo.QueryHookOptions<__AdminPlansQuery, __AdminPlansQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<AdminPlansQuery, AdminPlansQueryVariables>(AdminPlansDocument, options)
-}
-export function useAdminPlansLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<AdminPlansQuery, AdminPlansQueryVariables>,
-) {
-  const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<AdminPlansQuery, AdminPlansQueryVariables>(AdminPlansDocument, options)
-}
-export function useAdminPlansSuspenseQuery(
-  baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<AdminPlansQuery, AdminPlansQueryVariables>,
-) {
-  const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<AdminPlansQuery, AdminPlansQueryVariables>(
-    AdminPlansDocument,
+  return Apollo.useQuery<__AdminPlansQuery, __AdminPlansQueryVariables>(
+    __AdminPlansDocument,
     options,
   )
 }
-export type AdminPlansQueryHookResult = ReturnType<typeof useAdminPlansQuery>
-export type AdminPlansLazyQueryHookResult = ReturnType<typeof useAdminPlansLazyQuery>
-export type AdminPlansSuspenseQueryHookResult = ReturnType<typeof useAdminPlansSuspenseQuery>
-export type AdminPlansQueryResult = Apollo.QueryResult<AdminPlansQuery, AdminPlansQueryVariables>
-export const AdminPlanPaginationDocument = gql`
-  query AdminPlanPagination($input: ListPlanInput) {
+export function use__AdminPlansLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<__AdminPlansQuery, __AdminPlansQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<__AdminPlansQuery, __AdminPlansQueryVariables>(
+    __AdminPlansDocument,
+    options,
+  )
+}
+export function use__AdminPlansSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<__AdminPlansQuery, __AdminPlansQueryVariables>,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<__AdminPlansQuery, __AdminPlansQueryVariables>(
+    __AdminPlansDocument,
+    options,
+  )
+}
+export type __AdminPlansQueryHookResult = ReturnType<typeof use__AdminPlansQuery>
+export type __AdminPlansLazyQueryHookResult = ReturnType<typeof use__AdminPlansLazyQuery>
+export type __AdminPlansSuspenseQueryHookResult = ReturnType<typeof use__AdminPlansSuspenseQuery>
+export type __AdminPlansQueryResult = Apollo.QueryResult<
+  __AdminPlansQuery,
+  __AdminPlansQueryVariables
+>
+export const __AdminPlanPaginationDocument = gql`
+  query __AdminPlanPagination($input: ListPlanInput) {
     counters: plansCount(input: $input) {
       ...CorePagingDetails
     }
@@ -17712,325 +17933,340 @@ export const AdminPlanPaginationDocument = gql`
 `
 
 /**
- * __useAdminPlanPaginationQuery__
+ * __use__AdminPlanPaginationQuery__
  *
- * To run a query within a React component, call `useAdminPlanPaginationQuery` and pass it any options that fit your needs.
- * When your component renders, `useAdminPlanPaginationQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `use__AdminPlanPaginationQuery` and pass it any options that fit your needs.
+ * When your component renders, `use__AdminPlanPaginationQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useAdminPlanPaginationQuery({
+ * const { data, loading, error } = use__AdminPlanPaginationQuery({
  *   variables: {
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useAdminPlanPaginationQuery(
+export function use__AdminPlanPaginationQuery(
   baseOptions?: Apollo.QueryHookOptions<
-    AdminPlanPaginationQuery,
-    AdminPlanPaginationQueryVariables
+    __AdminPlanPaginationQuery,
+    __AdminPlanPaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<AdminPlanPaginationQuery, AdminPlanPaginationQueryVariables>(
-    AdminPlanPaginationDocument,
+  return Apollo.useQuery<__AdminPlanPaginationQuery, __AdminPlanPaginationQueryVariables>(
+    __AdminPlanPaginationDocument,
     options,
   )
 }
-export function useAdminPlanPaginationLazyQuery(
+export function use__AdminPlanPaginationLazyQuery(
   baseOptions?: Apollo.LazyQueryHookOptions<
-    AdminPlanPaginationQuery,
-    AdminPlanPaginationQueryVariables
+    __AdminPlanPaginationQuery,
+    __AdminPlanPaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<AdminPlanPaginationQuery, AdminPlanPaginationQueryVariables>(
-    AdminPlanPaginationDocument,
+  return Apollo.useLazyQuery<__AdminPlanPaginationQuery, __AdminPlanPaginationQueryVariables>(
+    __AdminPlanPaginationDocument,
     options,
   )
 }
-export function useAdminPlanPaginationSuspenseQuery(
+export function use__AdminPlanPaginationSuspenseQuery(
   baseOptions?:
     | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<AdminPlanPaginationQuery, AdminPlanPaginationQueryVariables>,
+    | Apollo.SuspenseQueryHookOptions<
+        __AdminPlanPaginationQuery,
+        __AdminPlanPaginationQueryVariables
+      >,
 ) {
   const options =
     baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<AdminPlanPaginationQuery, AdminPlanPaginationQueryVariables>(
-    AdminPlanPaginationDocument,
+  return Apollo.useSuspenseQuery<__AdminPlanPaginationQuery, __AdminPlanPaginationQueryVariables>(
+    __AdminPlanPaginationDocument,
     options,
   )
 }
-export type AdminPlanPaginationQueryHookResult = ReturnType<typeof useAdminPlanPaginationQuery>
-export type AdminPlanPaginationLazyQueryHookResult = ReturnType<
-  typeof useAdminPlanPaginationLazyQuery
+export type __AdminPlanPaginationQueryHookResult = ReturnType<typeof use__AdminPlanPaginationQuery>
+export type __AdminPlanPaginationLazyQueryHookResult = ReturnType<
+  typeof use__AdminPlanPaginationLazyQuery
 >
-export type AdminPlanPaginationSuspenseQueryHookResult = ReturnType<
-  typeof useAdminPlanPaginationSuspenseQuery
+export type __AdminPlanPaginationSuspenseQueryHookResult = ReturnType<
+  typeof use__AdminPlanPaginationSuspenseQuery
 >
-export type AdminPlanPaginationQueryResult = Apollo.QueryResult<
-  AdminPlanPaginationQuery,
-  AdminPlanPaginationQueryVariables
+export type __AdminPlanPaginationQueryResult = Apollo.QueryResult<
+  __AdminPlanPaginationQuery,
+  __AdminPlanPaginationQueryVariables
 >
-export const AdminCreateRoleDocument = gql`
-  mutation AdminCreateRole($input: CreateRoleInput!) {
+export const __AdminCreateRoleDocument = gql`
+  mutation __AdminCreateRole($input: CreateRoleInput!) {
     createRole(input: $input) {
-      ...AdminRoleDetails
+      ...__AdminRoleDetails
     }
   }
-  ${AdminRoleDetailsFragmentDoc}
+  ${__AdminRoleDetailsFragmentDoc}
 `
-export type AdminCreateRoleMutationFn = Apollo.MutationFunction<
-  AdminCreateRoleMutation,
-  AdminCreateRoleMutationVariables
+export type __AdminCreateRoleMutationFn = Apollo.MutationFunction<
+  __AdminCreateRoleMutation,
+  __AdminCreateRoleMutationVariables
 >
 
 /**
- * __useAdminCreateRoleMutation__
+ * __use__AdminCreateRoleMutation__
  *
- * To run a mutation, you first call `useAdminCreateRoleMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAdminCreateRoleMutation` returns a tuple that includes:
+ * To run a mutation, you first call `use__AdminCreateRoleMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `use__AdminCreateRoleMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [adminCreateRoleMutation, { data, loading, error }] = useAdminCreateRoleMutation({
+ * const [adminCreateRoleMutation, { data, loading, error }] = use__AdminCreateRoleMutation({
  *   variables: {
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useAdminCreateRoleMutation(
+export function use__AdminCreateRoleMutation(
   baseOptions?: Apollo.MutationHookOptions<
-    AdminCreateRoleMutation,
-    AdminCreateRoleMutationVariables
+    __AdminCreateRoleMutation,
+    __AdminCreateRoleMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<AdminCreateRoleMutation, AdminCreateRoleMutationVariables>(
-    AdminCreateRoleDocument,
+  return Apollo.useMutation<__AdminCreateRoleMutation, __AdminCreateRoleMutationVariables>(
+    __AdminCreateRoleDocument,
     options,
   )
 }
-export type AdminCreateRoleMutationHookResult = ReturnType<typeof useAdminCreateRoleMutation>
-export type AdminCreateRoleMutationResult = Apollo.MutationResult<AdminCreateRoleMutation>
-export type AdminCreateRoleMutationOptions = Apollo.BaseMutationOptions<
-  AdminCreateRoleMutation,
-  AdminCreateRoleMutationVariables
+export type __AdminCreateRoleMutationHookResult = ReturnType<typeof use__AdminCreateRoleMutation>
+export type __AdminCreateRoleMutationResult = Apollo.MutationResult<__AdminCreateRoleMutation>
+export type __AdminCreateRoleMutationOptions = Apollo.BaseMutationOptions<
+  __AdminCreateRoleMutation,
+  __AdminCreateRoleMutationVariables
 >
-export const AdminDeleteRoleDocument = gql`
-  mutation AdminDeleteRole($roleId: String!) {
+export const __AdminDeleteRoleDocument = gql`
+  mutation __AdminDeleteRole($roleId: String!) {
     deleteRole(roleId: $roleId) {
       id
     }
   }
 `
-export type AdminDeleteRoleMutationFn = Apollo.MutationFunction<
-  AdminDeleteRoleMutation,
-  AdminDeleteRoleMutationVariables
+export type __AdminDeleteRoleMutationFn = Apollo.MutationFunction<
+  __AdminDeleteRoleMutation,
+  __AdminDeleteRoleMutationVariables
 >
 
 /**
- * __useAdminDeleteRoleMutation__
+ * __use__AdminDeleteRoleMutation__
  *
- * To run a mutation, you first call `useAdminDeleteRoleMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAdminDeleteRoleMutation` returns a tuple that includes:
+ * To run a mutation, you first call `use__AdminDeleteRoleMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `use__AdminDeleteRoleMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [adminDeleteRoleMutation, { data, loading, error }] = useAdminDeleteRoleMutation({
+ * const [adminDeleteRoleMutation, { data, loading, error }] = use__AdminDeleteRoleMutation({
  *   variables: {
  *      roleId: // value for 'roleId'
  *   },
  * });
  */
-export function useAdminDeleteRoleMutation(
+export function use__AdminDeleteRoleMutation(
   baseOptions?: Apollo.MutationHookOptions<
-    AdminDeleteRoleMutation,
-    AdminDeleteRoleMutationVariables
+    __AdminDeleteRoleMutation,
+    __AdminDeleteRoleMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<AdminDeleteRoleMutation, AdminDeleteRoleMutationVariables>(
-    AdminDeleteRoleDocument,
+  return Apollo.useMutation<__AdminDeleteRoleMutation, __AdminDeleteRoleMutationVariables>(
+    __AdminDeleteRoleDocument,
     options,
   )
 }
-export type AdminDeleteRoleMutationHookResult = ReturnType<typeof useAdminDeleteRoleMutation>
-export type AdminDeleteRoleMutationResult = Apollo.MutationResult<AdminDeleteRoleMutation>
-export type AdminDeleteRoleMutationOptions = Apollo.BaseMutationOptions<
-  AdminDeleteRoleMutation,
-  AdminDeleteRoleMutationVariables
+export type __AdminDeleteRoleMutationHookResult = ReturnType<typeof use__AdminDeleteRoleMutation>
+export type __AdminDeleteRoleMutationResult = Apollo.MutationResult<__AdminDeleteRoleMutation>
+export type __AdminDeleteRoleMutationOptions = Apollo.BaseMutationOptions<
+  __AdminDeleteRoleMutation,
+  __AdminDeleteRoleMutationVariables
 >
-export const AdminUpdateRoleDocument = gql`
-  mutation AdminUpdateRole($roleId: String!, $input: UpdateRoleInput!) {
+export const __AdminUpdateRoleDocument = gql`
+  mutation __AdminUpdateRole($roleId: String!, $input: UpdateRoleInput!) {
     updateRole(roleId: $roleId, input: $input) {
-      ...AdminRoleDetails
+      ...__AdminRoleDetails
     }
   }
-  ${AdminRoleDetailsFragmentDoc}
+  ${__AdminRoleDetailsFragmentDoc}
 `
-export type AdminUpdateRoleMutationFn = Apollo.MutationFunction<
-  AdminUpdateRoleMutation,
-  AdminUpdateRoleMutationVariables
+export type __AdminUpdateRoleMutationFn = Apollo.MutationFunction<
+  __AdminUpdateRoleMutation,
+  __AdminUpdateRoleMutationVariables
 >
 
 /**
- * __useAdminUpdateRoleMutation__
+ * __use__AdminUpdateRoleMutation__
  *
- * To run a mutation, you first call `useAdminUpdateRoleMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAdminUpdateRoleMutation` returns a tuple that includes:
+ * To run a mutation, you first call `use__AdminUpdateRoleMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `use__AdminUpdateRoleMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [adminUpdateRoleMutation, { data, loading, error }] = useAdminUpdateRoleMutation({
+ * const [adminUpdateRoleMutation, { data, loading, error }] = use__AdminUpdateRoleMutation({
  *   variables: {
  *      roleId: // value for 'roleId'
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useAdminUpdateRoleMutation(
+export function use__AdminUpdateRoleMutation(
   baseOptions?: Apollo.MutationHookOptions<
-    AdminUpdateRoleMutation,
-    AdminUpdateRoleMutationVariables
+    __AdminUpdateRoleMutation,
+    __AdminUpdateRoleMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<AdminUpdateRoleMutation, AdminUpdateRoleMutationVariables>(
-    AdminUpdateRoleDocument,
+  return Apollo.useMutation<__AdminUpdateRoleMutation, __AdminUpdateRoleMutationVariables>(
+    __AdminUpdateRoleDocument,
     options,
   )
 }
-export type AdminUpdateRoleMutationHookResult = ReturnType<typeof useAdminUpdateRoleMutation>
-export type AdminUpdateRoleMutationResult = Apollo.MutationResult<AdminUpdateRoleMutation>
-export type AdminUpdateRoleMutationOptions = Apollo.BaseMutationOptions<
-  AdminUpdateRoleMutation,
-  AdminUpdateRoleMutationVariables
+export type __AdminUpdateRoleMutationHookResult = ReturnType<typeof use__AdminUpdateRoleMutation>
+export type __AdminUpdateRoleMutationResult = Apollo.MutationResult<__AdminUpdateRoleMutation>
+export type __AdminUpdateRoleMutationOptions = Apollo.BaseMutationOptions<
+  __AdminUpdateRoleMutation,
+  __AdminUpdateRoleMutationVariables
 >
-export const AdminRoleDocument = gql`
-  query AdminRole($roleId: String!) {
+export const __AdminRoleDocument = gql`
+  query __AdminRole($roleId: String!) {
     role(roleId: $roleId) {
-      ...AdminRoleDetails
+      ...__AdminRoleDetails
     }
   }
-  ${AdminRoleDetailsFragmentDoc}
+  ${__AdminRoleDetailsFragmentDoc}
 `
 
 /**
- * __useAdminRoleQuery__
+ * __use__AdminRoleQuery__
  *
- * To run a query within a React component, call `useAdminRoleQuery` and pass it any options that fit your needs.
- * When your component renders, `useAdminRoleQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `use__AdminRoleQuery` and pass it any options that fit your needs.
+ * When your component renders, `use__AdminRoleQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useAdminRoleQuery({
+ * const { data, loading, error } = use__AdminRoleQuery({
  *   variables: {
  *      roleId: // value for 'roleId'
  *   },
  * });
  */
-export function useAdminRoleQuery(
-  baseOptions: Apollo.QueryHookOptions<AdminRoleQuery, AdminRoleQueryVariables> &
-    ({ variables: AdminRoleQueryVariables; skip?: boolean } | { skip: boolean }),
+export function use__AdminRoleQuery(
+  baseOptions: Apollo.QueryHookOptions<__AdminRoleQuery, __AdminRoleQueryVariables> &
+    ({ variables: __AdminRoleQueryVariables; skip?: boolean } | { skip: boolean }),
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<AdminRoleQuery, AdminRoleQueryVariables>(AdminRoleDocument, options)
+  return Apollo.useQuery<__AdminRoleQuery, __AdminRoleQueryVariables>(__AdminRoleDocument, options)
 }
-export function useAdminRoleLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<AdminRoleQuery, AdminRoleQueryVariables>,
+export function use__AdminRoleLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<__AdminRoleQuery, __AdminRoleQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<AdminRoleQuery, AdminRoleQueryVariables>(AdminRoleDocument, options)
-}
-export function useAdminRoleSuspenseQuery(
-  baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<AdminRoleQuery, AdminRoleQueryVariables>,
-) {
-  const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<AdminRoleQuery, AdminRoleQueryVariables>(
-    AdminRoleDocument,
+  return Apollo.useLazyQuery<__AdminRoleQuery, __AdminRoleQueryVariables>(
+    __AdminRoleDocument,
     options,
   )
 }
-export type AdminRoleQueryHookResult = ReturnType<typeof useAdminRoleQuery>
-export type AdminRoleLazyQueryHookResult = ReturnType<typeof useAdminRoleLazyQuery>
-export type AdminRoleSuspenseQueryHookResult = ReturnType<typeof useAdminRoleSuspenseQuery>
-export type AdminRoleQueryResult = Apollo.QueryResult<AdminRoleQuery, AdminRoleQueryVariables>
-export const AdminRolesDocument = gql`
-  query AdminRoles($input: ListRoleInput) {
+export function use__AdminRoleSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<__AdminRoleQuery, __AdminRoleQueryVariables>,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<__AdminRoleQuery, __AdminRoleQueryVariables>(
+    __AdminRoleDocument,
+    options,
+  )
+}
+export type __AdminRoleQueryHookResult = ReturnType<typeof use__AdminRoleQuery>
+export type __AdminRoleLazyQueryHookResult = ReturnType<typeof use__AdminRoleLazyQuery>
+export type __AdminRoleSuspenseQueryHookResult = ReturnType<typeof use__AdminRoleSuspenseQuery>
+export type __AdminRoleQueryResult = Apollo.QueryResult<__AdminRoleQuery, __AdminRoleQueryVariables>
+export const __AdminRolesDocument = gql`
+  query __AdminRoles($input: ListRoleInput) {
     roles(input: $input) {
-      ...AdminRoleList
+      ...__AdminRoleList
     }
     counters: rolesCount(input: $input) {
       ...CorePagingDetails
     }
   }
-  ${AdminRoleListFragmentDoc}
+  ${__AdminRoleListFragmentDoc}
   ${CorePagingDetailsFragmentDoc}
 `
 
 /**
- * __useAdminRolesQuery__
+ * __use__AdminRolesQuery__
  *
- * To run a query within a React component, call `useAdminRolesQuery` and pass it any options that fit your needs.
- * When your component renders, `useAdminRolesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `use__AdminRolesQuery` and pass it any options that fit your needs.
+ * When your component renders, `use__AdminRolesQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useAdminRolesQuery({
+ * const { data, loading, error } = use__AdminRolesQuery({
  *   variables: {
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useAdminRolesQuery(
-  baseOptions?: Apollo.QueryHookOptions<AdminRolesQuery, AdminRolesQueryVariables>,
+export function use__AdminRolesQuery(
+  baseOptions?: Apollo.QueryHookOptions<__AdminRolesQuery, __AdminRolesQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<AdminRolesQuery, AdminRolesQueryVariables>(AdminRolesDocument, options)
-}
-export function useAdminRolesLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<AdminRolesQuery, AdminRolesQueryVariables>,
-) {
-  const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<AdminRolesQuery, AdminRolesQueryVariables>(AdminRolesDocument, options)
-}
-export function useAdminRolesSuspenseQuery(
-  baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<AdminRolesQuery, AdminRolesQueryVariables>,
-) {
-  const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<AdminRolesQuery, AdminRolesQueryVariables>(
-    AdminRolesDocument,
+  return Apollo.useQuery<__AdminRolesQuery, __AdminRolesQueryVariables>(
+    __AdminRolesDocument,
     options,
   )
 }
-export type AdminRolesQueryHookResult = ReturnType<typeof useAdminRolesQuery>
-export type AdminRolesLazyQueryHookResult = ReturnType<typeof useAdminRolesLazyQuery>
-export type AdminRolesSuspenseQueryHookResult = ReturnType<typeof useAdminRolesSuspenseQuery>
-export type AdminRolesQueryResult = Apollo.QueryResult<AdminRolesQuery, AdminRolesQueryVariables>
-export const AdminRolePaginationDocument = gql`
-  query AdminRolePagination($input: ListRoleInput) {
+export function use__AdminRolesLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<__AdminRolesQuery, __AdminRolesQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<__AdminRolesQuery, __AdminRolesQueryVariables>(
+    __AdminRolesDocument,
+    options,
+  )
+}
+export function use__AdminRolesSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<__AdminRolesQuery, __AdminRolesQueryVariables>,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<__AdminRolesQuery, __AdminRolesQueryVariables>(
+    __AdminRolesDocument,
+    options,
+  )
+}
+export type __AdminRolesQueryHookResult = ReturnType<typeof use__AdminRolesQuery>
+export type __AdminRolesLazyQueryHookResult = ReturnType<typeof use__AdminRolesLazyQuery>
+export type __AdminRolesSuspenseQueryHookResult = ReturnType<typeof use__AdminRolesSuspenseQuery>
+export type __AdminRolesQueryResult = Apollo.QueryResult<
+  __AdminRolesQuery,
+  __AdminRolesQueryVariables
+>
+export const __AdminRolePaginationDocument = gql`
+  query __AdminRolePagination($input: ListRoleInput) {
     counters: rolesCount(input: $input) {
       ...CorePagingDetails
     }
@@ -18039,369 +18275,384 @@ export const AdminRolePaginationDocument = gql`
 `
 
 /**
- * __useAdminRolePaginationQuery__
+ * __use__AdminRolePaginationQuery__
  *
- * To run a query within a React component, call `useAdminRolePaginationQuery` and pass it any options that fit your needs.
- * When your component renders, `useAdminRolePaginationQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `use__AdminRolePaginationQuery` and pass it any options that fit your needs.
+ * When your component renders, `use__AdminRolePaginationQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useAdminRolePaginationQuery({
+ * const { data, loading, error } = use__AdminRolePaginationQuery({
  *   variables: {
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useAdminRolePaginationQuery(
+export function use__AdminRolePaginationQuery(
   baseOptions?: Apollo.QueryHookOptions<
-    AdminRolePaginationQuery,
-    AdminRolePaginationQueryVariables
+    __AdminRolePaginationQuery,
+    __AdminRolePaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<AdminRolePaginationQuery, AdminRolePaginationQueryVariables>(
-    AdminRolePaginationDocument,
+  return Apollo.useQuery<__AdminRolePaginationQuery, __AdminRolePaginationQueryVariables>(
+    __AdminRolePaginationDocument,
     options,
   )
 }
-export function useAdminRolePaginationLazyQuery(
+export function use__AdminRolePaginationLazyQuery(
   baseOptions?: Apollo.LazyQueryHookOptions<
-    AdminRolePaginationQuery,
-    AdminRolePaginationQueryVariables
+    __AdminRolePaginationQuery,
+    __AdminRolePaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<AdminRolePaginationQuery, AdminRolePaginationQueryVariables>(
-    AdminRolePaginationDocument,
+  return Apollo.useLazyQuery<__AdminRolePaginationQuery, __AdminRolePaginationQueryVariables>(
+    __AdminRolePaginationDocument,
     options,
   )
 }
-export function useAdminRolePaginationSuspenseQuery(
+export function use__AdminRolePaginationSuspenseQuery(
   baseOptions?:
     | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<AdminRolePaginationQuery, AdminRolePaginationQueryVariables>,
+    | Apollo.SuspenseQueryHookOptions<
+        __AdminRolePaginationQuery,
+        __AdminRolePaginationQueryVariables
+      >,
 ) {
   const options =
     baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<AdminRolePaginationQuery, AdminRolePaginationQueryVariables>(
-    AdminRolePaginationDocument,
+  return Apollo.useSuspenseQuery<__AdminRolePaginationQuery, __AdminRolePaginationQueryVariables>(
+    __AdminRolePaginationDocument,
     options,
   )
 }
-export type AdminRolePaginationQueryHookResult = ReturnType<typeof useAdminRolePaginationQuery>
-export type AdminRolePaginationLazyQueryHookResult = ReturnType<
-  typeof useAdminRolePaginationLazyQuery
+export type __AdminRolePaginationQueryHookResult = ReturnType<typeof use__AdminRolePaginationQuery>
+export type __AdminRolePaginationLazyQueryHookResult = ReturnType<
+  typeof use__AdminRolePaginationLazyQuery
 >
-export type AdminRolePaginationSuspenseQueryHookResult = ReturnType<
-  typeof useAdminRolePaginationSuspenseQuery
+export type __AdminRolePaginationSuspenseQueryHookResult = ReturnType<
+  typeof use__AdminRolePaginationSuspenseQuery
 >
-export type AdminRolePaginationQueryResult = Apollo.QueryResult<
-  AdminRolePaginationQuery,
-  AdminRolePaginationQueryVariables
+export type __AdminRolePaginationQueryResult = Apollo.QueryResult<
+  __AdminRolePaginationQuery,
+  __AdminRolePaginationQueryVariables
 >
-export const AdminCreateSecurityEventDocument = gql`
-  mutation AdminCreateSecurityEvent($input: CreateSecurityEventInput!) {
+export const __AdminCreateSecurityEventDocument = gql`
+  mutation __AdminCreateSecurityEvent($input: CreateSecurityEventInput!) {
     createSecurityEvent(input: $input) {
-      ...AdminSecurityEventDetails
+      ...__AdminSecurityEventDetails
     }
   }
-  ${AdminSecurityEventDetailsFragmentDoc}
+  ${__AdminSecurityEventDetailsFragmentDoc}
 `
-export type AdminCreateSecurityEventMutationFn = Apollo.MutationFunction<
-  AdminCreateSecurityEventMutation,
-  AdminCreateSecurityEventMutationVariables
+export type __AdminCreateSecurityEventMutationFn = Apollo.MutationFunction<
+  __AdminCreateSecurityEventMutation,
+  __AdminCreateSecurityEventMutationVariables
 >
 
 /**
- * __useAdminCreateSecurityEventMutation__
+ * __use__AdminCreateSecurityEventMutation__
  *
- * To run a mutation, you first call `useAdminCreateSecurityEventMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAdminCreateSecurityEventMutation` returns a tuple that includes:
+ * To run a mutation, you first call `use__AdminCreateSecurityEventMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `use__AdminCreateSecurityEventMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [adminCreateSecurityEventMutation, { data, loading, error }] = useAdminCreateSecurityEventMutation({
+ * const [adminCreateSecurityEventMutation, { data, loading, error }] = use__AdminCreateSecurityEventMutation({
  *   variables: {
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useAdminCreateSecurityEventMutation(
+export function use__AdminCreateSecurityEventMutation(
   baseOptions?: Apollo.MutationHookOptions<
-    AdminCreateSecurityEventMutation,
-    AdminCreateSecurityEventMutationVariables
+    __AdminCreateSecurityEventMutation,
+    __AdminCreateSecurityEventMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
   return Apollo.useMutation<
-    AdminCreateSecurityEventMutation,
-    AdminCreateSecurityEventMutationVariables
-  >(AdminCreateSecurityEventDocument, options)
+    __AdminCreateSecurityEventMutation,
+    __AdminCreateSecurityEventMutationVariables
+  >(__AdminCreateSecurityEventDocument, options)
 }
-export type AdminCreateSecurityEventMutationHookResult = ReturnType<
-  typeof useAdminCreateSecurityEventMutation
+export type __AdminCreateSecurityEventMutationHookResult = ReturnType<
+  typeof use__AdminCreateSecurityEventMutation
 >
-export type AdminCreateSecurityEventMutationResult =
-  Apollo.MutationResult<AdminCreateSecurityEventMutation>
-export type AdminCreateSecurityEventMutationOptions = Apollo.BaseMutationOptions<
-  AdminCreateSecurityEventMutation,
-  AdminCreateSecurityEventMutationVariables
+export type __AdminCreateSecurityEventMutationResult =
+  Apollo.MutationResult<__AdminCreateSecurityEventMutation>
+export type __AdminCreateSecurityEventMutationOptions = Apollo.BaseMutationOptions<
+  __AdminCreateSecurityEventMutation,
+  __AdminCreateSecurityEventMutationVariables
 >
-export const AdminDeleteSecurityEventDocument = gql`
-  mutation AdminDeleteSecurityEvent($securityEventId: String!) {
+export const __AdminDeleteSecurityEventDocument = gql`
+  mutation __AdminDeleteSecurityEvent($securityEventId: String!) {
     deleteSecurityEvent(securityEventId: $securityEventId) {
       id
     }
   }
 `
-export type AdminDeleteSecurityEventMutationFn = Apollo.MutationFunction<
-  AdminDeleteSecurityEventMutation,
-  AdminDeleteSecurityEventMutationVariables
+export type __AdminDeleteSecurityEventMutationFn = Apollo.MutationFunction<
+  __AdminDeleteSecurityEventMutation,
+  __AdminDeleteSecurityEventMutationVariables
 >
 
 /**
- * __useAdminDeleteSecurityEventMutation__
+ * __use__AdminDeleteSecurityEventMutation__
  *
- * To run a mutation, you first call `useAdminDeleteSecurityEventMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAdminDeleteSecurityEventMutation` returns a tuple that includes:
+ * To run a mutation, you first call `use__AdminDeleteSecurityEventMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `use__AdminDeleteSecurityEventMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [adminDeleteSecurityEventMutation, { data, loading, error }] = useAdminDeleteSecurityEventMutation({
+ * const [adminDeleteSecurityEventMutation, { data, loading, error }] = use__AdminDeleteSecurityEventMutation({
  *   variables: {
  *      securityEventId: // value for 'securityEventId'
  *   },
  * });
  */
-export function useAdminDeleteSecurityEventMutation(
+export function use__AdminDeleteSecurityEventMutation(
   baseOptions?: Apollo.MutationHookOptions<
-    AdminDeleteSecurityEventMutation,
-    AdminDeleteSecurityEventMutationVariables
+    __AdminDeleteSecurityEventMutation,
+    __AdminDeleteSecurityEventMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
   return Apollo.useMutation<
-    AdminDeleteSecurityEventMutation,
-    AdminDeleteSecurityEventMutationVariables
-  >(AdminDeleteSecurityEventDocument, options)
+    __AdminDeleteSecurityEventMutation,
+    __AdminDeleteSecurityEventMutationVariables
+  >(__AdminDeleteSecurityEventDocument, options)
 }
-export type AdminDeleteSecurityEventMutationHookResult = ReturnType<
-  typeof useAdminDeleteSecurityEventMutation
+export type __AdminDeleteSecurityEventMutationHookResult = ReturnType<
+  typeof use__AdminDeleteSecurityEventMutation
 >
-export type AdminDeleteSecurityEventMutationResult =
-  Apollo.MutationResult<AdminDeleteSecurityEventMutation>
-export type AdminDeleteSecurityEventMutationOptions = Apollo.BaseMutationOptions<
-  AdminDeleteSecurityEventMutation,
-  AdminDeleteSecurityEventMutationVariables
+export type __AdminDeleteSecurityEventMutationResult =
+  Apollo.MutationResult<__AdminDeleteSecurityEventMutation>
+export type __AdminDeleteSecurityEventMutationOptions = Apollo.BaseMutationOptions<
+  __AdminDeleteSecurityEventMutation,
+  __AdminDeleteSecurityEventMutationVariables
 >
-export const AdminUpdateSecurityEventDocument = gql`
-  mutation AdminUpdateSecurityEvent($securityEventId: String!, $input: UpdateSecurityEventInput!) {
+export const __AdminUpdateSecurityEventDocument = gql`
+  mutation __AdminUpdateSecurityEvent(
+    $securityEventId: String!
+    $input: UpdateSecurityEventInput!
+  ) {
     updateSecurityEvent(securityEventId: $securityEventId, input: $input) {
-      ...AdminSecurityEventDetails
+      ...__AdminSecurityEventDetails
     }
   }
-  ${AdminSecurityEventDetailsFragmentDoc}
+  ${__AdminSecurityEventDetailsFragmentDoc}
 `
-export type AdminUpdateSecurityEventMutationFn = Apollo.MutationFunction<
-  AdminUpdateSecurityEventMutation,
-  AdminUpdateSecurityEventMutationVariables
+export type __AdminUpdateSecurityEventMutationFn = Apollo.MutationFunction<
+  __AdminUpdateSecurityEventMutation,
+  __AdminUpdateSecurityEventMutationVariables
 >
 
 /**
- * __useAdminUpdateSecurityEventMutation__
+ * __use__AdminUpdateSecurityEventMutation__
  *
- * To run a mutation, you first call `useAdminUpdateSecurityEventMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAdminUpdateSecurityEventMutation` returns a tuple that includes:
+ * To run a mutation, you first call `use__AdminUpdateSecurityEventMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `use__AdminUpdateSecurityEventMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [adminUpdateSecurityEventMutation, { data, loading, error }] = useAdminUpdateSecurityEventMutation({
+ * const [adminUpdateSecurityEventMutation, { data, loading, error }] = use__AdminUpdateSecurityEventMutation({
  *   variables: {
  *      securityEventId: // value for 'securityEventId'
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useAdminUpdateSecurityEventMutation(
+export function use__AdminUpdateSecurityEventMutation(
   baseOptions?: Apollo.MutationHookOptions<
-    AdminUpdateSecurityEventMutation,
-    AdminUpdateSecurityEventMutationVariables
+    __AdminUpdateSecurityEventMutation,
+    __AdminUpdateSecurityEventMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
   return Apollo.useMutation<
-    AdminUpdateSecurityEventMutation,
-    AdminUpdateSecurityEventMutationVariables
-  >(AdminUpdateSecurityEventDocument, options)
+    __AdminUpdateSecurityEventMutation,
+    __AdminUpdateSecurityEventMutationVariables
+  >(__AdminUpdateSecurityEventDocument, options)
 }
-export type AdminUpdateSecurityEventMutationHookResult = ReturnType<
-  typeof useAdminUpdateSecurityEventMutation
+export type __AdminUpdateSecurityEventMutationHookResult = ReturnType<
+  typeof use__AdminUpdateSecurityEventMutation
 >
-export type AdminUpdateSecurityEventMutationResult =
-  Apollo.MutationResult<AdminUpdateSecurityEventMutation>
-export type AdminUpdateSecurityEventMutationOptions = Apollo.BaseMutationOptions<
-  AdminUpdateSecurityEventMutation,
-  AdminUpdateSecurityEventMutationVariables
+export type __AdminUpdateSecurityEventMutationResult =
+  Apollo.MutationResult<__AdminUpdateSecurityEventMutation>
+export type __AdminUpdateSecurityEventMutationOptions = Apollo.BaseMutationOptions<
+  __AdminUpdateSecurityEventMutation,
+  __AdminUpdateSecurityEventMutationVariables
 >
-export const AdminSecurityEventDocument = gql`
-  query AdminSecurityEvent($securityEventId: String!) {
+export const __AdminSecurityEventDocument = gql`
+  query __AdminSecurityEvent($securityEventId: String!) {
     securityEvent(securityEventId: $securityEventId) {
-      ...AdminSecurityEventDetails
+      ...__AdminSecurityEventDetails
     }
   }
-  ${AdminSecurityEventDetailsFragmentDoc}
+  ${__AdminSecurityEventDetailsFragmentDoc}
 `
 
 /**
- * __useAdminSecurityEventQuery__
+ * __use__AdminSecurityEventQuery__
  *
- * To run a query within a React component, call `useAdminSecurityEventQuery` and pass it any options that fit your needs.
- * When your component renders, `useAdminSecurityEventQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `use__AdminSecurityEventQuery` and pass it any options that fit your needs.
+ * When your component renders, `use__AdminSecurityEventQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useAdminSecurityEventQuery({
+ * const { data, loading, error } = use__AdminSecurityEventQuery({
  *   variables: {
  *      securityEventId: // value for 'securityEventId'
  *   },
  * });
  */
-export function useAdminSecurityEventQuery(
-  baseOptions: Apollo.QueryHookOptions<AdminSecurityEventQuery, AdminSecurityEventQueryVariables> &
-    ({ variables: AdminSecurityEventQueryVariables; skip?: boolean } | { skip: boolean }),
+export function use__AdminSecurityEventQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    __AdminSecurityEventQuery,
+    __AdminSecurityEventQueryVariables
+  > &
+    ({ variables: __AdminSecurityEventQueryVariables; skip?: boolean } | { skip: boolean }),
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<AdminSecurityEventQuery, AdminSecurityEventQueryVariables>(
-    AdminSecurityEventDocument,
+  return Apollo.useQuery<__AdminSecurityEventQuery, __AdminSecurityEventQueryVariables>(
+    __AdminSecurityEventDocument,
     options,
   )
 }
-export function useAdminSecurityEventLazyQuery(
+export function use__AdminSecurityEventLazyQuery(
   baseOptions?: Apollo.LazyQueryHookOptions<
-    AdminSecurityEventQuery,
-    AdminSecurityEventQueryVariables
+    __AdminSecurityEventQuery,
+    __AdminSecurityEventQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<AdminSecurityEventQuery, AdminSecurityEventQueryVariables>(
-    AdminSecurityEventDocument,
+  return Apollo.useLazyQuery<__AdminSecurityEventQuery, __AdminSecurityEventQueryVariables>(
+    __AdminSecurityEventDocument,
     options,
   )
 }
-export function useAdminSecurityEventSuspenseQuery(
+export function use__AdminSecurityEventSuspenseQuery(
   baseOptions?:
     | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<AdminSecurityEventQuery, AdminSecurityEventQueryVariables>,
+    | Apollo.SuspenseQueryHookOptions<
+        __AdminSecurityEventQuery,
+        __AdminSecurityEventQueryVariables
+      >,
 ) {
   const options =
     baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<AdminSecurityEventQuery, AdminSecurityEventQueryVariables>(
-    AdminSecurityEventDocument,
+  return Apollo.useSuspenseQuery<__AdminSecurityEventQuery, __AdminSecurityEventQueryVariables>(
+    __AdminSecurityEventDocument,
     options,
   )
 }
-export type AdminSecurityEventQueryHookResult = ReturnType<typeof useAdminSecurityEventQuery>
-export type AdminSecurityEventLazyQueryHookResult = ReturnType<
-  typeof useAdminSecurityEventLazyQuery
+export type __AdminSecurityEventQueryHookResult = ReturnType<typeof use__AdminSecurityEventQuery>
+export type __AdminSecurityEventLazyQueryHookResult = ReturnType<
+  typeof use__AdminSecurityEventLazyQuery
 >
-export type AdminSecurityEventSuspenseQueryHookResult = ReturnType<
-  typeof useAdminSecurityEventSuspenseQuery
+export type __AdminSecurityEventSuspenseQueryHookResult = ReturnType<
+  typeof use__AdminSecurityEventSuspenseQuery
 >
-export type AdminSecurityEventQueryResult = Apollo.QueryResult<
-  AdminSecurityEventQuery,
-  AdminSecurityEventQueryVariables
+export type __AdminSecurityEventQueryResult = Apollo.QueryResult<
+  __AdminSecurityEventQuery,
+  __AdminSecurityEventQueryVariables
 >
-export const AdminSecurityEventsDocument = gql`
-  query AdminSecurityEvents($input: ListSecurityEventInput) {
+export const __AdminSecurityEventsDocument = gql`
+  query __AdminSecurityEvents($input: ListSecurityEventInput) {
     securityEvents(input: $input) {
-      ...AdminSecurityEventList
+      ...__AdminSecurityEventList
     }
     counters: securityEventsCount(input: $input) {
       ...CorePagingDetails
     }
   }
-  ${AdminSecurityEventListFragmentDoc}
+  ${__AdminSecurityEventListFragmentDoc}
   ${CorePagingDetailsFragmentDoc}
 `
 
 /**
- * __useAdminSecurityEventsQuery__
+ * __use__AdminSecurityEventsQuery__
  *
- * To run a query within a React component, call `useAdminSecurityEventsQuery` and pass it any options that fit your needs.
- * When your component renders, `useAdminSecurityEventsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `use__AdminSecurityEventsQuery` and pass it any options that fit your needs.
+ * When your component renders, `use__AdminSecurityEventsQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useAdminSecurityEventsQuery({
+ * const { data, loading, error } = use__AdminSecurityEventsQuery({
  *   variables: {
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useAdminSecurityEventsQuery(
+export function use__AdminSecurityEventsQuery(
   baseOptions?: Apollo.QueryHookOptions<
-    AdminSecurityEventsQuery,
-    AdminSecurityEventsQueryVariables
+    __AdminSecurityEventsQuery,
+    __AdminSecurityEventsQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<AdminSecurityEventsQuery, AdminSecurityEventsQueryVariables>(
-    AdminSecurityEventsDocument,
+  return Apollo.useQuery<__AdminSecurityEventsQuery, __AdminSecurityEventsQueryVariables>(
+    __AdminSecurityEventsDocument,
     options,
   )
 }
-export function useAdminSecurityEventsLazyQuery(
+export function use__AdminSecurityEventsLazyQuery(
   baseOptions?: Apollo.LazyQueryHookOptions<
-    AdminSecurityEventsQuery,
-    AdminSecurityEventsQueryVariables
+    __AdminSecurityEventsQuery,
+    __AdminSecurityEventsQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<AdminSecurityEventsQuery, AdminSecurityEventsQueryVariables>(
-    AdminSecurityEventsDocument,
+  return Apollo.useLazyQuery<__AdminSecurityEventsQuery, __AdminSecurityEventsQueryVariables>(
+    __AdminSecurityEventsDocument,
     options,
   )
 }
-export function useAdminSecurityEventsSuspenseQuery(
+export function use__AdminSecurityEventsSuspenseQuery(
   baseOptions?:
     | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<AdminSecurityEventsQuery, AdminSecurityEventsQueryVariables>,
+    | Apollo.SuspenseQueryHookOptions<
+        __AdminSecurityEventsQuery,
+        __AdminSecurityEventsQueryVariables
+      >,
 ) {
   const options =
     baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<AdminSecurityEventsQuery, AdminSecurityEventsQueryVariables>(
-    AdminSecurityEventsDocument,
+  return Apollo.useSuspenseQuery<__AdminSecurityEventsQuery, __AdminSecurityEventsQueryVariables>(
+    __AdminSecurityEventsDocument,
     options,
   )
 }
-export type AdminSecurityEventsQueryHookResult = ReturnType<typeof useAdminSecurityEventsQuery>
-export type AdminSecurityEventsLazyQueryHookResult = ReturnType<
-  typeof useAdminSecurityEventsLazyQuery
+export type __AdminSecurityEventsQueryHookResult = ReturnType<typeof use__AdminSecurityEventsQuery>
+export type __AdminSecurityEventsLazyQueryHookResult = ReturnType<
+  typeof use__AdminSecurityEventsLazyQuery
 >
-export type AdminSecurityEventsSuspenseQueryHookResult = ReturnType<
-  typeof useAdminSecurityEventsSuspenseQuery
+export type __AdminSecurityEventsSuspenseQueryHookResult = ReturnType<
+  typeof use__AdminSecurityEventsSuspenseQuery
 >
-export type AdminSecurityEventsQueryResult = Apollo.QueryResult<
-  AdminSecurityEventsQuery,
-  AdminSecurityEventsQueryVariables
+export type __AdminSecurityEventsQueryResult = Apollo.QueryResult<
+  __AdminSecurityEventsQuery,
+  __AdminSecurityEventsQueryVariables
 >
-export const AdminSecurityEventPaginationDocument = gql`
-  query AdminSecurityEventPagination($input: ListSecurityEventInput) {
+export const __AdminSecurityEventPaginationDocument = gql`
+  query __AdminSecurityEventPagination($input: ListSecurityEventInput) {
     counters: securityEventsCount(input: $input) {
       ...CorePagingDetails
     }
@@ -18410,732 +18661,751 @@ export const AdminSecurityEventPaginationDocument = gql`
 `
 
 /**
- * __useAdminSecurityEventPaginationQuery__
+ * __use__AdminSecurityEventPaginationQuery__
  *
- * To run a query within a React component, call `useAdminSecurityEventPaginationQuery` and pass it any options that fit your needs.
- * When your component renders, `useAdminSecurityEventPaginationQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `use__AdminSecurityEventPaginationQuery` and pass it any options that fit your needs.
+ * When your component renders, `use__AdminSecurityEventPaginationQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useAdminSecurityEventPaginationQuery({
+ * const { data, loading, error } = use__AdminSecurityEventPaginationQuery({
  *   variables: {
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useAdminSecurityEventPaginationQuery(
+export function use__AdminSecurityEventPaginationQuery(
   baseOptions?: Apollo.QueryHookOptions<
-    AdminSecurityEventPaginationQuery,
-    AdminSecurityEventPaginationQueryVariables
+    __AdminSecurityEventPaginationQuery,
+    __AdminSecurityEventPaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
   return Apollo.useQuery<
-    AdminSecurityEventPaginationQuery,
-    AdminSecurityEventPaginationQueryVariables
-  >(AdminSecurityEventPaginationDocument, options)
+    __AdminSecurityEventPaginationQuery,
+    __AdminSecurityEventPaginationQueryVariables
+  >(__AdminSecurityEventPaginationDocument, options)
 }
-export function useAdminSecurityEventPaginationLazyQuery(
+export function use__AdminSecurityEventPaginationLazyQuery(
   baseOptions?: Apollo.LazyQueryHookOptions<
-    AdminSecurityEventPaginationQuery,
-    AdminSecurityEventPaginationQueryVariables
+    __AdminSecurityEventPaginationQuery,
+    __AdminSecurityEventPaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
   return Apollo.useLazyQuery<
-    AdminSecurityEventPaginationQuery,
-    AdminSecurityEventPaginationQueryVariables
-  >(AdminSecurityEventPaginationDocument, options)
+    __AdminSecurityEventPaginationQuery,
+    __AdminSecurityEventPaginationQueryVariables
+  >(__AdminSecurityEventPaginationDocument, options)
 }
-export function useAdminSecurityEventPaginationSuspenseQuery(
+export function use__AdminSecurityEventPaginationSuspenseQuery(
   baseOptions?:
     | Apollo.SkipToken
     | Apollo.SuspenseQueryHookOptions<
-        AdminSecurityEventPaginationQuery,
-        AdminSecurityEventPaginationQueryVariables
+        __AdminSecurityEventPaginationQuery,
+        __AdminSecurityEventPaginationQueryVariables
       >,
 ) {
   const options =
     baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
   return Apollo.useSuspenseQuery<
-    AdminSecurityEventPaginationQuery,
-    AdminSecurityEventPaginationQueryVariables
-  >(AdminSecurityEventPaginationDocument, options)
+    __AdminSecurityEventPaginationQuery,
+    __AdminSecurityEventPaginationQueryVariables
+  >(__AdminSecurityEventPaginationDocument, options)
 }
-export type AdminSecurityEventPaginationQueryHookResult = ReturnType<
-  typeof useAdminSecurityEventPaginationQuery
+export type __AdminSecurityEventPaginationQueryHookResult = ReturnType<
+  typeof use__AdminSecurityEventPaginationQuery
 >
-export type AdminSecurityEventPaginationLazyQueryHookResult = ReturnType<
-  typeof useAdminSecurityEventPaginationLazyQuery
+export type __AdminSecurityEventPaginationLazyQueryHookResult = ReturnType<
+  typeof use__AdminSecurityEventPaginationLazyQuery
 >
-export type AdminSecurityEventPaginationSuspenseQueryHookResult = ReturnType<
-  typeof useAdminSecurityEventPaginationSuspenseQuery
+export type __AdminSecurityEventPaginationSuspenseQueryHookResult = ReturnType<
+  typeof use__AdminSecurityEventPaginationSuspenseQuery
 >
-export type AdminSecurityEventPaginationQueryResult = Apollo.QueryResult<
-  AdminSecurityEventPaginationQuery,
-  AdminSecurityEventPaginationQueryVariables
+export type __AdminSecurityEventPaginationQueryResult = Apollo.QueryResult<
+  __AdminSecurityEventPaginationQuery,
+  __AdminSecurityEventPaginationQueryVariables
 >
-export const AdminCreateStoredFileDocument = gql`
-  mutation AdminCreateStoredFile($input: CreateStoredFileInput!) {
+export const __AdminCreateStoredFileDocument = gql`
+  mutation __AdminCreateStoredFile($input: CreateStoredFileInput!) {
     createStoredFile(input: $input) {
-      ...AdminStoredFileDetails
+      ...__AdminStoredFileDetails
     }
   }
-  ${AdminStoredFileDetailsFragmentDoc}
+  ${__AdminStoredFileDetailsFragmentDoc}
 `
-export type AdminCreateStoredFileMutationFn = Apollo.MutationFunction<
-  AdminCreateStoredFileMutation,
-  AdminCreateStoredFileMutationVariables
+export type __AdminCreateStoredFileMutationFn = Apollo.MutationFunction<
+  __AdminCreateStoredFileMutation,
+  __AdminCreateStoredFileMutationVariables
 >
 
 /**
- * __useAdminCreateStoredFileMutation__
+ * __use__AdminCreateStoredFileMutation__
  *
- * To run a mutation, you first call `useAdminCreateStoredFileMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAdminCreateStoredFileMutation` returns a tuple that includes:
+ * To run a mutation, you first call `use__AdminCreateStoredFileMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `use__AdminCreateStoredFileMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [adminCreateStoredFileMutation, { data, loading, error }] = useAdminCreateStoredFileMutation({
+ * const [adminCreateStoredFileMutation, { data, loading, error }] = use__AdminCreateStoredFileMutation({
  *   variables: {
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useAdminCreateStoredFileMutation(
+export function use__AdminCreateStoredFileMutation(
   baseOptions?: Apollo.MutationHookOptions<
-    AdminCreateStoredFileMutation,
-    AdminCreateStoredFileMutationVariables
+    __AdminCreateStoredFileMutation,
+    __AdminCreateStoredFileMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<AdminCreateStoredFileMutation, AdminCreateStoredFileMutationVariables>(
-    AdminCreateStoredFileDocument,
-    options,
-  )
+  return Apollo.useMutation<
+    __AdminCreateStoredFileMutation,
+    __AdminCreateStoredFileMutationVariables
+  >(__AdminCreateStoredFileDocument, options)
 }
-export type AdminCreateStoredFileMutationHookResult = ReturnType<
-  typeof useAdminCreateStoredFileMutation
+export type __AdminCreateStoredFileMutationHookResult = ReturnType<
+  typeof use__AdminCreateStoredFileMutation
 >
-export type AdminCreateStoredFileMutationResult =
-  Apollo.MutationResult<AdminCreateStoredFileMutation>
-export type AdminCreateStoredFileMutationOptions = Apollo.BaseMutationOptions<
-  AdminCreateStoredFileMutation,
-  AdminCreateStoredFileMutationVariables
+export type __AdminCreateStoredFileMutationResult =
+  Apollo.MutationResult<__AdminCreateStoredFileMutation>
+export type __AdminCreateStoredFileMutationOptions = Apollo.BaseMutationOptions<
+  __AdminCreateStoredFileMutation,
+  __AdminCreateStoredFileMutationVariables
 >
-export const AdminDeleteStoredFileDocument = gql`
-  mutation AdminDeleteStoredFile($storedFileId: String!) {
+export const __AdminDeleteStoredFileDocument = gql`
+  mutation __AdminDeleteStoredFile($storedFileId: String!) {
     deleteStoredFile(storedFileId: $storedFileId) {
       id
     }
   }
 `
-export type AdminDeleteStoredFileMutationFn = Apollo.MutationFunction<
-  AdminDeleteStoredFileMutation,
-  AdminDeleteStoredFileMutationVariables
+export type __AdminDeleteStoredFileMutationFn = Apollo.MutationFunction<
+  __AdminDeleteStoredFileMutation,
+  __AdminDeleteStoredFileMutationVariables
 >
 
 /**
- * __useAdminDeleteStoredFileMutation__
+ * __use__AdminDeleteStoredFileMutation__
  *
- * To run a mutation, you first call `useAdminDeleteStoredFileMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAdminDeleteStoredFileMutation` returns a tuple that includes:
+ * To run a mutation, you first call `use__AdminDeleteStoredFileMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `use__AdminDeleteStoredFileMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [adminDeleteStoredFileMutation, { data, loading, error }] = useAdminDeleteStoredFileMutation({
+ * const [adminDeleteStoredFileMutation, { data, loading, error }] = use__AdminDeleteStoredFileMutation({
  *   variables: {
  *      storedFileId: // value for 'storedFileId'
  *   },
  * });
  */
-export function useAdminDeleteStoredFileMutation(
+export function use__AdminDeleteStoredFileMutation(
   baseOptions?: Apollo.MutationHookOptions<
-    AdminDeleteStoredFileMutation,
-    AdminDeleteStoredFileMutationVariables
+    __AdminDeleteStoredFileMutation,
+    __AdminDeleteStoredFileMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<AdminDeleteStoredFileMutation, AdminDeleteStoredFileMutationVariables>(
-    AdminDeleteStoredFileDocument,
-    options,
-  )
+  return Apollo.useMutation<
+    __AdminDeleteStoredFileMutation,
+    __AdminDeleteStoredFileMutationVariables
+  >(__AdminDeleteStoredFileDocument, options)
 }
-export type AdminDeleteStoredFileMutationHookResult = ReturnType<
-  typeof useAdminDeleteStoredFileMutation
+export type __AdminDeleteStoredFileMutationHookResult = ReturnType<
+  typeof use__AdminDeleteStoredFileMutation
 >
-export type AdminDeleteStoredFileMutationResult =
-  Apollo.MutationResult<AdminDeleteStoredFileMutation>
-export type AdminDeleteStoredFileMutationOptions = Apollo.BaseMutationOptions<
-  AdminDeleteStoredFileMutation,
-  AdminDeleteStoredFileMutationVariables
+export type __AdminDeleteStoredFileMutationResult =
+  Apollo.MutationResult<__AdminDeleteStoredFileMutation>
+export type __AdminDeleteStoredFileMutationOptions = Apollo.BaseMutationOptions<
+  __AdminDeleteStoredFileMutation,
+  __AdminDeleteStoredFileMutationVariables
 >
-export const AdminUpdateStoredFileDocument = gql`
-  mutation AdminUpdateStoredFile($storedFileId: String!, $input: UpdateStoredFileInput!) {
+export const __AdminUpdateStoredFileDocument = gql`
+  mutation __AdminUpdateStoredFile($storedFileId: String!, $input: UpdateStoredFileInput!) {
     updateStoredFile(storedFileId: $storedFileId, input: $input) {
-      ...AdminStoredFileDetails
+      ...__AdminStoredFileDetails
     }
   }
-  ${AdminStoredFileDetailsFragmentDoc}
+  ${__AdminStoredFileDetailsFragmentDoc}
 `
-export type AdminUpdateStoredFileMutationFn = Apollo.MutationFunction<
-  AdminUpdateStoredFileMutation,
-  AdminUpdateStoredFileMutationVariables
+export type __AdminUpdateStoredFileMutationFn = Apollo.MutationFunction<
+  __AdminUpdateStoredFileMutation,
+  __AdminUpdateStoredFileMutationVariables
 >
 
 /**
- * __useAdminUpdateStoredFileMutation__
+ * __use__AdminUpdateStoredFileMutation__
  *
- * To run a mutation, you first call `useAdminUpdateStoredFileMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAdminUpdateStoredFileMutation` returns a tuple that includes:
+ * To run a mutation, you first call `use__AdminUpdateStoredFileMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `use__AdminUpdateStoredFileMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [adminUpdateStoredFileMutation, { data, loading, error }] = useAdminUpdateStoredFileMutation({
+ * const [adminUpdateStoredFileMutation, { data, loading, error }] = use__AdminUpdateStoredFileMutation({
  *   variables: {
  *      storedFileId: // value for 'storedFileId'
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useAdminUpdateStoredFileMutation(
+export function use__AdminUpdateStoredFileMutation(
   baseOptions?: Apollo.MutationHookOptions<
-    AdminUpdateStoredFileMutation,
-    AdminUpdateStoredFileMutationVariables
+    __AdminUpdateStoredFileMutation,
+    __AdminUpdateStoredFileMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<AdminUpdateStoredFileMutation, AdminUpdateStoredFileMutationVariables>(
-    AdminUpdateStoredFileDocument,
-    options,
-  )
+  return Apollo.useMutation<
+    __AdminUpdateStoredFileMutation,
+    __AdminUpdateStoredFileMutationVariables
+  >(__AdminUpdateStoredFileDocument, options)
 }
-export type AdminUpdateStoredFileMutationHookResult = ReturnType<
-  typeof useAdminUpdateStoredFileMutation
+export type __AdminUpdateStoredFileMutationHookResult = ReturnType<
+  typeof use__AdminUpdateStoredFileMutation
 >
-export type AdminUpdateStoredFileMutationResult =
-  Apollo.MutationResult<AdminUpdateStoredFileMutation>
-export type AdminUpdateStoredFileMutationOptions = Apollo.BaseMutationOptions<
-  AdminUpdateStoredFileMutation,
-  AdminUpdateStoredFileMutationVariables
+export type __AdminUpdateStoredFileMutationResult =
+  Apollo.MutationResult<__AdminUpdateStoredFileMutation>
+export type __AdminUpdateStoredFileMutationOptions = Apollo.BaseMutationOptions<
+  __AdminUpdateStoredFileMutation,
+  __AdminUpdateStoredFileMutationVariables
 >
-export const AdminStoredFileDocument = gql`
-  query AdminStoredFile($storedFileId: String!) {
+export const __AdminStoredFileDocument = gql`
+  query __AdminStoredFile($storedFileId: String!) {
     storedFile(storedFileId: $storedFileId) {
-      ...AdminStoredFileDetails
+      ...__AdminStoredFileDetails
     }
   }
-  ${AdminStoredFileDetailsFragmentDoc}
+  ${__AdminStoredFileDetailsFragmentDoc}
 `
 
 /**
- * __useAdminStoredFileQuery__
+ * __use__AdminStoredFileQuery__
  *
- * To run a query within a React component, call `useAdminStoredFileQuery` and pass it any options that fit your needs.
- * When your component renders, `useAdminStoredFileQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `use__AdminStoredFileQuery` and pass it any options that fit your needs.
+ * When your component renders, `use__AdminStoredFileQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useAdminStoredFileQuery({
+ * const { data, loading, error } = use__AdminStoredFileQuery({
  *   variables: {
  *      storedFileId: // value for 'storedFileId'
  *   },
  * });
  */
-export function useAdminStoredFileQuery(
-  baseOptions: Apollo.QueryHookOptions<AdminStoredFileQuery, AdminStoredFileQueryVariables> &
-    ({ variables: AdminStoredFileQueryVariables; skip?: boolean } | { skip: boolean }),
+export function use__AdminStoredFileQuery(
+  baseOptions: Apollo.QueryHookOptions<__AdminStoredFileQuery, __AdminStoredFileQueryVariables> &
+    ({ variables: __AdminStoredFileQueryVariables; skip?: boolean } | { skip: boolean }),
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<AdminStoredFileQuery, AdminStoredFileQueryVariables>(
-    AdminStoredFileDocument,
+  return Apollo.useQuery<__AdminStoredFileQuery, __AdminStoredFileQueryVariables>(
+    __AdminStoredFileDocument,
     options,
   )
 }
-export function useAdminStoredFileLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<AdminStoredFileQuery, AdminStoredFileQueryVariables>,
-) {
-  const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<AdminStoredFileQuery, AdminStoredFileQueryVariables>(
-    AdminStoredFileDocument,
-    options,
-  )
-}
-export function useAdminStoredFileSuspenseQuery(
-  baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<AdminStoredFileQuery, AdminStoredFileQueryVariables>,
-) {
-  const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<AdminStoredFileQuery, AdminStoredFileQueryVariables>(
-    AdminStoredFileDocument,
-    options,
-  )
-}
-export type AdminStoredFileQueryHookResult = ReturnType<typeof useAdminStoredFileQuery>
-export type AdminStoredFileLazyQueryHookResult = ReturnType<typeof useAdminStoredFileLazyQuery>
-export type AdminStoredFileSuspenseQueryHookResult = ReturnType<
-  typeof useAdminStoredFileSuspenseQuery
->
-export type AdminStoredFileQueryResult = Apollo.QueryResult<
-  AdminStoredFileQuery,
-  AdminStoredFileQueryVariables
->
-export const AdminStoredFilesDocument = gql`
-  query AdminStoredFiles($input: ListStoredFileInput) {
-    storedFiles(input: $input) {
-      ...AdminStoredFileList
-    }
-    counters: storedFilesCount(input: $input) {
-      ...CorePagingDetails
-    }
-  }
-  ${AdminStoredFileListFragmentDoc}
-  ${CorePagingDetailsFragmentDoc}
-`
-
-/**
- * __useAdminStoredFilesQuery__
- *
- * To run a query within a React component, call `useAdminStoredFilesQuery` and pass it any options that fit your needs.
- * When your component renders, `useAdminStoredFilesQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useAdminStoredFilesQuery({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useAdminStoredFilesQuery(
-  baseOptions?: Apollo.QueryHookOptions<AdminStoredFilesQuery, AdminStoredFilesQueryVariables>,
-) {
-  const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<AdminStoredFilesQuery, AdminStoredFilesQueryVariables>(
-    AdminStoredFilesDocument,
-    options,
-  )
-}
-export function useAdminStoredFilesLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<AdminStoredFilesQuery, AdminStoredFilesQueryVariables>,
-) {
-  const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<AdminStoredFilesQuery, AdminStoredFilesQueryVariables>(
-    AdminStoredFilesDocument,
-    options,
-  )
-}
-export function useAdminStoredFilesSuspenseQuery(
-  baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<AdminStoredFilesQuery, AdminStoredFilesQueryVariables>,
-) {
-  const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<AdminStoredFilesQuery, AdminStoredFilesQueryVariables>(
-    AdminStoredFilesDocument,
-    options,
-  )
-}
-export type AdminStoredFilesQueryHookResult = ReturnType<typeof useAdminStoredFilesQuery>
-export type AdminStoredFilesLazyQueryHookResult = ReturnType<typeof useAdminStoredFilesLazyQuery>
-export type AdminStoredFilesSuspenseQueryHookResult = ReturnType<
-  typeof useAdminStoredFilesSuspenseQuery
->
-export type AdminStoredFilesQueryResult = Apollo.QueryResult<
-  AdminStoredFilesQuery,
-  AdminStoredFilesQueryVariables
->
-export const AdminStoredFilePaginationDocument = gql`
-  query AdminStoredFilePagination($input: ListStoredFileInput) {
-    counters: storedFilesCount(input: $input) {
-      ...CorePagingDetails
-    }
-  }
-  ${CorePagingDetailsFragmentDoc}
-`
-
-/**
- * __useAdminStoredFilePaginationQuery__
- *
- * To run a query within a React component, call `useAdminStoredFilePaginationQuery` and pass it any options that fit your needs.
- * When your component renders, `useAdminStoredFilePaginationQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useAdminStoredFilePaginationQuery({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useAdminStoredFilePaginationQuery(
-  baseOptions?: Apollo.QueryHookOptions<
-    AdminStoredFilePaginationQuery,
-    AdminStoredFilePaginationQueryVariables
+export function use__AdminStoredFileLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    __AdminStoredFileQuery,
+    __AdminStoredFileQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<AdminStoredFilePaginationQuery, AdminStoredFilePaginationQueryVariables>(
-    AdminStoredFilePaginationDocument,
+  return Apollo.useLazyQuery<__AdminStoredFileQuery, __AdminStoredFileQueryVariables>(
+    __AdminStoredFileDocument,
     options,
   )
 }
-export function useAdminStoredFilePaginationLazyQuery(
+export function use__AdminStoredFileSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<__AdminStoredFileQuery, __AdminStoredFileQueryVariables>,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<__AdminStoredFileQuery, __AdminStoredFileQueryVariables>(
+    __AdminStoredFileDocument,
+    options,
+  )
+}
+export type __AdminStoredFileQueryHookResult = ReturnType<typeof use__AdminStoredFileQuery>
+export type __AdminStoredFileLazyQueryHookResult = ReturnType<typeof use__AdminStoredFileLazyQuery>
+export type __AdminStoredFileSuspenseQueryHookResult = ReturnType<
+  typeof use__AdminStoredFileSuspenseQuery
+>
+export type __AdminStoredFileQueryResult = Apollo.QueryResult<
+  __AdminStoredFileQuery,
+  __AdminStoredFileQueryVariables
+>
+export const __AdminStoredFilesDocument = gql`
+  query __AdminStoredFiles($input: ListStoredFileInput) {
+    storedFiles(input: $input) {
+      ...__AdminStoredFileList
+    }
+    counters: storedFilesCount(input: $input) {
+      ...CorePagingDetails
+    }
+  }
+  ${__AdminStoredFileListFragmentDoc}
+  ${CorePagingDetailsFragmentDoc}
+`
+
+/**
+ * __use__AdminStoredFilesQuery__
+ *
+ * To run a query within a React component, call `use__AdminStoredFilesQuery` and pass it any options that fit your needs.
+ * When your component renders, `use__AdminStoredFilesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = use__AdminStoredFilesQuery({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function use__AdminStoredFilesQuery(
+  baseOptions?: Apollo.QueryHookOptions<__AdminStoredFilesQuery, __AdminStoredFilesQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<__AdminStoredFilesQuery, __AdminStoredFilesQueryVariables>(
+    __AdminStoredFilesDocument,
+    options,
+  )
+}
+export function use__AdminStoredFilesLazyQuery(
   baseOptions?: Apollo.LazyQueryHookOptions<
-    AdminStoredFilePaginationQuery,
-    AdminStoredFilePaginationQueryVariables
+    __AdminStoredFilesQuery,
+    __AdminStoredFilesQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<__AdminStoredFilesQuery, __AdminStoredFilesQueryVariables>(
+    __AdminStoredFilesDocument,
+    options,
+  )
+}
+export function use__AdminStoredFilesSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<__AdminStoredFilesQuery, __AdminStoredFilesQueryVariables>,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<__AdminStoredFilesQuery, __AdminStoredFilesQueryVariables>(
+    __AdminStoredFilesDocument,
+    options,
+  )
+}
+export type __AdminStoredFilesQueryHookResult = ReturnType<typeof use__AdminStoredFilesQuery>
+export type __AdminStoredFilesLazyQueryHookResult = ReturnType<
+  typeof use__AdminStoredFilesLazyQuery
+>
+export type __AdminStoredFilesSuspenseQueryHookResult = ReturnType<
+  typeof use__AdminStoredFilesSuspenseQuery
+>
+export type __AdminStoredFilesQueryResult = Apollo.QueryResult<
+  __AdminStoredFilesQuery,
+  __AdminStoredFilesQueryVariables
+>
+export const __AdminStoredFilePaginationDocument = gql`
+  query __AdminStoredFilePagination($input: ListStoredFileInput) {
+    counters: storedFilesCount(input: $input) {
+      ...CorePagingDetails
+    }
+  }
+  ${CorePagingDetailsFragmentDoc}
+`
+
+/**
+ * __use__AdminStoredFilePaginationQuery__
+ *
+ * To run a query within a React component, call `use__AdminStoredFilePaginationQuery` and pass it any options that fit your needs.
+ * When your component renders, `use__AdminStoredFilePaginationQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = use__AdminStoredFilePaginationQuery({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function use__AdminStoredFilePaginationQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    __AdminStoredFilePaginationQuery,
+    __AdminStoredFilePaginationQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<
+    __AdminStoredFilePaginationQuery,
+    __AdminStoredFilePaginationQueryVariables
+  >(__AdminStoredFilePaginationDocument, options)
+}
+export function use__AdminStoredFilePaginationLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    __AdminStoredFilePaginationQuery,
+    __AdminStoredFilePaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
   return Apollo.useLazyQuery<
-    AdminStoredFilePaginationQuery,
-    AdminStoredFilePaginationQueryVariables
-  >(AdminStoredFilePaginationDocument, options)
+    __AdminStoredFilePaginationQuery,
+    __AdminStoredFilePaginationQueryVariables
+  >(__AdminStoredFilePaginationDocument, options)
 }
-export function useAdminStoredFilePaginationSuspenseQuery(
+export function use__AdminStoredFilePaginationSuspenseQuery(
   baseOptions?:
     | Apollo.SkipToken
     | Apollo.SuspenseQueryHookOptions<
-        AdminStoredFilePaginationQuery,
-        AdminStoredFilePaginationQueryVariables
+        __AdminStoredFilePaginationQuery,
+        __AdminStoredFilePaginationQueryVariables
       >,
 ) {
   const options =
     baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
   return Apollo.useSuspenseQuery<
-    AdminStoredFilePaginationQuery,
-    AdminStoredFilePaginationQueryVariables
-  >(AdminStoredFilePaginationDocument, options)
+    __AdminStoredFilePaginationQuery,
+    __AdminStoredFilePaginationQueryVariables
+  >(__AdminStoredFilePaginationDocument, options)
 }
-export type AdminStoredFilePaginationQueryHookResult = ReturnType<
-  typeof useAdminStoredFilePaginationQuery
+export type __AdminStoredFilePaginationQueryHookResult = ReturnType<
+  typeof use__AdminStoredFilePaginationQuery
 >
-export type AdminStoredFilePaginationLazyQueryHookResult = ReturnType<
-  typeof useAdminStoredFilePaginationLazyQuery
+export type __AdminStoredFilePaginationLazyQueryHookResult = ReturnType<
+  typeof use__AdminStoredFilePaginationLazyQuery
 >
-export type AdminStoredFilePaginationSuspenseQueryHookResult = ReturnType<
-  typeof useAdminStoredFilePaginationSuspenseQuery
+export type __AdminStoredFilePaginationSuspenseQueryHookResult = ReturnType<
+  typeof use__AdminStoredFilePaginationSuspenseQuery
 >
-export type AdminStoredFilePaginationQueryResult = Apollo.QueryResult<
-  AdminStoredFilePaginationQuery,
-  AdminStoredFilePaginationQueryVariables
+export type __AdminStoredFilePaginationQueryResult = Apollo.QueryResult<
+  __AdminStoredFilePaginationQuery,
+  __AdminStoredFilePaginationQueryVariables
 >
-export const AdminCreateSubscriptionDocument = gql`
-  mutation AdminCreateSubscription($input: CreateSubscriptionInput!) {
+export const __AdminCreateSubscriptionDocument = gql`
+  mutation __AdminCreateSubscription($input: CreateSubscriptionInput!) {
     createSubscription(input: $input) {
-      ...AdminSubscriptionDetails
+      ...__AdminSubscriptionDetails
     }
   }
-  ${AdminSubscriptionDetailsFragmentDoc}
+  ${__AdminSubscriptionDetailsFragmentDoc}
 `
-export type AdminCreateSubscriptionMutationFn = Apollo.MutationFunction<
-  AdminCreateSubscriptionMutation,
-  AdminCreateSubscriptionMutationVariables
+export type __AdminCreateSubscriptionMutationFn = Apollo.MutationFunction<
+  __AdminCreateSubscriptionMutation,
+  __AdminCreateSubscriptionMutationVariables
 >
 
 /**
- * __useAdminCreateSubscriptionMutation__
+ * __use__AdminCreateSubscriptionMutation__
  *
- * To run a mutation, you first call `useAdminCreateSubscriptionMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAdminCreateSubscriptionMutation` returns a tuple that includes:
+ * To run a mutation, you first call `use__AdminCreateSubscriptionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `use__AdminCreateSubscriptionMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [adminCreateSubscriptionMutation, { data, loading, error }] = useAdminCreateSubscriptionMutation({
+ * const [adminCreateSubscriptionMutation, { data, loading, error }] = use__AdminCreateSubscriptionMutation({
  *   variables: {
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useAdminCreateSubscriptionMutation(
+export function use__AdminCreateSubscriptionMutation(
   baseOptions?: Apollo.MutationHookOptions<
-    AdminCreateSubscriptionMutation,
-    AdminCreateSubscriptionMutationVariables
+    __AdminCreateSubscriptionMutation,
+    __AdminCreateSubscriptionMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
   return Apollo.useMutation<
-    AdminCreateSubscriptionMutation,
-    AdminCreateSubscriptionMutationVariables
-  >(AdminCreateSubscriptionDocument, options)
+    __AdminCreateSubscriptionMutation,
+    __AdminCreateSubscriptionMutationVariables
+  >(__AdminCreateSubscriptionDocument, options)
 }
-export type AdminCreateSubscriptionMutationHookResult = ReturnType<
-  typeof useAdminCreateSubscriptionMutation
+export type __AdminCreateSubscriptionMutationHookResult = ReturnType<
+  typeof use__AdminCreateSubscriptionMutation
 >
-export type AdminCreateSubscriptionMutationResult =
-  Apollo.MutationResult<AdminCreateSubscriptionMutation>
-export type AdminCreateSubscriptionMutationOptions = Apollo.BaseMutationOptions<
-  AdminCreateSubscriptionMutation,
-  AdminCreateSubscriptionMutationVariables
+export type __AdminCreateSubscriptionMutationResult =
+  Apollo.MutationResult<__AdminCreateSubscriptionMutation>
+export type __AdminCreateSubscriptionMutationOptions = Apollo.BaseMutationOptions<
+  __AdminCreateSubscriptionMutation,
+  __AdminCreateSubscriptionMutationVariables
 >
-export const AdminDeleteSubscriptionDocument = gql`
-  mutation AdminDeleteSubscription($subscriptionId: String!) {
+export const __AdminDeleteSubscriptionDocument = gql`
+  mutation __AdminDeleteSubscription($subscriptionId: String!) {
     deleteSubscription(subscriptionId: $subscriptionId) {
       id
     }
   }
 `
-export type AdminDeleteSubscriptionMutationFn = Apollo.MutationFunction<
-  AdminDeleteSubscriptionMutation,
-  AdminDeleteSubscriptionMutationVariables
+export type __AdminDeleteSubscriptionMutationFn = Apollo.MutationFunction<
+  __AdminDeleteSubscriptionMutation,
+  __AdminDeleteSubscriptionMutationVariables
 >
 
 /**
- * __useAdminDeleteSubscriptionMutation__
+ * __use__AdminDeleteSubscriptionMutation__
  *
- * To run a mutation, you first call `useAdminDeleteSubscriptionMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAdminDeleteSubscriptionMutation` returns a tuple that includes:
+ * To run a mutation, you first call `use__AdminDeleteSubscriptionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `use__AdminDeleteSubscriptionMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [adminDeleteSubscriptionMutation, { data, loading, error }] = useAdminDeleteSubscriptionMutation({
+ * const [adminDeleteSubscriptionMutation, { data, loading, error }] = use__AdminDeleteSubscriptionMutation({
  *   variables: {
  *      subscriptionId: // value for 'subscriptionId'
  *   },
  * });
  */
-export function useAdminDeleteSubscriptionMutation(
+export function use__AdminDeleteSubscriptionMutation(
   baseOptions?: Apollo.MutationHookOptions<
-    AdminDeleteSubscriptionMutation,
-    AdminDeleteSubscriptionMutationVariables
+    __AdminDeleteSubscriptionMutation,
+    __AdminDeleteSubscriptionMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
   return Apollo.useMutation<
-    AdminDeleteSubscriptionMutation,
-    AdminDeleteSubscriptionMutationVariables
-  >(AdminDeleteSubscriptionDocument, options)
+    __AdminDeleteSubscriptionMutation,
+    __AdminDeleteSubscriptionMutationVariables
+  >(__AdminDeleteSubscriptionDocument, options)
 }
-export type AdminDeleteSubscriptionMutationHookResult = ReturnType<
-  typeof useAdminDeleteSubscriptionMutation
+export type __AdminDeleteSubscriptionMutationHookResult = ReturnType<
+  typeof use__AdminDeleteSubscriptionMutation
 >
-export type AdminDeleteSubscriptionMutationResult =
-  Apollo.MutationResult<AdminDeleteSubscriptionMutation>
-export type AdminDeleteSubscriptionMutationOptions = Apollo.BaseMutationOptions<
-  AdminDeleteSubscriptionMutation,
-  AdminDeleteSubscriptionMutationVariables
+export type __AdminDeleteSubscriptionMutationResult =
+  Apollo.MutationResult<__AdminDeleteSubscriptionMutation>
+export type __AdminDeleteSubscriptionMutationOptions = Apollo.BaseMutationOptions<
+  __AdminDeleteSubscriptionMutation,
+  __AdminDeleteSubscriptionMutationVariables
 >
-export const AdminUpdateSubscriptionDocument = gql`
-  mutation AdminUpdateSubscription($subscriptionId: String!, $input: UpdateSubscriptionInput!) {
+export const __AdminUpdateSubscriptionDocument = gql`
+  mutation __AdminUpdateSubscription($subscriptionId: String!, $input: UpdateSubscriptionInput!) {
     updateSubscription(subscriptionId: $subscriptionId, input: $input) {
-      ...AdminSubscriptionDetails
+      ...__AdminSubscriptionDetails
     }
   }
-  ${AdminSubscriptionDetailsFragmentDoc}
+  ${__AdminSubscriptionDetailsFragmentDoc}
 `
-export type AdminUpdateSubscriptionMutationFn = Apollo.MutationFunction<
-  AdminUpdateSubscriptionMutation,
-  AdminUpdateSubscriptionMutationVariables
+export type __AdminUpdateSubscriptionMutationFn = Apollo.MutationFunction<
+  __AdminUpdateSubscriptionMutation,
+  __AdminUpdateSubscriptionMutationVariables
 >
 
 /**
- * __useAdminUpdateSubscriptionMutation__
+ * __use__AdminUpdateSubscriptionMutation__
  *
- * To run a mutation, you first call `useAdminUpdateSubscriptionMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAdminUpdateSubscriptionMutation` returns a tuple that includes:
+ * To run a mutation, you first call `use__AdminUpdateSubscriptionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `use__AdminUpdateSubscriptionMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [adminUpdateSubscriptionMutation, { data, loading, error }] = useAdminUpdateSubscriptionMutation({
+ * const [adminUpdateSubscriptionMutation, { data, loading, error }] = use__AdminUpdateSubscriptionMutation({
  *   variables: {
  *      subscriptionId: // value for 'subscriptionId'
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useAdminUpdateSubscriptionMutation(
+export function use__AdminUpdateSubscriptionMutation(
   baseOptions?: Apollo.MutationHookOptions<
-    AdminUpdateSubscriptionMutation,
-    AdminUpdateSubscriptionMutationVariables
+    __AdminUpdateSubscriptionMutation,
+    __AdminUpdateSubscriptionMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
   return Apollo.useMutation<
-    AdminUpdateSubscriptionMutation,
-    AdminUpdateSubscriptionMutationVariables
-  >(AdminUpdateSubscriptionDocument, options)
+    __AdminUpdateSubscriptionMutation,
+    __AdminUpdateSubscriptionMutationVariables
+  >(__AdminUpdateSubscriptionDocument, options)
 }
-export type AdminUpdateSubscriptionMutationHookResult = ReturnType<
-  typeof useAdminUpdateSubscriptionMutation
+export type __AdminUpdateSubscriptionMutationHookResult = ReturnType<
+  typeof use__AdminUpdateSubscriptionMutation
 >
-export type AdminUpdateSubscriptionMutationResult =
-  Apollo.MutationResult<AdminUpdateSubscriptionMutation>
-export type AdminUpdateSubscriptionMutationOptions = Apollo.BaseMutationOptions<
-  AdminUpdateSubscriptionMutation,
-  AdminUpdateSubscriptionMutationVariables
+export type __AdminUpdateSubscriptionMutationResult =
+  Apollo.MutationResult<__AdminUpdateSubscriptionMutation>
+export type __AdminUpdateSubscriptionMutationOptions = Apollo.BaseMutationOptions<
+  __AdminUpdateSubscriptionMutation,
+  __AdminUpdateSubscriptionMutationVariables
 >
-export const AdminSubscriptionDocument = gql`
-  query AdminSubscription($subscriptionId: String!) {
+export const __AdminSubscriptionDocument = gql`
+  query __AdminSubscription($subscriptionId: String!) {
     subscription(subscriptionId: $subscriptionId) {
-      ...AdminSubscriptionDetails
+      ...__AdminSubscriptionDetails
     }
   }
-  ${AdminSubscriptionDetailsFragmentDoc}
+  ${__AdminSubscriptionDetailsFragmentDoc}
 `
 
 /**
- * __useAdminSubscriptionQuery__
+ * __use__AdminSubscriptionQuery__
  *
- * To run a query within a React component, call `useAdminSubscriptionQuery` and pass it any options that fit your needs.
- * When your component renders, `useAdminSubscriptionQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `use__AdminSubscriptionQuery` and pass it any options that fit your needs.
+ * When your component renders, `use__AdminSubscriptionQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useAdminSubscriptionQuery({
+ * const { data, loading, error } = use__AdminSubscriptionQuery({
  *   variables: {
  *      subscriptionId: // value for 'subscriptionId'
  *   },
  * });
  */
-export function useAdminSubscriptionQuery(
-  baseOptions: Apollo.QueryHookOptions<AdminSubscriptionQuery, AdminSubscriptionQueryVariables> &
-    ({ variables: AdminSubscriptionQueryVariables; skip?: boolean } | { skip: boolean }),
+export function use__AdminSubscriptionQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    __AdminSubscriptionQuery,
+    __AdminSubscriptionQueryVariables
+  > &
+    ({ variables: __AdminSubscriptionQueryVariables; skip?: boolean } | { skip: boolean }),
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<AdminSubscriptionQuery, AdminSubscriptionQueryVariables>(
-    AdminSubscriptionDocument,
+  return Apollo.useQuery<__AdminSubscriptionQuery, __AdminSubscriptionQueryVariables>(
+    __AdminSubscriptionDocument,
     options,
   )
 }
-export function useAdminSubscriptionLazyQuery(
+export function use__AdminSubscriptionLazyQuery(
   baseOptions?: Apollo.LazyQueryHookOptions<
-    AdminSubscriptionQuery,
-    AdminSubscriptionQueryVariables
+    __AdminSubscriptionQuery,
+    __AdminSubscriptionQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<AdminSubscriptionQuery, AdminSubscriptionQueryVariables>(
-    AdminSubscriptionDocument,
+  return Apollo.useLazyQuery<__AdminSubscriptionQuery, __AdminSubscriptionQueryVariables>(
+    __AdminSubscriptionDocument,
     options,
   )
 }
-export function useAdminSubscriptionSuspenseQuery(
+export function use__AdminSubscriptionSuspenseQuery(
   baseOptions?:
     | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<AdminSubscriptionQuery, AdminSubscriptionQueryVariables>,
+    | Apollo.SuspenseQueryHookOptions<__AdminSubscriptionQuery, __AdminSubscriptionQueryVariables>,
 ) {
   const options =
     baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<AdminSubscriptionQuery, AdminSubscriptionQueryVariables>(
-    AdminSubscriptionDocument,
+  return Apollo.useSuspenseQuery<__AdminSubscriptionQuery, __AdminSubscriptionQueryVariables>(
+    __AdminSubscriptionDocument,
     options,
   )
 }
-export type AdminSubscriptionQueryHookResult = ReturnType<typeof useAdminSubscriptionQuery>
-export type AdminSubscriptionLazyQueryHookResult = ReturnType<typeof useAdminSubscriptionLazyQuery>
-export type AdminSubscriptionSuspenseQueryHookResult = ReturnType<
-  typeof useAdminSubscriptionSuspenseQuery
+export type __AdminSubscriptionQueryHookResult = ReturnType<typeof use__AdminSubscriptionQuery>
+export type __AdminSubscriptionLazyQueryHookResult = ReturnType<
+  typeof use__AdminSubscriptionLazyQuery
 >
-export type AdminSubscriptionQueryResult = Apollo.QueryResult<
-  AdminSubscriptionQuery,
-  AdminSubscriptionQueryVariables
+export type __AdminSubscriptionSuspenseQueryHookResult = ReturnType<
+  typeof use__AdminSubscriptionSuspenseQuery
 >
-export const AdminSubscriptionsDocument = gql`
-  query AdminSubscriptions($input: ListSubscriptionInput) {
+export type __AdminSubscriptionQueryResult = Apollo.QueryResult<
+  __AdminSubscriptionQuery,
+  __AdminSubscriptionQueryVariables
+>
+export const __AdminSubscriptionsDocument = gql`
+  query __AdminSubscriptions($input: ListSubscriptionInput) {
     subscriptions(input: $input) {
-      ...AdminSubscriptionList
+      ...__AdminSubscriptionList
     }
     counters: subscriptionsCount(input: $input) {
       ...CorePagingDetails
     }
   }
-  ${AdminSubscriptionListFragmentDoc}
+  ${__AdminSubscriptionListFragmentDoc}
   ${CorePagingDetailsFragmentDoc}
 `
 
 /**
- * __useAdminSubscriptionsQuery__
+ * __use__AdminSubscriptionsQuery__
  *
- * To run a query within a React component, call `useAdminSubscriptionsQuery` and pass it any options that fit your needs.
- * When your component renders, `useAdminSubscriptionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `use__AdminSubscriptionsQuery` and pass it any options that fit your needs.
+ * When your component renders, `use__AdminSubscriptionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useAdminSubscriptionsQuery({
+ * const { data, loading, error } = use__AdminSubscriptionsQuery({
  *   variables: {
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useAdminSubscriptionsQuery(
-  baseOptions?: Apollo.QueryHookOptions<AdminSubscriptionsQuery, AdminSubscriptionsQueryVariables>,
-) {
-  const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<AdminSubscriptionsQuery, AdminSubscriptionsQueryVariables>(
-    AdminSubscriptionsDocument,
-    options,
-  )
-}
-export function useAdminSubscriptionsLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
-    AdminSubscriptionsQuery,
-    AdminSubscriptionsQueryVariables
+export function use__AdminSubscriptionsQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    __AdminSubscriptionsQuery,
+    __AdminSubscriptionsQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<AdminSubscriptionsQuery, AdminSubscriptionsQueryVariables>(
-    AdminSubscriptionsDocument,
+  return Apollo.useQuery<__AdminSubscriptionsQuery, __AdminSubscriptionsQueryVariables>(
+    __AdminSubscriptionsDocument,
     options,
   )
 }
-export function useAdminSubscriptionsSuspenseQuery(
+export function use__AdminSubscriptionsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    __AdminSubscriptionsQuery,
+    __AdminSubscriptionsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<__AdminSubscriptionsQuery, __AdminSubscriptionsQueryVariables>(
+    __AdminSubscriptionsDocument,
+    options,
+  )
+}
+export function use__AdminSubscriptionsSuspenseQuery(
   baseOptions?:
     | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<AdminSubscriptionsQuery, AdminSubscriptionsQueryVariables>,
+    | Apollo.SuspenseQueryHookOptions<
+        __AdminSubscriptionsQuery,
+        __AdminSubscriptionsQueryVariables
+      >,
 ) {
   const options =
     baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<AdminSubscriptionsQuery, AdminSubscriptionsQueryVariables>(
-    AdminSubscriptionsDocument,
+  return Apollo.useSuspenseQuery<__AdminSubscriptionsQuery, __AdminSubscriptionsQueryVariables>(
+    __AdminSubscriptionsDocument,
     options,
   )
 }
-export type AdminSubscriptionsQueryHookResult = ReturnType<typeof useAdminSubscriptionsQuery>
-export type AdminSubscriptionsLazyQueryHookResult = ReturnType<
-  typeof useAdminSubscriptionsLazyQuery
+export type __AdminSubscriptionsQueryHookResult = ReturnType<typeof use__AdminSubscriptionsQuery>
+export type __AdminSubscriptionsLazyQueryHookResult = ReturnType<
+  typeof use__AdminSubscriptionsLazyQuery
 >
-export type AdminSubscriptionsSuspenseQueryHookResult = ReturnType<
-  typeof useAdminSubscriptionsSuspenseQuery
+export type __AdminSubscriptionsSuspenseQueryHookResult = ReturnType<
+  typeof use__AdminSubscriptionsSuspenseQuery
 >
-export type AdminSubscriptionsQueryResult = Apollo.QueryResult<
-  AdminSubscriptionsQuery,
-  AdminSubscriptionsQueryVariables
+export type __AdminSubscriptionsQueryResult = Apollo.QueryResult<
+  __AdminSubscriptionsQuery,
+  __AdminSubscriptionsQueryVariables
 >
-export const AdminSubscriptionPaginationDocument = gql`
-  query AdminSubscriptionPagination($input: ListSubscriptionInput) {
+export const __AdminSubscriptionPaginationDocument = gql`
+  query __AdminSubscriptionPagination($input: ListSubscriptionInput) {
     counters: subscriptionsCount(input: $input) {
       ...CorePagingDetails
     }
@@ -19144,693 +19414,713 @@ export const AdminSubscriptionPaginationDocument = gql`
 `
 
 /**
- * __useAdminSubscriptionPaginationQuery__
+ * __use__AdminSubscriptionPaginationQuery__
  *
- * To run a query within a React component, call `useAdminSubscriptionPaginationQuery` and pass it any options that fit your needs.
- * When your component renders, `useAdminSubscriptionPaginationQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `use__AdminSubscriptionPaginationQuery` and pass it any options that fit your needs.
+ * When your component renders, `use__AdminSubscriptionPaginationQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useAdminSubscriptionPaginationQuery({
+ * const { data, loading, error } = use__AdminSubscriptionPaginationQuery({
  *   variables: {
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useAdminSubscriptionPaginationQuery(
+export function use__AdminSubscriptionPaginationQuery(
   baseOptions?: Apollo.QueryHookOptions<
-    AdminSubscriptionPaginationQuery,
-    AdminSubscriptionPaginationQueryVariables
+    __AdminSubscriptionPaginationQuery,
+    __AdminSubscriptionPaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
   return Apollo.useQuery<
-    AdminSubscriptionPaginationQuery,
-    AdminSubscriptionPaginationQueryVariables
-  >(AdminSubscriptionPaginationDocument, options)
+    __AdminSubscriptionPaginationQuery,
+    __AdminSubscriptionPaginationQueryVariables
+  >(__AdminSubscriptionPaginationDocument, options)
 }
-export function useAdminSubscriptionPaginationLazyQuery(
+export function use__AdminSubscriptionPaginationLazyQuery(
   baseOptions?: Apollo.LazyQueryHookOptions<
-    AdminSubscriptionPaginationQuery,
-    AdminSubscriptionPaginationQueryVariables
+    __AdminSubscriptionPaginationQuery,
+    __AdminSubscriptionPaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
   return Apollo.useLazyQuery<
-    AdminSubscriptionPaginationQuery,
-    AdminSubscriptionPaginationQueryVariables
-  >(AdminSubscriptionPaginationDocument, options)
+    __AdminSubscriptionPaginationQuery,
+    __AdminSubscriptionPaginationQueryVariables
+  >(__AdminSubscriptionPaginationDocument, options)
 }
-export function useAdminSubscriptionPaginationSuspenseQuery(
+export function use__AdminSubscriptionPaginationSuspenseQuery(
   baseOptions?:
     | Apollo.SkipToken
     | Apollo.SuspenseQueryHookOptions<
-        AdminSubscriptionPaginationQuery,
-        AdminSubscriptionPaginationQueryVariables
+        __AdminSubscriptionPaginationQuery,
+        __AdminSubscriptionPaginationQueryVariables
       >,
 ) {
   const options =
     baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
   return Apollo.useSuspenseQuery<
-    AdminSubscriptionPaginationQuery,
-    AdminSubscriptionPaginationQueryVariables
-  >(AdminSubscriptionPaginationDocument, options)
+    __AdminSubscriptionPaginationQuery,
+    __AdminSubscriptionPaginationQueryVariables
+  >(__AdminSubscriptionPaginationDocument, options)
 }
-export type AdminSubscriptionPaginationQueryHookResult = ReturnType<
-  typeof useAdminSubscriptionPaginationQuery
+export type __AdminSubscriptionPaginationQueryHookResult = ReturnType<
+  typeof use__AdminSubscriptionPaginationQuery
 >
-export type AdminSubscriptionPaginationLazyQueryHookResult = ReturnType<
-  typeof useAdminSubscriptionPaginationLazyQuery
+export type __AdminSubscriptionPaginationLazyQueryHookResult = ReturnType<
+  typeof use__AdminSubscriptionPaginationLazyQuery
 >
-export type AdminSubscriptionPaginationSuspenseQueryHookResult = ReturnType<
-  typeof useAdminSubscriptionPaginationSuspenseQuery
+export type __AdminSubscriptionPaginationSuspenseQueryHookResult = ReturnType<
+  typeof use__AdminSubscriptionPaginationSuspenseQuery
 >
-export type AdminSubscriptionPaginationQueryResult = Apollo.QueryResult<
-  AdminSubscriptionPaginationQuery,
-  AdminSubscriptionPaginationQueryVariables
+export type __AdminSubscriptionPaginationQueryResult = Apollo.QueryResult<
+  __AdminSubscriptionPaginationQuery,
+  __AdminSubscriptionPaginationQueryVariables
 >
-export const AdminCreateTeamMemberDocument = gql`
-  mutation AdminCreateTeamMember($input: CreateTeamMemberInput!) {
+export const __AdminCreateTeamMemberDocument = gql`
+  mutation __AdminCreateTeamMember($input: CreateTeamMemberInput!) {
     createTeamMember(input: $input) {
-      ...AdminTeamMemberDetails
+      ...__AdminTeamMemberDetails
     }
   }
-  ${AdminTeamMemberDetailsFragmentDoc}
+  ${__AdminTeamMemberDetailsFragmentDoc}
 `
-export type AdminCreateTeamMemberMutationFn = Apollo.MutationFunction<
-  AdminCreateTeamMemberMutation,
-  AdminCreateTeamMemberMutationVariables
+export type __AdminCreateTeamMemberMutationFn = Apollo.MutationFunction<
+  __AdminCreateTeamMemberMutation,
+  __AdminCreateTeamMemberMutationVariables
 >
 
 /**
- * __useAdminCreateTeamMemberMutation__
+ * __use__AdminCreateTeamMemberMutation__
  *
- * To run a mutation, you first call `useAdminCreateTeamMemberMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAdminCreateTeamMemberMutation` returns a tuple that includes:
+ * To run a mutation, you first call `use__AdminCreateTeamMemberMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `use__AdminCreateTeamMemberMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [adminCreateTeamMemberMutation, { data, loading, error }] = useAdminCreateTeamMemberMutation({
+ * const [adminCreateTeamMemberMutation, { data, loading, error }] = use__AdminCreateTeamMemberMutation({
  *   variables: {
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useAdminCreateTeamMemberMutation(
+export function use__AdminCreateTeamMemberMutation(
   baseOptions?: Apollo.MutationHookOptions<
-    AdminCreateTeamMemberMutation,
-    AdminCreateTeamMemberMutationVariables
+    __AdminCreateTeamMemberMutation,
+    __AdminCreateTeamMemberMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<AdminCreateTeamMemberMutation, AdminCreateTeamMemberMutationVariables>(
-    AdminCreateTeamMemberDocument,
-    options,
-  )
+  return Apollo.useMutation<
+    __AdminCreateTeamMemberMutation,
+    __AdminCreateTeamMemberMutationVariables
+  >(__AdminCreateTeamMemberDocument, options)
 }
-export type AdminCreateTeamMemberMutationHookResult = ReturnType<
-  typeof useAdminCreateTeamMemberMutation
+export type __AdminCreateTeamMemberMutationHookResult = ReturnType<
+  typeof use__AdminCreateTeamMemberMutation
 >
-export type AdminCreateTeamMemberMutationResult =
-  Apollo.MutationResult<AdminCreateTeamMemberMutation>
-export type AdminCreateTeamMemberMutationOptions = Apollo.BaseMutationOptions<
-  AdminCreateTeamMemberMutation,
-  AdminCreateTeamMemberMutationVariables
+export type __AdminCreateTeamMemberMutationResult =
+  Apollo.MutationResult<__AdminCreateTeamMemberMutation>
+export type __AdminCreateTeamMemberMutationOptions = Apollo.BaseMutationOptions<
+  __AdminCreateTeamMemberMutation,
+  __AdminCreateTeamMemberMutationVariables
 >
-export const AdminDeleteTeamMemberDocument = gql`
-  mutation AdminDeleteTeamMember($teamMemberId: String!) {
+export const __AdminDeleteTeamMemberDocument = gql`
+  mutation __AdminDeleteTeamMember($teamMemberId: String!) {
     deleteTeamMember(teamMemberId: $teamMemberId) {
       id
     }
   }
 `
-export type AdminDeleteTeamMemberMutationFn = Apollo.MutationFunction<
-  AdminDeleteTeamMemberMutation,
-  AdminDeleteTeamMemberMutationVariables
+export type __AdminDeleteTeamMemberMutationFn = Apollo.MutationFunction<
+  __AdminDeleteTeamMemberMutation,
+  __AdminDeleteTeamMemberMutationVariables
 >
 
 /**
- * __useAdminDeleteTeamMemberMutation__
+ * __use__AdminDeleteTeamMemberMutation__
  *
- * To run a mutation, you first call `useAdminDeleteTeamMemberMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAdminDeleteTeamMemberMutation` returns a tuple that includes:
+ * To run a mutation, you first call `use__AdminDeleteTeamMemberMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `use__AdminDeleteTeamMemberMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [adminDeleteTeamMemberMutation, { data, loading, error }] = useAdminDeleteTeamMemberMutation({
+ * const [adminDeleteTeamMemberMutation, { data, loading, error }] = use__AdminDeleteTeamMemberMutation({
  *   variables: {
  *      teamMemberId: // value for 'teamMemberId'
  *   },
  * });
  */
-export function useAdminDeleteTeamMemberMutation(
+export function use__AdminDeleteTeamMemberMutation(
   baseOptions?: Apollo.MutationHookOptions<
-    AdminDeleteTeamMemberMutation,
-    AdminDeleteTeamMemberMutationVariables
+    __AdminDeleteTeamMemberMutation,
+    __AdminDeleteTeamMemberMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<AdminDeleteTeamMemberMutation, AdminDeleteTeamMemberMutationVariables>(
-    AdminDeleteTeamMemberDocument,
-    options,
-  )
+  return Apollo.useMutation<
+    __AdminDeleteTeamMemberMutation,
+    __AdminDeleteTeamMemberMutationVariables
+  >(__AdminDeleteTeamMemberDocument, options)
 }
-export type AdminDeleteTeamMemberMutationHookResult = ReturnType<
-  typeof useAdminDeleteTeamMemberMutation
+export type __AdminDeleteTeamMemberMutationHookResult = ReturnType<
+  typeof use__AdminDeleteTeamMemberMutation
 >
-export type AdminDeleteTeamMemberMutationResult =
-  Apollo.MutationResult<AdminDeleteTeamMemberMutation>
-export type AdminDeleteTeamMemberMutationOptions = Apollo.BaseMutationOptions<
-  AdminDeleteTeamMemberMutation,
-  AdminDeleteTeamMemberMutationVariables
+export type __AdminDeleteTeamMemberMutationResult =
+  Apollo.MutationResult<__AdminDeleteTeamMemberMutation>
+export type __AdminDeleteTeamMemberMutationOptions = Apollo.BaseMutationOptions<
+  __AdminDeleteTeamMemberMutation,
+  __AdminDeleteTeamMemberMutationVariables
 >
-export const AdminUpdateTeamMemberDocument = gql`
-  mutation AdminUpdateTeamMember($teamMemberId: String!, $input: UpdateTeamMemberInput!) {
+export const __AdminUpdateTeamMemberDocument = gql`
+  mutation __AdminUpdateTeamMember($teamMemberId: String!, $input: UpdateTeamMemberInput!) {
     updateTeamMember(teamMemberId: $teamMemberId, input: $input) {
-      ...AdminTeamMemberDetails
+      ...__AdminTeamMemberDetails
     }
   }
-  ${AdminTeamMemberDetailsFragmentDoc}
+  ${__AdminTeamMemberDetailsFragmentDoc}
 `
-export type AdminUpdateTeamMemberMutationFn = Apollo.MutationFunction<
-  AdminUpdateTeamMemberMutation,
-  AdminUpdateTeamMemberMutationVariables
+export type __AdminUpdateTeamMemberMutationFn = Apollo.MutationFunction<
+  __AdminUpdateTeamMemberMutation,
+  __AdminUpdateTeamMemberMutationVariables
 >
 
 /**
- * __useAdminUpdateTeamMemberMutation__
+ * __use__AdminUpdateTeamMemberMutation__
  *
- * To run a mutation, you first call `useAdminUpdateTeamMemberMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAdminUpdateTeamMemberMutation` returns a tuple that includes:
+ * To run a mutation, you first call `use__AdminUpdateTeamMemberMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `use__AdminUpdateTeamMemberMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [adminUpdateTeamMemberMutation, { data, loading, error }] = useAdminUpdateTeamMemberMutation({
+ * const [adminUpdateTeamMemberMutation, { data, loading, error }] = use__AdminUpdateTeamMemberMutation({
  *   variables: {
  *      teamMemberId: // value for 'teamMemberId'
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useAdminUpdateTeamMemberMutation(
+export function use__AdminUpdateTeamMemberMutation(
   baseOptions?: Apollo.MutationHookOptions<
-    AdminUpdateTeamMemberMutation,
-    AdminUpdateTeamMemberMutationVariables
+    __AdminUpdateTeamMemberMutation,
+    __AdminUpdateTeamMemberMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<AdminUpdateTeamMemberMutation, AdminUpdateTeamMemberMutationVariables>(
-    AdminUpdateTeamMemberDocument,
-    options,
-  )
+  return Apollo.useMutation<
+    __AdminUpdateTeamMemberMutation,
+    __AdminUpdateTeamMemberMutationVariables
+  >(__AdminUpdateTeamMemberDocument, options)
 }
-export type AdminUpdateTeamMemberMutationHookResult = ReturnType<
-  typeof useAdminUpdateTeamMemberMutation
+export type __AdminUpdateTeamMemberMutationHookResult = ReturnType<
+  typeof use__AdminUpdateTeamMemberMutation
 >
-export type AdminUpdateTeamMemberMutationResult =
-  Apollo.MutationResult<AdminUpdateTeamMemberMutation>
-export type AdminUpdateTeamMemberMutationOptions = Apollo.BaseMutationOptions<
-  AdminUpdateTeamMemberMutation,
-  AdminUpdateTeamMemberMutationVariables
+export type __AdminUpdateTeamMemberMutationResult =
+  Apollo.MutationResult<__AdminUpdateTeamMemberMutation>
+export type __AdminUpdateTeamMemberMutationOptions = Apollo.BaseMutationOptions<
+  __AdminUpdateTeamMemberMutation,
+  __AdminUpdateTeamMemberMutationVariables
 >
-export const AdminTeamMemberDocument = gql`
-  query AdminTeamMember($teamMemberId: String!) {
+export const __AdminTeamMemberDocument = gql`
+  query __AdminTeamMember($teamMemberId: String!) {
     teamMember(teamMemberId: $teamMemberId) {
-      ...AdminTeamMemberDetails
+      ...__AdminTeamMemberDetails
     }
   }
-  ${AdminTeamMemberDetailsFragmentDoc}
+  ${__AdminTeamMemberDetailsFragmentDoc}
 `
 
 /**
- * __useAdminTeamMemberQuery__
+ * __use__AdminTeamMemberQuery__
  *
- * To run a query within a React component, call `useAdminTeamMemberQuery` and pass it any options that fit your needs.
- * When your component renders, `useAdminTeamMemberQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `use__AdminTeamMemberQuery` and pass it any options that fit your needs.
+ * When your component renders, `use__AdminTeamMemberQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useAdminTeamMemberQuery({
+ * const { data, loading, error } = use__AdminTeamMemberQuery({
  *   variables: {
  *      teamMemberId: // value for 'teamMemberId'
  *   },
  * });
  */
-export function useAdminTeamMemberQuery(
-  baseOptions: Apollo.QueryHookOptions<AdminTeamMemberQuery, AdminTeamMemberQueryVariables> &
-    ({ variables: AdminTeamMemberQueryVariables; skip?: boolean } | { skip: boolean }),
+export function use__AdminTeamMemberQuery(
+  baseOptions: Apollo.QueryHookOptions<__AdminTeamMemberQuery, __AdminTeamMemberQueryVariables> &
+    ({ variables: __AdminTeamMemberQueryVariables; skip?: boolean } | { skip: boolean }),
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<AdminTeamMemberQuery, AdminTeamMemberQueryVariables>(
-    AdminTeamMemberDocument,
+  return Apollo.useQuery<__AdminTeamMemberQuery, __AdminTeamMemberQueryVariables>(
+    __AdminTeamMemberDocument,
     options,
   )
 }
-export function useAdminTeamMemberLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<AdminTeamMemberQuery, AdminTeamMemberQueryVariables>,
-) {
-  const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<AdminTeamMemberQuery, AdminTeamMemberQueryVariables>(
-    AdminTeamMemberDocument,
-    options,
-  )
-}
-export function useAdminTeamMemberSuspenseQuery(
-  baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<AdminTeamMemberQuery, AdminTeamMemberQueryVariables>,
-) {
-  const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<AdminTeamMemberQuery, AdminTeamMemberQueryVariables>(
-    AdminTeamMemberDocument,
-    options,
-  )
-}
-export type AdminTeamMemberQueryHookResult = ReturnType<typeof useAdminTeamMemberQuery>
-export type AdminTeamMemberLazyQueryHookResult = ReturnType<typeof useAdminTeamMemberLazyQuery>
-export type AdminTeamMemberSuspenseQueryHookResult = ReturnType<
-  typeof useAdminTeamMemberSuspenseQuery
->
-export type AdminTeamMemberQueryResult = Apollo.QueryResult<
-  AdminTeamMemberQuery,
-  AdminTeamMemberQueryVariables
->
-export const AdminTeamMembersDocument = gql`
-  query AdminTeamMembers($input: ListTeamMemberInput) {
-    teamMembers(input: $input) {
-      ...AdminTeamMemberList
-    }
-    counters: teamMembersCount(input: $input) {
-      ...CorePagingDetails
-    }
-  }
-  ${AdminTeamMemberListFragmentDoc}
-  ${CorePagingDetailsFragmentDoc}
-`
-
-/**
- * __useAdminTeamMembersQuery__
- *
- * To run a query within a React component, call `useAdminTeamMembersQuery` and pass it any options that fit your needs.
- * When your component renders, `useAdminTeamMembersQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useAdminTeamMembersQuery({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useAdminTeamMembersQuery(
-  baseOptions?: Apollo.QueryHookOptions<AdminTeamMembersQuery, AdminTeamMembersQueryVariables>,
-) {
-  const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<AdminTeamMembersQuery, AdminTeamMembersQueryVariables>(
-    AdminTeamMembersDocument,
-    options,
-  )
-}
-export function useAdminTeamMembersLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<AdminTeamMembersQuery, AdminTeamMembersQueryVariables>,
-) {
-  const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<AdminTeamMembersQuery, AdminTeamMembersQueryVariables>(
-    AdminTeamMembersDocument,
-    options,
-  )
-}
-export function useAdminTeamMembersSuspenseQuery(
-  baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<AdminTeamMembersQuery, AdminTeamMembersQueryVariables>,
-) {
-  const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<AdminTeamMembersQuery, AdminTeamMembersQueryVariables>(
-    AdminTeamMembersDocument,
-    options,
-  )
-}
-export type AdminTeamMembersQueryHookResult = ReturnType<typeof useAdminTeamMembersQuery>
-export type AdminTeamMembersLazyQueryHookResult = ReturnType<typeof useAdminTeamMembersLazyQuery>
-export type AdminTeamMembersSuspenseQueryHookResult = ReturnType<
-  typeof useAdminTeamMembersSuspenseQuery
->
-export type AdminTeamMembersQueryResult = Apollo.QueryResult<
-  AdminTeamMembersQuery,
-  AdminTeamMembersQueryVariables
->
-export const AdminTeamMemberPaginationDocument = gql`
-  query AdminTeamMemberPagination($input: ListTeamMemberInput) {
-    counters: teamMembersCount(input: $input) {
-      ...CorePagingDetails
-    }
-  }
-  ${CorePagingDetailsFragmentDoc}
-`
-
-/**
- * __useAdminTeamMemberPaginationQuery__
- *
- * To run a query within a React component, call `useAdminTeamMemberPaginationQuery` and pass it any options that fit your needs.
- * When your component renders, `useAdminTeamMemberPaginationQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useAdminTeamMemberPaginationQuery({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useAdminTeamMemberPaginationQuery(
-  baseOptions?: Apollo.QueryHookOptions<
-    AdminTeamMemberPaginationQuery,
-    AdminTeamMemberPaginationQueryVariables
+export function use__AdminTeamMemberLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    __AdminTeamMemberQuery,
+    __AdminTeamMemberQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<AdminTeamMemberPaginationQuery, AdminTeamMemberPaginationQueryVariables>(
-    AdminTeamMemberPaginationDocument,
+  return Apollo.useLazyQuery<__AdminTeamMemberQuery, __AdminTeamMemberQueryVariables>(
+    __AdminTeamMemberDocument,
     options,
   )
 }
-export function useAdminTeamMemberPaginationLazyQuery(
+export function use__AdminTeamMemberSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<__AdminTeamMemberQuery, __AdminTeamMemberQueryVariables>,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<__AdminTeamMemberQuery, __AdminTeamMemberQueryVariables>(
+    __AdminTeamMemberDocument,
+    options,
+  )
+}
+export type __AdminTeamMemberQueryHookResult = ReturnType<typeof use__AdminTeamMemberQuery>
+export type __AdminTeamMemberLazyQueryHookResult = ReturnType<typeof use__AdminTeamMemberLazyQuery>
+export type __AdminTeamMemberSuspenseQueryHookResult = ReturnType<
+  typeof use__AdminTeamMemberSuspenseQuery
+>
+export type __AdminTeamMemberQueryResult = Apollo.QueryResult<
+  __AdminTeamMemberQuery,
+  __AdminTeamMemberQueryVariables
+>
+export const __AdminTeamMembersDocument = gql`
+  query __AdminTeamMembers($input: ListTeamMemberInput) {
+    teamMembers(input: $input) {
+      ...__AdminTeamMemberList
+    }
+    counters: teamMembersCount(input: $input) {
+      ...CorePagingDetails
+    }
+  }
+  ${__AdminTeamMemberListFragmentDoc}
+  ${CorePagingDetailsFragmentDoc}
+`
+
+/**
+ * __use__AdminTeamMembersQuery__
+ *
+ * To run a query within a React component, call `use__AdminTeamMembersQuery` and pass it any options that fit your needs.
+ * When your component renders, `use__AdminTeamMembersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = use__AdminTeamMembersQuery({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function use__AdminTeamMembersQuery(
+  baseOptions?: Apollo.QueryHookOptions<__AdminTeamMembersQuery, __AdminTeamMembersQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<__AdminTeamMembersQuery, __AdminTeamMembersQueryVariables>(
+    __AdminTeamMembersDocument,
+    options,
+  )
+}
+export function use__AdminTeamMembersLazyQuery(
   baseOptions?: Apollo.LazyQueryHookOptions<
-    AdminTeamMemberPaginationQuery,
-    AdminTeamMemberPaginationQueryVariables
+    __AdminTeamMembersQuery,
+    __AdminTeamMembersQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<__AdminTeamMembersQuery, __AdminTeamMembersQueryVariables>(
+    __AdminTeamMembersDocument,
+    options,
+  )
+}
+export function use__AdminTeamMembersSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<__AdminTeamMembersQuery, __AdminTeamMembersQueryVariables>,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<__AdminTeamMembersQuery, __AdminTeamMembersQueryVariables>(
+    __AdminTeamMembersDocument,
+    options,
+  )
+}
+export type __AdminTeamMembersQueryHookResult = ReturnType<typeof use__AdminTeamMembersQuery>
+export type __AdminTeamMembersLazyQueryHookResult = ReturnType<
+  typeof use__AdminTeamMembersLazyQuery
+>
+export type __AdminTeamMembersSuspenseQueryHookResult = ReturnType<
+  typeof use__AdminTeamMembersSuspenseQuery
+>
+export type __AdminTeamMembersQueryResult = Apollo.QueryResult<
+  __AdminTeamMembersQuery,
+  __AdminTeamMembersQueryVariables
+>
+export const __AdminTeamMemberPaginationDocument = gql`
+  query __AdminTeamMemberPagination($input: ListTeamMemberInput) {
+    counters: teamMembersCount(input: $input) {
+      ...CorePagingDetails
+    }
+  }
+  ${CorePagingDetailsFragmentDoc}
+`
+
+/**
+ * __use__AdminTeamMemberPaginationQuery__
+ *
+ * To run a query within a React component, call `use__AdminTeamMemberPaginationQuery` and pass it any options that fit your needs.
+ * When your component renders, `use__AdminTeamMemberPaginationQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = use__AdminTeamMemberPaginationQuery({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function use__AdminTeamMemberPaginationQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    __AdminTeamMemberPaginationQuery,
+    __AdminTeamMemberPaginationQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<
+    __AdminTeamMemberPaginationQuery,
+    __AdminTeamMemberPaginationQueryVariables
+  >(__AdminTeamMemberPaginationDocument, options)
+}
+export function use__AdminTeamMemberPaginationLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    __AdminTeamMemberPaginationQuery,
+    __AdminTeamMemberPaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
   return Apollo.useLazyQuery<
-    AdminTeamMemberPaginationQuery,
-    AdminTeamMemberPaginationQueryVariables
-  >(AdminTeamMemberPaginationDocument, options)
+    __AdminTeamMemberPaginationQuery,
+    __AdminTeamMemberPaginationQueryVariables
+  >(__AdminTeamMemberPaginationDocument, options)
 }
-export function useAdminTeamMemberPaginationSuspenseQuery(
+export function use__AdminTeamMemberPaginationSuspenseQuery(
   baseOptions?:
     | Apollo.SkipToken
     | Apollo.SuspenseQueryHookOptions<
-        AdminTeamMemberPaginationQuery,
-        AdminTeamMemberPaginationQueryVariables
+        __AdminTeamMemberPaginationQuery,
+        __AdminTeamMemberPaginationQueryVariables
       >,
 ) {
   const options =
     baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
   return Apollo.useSuspenseQuery<
-    AdminTeamMemberPaginationQuery,
-    AdminTeamMemberPaginationQueryVariables
-  >(AdminTeamMemberPaginationDocument, options)
+    __AdminTeamMemberPaginationQuery,
+    __AdminTeamMemberPaginationQueryVariables
+  >(__AdminTeamMemberPaginationDocument, options)
 }
-export type AdminTeamMemberPaginationQueryHookResult = ReturnType<
-  typeof useAdminTeamMemberPaginationQuery
+export type __AdminTeamMemberPaginationQueryHookResult = ReturnType<
+  typeof use__AdminTeamMemberPaginationQuery
 >
-export type AdminTeamMemberPaginationLazyQueryHookResult = ReturnType<
-  typeof useAdminTeamMemberPaginationLazyQuery
+export type __AdminTeamMemberPaginationLazyQueryHookResult = ReturnType<
+  typeof use__AdminTeamMemberPaginationLazyQuery
 >
-export type AdminTeamMemberPaginationSuspenseQueryHookResult = ReturnType<
-  typeof useAdminTeamMemberPaginationSuspenseQuery
+export type __AdminTeamMemberPaginationSuspenseQueryHookResult = ReturnType<
+  typeof use__AdminTeamMemberPaginationSuspenseQuery
 >
-export type AdminTeamMemberPaginationQueryResult = Apollo.QueryResult<
-  AdminTeamMemberPaginationQuery,
-  AdminTeamMemberPaginationQueryVariables
+export type __AdminTeamMemberPaginationQueryResult = Apollo.QueryResult<
+  __AdminTeamMemberPaginationQuery,
+  __AdminTeamMemberPaginationQueryVariables
 >
-export const AdminCreateTeamDocument = gql`
-  mutation AdminCreateTeam($input: CreateTeamInput!) {
+export const __AdminCreateTeamDocument = gql`
+  mutation __AdminCreateTeam($input: CreateTeamInput!) {
     createTeam(input: $input) {
-      ...AdminTeamDetails
+      ...__AdminTeamDetails
     }
   }
-  ${AdminTeamDetailsFragmentDoc}
+  ${__AdminTeamDetailsFragmentDoc}
 `
-export type AdminCreateTeamMutationFn = Apollo.MutationFunction<
-  AdminCreateTeamMutation,
-  AdminCreateTeamMutationVariables
+export type __AdminCreateTeamMutationFn = Apollo.MutationFunction<
+  __AdminCreateTeamMutation,
+  __AdminCreateTeamMutationVariables
 >
 
 /**
- * __useAdminCreateTeamMutation__
+ * __use__AdminCreateTeamMutation__
  *
- * To run a mutation, you first call `useAdminCreateTeamMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAdminCreateTeamMutation` returns a tuple that includes:
+ * To run a mutation, you first call `use__AdminCreateTeamMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `use__AdminCreateTeamMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [adminCreateTeamMutation, { data, loading, error }] = useAdminCreateTeamMutation({
+ * const [adminCreateTeamMutation, { data, loading, error }] = use__AdminCreateTeamMutation({
  *   variables: {
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useAdminCreateTeamMutation(
+export function use__AdminCreateTeamMutation(
   baseOptions?: Apollo.MutationHookOptions<
-    AdminCreateTeamMutation,
-    AdminCreateTeamMutationVariables
+    __AdminCreateTeamMutation,
+    __AdminCreateTeamMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<AdminCreateTeamMutation, AdminCreateTeamMutationVariables>(
-    AdminCreateTeamDocument,
+  return Apollo.useMutation<__AdminCreateTeamMutation, __AdminCreateTeamMutationVariables>(
+    __AdminCreateTeamDocument,
     options,
   )
 }
-export type AdminCreateTeamMutationHookResult = ReturnType<typeof useAdminCreateTeamMutation>
-export type AdminCreateTeamMutationResult = Apollo.MutationResult<AdminCreateTeamMutation>
-export type AdminCreateTeamMutationOptions = Apollo.BaseMutationOptions<
-  AdminCreateTeamMutation,
-  AdminCreateTeamMutationVariables
+export type __AdminCreateTeamMutationHookResult = ReturnType<typeof use__AdminCreateTeamMutation>
+export type __AdminCreateTeamMutationResult = Apollo.MutationResult<__AdminCreateTeamMutation>
+export type __AdminCreateTeamMutationOptions = Apollo.BaseMutationOptions<
+  __AdminCreateTeamMutation,
+  __AdminCreateTeamMutationVariables
 >
-export const AdminDeleteTeamDocument = gql`
-  mutation AdminDeleteTeam($teamId: String!) {
+export const __AdminDeleteTeamDocument = gql`
+  mutation __AdminDeleteTeam($teamId: String!) {
     deleteTeam(teamId: $teamId) {
       id
     }
   }
 `
-export type AdminDeleteTeamMutationFn = Apollo.MutationFunction<
-  AdminDeleteTeamMutation,
-  AdminDeleteTeamMutationVariables
+export type __AdminDeleteTeamMutationFn = Apollo.MutationFunction<
+  __AdminDeleteTeamMutation,
+  __AdminDeleteTeamMutationVariables
 >
 
 /**
- * __useAdminDeleteTeamMutation__
+ * __use__AdminDeleteTeamMutation__
  *
- * To run a mutation, you first call `useAdminDeleteTeamMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAdminDeleteTeamMutation` returns a tuple that includes:
+ * To run a mutation, you first call `use__AdminDeleteTeamMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `use__AdminDeleteTeamMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [adminDeleteTeamMutation, { data, loading, error }] = useAdminDeleteTeamMutation({
+ * const [adminDeleteTeamMutation, { data, loading, error }] = use__AdminDeleteTeamMutation({
  *   variables: {
  *      teamId: // value for 'teamId'
  *   },
  * });
  */
-export function useAdminDeleteTeamMutation(
+export function use__AdminDeleteTeamMutation(
   baseOptions?: Apollo.MutationHookOptions<
-    AdminDeleteTeamMutation,
-    AdminDeleteTeamMutationVariables
+    __AdminDeleteTeamMutation,
+    __AdminDeleteTeamMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<AdminDeleteTeamMutation, AdminDeleteTeamMutationVariables>(
-    AdminDeleteTeamDocument,
+  return Apollo.useMutation<__AdminDeleteTeamMutation, __AdminDeleteTeamMutationVariables>(
+    __AdminDeleteTeamDocument,
     options,
   )
 }
-export type AdminDeleteTeamMutationHookResult = ReturnType<typeof useAdminDeleteTeamMutation>
-export type AdminDeleteTeamMutationResult = Apollo.MutationResult<AdminDeleteTeamMutation>
-export type AdminDeleteTeamMutationOptions = Apollo.BaseMutationOptions<
-  AdminDeleteTeamMutation,
-  AdminDeleteTeamMutationVariables
+export type __AdminDeleteTeamMutationHookResult = ReturnType<typeof use__AdminDeleteTeamMutation>
+export type __AdminDeleteTeamMutationResult = Apollo.MutationResult<__AdminDeleteTeamMutation>
+export type __AdminDeleteTeamMutationOptions = Apollo.BaseMutationOptions<
+  __AdminDeleteTeamMutation,
+  __AdminDeleteTeamMutationVariables
 >
-export const AdminUpdateTeamDocument = gql`
-  mutation AdminUpdateTeam($teamId: String!, $input: UpdateTeamInput!) {
+export const __AdminUpdateTeamDocument = gql`
+  mutation __AdminUpdateTeam($teamId: String!, $input: UpdateTeamInput!) {
     updateTeam(teamId: $teamId, input: $input) {
-      ...AdminTeamDetails
+      ...__AdminTeamDetails
     }
   }
-  ${AdminTeamDetailsFragmentDoc}
+  ${__AdminTeamDetailsFragmentDoc}
 `
-export type AdminUpdateTeamMutationFn = Apollo.MutationFunction<
-  AdminUpdateTeamMutation,
-  AdminUpdateTeamMutationVariables
+export type __AdminUpdateTeamMutationFn = Apollo.MutationFunction<
+  __AdminUpdateTeamMutation,
+  __AdminUpdateTeamMutationVariables
 >
 
 /**
- * __useAdminUpdateTeamMutation__
+ * __use__AdminUpdateTeamMutation__
  *
- * To run a mutation, you first call `useAdminUpdateTeamMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAdminUpdateTeamMutation` returns a tuple that includes:
+ * To run a mutation, you first call `use__AdminUpdateTeamMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `use__AdminUpdateTeamMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [adminUpdateTeamMutation, { data, loading, error }] = useAdminUpdateTeamMutation({
+ * const [adminUpdateTeamMutation, { data, loading, error }] = use__AdminUpdateTeamMutation({
  *   variables: {
  *      teamId: // value for 'teamId'
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useAdminUpdateTeamMutation(
+export function use__AdminUpdateTeamMutation(
   baseOptions?: Apollo.MutationHookOptions<
-    AdminUpdateTeamMutation,
-    AdminUpdateTeamMutationVariables
+    __AdminUpdateTeamMutation,
+    __AdminUpdateTeamMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<AdminUpdateTeamMutation, AdminUpdateTeamMutationVariables>(
-    AdminUpdateTeamDocument,
+  return Apollo.useMutation<__AdminUpdateTeamMutation, __AdminUpdateTeamMutationVariables>(
+    __AdminUpdateTeamDocument,
     options,
   )
 }
-export type AdminUpdateTeamMutationHookResult = ReturnType<typeof useAdminUpdateTeamMutation>
-export type AdminUpdateTeamMutationResult = Apollo.MutationResult<AdminUpdateTeamMutation>
-export type AdminUpdateTeamMutationOptions = Apollo.BaseMutationOptions<
-  AdminUpdateTeamMutation,
-  AdminUpdateTeamMutationVariables
+export type __AdminUpdateTeamMutationHookResult = ReturnType<typeof use__AdminUpdateTeamMutation>
+export type __AdminUpdateTeamMutationResult = Apollo.MutationResult<__AdminUpdateTeamMutation>
+export type __AdminUpdateTeamMutationOptions = Apollo.BaseMutationOptions<
+  __AdminUpdateTeamMutation,
+  __AdminUpdateTeamMutationVariables
 >
-export const AdminTeamDocument = gql`
-  query AdminTeam($teamId: String!) {
+export const __AdminTeamDocument = gql`
+  query __AdminTeam($teamId: String!) {
     team(teamId: $teamId) {
-      ...AdminTeamDetails
+      ...__AdminTeamDetails
     }
   }
-  ${AdminTeamDetailsFragmentDoc}
+  ${__AdminTeamDetailsFragmentDoc}
 `
 
 /**
- * __useAdminTeamQuery__
+ * __use__AdminTeamQuery__
  *
- * To run a query within a React component, call `useAdminTeamQuery` and pass it any options that fit your needs.
- * When your component renders, `useAdminTeamQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `use__AdminTeamQuery` and pass it any options that fit your needs.
+ * When your component renders, `use__AdminTeamQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useAdminTeamQuery({
+ * const { data, loading, error } = use__AdminTeamQuery({
  *   variables: {
  *      teamId: // value for 'teamId'
  *   },
  * });
  */
-export function useAdminTeamQuery(
-  baseOptions: Apollo.QueryHookOptions<AdminTeamQuery, AdminTeamQueryVariables> &
-    ({ variables: AdminTeamQueryVariables; skip?: boolean } | { skip: boolean }),
+export function use__AdminTeamQuery(
+  baseOptions: Apollo.QueryHookOptions<__AdminTeamQuery, __AdminTeamQueryVariables> &
+    ({ variables: __AdminTeamQueryVariables; skip?: boolean } | { skip: boolean }),
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<AdminTeamQuery, AdminTeamQueryVariables>(AdminTeamDocument, options)
+  return Apollo.useQuery<__AdminTeamQuery, __AdminTeamQueryVariables>(__AdminTeamDocument, options)
 }
-export function useAdminTeamLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<AdminTeamQuery, AdminTeamQueryVariables>,
+export function use__AdminTeamLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<__AdminTeamQuery, __AdminTeamQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<AdminTeamQuery, AdminTeamQueryVariables>(AdminTeamDocument, options)
-}
-export function useAdminTeamSuspenseQuery(
-  baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<AdminTeamQuery, AdminTeamQueryVariables>,
-) {
-  const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<AdminTeamQuery, AdminTeamQueryVariables>(
-    AdminTeamDocument,
+  return Apollo.useLazyQuery<__AdminTeamQuery, __AdminTeamQueryVariables>(
+    __AdminTeamDocument,
     options,
   )
 }
-export type AdminTeamQueryHookResult = ReturnType<typeof useAdminTeamQuery>
-export type AdminTeamLazyQueryHookResult = ReturnType<typeof useAdminTeamLazyQuery>
-export type AdminTeamSuspenseQueryHookResult = ReturnType<typeof useAdminTeamSuspenseQuery>
-export type AdminTeamQueryResult = Apollo.QueryResult<AdminTeamQuery, AdminTeamQueryVariables>
-export const AdminTeamsDocument = gql`
-  query AdminTeams($input: ListTeamInput) {
+export function use__AdminTeamSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<__AdminTeamQuery, __AdminTeamQueryVariables>,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<__AdminTeamQuery, __AdminTeamQueryVariables>(
+    __AdminTeamDocument,
+    options,
+  )
+}
+export type __AdminTeamQueryHookResult = ReturnType<typeof use__AdminTeamQuery>
+export type __AdminTeamLazyQueryHookResult = ReturnType<typeof use__AdminTeamLazyQuery>
+export type __AdminTeamSuspenseQueryHookResult = ReturnType<typeof use__AdminTeamSuspenseQuery>
+export type __AdminTeamQueryResult = Apollo.QueryResult<__AdminTeamQuery, __AdminTeamQueryVariables>
+export const __AdminTeamsDocument = gql`
+  query __AdminTeams($input: ListTeamInput) {
     teams(input: $input) {
-      ...AdminTeamList
+      ...__AdminTeamList
     }
     counters: teamsCount(input: $input) {
       ...CorePagingDetails
     }
   }
-  ${AdminTeamListFragmentDoc}
+  ${__AdminTeamListFragmentDoc}
   ${CorePagingDetailsFragmentDoc}
 `
 
 /**
- * __useAdminTeamsQuery__
+ * __use__AdminTeamsQuery__
  *
- * To run a query within a React component, call `useAdminTeamsQuery` and pass it any options that fit your needs.
- * When your component renders, `useAdminTeamsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `use__AdminTeamsQuery` and pass it any options that fit your needs.
+ * When your component renders, `use__AdminTeamsQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useAdminTeamsQuery({
+ * const { data, loading, error } = use__AdminTeamsQuery({
  *   variables: {
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useAdminTeamsQuery(
-  baseOptions?: Apollo.QueryHookOptions<AdminTeamsQuery, AdminTeamsQueryVariables>,
+export function use__AdminTeamsQuery(
+  baseOptions?: Apollo.QueryHookOptions<__AdminTeamsQuery, __AdminTeamsQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<AdminTeamsQuery, AdminTeamsQueryVariables>(AdminTeamsDocument, options)
-}
-export function useAdminTeamsLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<AdminTeamsQuery, AdminTeamsQueryVariables>,
-) {
-  const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<AdminTeamsQuery, AdminTeamsQueryVariables>(AdminTeamsDocument, options)
-}
-export function useAdminTeamsSuspenseQuery(
-  baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<AdminTeamsQuery, AdminTeamsQueryVariables>,
-) {
-  const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<AdminTeamsQuery, AdminTeamsQueryVariables>(
-    AdminTeamsDocument,
+  return Apollo.useQuery<__AdminTeamsQuery, __AdminTeamsQueryVariables>(
+    __AdminTeamsDocument,
     options,
   )
 }
-export type AdminTeamsQueryHookResult = ReturnType<typeof useAdminTeamsQuery>
-export type AdminTeamsLazyQueryHookResult = ReturnType<typeof useAdminTeamsLazyQuery>
-export type AdminTeamsSuspenseQueryHookResult = ReturnType<typeof useAdminTeamsSuspenseQuery>
-export type AdminTeamsQueryResult = Apollo.QueryResult<AdminTeamsQuery, AdminTeamsQueryVariables>
-export const AdminTeamPaginationDocument = gql`
-  query AdminTeamPagination($input: ListTeamInput) {
+export function use__AdminTeamsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<__AdminTeamsQuery, __AdminTeamsQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<__AdminTeamsQuery, __AdminTeamsQueryVariables>(
+    __AdminTeamsDocument,
+    options,
+  )
+}
+export function use__AdminTeamsSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<__AdminTeamsQuery, __AdminTeamsQueryVariables>,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<__AdminTeamsQuery, __AdminTeamsQueryVariables>(
+    __AdminTeamsDocument,
+    options,
+  )
+}
+export type __AdminTeamsQueryHookResult = ReturnType<typeof use__AdminTeamsQuery>
+export type __AdminTeamsLazyQueryHookResult = ReturnType<typeof use__AdminTeamsLazyQuery>
+export type __AdminTeamsSuspenseQueryHookResult = ReturnType<typeof use__AdminTeamsSuspenseQuery>
+export type __AdminTeamsQueryResult = Apollo.QueryResult<
+  __AdminTeamsQuery,
+  __AdminTeamsQueryVariables
+>
+export const __AdminTeamPaginationDocument = gql`
+  query __AdminTeamPagination($input: ListTeamInput) {
     counters: teamsCount(input: $input) {
       ...CorePagingDetails
     }
@@ -19839,378 +20129,386 @@ export const AdminTeamPaginationDocument = gql`
 `
 
 /**
- * __useAdminTeamPaginationQuery__
+ * __use__AdminTeamPaginationQuery__
  *
- * To run a query within a React component, call `useAdminTeamPaginationQuery` and pass it any options that fit your needs.
- * When your component renders, `useAdminTeamPaginationQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `use__AdminTeamPaginationQuery` and pass it any options that fit your needs.
+ * When your component renders, `use__AdminTeamPaginationQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useAdminTeamPaginationQuery({
+ * const { data, loading, error } = use__AdminTeamPaginationQuery({
  *   variables: {
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useAdminTeamPaginationQuery(
+export function use__AdminTeamPaginationQuery(
   baseOptions?: Apollo.QueryHookOptions<
-    AdminTeamPaginationQuery,
-    AdminTeamPaginationQueryVariables
+    __AdminTeamPaginationQuery,
+    __AdminTeamPaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<AdminTeamPaginationQuery, AdminTeamPaginationQueryVariables>(
-    AdminTeamPaginationDocument,
+  return Apollo.useQuery<__AdminTeamPaginationQuery, __AdminTeamPaginationQueryVariables>(
+    __AdminTeamPaginationDocument,
     options,
   )
 }
-export function useAdminTeamPaginationLazyQuery(
+export function use__AdminTeamPaginationLazyQuery(
   baseOptions?: Apollo.LazyQueryHookOptions<
-    AdminTeamPaginationQuery,
-    AdminTeamPaginationQueryVariables
+    __AdminTeamPaginationQuery,
+    __AdminTeamPaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<AdminTeamPaginationQuery, AdminTeamPaginationQueryVariables>(
-    AdminTeamPaginationDocument,
+  return Apollo.useLazyQuery<__AdminTeamPaginationQuery, __AdminTeamPaginationQueryVariables>(
+    __AdminTeamPaginationDocument,
     options,
   )
 }
-export function useAdminTeamPaginationSuspenseQuery(
+export function use__AdminTeamPaginationSuspenseQuery(
   baseOptions?:
     | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<AdminTeamPaginationQuery, AdminTeamPaginationQueryVariables>,
+    | Apollo.SuspenseQueryHookOptions<
+        __AdminTeamPaginationQuery,
+        __AdminTeamPaginationQueryVariables
+      >,
 ) {
   const options =
     baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<AdminTeamPaginationQuery, AdminTeamPaginationQueryVariables>(
-    AdminTeamPaginationDocument,
+  return Apollo.useSuspenseQuery<__AdminTeamPaginationQuery, __AdminTeamPaginationQueryVariables>(
+    __AdminTeamPaginationDocument,
     options,
   )
 }
-export type AdminTeamPaginationQueryHookResult = ReturnType<typeof useAdminTeamPaginationQuery>
-export type AdminTeamPaginationLazyQueryHookResult = ReturnType<
-  typeof useAdminTeamPaginationLazyQuery
+export type __AdminTeamPaginationQueryHookResult = ReturnType<typeof use__AdminTeamPaginationQuery>
+export type __AdminTeamPaginationLazyQueryHookResult = ReturnType<
+  typeof use__AdminTeamPaginationLazyQuery
 >
-export type AdminTeamPaginationSuspenseQueryHookResult = ReturnType<
-  typeof useAdminTeamPaginationSuspenseQuery
+export type __AdminTeamPaginationSuspenseQueryHookResult = ReturnType<
+  typeof use__AdminTeamPaginationSuspenseQuery
 >
-export type AdminTeamPaginationQueryResult = Apollo.QueryResult<
-  AdminTeamPaginationQuery,
-  AdminTeamPaginationQueryVariables
+export type __AdminTeamPaginationQueryResult = Apollo.QueryResult<
+  __AdminTeamPaginationQuery,
+  __AdminTeamPaginationQueryVariables
 >
-export const AdminCreateUserPreferenceDocument = gql`
-  mutation AdminCreateUserPreference($input: CreateUserPreferenceInput!) {
+export const __AdminCreateUserPreferenceDocument = gql`
+  mutation __AdminCreateUserPreference($input: CreateUserPreferenceInput!) {
     createUserPreference(input: $input) {
-      ...AdminUserPreferenceDetails
+      ...__AdminUserPreferenceDetails
     }
   }
-  ${AdminUserPreferenceDetailsFragmentDoc}
+  ${__AdminUserPreferenceDetailsFragmentDoc}
 `
-export type AdminCreateUserPreferenceMutationFn = Apollo.MutationFunction<
-  AdminCreateUserPreferenceMutation,
-  AdminCreateUserPreferenceMutationVariables
+export type __AdminCreateUserPreferenceMutationFn = Apollo.MutationFunction<
+  __AdminCreateUserPreferenceMutation,
+  __AdminCreateUserPreferenceMutationVariables
 >
 
 /**
- * __useAdminCreateUserPreferenceMutation__
+ * __use__AdminCreateUserPreferenceMutation__
  *
- * To run a mutation, you first call `useAdminCreateUserPreferenceMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAdminCreateUserPreferenceMutation` returns a tuple that includes:
+ * To run a mutation, you first call `use__AdminCreateUserPreferenceMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `use__AdminCreateUserPreferenceMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [adminCreateUserPreferenceMutation, { data, loading, error }] = useAdminCreateUserPreferenceMutation({
+ * const [adminCreateUserPreferenceMutation, { data, loading, error }] = use__AdminCreateUserPreferenceMutation({
  *   variables: {
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useAdminCreateUserPreferenceMutation(
+export function use__AdminCreateUserPreferenceMutation(
   baseOptions?: Apollo.MutationHookOptions<
-    AdminCreateUserPreferenceMutation,
-    AdminCreateUserPreferenceMutationVariables
+    __AdminCreateUserPreferenceMutation,
+    __AdminCreateUserPreferenceMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
   return Apollo.useMutation<
-    AdminCreateUserPreferenceMutation,
-    AdminCreateUserPreferenceMutationVariables
-  >(AdminCreateUserPreferenceDocument, options)
+    __AdminCreateUserPreferenceMutation,
+    __AdminCreateUserPreferenceMutationVariables
+  >(__AdminCreateUserPreferenceDocument, options)
 }
-export type AdminCreateUserPreferenceMutationHookResult = ReturnType<
-  typeof useAdminCreateUserPreferenceMutation
+export type __AdminCreateUserPreferenceMutationHookResult = ReturnType<
+  typeof use__AdminCreateUserPreferenceMutation
 >
-export type AdminCreateUserPreferenceMutationResult =
-  Apollo.MutationResult<AdminCreateUserPreferenceMutation>
-export type AdminCreateUserPreferenceMutationOptions = Apollo.BaseMutationOptions<
-  AdminCreateUserPreferenceMutation,
-  AdminCreateUserPreferenceMutationVariables
+export type __AdminCreateUserPreferenceMutationResult =
+  Apollo.MutationResult<__AdminCreateUserPreferenceMutation>
+export type __AdminCreateUserPreferenceMutationOptions = Apollo.BaseMutationOptions<
+  __AdminCreateUserPreferenceMutation,
+  __AdminCreateUserPreferenceMutationVariables
 >
-export const AdminDeleteUserPreferenceDocument = gql`
-  mutation AdminDeleteUserPreference($userPreferenceId: String!) {
+export const __AdminDeleteUserPreferenceDocument = gql`
+  mutation __AdminDeleteUserPreference($userPreferenceId: String!) {
     deleteUserPreference(userPreferenceId: $userPreferenceId) {
       id
     }
   }
 `
-export type AdminDeleteUserPreferenceMutationFn = Apollo.MutationFunction<
-  AdminDeleteUserPreferenceMutation,
-  AdminDeleteUserPreferenceMutationVariables
+export type __AdminDeleteUserPreferenceMutationFn = Apollo.MutationFunction<
+  __AdminDeleteUserPreferenceMutation,
+  __AdminDeleteUserPreferenceMutationVariables
 >
 
 /**
- * __useAdminDeleteUserPreferenceMutation__
+ * __use__AdminDeleteUserPreferenceMutation__
  *
- * To run a mutation, you first call `useAdminDeleteUserPreferenceMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAdminDeleteUserPreferenceMutation` returns a tuple that includes:
+ * To run a mutation, you first call `use__AdminDeleteUserPreferenceMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `use__AdminDeleteUserPreferenceMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [adminDeleteUserPreferenceMutation, { data, loading, error }] = useAdminDeleteUserPreferenceMutation({
+ * const [adminDeleteUserPreferenceMutation, { data, loading, error }] = use__AdminDeleteUserPreferenceMutation({
  *   variables: {
  *      userPreferenceId: // value for 'userPreferenceId'
  *   },
  * });
  */
-export function useAdminDeleteUserPreferenceMutation(
+export function use__AdminDeleteUserPreferenceMutation(
   baseOptions?: Apollo.MutationHookOptions<
-    AdminDeleteUserPreferenceMutation,
-    AdminDeleteUserPreferenceMutationVariables
+    __AdminDeleteUserPreferenceMutation,
+    __AdminDeleteUserPreferenceMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
   return Apollo.useMutation<
-    AdminDeleteUserPreferenceMutation,
-    AdminDeleteUserPreferenceMutationVariables
-  >(AdminDeleteUserPreferenceDocument, options)
+    __AdminDeleteUserPreferenceMutation,
+    __AdminDeleteUserPreferenceMutationVariables
+  >(__AdminDeleteUserPreferenceDocument, options)
 }
-export type AdminDeleteUserPreferenceMutationHookResult = ReturnType<
-  typeof useAdminDeleteUserPreferenceMutation
+export type __AdminDeleteUserPreferenceMutationHookResult = ReturnType<
+  typeof use__AdminDeleteUserPreferenceMutation
 >
-export type AdminDeleteUserPreferenceMutationResult =
-  Apollo.MutationResult<AdminDeleteUserPreferenceMutation>
-export type AdminDeleteUserPreferenceMutationOptions = Apollo.BaseMutationOptions<
-  AdminDeleteUserPreferenceMutation,
-  AdminDeleteUserPreferenceMutationVariables
+export type __AdminDeleteUserPreferenceMutationResult =
+  Apollo.MutationResult<__AdminDeleteUserPreferenceMutation>
+export type __AdminDeleteUserPreferenceMutationOptions = Apollo.BaseMutationOptions<
+  __AdminDeleteUserPreferenceMutation,
+  __AdminDeleteUserPreferenceMutationVariables
 >
-export const AdminUpdateUserPreferenceDocument = gql`
-  mutation AdminUpdateUserPreference(
+export const __AdminUpdateUserPreferenceDocument = gql`
+  mutation __AdminUpdateUserPreference(
     $userPreferenceId: String!
     $input: UpdateUserPreferenceInput!
   ) {
     updateUserPreference(userPreferenceId: $userPreferenceId, input: $input) {
-      ...AdminUserPreferenceDetails
+      ...__AdminUserPreferenceDetails
     }
   }
-  ${AdminUserPreferenceDetailsFragmentDoc}
+  ${__AdminUserPreferenceDetailsFragmentDoc}
 `
-export type AdminUpdateUserPreferenceMutationFn = Apollo.MutationFunction<
-  AdminUpdateUserPreferenceMutation,
-  AdminUpdateUserPreferenceMutationVariables
+export type __AdminUpdateUserPreferenceMutationFn = Apollo.MutationFunction<
+  __AdminUpdateUserPreferenceMutation,
+  __AdminUpdateUserPreferenceMutationVariables
 >
 
 /**
- * __useAdminUpdateUserPreferenceMutation__
+ * __use__AdminUpdateUserPreferenceMutation__
  *
- * To run a mutation, you first call `useAdminUpdateUserPreferenceMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAdminUpdateUserPreferenceMutation` returns a tuple that includes:
+ * To run a mutation, you first call `use__AdminUpdateUserPreferenceMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `use__AdminUpdateUserPreferenceMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [adminUpdateUserPreferenceMutation, { data, loading, error }] = useAdminUpdateUserPreferenceMutation({
+ * const [adminUpdateUserPreferenceMutation, { data, loading, error }] = use__AdminUpdateUserPreferenceMutation({
  *   variables: {
  *      userPreferenceId: // value for 'userPreferenceId'
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useAdminUpdateUserPreferenceMutation(
+export function use__AdminUpdateUserPreferenceMutation(
   baseOptions?: Apollo.MutationHookOptions<
-    AdminUpdateUserPreferenceMutation,
-    AdminUpdateUserPreferenceMutationVariables
+    __AdminUpdateUserPreferenceMutation,
+    __AdminUpdateUserPreferenceMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
   return Apollo.useMutation<
-    AdminUpdateUserPreferenceMutation,
-    AdminUpdateUserPreferenceMutationVariables
-  >(AdminUpdateUserPreferenceDocument, options)
+    __AdminUpdateUserPreferenceMutation,
+    __AdminUpdateUserPreferenceMutationVariables
+  >(__AdminUpdateUserPreferenceDocument, options)
 }
-export type AdminUpdateUserPreferenceMutationHookResult = ReturnType<
-  typeof useAdminUpdateUserPreferenceMutation
+export type __AdminUpdateUserPreferenceMutationHookResult = ReturnType<
+  typeof use__AdminUpdateUserPreferenceMutation
 >
-export type AdminUpdateUserPreferenceMutationResult =
-  Apollo.MutationResult<AdminUpdateUserPreferenceMutation>
-export type AdminUpdateUserPreferenceMutationOptions = Apollo.BaseMutationOptions<
-  AdminUpdateUserPreferenceMutation,
-  AdminUpdateUserPreferenceMutationVariables
+export type __AdminUpdateUserPreferenceMutationResult =
+  Apollo.MutationResult<__AdminUpdateUserPreferenceMutation>
+export type __AdminUpdateUserPreferenceMutationOptions = Apollo.BaseMutationOptions<
+  __AdminUpdateUserPreferenceMutation,
+  __AdminUpdateUserPreferenceMutationVariables
 >
-export const AdminUserPreferenceDocument = gql`
-  query AdminUserPreference($userPreferenceId: String!) {
+export const __AdminUserPreferenceDocument = gql`
+  query __AdminUserPreference($userPreferenceId: String!) {
     userPreference(userPreferenceId: $userPreferenceId) {
-      ...AdminUserPreferenceDetails
+      ...__AdminUserPreferenceDetails
     }
   }
-  ${AdminUserPreferenceDetailsFragmentDoc}
+  ${__AdminUserPreferenceDetailsFragmentDoc}
 `
 
 /**
- * __useAdminUserPreferenceQuery__
+ * __use__AdminUserPreferenceQuery__
  *
- * To run a query within a React component, call `useAdminUserPreferenceQuery` and pass it any options that fit your needs.
- * When your component renders, `useAdminUserPreferenceQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `use__AdminUserPreferenceQuery` and pass it any options that fit your needs.
+ * When your component renders, `use__AdminUserPreferenceQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useAdminUserPreferenceQuery({
+ * const { data, loading, error } = use__AdminUserPreferenceQuery({
  *   variables: {
  *      userPreferenceId: // value for 'userPreferenceId'
  *   },
  * });
  */
-export function useAdminUserPreferenceQuery(
+export function use__AdminUserPreferenceQuery(
   baseOptions: Apollo.QueryHookOptions<
-    AdminUserPreferenceQuery,
-    AdminUserPreferenceQueryVariables
+    __AdminUserPreferenceQuery,
+    __AdminUserPreferenceQueryVariables
   > &
-    ({ variables: AdminUserPreferenceQueryVariables; skip?: boolean } | { skip: boolean }),
+    ({ variables: __AdminUserPreferenceQueryVariables; skip?: boolean } | { skip: boolean }),
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<AdminUserPreferenceQuery, AdminUserPreferenceQueryVariables>(
-    AdminUserPreferenceDocument,
+  return Apollo.useQuery<__AdminUserPreferenceQuery, __AdminUserPreferenceQueryVariables>(
+    __AdminUserPreferenceDocument,
     options,
   )
 }
-export function useAdminUserPreferenceLazyQuery(
+export function use__AdminUserPreferenceLazyQuery(
   baseOptions?: Apollo.LazyQueryHookOptions<
-    AdminUserPreferenceQuery,
-    AdminUserPreferenceQueryVariables
+    __AdminUserPreferenceQuery,
+    __AdminUserPreferenceQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<AdminUserPreferenceQuery, AdminUserPreferenceQueryVariables>(
-    AdminUserPreferenceDocument,
+  return Apollo.useLazyQuery<__AdminUserPreferenceQuery, __AdminUserPreferenceQueryVariables>(
+    __AdminUserPreferenceDocument,
     options,
   )
 }
-export function useAdminUserPreferenceSuspenseQuery(
-  baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<AdminUserPreferenceQuery, AdminUserPreferenceQueryVariables>,
-) {
-  const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<AdminUserPreferenceQuery, AdminUserPreferenceQueryVariables>(
-    AdminUserPreferenceDocument,
-    options,
-  )
-}
-export type AdminUserPreferenceQueryHookResult = ReturnType<typeof useAdminUserPreferenceQuery>
-export type AdminUserPreferenceLazyQueryHookResult = ReturnType<
-  typeof useAdminUserPreferenceLazyQuery
->
-export type AdminUserPreferenceSuspenseQueryHookResult = ReturnType<
-  typeof useAdminUserPreferenceSuspenseQuery
->
-export type AdminUserPreferenceQueryResult = Apollo.QueryResult<
-  AdminUserPreferenceQuery,
-  AdminUserPreferenceQueryVariables
->
-export const AdminUserPreferencesDocument = gql`
-  query AdminUserPreferences($input: ListUserPreferenceInput) {
-    userPreferences(input: $input) {
-      ...AdminUserPreferenceList
-    }
-    counters: userPreferencesCount(input: $input) {
-      ...CorePagingDetails
-    }
-  }
-  ${AdminUserPreferenceListFragmentDoc}
-  ${CorePagingDetailsFragmentDoc}
-`
-
-/**
- * __useAdminUserPreferencesQuery__
- *
- * To run a query within a React component, call `useAdminUserPreferencesQuery` and pass it any options that fit your needs.
- * When your component renders, `useAdminUserPreferencesQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useAdminUserPreferencesQuery({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useAdminUserPreferencesQuery(
-  baseOptions?: Apollo.QueryHookOptions<
-    AdminUserPreferencesQuery,
-    AdminUserPreferencesQueryVariables
-  >,
-) {
-  const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<AdminUserPreferencesQuery, AdminUserPreferencesQueryVariables>(
-    AdminUserPreferencesDocument,
-    options,
-  )
-}
-export function useAdminUserPreferencesLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
-    AdminUserPreferencesQuery,
-    AdminUserPreferencesQueryVariables
-  >,
-) {
-  const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<AdminUserPreferencesQuery, AdminUserPreferencesQueryVariables>(
-    AdminUserPreferencesDocument,
-    options,
-  )
-}
-export function useAdminUserPreferencesSuspenseQuery(
+export function use__AdminUserPreferenceSuspenseQuery(
   baseOptions?:
     | Apollo.SkipToken
     | Apollo.SuspenseQueryHookOptions<
-        AdminUserPreferencesQuery,
-        AdminUserPreferencesQueryVariables
+        __AdminUserPreferenceQuery,
+        __AdminUserPreferenceQueryVariables
       >,
 ) {
   const options =
     baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<AdminUserPreferencesQuery, AdminUserPreferencesQueryVariables>(
-    AdminUserPreferencesDocument,
+  return Apollo.useSuspenseQuery<__AdminUserPreferenceQuery, __AdminUserPreferenceQueryVariables>(
+    __AdminUserPreferenceDocument,
     options,
   )
 }
-export type AdminUserPreferencesQueryHookResult = ReturnType<typeof useAdminUserPreferencesQuery>
-export type AdminUserPreferencesLazyQueryHookResult = ReturnType<
-  typeof useAdminUserPreferencesLazyQuery
+export type __AdminUserPreferenceQueryHookResult = ReturnType<typeof use__AdminUserPreferenceQuery>
+export type __AdminUserPreferenceLazyQueryHookResult = ReturnType<
+  typeof use__AdminUserPreferenceLazyQuery
 >
-export type AdminUserPreferencesSuspenseQueryHookResult = ReturnType<
-  typeof useAdminUserPreferencesSuspenseQuery
+export type __AdminUserPreferenceSuspenseQueryHookResult = ReturnType<
+  typeof use__AdminUserPreferenceSuspenseQuery
 >
-export type AdminUserPreferencesQueryResult = Apollo.QueryResult<
-  AdminUserPreferencesQuery,
-  AdminUserPreferencesQueryVariables
+export type __AdminUserPreferenceQueryResult = Apollo.QueryResult<
+  __AdminUserPreferenceQuery,
+  __AdminUserPreferenceQueryVariables
 >
-export const AdminUserPreferencePaginationDocument = gql`
-  query AdminUserPreferencePagination($input: ListUserPreferenceInput) {
+export const __AdminUserPreferencesDocument = gql`
+  query __AdminUserPreferences($input: ListUserPreferenceInput) {
+    userPreferences(input: $input) {
+      ...__AdminUserPreferenceList
+    }
+    counters: userPreferencesCount(input: $input) {
+      ...CorePagingDetails
+    }
+  }
+  ${__AdminUserPreferenceListFragmentDoc}
+  ${CorePagingDetailsFragmentDoc}
+`
+
+/**
+ * __use__AdminUserPreferencesQuery__
+ *
+ * To run a query within a React component, call `use__AdminUserPreferencesQuery` and pass it any options that fit your needs.
+ * When your component renders, `use__AdminUserPreferencesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = use__AdminUserPreferencesQuery({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function use__AdminUserPreferencesQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    __AdminUserPreferencesQuery,
+    __AdminUserPreferencesQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<__AdminUserPreferencesQuery, __AdminUserPreferencesQueryVariables>(
+    __AdminUserPreferencesDocument,
+    options,
+  )
+}
+export function use__AdminUserPreferencesLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    __AdminUserPreferencesQuery,
+    __AdminUserPreferencesQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<__AdminUserPreferencesQuery, __AdminUserPreferencesQueryVariables>(
+    __AdminUserPreferencesDocument,
+    options,
+  )
+}
+export function use__AdminUserPreferencesSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<
+        __AdminUserPreferencesQuery,
+        __AdminUserPreferencesQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<__AdminUserPreferencesQuery, __AdminUserPreferencesQueryVariables>(
+    __AdminUserPreferencesDocument,
+    options,
+  )
+}
+export type __AdminUserPreferencesQueryHookResult = ReturnType<
+  typeof use__AdminUserPreferencesQuery
+>
+export type __AdminUserPreferencesLazyQueryHookResult = ReturnType<
+  typeof use__AdminUserPreferencesLazyQuery
+>
+export type __AdminUserPreferencesSuspenseQueryHookResult = ReturnType<
+  typeof use__AdminUserPreferencesSuspenseQuery
+>
+export type __AdminUserPreferencesQueryResult = Apollo.QueryResult<
+  __AdminUserPreferencesQuery,
+  __AdminUserPreferencesQueryVariables
+>
+export const __AdminUserPreferencePaginationDocument = gql`
+  query __AdminUserPreferencePagination($input: ListUserPreferenceInput) {
     counters: userPreferencesCount(input: $input) {
       ...CorePagingDetails
     }
@@ -20219,364 +20517,374 @@ export const AdminUserPreferencePaginationDocument = gql`
 `
 
 /**
- * __useAdminUserPreferencePaginationQuery__
+ * __use__AdminUserPreferencePaginationQuery__
  *
- * To run a query within a React component, call `useAdminUserPreferencePaginationQuery` and pass it any options that fit your needs.
- * When your component renders, `useAdminUserPreferencePaginationQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `use__AdminUserPreferencePaginationQuery` and pass it any options that fit your needs.
+ * When your component renders, `use__AdminUserPreferencePaginationQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useAdminUserPreferencePaginationQuery({
+ * const { data, loading, error } = use__AdminUserPreferencePaginationQuery({
  *   variables: {
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useAdminUserPreferencePaginationQuery(
+export function use__AdminUserPreferencePaginationQuery(
   baseOptions?: Apollo.QueryHookOptions<
-    AdminUserPreferencePaginationQuery,
-    AdminUserPreferencePaginationQueryVariables
+    __AdminUserPreferencePaginationQuery,
+    __AdminUserPreferencePaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
   return Apollo.useQuery<
-    AdminUserPreferencePaginationQuery,
-    AdminUserPreferencePaginationQueryVariables
-  >(AdminUserPreferencePaginationDocument, options)
+    __AdminUserPreferencePaginationQuery,
+    __AdminUserPreferencePaginationQueryVariables
+  >(__AdminUserPreferencePaginationDocument, options)
 }
-export function useAdminUserPreferencePaginationLazyQuery(
+export function use__AdminUserPreferencePaginationLazyQuery(
   baseOptions?: Apollo.LazyQueryHookOptions<
-    AdminUserPreferencePaginationQuery,
-    AdminUserPreferencePaginationQueryVariables
+    __AdminUserPreferencePaginationQuery,
+    __AdminUserPreferencePaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
   return Apollo.useLazyQuery<
-    AdminUserPreferencePaginationQuery,
-    AdminUserPreferencePaginationQueryVariables
-  >(AdminUserPreferencePaginationDocument, options)
+    __AdminUserPreferencePaginationQuery,
+    __AdminUserPreferencePaginationQueryVariables
+  >(__AdminUserPreferencePaginationDocument, options)
 }
-export function useAdminUserPreferencePaginationSuspenseQuery(
+export function use__AdminUserPreferencePaginationSuspenseQuery(
   baseOptions?:
     | Apollo.SkipToken
     | Apollo.SuspenseQueryHookOptions<
-        AdminUserPreferencePaginationQuery,
-        AdminUserPreferencePaginationQueryVariables
+        __AdminUserPreferencePaginationQuery,
+        __AdminUserPreferencePaginationQueryVariables
       >,
 ) {
   const options =
     baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
   return Apollo.useSuspenseQuery<
-    AdminUserPreferencePaginationQuery,
-    AdminUserPreferencePaginationQueryVariables
-  >(AdminUserPreferencePaginationDocument, options)
+    __AdminUserPreferencePaginationQuery,
+    __AdminUserPreferencePaginationQueryVariables
+  >(__AdminUserPreferencePaginationDocument, options)
 }
-export type AdminUserPreferencePaginationQueryHookResult = ReturnType<
-  typeof useAdminUserPreferencePaginationQuery
+export type __AdminUserPreferencePaginationQueryHookResult = ReturnType<
+  typeof use__AdminUserPreferencePaginationQuery
 >
-export type AdminUserPreferencePaginationLazyQueryHookResult = ReturnType<
-  typeof useAdminUserPreferencePaginationLazyQuery
+export type __AdminUserPreferencePaginationLazyQueryHookResult = ReturnType<
+  typeof use__AdminUserPreferencePaginationLazyQuery
 >
-export type AdminUserPreferencePaginationSuspenseQueryHookResult = ReturnType<
-  typeof useAdminUserPreferencePaginationSuspenseQuery
+export type __AdminUserPreferencePaginationSuspenseQueryHookResult = ReturnType<
+  typeof use__AdminUserPreferencePaginationSuspenseQuery
 >
-export type AdminUserPreferencePaginationQueryResult = Apollo.QueryResult<
-  AdminUserPreferencePaginationQuery,
-  AdminUserPreferencePaginationQueryVariables
+export type __AdminUserPreferencePaginationQueryResult = Apollo.QueryResult<
+  __AdminUserPreferencePaginationQuery,
+  __AdminUserPreferencePaginationQueryVariables
 >
-export const AdminCreateUserSessionDocument = gql`
-  mutation AdminCreateUserSession($input: CreateUserSessionInput!) {
+export const __AdminCreateUserSessionDocument = gql`
+  mutation __AdminCreateUserSession($input: CreateUserSessionInput!) {
     createUserSession(input: $input) {
-      ...AdminUserSessionDetails
+      ...__AdminUserSessionDetails
     }
   }
-  ${AdminUserSessionDetailsFragmentDoc}
+  ${__AdminUserSessionDetailsFragmentDoc}
 `
-export type AdminCreateUserSessionMutationFn = Apollo.MutationFunction<
-  AdminCreateUserSessionMutation,
-  AdminCreateUserSessionMutationVariables
+export type __AdminCreateUserSessionMutationFn = Apollo.MutationFunction<
+  __AdminCreateUserSessionMutation,
+  __AdminCreateUserSessionMutationVariables
 >
 
 /**
- * __useAdminCreateUserSessionMutation__
+ * __use__AdminCreateUserSessionMutation__
  *
- * To run a mutation, you first call `useAdminCreateUserSessionMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAdminCreateUserSessionMutation` returns a tuple that includes:
+ * To run a mutation, you first call `use__AdminCreateUserSessionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `use__AdminCreateUserSessionMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [adminCreateUserSessionMutation, { data, loading, error }] = useAdminCreateUserSessionMutation({
+ * const [adminCreateUserSessionMutation, { data, loading, error }] = use__AdminCreateUserSessionMutation({
  *   variables: {
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useAdminCreateUserSessionMutation(
+export function use__AdminCreateUserSessionMutation(
   baseOptions?: Apollo.MutationHookOptions<
-    AdminCreateUserSessionMutation,
-    AdminCreateUserSessionMutationVariables
+    __AdminCreateUserSessionMutation,
+    __AdminCreateUserSessionMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
   return Apollo.useMutation<
-    AdminCreateUserSessionMutation,
-    AdminCreateUserSessionMutationVariables
-  >(AdminCreateUserSessionDocument, options)
+    __AdminCreateUserSessionMutation,
+    __AdminCreateUserSessionMutationVariables
+  >(__AdminCreateUserSessionDocument, options)
 }
-export type AdminCreateUserSessionMutationHookResult = ReturnType<
-  typeof useAdminCreateUserSessionMutation
+export type __AdminCreateUserSessionMutationHookResult = ReturnType<
+  typeof use__AdminCreateUserSessionMutation
 >
-export type AdminCreateUserSessionMutationResult =
-  Apollo.MutationResult<AdminCreateUserSessionMutation>
-export type AdminCreateUserSessionMutationOptions = Apollo.BaseMutationOptions<
-  AdminCreateUserSessionMutation,
-  AdminCreateUserSessionMutationVariables
+export type __AdminCreateUserSessionMutationResult =
+  Apollo.MutationResult<__AdminCreateUserSessionMutation>
+export type __AdminCreateUserSessionMutationOptions = Apollo.BaseMutationOptions<
+  __AdminCreateUserSessionMutation,
+  __AdminCreateUserSessionMutationVariables
 >
-export const AdminDeleteUserSessionDocument = gql`
-  mutation AdminDeleteUserSession($userSessionId: String!) {
+export const __AdminDeleteUserSessionDocument = gql`
+  mutation __AdminDeleteUserSession($userSessionId: String!) {
     deleteUserSession(userSessionId: $userSessionId) {
       id
     }
   }
 `
-export type AdminDeleteUserSessionMutationFn = Apollo.MutationFunction<
-  AdminDeleteUserSessionMutation,
-  AdminDeleteUserSessionMutationVariables
+export type __AdminDeleteUserSessionMutationFn = Apollo.MutationFunction<
+  __AdminDeleteUserSessionMutation,
+  __AdminDeleteUserSessionMutationVariables
 >
 
 /**
- * __useAdminDeleteUserSessionMutation__
+ * __use__AdminDeleteUserSessionMutation__
  *
- * To run a mutation, you first call `useAdminDeleteUserSessionMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAdminDeleteUserSessionMutation` returns a tuple that includes:
+ * To run a mutation, you first call `use__AdminDeleteUserSessionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `use__AdminDeleteUserSessionMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [adminDeleteUserSessionMutation, { data, loading, error }] = useAdminDeleteUserSessionMutation({
+ * const [adminDeleteUserSessionMutation, { data, loading, error }] = use__AdminDeleteUserSessionMutation({
  *   variables: {
  *      userSessionId: // value for 'userSessionId'
  *   },
  * });
  */
-export function useAdminDeleteUserSessionMutation(
+export function use__AdminDeleteUserSessionMutation(
   baseOptions?: Apollo.MutationHookOptions<
-    AdminDeleteUserSessionMutation,
-    AdminDeleteUserSessionMutationVariables
+    __AdminDeleteUserSessionMutation,
+    __AdminDeleteUserSessionMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
   return Apollo.useMutation<
-    AdminDeleteUserSessionMutation,
-    AdminDeleteUserSessionMutationVariables
-  >(AdminDeleteUserSessionDocument, options)
+    __AdminDeleteUserSessionMutation,
+    __AdminDeleteUserSessionMutationVariables
+  >(__AdminDeleteUserSessionDocument, options)
 }
-export type AdminDeleteUserSessionMutationHookResult = ReturnType<
-  typeof useAdminDeleteUserSessionMutation
+export type __AdminDeleteUserSessionMutationHookResult = ReturnType<
+  typeof use__AdminDeleteUserSessionMutation
 >
-export type AdminDeleteUserSessionMutationResult =
-  Apollo.MutationResult<AdminDeleteUserSessionMutation>
-export type AdminDeleteUserSessionMutationOptions = Apollo.BaseMutationOptions<
-  AdminDeleteUserSessionMutation,
-  AdminDeleteUserSessionMutationVariables
+export type __AdminDeleteUserSessionMutationResult =
+  Apollo.MutationResult<__AdminDeleteUserSessionMutation>
+export type __AdminDeleteUserSessionMutationOptions = Apollo.BaseMutationOptions<
+  __AdminDeleteUserSessionMutation,
+  __AdminDeleteUserSessionMutationVariables
 >
-export const AdminUpdateUserSessionDocument = gql`
-  mutation AdminUpdateUserSession($userSessionId: String!, $input: UpdateUserSessionInput!) {
+export const __AdminUpdateUserSessionDocument = gql`
+  mutation __AdminUpdateUserSession($userSessionId: String!, $input: UpdateUserSessionInput!) {
     updateUserSession(userSessionId: $userSessionId, input: $input) {
-      ...AdminUserSessionDetails
+      ...__AdminUserSessionDetails
     }
   }
-  ${AdminUserSessionDetailsFragmentDoc}
+  ${__AdminUserSessionDetailsFragmentDoc}
 `
-export type AdminUpdateUserSessionMutationFn = Apollo.MutationFunction<
-  AdminUpdateUserSessionMutation,
-  AdminUpdateUserSessionMutationVariables
+export type __AdminUpdateUserSessionMutationFn = Apollo.MutationFunction<
+  __AdminUpdateUserSessionMutation,
+  __AdminUpdateUserSessionMutationVariables
 >
 
 /**
- * __useAdminUpdateUserSessionMutation__
+ * __use__AdminUpdateUserSessionMutation__
  *
- * To run a mutation, you first call `useAdminUpdateUserSessionMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAdminUpdateUserSessionMutation` returns a tuple that includes:
+ * To run a mutation, you first call `use__AdminUpdateUserSessionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `use__AdminUpdateUserSessionMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [adminUpdateUserSessionMutation, { data, loading, error }] = useAdminUpdateUserSessionMutation({
+ * const [adminUpdateUserSessionMutation, { data, loading, error }] = use__AdminUpdateUserSessionMutation({
  *   variables: {
  *      userSessionId: // value for 'userSessionId'
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useAdminUpdateUserSessionMutation(
+export function use__AdminUpdateUserSessionMutation(
   baseOptions?: Apollo.MutationHookOptions<
-    AdminUpdateUserSessionMutation,
-    AdminUpdateUserSessionMutationVariables
+    __AdminUpdateUserSessionMutation,
+    __AdminUpdateUserSessionMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
   return Apollo.useMutation<
-    AdminUpdateUserSessionMutation,
-    AdminUpdateUserSessionMutationVariables
-  >(AdminUpdateUserSessionDocument, options)
+    __AdminUpdateUserSessionMutation,
+    __AdminUpdateUserSessionMutationVariables
+  >(__AdminUpdateUserSessionDocument, options)
 }
-export type AdminUpdateUserSessionMutationHookResult = ReturnType<
-  typeof useAdminUpdateUserSessionMutation
+export type __AdminUpdateUserSessionMutationHookResult = ReturnType<
+  typeof use__AdminUpdateUserSessionMutation
 >
-export type AdminUpdateUserSessionMutationResult =
-  Apollo.MutationResult<AdminUpdateUserSessionMutation>
-export type AdminUpdateUserSessionMutationOptions = Apollo.BaseMutationOptions<
-  AdminUpdateUserSessionMutation,
-  AdminUpdateUserSessionMutationVariables
+export type __AdminUpdateUserSessionMutationResult =
+  Apollo.MutationResult<__AdminUpdateUserSessionMutation>
+export type __AdminUpdateUserSessionMutationOptions = Apollo.BaseMutationOptions<
+  __AdminUpdateUserSessionMutation,
+  __AdminUpdateUserSessionMutationVariables
 >
-export const AdminUserSessionDocument = gql`
-  query AdminUserSession($userSessionId: String!) {
+export const __AdminUserSessionDocument = gql`
+  query __AdminUserSession($userSessionId: String!) {
     userSession(userSessionId: $userSessionId) {
-      ...AdminUserSessionDetails
+      ...__AdminUserSessionDetails
     }
   }
-  ${AdminUserSessionDetailsFragmentDoc}
+  ${__AdminUserSessionDetailsFragmentDoc}
 `
 
 /**
- * __useAdminUserSessionQuery__
+ * __use__AdminUserSessionQuery__
  *
- * To run a query within a React component, call `useAdminUserSessionQuery` and pass it any options that fit your needs.
- * When your component renders, `useAdminUserSessionQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `use__AdminUserSessionQuery` and pass it any options that fit your needs.
+ * When your component renders, `use__AdminUserSessionQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useAdminUserSessionQuery({
+ * const { data, loading, error } = use__AdminUserSessionQuery({
  *   variables: {
  *      userSessionId: // value for 'userSessionId'
  *   },
  * });
  */
-export function useAdminUserSessionQuery(
-  baseOptions: Apollo.QueryHookOptions<AdminUserSessionQuery, AdminUserSessionQueryVariables> &
-    ({ variables: AdminUserSessionQueryVariables; skip?: boolean } | { skip: boolean }),
+export function use__AdminUserSessionQuery(
+  baseOptions: Apollo.QueryHookOptions<__AdminUserSessionQuery, __AdminUserSessionQueryVariables> &
+    ({ variables: __AdminUserSessionQueryVariables; skip?: boolean } | { skip: boolean }),
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<AdminUserSessionQuery, AdminUserSessionQueryVariables>(
-    AdminUserSessionDocument,
+  return Apollo.useQuery<__AdminUserSessionQuery, __AdminUserSessionQueryVariables>(
+    __AdminUserSessionDocument,
     options,
   )
 }
-export function useAdminUserSessionLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<AdminUserSessionQuery, AdminUserSessionQueryVariables>,
+export function use__AdminUserSessionLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    __AdminUserSessionQuery,
+    __AdminUserSessionQueryVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<AdminUserSessionQuery, AdminUserSessionQueryVariables>(
-    AdminUserSessionDocument,
+  return Apollo.useLazyQuery<__AdminUserSessionQuery, __AdminUserSessionQueryVariables>(
+    __AdminUserSessionDocument,
     options,
   )
 }
-export function useAdminUserSessionSuspenseQuery(
+export function use__AdminUserSessionSuspenseQuery(
   baseOptions?:
     | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<AdminUserSessionQuery, AdminUserSessionQueryVariables>,
+    | Apollo.SuspenseQueryHookOptions<__AdminUserSessionQuery, __AdminUserSessionQueryVariables>,
 ) {
   const options =
     baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<AdminUserSessionQuery, AdminUserSessionQueryVariables>(
-    AdminUserSessionDocument,
+  return Apollo.useSuspenseQuery<__AdminUserSessionQuery, __AdminUserSessionQueryVariables>(
+    __AdminUserSessionDocument,
     options,
   )
 }
-export type AdminUserSessionQueryHookResult = ReturnType<typeof useAdminUserSessionQuery>
-export type AdminUserSessionLazyQueryHookResult = ReturnType<typeof useAdminUserSessionLazyQuery>
-export type AdminUserSessionSuspenseQueryHookResult = ReturnType<
-  typeof useAdminUserSessionSuspenseQuery
+export type __AdminUserSessionQueryHookResult = ReturnType<typeof use__AdminUserSessionQuery>
+export type __AdminUserSessionLazyQueryHookResult = ReturnType<
+  typeof use__AdminUserSessionLazyQuery
 >
-export type AdminUserSessionQueryResult = Apollo.QueryResult<
-  AdminUserSessionQuery,
-  AdminUserSessionQueryVariables
+export type __AdminUserSessionSuspenseQueryHookResult = ReturnType<
+  typeof use__AdminUserSessionSuspenseQuery
 >
-export const AdminUserSessionsDocument = gql`
-  query AdminUserSessions($input: ListUserSessionInput) {
+export type __AdminUserSessionQueryResult = Apollo.QueryResult<
+  __AdminUserSessionQuery,
+  __AdminUserSessionQueryVariables
+>
+export const __AdminUserSessionsDocument = gql`
+  query __AdminUserSessions($input: ListUserSessionInput) {
     userSessions(input: $input) {
-      ...AdminUserSessionList
+      ...__AdminUserSessionList
     }
     counters: userSessionsCount(input: $input) {
       ...CorePagingDetails
     }
   }
-  ${AdminUserSessionListFragmentDoc}
+  ${__AdminUserSessionListFragmentDoc}
   ${CorePagingDetailsFragmentDoc}
 `
 
 /**
- * __useAdminUserSessionsQuery__
+ * __use__AdminUserSessionsQuery__
  *
- * To run a query within a React component, call `useAdminUserSessionsQuery` and pass it any options that fit your needs.
- * When your component renders, `useAdminUserSessionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `use__AdminUserSessionsQuery` and pass it any options that fit your needs.
+ * When your component renders, `use__AdminUserSessionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useAdminUserSessionsQuery({
+ * const { data, loading, error } = use__AdminUserSessionsQuery({
  *   variables: {
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useAdminUserSessionsQuery(
-  baseOptions?: Apollo.QueryHookOptions<AdminUserSessionsQuery, AdminUserSessionsQueryVariables>,
-) {
-  const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<AdminUserSessionsQuery, AdminUserSessionsQueryVariables>(
-    AdminUserSessionsDocument,
-    options,
-  )
-}
-export function useAdminUserSessionsLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
-    AdminUserSessionsQuery,
-    AdminUserSessionsQueryVariables
+export function use__AdminUserSessionsQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    __AdminUserSessionsQuery,
+    __AdminUserSessionsQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<AdminUserSessionsQuery, AdminUserSessionsQueryVariables>(
-    AdminUserSessionsDocument,
+  return Apollo.useQuery<__AdminUserSessionsQuery, __AdminUserSessionsQueryVariables>(
+    __AdminUserSessionsDocument,
     options,
   )
 }
-export function useAdminUserSessionsSuspenseQuery(
+export function use__AdminUserSessionsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    __AdminUserSessionsQuery,
+    __AdminUserSessionsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<__AdminUserSessionsQuery, __AdminUserSessionsQueryVariables>(
+    __AdminUserSessionsDocument,
+    options,
+  )
+}
+export function use__AdminUserSessionsSuspenseQuery(
   baseOptions?:
     | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<AdminUserSessionsQuery, AdminUserSessionsQueryVariables>,
+    | Apollo.SuspenseQueryHookOptions<__AdminUserSessionsQuery, __AdminUserSessionsQueryVariables>,
 ) {
   const options =
     baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<AdminUserSessionsQuery, AdminUserSessionsQueryVariables>(
-    AdminUserSessionsDocument,
+  return Apollo.useSuspenseQuery<__AdminUserSessionsQuery, __AdminUserSessionsQueryVariables>(
+    __AdminUserSessionsDocument,
     options,
   )
 }
-export type AdminUserSessionsQueryHookResult = ReturnType<typeof useAdminUserSessionsQuery>
-export type AdminUserSessionsLazyQueryHookResult = ReturnType<typeof useAdminUserSessionsLazyQuery>
-export type AdminUserSessionsSuspenseQueryHookResult = ReturnType<
-  typeof useAdminUserSessionsSuspenseQuery
+export type __AdminUserSessionsQueryHookResult = ReturnType<typeof use__AdminUserSessionsQuery>
+export type __AdminUserSessionsLazyQueryHookResult = ReturnType<
+  typeof use__AdminUserSessionsLazyQuery
 >
-export type AdminUserSessionsQueryResult = Apollo.QueryResult<
-  AdminUserSessionsQuery,
-  AdminUserSessionsQueryVariables
+export type __AdminUserSessionsSuspenseQueryHookResult = ReturnType<
+  typeof use__AdminUserSessionsSuspenseQuery
 >
-export const AdminUserSessionPaginationDocument = gql`
-  query AdminUserSessionPagination($input: ListUserSessionInput) {
+export type __AdminUserSessionsQueryResult = Apollo.QueryResult<
+  __AdminUserSessionsQuery,
+  __AdminUserSessionsQueryVariables
+>
+export const __AdminUserSessionPaginationDocument = gql`
+  query __AdminUserSessionPagination($input: ListUserSessionInput) {
     counters: userSessionsCount(input: $input) {
       ...CorePagingDetails
     }
@@ -20585,330 +20893,342 @@ export const AdminUserSessionPaginationDocument = gql`
 `
 
 /**
- * __useAdminUserSessionPaginationQuery__
+ * __use__AdminUserSessionPaginationQuery__
  *
- * To run a query within a React component, call `useAdminUserSessionPaginationQuery` and pass it any options that fit your needs.
- * When your component renders, `useAdminUserSessionPaginationQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `use__AdminUserSessionPaginationQuery` and pass it any options that fit your needs.
+ * When your component renders, `use__AdminUserSessionPaginationQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useAdminUserSessionPaginationQuery({
+ * const { data, loading, error } = use__AdminUserSessionPaginationQuery({
  *   variables: {
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useAdminUserSessionPaginationQuery(
+export function use__AdminUserSessionPaginationQuery(
   baseOptions?: Apollo.QueryHookOptions<
-    AdminUserSessionPaginationQuery,
-    AdminUserSessionPaginationQueryVariables
+    __AdminUserSessionPaginationQuery,
+    __AdminUserSessionPaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<AdminUserSessionPaginationQuery, AdminUserSessionPaginationQueryVariables>(
-    AdminUserSessionPaginationDocument,
-    options,
-  )
+  return Apollo.useQuery<
+    __AdminUserSessionPaginationQuery,
+    __AdminUserSessionPaginationQueryVariables
+  >(__AdminUserSessionPaginationDocument, options)
 }
-export function useAdminUserSessionPaginationLazyQuery(
+export function use__AdminUserSessionPaginationLazyQuery(
   baseOptions?: Apollo.LazyQueryHookOptions<
-    AdminUserSessionPaginationQuery,
-    AdminUserSessionPaginationQueryVariables
+    __AdminUserSessionPaginationQuery,
+    __AdminUserSessionPaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
   return Apollo.useLazyQuery<
-    AdminUserSessionPaginationQuery,
-    AdminUserSessionPaginationQueryVariables
-  >(AdminUserSessionPaginationDocument, options)
+    __AdminUserSessionPaginationQuery,
+    __AdminUserSessionPaginationQueryVariables
+  >(__AdminUserSessionPaginationDocument, options)
 }
-export function useAdminUserSessionPaginationSuspenseQuery(
+export function use__AdminUserSessionPaginationSuspenseQuery(
   baseOptions?:
     | Apollo.SkipToken
     | Apollo.SuspenseQueryHookOptions<
-        AdminUserSessionPaginationQuery,
-        AdminUserSessionPaginationQueryVariables
+        __AdminUserSessionPaginationQuery,
+        __AdminUserSessionPaginationQueryVariables
       >,
 ) {
   const options =
     baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
   return Apollo.useSuspenseQuery<
-    AdminUserSessionPaginationQuery,
-    AdminUserSessionPaginationQueryVariables
-  >(AdminUserSessionPaginationDocument, options)
+    __AdminUserSessionPaginationQuery,
+    __AdminUserSessionPaginationQueryVariables
+  >(__AdminUserSessionPaginationDocument, options)
 }
-export type AdminUserSessionPaginationQueryHookResult = ReturnType<
-  typeof useAdminUserSessionPaginationQuery
+export type __AdminUserSessionPaginationQueryHookResult = ReturnType<
+  typeof use__AdminUserSessionPaginationQuery
 >
-export type AdminUserSessionPaginationLazyQueryHookResult = ReturnType<
-  typeof useAdminUserSessionPaginationLazyQuery
+export type __AdminUserSessionPaginationLazyQueryHookResult = ReturnType<
+  typeof use__AdminUserSessionPaginationLazyQuery
 >
-export type AdminUserSessionPaginationSuspenseQueryHookResult = ReturnType<
-  typeof useAdminUserSessionPaginationSuspenseQuery
+export type __AdminUserSessionPaginationSuspenseQueryHookResult = ReturnType<
+  typeof use__AdminUserSessionPaginationSuspenseQuery
 >
-export type AdminUserSessionPaginationQueryResult = Apollo.QueryResult<
-  AdminUserSessionPaginationQuery,
-  AdminUserSessionPaginationQueryVariables
+export type __AdminUserSessionPaginationQueryResult = Apollo.QueryResult<
+  __AdminUserSessionPaginationQuery,
+  __AdminUserSessionPaginationQueryVariables
 >
-export const AdminCreateUserDocument = gql`
-  mutation AdminCreateUser($input: CreateUserInput!) {
+export const __AdminCreateUserDocument = gql`
+  mutation __AdminCreateUser($input: CreateUserInput!) {
     createUser(input: $input) {
-      ...AdminUserDetails
+      ...__AdminUserDetails
     }
   }
-  ${AdminUserDetailsFragmentDoc}
+  ${__AdminUserDetailsFragmentDoc}
 `
-export type AdminCreateUserMutationFn = Apollo.MutationFunction<
-  AdminCreateUserMutation,
-  AdminCreateUserMutationVariables
+export type __AdminCreateUserMutationFn = Apollo.MutationFunction<
+  __AdminCreateUserMutation,
+  __AdminCreateUserMutationVariables
 >
 
 /**
- * __useAdminCreateUserMutation__
+ * __use__AdminCreateUserMutation__
  *
- * To run a mutation, you first call `useAdminCreateUserMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAdminCreateUserMutation` returns a tuple that includes:
+ * To run a mutation, you first call `use__AdminCreateUserMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `use__AdminCreateUserMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [adminCreateUserMutation, { data, loading, error }] = useAdminCreateUserMutation({
+ * const [adminCreateUserMutation, { data, loading, error }] = use__AdminCreateUserMutation({
  *   variables: {
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useAdminCreateUserMutation(
+export function use__AdminCreateUserMutation(
   baseOptions?: Apollo.MutationHookOptions<
-    AdminCreateUserMutation,
-    AdminCreateUserMutationVariables
+    __AdminCreateUserMutation,
+    __AdminCreateUserMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<AdminCreateUserMutation, AdminCreateUserMutationVariables>(
-    AdminCreateUserDocument,
+  return Apollo.useMutation<__AdminCreateUserMutation, __AdminCreateUserMutationVariables>(
+    __AdminCreateUserDocument,
     options,
   )
 }
-export type AdminCreateUserMutationHookResult = ReturnType<typeof useAdminCreateUserMutation>
-export type AdminCreateUserMutationResult = Apollo.MutationResult<AdminCreateUserMutation>
-export type AdminCreateUserMutationOptions = Apollo.BaseMutationOptions<
-  AdminCreateUserMutation,
-  AdminCreateUserMutationVariables
+export type __AdminCreateUserMutationHookResult = ReturnType<typeof use__AdminCreateUserMutation>
+export type __AdminCreateUserMutationResult = Apollo.MutationResult<__AdminCreateUserMutation>
+export type __AdminCreateUserMutationOptions = Apollo.BaseMutationOptions<
+  __AdminCreateUserMutation,
+  __AdminCreateUserMutationVariables
 >
-export const AdminDeleteUserDocument = gql`
-  mutation AdminDeleteUser($userId: String!) {
+export const __AdminDeleteUserDocument = gql`
+  mutation __AdminDeleteUser($userId: String!) {
     deleteUser(userId: $userId) {
       id
     }
   }
 `
-export type AdminDeleteUserMutationFn = Apollo.MutationFunction<
-  AdminDeleteUserMutation,
-  AdminDeleteUserMutationVariables
+export type __AdminDeleteUserMutationFn = Apollo.MutationFunction<
+  __AdminDeleteUserMutation,
+  __AdminDeleteUserMutationVariables
 >
 
 /**
- * __useAdminDeleteUserMutation__
+ * __use__AdminDeleteUserMutation__
  *
- * To run a mutation, you first call `useAdminDeleteUserMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAdminDeleteUserMutation` returns a tuple that includes:
+ * To run a mutation, you first call `use__AdminDeleteUserMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `use__AdminDeleteUserMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [adminDeleteUserMutation, { data, loading, error }] = useAdminDeleteUserMutation({
+ * const [adminDeleteUserMutation, { data, loading, error }] = use__AdminDeleteUserMutation({
  *   variables: {
  *      userId: // value for 'userId'
  *   },
  * });
  */
-export function useAdminDeleteUserMutation(
+export function use__AdminDeleteUserMutation(
   baseOptions?: Apollo.MutationHookOptions<
-    AdminDeleteUserMutation,
-    AdminDeleteUserMutationVariables
+    __AdminDeleteUserMutation,
+    __AdminDeleteUserMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<AdminDeleteUserMutation, AdminDeleteUserMutationVariables>(
-    AdminDeleteUserDocument,
+  return Apollo.useMutation<__AdminDeleteUserMutation, __AdminDeleteUserMutationVariables>(
+    __AdminDeleteUserDocument,
     options,
   )
 }
-export type AdminDeleteUserMutationHookResult = ReturnType<typeof useAdminDeleteUserMutation>
-export type AdminDeleteUserMutationResult = Apollo.MutationResult<AdminDeleteUserMutation>
-export type AdminDeleteUserMutationOptions = Apollo.BaseMutationOptions<
-  AdminDeleteUserMutation,
-  AdminDeleteUserMutationVariables
+export type __AdminDeleteUserMutationHookResult = ReturnType<typeof use__AdminDeleteUserMutation>
+export type __AdminDeleteUserMutationResult = Apollo.MutationResult<__AdminDeleteUserMutation>
+export type __AdminDeleteUserMutationOptions = Apollo.BaseMutationOptions<
+  __AdminDeleteUserMutation,
+  __AdminDeleteUserMutationVariables
 >
-export const AdminUpdateUserDocument = gql`
-  mutation AdminUpdateUser($userId: String!, $input: UpdateUserInput!) {
+export const __AdminUpdateUserDocument = gql`
+  mutation __AdminUpdateUser($userId: String!, $input: UpdateUserInput!) {
     updateUser(userId: $userId, input: $input) {
-      ...AdminUserDetails
+      ...__AdminUserDetails
     }
   }
-  ${AdminUserDetailsFragmentDoc}
+  ${__AdminUserDetailsFragmentDoc}
 `
-export type AdminUpdateUserMutationFn = Apollo.MutationFunction<
-  AdminUpdateUserMutation,
-  AdminUpdateUserMutationVariables
+export type __AdminUpdateUserMutationFn = Apollo.MutationFunction<
+  __AdminUpdateUserMutation,
+  __AdminUpdateUserMutationVariables
 >
 
 /**
- * __useAdminUpdateUserMutation__
+ * __use__AdminUpdateUserMutation__
  *
- * To run a mutation, you first call `useAdminUpdateUserMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAdminUpdateUserMutation` returns a tuple that includes:
+ * To run a mutation, you first call `use__AdminUpdateUserMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `use__AdminUpdateUserMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [adminUpdateUserMutation, { data, loading, error }] = useAdminUpdateUserMutation({
+ * const [adminUpdateUserMutation, { data, loading, error }] = use__AdminUpdateUserMutation({
  *   variables: {
  *      userId: // value for 'userId'
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useAdminUpdateUserMutation(
+export function use__AdminUpdateUserMutation(
   baseOptions?: Apollo.MutationHookOptions<
-    AdminUpdateUserMutation,
-    AdminUpdateUserMutationVariables
+    __AdminUpdateUserMutation,
+    __AdminUpdateUserMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<AdminUpdateUserMutation, AdminUpdateUserMutationVariables>(
-    AdminUpdateUserDocument,
+  return Apollo.useMutation<__AdminUpdateUserMutation, __AdminUpdateUserMutationVariables>(
+    __AdminUpdateUserDocument,
     options,
   )
 }
-export type AdminUpdateUserMutationHookResult = ReturnType<typeof useAdminUpdateUserMutation>
-export type AdminUpdateUserMutationResult = Apollo.MutationResult<AdminUpdateUserMutation>
-export type AdminUpdateUserMutationOptions = Apollo.BaseMutationOptions<
-  AdminUpdateUserMutation,
-  AdminUpdateUserMutationVariables
+export type __AdminUpdateUserMutationHookResult = ReturnType<typeof use__AdminUpdateUserMutation>
+export type __AdminUpdateUserMutationResult = Apollo.MutationResult<__AdminUpdateUserMutation>
+export type __AdminUpdateUserMutationOptions = Apollo.BaseMutationOptions<
+  __AdminUpdateUserMutation,
+  __AdminUpdateUserMutationVariables
 >
-export const AdminUserDocument = gql`
-  query AdminUser($userId: String!) {
+export const __AdminUserDocument = gql`
+  query __AdminUser($userId: String!) {
     user(userId: $userId) {
-      ...AdminUserDetails
+      ...__AdminUserDetails
     }
   }
-  ${AdminUserDetailsFragmentDoc}
+  ${__AdminUserDetailsFragmentDoc}
 `
 
 /**
- * __useAdminUserQuery__
+ * __use__AdminUserQuery__
  *
- * To run a query within a React component, call `useAdminUserQuery` and pass it any options that fit your needs.
- * When your component renders, `useAdminUserQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `use__AdminUserQuery` and pass it any options that fit your needs.
+ * When your component renders, `use__AdminUserQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useAdminUserQuery({
+ * const { data, loading, error } = use__AdminUserQuery({
  *   variables: {
  *      userId: // value for 'userId'
  *   },
  * });
  */
-export function useAdminUserQuery(
-  baseOptions: Apollo.QueryHookOptions<AdminUserQuery, AdminUserQueryVariables> &
-    ({ variables: AdminUserQueryVariables; skip?: boolean } | { skip: boolean }),
+export function use__AdminUserQuery(
+  baseOptions: Apollo.QueryHookOptions<__AdminUserQuery, __AdminUserQueryVariables> &
+    ({ variables: __AdminUserQueryVariables; skip?: boolean } | { skip: boolean }),
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<AdminUserQuery, AdminUserQueryVariables>(AdminUserDocument, options)
+  return Apollo.useQuery<__AdminUserQuery, __AdminUserQueryVariables>(__AdminUserDocument, options)
 }
-export function useAdminUserLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<AdminUserQuery, AdminUserQueryVariables>,
+export function use__AdminUserLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<__AdminUserQuery, __AdminUserQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<AdminUserQuery, AdminUserQueryVariables>(AdminUserDocument, options)
-}
-export function useAdminUserSuspenseQuery(
-  baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<AdminUserQuery, AdminUserQueryVariables>,
-) {
-  const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<AdminUserQuery, AdminUserQueryVariables>(
-    AdminUserDocument,
+  return Apollo.useLazyQuery<__AdminUserQuery, __AdminUserQueryVariables>(
+    __AdminUserDocument,
     options,
   )
 }
-export type AdminUserQueryHookResult = ReturnType<typeof useAdminUserQuery>
-export type AdminUserLazyQueryHookResult = ReturnType<typeof useAdminUserLazyQuery>
-export type AdminUserSuspenseQueryHookResult = ReturnType<typeof useAdminUserSuspenseQuery>
-export type AdminUserQueryResult = Apollo.QueryResult<AdminUserQuery, AdminUserQueryVariables>
-export const AdminUsersDocument = gql`
-  query AdminUsers($input: ListUserInput) {
+export function use__AdminUserSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<__AdminUserQuery, __AdminUserQueryVariables>,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<__AdminUserQuery, __AdminUserQueryVariables>(
+    __AdminUserDocument,
+    options,
+  )
+}
+export type __AdminUserQueryHookResult = ReturnType<typeof use__AdminUserQuery>
+export type __AdminUserLazyQueryHookResult = ReturnType<typeof use__AdminUserLazyQuery>
+export type __AdminUserSuspenseQueryHookResult = ReturnType<typeof use__AdminUserSuspenseQuery>
+export type __AdminUserQueryResult = Apollo.QueryResult<__AdminUserQuery, __AdminUserQueryVariables>
+export const __AdminUsersDocument = gql`
+  query __AdminUsers($input: ListUserInput) {
     users(input: $input) {
-      ...AdminUserList
+      ...__AdminUserList
     }
     counters: usersCount(input: $input) {
       ...CorePagingDetails
     }
   }
-  ${AdminUserListFragmentDoc}
+  ${__AdminUserListFragmentDoc}
   ${CorePagingDetailsFragmentDoc}
 `
 
 /**
- * __useAdminUsersQuery__
+ * __use__AdminUsersQuery__
  *
- * To run a query within a React component, call `useAdminUsersQuery` and pass it any options that fit your needs.
- * When your component renders, `useAdminUsersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `use__AdminUsersQuery` and pass it any options that fit your needs.
+ * When your component renders, `use__AdminUsersQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useAdminUsersQuery({
+ * const { data, loading, error } = use__AdminUsersQuery({
  *   variables: {
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useAdminUsersQuery(
-  baseOptions?: Apollo.QueryHookOptions<AdminUsersQuery, AdminUsersQueryVariables>,
+export function use__AdminUsersQuery(
+  baseOptions?: Apollo.QueryHookOptions<__AdminUsersQuery, __AdminUsersQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<AdminUsersQuery, AdminUsersQueryVariables>(AdminUsersDocument, options)
-}
-export function useAdminUsersLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<AdminUsersQuery, AdminUsersQueryVariables>,
-) {
-  const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<AdminUsersQuery, AdminUsersQueryVariables>(AdminUsersDocument, options)
-}
-export function useAdminUsersSuspenseQuery(
-  baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<AdminUsersQuery, AdminUsersQueryVariables>,
-) {
-  const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<AdminUsersQuery, AdminUsersQueryVariables>(
-    AdminUsersDocument,
+  return Apollo.useQuery<__AdminUsersQuery, __AdminUsersQueryVariables>(
+    __AdminUsersDocument,
     options,
   )
 }
-export type AdminUsersQueryHookResult = ReturnType<typeof useAdminUsersQuery>
-export type AdminUsersLazyQueryHookResult = ReturnType<typeof useAdminUsersLazyQuery>
-export type AdminUsersSuspenseQueryHookResult = ReturnType<typeof useAdminUsersSuspenseQuery>
-export type AdminUsersQueryResult = Apollo.QueryResult<AdminUsersQuery, AdminUsersQueryVariables>
-export const AdminUserPaginationDocument = gql`
-  query AdminUserPagination($input: ListUserInput) {
+export function use__AdminUsersLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<__AdminUsersQuery, __AdminUsersQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<__AdminUsersQuery, __AdminUsersQueryVariables>(
+    __AdminUsersDocument,
+    options,
+  )
+}
+export function use__AdminUsersSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<__AdminUsersQuery, __AdminUsersQueryVariables>,
+) {
+  const options =
+    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return Apollo.useSuspenseQuery<__AdminUsersQuery, __AdminUsersQueryVariables>(
+    __AdminUsersDocument,
+    options,
+  )
+}
+export type __AdminUsersQueryHookResult = ReturnType<typeof use__AdminUsersQuery>
+export type __AdminUsersLazyQueryHookResult = ReturnType<typeof use__AdminUsersLazyQuery>
+export type __AdminUsersSuspenseQueryHookResult = ReturnType<typeof use__AdminUsersSuspenseQuery>
+export type __AdminUsersQueryResult = Apollo.QueryResult<
+  __AdminUsersQuery,
+  __AdminUsersQueryVariables
+>
+export const __AdminUserPaginationDocument = gql`
+  query __AdminUserPagination($input: ListUserInput) {
     counters: usersCount(input: $input) {
       ...CorePagingDetails
     }
@@ -20917,67 +21237,70 @@ export const AdminUserPaginationDocument = gql`
 `
 
 /**
- * __useAdminUserPaginationQuery__
+ * __use__AdminUserPaginationQuery__
  *
- * To run a query within a React component, call `useAdminUserPaginationQuery` and pass it any options that fit your needs.
- * When your component renders, `useAdminUserPaginationQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `use__AdminUserPaginationQuery` and pass it any options that fit your needs.
+ * When your component renders, `use__AdminUserPaginationQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useAdminUserPaginationQuery({
+ * const { data, loading, error } = use__AdminUserPaginationQuery({
  *   variables: {
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useAdminUserPaginationQuery(
+export function use__AdminUserPaginationQuery(
   baseOptions?: Apollo.QueryHookOptions<
-    AdminUserPaginationQuery,
-    AdminUserPaginationQueryVariables
+    __AdminUserPaginationQuery,
+    __AdminUserPaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<AdminUserPaginationQuery, AdminUserPaginationQueryVariables>(
-    AdminUserPaginationDocument,
+  return Apollo.useQuery<__AdminUserPaginationQuery, __AdminUserPaginationQueryVariables>(
+    __AdminUserPaginationDocument,
     options,
   )
 }
-export function useAdminUserPaginationLazyQuery(
+export function use__AdminUserPaginationLazyQuery(
   baseOptions?: Apollo.LazyQueryHookOptions<
-    AdminUserPaginationQuery,
-    AdminUserPaginationQueryVariables
+    __AdminUserPaginationQuery,
+    __AdminUserPaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<AdminUserPaginationQuery, AdminUserPaginationQueryVariables>(
-    AdminUserPaginationDocument,
+  return Apollo.useLazyQuery<__AdminUserPaginationQuery, __AdminUserPaginationQueryVariables>(
+    __AdminUserPaginationDocument,
     options,
   )
 }
-export function useAdminUserPaginationSuspenseQuery(
+export function use__AdminUserPaginationSuspenseQuery(
   baseOptions?:
     | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<AdminUserPaginationQuery, AdminUserPaginationQueryVariables>,
+    | Apollo.SuspenseQueryHookOptions<
+        __AdminUserPaginationQuery,
+        __AdminUserPaginationQueryVariables
+      >,
 ) {
   const options =
     baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<AdminUserPaginationQuery, AdminUserPaginationQueryVariables>(
-    AdminUserPaginationDocument,
+  return Apollo.useSuspenseQuery<__AdminUserPaginationQuery, __AdminUserPaginationQueryVariables>(
+    __AdminUserPaginationDocument,
     options,
   )
 }
-export type AdminUserPaginationQueryHookResult = ReturnType<typeof useAdminUserPaginationQuery>
-export type AdminUserPaginationLazyQueryHookResult = ReturnType<
-  typeof useAdminUserPaginationLazyQuery
+export type __AdminUserPaginationQueryHookResult = ReturnType<typeof use__AdminUserPaginationQuery>
+export type __AdminUserPaginationLazyQueryHookResult = ReturnType<
+  typeof use__AdminUserPaginationLazyQuery
 >
-export type AdminUserPaginationSuspenseQueryHookResult = ReturnType<
-  typeof useAdminUserPaginationSuspenseQuery
+export type __AdminUserPaginationSuspenseQueryHookResult = ReturnType<
+  typeof use__AdminUserPaginationSuspenseQuery
 >
-export type AdminUserPaginationQueryResult = Apollo.QueryResult<
-  AdminUserPaginationQuery,
-  AdminUserPaginationQueryVariables
+export type __AdminUserPaginationQueryResult = Apollo.QueryResult<
+  __AdminUserPaginationQuery,
+  __AdminUserPaginationQueryVariables
 >
 export const CreateAddressDocument = gql`
   mutation createAddress($input: CreateAddressInput!) {
@@ -21288,6 +21611,213 @@ export type AddressPaginationSuspenseQueryHookResult = ReturnType<
 export type AddressPaginationQueryResult = Apollo.QueryResult<
   AddressPaginationQuery,
   AddressPaginationQueryVariables
+>
+export const AdminDeactivateUserDocument = gql`
+  mutation AdminDeactivateUser($userId: String!) {
+    adminDeactivateUser(userId: $userId) {
+      id
+      isActive
+      deactivatedAt
+    }
+  }
+`
+export type AdminDeactivateUserMutationFn = Apollo.MutationFunction<
+  AdminDeactivateUserMutation,
+  AdminDeactivateUserMutationVariables
+>
+
+/**
+ * __useAdminDeactivateUserMutation__
+ *
+ * To run a mutation, you first call `useAdminDeactivateUserMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAdminDeactivateUserMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [adminDeactivateUserMutation, { data, loading, error }] = useAdminDeactivateUserMutation({
+ *   variables: {
+ *      userId: // value for 'userId'
+ *   },
+ * });
+ */
+export function useAdminDeactivateUserMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    AdminDeactivateUserMutation,
+    AdminDeactivateUserMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<AdminDeactivateUserMutation, AdminDeactivateUserMutationVariables>(
+    AdminDeactivateUserDocument,
+    options,
+  )
+}
+export type AdminDeactivateUserMutationHookResult = ReturnType<
+  typeof useAdminDeactivateUserMutation
+>
+export type AdminDeactivateUserMutationResult = Apollo.MutationResult<AdminDeactivateUserMutation>
+export type AdminDeactivateUserMutationOptions = Apollo.BaseMutationOptions<
+  AdminDeactivateUserMutation,
+  AdminDeactivateUserMutationVariables
+>
+export const AdminActivateUserDocument = gql`
+  mutation AdminActivateUser($userId: String!) {
+    adminActivateUser(userId: $userId) {
+      id
+      isActive
+      deactivatedAt
+    }
+  }
+`
+export type AdminActivateUserMutationFn = Apollo.MutationFunction<
+  AdminActivateUserMutation,
+  AdminActivateUserMutationVariables
+>
+
+/**
+ * __useAdminActivateUserMutation__
+ *
+ * To run a mutation, you first call `useAdminActivateUserMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAdminActivateUserMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [adminActivateUserMutation, { data, loading, error }] = useAdminActivateUserMutation({
+ *   variables: {
+ *      userId: // value for 'userId'
+ *   },
+ * });
+ */
+export function useAdminActivateUserMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    AdminActivateUserMutation,
+    AdminActivateUserMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<AdminActivateUserMutation, AdminActivateUserMutationVariables>(
+    AdminActivateUserDocument,
+    options,
+  )
+}
+export type AdminActivateUserMutationHookResult = ReturnType<typeof useAdminActivateUserMutation>
+export type AdminActivateUserMutationResult = Apollo.MutationResult<AdminActivateUserMutation>
+export type AdminActivateUserMutationOptions = Apollo.BaseMutationOptions<
+  AdminActivateUserMutation,
+  AdminActivateUserMutationVariables
+>
+export const AdminVerifyEmailDocument = gql`
+  mutation AdminVerifyEmail($userId: String!, $emailId: String!) {
+    adminVerifyEmail(userId: $userId, emailId: $emailId) {
+      id
+      emailValidated
+      emails {
+        id
+        email
+        verified
+        primary
+      }
+    }
+  }
+`
+export type AdminVerifyEmailMutationFn = Apollo.MutationFunction<
+  AdminVerifyEmailMutation,
+  AdminVerifyEmailMutationVariables
+>
+
+/**
+ * __useAdminVerifyEmailMutation__
+ *
+ * To run a mutation, you first call `useAdminVerifyEmailMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAdminVerifyEmailMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [adminVerifyEmailMutation, { data, loading, error }] = useAdminVerifyEmailMutation({
+ *   variables: {
+ *      userId: // value for 'userId'
+ *      emailId: // value for 'emailId'
+ *   },
+ * });
+ */
+export function useAdminVerifyEmailMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    AdminVerifyEmailMutation,
+    AdminVerifyEmailMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<AdminVerifyEmailMutation, AdminVerifyEmailMutationVariables>(
+    AdminVerifyEmailDocument,
+    options,
+  )
+}
+export type AdminVerifyEmailMutationHookResult = ReturnType<typeof useAdminVerifyEmailMutation>
+export type AdminVerifyEmailMutationResult = Apollo.MutationResult<AdminVerifyEmailMutation>
+export type AdminVerifyEmailMutationOptions = Apollo.BaseMutationOptions<
+  AdminVerifyEmailMutation,
+  AdminVerifyEmailMutationVariables
+>
+export const AdminForcePasswordResetDocument = gql`
+  mutation AdminForcePasswordReset($userId: String!) {
+    adminForcePasswordReset(userId: $userId) {
+      id
+      passwordResetToken
+      passwordResetExpires
+    }
+  }
+`
+export type AdminForcePasswordResetMutationFn = Apollo.MutationFunction<
+  AdminForcePasswordResetMutation,
+  AdminForcePasswordResetMutationVariables
+>
+
+/**
+ * __useAdminForcePasswordResetMutation__
+ *
+ * To run a mutation, you first call `useAdminForcePasswordResetMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAdminForcePasswordResetMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [adminForcePasswordResetMutation, { data, loading, error }] = useAdminForcePasswordResetMutation({
+ *   variables: {
+ *      userId: // value for 'userId'
+ *   },
+ * });
+ */
+export function useAdminForcePasswordResetMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    AdminForcePasswordResetMutation,
+    AdminForcePasswordResetMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<
+    AdminForcePasswordResetMutation,
+    AdminForcePasswordResetMutationVariables
+  >(AdminForcePasswordResetDocument, options)
+}
+export type AdminForcePasswordResetMutationHookResult = ReturnType<
+  typeof useAdminForcePasswordResetMutation
+>
+export type AdminForcePasswordResetMutationResult =
+  Apollo.MutationResult<AdminForcePasswordResetMutation>
+export type AdminForcePasswordResetMutationOptions = Apollo.BaseMutationOptions<
+  AdminForcePasswordResetMutation,
+  AdminForcePasswordResetMutationVariables
 >
 export const AdminPlatformOrganizationsDocument = gql`
   query AdminPlatformOrganizations($filters: AdminOrganizationFiltersInput) {
