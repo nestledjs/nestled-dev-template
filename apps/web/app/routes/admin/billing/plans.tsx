@@ -1,5 +1,5 @@
-import { useQuery } from '@apollo/client'
 import { gql } from '@apollo/client'
+import { useQuery } from '@apollo/client/react'
 import { CheckCircleIcon, XCircleIcon } from '@heroicons/react/24/outline'
 
 const ADMIN_PLANS_QUERY = gql`

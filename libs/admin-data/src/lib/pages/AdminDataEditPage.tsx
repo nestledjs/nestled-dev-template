@@ -1,13 +1,10 @@
-import { gql, useMutation, useQuery } from '@apollo/client'
+import { gql } from '@apollo/client'
+import { useMutation, useQuery } from '@apollo/client/react'
 import { loadDevMessages, loadErrorMessages } from '@apollo/client/dev'
 import { CheckCircleIcon, ExclamationCircleIcon } from '@heroicons/react/24/outline'
 import { TrashIcon } from '@heroicons/react/24/solid'
-import { DATABASE_MODELS } from '@nestled-template/shared/sdk'
 import { formTheme } from '@nestled-template/shared/styles'
-// Helper functions for admin data management
-function findModelByName(name: string) {
-  return DATABASE_MODELS.find(model => model.name === name)
-}
+import { useAdminDataContext } from '../context/AdminDataContext'
 
 function toLowerCamelCase(name: string): string {
   if (!name) return ''
@@ -58,27 +55,7 @@ const toKebabCase = (str: string): string => {
     .toLowerCase() // Convert to lowercase
 }
 
-const validateDataType = (dataType: string | undefined): string | null => {
-  if (!dataType) return null
-
-  const sanitized = sanitizeInput(dataType)
-  if (!sanitized) return null
-
-  // Convert kebab-case to PascalCase (course-chapter -> CourseChapter)
-  const properCaseDataType = sanitized
-    .split('-')
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-    .join('')
-
-  // Check if this data type exists in our models
-  const model = DATABASE_MODELS.find(m => m.name === properCaseDataType)
-  if (!model) {
-    console.warn(`[Security] Invalid dataType attempted: ${dataType}`)
-    return null
-  }
-
-  return properCaseDataType
-}
+// Validation functions moved into component to access databaseModels from context
 
 const validateId = (id: string | undefined): string | null => {
   if (!id) return null
@@ -97,6 +74,35 @@ const validateId = (id: string | undefined): string | null => {
 
 export function AdminDataEditPage() {
   const { dataType, id } = useParams()
+  const { databaseModels, basePath = '/admin/data' } = useAdminDataContext()
+
+  // Helper function to find model by name
+  const findModelByName = (name: string) => {
+    return databaseModels.find(model => model.name === name)
+  }
+
+  // Validate data type
+  const validateDataType = (dataType: string | undefined): string | null => {
+    if (!dataType) return null
+
+    const sanitized = sanitizeInput(dataType)
+    if (!sanitized) return null
+
+    // Convert kebab-case to PascalCase (course-chapter -> CourseChapter)
+    const properCaseDataType = sanitized
+      .split('-')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join('')
+
+    // Check if this data type exists in our models
+    const model = databaseModels.find(m => m.name === properCaseDataType)
+    if (!model) {
+      console.warn(`[Security] Invalid dataType attempted: ${dataType}`)
+      return null
+    }
+
+    return properCaseDataType
+  }
 
   // Security validation
   const validatedDataType = validateDataType(dataType)
@@ -121,7 +127,7 @@ export function AdminDataEditPage() {
               </p>
               <div className="mt-6">
                 <Link
-                  to="/admin/data"
+                  to={basePath}
                   className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-web hover:bg-green-web-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-web"
                 >
                   Return to Data Browser
@@ -147,7 +153,7 @@ export function AdminDataEditPage() {
               </p>
               <div className="mt-6">
                 <Link
-                  to="/admin/data"
+                  to={basePath}
                   className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-web hover:bg-green-web-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-web"
                 >
                   Return to Data Browser
@@ -161,15 +167,16 @@ export function AdminDataEditPage() {
   }
 
   // At this point we know model exists and is valid
-  return <AdminDataEditPageContent model={model!} id={validatedId!} />
+  return <AdminDataEditPageContent model={model!} id={validatedId!} basePath={basePath} />
 }
 
 // =================================
 // CONTENT COMPONENT
 // =================================
 
-function AdminDataEditPageContent({ model, id }: Readonly<{ model: any; id: string }>) {
+function AdminDataEditPageContent({ model, id, basePath }: Readonly<{ model: any; id: string; basePath: string }>) {
   const navigate = useNavigate()
+  const { sdk } = useAdminDataContext()
 
   // State
   const [submissionState, setSubmissionState] = useState<{
@@ -187,12 +194,12 @@ function AdminDataEditPageContent({ model, id }: Readonly<{ model: any; id: stri
   // Get GraphQL documents with error handling (memoized to prevent render loops)
   const documents = useMemo(() => {
     try {
-      return getAdminDocuments(model)
+      return getAdminDocuments(sdk, model)
     } catch (error) {
       console.error('[AdminDataEditPage] Error getting documents:', error)
       return null
     }
-  }, [model])
+  }, [sdk, model])
 
   const QUERY = useMemo(() => {
     if (!documents?.query) return null
@@ -308,7 +315,7 @@ function AdminDataEditPageContent({ model, id }: Readonly<{ model: any; id: stri
               </p>
               <div className="mt-6">
                 <Link
-                  to="/admin/data"
+                  to={basePath}
                   className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-web hover:bg-green-web-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-web"
                 >
                   Return to Data Browser
@@ -402,7 +409,7 @@ function AdminDataEditPageContent({ model, id }: Readonly<{ model: any; id: stri
   }
 
   // Build form fields without values (we'll use defaultValues prop instead)
-  const formFields = buildFormFields(model, 'update')
+  const formFields = buildFormFields(sdk, model, 'update')
 
   // Extract initial values for the Form component
   const initialValues: Record<string, any> = {}

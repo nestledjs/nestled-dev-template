@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useQuery } from '@apollo/client'
+import { useQuery } from '@apollo/client/react'
 import { AdminPlatformSecurityEventsDocument, SecurityEventType } from '@nestled-template/shared/sdk'
 import {
   MagnifyingGlassIcon,

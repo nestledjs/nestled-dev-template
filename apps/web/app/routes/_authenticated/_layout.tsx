@@ -9,7 +9,7 @@ import {
 import { WebUiFooter, WebUiHeader } from '@nestled-template/web-ui'
 import { apolloLoader } from '@nestled-template/shared/apollo'
 import { MyOrganizationsWithMembersDocument, MyOrganizationsWithMembersQuery } from '@nestled-template/shared/sdk'
-import { useReadQuery } from '@apollo/client'
+import { useReadQuery } from '@apollo/client/react'
 
 export const loader = apolloLoader()(({ preloadQuery }) => {
   const myOrganizationsQueryRef = preloadQuery<MyOrganizationsWithMembersQuery>(MyOrganizationsWithMembersDocument, {

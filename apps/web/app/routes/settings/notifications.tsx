@@ -8,7 +8,8 @@ import {
   UserPreferencesQuery,
   useUpdateUserPreferenceMutation,
 } from '@nestled-template/shared/sdk'
-import { gql, useQuery } from '@apollo/client'
+import { gql } from '@apollo/client'
+import { useQuery } from '@apollo/client/react'
 
 interface NotificationSetting {
   key: string

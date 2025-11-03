@@ -1,0 +1,41 @@
+{
+  "name": "@nestledjs/data-browser",
+  "version": "0.1.0",
+  "description": "Universal admin data browser for Nestled framework projects with full CRUD operations",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "keywords": [
+    "nestled",
+    "admin",
+    "data-browser",
+    "crud",
+    "react",
+    "graphql",
+    "apollo"
+  ],
+  "author": "Nestled Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nestledjs/nestled_template.git",
+    "directory": "libs/admin-data"
+  },
+  "peerDependencies": {
+    "@apollo/client": "^4.0.0",
+    "@heroicons/react": "^2.0.0",
+    "@nestledjs/forms": "^0.5.0",
+    "@nestledjs/helpers": "^0.1.0",
+    "react": "^19.0.0",
+    "react-router": "^7.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@heroicons/react": {
+      "optional": false
+    }
+  },
+  "dependencies": {},
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  }
+}

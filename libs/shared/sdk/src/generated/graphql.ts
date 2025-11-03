@@ -1,5 +1,6 @@
 import { gql } from '@apollo/client'
 import * as Apollo from '@apollo/client'
+import * as ApolloReactHooks from '@apollo/client/react'
 export type Maybe<T> = T | null
 export type InputMaybe<T> = Maybe<T>
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] }
@@ -12906,16 +12907,16 @@ export type __AdminCreateAddressMutationFn = Apollo.MutationFunction<
  * });
  */
 export function use__AdminCreateAddressMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     __AdminCreateAddressMutation,
     __AdminCreateAddressMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<__AdminCreateAddressMutation, __AdminCreateAddressMutationVariables>(
-    __AdminCreateAddressDocument,
-    options,
-  )
+  return ApolloReactHooks.useMutation<
+    __AdminCreateAddressMutation,
+    __AdminCreateAddressMutationVariables
+  >(__AdminCreateAddressDocument, options)
 }
 export type __AdminCreateAddressMutationHookResult = ReturnType<
   typeof use__AdminCreateAddressMutation
@@ -12955,16 +12956,16 @@ export type __AdminDeleteAddressMutationFn = Apollo.MutationFunction<
  * });
  */
 export function use__AdminDeleteAddressMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     __AdminDeleteAddressMutation,
     __AdminDeleteAddressMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<__AdminDeleteAddressMutation, __AdminDeleteAddressMutationVariables>(
-    __AdminDeleteAddressDocument,
-    options,
-  )
+  return ApolloReactHooks.useMutation<
+    __AdminDeleteAddressMutation,
+    __AdminDeleteAddressMutationVariables
+  >(__AdminDeleteAddressDocument, options)
 }
 export type __AdminDeleteAddressMutationHookResult = ReturnType<
   typeof use__AdminDeleteAddressMutation
@@ -13006,16 +13007,16 @@ export type __AdminUpdateAddressMutationFn = Apollo.MutationFunction<
  * });
  */
 export function use__AdminUpdateAddressMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     __AdminUpdateAddressMutation,
     __AdminUpdateAddressMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<__AdminUpdateAddressMutation, __AdminUpdateAddressMutationVariables>(
-    __AdminUpdateAddressDocument,
-    options,
-  )
+  return ApolloReactHooks.useMutation<
+    __AdminUpdateAddressMutation,
+    __AdminUpdateAddressMutationVariables
+  >(__AdminUpdateAddressDocument, options)
 }
 export type __AdminUpdateAddressMutationHookResult = ReturnType<
   typeof use__AdminUpdateAddressMutation
@@ -13051,32 +13052,38 @@ export const __AdminAddressDocument = gql`
  * });
  */
 export function use__AdminAddressQuery(
-  baseOptions: Apollo.QueryHookOptions<__AdminAddressQuery, __AdminAddressQueryVariables> &
+  baseOptions: ApolloReactHooks.QueryHookOptions<
+    __AdminAddressQuery,
+    __AdminAddressQueryVariables
+  > &
     ({ variables: __AdminAddressQueryVariables; skip?: boolean } | { skip: boolean }),
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<__AdminAddressQuery, __AdminAddressQueryVariables>(
+  return ApolloReactHooks.useQuery<__AdminAddressQuery, __AdminAddressQueryVariables>(
     __AdminAddressDocument,
     options,
   )
 }
 export function use__AdminAddressLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<__AdminAddressQuery, __AdminAddressQueryVariables>,
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    __AdminAddressQuery,
+    __AdminAddressQueryVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<__AdminAddressQuery, __AdminAddressQueryVariables>(
+  return ApolloReactHooks.useLazyQuery<__AdminAddressQuery, __AdminAddressQueryVariables>(
     __AdminAddressDocument,
     options,
   )
 }
 export function use__AdminAddressSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<__AdminAddressQuery, __AdminAddressQueryVariables>,
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<__AdminAddressQuery, __AdminAddressQueryVariables>,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<__AdminAddressQuery, __AdminAddressQueryVariables>(
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<__AdminAddressQuery, __AdminAddressQueryVariables>(
     __AdminAddressDocument,
     options,
   )
@@ -13120,31 +13127,40 @@ export const __AdminAddressesDocument = gql`
  * });
  */
 export function use__AdminAddressesQuery(
-  baseOptions?: Apollo.QueryHookOptions<__AdminAddressesQuery, __AdminAddressesQueryVariables>,
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    __AdminAddressesQuery,
+    __AdminAddressesQueryVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<__AdminAddressesQuery, __AdminAddressesQueryVariables>(
+  return ApolloReactHooks.useQuery<__AdminAddressesQuery, __AdminAddressesQueryVariables>(
     __AdminAddressesDocument,
     options,
   )
 }
 export function use__AdminAddressesLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<__AdminAddressesQuery, __AdminAddressesQueryVariables>,
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    __AdminAddressesQuery,
+    __AdminAddressesQueryVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<__AdminAddressesQuery, __AdminAddressesQueryVariables>(
+  return ApolloReactHooks.useLazyQuery<__AdminAddressesQuery, __AdminAddressesQueryVariables>(
     __AdminAddressesDocument,
     options,
   )
 }
 export function use__AdminAddressesSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<__AdminAddressesQuery, __AdminAddressesQueryVariables>,
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        __AdminAddressesQuery,
+        __AdminAddressesQueryVariables
+      >,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<__AdminAddressesQuery, __AdminAddressesQueryVariables>(
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<__AdminAddressesQuery, __AdminAddressesQueryVariables>(
     __AdminAddressesDocument,
     options,
   )
@@ -13184,40 +13200,40 @@ export const __AdminAddressPaginationDocument = gql`
  * });
  */
 export function use__AdminAddressPaginationQuery(
-  baseOptions?: Apollo.QueryHookOptions<
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
     __AdminAddressPaginationQuery,
     __AdminAddressPaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<__AdminAddressPaginationQuery, __AdminAddressPaginationQueryVariables>(
-    __AdminAddressPaginationDocument,
-    options,
-  )
+  return ApolloReactHooks.useQuery<
+    __AdminAddressPaginationQuery,
+    __AdminAddressPaginationQueryVariables
+  >(__AdminAddressPaginationDocument, options)
 }
 export function use__AdminAddressPaginationLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
     __AdminAddressPaginationQuery,
     __AdminAddressPaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<__AdminAddressPaginationQuery, __AdminAddressPaginationQueryVariables>(
-    __AdminAddressPaginationDocument,
-    options,
-  )
+  return ApolloReactHooks.useLazyQuery<
+    __AdminAddressPaginationQuery,
+    __AdminAddressPaginationQueryVariables
+  >(__AdminAddressPaginationDocument, options)
 }
 export function use__AdminAddressPaginationSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
         __AdminAddressPaginationQuery,
         __AdminAddressPaginationQueryVariables
       >,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<
     __AdminAddressPaginationQuery,
     __AdminAddressPaginationQueryVariables
   >(__AdminAddressPaginationDocument, options)
@@ -13266,16 +13282,16 @@ export type __AdminCreateApiTokenMutationFn = Apollo.MutationFunction<
  * });
  */
 export function use__AdminCreateApiTokenMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     __AdminCreateApiTokenMutation,
     __AdminCreateApiTokenMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<__AdminCreateApiTokenMutation, __AdminCreateApiTokenMutationVariables>(
-    __AdminCreateApiTokenDocument,
-    options,
-  )
+  return ApolloReactHooks.useMutation<
+    __AdminCreateApiTokenMutation,
+    __AdminCreateApiTokenMutationVariables
+  >(__AdminCreateApiTokenDocument, options)
 }
 export type __AdminCreateApiTokenMutationHookResult = ReturnType<
   typeof use__AdminCreateApiTokenMutation
@@ -13316,16 +13332,16 @@ export type __AdminDeleteApiTokenMutationFn = Apollo.MutationFunction<
  * });
  */
 export function use__AdminDeleteApiTokenMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     __AdminDeleteApiTokenMutation,
     __AdminDeleteApiTokenMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<__AdminDeleteApiTokenMutation, __AdminDeleteApiTokenMutationVariables>(
-    __AdminDeleteApiTokenDocument,
-    options,
-  )
+  return ApolloReactHooks.useMutation<
+    __AdminDeleteApiTokenMutation,
+    __AdminDeleteApiTokenMutationVariables
+  >(__AdminDeleteApiTokenDocument, options)
 }
 export type __AdminDeleteApiTokenMutationHookResult = ReturnType<
   typeof use__AdminDeleteApiTokenMutation
@@ -13368,16 +13384,16 @@ export type __AdminUpdateApiTokenMutationFn = Apollo.MutationFunction<
  * });
  */
 export function use__AdminUpdateApiTokenMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     __AdminUpdateApiTokenMutation,
     __AdminUpdateApiTokenMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<__AdminUpdateApiTokenMutation, __AdminUpdateApiTokenMutationVariables>(
-    __AdminUpdateApiTokenDocument,
-    options,
-  )
+  return ApolloReactHooks.useMutation<
+    __AdminUpdateApiTokenMutation,
+    __AdminUpdateApiTokenMutationVariables
+  >(__AdminUpdateApiTokenDocument, options)
 }
 export type __AdminUpdateApiTokenMutationHookResult = ReturnType<
   typeof use__AdminUpdateApiTokenMutation
@@ -13414,32 +13430,41 @@ export const __AdminApiTokenDocument = gql`
  * });
  */
 export function use__AdminApiTokenQuery(
-  baseOptions: Apollo.QueryHookOptions<__AdminApiTokenQuery, __AdminApiTokenQueryVariables> &
+  baseOptions: ApolloReactHooks.QueryHookOptions<
+    __AdminApiTokenQuery,
+    __AdminApiTokenQueryVariables
+  > &
     ({ variables: __AdminApiTokenQueryVariables; skip?: boolean } | { skip: boolean }),
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<__AdminApiTokenQuery, __AdminApiTokenQueryVariables>(
+  return ApolloReactHooks.useQuery<__AdminApiTokenQuery, __AdminApiTokenQueryVariables>(
     __AdminApiTokenDocument,
     options,
   )
 }
 export function use__AdminApiTokenLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<__AdminApiTokenQuery, __AdminApiTokenQueryVariables>,
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    __AdminApiTokenQuery,
+    __AdminApiTokenQueryVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<__AdminApiTokenQuery, __AdminApiTokenQueryVariables>(
+  return ApolloReactHooks.useLazyQuery<__AdminApiTokenQuery, __AdminApiTokenQueryVariables>(
     __AdminApiTokenDocument,
     options,
   )
 }
 export function use__AdminApiTokenSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<__AdminApiTokenQuery, __AdminApiTokenQueryVariables>,
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        __AdminApiTokenQuery,
+        __AdminApiTokenQueryVariables
+      >,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<__AdminApiTokenQuery, __AdminApiTokenQueryVariables>(
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<__AdminApiTokenQuery, __AdminApiTokenQueryVariables>(
     __AdminApiTokenDocument,
     options,
   )
@@ -13483,31 +13508,40 @@ export const __AdminApiTokensDocument = gql`
  * });
  */
 export function use__AdminApiTokensQuery(
-  baseOptions?: Apollo.QueryHookOptions<__AdminApiTokensQuery, __AdminApiTokensQueryVariables>,
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    __AdminApiTokensQuery,
+    __AdminApiTokensQueryVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<__AdminApiTokensQuery, __AdminApiTokensQueryVariables>(
+  return ApolloReactHooks.useQuery<__AdminApiTokensQuery, __AdminApiTokensQueryVariables>(
     __AdminApiTokensDocument,
     options,
   )
 }
 export function use__AdminApiTokensLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<__AdminApiTokensQuery, __AdminApiTokensQueryVariables>,
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    __AdminApiTokensQuery,
+    __AdminApiTokensQueryVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<__AdminApiTokensQuery, __AdminApiTokensQueryVariables>(
+  return ApolloReactHooks.useLazyQuery<__AdminApiTokensQuery, __AdminApiTokensQueryVariables>(
     __AdminApiTokensDocument,
     options,
   )
 }
 export function use__AdminApiTokensSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<__AdminApiTokensQuery, __AdminApiTokensQueryVariables>,
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        __AdminApiTokensQuery,
+        __AdminApiTokensQueryVariables
+      >,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<__AdminApiTokensQuery, __AdminApiTokensQueryVariables>(
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<__AdminApiTokensQuery, __AdminApiTokensQueryVariables>(
     __AdminApiTokensDocument,
     options,
   )
@@ -13547,40 +13581,40 @@ export const __AdminApiTokenPaginationDocument = gql`
  * });
  */
 export function use__AdminApiTokenPaginationQuery(
-  baseOptions?: Apollo.QueryHookOptions<
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
     __AdminApiTokenPaginationQuery,
     __AdminApiTokenPaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<__AdminApiTokenPaginationQuery, __AdminApiTokenPaginationQueryVariables>(
-    __AdminApiTokenPaginationDocument,
-    options,
-  )
+  return ApolloReactHooks.useQuery<
+    __AdminApiTokenPaginationQuery,
+    __AdminApiTokenPaginationQueryVariables
+  >(__AdminApiTokenPaginationDocument, options)
 }
 export function use__AdminApiTokenPaginationLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
     __AdminApiTokenPaginationQuery,
     __AdminApiTokenPaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<
+  return ApolloReactHooks.useLazyQuery<
     __AdminApiTokenPaginationQuery,
     __AdminApiTokenPaginationQueryVariables
   >(__AdminApiTokenPaginationDocument, options)
 }
 export function use__AdminApiTokenPaginationSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
         __AdminApiTokenPaginationQuery,
         __AdminApiTokenPaginationQueryVariables
       >,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<
     __AdminApiTokenPaginationQuery,
     __AdminApiTokenPaginationQueryVariables
   >(__AdminApiTokenPaginationDocument, options)
@@ -13629,16 +13663,16 @@ export type __AdminCreateAuditLogMutationFn = Apollo.MutationFunction<
  * });
  */
 export function use__AdminCreateAuditLogMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     __AdminCreateAuditLogMutation,
     __AdminCreateAuditLogMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<__AdminCreateAuditLogMutation, __AdminCreateAuditLogMutationVariables>(
-    __AdminCreateAuditLogDocument,
-    options,
-  )
+  return ApolloReactHooks.useMutation<
+    __AdminCreateAuditLogMutation,
+    __AdminCreateAuditLogMutationVariables
+  >(__AdminCreateAuditLogDocument, options)
 }
 export type __AdminCreateAuditLogMutationHookResult = ReturnType<
   typeof use__AdminCreateAuditLogMutation
@@ -13679,16 +13713,16 @@ export type __AdminDeleteAuditLogMutationFn = Apollo.MutationFunction<
  * });
  */
 export function use__AdminDeleteAuditLogMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     __AdminDeleteAuditLogMutation,
     __AdminDeleteAuditLogMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<__AdminDeleteAuditLogMutation, __AdminDeleteAuditLogMutationVariables>(
-    __AdminDeleteAuditLogDocument,
-    options,
-  )
+  return ApolloReactHooks.useMutation<
+    __AdminDeleteAuditLogMutation,
+    __AdminDeleteAuditLogMutationVariables
+  >(__AdminDeleteAuditLogDocument, options)
 }
 export type __AdminDeleteAuditLogMutationHookResult = ReturnType<
   typeof use__AdminDeleteAuditLogMutation
@@ -13731,16 +13765,16 @@ export type __AdminUpdateAuditLogMutationFn = Apollo.MutationFunction<
  * });
  */
 export function use__AdminUpdateAuditLogMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     __AdminUpdateAuditLogMutation,
     __AdminUpdateAuditLogMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<__AdminUpdateAuditLogMutation, __AdminUpdateAuditLogMutationVariables>(
-    __AdminUpdateAuditLogDocument,
-    options,
-  )
+  return ApolloReactHooks.useMutation<
+    __AdminUpdateAuditLogMutation,
+    __AdminUpdateAuditLogMutationVariables
+  >(__AdminUpdateAuditLogDocument, options)
 }
 export type __AdminUpdateAuditLogMutationHookResult = ReturnType<
   typeof use__AdminUpdateAuditLogMutation
@@ -13777,32 +13811,41 @@ export const __AdminAuditLogDocument = gql`
  * });
  */
 export function use__AdminAuditLogQuery(
-  baseOptions: Apollo.QueryHookOptions<__AdminAuditLogQuery, __AdminAuditLogQueryVariables> &
+  baseOptions: ApolloReactHooks.QueryHookOptions<
+    __AdminAuditLogQuery,
+    __AdminAuditLogQueryVariables
+  > &
     ({ variables: __AdminAuditLogQueryVariables; skip?: boolean } | { skip: boolean }),
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<__AdminAuditLogQuery, __AdminAuditLogQueryVariables>(
+  return ApolloReactHooks.useQuery<__AdminAuditLogQuery, __AdminAuditLogQueryVariables>(
     __AdminAuditLogDocument,
     options,
   )
 }
 export function use__AdminAuditLogLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<__AdminAuditLogQuery, __AdminAuditLogQueryVariables>,
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    __AdminAuditLogQuery,
+    __AdminAuditLogQueryVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<__AdminAuditLogQuery, __AdminAuditLogQueryVariables>(
+  return ApolloReactHooks.useLazyQuery<__AdminAuditLogQuery, __AdminAuditLogQueryVariables>(
     __AdminAuditLogDocument,
     options,
   )
 }
 export function use__AdminAuditLogSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<__AdminAuditLogQuery, __AdminAuditLogQueryVariables>,
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        __AdminAuditLogQuery,
+        __AdminAuditLogQueryVariables
+      >,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<__AdminAuditLogQuery, __AdminAuditLogQueryVariables>(
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<__AdminAuditLogQuery, __AdminAuditLogQueryVariables>(
     __AdminAuditLogDocument,
     options,
   )
@@ -13846,31 +13889,40 @@ export const __AdminAuditLogsDocument = gql`
  * });
  */
 export function use__AdminAuditLogsQuery(
-  baseOptions?: Apollo.QueryHookOptions<__AdminAuditLogsQuery, __AdminAuditLogsQueryVariables>,
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    __AdminAuditLogsQuery,
+    __AdminAuditLogsQueryVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<__AdminAuditLogsQuery, __AdminAuditLogsQueryVariables>(
+  return ApolloReactHooks.useQuery<__AdminAuditLogsQuery, __AdminAuditLogsQueryVariables>(
     __AdminAuditLogsDocument,
     options,
   )
 }
 export function use__AdminAuditLogsLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<__AdminAuditLogsQuery, __AdminAuditLogsQueryVariables>,
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    __AdminAuditLogsQuery,
+    __AdminAuditLogsQueryVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<__AdminAuditLogsQuery, __AdminAuditLogsQueryVariables>(
+  return ApolloReactHooks.useLazyQuery<__AdminAuditLogsQuery, __AdminAuditLogsQueryVariables>(
     __AdminAuditLogsDocument,
     options,
   )
 }
 export function use__AdminAuditLogsSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<__AdminAuditLogsQuery, __AdminAuditLogsQueryVariables>,
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        __AdminAuditLogsQuery,
+        __AdminAuditLogsQueryVariables
+      >,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<__AdminAuditLogsQuery, __AdminAuditLogsQueryVariables>(
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<__AdminAuditLogsQuery, __AdminAuditLogsQueryVariables>(
     __AdminAuditLogsDocument,
     options,
   )
@@ -13910,40 +13962,40 @@ export const __AdminAuditLogPaginationDocument = gql`
  * });
  */
 export function use__AdminAuditLogPaginationQuery(
-  baseOptions?: Apollo.QueryHookOptions<
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
     __AdminAuditLogPaginationQuery,
     __AdminAuditLogPaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<__AdminAuditLogPaginationQuery, __AdminAuditLogPaginationQueryVariables>(
-    __AdminAuditLogPaginationDocument,
-    options,
-  )
+  return ApolloReactHooks.useQuery<
+    __AdminAuditLogPaginationQuery,
+    __AdminAuditLogPaginationQueryVariables
+  >(__AdminAuditLogPaginationDocument, options)
 }
 export function use__AdminAuditLogPaginationLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
     __AdminAuditLogPaginationQuery,
     __AdminAuditLogPaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<
+  return ApolloReactHooks.useLazyQuery<
     __AdminAuditLogPaginationQuery,
     __AdminAuditLogPaginationQueryVariables
   >(__AdminAuditLogPaginationDocument, options)
 }
 export function use__AdminAuditLogPaginationSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
         __AdminAuditLogPaginationQuery,
         __AdminAuditLogPaginationQueryVariables
       >,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<
     __AdminAuditLogPaginationQuery,
     __AdminAuditLogPaginationQueryVariables
   >(__AdminAuditLogPaginationDocument, options)
@@ -13992,16 +14044,16 @@ export type __AdminCreateCountryMutationFn = Apollo.MutationFunction<
  * });
  */
 export function use__AdminCreateCountryMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     __AdminCreateCountryMutation,
     __AdminCreateCountryMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<__AdminCreateCountryMutation, __AdminCreateCountryMutationVariables>(
-    __AdminCreateCountryDocument,
-    options,
-  )
+  return ApolloReactHooks.useMutation<
+    __AdminCreateCountryMutation,
+    __AdminCreateCountryMutationVariables
+  >(__AdminCreateCountryDocument, options)
 }
 export type __AdminCreateCountryMutationHookResult = ReturnType<
   typeof use__AdminCreateCountryMutation
@@ -14041,16 +14093,16 @@ export type __AdminDeleteCountryMutationFn = Apollo.MutationFunction<
  * });
  */
 export function use__AdminDeleteCountryMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     __AdminDeleteCountryMutation,
     __AdminDeleteCountryMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<__AdminDeleteCountryMutation, __AdminDeleteCountryMutationVariables>(
-    __AdminDeleteCountryDocument,
-    options,
-  )
+  return ApolloReactHooks.useMutation<
+    __AdminDeleteCountryMutation,
+    __AdminDeleteCountryMutationVariables
+  >(__AdminDeleteCountryDocument, options)
 }
 export type __AdminDeleteCountryMutationHookResult = ReturnType<
   typeof use__AdminDeleteCountryMutation
@@ -14092,16 +14144,16 @@ export type __AdminUpdateCountryMutationFn = Apollo.MutationFunction<
  * });
  */
 export function use__AdminUpdateCountryMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     __AdminUpdateCountryMutation,
     __AdminUpdateCountryMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<__AdminUpdateCountryMutation, __AdminUpdateCountryMutationVariables>(
-    __AdminUpdateCountryDocument,
-    options,
-  )
+  return ApolloReactHooks.useMutation<
+    __AdminUpdateCountryMutation,
+    __AdminUpdateCountryMutationVariables
+  >(__AdminUpdateCountryDocument, options)
 }
 export type __AdminUpdateCountryMutationHookResult = ReturnType<
   typeof use__AdminUpdateCountryMutation
@@ -14137,32 +14189,38 @@ export const __AdminCountryDocument = gql`
  * });
  */
 export function use__AdminCountryQuery(
-  baseOptions: Apollo.QueryHookOptions<__AdminCountryQuery, __AdminCountryQueryVariables> &
+  baseOptions: ApolloReactHooks.QueryHookOptions<
+    __AdminCountryQuery,
+    __AdminCountryQueryVariables
+  > &
     ({ variables: __AdminCountryQueryVariables; skip?: boolean } | { skip: boolean }),
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<__AdminCountryQuery, __AdminCountryQueryVariables>(
+  return ApolloReactHooks.useQuery<__AdminCountryQuery, __AdminCountryQueryVariables>(
     __AdminCountryDocument,
     options,
   )
 }
 export function use__AdminCountryLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<__AdminCountryQuery, __AdminCountryQueryVariables>,
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    __AdminCountryQuery,
+    __AdminCountryQueryVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<__AdminCountryQuery, __AdminCountryQueryVariables>(
+  return ApolloReactHooks.useLazyQuery<__AdminCountryQuery, __AdminCountryQueryVariables>(
     __AdminCountryDocument,
     options,
   )
 }
 export function use__AdminCountrySuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<__AdminCountryQuery, __AdminCountryQueryVariables>,
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<__AdminCountryQuery, __AdminCountryQueryVariables>,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<__AdminCountryQuery, __AdminCountryQueryVariables>(
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<__AdminCountryQuery, __AdminCountryQueryVariables>(
     __AdminCountryDocument,
     options,
   )
@@ -14206,31 +14264,40 @@ export const __AdminCountriesDocument = gql`
  * });
  */
 export function use__AdminCountriesQuery(
-  baseOptions?: Apollo.QueryHookOptions<__AdminCountriesQuery, __AdminCountriesQueryVariables>,
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    __AdminCountriesQuery,
+    __AdminCountriesQueryVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<__AdminCountriesQuery, __AdminCountriesQueryVariables>(
+  return ApolloReactHooks.useQuery<__AdminCountriesQuery, __AdminCountriesQueryVariables>(
     __AdminCountriesDocument,
     options,
   )
 }
 export function use__AdminCountriesLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<__AdminCountriesQuery, __AdminCountriesQueryVariables>,
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    __AdminCountriesQuery,
+    __AdminCountriesQueryVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<__AdminCountriesQuery, __AdminCountriesQueryVariables>(
+  return ApolloReactHooks.useLazyQuery<__AdminCountriesQuery, __AdminCountriesQueryVariables>(
     __AdminCountriesDocument,
     options,
   )
 }
 export function use__AdminCountriesSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<__AdminCountriesQuery, __AdminCountriesQueryVariables>,
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        __AdminCountriesQuery,
+        __AdminCountriesQueryVariables
+      >,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<__AdminCountriesQuery, __AdminCountriesQueryVariables>(
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<__AdminCountriesQuery, __AdminCountriesQueryVariables>(
     __AdminCountriesDocument,
     options,
   )
@@ -14270,40 +14337,40 @@ export const __AdminCountryPaginationDocument = gql`
  * });
  */
 export function use__AdminCountryPaginationQuery(
-  baseOptions?: Apollo.QueryHookOptions<
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
     __AdminCountryPaginationQuery,
     __AdminCountryPaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<__AdminCountryPaginationQuery, __AdminCountryPaginationQueryVariables>(
-    __AdminCountryPaginationDocument,
-    options,
-  )
+  return ApolloReactHooks.useQuery<
+    __AdminCountryPaginationQuery,
+    __AdminCountryPaginationQueryVariables
+  >(__AdminCountryPaginationDocument, options)
 }
 export function use__AdminCountryPaginationLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
     __AdminCountryPaginationQuery,
     __AdminCountryPaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<__AdminCountryPaginationQuery, __AdminCountryPaginationQueryVariables>(
-    __AdminCountryPaginationDocument,
-    options,
-  )
+  return ApolloReactHooks.useLazyQuery<
+    __AdminCountryPaginationQuery,
+    __AdminCountryPaginationQueryVariables
+  >(__AdminCountryPaginationDocument, options)
 }
 export function use__AdminCountryPaginationSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
         __AdminCountryPaginationQuery,
         __AdminCountryPaginationQueryVariables
       >,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<
     __AdminCountryPaginationQuery,
     __AdminCountryPaginationQueryVariables
   >(__AdminCountryPaginationDocument, options)
@@ -14352,16 +14419,16 @@ export type __AdminCreateEmailMutationFn = Apollo.MutationFunction<
  * });
  */
 export function use__AdminCreateEmailMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     __AdminCreateEmailMutation,
     __AdminCreateEmailMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<__AdminCreateEmailMutation, __AdminCreateEmailMutationVariables>(
-    __AdminCreateEmailDocument,
-    options,
-  )
+  return ApolloReactHooks.useMutation<
+    __AdminCreateEmailMutation,
+    __AdminCreateEmailMutationVariables
+  >(__AdminCreateEmailDocument, options)
 }
 export type __AdminCreateEmailMutationHookResult = ReturnType<typeof use__AdminCreateEmailMutation>
 export type __AdminCreateEmailMutationResult = Apollo.MutationResult<__AdminCreateEmailMutation>
@@ -14399,16 +14466,16 @@ export type __AdminDeleteEmailMutationFn = Apollo.MutationFunction<
  * });
  */
 export function use__AdminDeleteEmailMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     __AdminDeleteEmailMutation,
     __AdminDeleteEmailMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<__AdminDeleteEmailMutation, __AdminDeleteEmailMutationVariables>(
-    __AdminDeleteEmailDocument,
-    options,
-  )
+  return ApolloReactHooks.useMutation<
+    __AdminDeleteEmailMutation,
+    __AdminDeleteEmailMutationVariables
+  >(__AdminDeleteEmailDocument, options)
 }
 export type __AdminDeleteEmailMutationHookResult = ReturnType<typeof use__AdminDeleteEmailMutation>
 export type __AdminDeleteEmailMutationResult = Apollo.MutationResult<__AdminDeleteEmailMutation>
@@ -14448,16 +14515,16 @@ export type __AdminUpdateEmailMutationFn = Apollo.MutationFunction<
  * });
  */
 export function use__AdminUpdateEmailMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     __AdminUpdateEmailMutation,
     __AdminUpdateEmailMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<__AdminUpdateEmailMutation, __AdminUpdateEmailMutationVariables>(
-    __AdminUpdateEmailDocument,
-    options,
-  )
+  return ApolloReactHooks.useMutation<
+    __AdminUpdateEmailMutation,
+    __AdminUpdateEmailMutationVariables
+  >(__AdminUpdateEmailDocument, options)
 }
 export type __AdminUpdateEmailMutationHookResult = ReturnType<typeof use__AdminUpdateEmailMutation>
 export type __AdminUpdateEmailMutationResult = Apollo.MutationResult<__AdminUpdateEmailMutation>
@@ -14491,32 +14558,35 @@ export const __AdminEmailDocument = gql`
  * });
  */
 export function use__AdminEmailQuery(
-  baseOptions: Apollo.QueryHookOptions<__AdminEmailQuery, __AdminEmailQueryVariables> &
+  baseOptions: ApolloReactHooks.QueryHookOptions<__AdminEmailQuery, __AdminEmailQueryVariables> &
     ({ variables: __AdminEmailQueryVariables; skip?: boolean } | { skip: boolean }),
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<__AdminEmailQuery, __AdminEmailQueryVariables>(
+  return ApolloReactHooks.useQuery<__AdminEmailQuery, __AdminEmailQueryVariables>(
     __AdminEmailDocument,
     options,
   )
 }
 export function use__AdminEmailLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<__AdminEmailQuery, __AdminEmailQueryVariables>,
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    __AdminEmailQuery,
+    __AdminEmailQueryVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<__AdminEmailQuery, __AdminEmailQueryVariables>(
+  return ApolloReactHooks.useLazyQuery<__AdminEmailQuery, __AdminEmailQueryVariables>(
     __AdminEmailDocument,
     options,
   )
 }
 export function use__AdminEmailSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<__AdminEmailQuery, __AdminEmailQueryVariables>,
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<__AdminEmailQuery, __AdminEmailQueryVariables>,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<__AdminEmailQuery, __AdminEmailQueryVariables>(
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<__AdminEmailQuery, __AdminEmailQueryVariables>(
     __AdminEmailDocument,
     options,
   )
@@ -14558,31 +14628,34 @@ export const __AdminEmailsDocument = gql`
  * });
  */
 export function use__AdminEmailsQuery(
-  baseOptions?: Apollo.QueryHookOptions<__AdminEmailsQuery, __AdminEmailsQueryVariables>,
+  baseOptions?: ApolloReactHooks.QueryHookOptions<__AdminEmailsQuery, __AdminEmailsQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<__AdminEmailsQuery, __AdminEmailsQueryVariables>(
+  return ApolloReactHooks.useQuery<__AdminEmailsQuery, __AdminEmailsQueryVariables>(
     __AdminEmailsDocument,
     options,
   )
 }
 export function use__AdminEmailsLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<__AdminEmailsQuery, __AdminEmailsQueryVariables>,
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    __AdminEmailsQuery,
+    __AdminEmailsQueryVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<__AdminEmailsQuery, __AdminEmailsQueryVariables>(
+  return ApolloReactHooks.useLazyQuery<__AdminEmailsQuery, __AdminEmailsQueryVariables>(
     __AdminEmailsDocument,
     options,
   )
 }
 export function use__AdminEmailsSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<__AdminEmailsQuery, __AdminEmailsQueryVariables>,
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<__AdminEmailsQuery, __AdminEmailsQueryVariables>,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<__AdminEmailsQuery, __AdminEmailsQueryVariables>(
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<__AdminEmailsQuery, __AdminEmailsQueryVariables>(
     __AdminEmailsDocument,
     options,
   )
@@ -14620,43 +14693,43 @@ export const __AdminEmailPaginationDocument = gql`
  * });
  */
 export function use__AdminEmailPaginationQuery(
-  baseOptions?: Apollo.QueryHookOptions<
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
     __AdminEmailPaginationQuery,
     __AdminEmailPaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<__AdminEmailPaginationQuery, __AdminEmailPaginationQueryVariables>(
-    __AdminEmailPaginationDocument,
-    options,
-  )
+  return ApolloReactHooks.useQuery<
+    __AdminEmailPaginationQuery,
+    __AdminEmailPaginationQueryVariables
+  >(__AdminEmailPaginationDocument, options)
 }
 export function use__AdminEmailPaginationLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
     __AdminEmailPaginationQuery,
     __AdminEmailPaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<__AdminEmailPaginationQuery, __AdminEmailPaginationQueryVariables>(
-    __AdminEmailPaginationDocument,
-    options,
-  )
+  return ApolloReactHooks.useLazyQuery<
+    __AdminEmailPaginationQuery,
+    __AdminEmailPaginationQueryVariables
+  >(__AdminEmailPaginationDocument, options)
 }
 export function use__AdminEmailPaginationSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
         __AdminEmailPaginationQuery,
         __AdminEmailPaginationQueryVariables
       >,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<__AdminEmailPaginationQuery, __AdminEmailPaginationQueryVariables>(
-    __AdminEmailPaginationDocument,
-    options,
-  )
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<
+    __AdminEmailPaginationQuery,
+    __AdminEmailPaginationQueryVariables
+  >(__AdminEmailPaginationDocument, options)
 }
 export type __AdminEmailPaginationQueryHookResult = ReturnType<
   typeof use__AdminEmailPaginationQuery
@@ -14702,16 +14775,16 @@ export type __AdminCreateInviteMutationFn = Apollo.MutationFunction<
  * });
  */
 export function use__AdminCreateInviteMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     __AdminCreateInviteMutation,
     __AdminCreateInviteMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<__AdminCreateInviteMutation, __AdminCreateInviteMutationVariables>(
-    __AdminCreateInviteDocument,
-    options,
-  )
+  return ApolloReactHooks.useMutation<
+    __AdminCreateInviteMutation,
+    __AdminCreateInviteMutationVariables
+  >(__AdminCreateInviteDocument, options)
 }
 export type __AdminCreateInviteMutationHookResult = ReturnType<
   typeof use__AdminCreateInviteMutation
@@ -14751,16 +14824,16 @@ export type __AdminDeleteInviteMutationFn = Apollo.MutationFunction<
  * });
  */
 export function use__AdminDeleteInviteMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     __AdminDeleteInviteMutation,
     __AdminDeleteInviteMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<__AdminDeleteInviteMutation, __AdminDeleteInviteMutationVariables>(
-    __AdminDeleteInviteDocument,
-    options,
-  )
+  return ApolloReactHooks.useMutation<
+    __AdminDeleteInviteMutation,
+    __AdminDeleteInviteMutationVariables
+  >(__AdminDeleteInviteDocument, options)
 }
 export type __AdminDeleteInviteMutationHookResult = ReturnType<
   typeof use__AdminDeleteInviteMutation
@@ -14802,16 +14875,16 @@ export type __AdminUpdateInviteMutationFn = Apollo.MutationFunction<
  * });
  */
 export function use__AdminUpdateInviteMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     __AdminUpdateInviteMutation,
     __AdminUpdateInviteMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<__AdminUpdateInviteMutation, __AdminUpdateInviteMutationVariables>(
-    __AdminUpdateInviteDocument,
-    options,
-  )
+  return ApolloReactHooks.useMutation<
+    __AdminUpdateInviteMutation,
+    __AdminUpdateInviteMutationVariables
+  >(__AdminUpdateInviteDocument, options)
 }
 export type __AdminUpdateInviteMutationHookResult = ReturnType<
   typeof use__AdminUpdateInviteMutation
@@ -14847,32 +14920,35 @@ export const __AdminInviteDocument = gql`
  * });
  */
 export function use__AdminInviteQuery(
-  baseOptions: Apollo.QueryHookOptions<__AdminInviteQuery, __AdminInviteQueryVariables> &
+  baseOptions: ApolloReactHooks.QueryHookOptions<__AdminInviteQuery, __AdminInviteQueryVariables> &
     ({ variables: __AdminInviteQueryVariables; skip?: boolean } | { skip: boolean }),
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<__AdminInviteQuery, __AdminInviteQueryVariables>(
+  return ApolloReactHooks.useQuery<__AdminInviteQuery, __AdminInviteQueryVariables>(
     __AdminInviteDocument,
     options,
   )
 }
 export function use__AdminInviteLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<__AdminInviteQuery, __AdminInviteQueryVariables>,
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    __AdminInviteQuery,
+    __AdminInviteQueryVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<__AdminInviteQuery, __AdminInviteQueryVariables>(
+  return ApolloReactHooks.useLazyQuery<__AdminInviteQuery, __AdminInviteQueryVariables>(
     __AdminInviteDocument,
     options,
   )
 }
 export function use__AdminInviteSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<__AdminInviteQuery, __AdminInviteQueryVariables>,
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<__AdminInviteQuery, __AdminInviteQueryVariables>,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<__AdminInviteQuery, __AdminInviteQueryVariables>(
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<__AdminInviteQuery, __AdminInviteQueryVariables>(
     __AdminInviteDocument,
     options,
   )
@@ -14914,31 +14990,37 @@ export const __AdminInvitesDocument = gql`
  * });
  */
 export function use__AdminInvitesQuery(
-  baseOptions?: Apollo.QueryHookOptions<__AdminInvitesQuery, __AdminInvitesQueryVariables>,
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    __AdminInvitesQuery,
+    __AdminInvitesQueryVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<__AdminInvitesQuery, __AdminInvitesQueryVariables>(
+  return ApolloReactHooks.useQuery<__AdminInvitesQuery, __AdminInvitesQueryVariables>(
     __AdminInvitesDocument,
     options,
   )
 }
 export function use__AdminInvitesLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<__AdminInvitesQuery, __AdminInvitesQueryVariables>,
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    __AdminInvitesQuery,
+    __AdminInvitesQueryVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<__AdminInvitesQuery, __AdminInvitesQueryVariables>(
+  return ApolloReactHooks.useLazyQuery<__AdminInvitesQuery, __AdminInvitesQueryVariables>(
     __AdminInvitesDocument,
     options,
   )
 }
 export function use__AdminInvitesSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<__AdminInvitesQuery, __AdminInvitesQueryVariables>,
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<__AdminInvitesQuery, __AdminInvitesQueryVariables>,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<__AdminInvitesQuery, __AdminInvitesQueryVariables>(
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<__AdminInvitesQuery, __AdminInvitesQueryVariables>(
     __AdminInvitesDocument,
     options,
   )
@@ -14978,40 +15060,40 @@ export const __AdminInvitePaginationDocument = gql`
  * });
  */
 export function use__AdminInvitePaginationQuery(
-  baseOptions?: Apollo.QueryHookOptions<
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
     __AdminInvitePaginationQuery,
     __AdminInvitePaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<__AdminInvitePaginationQuery, __AdminInvitePaginationQueryVariables>(
-    __AdminInvitePaginationDocument,
-    options,
-  )
+  return ApolloReactHooks.useQuery<
+    __AdminInvitePaginationQuery,
+    __AdminInvitePaginationQueryVariables
+  >(__AdminInvitePaginationDocument, options)
 }
 export function use__AdminInvitePaginationLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
     __AdminInvitePaginationQuery,
     __AdminInvitePaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<__AdminInvitePaginationQuery, __AdminInvitePaginationQueryVariables>(
-    __AdminInvitePaginationDocument,
-    options,
-  )
+  return ApolloReactHooks.useLazyQuery<
+    __AdminInvitePaginationQuery,
+    __AdminInvitePaginationQueryVariables
+  >(__AdminInvitePaginationDocument, options)
 }
 export function use__AdminInvitePaginationSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
         __AdminInvitePaginationQuery,
         __AdminInvitePaginationQueryVariables
       >,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<
     __AdminInvitePaginationQuery,
     __AdminInvitePaginationQueryVariables
   >(__AdminInvitePaginationDocument, options)
@@ -15060,16 +15142,16 @@ export type __AdminCreateLinkMutationFn = Apollo.MutationFunction<
  * });
  */
 export function use__AdminCreateLinkMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     __AdminCreateLinkMutation,
     __AdminCreateLinkMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<__AdminCreateLinkMutation, __AdminCreateLinkMutationVariables>(
-    __AdminCreateLinkDocument,
-    options,
-  )
+  return ApolloReactHooks.useMutation<
+    __AdminCreateLinkMutation,
+    __AdminCreateLinkMutationVariables
+  >(__AdminCreateLinkDocument, options)
 }
 export type __AdminCreateLinkMutationHookResult = ReturnType<typeof use__AdminCreateLinkMutation>
 export type __AdminCreateLinkMutationResult = Apollo.MutationResult<__AdminCreateLinkMutation>
@@ -15107,16 +15189,16 @@ export type __AdminDeleteLinkMutationFn = Apollo.MutationFunction<
  * });
  */
 export function use__AdminDeleteLinkMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     __AdminDeleteLinkMutation,
     __AdminDeleteLinkMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<__AdminDeleteLinkMutation, __AdminDeleteLinkMutationVariables>(
-    __AdminDeleteLinkDocument,
-    options,
-  )
+  return ApolloReactHooks.useMutation<
+    __AdminDeleteLinkMutation,
+    __AdminDeleteLinkMutationVariables
+  >(__AdminDeleteLinkDocument, options)
 }
 export type __AdminDeleteLinkMutationHookResult = ReturnType<typeof use__AdminDeleteLinkMutation>
 export type __AdminDeleteLinkMutationResult = Apollo.MutationResult<__AdminDeleteLinkMutation>
@@ -15156,16 +15238,16 @@ export type __AdminUpdateLinkMutationFn = Apollo.MutationFunction<
  * });
  */
 export function use__AdminUpdateLinkMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     __AdminUpdateLinkMutation,
     __AdminUpdateLinkMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<__AdminUpdateLinkMutation, __AdminUpdateLinkMutationVariables>(
-    __AdminUpdateLinkDocument,
-    options,
-  )
+  return ApolloReactHooks.useMutation<
+    __AdminUpdateLinkMutation,
+    __AdminUpdateLinkMutationVariables
+  >(__AdminUpdateLinkDocument, options)
 }
 export type __AdminUpdateLinkMutationHookResult = ReturnType<typeof use__AdminUpdateLinkMutation>
 export type __AdminUpdateLinkMutationResult = Apollo.MutationResult<__AdminUpdateLinkMutation>
@@ -15199,29 +15281,32 @@ export const __AdminLinkDocument = gql`
  * });
  */
 export function use__AdminLinkQuery(
-  baseOptions: Apollo.QueryHookOptions<__AdminLinkQuery, __AdminLinkQueryVariables> &
+  baseOptions: ApolloReactHooks.QueryHookOptions<__AdminLinkQuery, __AdminLinkQueryVariables> &
     ({ variables: __AdminLinkQueryVariables; skip?: boolean } | { skip: boolean }),
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<__AdminLinkQuery, __AdminLinkQueryVariables>(__AdminLinkDocument, options)
+  return ApolloReactHooks.useQuery<__AdminLinkQuery, __AdminLinkQueryVariables>(
+    __AdminLinkDocument,
+    options,
+  )
 }
 export function use__AdminLinkLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<__AdminLinkQuery, __AdminLinkQueryVariables>,
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<__AdminLinkQuery, __AdminLinkQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<__AdminLinkQuery, __AdminLinkQueryVariables>(
+  return ApolloReactHooks.useLazyQuery<__AdminLinkQuery, __AdminLinkQueryVariables>(
     __AdminLinkDocument,
     options,
   )
 }
 export function use__AdminLinkSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<__AdminLinkQuery, __AdminLinkQueryVariables>,
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<__AdminLinkQuery, __AdminLinkQueryVariables>,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<__AdminLinkQuery, __AdminLinkQueryVariables>(
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<__AdminLinkQuery, __AdminLinkQueryVariables>(
     __AdminLinkDocument,
     options,
   )
@@ -15260,31 +15345,34 @@ export const __AdminLinksDocument = gql`
  * });
  */
 export function use__AdminLinksQuery(
-  baseOptions?: Apollo.QueryHookOptions<__AdminLinksQuery, __AdminLinksQueryVariables>,
+  baseOptions?: ApolloReactHooks.QueryHookOptions<__AdminLinksQuery, __AdminLinksQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<__AdminLinksQuery, __AdminLinksQueryVariables>(
+  return ApolloReactHooks.useQuery<__AdminLinksQuery, __AdminLinksQueryVariables>(
     __AdminLinksDocument,
     options,
   )
 }
 export function use__AdminLinksLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<__AdminLinksQuery, __AdminLinksQueryVariables>,
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    __AdminLinksQuery,
+    __AdminLinksQueryVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<__AdminLinksQuery, __AdminLinksQueryVariables>(
+  return ApolloReactHooks.useLazyQuery<__AdminLinksQuery, __AdminLinksQueryVariables>(
     __AdminLinksDocument,
     options,
   )
 }
 export function use__AdminLinksSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<__AdminLinksQuery, __AdminLinksQueryVariables>,
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<__AdminLinksQuery, __AdminLinksQueryVariables>,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<__AdminLinksQuery, __AdminLinksQueryVariables>(
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<__AdminLinksQuery, __AdminLinksQueryVariables>(
     __AdminLinksDocument,
     options,
   )
@@ -15322,43 +15410,43 @@ export const __AdminLinkPaginationDocument = gql`
  * });
  */
 export function use__AdminLinkPaginationQuery(
-  baseOptions?: Apollo.QueryHookOptions<
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
     __AdminLinkPaginationQuery,
     __AdminLinkPaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<__AdminLinkPaginationQuery, __AdminLinkPaginationQueryVariables>(
+  return ApolloReactHooks.useQuery<__AdminLinkPaginationQuery, __AdminLinkPaginationQueryVariables>(
     __AdminLinkPaginationDocument,
     options,
   )
 }
 export function use__AdminLinkPaginationLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
     __AdminLinkPaginationQuery,
     __AdminLinkPaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<__AdminLinkPaginationQuery, __AdminLinkPaginationQueryVariables>(
-    __AdminLinkPaginationDocument,
-    options,
-  )
+  return ApolloReactHooks.useLazyQuery<
+    __AdminLinkPaginationQuery,
+    __AdminLinkPaginationQueryVariables
+  >(__AdminLinkPaginationDocument, options)
 }
 export function use__AdminLinkPaginationSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
         __AdminLinkPaginationQuery,
         __AdminLinkPaginationQueryVariables
       >,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<__AdminLinkPaginationQuery, __AdminLinkPaginationQueryVariables>(
-    __AdminLinkPaginationDocument,
-    options,
-  )
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<
+    __AdminLinkPaginationQuery,
+    __AdminLinkPaginationQueryVariables
+  >(__AdminLinkPaginationDocument, options)
 }
 export type __AdminLinkPaginationQueryHookResult = ReturnType<typeof use__AdminLinkPaginationQuery>
 export type __AdminLinkPaginationLazyQueryHookResult = ReturnType<
@@ -15402,13 +15490,13 @@ export type __AdminCreateLoginAttemptMutationFn = Apollo.MutationFunction<
  * });
  */
 export function use__AdminCreateLoginAttemptMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     __AdminCreateLoginAttemptMutation,
     __AdminCreateLoginAttemptMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<
+  return ApolloReactHooks.useMutation<
     __AdminCreateLoginAttemptMutation,
     __AdminCreateLoginAttemptMutationVariables
   >(__AdminCreateLoginAttemptDocument, options)
@@ -15452,13 +15540,13 @@ export type __AdminDeleteLoginAttemptMutationFn = Apollo.MutationFunction<
  * });
  */
 export function use__AdminDeleteLoginAttemptMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     __AdminDeleteLoginAttemptMutation,
     __AdminDeleteLoginAttemptMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<
+  return ApolloReactHooks.useMutation<
     __AdminDeleteLoginAttemptMutation,
     __AdminDeleteLoginAttemptMutationVariables
   >(__AdminDeleteLoginAttemptDocument, options)
@@ -15504,13 +15592,13 @@ export type __AdminUpdateLoginAttemptMutationFn = Apollo.MutationFunction<
  * });
  */
 export function use__AdminUpdateLoginAttemptMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     __AdminUpdateLoginAttemptMutation,
     __AdminUpdateLoginAttemptMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<
+  return ApolloReactHooks.useMutation<
     __AdminUpdateLoginAttemptMutation,
     __AdminUpdateLoginAttemptMutationVariables
   >(__AdminUpdateLoginAttemptDocument, options)
@@ -15550,41 +15638,44 @@ export const __AdminLoginAttemptDocument = gql`
  * });
  */
 export function use__AdminLoginAttemptQuery(
-  baseOptions: Apollo.QueryHookOptions<
+  baseOptions: ApolloReactHooks.QueryHookOptions<
     __AdminLoginAttemptQuery,
     __AdminLoginAttemptQueryVariables
   > &
     ({ variables: __AdminLoginAttemptQueryVariables; skip?: boolean } | { skip: boolean }),
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<__AdminLoginAttemptQuery, __AdminLoginAttemptQueryVariables>(
+  return ApolloReactHooks.useQuery<__AdminLoginAttemptQuery, __AdminLoginAttemptQueryVariables>(
     __AdminLoginAttemptDocument,
     options,
   )
 }
 export function use__AdminLoginAttemptLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
     __AdminLoginAttemptQuery,
     __AdminLoginAttemptQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<__AdminLoginAttemptQuery, __AdminLoginAttemptQueryVariables>(
+  return ApolloReactHooks.useLazyQuery<__AdminLoginAttemptQuery, __AdminLoginAttemptQueryVariables>(
     __AdminLoginAttemptDocument,
     options,
   )
 }
 export function use__AdminLoginAttemptSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<__AdminLoginAttemptQuery, __AdminLoginAttemptQueryVariables>,
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        __AdminLoginAttemptQuery,
+        __AdminLoginAttemptQueryVariables
+      >,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<__AdminLoginAttemptQuery, __AdminLoginAttemptQueryVariables>(
-    __AdminLoginAttemptDocument,
-    options,
-  )
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<
+    __AdminLoginAttemptQuery,
+    __AdminLoginAttemptQueryVariables
+  >(__AdminLoginAttemptDocument, options)
 }
 export type __AdminLoginAttemptQueryHookResult = ReturnType<typeof use__AdminLoginAttemptQuery>
 export type __AdminLoginAttemptLazyQueryHookResult = ReturnType<
@@ -15627,43 +15718,43 @@ export const __AdminLoginAttemptsDocument = gql`
  * });
  */
 export function use__AdminLoginAttemptsQuery(
-  baseOptions?: Apollo.QueryHookOptions<
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
     __AdminLoginAttemptsQuery,
     __AdminLoginAttemptsQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<__AdminLoginAttemptsQuery, __AdminLoginAttemptsQueryVariables>(
+  return ApolloReactHooks.useQuery<__AdminLoginAttemptsQuery, __AdminLoginAttemptsQueryVariables>(
     __AdminLoginAttemptsDocument,
     options,
   )
 }
 export function use__AdminLoginAttemptsLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
     __AdminLoginAttemptsQuery,
     __AdminLoginAttemptsQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<__AdminLoginAttemptsQuery, __AdminLoginAttemptsQueryVariables>(
-    __AdminLoginAttemptsDocument,
-    options,
-  )
+  return ApolloReactHooks.useLazyQuery<
+    __AdminLoginAttemptsQuery,
+    __AdminLoginAttemptsQueryVariables
+  >(__AdminLoginAttemptsDocument, options)
 }
 export function use__AdminLoginAttemptsSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
         __AdminLoginAttemptsQuery,
         __AdminLoginAttemptsQueryVariables
       >,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<__AdminLoginAttemptsQuery, __AdminLoginAttemptsQueryVariables>(
-    __AdminLoginAttemptsDocument,
-    options,
-  )
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<
+    __AdminLoginAttemptsQuery,
+    __AdminLoginAttemptsQueryVariables
+  >(__AdminLoginAttemptsDocument, options)
 }
 export type __AdminLoginAttemptsQueryHookResult = ReturnType<typeof use__AdminLoginAttemptsQuery>
 export type __AdminLoginAttemptsLazyQueryHookResult = ReturnType<
@@ -15702,40 +15793,40 @@ export const __AdminLoginAttemptPaginationDocument = gql`
  * });
  */
 export function use__AdminLoginAttemptPaginationQuery(
-  baseOptions?: Apollo.QueryHookOptions<
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
     __AdminLoginAttemptPaginationQuery,
     __AdminLoginAttemptPaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<
+  return ApolloReactHooks.useQuery<
     __AdminLoginAttemptPaginationQuery,
     __AdminLoginAttemptPaginationQueryVariables
   >(__AdminLoginAttemptPaginationDocument, options)
 }
 export function use__AdminLoginAttemptPaginationLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
     __AdminLoginAttemptPaginationQuery,
     __AdminLoginAttemptPaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<
+  return ApolloReactHooks.useLazyQuery<
     __AdminLoginAttemptPaginationQuery,
     __AdminLoginAttemptPaginationQueryVariables
   >(__AdminLoginAttemptPaginationDocument, options)
 }
 export function use__AdminLoginAttemptPaginationSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
         __AdminLoginAttemptPaginationQuery,
         __AdminLoginAttemptPaginationQueryVariables
       >,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<
     __AdminLoginAttemptPaginationQuery,
     __AdminLoginAttemptPaginationQueryVariables
   >(__AdminLoginAttemptPaginationDocument, options)
@@ -15784,13 +15875,13 @@ export type __AdminCreateOAuthAccountMutationFn = Apollo.MutationFunction<
  * });
  */
 export function use__AdminCreateOAuthAccountMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     __AdminCreateOAuthAccountMutation,
     __AdminCreateOAuthAccountMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<
+  return ApolloReactHooks.useMutation<
     __AdminCreateOAuthAccountMutation,
     __AdminCreateOAuthAccountMutationVariables
   >(__AdminCreateOAuthAccountDocument, options)
@@ -15834,13 +15925,13 @@ export type __AdminDeleteOAuthAccountMutationFn = Apollo.MutationFunction<
  * });
  */
 export function use__AdminDeleteOAuthAccountMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     __AdminDeleteOAuthAccountMutation,
     __AdminDeleteOAuthAccountMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<
+  return ApolloReactHooks.useMutation<
     __AdminDeleteOAuthAccountMutation,
     __AdminDeleteOAuthAccountMutationVariables
   >(__AdminDeleteOAuthAccountDocument, options)
@@ -15886,13 +15977,13 @@ export type __AdminUpdateOAuthAccountMutationFn = Apollo.MutationFunction<
  * });
  */
 export function use__AdminUpdateOAuthAccountMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     __AdminUpdateOAuthAccountMutation,
     __AdminUpdateOAuthAccountMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<
+  return ApolloReactHooks.useMutation<
     __AdminUpdateOAuthAccountMutation,
     __AdminUpdateOAuthAccountMutationVariables
   >(__AdminUpdateOAuthAccountDocument, options)
@@ -15932,41 +16023,44 @@ export const __AdminOAuthAccountDocument = gql`
  * });
  */
 export function use__AdminOAuthAccountQuery(
-  baseOptions: Apollo.QueryHookOptions<
+  baseOptions: ApolloReactHooks.QueryHookOptions<
     __AdminOAuthAccountQuery,
     __AdminOAuthAccountQueryVariables
   > &
     ({ variables: __AdminOAuthAccountQueryVariables; skip?: boolean } | { skip: boolean }),
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<__AdminOAuthAccountQuery, __AdminOAuthAccountQueryVariables>(
+  return ApolloReactHooks.useQuery<__AdminOAuthAccountQuery, __AdminOAuthAccountQueryVariables>(
     __AdminOAuthAccountDocument,
     options,
   )
 }
 export function use__AdminOAuthAccountLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
     __AdminOAuthAccountQuery,
     __AdminOAuthAccountQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<__AdminOAuthAccountQuery, __AdminOAuthAccountQueryVariables>(
+  return ApolloReactHooks.useLazyQuery<__AdminOAuthAccountQuery, __AdminOAuthAccountQueryVariables>(
     __AdminOAuthAccountDocument,
     options,
   )
 }
 export function use__AdminOAuthAccountSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<__AdminOAuthAccountQuery, __AdminOAuthAccountQueryVariables>,
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        __AdminOAuthAccountQuery,
+        __AdminOAuthAccountQueryVariables
+      >,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<__AdminOAuthAccountQuery, __AdminOAuthAccountQueryVariables>(
-    __AdminOAuthAccountDocument,
-    options,
-  )
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<
+    __AdminOAuthAccountQuery,
+    __AdminOAuthAccountQueryVariables
+  >(__AdminOAuthAccountDocument, options)
 }
 export type __AdminOAuthAccountQueryHookResult = ReturnType<typeof use__AdminOAuthAccountQuery>
 export type __AdminOAuthAccountLazyQueryHookResult = ReturnType<
@@ -16009,43 +16103,43 @@ export const __AdminOAuthAccountsDocument = gql`
  * });
  */
 export function use__AdminOAuthAccountsQuery(
-  baseOptions?: Apollo.QueryHookOptions<
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
     __AdminOAuthAccountsQuery,
     __AdminOAuthAccountsQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<__AdminOAuthAccountsQuery, __AdminOAuthAccountsQueryVariables>(
+  return ApolloReactHooks.useQuery<__AdminOAuthAccountsQuery, __AdminOAuthAccountsQueryVariables>(
     __AdminOAuthAccountsDocument,
     options,
   )
 }
 export function use__AdminOAuthAccountsLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
     __AdminOAuthAccountsQuery,
     __AdminOAuthAccountsQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<__AdminOAuthAccountsQuery, __AdminOAuthAccountsQueryVariables>(
-    __AdminOAuthAccountsDocument,
-    options,
-  )
+  return ApolloReactHooks.useLazyQuery<
+    __AdminOAuthAccountsQuery,
+    __AdminOAuthAccountsQueryVariables
+  >(__AdminOAuthAccountsDocument, options)
 }
 export function use__AdminOAuthAccountsSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
         __AdminOAuthAccountsQuery,
         __AdminOAuthAccountsQueryVariables
       >,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<__AdminOAuthAccountsQuery, __AdminOAuthAccountsQueryVariables>(
-    __AdminOAuthAccountsDocument,
-    options,
-  )
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<
+    __AdminOAuthAccountsQuery,
+    __AdminOAuthAccountsQueryVariables
+  >(__AdminOAuthAccountsDocument, options)
 }
 export type __AdminOAuthAccountsQueryHookResult = ReturnType<typeof use__AdminOAuthAccountsQuery>
 export type __AdminOAuthAccountsLazyQueryHookResult = ReturnType<
@@ -16084,40 +16178,40 @@ export const __AdminOAuthAccountPaginationDocument = gql`
  * });
  */
 export function use__AdminOAuthAccountPaginationQuery(
-  baseOptions?: Apollo.QueryHookOptions<
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
     __AdminOAuthAccountPaginationQuery,
     __AdminOAuthAccountPaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<
+  return ApolloReactHooks.useQuery<
     __AdminOAuthAccountPaginationQuery,
     __AdminOAuthAccountPaginationQueryVariables
   >(__AdminOAuthAccountPaginationDocument, options)
 }
 export function use__AdminOAuthAccountPaginationLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
     __AdminOAuthAccountPaginationQuery,
     __AdminOAuthAccountPaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<
+  return ApolloReactHooks.useLazyQuery<
     __AdminOAuthAccountPaginationQuery,
     __AdminOAuthAccountPaginationQueryVariables
   >(__AdminOAuthAccountPaginationDocument, options)
 }
 export function use__AdminOAuthAccountPaginationSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
         __AdminOAuthAccountPaginationQuery,
         __AdminOAuthAccountPaginationQueryVariables
       >,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<
     __AdminOAuthAccountPaginationQuery,
     __AdminOAuthAccountPaginationQueryVariables
   >(__AdminOAuthAccountPaginationDocument, options)
@@ -16166,13 +16260,13 @@ export type __AdminCreateOrganizationMemberMutationFn = Apollo.MutationFunction<
  * });
  */
 export function use__AdminCreateOrganizationMemberMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     __AdminCreateOrganizationMemberMutation,
     __AdminCreateOrganizationMemberMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<
+  return ApolloReactHooks.useMutation<
     __AdminCreateOrganizationMemberMutation,
     __AdminCreateOrganizationMemberMutationVariables
   >(__AdminCreateOrganizationMemberDocument, options)
@@ -16216,13 +16310,13 @@ export type __AdminDeleteOrganizationMemberMutationFn = Apollo.MutationFunction<
  * });
  */
 export function use__AdminDeleteOrganizationMemberMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     __AdminDeleteOrganizationMemberMutation,
     __AdminDeleteOrganizationMemberMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<
+  return ApolloReactHooks.useMutation<
     __AdminDeleteOrganizationMemberMutation,
     __AdminDeleteOrganizationMemberMutationVariables
   >(__AdminDeleteOrganizationMemberDocument, options)
@@ -16271,13 +16365,13 @@ export type __AdminUpdateOrganizationMemberMutationFn = Apollo.MutationFunction<
  * });
  */
 export function use__AdminUpdateOrganizationMemberMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     __AdminUpdateOrganizationMemberMutation,
     __AdminUpdateOrganizationMemberMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<
+  return ApolloReactHooks.useMutation<
     __AdminUpdateOrganizationMemberMutation,
     __AdminUpdateOrganizationMemberMutationVariables
   >(__AdminUpdateOrganizationMemberDocument, options)
@@ -16317,41 +16411,41 @@ export const __AdminOrganizationMemberDocument = gql`
  * });
  */
 export function use__AdminOrganizationMemberQuery(
-  baseOptions: Apollo.QueryHookOptions<
+  baseOptions: ApolloReactHooks.QueryHookOptions<
     __AdminOrganizationMemberQuery,
     __AdminOrganizationMemberQueryVariables
   > &
     ({ variables: __AdminOrganizationMemberQueryVariables; skip?: boolean } | { skip: boolean }),
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<__AdminOrganizationMemberQuery, __AdminOrganizationMemberQueryVariables>(
-    __AdminOrganizationMemberDocument,
-    options,
-  )
+  return ApolloReactHooks.useQuery<
+    __AdminOrganizationMemberQuery,
+    __AdminOrganizationMemberQueryVariables
+  >(__AdminOrganizationMemberDocument, options)
 }
 export function use__AdminOrganizationMemberLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
     __AdminOrganizationMemberQuery,
     __AdminOrganizationMemberQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<
+  return ApolloReactHooks.useLazyQuery<
     __AdminOrganizationMemberQuery,
     __AdminOrganizationMemberQueryVariables
   >(__AdminOrganizationMemberDocument, options)
 }
 export function use__AdminOrganizationMemberSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
         __AdminOrganizationMemberQuery,
         __AdminOrganizationMemberQueryVariables
       >,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<
     __AdminOrganizationMemberQuery,
     __AdminOrganizationMemberQueryVariables
   >(__AdminOrganizationMemberDocument, options)
@@ -16399,40 +16493,40 @@ export const __AdminOrganizationMembersDocument = gql`
  * });
  */
 export function use__AdminOrganizationMembersQuery(
-  baseOptions?: Apollo.QueryHookOptions<
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
     __AdminOrganizationMembersQuery,
     __AdminOrganizationMembersQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<__AdminOrganizationMembersQuery, __AdminOrganizationMembersQueryVariables>(
-    __AdminOrganizationMembersDocument,
-    options,
-  )
+  return ApolloReactHooks.useQuery<
+    __AdminOrganizationMembersQuery,
+    __AdminOrganizationMembersQueryVariables
+  >(__AdminOrganizationMembersDocument, options)
 }
 export function use__AdminOrganizationMembersLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
     __AdminOrganizationMembersQuery,
     __AdminOrganizationMembersQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<
+  return ApolloReactHooks.useLazyQuery<
     __AdminOrganizationMembersQuery,
     __AdminOrganizationMembersQueryVariables
   >(__AdminOrganizationMembersDocument, options)
 }
 export function use__AdminOrganizationMembersSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
         __AdminOrganizationMembersQuery,
         __AdminOrganizationMembersQueryVariables
       >,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<
     __AdminOrganizationMembersQuery,
     __AdminOrganizationMembersQueryVariables
   >(__AdminOrganizationMembersDocument, options)
@@ -16476,40 +16570,40 @@ export const __AdminOrganizationMemberPaginationDocument = gql`
  * });
  */
 export function use__AdminOrganizationMemberPaginationQuery(
-  baseOptions?: Apollo.QueryHookOptions<
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
     __AdminOrganizationMemberPaginationQuery,
     __AdminOrganizationMemberPaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<
+  return ApolloReactHooks.useQuery<
     __AdminOrganizationMemberPaginationQuery,
     __AdminOrganizationMemberPaginationQueryVariables
   >(__AdminOrganizationMemberPaginationDocument, options)
 }
 export function use__AdminOrganizationMemberPaginationLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
     __AdminOrganizationMemberPaginationQuery,
     __AdminOrganizationMemberPaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<
+  return ApolloReactHooks.useLazyQuery<
     __AdminOrganizationMemberPaginationQuery,
     __AdminOrganizationMemberPaginationQueryVariables
   >(__AdminOrganizationMemberPaginationDocument, options)
 }
 export function use__AdminOrganizationMemberPaginationSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
         __AdminOrganizationMemberPaginationQuery,
         __AdminOrganizationMemberPaginationQueryVariables
       >,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<
     __AdminOrganizationMemberPaginationQuery,
     __AdminOrganizationMemberPaginationQueryVariables
   >(__AdminOrganizationMemberPaginationDocument, options)
@@ -16558,13 +16652,13 @@ export type __AdminCreateOrganizationMutationFn = Apollo.MutationFunction<
  * });
  */
 export function use__AdminCreateOrganizationMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     __AdminCreateOrganizationMutation,
     __AdminCreateOrganizationMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<
+  return ApolloReactHooks.useMutation<
     __AdminCreateOrganizationMutation,
     __AdminCreateOrganizationMutationVariables
   >(__AdminCreateOrganizationDocument, options)
@@ -16608,13 +16702,13 @@ export type __AdminDeleteOrganizationMutationFn = Apollo.MutationFunction<
  * });
  */
 export function use__AdminDeleteOrganizationMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     __AdminDeleteOrganizationMutation,
     __AdminDeleteOrganizationMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<
+  return ApolloReactHooks.useMutation<
     __AdminDeleteOrganizationMutation,
     __AdminDeleteOrganizationMutationVariables
   >(__AdminDeleteOrganizationDocument, options)
@@ -16660,13 +16754,13 @@ export type __AdminUpdateOrganizationMutationFn = Apollo.MutationFunction<
  * });
  */
 export function use__AdminUpdateOrganizationMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     __AdminUpdateOrganizationMutation,
     __AdminUpdateOrganizationMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<
+  return ApolloReactHooks.useMutation<
     __AdminUpdateOrganizationMutation,
     __AdminUpdateOrganizationMutationVariables
   >(__AdminUpdateOrganizationDocument, options)
@@ -16706,41 +16800,44 @@ export const __AdminOrganizationDocument = gql`
  * });
  */
 export function use__AdminOrganizationQuery(
-  baseOptions: Apollo.QueryHookOptions<
+  baseOptions: ApolloReactHooks.QueryHookOptions<
     __AdminOrganizationQuery,
     __AdminOrganizationQueryVariables
   > &
     ({ variables: __AdminOrganizationQueryVariables; skip?: boolean } | { skip: boolean }),
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<__AdminOrganizationQuery, __AdminOrganizationQueryVariables>(
+  return ApolloReactHooks.useQuery<__AdminOrganizationQuery, __AdminOrganizationQueryVariables>(
     __AdminOrganizationDocument,
     options,
   )
 }
 export function use__AdminOrganizationLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
     __AdminOrganizationQuery,
     __AdminOrganizationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<__AdminOrganizationQuery, __AdminOrganizationQueryVariables>(
+  return ApolloReactHooks.useLazyQuery<__AdminOrganizationQuery, __AdminOrganizationQueryVariables>(
     __AdminOrganizationDocument,
     options,
   )
 }
 export function use__AdminOrganizationSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<__AdminOrganizationQuery, __AdminOrganizationQueryVariables>,
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        __AdminOrganizationQuery,
+        __AdminOrganizationQueryVariables
+      >,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<__AdminOrganizationQuery, __AdminOrganizationQueryVariables>(
-    __AdminOrganizationDocument,
-    options,
-  )
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<
+    __AdminOrganizationQuery,
+    __AdminOrganizationQueryVariables
+  >(__AdminOrganizationDocument, options)
 }
 export type __AdminOrganizationQueryHookResult = ReturnType<typeof use__AdminOrganizationQuery>
 export type __AdminOrganizationLazyQueryHookResult = ReturnType<
@@ -16783,43 +16880,43 @@ export const __AdminOrganizationsDocument = gql`
  * });
  */
 export function use__AdminOrganizationsQuery(
-  baseOptions?: Apollo.QueryHookOptions<
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
     __AdminOrganizationsQuery,
     __AdminOrganizationsQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<__AdminOrganizationsQuery, __AdminOrganizationsQueryVariables>(
+  return ApolloReactHooks.useQuery<__AdminOrganizationsQuery, __AdminOrganizationsQueryVariables>(
     __AdminOrganizationsDocument,
     options,
   )
 }
 export function use__AdminOrganizationsLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
     __AdminOrganizationsQuery,
     __AdminOrganizationsQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<__AdminOrganizationsQuery, __AdminOrganizationsQueryVariables>(
-    __AdminOrganizationsDocument,
-    options,
-  )
+  return ApolloReactHooks.useLazyQuery<
+    __AdminOrganizationsQuery,
+    __AdminOrganizationsQueryVariables
+  >(__AdminOrganizationsDocument, options)
 }
 export function use__AdminOrganizationsSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
         __AdminOrganizationsQuery,
         __AdminOrganizationsQueryVariables
       >,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<__AdminOrganizationsQuery, __AdminOrganizationsQueryVariables>(
-    __AdminOrganizationsDocument,
-    options,
-  )
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<
+    __AdminOrganizationsQuery,
+    __AdminOrganizationsQueryVariables
+  >(__AdminOrganizationsDocument, options)
 }
 export type __AdminOrganizationsQueryHookResult = ReturnType<typeof use__AdminOrganizationsQuery>
 export type __AdminOrganizationsLazyQueryHookResult = ReturnType<
@@ -16858,40 +16955,40 @@ export const __AdminOrganizationPaginationDocument = gql`
  * });
  */
 export function use__AdminOrganizationPaginationQuery(
-  baseOptions?: Apollo.QueryHookOptions<
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
     __AdminOrganizationPaginationQuery,
     __AdminOrganizationPaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<
+  return ApolloReactHooks.useQuery<
     __AdminOrganizationPaginationQuery,
     __AdminOrganizationPaginationQueryVariables
   >(__AdminOrganizationPaginationDocument, options)
 }
 export function use__AdminOrganizationPaginationLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
     __AdminOrganizationPaginationQuery,
     __AdminOrganizationPaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<
+  return ApolloReactHooks.useLazyQuery<
     __AdminOrganizationPaginationQuery,
     __AdminOrganizationPaginationQueryVariables
   >(__AdminOrganizationPaginationDocument, options)
 }
 export function use__AdminOrganizationPaginationSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
         __AdminOrganizationPaginationQuery,
         __AdminOrganizationPaginationQueryVariables
       >,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<
     __AdminOrganizationPaginationQuery,
     __AdminOrganizationPaginationQueryVariables
   >(__AdminOrganizationPaginationDocument, options)
@@ -16940,13 +17037,13 @@ export type __AdminCreatePermissionMutationFn = Apollo.MutationFunction<
  * });
  */
 export function use__AdminCreatePermissionMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     __AdminCreatePermissionMutation,
     __AdminCreatePermissionMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<
+  return ApolloReactHooks.useMutation<
     __AdminCreatePermissionMutation,
     __AdminCreatePermissionMutationVariables
   >(__AdminCreatePermissionDocument, options)
@@ -16990,13 +17087,13 @@ export type __AdminDeletePermissionMutationFn = Apollo.MutationFunction<
  * });
  */
 export function use__AdminDeletePermissionMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     __AdminDeletePermissionMutation,
     __AdminDeletePermissionMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<
+  return ApolloReactHooks.useMutation<
     __AdminDeletePermissionMutation,
     __AdminDeletePermissionMutationVariables
   >(__AdminDeletePermissionDocument, options)
@@ -17042,13 +17139,13 @@ export type __AdminUpdatePermissionMutationFn = Apollo.MutationFunction<
  * });
  */
 export function use__AdminUpdatePermissionMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     __AdminUpdatePermissionMutation,
     __AdminUpdatePermissionMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<
+  return ApolloReactHooks.useMutation<
     __AdminUpdatePermissionMutation,
     __AdminUpdatePermissionMutationVariables
   >(__AdminUpdatePermissionDocument, options)
@@ -17088,35 +17185,41 @@ export const __AdminPermissionDocument = gql`
  * });
  */
 export function use__AdminPermissionQuery(
-  baseOptions: Apollo.QueryHookOptions<__AdminPermissionQuery, __AdminPermissionQueryVariables> &
+  baseOptions: ApolloReactHooks.QueryHookOptions<
+    __AdminPermissionQuery,
+    __AdminPermissionQueryVariables
+  > &
     ({ variables: __AdminPermissionQueryVariables; skip?: boolean } | { skip: boolean }),
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<__AdminPermissionQuery, __AdminPermissionQueryVariables>(
+  return ApolloReactHooks.useQuery<__AdminPermissionQuery, __AdminPermissionQueryVariables>(
     __AdminPermissionDocument,
     options,
   )
 }
 export function use__AdminPermissionLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
     __AdminPermissionQuery,
     __AdminPermissionQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<__AdminPermissionQuery, __AdminPermissionQueryVariables>(
+  return ApolloReactHooks.useLazyQuery<__AdminPermissionQuery, __AdminPermissionQueryVariables>(
     __AdminPermissionDocument,
     options,
   )
 }
 export function use__AdminPermissionSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<__AdminPermissionQuery, __AdminPermissionQueryVariables>,
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        __AdminPermissionQuery,
+        __AdminPermissionQueryVariables
+      >,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<__AdminPermissionQuery, __AdminPermissionQueryVariables>(
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<__AdminPermissionQuery, __AdminPermissionQueryVariables>(
     __AdminPermissionDocument,
     options,
   )
@@ -17160,37 +17263,43 @@ export const __AdminPermissionsDocument = gql`
  * });
  */
 export function use__AdminPermissionsQuery(
-  baseOptions?: Apollo.QueryHookOptions<__AdminPermissionsQuery, __AdminPermissionsQueryVariables>,
-) {
-  const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<__AdminPermissionsQuery, __AdminPermissionsQueryVariables>(
-    __AdminPermissionsDocument,
-    options,
-  )
-}
-export function use__AdminPermissionsLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
     __AdminPermissionsQuery,
     __AdminPermissionsQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<__AdminPermissionsQuery, __AdminPermissionsQueryVariables>(
+  return ApolloReactHooks.useQuery<__AdminPermissionsQuery, __AdminPermissionsQueryVariables>(
+    __AdminPermissionsDocument,
+    options,
+  )
+}
+export function use__AdminPermissionsLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    __AdminPermissionsQuery,
+    __AdminPermissionsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useLazyQuery<__AdminPermissionsQuery, __AdminPermissionsQueryVariables>(
     __AdminPermissionsDocument,
     options,
   )
 }
 export function use__AdminPermissionsSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<__AdminPermissionsQuery, __AdminPermissionsQueryVariables>,
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        __AdminPermissionsQuery,
+        __AdminPermissionsQueryVariables
+      >,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<__AdminPermissionsQuery, __AdminPermissionsQueryVariables>(
-    __AdminPermissionsDocument,
-    options,
-  )
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<
+    __AdminPermissionsQuery,
+    __AdminPermissionsQueryVariables
+  >(__AdminPermissionsDocument, options)
 }
 export type __AdminPermissionsQueryHookResult = ReturnType<typeof use__AdminPermissionsQuery>
 export type __AdminPermissionsLazyQueryHookResult = ReturnType<
@@ -17229,40 +17338,40 @@ export const __AdminPermissionPaginationDocument = gql`
  * });
  */
 export function use__AdminPermissionPaginationQuery(
-  baseOptions?: Apollo.QueryHookOptions<
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
     __AdminPermissionPaginationQuery,
     __AdminPermissionPaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<
+  return ApolloReactHooks.useQuery<
     __AdminPermissionPaginationQuery,
     __AdminPermissionPaginationQueryVariables
   >(__AdminPermissionPaginationDocument, options)
 }
 export function use__AdminPermissionPaginationLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
     __AdminPermissionPaginationQuery,
     __AdminPermissionPaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<
+  return ApolloReactHooks.useLazyQuery<
     __AdminPermissionPaginationQuery,
     __AdminPermissionPaginationQueryVariables
   >(__AdminPermissionPaginationDocument, options)
 }
 export function use__AdminPermissionPaginationSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
         __AdminPermissionPaginationQuery,
         __AdminPermissionPaginationQueryVariables
       >,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<
     __AdminPermissionPaginationQuery,
     __AdminPermissionPaginationQueryVariables
   >(__AdminPermissionPaginationDocument, options)
@@ -17311,13 +17420,13 @@ export type __AdminCreatePhoneNumberMutationFn = Apollo.MutationFunction<
  * });
  */
 export function use__AdminCreatePhoneNumberMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     __AdminCreatePhoneNumberMutation,
     __AdminCreatePhoneNumberMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<
+  return ApolloReactHooks.useMutation<
     __AdminCreatePhoneNumberMutation,
     __AdminCreatePhoneNumberMutationVariables
   >(__AdminCreatePhoneNumberDocument, options)
@@ -17361,13 +17470,13 @@ export type __AdminDeletePhoneNumberMutationFn = Apollo.MutationFunction<
  * });
  */
 export function use__AdminDeletePhoneNumberMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     __AdminDeletePhoneNumberMutation,
     __AdminDeletePhoneNumberMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<
+  return ApolloReactHooks.useMutation<
     __AdminDeletePhoneNumberMutation,
     __AdminDeletePhoneNumberMutationVariables
   >(__AdminDeletePhoneNumberDocument, options)
@@ -17413,13 +17522,13 @@ export type __AdminUpdatePhoneNumberMutationFn = Apollo.MutationFunction<
  * });
  */
 export function use__AdminUpdatePhoneNumberMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     __AdminUpdatePhoneNumberMutation,
     __AdminUpdatePhoneNumberMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<
+  return ApolloReactHooks.useMutation<
     __AdminUpdatePhoneNumberMutation,
     __AdminUpdatePhoneNumberMutationVariables
   >(__AdminUpdatePhoneNumberDocument, options)
@@ -17459,38 +17568,44 @@ export const __AdminPhoneNumberDocument = gql`
  * });
  */
 export function use__AdminPhoneNumberQuery(
-  baseOptions: Apollo.QueryHookOptions<__AdminPhoneNumberQuery, __AdminPhoneNumberQueryVariables> &
+  baseOptions: ApolloReactHooks.QueryHookOptions<
+    __AdminPhoneNumberQuery,
+    __AdminPhoneNumberQueryVariables
+  > &
     ({ variables: __AdminPhoneNumberQueryVariables; skip?: boolean } | { skip: boolean }),
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<__AdminPhoneNumberQuery, __AdminPhoneNumberQueryVariables>(
+  return ApolloReactHooks.useQuery<__AdminPhoneNumberQuery, __AdminPhoneNumberQueryVariables>(
     __AdminPhoneNumberDocument,
     options,
   )
 }
 export function use__AdminPhoneNumberLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
     __AdminPhoneNumberQuery,
     __AdminPhoneNumberQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<__AdminPhoneNumberQuery, __AdminPhoneNumberQueryVariables>(
+  return ApolloReactHooks.useLazyQuery<__AdminPhoneNumberQuery, __AdminPhoneNumberQueryVariables>(
     __AdminPhoneNumberDocument,
     options,
   )
 }
 export function use__AdminPhoneNumberSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<__AdminPhoneNumberQuery, __AdminPhoneNumberQueryVariables>,
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        __AdminPhoneNumberQuery,
+        __AdminPhoneNumberQueryVariables
+      >,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<__AdminPhoneNumberQuery, __AdminPhoneNumberQueryVariables>(
-    __AdminPhoneNumberDocument,
-    options,
-  )
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<
+    __AdminPhoneNumberQuery,
+    __AdminPhoneNumberQueryVariables
+  >(__AdminPhoneNumberDocument, options)
 }
 export type __AdminPhoneNumberQueryHookResult = ReturnType<typeof use__AdminPhoneNumberQuery>
 export type __AdminPhoneNumberLazyQueryHookResult = ReturnType<
@@ -17533,40 +17648,43 @@ export const __AdminPhoneNumbersDocument = gql`
  * });
  */
 export function use__AdminPhoneNumbersQuery(
-  baseOptions?: Apollo.QueryHookOptions<
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
     __AdminPhoneNumbersQuery,
     __AdminPhoneNumbersQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<__AdminPhoneNumbersQuery, __AdminPhoneNumbersQueryVariables>(
+  return ApolloReactHooks.useQuery<__AdminPhoneNumbersQuery, __AdminPhoneNumbersQueryVariables>(
     __AdminPhoneNumbersDocument,
     options,
   )
 }
 export function use__AdminPhoneNumbersLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
     __AdminPhoneNumbersQuery,
     __AdminPhoneNumbersQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<__AdminPhoneNumbersQuery, __AdminPhoneNumbersQueryVariables>(
+  return ApolloReactHooks.useLazyQuery<__AdminPhoneNumbersQuery, __AdminPhoneNumbersQueryVariables>(
     __AdminPhoneNumbersDocument,
     options,
   )
 }
 export function use__AdminPhoneNumbersSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<__AdminPhoneNumbersQuery, __AdminPhoneNumbersQueryVariables>,
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        __AdminPhoneNumbersQuery,
+        __AdminPhoneNumbersQueryVariables
+      >,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<__AdminPhoneNumbersQuery, __AdminPhoneNumbersQueryVariables>(
-    __AdminPhoneNumbersDocument,
-    options,
-  )
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<
+    __AdminPhoneNumbersQuery,
+    __AdminPhoneNumbersQueryVariables
+  >(__AdminPhoneNumbersDocument, options)
 }
 export type __AdminPhoneNumbersQueryHookResult = ReturnType<typeof use__AdminPhoneNumbersQuery>
 export type __AdminPhoneNumbersLazyQueryHookResult = ReturnType<
@@ -17605,40 +17723,40 @@ export const __AdminPhoneNumberPaginationDocument = gql`
  * });
  */
 export function use__AdminPhoneNumberPaginationQuery(
-  baseOptions?: Apollo.QueryHookOptions<
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
     __AdminPhoneNumberPaginationQuery,
     __AdminPhoneNumberPaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<
+  return ApolloReactHooks.useQuery<
     __AdminPhoneNumberPaginationQuery,
     __AdminPhoneNumberPaginationQueryVariables
   >(__AdminPhoneNumberPaginationDocument, options)
 }
 export function use__AdminPhoneNumberPaginationLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
     __AdminPhoneNumberPaginationQuery,
     __AdminPhoneNumberPaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<
+  return ApolloReactHooks.useLazyQuery<
     __AdminPhoneNumberPaginationQuery,
     __AdminPhoneNumberPaginationQueryVariables
   >(__AdminPhoneNumberPaginationDocument, options)
 }
 export function use__AdminPhoneNumberPaginationSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
         __AdminPhoneNumberPaginationQuery,
         __AdminPhoneNumberPaginationQueryVariables
       >,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<
     __AdminPhoneNumberPaginationQuery,
     __AdminPhoneNumberPaginationQueryVariables
   >(__AdminPhoneNumberPaginationDocument, options)
@@ -17687,16 +17805,16 @@ export type __AdminCreatePlanMutationFn = Apollo.MutationFunction<
  * });
  */
 export function use__AdminCreatePlanMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     __AdminCreatePlanMutation,
     __AdminCreatePlanMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<__AdminCreatePlanMutation, __AdminCreatePlanMutationVariables>(
-    __AdminCreatePlanDocument,
-    options,
-  )
+  return ApolloReactHooks.useMutation<
+    __AdminCreatePlanMutation,
+    __AdminCreatePlanMutationVariables
+  >(__AdminCreatePlanDocument, options)
 }
 export type __AdminCreatePlanMutationHookResult = ReturnType<typeof use__AdminCreatePlanMutation>
 export type __AdminCreatePlanMutationResult = Apollo.MutationResult<__AdminCreatePlanMutation>
@@ -17734,16 +17852,16 @@ export type __AdminDeletePlanMutationFn = Apollo.MutationFunction<
  * });
  */
 export function use__AdminDeletePlanMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     __AdminDeletePlanMutation,
     __AdminDeletePlanMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<__AdminDeletePlanMutation, __AdminDeletePlanMutationVariables>(
-    __AdminDeletePlanDocument,
-    options,
-  )
+  return ApolloReactHooks.useMutation<
+    __AdminDeletePlanMutation,
+    __AdminDeletePlanMutationVariables
+  >(__AdminDeletePlanDocument, options)
 }
 export type __AdminDeletePlanMutationHookResult = ReturnType<typeof use__AdminDeletePlanMutation>
 export type __AdminDeletePlanMutationResult = Apollo.MutationResult<__AdminDeletePlanMutation>
@@ -17783,16 +17901,16 @@ export type __AdminUpdatePlanMutationFn = Apollo.MutationFunction<
  * });
  */
 export function use__AdminUpdatePlanMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     __AdminUpdatePlanMutation,
     __AdminUpdatePlanMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<__AdminUpdatePlanMutation, __AdminUpdatePlanMutationVariables>(
-    __AdminUpdatePlanDocument,
-    options,
-  )
+  return ApolloReactHooks.useMutation<
+    __AdminUpdatePlanMutation,
+    __AdminUpdatePlanMutationVariables
+  >(__AdminUpdatePlanDocument, options)
 }
 export type __AdminUpdatePlanMutationHookResult = ReturnType<typeof use__AdminUpdatePlanMutation>
 export type __AdminUpdatePlanMutationResult = Apollo.MutationResult<__AdminUpdatePlanMutation>
@@ -17826,29 +17944,32 @@ export const __AdminPlanDocument = gql`
  * });
  */
 export function use__AdminPlanQuery(
-  baseOptions: Apollo.QueryHookOptions<__AdminPlanQuery, __AdminPlanQueryVariables> &
+  baseOptions: ApolloReactHooks.QueryHookOptions<__AdminPlanQuery, __AdminPlanQueryVariables> &
     ({ variables: __AdminPlanQueryVariables; skip?: boolean } | { skip: boolean }),
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<__AdminPlanQuery, __AdminPlanQueryVariables>(__AdminPlanDocument, options)
+  return ApolloReactHooks.useQuery<__AdminPlanQuery, __AdminPlanQueryVariables>(
+    __AdminPlanDocument,
+    options,
+  )
 }
 export function use__AdminPlanLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<__AdminPlanQuery, __AdminPlanQueryVariables>,
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<__AdminPlanQuery, __AdminPlanQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<__AdminPlanQuery, __AdminPlanQueryVariables>(
+  return ApolloReactHooks.useLazyQuery<__AdminPlanQuery, __AdminPlanQueryVariables>(
     __AdminPlanDocument,
     options,
   )
 }
 export function use__AdminPlanSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<__AdminPlanQuery, __AdminPlanQueryVariables>,
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<__AdminPlanQuery, __AdminPlanQueryVariables>,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<__AdminPlanQuery, __AdminPlanQueryVariables>(
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<__AdminPlanQuery, __AdminPlanQueryVariables>(
     __AdminPlanDocument,
     options,
   )
@@ -17887,31 +18008,34 @@ export const __AdminPlansDocument = gql`
  * });
  */
 export function use__AdminPlansQuery(
-  baseOptions?: Apollo.QueryHookOptions<__AdminPlansQuery, __AdminPlansQueryVariables>,
+  baseOptions?: ApolloReactHooks.QueryHookOptions<__AdminPlansQuery, __AdminPlansQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<__AdminPlansQuery, __AdminPlansQueryVariables>(
+  return ApolloReactHooks.useQuery<__AdminPlansQuery, __AdminPlansQueryVariables>(
     __AdminPlansDocument,
     options,
   )
 }
 export function use__AdminPlansLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<__AdminPlansQuery, __AdminPlansQueryVariables>,
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    __AdminPlansQuery,
+    __AdminPlansQueryVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<__AdminPlansQuery, __AdminPlansQueryVariables>(
+  return ApolloReactHooks.useLazyQuery<__AdminPlansQuery, __AdminPlansQueryVariables>(
     __AdminPlansDocument,
     options,
   )
 }
 export function use__AdminPlansSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<__AdminPlansQuery, __AdminPlansQueryVariables>,
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<__AdminPlansQuery, __AdminPlansQueryVariables>,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<__AdminPlansQuery, __AdminPlansQueryVariables>(
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<__AdminPlansQuery, __AdminPlansQueryVariables>(
     __AdminPlansDocument,
     options,
   )
@@ -17949,43 +18073,43 @@ export const __AdminPlanPaginationDocument = gql`
  * });
  */
 export function use__AdminPlanPaginationQuery(
-  baseOptions?: Apollo.QueryHookOptions<
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
     __AdminPlanPaginationQuery,
     __AdminPlanPaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<__AdminPlanPaginationQuery, __AdminPlanPaginationQueryVariables>(
+  return ApolloReactHooks.useQuery<__AdminPlanPaginationQuery, __AdminPlanPaginationQueryVariables>(
     __AdminPlanPaginationDocument,
     options,
   )
 }
 export function use__AdminPlanPaginationLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
     __AdminPlanPaginationQuery,
     __AdminPlanPaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<__AdminPlanPaginationQuery, __AdminPlanPaginationQueryVariables>(
-    __AdminPlanPaginationDocument,
-    options,
-  )
+  return ApolloReactHooks.useLazyQuery<
+    __AdminPlanPaginationQuery,
+    __AdminPlanPaginationQueryVariables
+  >(__AdminPlanPaginationDocument, options)
 }
 export function use__AdminPlanPaginationSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
         __AdminPlanPaginationQuery,
         __AdminPlanPaginationQueryVariables
       >,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<__AdminPlanPaginationQuery, __AdminPlanPaginationQueryVariables>(
-    __AdminPlanPaginationDocument,
-    options,
-  )
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<
+    __AdminPlanPaginationQuery,
+    __AdminPlanPaginationQueryVariables
+  >(__AdminPlanPaginationDocument, options)
 }
 export type __AdminPlanPaginationQueryHookResult = ReturnType<typeof use__AdminPlanPaginationQuery>
 export type __AdminPlanPaginationLazyQueryHookResult = ReturnType<
@@ -18029,16 +18153,16 @@ export type __AdminCreateRoleMutationFn = Apollo.MutationFunction<
  * });
  */
 export function use__AdminCreateRoleMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     __AdminCreateRoleMutation,
     __AdminCreateRoleMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<__AdminCreateRoleMutation, __AdminCreateRoleMutationVariables>(
-    __AdminCreateRoleDocument,
-    options,
-  )
+  return ApolloReactHooks.useMutation<
+    __AdminCreateRoleMutation,
+    __AdminCreateRoleMutationVariables
+  >(__AdminCreateRoleDocument, options)
 }
 export type __AdminCreateRoleMutationHookResult = ReturnType<typeof use__AdminCreateRoleMutation>
 export type __AdminCreateRoleMutationResult = Apollo.MutationResult<__AdminCreateRoleMutation>
@@ -18076,16 +18200,16 @@ export type __AdminDeleteRoleMutationFn = Apollo.MutationFunction<
  * });
  */
 export function use__AdminDeleteRoleMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     __AdminDeleteRoleMutation,
     __AdminDeleteRoleMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<__AdminDeleteRoleMutation, __AdminDeleteRoleMutationVariables>(
-    __AdminDeleteRoleDocument,
-    options,
-  )
+  return ApolloReactHooks.useMutation<
+    __AdminDeleteRoleMutation,
+    __AdminDeleteRoleMutationVariables
+  >(__AdminDeleteRoleDocument, options)
 }
 export type __AdminDeleteRoleMutationHookResult = ReturnType<typeof use__AdminDeleteRoleMutation>
 export type __AdminDeleteRoleMutationResult = Apollo.MutationResult<__AdminDeleteRoleMutation>
@@ -18125,16 +18249,16 @@ export type __AdminUpdateRoleMutationFn = Apollo.MutationFunction<
  * });
  */
 export function use__AdminUpdateRoleMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     __AdminUpdateRoleMutation,
     __AdminUpdateRoleMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<__AdminUpdateRoleMutation, __AdminUpdateRoleMutationVariables>(
-    __AdminUpdateRoleDocument,
-    options,
-  )
+  return ApolloReactHooks.useMutation<
+    __AdminUpdateRoleMutation,
+    __AdminUpdateRoleMutationVariables
+  >(__AdminUpdateRoleDocument, options)
 }
 export type __AdminUpdateRoleMutationHookResult = ReturnType<typeof use__AdminUpdateRoleMutation>
 export type __AdminUpdateRoleMutationResult = Apollo.MutationResult<__AdminUpdateRoleMutation>
@@ -18168,29 +18292,32 @@ export const __AdminRoleDocument = gql`
  * });
  */
 export function use__AdminRoleQuery(
-  baseOptions: Apollo.QueryHookOptions<__AdminRoleQuery, __AdminRoleQueryVariables> &
+  baseOptions: ApolloReactHooks.QueryHookOptions<__AdminRoleQuery, __AdminRoleQueryVariables> &
     ({ variables: __AdminRoleQueryVariables; skip?: boolean } | { skip: boolean }),
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<__AdminRoleQuery, __AdminRoleQueryVariables>(__AdminRoleDocument, options)
+  return ApolloReactHooks.useQuery<__AdminRoleQuery, __AdminRoleQueryVariables>(
+    __AdminRoleDocument,
+    options,
+  )
 }
 export function use__AdminRoleLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<__AdminRoleQuery, __AdminRoleQueryVariables>,
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<__AdminRoleQuery, __AdminRoleQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<__AdminRoleQuery, __AdminRoleQueryVariables>(
+  return ApolloReactHooks.useLazyQuery<__AdminRoleQuery, __AdminRoleQueryVariables>(
     __AdminRoleDocument,
     options,
   )
 }
 export function use__AdminRoleSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<__AdminRoleQuery, __AdminRoleQueryVariables>,
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<__AdminRoleQuery, __AdminRoleQueryVariables>,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<__AdminRoleQuery, __AdminRoleQueryVariables>(
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<__AdminRoleQuery, __AdminRoleQueryVariables>(
     __AdminRoleDocument,
     options,
   )
@@ -18229,31 +18356,34 @@ export const __AdminRolesDocument = gql`
  * });
  */
 export function use__AdminRolesQuery(
-  baseOptions?: Apollo.QueryHookOptions<__AdminRolesQuery, __AdminRolesQueryVariables>,
+  baseOptions?: ApolloReactHooks.QueryHookOptions<__AdminRolesQuery, __AdminRolesQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<__AdminRolesQuery, __AdminRolesQueryVariables>(
+  return ApolloReactHooks.useQuery<__AdminRolesQuery, __AdminRolesQueryVariables>(
     __AdminRolesDocument,
     options,
   )
 }
 export function use__AdminRolesLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<__AdminRolesQuery, __AdminRolesQueryVariables>,
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    __AdminRolesQuery,
+    __AdminRolesQueryVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<__AdminRolesQuery, __AdminRolesQueryVariables>(
+  return ApolloReactHooks.useLazyQuery<__AdminRolesQuery, __AdminRolesQueryVariables>(
     __AdminRolesDocument,
     options,
   )
 }
 export function use__AdminRolesSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<__AdminRolesQuery, __AdminRolesQueryVariables>,
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<__AdminRolesQuery, __AdminRolesQueryVariables>,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<__AdminRolesQuery, __AdminRolesQueryVariables>(
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<__AdminRolesQuery, __AdminRolesQueryVariables>(
     __AdminRolesDocument,
     options,
   )
@@ -18291,43 +18421,43 @@ export const __AdminRolePaginationDocument = gql`
  * });
  */
 export function use__AdminRolePaginationQuery(
-  baseOptions?: Apollo.QueryHookOptions<
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
     __AdminRolePaginationQuery,
     __AdminRolePaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<__AdminRolePaginationQuery, __AdminRolePaginationQueryVariables>(
+  return ApolloReactHooks.useQuery<__AdminRolePaginationQuery, __AdminRolePaginationQueryVariables>(
     __AdminRolePaginationDocument,
     options,
   )
 }
 export function use__AdminRolePaginationLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
     __AdminRolePaginationQuery,
     __AdminRolePaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<__AdminRolePaginationQuery, __AdminRolePaginationQueryVariables>(
-    __AdminRolePaginationDocument,
-    options,
-  )
+  return ApolloReactHooks.useLazyQuery<
+    __AdminRolePaginationQuery,
+    __AdminRolePaginationQueryVariables
+  >(__AdminRolePaginationDocument, options)
 }
 export function use__AdminRolePaginationSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
         __AdminRolePaginationQuery,
         __AdminRolePaginationQueryVariables
       >,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<__AdminRolePaginationQuery, __AdminRolePaginationQueryVariables>(
-    __AdminRolePaginationDocument,
-    options,
-  )
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<
+    __AdminRolePaginationQuery,
+    __AdminRolePaginationQueryVariables
+  >(__AdminRolePaginationDocument, options)
 }
 export type __AdminRolePaginationQueryHookResult = ReturnType<typeof use__AdminRolePaginationQuery>
 export type __AdminRolePaginationLazyQueryHookResult = ReturnType<
@@ -18371,13 +18501,13 @@ export type __AdminCreateSecurityEventMutationFn = Apollo.MutationFunction<
  * });
  */
 export function use__AdminCreateSecurityEventMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     __AdminCreateSecurityEventMutation,
     __AdminCreateSecurityEventMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<
+  return ApolloReactHooks.useMutation<
     __AdminCreateSecurityEventMutation,
     __AdminCreateSecurityEventMutationVariables
   >(__AdminCreateSecurityEventDocument, options)
@@ -18421,13 +18551,13 @@ export type __AdminDeleteSecurityEventMutationFn = Apollo.MutationFunction<
  * });
  */
 export function use__AdminDeleteSecurityEventMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     __AdminDeleteSecurityEventMutation,
     __AdminDeleteSecurityEventMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<
+  return ApolloReactHooks.useMutation<
     __AdminDeleteSecurityEventMutation,
     __AdminDeleteSecurityEventMutationVariables
   >(__AdminDeleteSecurityEventDocument, options)
@@ -18476,13 +18606,13 @@ export type __AdminUpdateSecurityEventMutationFn = Apollo.MutationFunction<
  * });
  */
 export function use__AdminUpdateSecurityEventMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     __AdminUpdateSecurityEventMutation,
     __AdminUpdateSecurityEventMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<
+  return ApolloReactHooks.useMutation<
     __AdminUpdateSecurityEventMutation,
     __AdminUpdateSecurityEventMutationVariables
   >(__AdminUpdateSecurityEventDocument, options)
@@ -18522,44 +18652,44 @@ export const __AdminSecurityEventDocument = gql`
  * });
  */
 export function use__AdminSecurityEventQuery(
-  baseOptions: Apollo.QueryHookOptions<
+  baseOptions: ApolloReactHooks.QueryHookOptions<
     __AdminSecurityEventQuery,
     __AdminSecurityEventQueryVariables
   > &
     ({ variables: __AdminSecurityEventQueryVariables; skip?: boolean } | { skip: boolean }),
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<__AdminSecurityEventQuery, __AdminSecurityEventQueryVariables>(
+  return ApolloReactHooks.useQuery<__AdminSecurityEventQuery, __AdminSecurityEventQueryVariables>(
     __AdminSecurityEventDocument,
     options,
   )
 }
 export function use__AdminSecurityEventLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
     __AdminSecurityEventQuery,
     __AdminSecurityEventQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<__AdminSecurityEventQuery, __AdminSecurityEventQueryVariables>(
-    __AdminSecurityEventDocument,
-    options,
-  )
+  return ApolloReactHooks.useLazyQuery<
+    __AdminSecurityEventQuery,
+    __AdminSecurityEventQueryVariables
+  >(__AdminSecurityEventDocument, options)
 }
 export function use__AdminSecurityEventSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
         __AdminSecurityEventQuery,
         __AdminSecurityEventQueryVariables
       >,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<__AdminSecurityEventQuery, __AdminSecurityEventQueryVariables>(
-    __AdminSecurityEventDocument,
-    options,
-  )
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<
+    __AdminSecurityEventQuery,
+    __AdminSecurityEventQueryVariables
+  >(__AdminSecurityEventDocument, options)
 }
 export type __AdminSecurityEventQueryHookResult = ReturnType<typeof use__AdminSecurityEventQuery>
 export type __AdminSecurityEventLazyQueryHookResult = ReturnType<
@@ -18602,43 +18732,43 @@ export const __AdminSecurityEventsDocument = gql`
  * });
  */
 export function use__AdminSecurityEventsQuery(
-  baseOptions?: Apollo.QueryHookOptions<
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
     __AdminSecurityEventsQuery,
     __AdminSecurityEventsQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<__AdminSecurityEventsQuery, __AdminSecurityEventsQueryVariables>(
+  return ApolloReactHooks.useQuery<__AdminSecurityEventsQuery, __AdminSecurityEventsQueryVariables>(
     __AdminSecurityEventsDocument,
     options,
   )
 }
 export function use__AdminSecurityEventsLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
     __AdminSecurityEventsQuery,
     __AdminSecurityEventsQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<__AdminSecurityEventsQuery, __AdminSecurityEventsQueryVariables>(
-    __AdminSecurityEventsDocument,
-    options,
-  )
+  return ApolloReactHooks.useLazyQuery<
+    __AdminSecurityEventsQuery,
+    __AdminSecurityEventsQueryVariables
+  >(__AdminSecurityEventsDocument, options)
 }
 export function use__AdminSecurityEventsSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
         __AdminSecurityEventsQuery,
         __AdminSecurityEventsQueryVariables
       >,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<__AdminSecurityEventsQuery, __AdminSecurityEventsQueryVariables>(
-    __AdminSecurityEventsDocument,
-    options,
-  )
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<
+    __AdminSecurityEventsQuery,
+    __AdminSecurityEventsQueryVariables
+  >(__AdminSecurityEventsDocument, options)
 }
 export type __AdminSecurityEventsQueryHookResult = ReturnType<typeof use__AdminSecurityEventsQuery>
 export type __AdminSecurityEventsLazyQueryHookResult = ReturnType<
@@ -18677,40 +18807,40 @@ export const __AdminSecurityEventPaginationDocument = gql`
  * });
  */
 export function use__AdminSecurityEventPaginationQuery(
-  baseOptions?: Apollo.QueryHookOptions<
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
     __AdminSecurityEventPaginationQuery,
     __AdminSecurityEventPaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<
+  return ApolloReactHooks.useQuery<
     __AdminSecurityEventPaginationQuery,
     __AdminSecurityEventPaginationQueryVariables
   >(__AdminSecurityEventPaginationDocument, options)
 }
 export function use__AdminSecurityEventPaginationLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
     __AdminSecurityEventPaginationQuery,
     __AdminSecurityEventPaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<
+  return ApolloReactHooks.useLazyQuery<
     __AdminSecurityEventPaginationQuery,
     __AdminSecurityEventPaginationQueryVariables
   >(__AdminSecurityEventPaginationDocument, options)
 }
 export function use__AdminSecurityEventPaginationSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
         __AdminSecurityEventPaginationQuery,
         __AdminSecurityEventPaginationQueryVariables
       >,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<
     __AdminSecurityEventPaginationQuery,
     __AdminSecurityEventPaginationQueryVariables
   >(__AdminSecurityEventPaginationDocument, options)
@@ -18759,13 +18889,13 @@ export type __AdminCreateStoredFileMutationFn = Apollo.MutationFunction<
  * });
  */
 export function use__AdminCreateStoredFileMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     __AdminCreateStoredFileMutation,
     __AdminCreateStoredFileMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<
+  return ApolloReactHooks.useMutation<
     __AdminCreateStoredFileMutation,
     __AdminCreateStoredFileMutationVariables
   >(__AdminCreateStoredFileDocument, options)
@@ -18809,13 +18939,13 @@ export type __AdminDeleteStoredFileMutationFn = Apollo.MutationFunction<
  * });
  */
 export function use__AdminDeleteStoredFileMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     __AdminDeleteStoredFileMutation,
     __AdminDeleteStoredFileMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<
+  return ApolloReactHooks.useMutation<
     __AdminDeleteStoredFileMutation,
     __AdminDeleteStoredFileMutationVariables
   >(__AdminDeleteStoredFileDocument, options)
@@ -18861,13 +18991,13 @@ export type __AdminUpdateStoredFileMutationFn = Apollo.MutationFunction<
  * });
  */
 export function use__AdminUpdateStoredFileMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     __AdminUpdateStoredFileMutation,
     __AdminUpdateStoredFileMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<
+  return ApolloReactHooks.useMutation<
     __AdminUpdateStoredFileMutation,
     __AdminUpdateStoredFileMutationVariables
   >(__AdminUpdateStoredFileDocument, options)
@@ -18907,35 +19037,41 @@ export const __AdminStoredFileDocument = gql`
  * });
  */
 export function use__AdminStoredFileQuery(
-  baseOptions: Apollo.QueryHookOptions<__AdminStoredFileQuery, __AdminStoredFileQueryVariables> &
+  baseOptions: ApolloReactHooks.QueryHookOptions<
+    __AdminStoredFileQuery,
+    __AdminStoredFileQueryVariables
+  > &
     ({ variables: __AdminStoredFileQueryVariables; skip?: boolean } | { skip: boolean }),
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<__AdminStoredFileQuery, __AdminStoredFileQueryVariables>(
+  return ApolloReactHooks.useQuery<__AdminStoredFileQuery, __AdminStoredFileQueryVariables>(
     __AdminStoredFileDocument,
     options,
   )
 }
 export function use__AdminStoredFileLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
     __AdminStoredFileQuery,
     __AdminStoredFileQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<__AdminStoredFileQuery, __AdminStoredFileQueryVariables>(
+  return ApolloReactHooks.useLazyQuery<__AdminStoredFileQuery, __AdminStoredFileQueryVariables>(
     __AdminStoredFileDocument,
     options,
   )
 }
 export function use__AdminStoredFileSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<__AdminStoredFileQuery, __AdminStoredFileQueryVariables>,
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        __AdminStoredFileQuery,
+        __AdminStoredFileQueryVariables
+      >,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<__AdminStoredFileQuery, __AdminStoredFileQueryVariables>(
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<__AdminStoredFileQuery, __AdminStoredFileQueryVariables>(
     __AdminStoredFileDocument,
     options,
   )
@@ -18979,37 +19115,43 @@ export const __AdminStoredFilesDocument = gql`
  * });
  */
 export function use__AdminStoredFilesQuery(
-  baseOptions?: Apollo.QueryHookOptions<__AdminStoredFilesQuery, __AdminStoredFilesQueryVariables>,
-) {
-  const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<__AdminStoredFilesQuery, __AdminStoredFilesQueryVariables>(
-    __AdminStoredFilesDocument,
-    options,
-  )
-}
-export function use__AdminStoredFilesLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
     __AdminStoredFilesQuery,
     __AdminStoredFilesQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<__AdminStoredFilesQuery, __AdminStoredFilesQueryVariables>(
+  return ApolloReactHooks.useQuery<__AdminStoredFilesQuery, __AdminStoredFilesQueryVariables>(
+    __AdminStoredFilesDocument,
+    options,
+  )
+}
+export function use__AdminStoredFilesLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    __AdminStoredFilesQuery,
+    __AdminStoredFilesQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useLazyQuery<__AdminStoredFilesQuery, __AdminStoredFilesQueryVariables>(
     __AdminStoredFilesDocument,
     options,
   )
 }
 export function use__AdminStoredFilesSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<__AdminStoredFilesQuery, __AdminStoredFilesQueryVariables>,
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        __AdminStoredFilesQuery,
+        __AdminStoredFilesQueryVariables
+      >,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<__AdminStoredFilesQuery, __AdminStoredFilesQueryVariables>(
-    __AdminStoredFilesDocument,
-    options,
-  )
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<
+    __AdminStoredFilesQuery,
+    __AdminStoredFilesQueryVariables
+  >(__AdminStoredFilesDocument, options)
 }
 export type __AdminStoredFilesQueryHookResult = ReturnType<typeof use__AdminStoredFilesQuery>
 export type __AdminStoredFilesLazyQueryHookResult = ReturnType<
@@ -19048,40 +19190,40 @@ export const __AdminStoredFilePaginationDocument = gql`
  * });
  */
 export function use__AdminStoredFilePaginationQuery(
-  baseOptions?: Apollo.QueryHookOptions<
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
     __AdminStoredFilePaginationQuery,
     __AdminStoredFilePaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<
+  return ApolloReactHooks.useQuery<
     __AdminStoredFilePaginationQuery,
     __AdminStoredFilePaginationQueryVariables
   >(__AdminStoredFilePaginationDocument, options)
 }
 export function use__AdminStoredFilePaginationLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
     __AdminStoredFilePaginationQuery,
     __AdminStoredFilePaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<
+  return ApolloReactHooks.useLazyQuery<
     __AdminStoredFilePaginationQuery,
     __AdminStoredFilePaginationQueryVariables
   >(__AdminStoredFilePaginationDocument, options)
 }
 export function use__AdminStoredFilePaginationSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
         __AdminStoredFilePaginationQuery,
         __AdminStoredFilePaginationQueryVariables
       >,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<
     __AdminStoredFilePaginationQuery,
     __AdminStoredFilePaginationQueryVariables
   >(__AdminStoredFilePaginationDocument, options)
@@ -19130,13 +19272,13 @@ export type __AdminCreateSubscriptionMutationFn = Apollo.MutationFunction<
  * });
  */
 export function use__AdminCreateSubscriptionMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     __AdminCreateSubscriptionMutation,
     __AdminCreateSubscriptionMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<
+  return ApolloReactHooks.useMutation<
     __AdminCreateSubscriptionMutation,
     __AdminCreateSubscriptionMutationVariables
   >(__AdminCreateSubscriptionDocument, options)
@@ -19180,13 +19322,13 @@ export type __AdminDeleteSubscriptionMutationFn = Apollo.MutationFunction<
  * });
  */
 export function use__AdminDeleteSubscriptionMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     __AdminDeleteSubscriptionMutation,
     __AdminDeleteSubscriptionMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<
+  return ApolloReactHooks.useMutation<
     __AdminDeleteSubscriptionMutation,
     __AdminDeleteSubscriptionMutationVariables
   >(__AdminDeleteSubscriptionDocument, options)
@@ -19232,13 +19374,13 @@ export type __AdminUpdateSubscriptionMutationFn = Apollo.MutationFunction<
  * });
  */
 export function use__AdminUpdateSubscriptionMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     __AdminUpdateSubscriptionMutation,
     __AdminUpdateSubscriptionMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<
+  return ApolloReactHooks.useMutation<
     __AdminUpdateSubscriptionMutation,
     __AdminUpdateSubscriptionMutationVariables
   >(__AdminUpdateSubscriptionDocument, options)
@@ -19278,41 +19420,44 @@ export const __AdminSubscriptionDocument = gql`
  * });
  */
 export function use__AdminSubscriptionQuery(
-  baseOptions: Apollo.QueryHookOptions<
+  baseOptions: ApolloReactHooks.QueryHookOptions<
     __AdminSubscriptionQuery,
     __AdminSubscriptionQueryVariables
   > &
     ({ variables: __AdminSubscriptionQueryVariables; skip?: boolean } | { skip: boolean }),
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<__AdminSubscriptionQuery, __AdminSubscriptionQueryVariables>(
+  return ApolloReactHooks.useQuery<__AdminSubscriptionQuery, __AdminSubscriptionQueryVariables>(
     __AdminSubscriptionDocument,
     options,
   )
 }
 export function use__AdminSubscriptionLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
     __AdminSubscriptionQuery,
     __AdminSubscriptionQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<__AdminSubscriptionQuery, __AdminSubscriptionQueryVariables>(
+  return ApolloReactHooks.useLazyQuery<__AdminSubscriptionQuery, __AdminSubscriptionQueryVariables>(
     __AdminSubscriptionDocument,
     options,
   )
 }
 export function use__AdminSubscriptionSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<__AdminSubscriptionQuery, __AdminSubscriptionQueryVariables>,
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        __AdminSubscriptionQuery,
+        __AdminSubscriptionQueryVariables
+      >,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<__AdminSubscriptionQuery, __AdminSubscriptionQueryVariables>(
-    __AdminSubscriptionDocument,
-    options,
-  )
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<
+    __AdminSubscriptionQuery,
+    __AdminSubscriptionQueryVariables
+  >(__AdminSubscriptionDocument, options)
 }
 export type __AdminSubscriptionQueryHookResult = ReturnType<typeof use__AdminSubscriptionQuery>
 export type __AdminSubscriptionLazyQueryHookResult = ReturnType<
@@ -19355,43 +19500,43 @@ export const __AdminSubscriptionsDocument = gql`
  * });
  */
 export function use__AdminSubscriptionsQuery(
-  baseOptions?: Apollo.QueryHookOptions<
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
     __AdminSubscriptionsQuery,
     __AdminSubscriptionsQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<__AdminSubscriptionsQuery, __AdminSubscriptionsQueryVariables>(
+  return ApolloReactHooks.useQuery<__AdminSubscriptionsQuery, __AdminSubscriptionsQueryVariables>(
     __AdminSubscriptionsDocument,
     options,
   )
 }
 export function use__AdminSubscriptionsLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
     __AdminSubscriptionsQuery,
     __AdminSubscriptionsQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<__AdminSubscriptionsQuery, __AdminSubscriptionsQueryVariables>(
-    __AdminSubscriptionsDocument,
-    options,
-  )
+  return ApolloReactHooks.useLazyQuery<
+    __AdminSubscriptionsQuery,
+    __AdminSubscriptionsQueryVariables
+  >(__AdminSubscriptionsDocument, options)
 }
 export function use__AdminSubscriptionsSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
         __AdminSubscriptionsQuery,
         __AdminSubscriptionsQueryVariables
       >,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<__AdminSubscriptionsQuery, __AdminSubscriptionsQueryVariables>(
-    __AdminSubscriptionsDocument,
-    options,
-  )
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<
+    __AdminSubscriptionsQuery,
+    __AdminSubscriptionsQueryVariables
+  >(__AdminSubscriptionsDocument, options)
 }
 export type __AdminSubscriptionsQueryHookResult = ReturnType<typeof use__AdminSubscriptionsQuery>
 export type __AdminSubscriptionsLazyQueryHookResult = ReturnType<
@@ -19430,40 +19575,40 @@ export const __AdminSubscriptionPaginationDocument = gql`
  * });
  */
 export function use__AdminSubscriptionPaginationQuery(
-  baseOptions?: Apollo.QueryHookOptions<
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
     __AdminSubscriptionPaginationQuery,
     __AdminSubscriptionPaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<
+  return ApolloReactHooks.useQuery<
     __AdminSubscriptionPaginationQuery,
     __AdminSubscriptionPaginationQueryVariables
   >(__AdminSubscriptionPaginationDocument, options)
 }
 export function use__AdminSubscriptionPaginationLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
     __AdminSubscriptionPaginationQuery,
     __AdminSubscriptionPaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<
+  return ApolloReactHooks.useLazyQuery<
     __AdminSubscriptionPaginationQuery,
     __AdminSubscriptionPaginationQueryVariables
   >(__AdminSubscriptionPaginationDocument, options)
 }
 export function use__AdminSubscriptionPaginationSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
         __AdminSubscriptionPaginationQuery,
         __AdminSubscriptionPaginationQueryVariables
       >,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<
     __AdminSubscriptionPaginationQuery,
     __AdminSubscriptionPaginationQueryVariables
   >(__AdminSubscriptionPaginationDocument, options)
@@ -19512,13 +19657,13 @@ export type __AdminCreateTeamMemberMutationFn = Apollo.MutationFunction<
  * });
  */
 export function use__AdminCreateTeamMemberMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     __AdminCreateTeamMemberMutation,
     __AdminCreateTeamMemberMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<
+  return ApolloReactHooks.useMutation<
     __AdminCreateTeamMemberMutation,
     __AdminCreateTeamMemberMutationVariables
   >(__AdminCreateTeamMemberDocument, options)
@@ -19562,13 +19707,13 @@ export type __AdminDeleteTeamMemberMutationFn = Apollo.MutationFunction<
  * });
  */
 export function use__AdminDeleteTeamMemberMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     __AdminDeleteTeamMemberMutation,
     __AdminDeleteTeamMemberMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<
+  return ApolloReactHooks.useMutation<
     __AdminDeleteTeamMemberMutation,
     __AdminDeleteTeamMemberMutationVariables
   >(__AdminDeleteTeamMemberDocument, options)
@@ -19614,13 +19759,13 @@ export type __AdminUpdateTeamMemberMutationFn = Apollo.MutationFunction<
  * });
  */
 export function use__AdminUpdateTeamMemberMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     __AdminUpdateTeamMemberMutation,
     __AdminUpdateTeamMemberMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<
+  return ApolloReactHooks.useMutation<
     __AdminUpdateTeamMemberMutation,
     __AdminUpdateTeamMemberMutationVariables
   >(__AdminUpdateTeamMemberDocument, options)
@@ -19660,35 +19805,41 @@ export const __AdminTeamMemberDocument = gql`
  * });
  */
 export function use__AdminTeamMemberQuery(
-  baseOptions: Apollo.QueryHookOptions<__AdminTeamMemberQuery, __AdminTeamMemberQueryVariables> &
+  baseOptions: ApolloReactHooks.QueryHookOptions<
+    __AdminTeamMemberQuery,
+    __AdminTeamMemberQueryVariables
+  > &
     ({ variables: __AdminTeamMemberQueryVariables; skip?: boolean } | { skip: boolean }),
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<__AdminTeamMemberQuery, __AdminTeamMemberQueryVariables>(
+  return ApolloReactHooks.useQuery<__AdminTeamMemberQuery, __AdminTeamMemberQueryVariables>(
     __AdminTeamMemberDocument,
     options,
   )
 }
 export function use__AdminTeamMemberLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
     __AdminTeamMemberQuery,
     __AdminTeamMemberQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<__AdminTeamMemberQuery, __AdminTeamMemberQueryVariables>(
+  return ApolloReactHooks.useLazyQuery<__AdminTeamMemberQuery, __AdminTeamMemberQueryVariables>(
     __AdminTeamMemberDocument,
     options,
   )
 }
 export function use__AdminTeamMemberSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<__AdminTeamMemberQuery, __AdminTeamMemberQueryVariables>,
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        __AdminTeamMemberQuery,
+        __AdminTeamMemberQueryVariables
+      >,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<__AdminTeamMemberQuery, __AdminTeamMemberQueryVariables>(
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<__AdminTeamMemberQuery, __AdminTeamMemberQueryVariables>(
     __AdminTeamMemberDocument,
     options,
   )
@@ -19732,37 +19883,43 @@ export const __AdminTeamMembersDocument = gql`
  * });
  */
 export function use__AdminTeamMembersQuery(
-  baseOptions?: Apollo.QueryHookOptions<__AdminTeamMembersQuery, __AdminTeamMembersQueryVariables>,
-) {
-  const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<__AdminTeamMembersQuery, __AdminTeamMembersQueryVariables>(
-    __AdminTeamMembersDocument,
-    options,
-  )
-}
-export function use__AdminTeamMembersLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
     __AdminTeamMembersQuery,
     __AdminTeamMembersQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<__AdminTeamMembersQuery, __AdminTeamMembersQueryVariables>(
+  return ApolloReactHooks.useQuery<__AdminTeamMembersQuery, __AdminTeamMembersQueryVariables>(
+    __AdminTeamMembersDocument,
+    options,
+  )
+}
+export function use__AdminTeamMembersLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    __AdminTeamMembersQuery,
+    __AdminTeamMembersQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useLazyQuery<__AdminTeamMembersQuery, __AdminTeamMembersQueryVariables>(
     __AdminTeamMembersDocument,
     options,
   )
 }
 export function use__AdminTeamMembersSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<__AdminTeamMembersQuery, __AdminTeamMembersQueryVariables>,
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        __AdminTeamMembersQuery,
+        __AdminTeamMembersQueryVariables
+      >,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<__AdminTeamMembersQuery, __AdminTeamMembersQueryVariables>(
-    __AdminTeamMembersDocument,
-    options,
-  )
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<
+    __AdminTeamMembersQuery,
+    __AdminTeamMembersQueryVariables
+  >(__AdminTeamMembersDocument, options)
 }
 export type __AdminTeamMembersQueryHookResult = ReturnType<typeof use__AdminTeamMembersQuery>
 export type __AdminTeamMembersLazyQueryHookResult = ReturnType<
@@ -19801,40 +19958,40 @@ export const __AdminTeamMemberPaginationDocument = gql`
  * });
  */
 export function use__AdminTeamMemberPaginationQuery(
-  baseOptions?: Apollo.QueryHookOptions<
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
     __AdminTeamMemberPaginationQuery,
     __AdminTeamMemberPaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<
+  return ApolloReactHooks.useQuery<
     __AdminTeamMemberPaginationQuery,
     __AdminTeamMemberPaginationQueryVariables
   >(__AdminTeamMemberPaginationDocument, options)
 }
 export function use__AdminTeamMemberPaginationLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
     __AdminTeamMemberPaginationQuery,
     __AdminTeamMemberPaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<
+  return ApolloReactHooks.useLazyQuery<
     __AdminTeamMemberPaginationQuery,
     __AdminTeamMemberPaginationQueryVariables
   >(__AdminTeamMemberPaginationDocument, options)
 }
 export function use__AdminTeamMemberPaginationSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
         __AdminTeamMemberPaginationQuery,
         __AdminTeamMemberPaginationQueryVariables
       >,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<
     __AdminTeamMemberPaginationQuery,
     __AdminTeamMemberPaginationQueryVariables
   >(__AdminTeamMemberPaginationDocument, options)
@@ -19883,16 +20040,16 @@ export type __AdminCreateTeamMutationFn = Apollo.MutationFunction<
  * });
  */
 export function use__AdminCreateTeamMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     __AdminCreateTeamMutation,
     __AdminCreateTeamMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<__AdminCreateTeamMutation, __AdminCreateTeamMutationVariables>(
-    __AdminCreateTeamDocument,
-    options,
-  )
+  return ApolloReactHooks.useMutation<
+    __AdminCreateTeamMutation,
+    __AdminCreateTeamMutationVariables
+  >(__AdminCreateTeamDocument, options)
 }
 export type __AdminCreateTeamMutationHookResult = ReturnType<typeof use__AdminCreateTeamMutation>
 export type __AdminCreateTeamMutationResult = Apollo.MutationResult<__AdminCreateTeamMutation>
@@ -19930,16 +20087,16 @@ export type __AdminDeleteTeamMutationFn = Apollo.MutationFunction<
  * });
  */
 export function use__AdminDeleteTeamMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     __AdminDeleteTeamMutation,
     __AdminDeleteTeamMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<__AdminDeleteTeamMutation, __AdminDeleteTeamMutationVariables>(
-    __AdminDeleteTeamDocument,
-    options,
-  )
+  return ApolloReactHooks.useMutation<
+    __AdminDeleteTeamMutation,
+    __AdminDeleteTeamMutationVariables
+  >(__AdminDeleteTeamDocument, options)
 }
 export type __AdminDeleteTeamMutationHookResult = ReturnType<typeof use__AdminDeleteTeamMutation>
 export type __AdminDeleteTeamMutationResult = Apollo.MutationResult<__AdminDeleteTeamMutation>
@@ -19979,16 +20136,16 @@ export type __AdminUpdateTeamMutationFn = Apollo.MutationFunction<
  * });
  */
 export function use__AdminUpdateTeamMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     __AdminUpdateTeamMutation,
     __AdminUpdateTeamMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<__AdminUpdateTeamMutation, __AdminUpdateTeamMutationVariables>(
-    __AdminUpdateTeamDocument,
-    options,
-  )
+  return ApolloReactHooks.useMutation<
+    __AdminUpdateTeamMutation,
+    __AdminUpdateTeamMutationVariables
+  >(__AdminUpdateTeamDocument, options)
 }
 export type __AdminUpdateTeamMutationHookResult = ReturnType<typeof use__AdminUpdateTeamMutation>
 export type __AdminUpdateTeamMutationResult = Apollo.MutationResult<__AdminUpdateTeamMutation>
@@ -20022,29 +20179,32 @@ export const __AdminTeamDocument = gql`
  * });
  */
 export function use__AdminTeamQuery(
-  baseOptions: Apollo.QueryHookOptions<__AdminTeamQuery, __AdminTeamQueryVariables> &
+  baseOptions: ApolloReactHooks.QueryHookOptions<__AdminTeamQuery, __AdminTeamQueryVariables> &
     ({ variables: __AdminTeamQueryVariables; skip?: boolean } | { skip: boolean }),
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<__AdminTeamQuery, __AdminTeamQueryVariables>(__AdminTeamDocument, options)
+  return ApolloReactHooks.useQuery<__AdminTeamQuery, __AdminTeamQueryVariables>(
+    __AdminTeamDocument,
+    options,
+  )
 }
 export function use__AdminTeamLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<__AdminTeamQuery, __AdminTeamQueryVariables>,
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<__AdminTeamQuery, __AdminTeamQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<__AdminTeamQuery, __AdminTeamQueryVariables>(
+  return ApolloReactHooks.useLazyQuery<__AdminTeamQuery, __AdminTeamQueryVariables>(
     __AdminTeamDocument,
     options,
   )
 }
 export function use__AdminTeamSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<__AdminTeamQuery, __AdminTeamQueryVariables>,
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<__AdminTeamQuery, __AdminTeamQueryVariables>,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<__AdminTeamQuery, __AdminTeamQueryVariables>(
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<__AdminTeamQuery, __AdminTeamQueryVariables>(
     __AdminTeamDocument,
     options,
   )
@@ -20083,31 +20243,34 @@ export const __AdminTeamsDocument = gql`
  * });
  */
 export function use__AdminTeamsQuery(
-  baseOptions?: Apollo.QueryHookOptions<__AdminTeamsQuery, __AdminTeamsQueryVariables>,
+  baseOptions?: ApolloReactHooks.QueryHookOptions<__AdminTeamsQuery, __AdminTeamsQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<__AdminTeamsQuery, __AdminTeamsQueryVariables>(
+  return ApolloReactHooks.useQuery<__AdminTeamsQuery, __AdminTeamsQueryVariables>(
     __AdminTeamsDocument,
     options,
   )
 }
 export function use__AdminTeamsLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<__AdminTeamsQuery, __AdminTeamsQueryVariables>,
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    __AdminTeamsQuery,
+    __AdminTeamsQueryVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<__AdminTeamsQuery, __AdminTeamsQueryVariables>(
+  return ApolloReactHooks.useLazyQuery<__AdminTeamsQuery, __AdminTeamsQueryVariables>(
     __AdminTeamsDocument,
     options,
   )
 }
 export function use__AdminTeamsSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<__AdminTeamsQuery, __AdminTeamsQueryVariables>,
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<__AdminTeamsQuery, __AdminTeamsQueryVariables>,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<__AdminTeamsQuery, __AdminTeamsQueryVariables>(
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<__AdminTeamsQuery, __AdminTeamsQueryVariables>(
     __AdminTeamsDocument,
     options,
   )
@@ -20145,43 +20308,43 @@ export const __AdminTeamPaginationDocument = gql`
  * });
  */
 export function use__AdminTeamPaginationQuery(
-  baseOptions?: Apollo.QueryHookOptions<
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
     __AdminTeamPaginationQuery,
     __AdminTeamPaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<__AdminTeamPaginationQuery, __AdminTeamPaginationQueryVariables>(
+  return ApolloReactHooks.useQuery<__AdminTeamPaginationQuery, __AdminTeamPaginationQueryVariables>(
     __AdminTeamPaginationDocument,
     options,
   )
 }
 export function use__AdminTeamPaginationLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
     __AdminTeamPaginationQuery,
     __AdminTeamPaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<__AdminTeamPaginationQuery, __AdminTeamPaginationQueryVariables>(
-    __AdminTeamPaginationDocument,
-    options,
-  )
+  return ApolloReactHooks.useLazyQuery<
+    __AdminTeamPaginationQuery,
+    __AdminTeamPaginationQueryVariables
+  >(__AdminTeamPaginationDocument, options)
 }
 export function use__AdminTeamPaginationSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
         __AdminTeamPaginationQuery,
         __AdminTeamPaginationQueryVariables
       >,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<__AdminTeamPaginationQuery, __AdminTeamPaginationQueryVariables>(
-    __AdminTeamPaginationDocument,
-    options,
-  )
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<
+    __AdminTeamPaginationQuery,
+    __AdminTeamPaginationQueryVariables
+  >(__AdminTeamPaginationDocument, options)
 }
 export type __AdminTeamPaginationQueryHookResult = ReturnType<typeof use__AdminTeamPaginationQuery>
 export type __AdminTeamPaginationLazyQueryHookResult = ReturnType<
@@ -20225,13 +20388,13 @@ export type __AdminCreateUserPreferenceMutationFn = Apollo.MutationFunction<
  * });
  */
 export function use__AdminCreateUserPreferenceMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     __AdminCreateUserPreferenceMutation,
     __AdminCreateUserPreferenceMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<
+  return ApolloReactHooks.useMutation<
     __AdminCreateUserPreferenceMutation,
     __AdminCreateUserPreferenceMutationVariables
   >(__AdminCreateUserPreferenceDocument, options)
@@ -20275,13 +20438,13 @@ export type __AdminDeleteUserPreferenceMutationFn = Apollo.MutationFunction<
  * });
  */
 export function use__AdminDeleteUserPreferenceMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     __AdminDeleteUserPreferenceMutation,
     __AdminDeleteUserPreferenceMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<
+  return ApolloReactHooks.useMutation<
     __AdminDeleteUserPreferenceMutation,
     __AdminDeleteUserPreferenceMutationVariables
   >(__AdminDeleteUserPreferenceDocument, options)
@@ -20330,13 +20493,13 @@ export type __AdminUpdateUserPreferenceMutationFn = Apollo.MutationFunction<
  * });
  */
 export function use__AdminUpdateUserPreferenceMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     __AdminUpdateUserPreferenceMutation,
     __AdminUpdateUserPreferenceMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<
+  return ApolloReactHooks.useMutation<
     __AdminUpdateUserPreferenceMutation,
     __AdminUpdateUserPreferenceMutationVariables
   >(__AdminUpdateUserPreferenceDocument, options)
@@ -20376,44 +20539,44 @@ export const __AdminUserPreferenceDocument = gql`
  * });
  */
 export function use__AdminUserPreferenceQuery(
-  baseOptions: Apollo.QueryHookOptions<
+  baseOptions: ApolloReactHooks.QueryHookOptions<
     __AdminUserPreferenceQuery,
     __AdminUserPreferenceQueryVariables
   > &
     ({ variables: __AdminUserPreferenceQueryVariables; skip?: boolean } | { skip: boolean }),
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<__AdminUserPreferenceQuery, __AdminUserPreferenceQueryVariables>(
+  return ApolloReactHooks.useQuery<__AdminUserPreferenceQuery, __AdminUserPreferenceQueryVariables>(
     __AdminUserPreferenceDocument,
     options,
   )
 }
 export function use__AdminUserPreferenceLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
     __AdminUserPreferenceQuery,
     __AdminUserPreferenceQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<__AdminUserPreferenceQuery, __AdminUserPreferenceQueryVariables>(
-    __AdminUserPreferenceDocument,
-    options,
-  )
+  return ApolloReactHooks.useLazyQuery<
+    __AdminUserPreferenceQuery,
+    __AdminUserPreferenceQueryVariables
+  >(__AdminUserPreferenceDocument, options)
 }
 export function use__AdminUserPreferenceSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
         __AdminUserPreferenceQuery,
         __AdminUserPreferenceQueryVariables
       >,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<__AdminUserPreferenceQuery, __AdminUserPreferenceQueryVariables>(
-    __AdminUserPreferenceDocument,
-    options,
-  )
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<
+    __AdminUserPreferenceQuery,
+    __AdminUserPreferenceQueryVariables
+  >(__AdminUserPreferenceDocument, options)
 }
 export type __AdminUserPreferenceQueryHookResult = ReturnType<typeof use__AdminUserPreferenceQuery>
 export type __AdminUserPreferenceLazyQueryHookResult = ReturnType<
@@ -20456,43 +20619,43 @@ export const __AdminUserPreferencesDocument = gql`
  * });
  */
 export function use__AdminUserPreferencesQuery(
-  baseOptions?: Apollo.QueryHookOptions<
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
     __AdminUserPreferencesQuery,
     __AdminUserPreferencesQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<__AdminUserPreferencesQuery, __AdminUserPreferencesQueryVariables>(
-    __AdminUserPreferencesDocument,
-    options,
-  )
+  return ApolloReactHooks.useQuery<
+    __AdminUserPreferencesQuery,
+    __AdminUserPreferencesQueryVariables
+  >(__AdminUserPreferencesDocument, options)
 }
 export function use__AdminUserPreferencesLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
     __AdminUserPreferencesQuery,
     __AdminUserPreferencesQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<__AdminUserPreferencesQuery, __AdminUserPreferencesQueryVariables>(
-    __AdminUserPreferencesDocument,
-    options,
-  )
+  return ApolloReactHooks.useLazyQuery<
+    __AdminUserPreferencesQuery,
+    __AdminUserPreferencesQueryVariables
+  >(__AdminUserPreferencesDocument, options)
 }
 export function use__AdminUserPreferencesSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
         __AdminUserPreferencesQuery,
         __AdminUserPreferencesQueryVariables
       >,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<__AdminUserPreferencesQuery, __AdminUserPreferencesQueryVariables>(
-    __AdminUserPreferencesDocument,
-    options,
-  )
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<
+    __AdminUserPreferencesQuery,
+    __AdminUserPreferencesQueryVariables
+  >(__AdminUserPreferencesDocument, options)
 }
 export type __AdminUserPreferencesQueryHookResult = ReturnType<
   typeof use__AdminUserPreferencesQuery
@@ -20533,40 +20696,40 @@ export const __AdminUserPreferencePaginationDocument = gql`
  * });
  */
 export function use__AdminUserPreferencePaginationQuery(
-  baseOptions?: Apollo.QueryHookOptions<
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
     __AdminUserPreferencePaginationQuery,
     __AdminUserPreferencePaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<
+  return ApolloReactHooks.useQuery<
     __AdminUserPreferencePaginationQuery,
     __AdminUserPreferencePaginationQueryVariables
   >(__AdminUserPreferencePaginationDocument, options)
 }
 export function use__AdminUserPreferencePaginationLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
     __AdminUserPreferencePaginationQuery,
     __AdminUserPreferencePaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<
+  return ApolloReactHooks.useLazyQuery<
     __AdminUserPreferencePaginationQuery,
     __AdminUserPreferencePaginationQueryVariables
   >(__AdminUserPreferencePaginationDocument, options)
 }
 export function use__AdminUserPreferencePaginationSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
         __AdminUserPreferencePaginationQuery,
         __AdminUserPreferencePaginationQueryVariables
       >,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<
     __AdminUserPreferencePaginationQuery,
     __AdminUserPreferencePaginationQueryVariables
   >(__AdminUserPreferencePaginationDocument, options)
@@ -20615,13 +20778,13 @@ export type __AdminCreateUserSessionMutationFn = Apollo.MutationFunction<
  * });
  */
 export function use__AdminCreateUserSessionMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     __AdminCreateUserSessionMutation,
     __AdminCreateUserSessionMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<
+  return ApolloReactHooks.useMutation<
     __AdminCreateUserSessionMutation,
     __AdminCreateUserSessionMutationVariables
   >(__AdminCreateUserSessionDocument, options)
@@ -20665,13 +20828,13 @@ export type __AdminDeleteUserSessionMutationFn = Apollo.MutationFunction<
  * });
  */
 export function use__AdminDeleteUserSessionMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     __AdminDeleteUserSessionMutation,
     __AdminDeleteUserSessionMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<
+  return ApolloReactHooks.useMutation<
     __AdminDeleteUserSessionMutation,
     __AdminDeleteUserSessionMutationVariables
   >(__AdminDeleteUserSessionDocument, options)
@@ -20717,13 +20880,13 @@ export type __AdminUpdateUserSessionMutationFn = Apollo.MutationFunction<
  * });
  */
 export function use__AdminUpdateUserSessionMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     __AdminUpdateUserSessionMutation,
     __AdminUpdateUserSessionMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<
+  return ApolloReactHooks.useMutation<
     __AdminUpdateUserSessionMutation,
     __AdminUpdateUserSessionMutationVariables
   >(__AdminUpdateUserSessionDocument, options)
@@ -20763,38 +20926,44 @@ export const __AdminUserSessionDocument = gql`
  * });
  */
 export function use__AdminUserSessionQuery(
-  baseOptions: Apollo.QueryHookOptions<__AdminUserSessionQuery, __AdminUserSessionQueryVariables> &
+  baseOptions: ApolloReactHooks.QueryHookOptions<
+    __AdminUserSessionQuery,
+    __AdminUserSessionQueryVariables
+  > &
     ({ variables: __AdminUserSessionQueryVariables; skip?: boolean } | { skip: boolean }),
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<__AdminUserSessionQuery, __AdminUserSessionQueryVariables>(
+  return ApolloReactHooks.useQuery<__AdminUserSessionQuery, __AdminUserSessionQueryVariables>(
     __AdminUserSessionDocument,
     options,
   )
 }
 export function use__AdminUserSessionLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
     __AdminUserSessionQuery,
     __AdminUserSessionQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<__AdminUserSessionQuery, __AdminUserSessionQueryVariables>(
+  return ApolloReactHooks.useLazyQuery<__AdminUserSessionQuery, __AdminUserSessionQueryVariables>(
     __AdminUserSessionDocument,
     options,
   )
 }
 export function use__AdminUserSessionSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<__AdminUserSessionQuery, __AdminUserSessionQueryVariables>,
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        __AdminUserSessionQuery,
+        __AdminUserSessionQueryVariables
+      >,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<__AdminUserSessionQuery, __AdminUserSessionQueryVariables>(
-    __AdminUserSessionDocument,
-    options,
-  )
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<
+    __AdminUserSessionQuery,
+    __AdminUserSessionQueryVariables
+  >(__AdminUserSessionDocument, options)
 }
 export type __AdminUserSessionQueryHookResult = ReturnType<typeof use__AdminUserSessionQuery>
 export type __AdminUserSessionLazyQueryHookResult = ReturnType<
@@ -20837,40 +21006,43 @@ export const __AdminUserSessionsDocument = gql`
  * });
  */
 export function use__AdminUserSessionsQuery(
-  baseOptions?: Apollo.QueryHookOptions<
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
     __AdminUserSessionsQuery,
     __AdminUserSessionsQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<__AdminUserSessionsQuery, __AdminUserSessionsQueryVariables>(
+  return ApolloReactHooks.useQuery<__AdminUserSessionsQuery, __AdminUserSessionsQueryVariables>(
     __AdminUserSessionsDocument,
     options,
   )
 }
 export function use__AdminUserSessionsLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
     __AdminUserSessionsQuery,
     __AdminUserSessionsQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<__AdminUserSessionsQuery, __AdminUserSessionsQueryVariables>(
+  return ApolloReactHooks.useLazyQuery<__AdminUserSessionsQuery, __AdminUserSessionsQueryVariables>(
     __AdminUserSessionsDocument,
     options,
   )
 }
 export function use__AdminUserSessionsSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<__AdminUserSessionsQuery, __AdminUserSessionsQueryVariables>,
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        __AdminUserSessionsQuery,
+        __AdminUserSessionsQueryVariables
+      >,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<__AdminUserSessionsQuery, __AdminUserSessionsQueryVariables>(
-    __AdminUserSessionsDocument,
-    options,
-  )
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<
+    __AdminUserSessionsQuery,
+    __AdminUserSessionsQueryVariables
+  >(__AdminUserSessionsDocument, options)
 }
 export type __AdminUserSessionsQueryHookResult = ReturnType<typeof use__AdminUserSessionsQuery>
 export type __AdminUserSessionsLazyQueryHookResult = ReturnType<
@@ -20909,40 +21081,40 @@ export const __AdminUserSessionPaginationDocument = gql`
  * });
  */
 export function use__AdminUserSessionPaginationQuery(
-  baseOptions?: Apollo.QueryHookOptions<
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
     __AdminUserSessionPaginationQuery,
     __AdminUserSessionPaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<
+  return ApolloReactHooks.useQuery<
     __AdminUserSessionPaginationQuery,
     __AdminUserSessionPaginationQueryVariables
   >(__AdminUserSessionPaginationDocument, options)
 }
 export function use__AdminUserSessionPaginationLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
     __AdminUserSessionPaginationQuery,
     __AdminUserSessionPaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<
+  return ApolloReactHooks.useLazyQuery<
     __AdminUserSessionPaginationQuery,
     __AdminUserSessionPaginationQueryVariables
   >(__AdminUserSessionPaginationDocument, options)
 }
 export function use__AdminUserSessionPaginationSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
         __AdminUserSessionPaginationQuery,
         __AdminUserSessionPaginationQueryVariables
       >,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<
     __AdminUserSessionPaginationQuery,
     __AdminUserSessionPaginationQueryVariables
   >(__AdminUserSessionPaginationDocument, options)
@@ -20991,16 +21163,16 @@ export type __AdminCreateUserMutationFn = Apollo.MutationFunction<
  * });
  */
 export function use__AdminCreateUserMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     __AdminCreateUserMutation,
     __AdminCreateUserMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<__AdminCreateUserMutation, __AdminCreateUserMutationVariables>(
-    __AdminCreateUserDocument,
-    options,
-  )
+  return ApolloReactHooks.useMutation<
+    __AdminCreateUserMutation,
+    __AdminCreateUserMutationVariables
+  >(__AdminCreateUserDocument, options)
 }
 export type __AdminCreateUserMutationHookResult = ReturnType<typeof use__AdminCreateUserMutation>
 export type __AdminCreateUserMutationResult = Apollo.MutationResult<__AdminCreateUserMutation>
@@ -21038,16 +21210,16 @@ export type __AdminDeleteUserMutationFn = Apollo.MutationFunction<
  * });
  */
 export function use__AdminDeleteUserMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     __AdminDeleteUserMutation,
     __AdminDeleteUserMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<__AdminDeleteUserMutation, __AdminDeleteUserMutationVariables>(
-    __AdminDeleteUserDocument,
-    options,
-  )
+  return ApolloReactHooks.useMutation<
+    __AdminDeleteUserMutation,
+    __AdminDeleteUserMutationVariables
+  >(__AdminDeleteUserDocument, options)
 }
 export type __AdminDeleteUserMutationHookResult = ReturnType<typeof use__AdminDeleteUserMutation>
 export type __AdminDeleteUserMutationResult = Apollo.MutationResult<__AdminDeleteUserMutation>
@@ -21087,16 +21259,16 @@ export type __AdminUpdateUserMutationFn = Apollo.MutationFunction<
  * });
  */
 export function use__AdminUpdateUserMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     __AdminUpdateUserMutation,
     __AdminUpdateUserMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<__AdminUpdateUserMutation, __AdminUpdateUserMutationVariables>(
-    __AdminUpdateUserDocument,
-    options,
-  )
+  return ApolloReactHooks.useMutation<
+    __AdminUpdateUserMutation,
+    __AdminUpdateUserMutationVariables
+  >(__AdminUpdateUserDocument, options)
 }
 export type __AdminUpdateUserMutationHookResult = ReturnType<typeof use__AdminUpdateUserMutation>
 export type __AdminUpdateUserMutationResult = Apollo.MutationResult<__AdminUpdateUserMutation>
@@ -21130,29 +21302,32 @@ export const __AdminUserDocument = gql`
  * });
  */
 export function use__AdminUserQuery(
-  baseOptions: Apollo.QueryHookOptions<__AdminUserQuery, __AdminUserQueryVariables> &
+  baseOptions: ApolloReactHooks.QueryHookOptions<__AdminUserQuery, __AdminUserQueryVariables> &
     ({ variables: __AdminUserQueryVariables; skip?: boolean } | { skip: boolean }),
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<__AdminUserQuery, __AdminUserQueryVariables>(__AdminUserDocument, options)
+  return ApolloReactHooks.useQuery<__AdminUserQuery, __AdminUserQueryVariables>(
+    __AdminUserDocument,
+    options,
+  )
 }
 export function use__AdminUserLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<__AdminUserQuery, __AdminUserQueryVariables>,
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<__AdminUserQuery, __AdminUserQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<__AdminUserQuery, __AdminUserQueryVariables>(
+  return ApolloReactHooks.useLazyQuery<__AdminUserQuery, __AdminUserQueryVariables>(
     __AdminUserDocument,
     options,
   )
 }
 export function use__AdminUserSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<__AdminUserQuery, __AdminUserQueryVariables>,
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<__AdminUserQuery, __AdminUserQueryVariables>,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<__AdminUserQuery, __AdminUserQueryVariables>(
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<__AdminUserQuery, __AdminUserQueryVariables>(
     __AdminUserDocument,
     options,
   )
@@ -21191,31 +21366,34 @@ export const __AdminUsersDocument = gql`
  * });
  */
 export function use__AdminUsersQuery(
-  baseOptions?: Apollo.QueryHookOptions<__AdminUsersQuery, __AdminUsersQueryVariables>,
+  baseOptions?: ApolloReactHooks.QueryHookOptions<__AdminUsersQuery, __AdminUsersQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<__AdminUsersQuery, __AdminUsersQueryVariables>(
+  return ApolloReactHooks.useQuery<__AdminUsersQuery, __AdminUsersQueryVariables>(
     __AdminUsersDocument,
     options,
   )
 }
 export function use__AdminUsersLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<__AdminUsersQuery, __AdminUsersQueryVariables>,
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    __AdminUsersQuery,
+    __AdminUsersQueryVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<__AdminUsersQuery, __AdminUsersQueryVariables>(
+  return ApolloReactHooks.useLazyQuery<__AdminUsersQuery, __AdminUsersQueryVariables>(
     __AdminUsersDocument,
     options,
   )
 }
 export function use__AdminUsersSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<__AdminUsersQuery, __AdminUsersQueryVariables>,
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<__AdminUsersQuery, __AdminUsersQueryVariables>,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<__AdminUsersQuery, __AdminUsersQueryVariables>(
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<__AdminUsersQuery, __AdminUsersQueryVariables>(
     __AdminUsersDocument,
     options,
   )
@@ -21253,43 +21431,43 @@ export const __AdminUserPaginationDocument = gql`
  * });
  */
 export function use__AdminUserPaginationQuery(
-  baseOptions?: Apollo.QueryHookOptions<
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
     __AdminUserPaginationQuery,
     __AdminUserPaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<__AdminUserPaginationQuery, __AdminUserPaginationQueryVariables>(
+  return ApolloReactHooks.useQuery<__AdminUserPaginationQuery, __AdminUserPaginationQueryVariables>(
     __AdminUserPaginationDocument,
     options,
   )
 }
 export function use__AdminUserPaginationLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
     __AdminUserPaginationQuery,
     __AdminUserPaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<__AdminUserPaginationQuery, __AdminUserPaginationQueryVariables>(
-    __AdminUserPaginationDocument,
-    options,
-  )
+  return ApolloReactHooks.useLazyQuery<
+    __AdminUserPaginationQuery,
+    __AdminUserPaginationQueryVariables
+  >(__AdminUserPaginationDocument, options)
 }
 export function use__AdminUserPaginationSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
         __AdminUserPaginationQuery,
         __AdminUserPaginationQueryVariables
       >,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<__AdminUserPaginationQuery, __AdminUserPaginationQueryVariables>(
-    __AdminUserPaginationDocument,
-    options,
-  )
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<
+    __AdminUserPaginationQuery,
+    __AdminUserPaginationQueryVariables
+  >(__AdminUserPaginationDocument, options)
 }
 export type __AdminUserPaginationQueryHookResult = ReturnType<typeof use__AdminUserPaginationQuery>
 export type __AdminUserPaginationLazyQueryHookResult = ReturnType<
@@ -21333,10 +21511,13 @@ export type CreateAddressMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useCreateAddressMutation(
-  baseOptions?: Apollo.MutationHookOptions<CreateAddressMutation, CreateAddressMutationVariables>,
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    CreateAddressMutation,
+    CreateAddressMutationVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<CreateAddressMutation, CreateAddressMutationVariables>(
+  return ApolloReactHooks.useMutation<CreateAddressMutation, CreateAddressMutationVariables>(
     CreateAddressDocument,
     options,
   )
@@ -21377,10 +21558,13 @@ export type DeleteAddressMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useDeleteAddressMutation(
-  baseOptions?: Apollo.MutationHookOptions<DeleteAddressMutation, DeleteAddressMutationVariables>,
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    DeleteAddressMutation,
+    DeleteAddressMutationVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<DeleteAddressMutation, DeleteAddressMutationVariables>(
+  return ApolloReactHooks.useMutation<DeleteAddressMutation, DeleteAddressMutationVariables>(
     DeleteAddressDocument,
     options,
   )
@@ -21423,10 +21607,13 @@ export type UpdateAddressMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useUpdateAddressMutation(
-  baseOptions?: Apollo.MutationHookOptions<UpdateAddressMutation, UpdateAddressMutationVariables>,
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    UpdateAddressMutation,
+    UpdateAddressMutationVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<UpdateAddressMutation, UpdateAddressMutationVariables>(
+  return ApolloReactHooks.useMutation<UpdateAddressMutation, UpdateAddressMutationVariables>(
     UpdateAddressDocument,
     options,
   )
@@ -21463,26 +21650,32 @@ export const AddressDocument = gql`
  * });
  */
 export function useAddressQuery(
-  baseOptions: Apollo.QueryHookOptions<AddressQuery, AddressQueryVariables> &
+  baseOptions: ApolloReactHooks.QueryHookOptions<AddressQuery, AddressQueryVariables> &
     ({ variables: AddressQueryVariables; skip?: boolean } | { skip: boolean }),
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<AddressQuery, AddressQueryVariables>(AddressDocument, options)
+  return ApolloReactHooks.useQuery<AddressQuery, AddressQueryVariables>(AddressDocument, options)
 }
 export function useAddressLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<AddressQuery, AddressQueryVariables>,
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<AddressQuery, AddressQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<AddressQuery, AddressQueryVariables>(AddressDocument, options)
+  return ApolloReactHooks.useLazyQuery<AddressQuery, AddressQueryVariables>(
+    AddressDocument,
+    options,
+  )
 }
 export function useAddressSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<AddressQuery, AddressQueryVariables>,
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<AddressQuery, AddressQueryVariables>,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<AddressQuery, AddressQueryVariables>(AddressDocument, options)
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<AddressQuery, AddressQueryVariables>(
+    AddressDocument,
+    options,
+  )
 }
 export type AddressQueryHookResult = ReturnType<typeof useAddressQuery>
 export type AddressLazyQueryHookResult = ReturnType<typeof useAddressLazyQuery>
@@ -21518,25 +21711,31 @@ export const AddressesDocument = gql`
  * });
  */
 export function useAddressesQuery(
-  baseOptions?: Apollo.QueryHookOptions<AddressesQuery, AddressesQueryVariables>,
+  baseOptions?: ApolloReactHooks.QueryHookOptions<AddressesQuery, AddressesQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<AddressesQuery, AddressesQueryVariables>(AddressesDocument, options)
+  return ApolloReactHooks.useQuery<AddressesQuery, AddressesQueryVariables>(
+    AddressesDocument,
+    options,
+  )
 }
 export function useAddressesLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<AddressesQuery, AddressesQueryVariables>,
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<AddressesQuery, AddressesQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<AddressesQuery, AddressesQueryVariables>(AddressesDocument, options)
+  return ApolloReactHooks.useLazyQuery<AddressesQuery, AddressesQueryVariables>(
+    AddressesDocument,
+    options,
+  )
 }
 export function useAddressesSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<AddressesQuery, AddressesQueryVariables>,
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<AddressesQuery, AddressesQueryVariables>,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<AddressesQuery, AddressesQueryVariables>(
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<AddressesQuery, AddressesQueryVariables>(
     AddressesDocument,
     options,
   )
@@ -21571,34 +21770,40 @@ export const AddressPaginationDocument = gql`
  * });
  */
 export function useAddressPaginationQuery(
-  baseOptions?: Apollo.QueryHookOptions<AddressPaginationQuery, AddressPaginationQueryVariables>,
-) {
-  const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<AddressPaginationQuery, AddressPaginationQueryVariables>(
-    AddressPaginationDocument,
-    options,
-  )
-}
-export function useAddressPaginationLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
     AddressPaginationQuery,
     AddressPaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<AddressPaginationQuery, AddressPaginationQueryVariables>(
+  return ApolloReactHooks.useQuery<AddressPaginationQuery, AddressPaginationQueryVariables>(
+    AddressPaginationDocument,
+    options,
+  )
+}
+export function useAddressPaginationLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    AddressPaginationQuery,
+    AddressPaginationQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useLazyQuery<AddressPaginationQuery, AddressPaginationQueryVariables>(
     AddressPaginationDocument,
     options,
   )
 }
 export function useAddressPaginationSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<AddressPaginationQuery, AddressPaginationQueryVariables>,
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        AddressPaginationQuery,
+        AddressPaginationQueryVariables
+      >,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<AddressPaginationQuery, AddressPaginationQueryVariables>(
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<AddressPaginationQuery, AddressPaginationQueryVariables>(
     AddressPaginationDocument,
     options,
   )
@@ -21644,16 +21849,16 @@ export type AdminDeactivateUserMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useAdminDeactivateUserMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     AdminDeactivateUserMutation,
     AdminDeactivateUserMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<AdminDeactivateUserMutation, AdminDeactivateUserMutationVariables>(
-    AdminDeactivateUserDocument,
-    options,
-  )
+  return ApolloReactHooks.useMutation<
+    AdminDeactivateUserMutation,
+    AdminDeactivateUserMutationVariables
+  >(AdminDeactivateUserDocument, options)
 }
 export type AdminDeactivateUserMutationHookResult = ReturnType<
   typeof useAdminDeactivateUserMutation
@@ -21695,16 +21900,16 @@ export type AdminActivateUserMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useAdminActivateUserMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     AdminActivateUserMutation,
     AdminActivateUserMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<AdminActivateUserMutation, AdminActivateUserMutationVariables>(
-    AdminActivateUserDocument,
-    options,
-  )
+  return ApolloReactHooks.useMutation<
+    AdminActivateUserMutation,
+    AdminActivateUserMutationVariables
+  >(AdminActivateUserDocument, options)
 }
 export type AdminActivateUserMutationHookResult = ReturnType<typeof useAdminActivateUserMutation>
 export type AdminActivateUserMutationResult = Apollo.MutationResult<AdminActivateUserMutation>
@@ -21750,13 +21955,13 @@ export type AdminVerifyEmailMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useAdminVerifyEmailMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     AdminVerifyEmailMutation,
     AdminVerifyEmailMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<AdminVerifyEmailMutation, AdminVerifyEmailMutationVariables>(
+  return ApolloReactHooks.useMutation<AdminVerifyEmailMutation, AdminVerifyEmailMutationVariables>(
     AdminVerifyEmailDocument,
     options,
   )
@@ -21799,13 +22004,13 @@ export type AdminForcePasswordResetMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useAdminForcePasswordResetMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     AdminForcePasswordResetMutation,
     AdminForcePasswordResetMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<
+  return ApolloReactHooks.useMutation<
     AdminForcePasswordResetMutation,
     AdminForcePasswordResetMutationVariables
   >(AdminForcePasswordResetDocument, options)
@@ -21867,40 +22072,40 @@ export const AdminPlatformOrganizationsDocument = gql`
  * });
  */
 export function useAdminPlatformOrganizationsQuery(
-  baseOptions?: Apollo.QueryHookOptions<
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
     AdminPlatformOrganizationsQuery,
     AdminPlatformOrganizationsQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<AdminPlatformOrganizationsQuery, AdminPlatformOrganizationsQueryVariables>(
-    AdminPlatformOrganizationsDocument,
-    options,
-  )
+  return ApolloReactHooks.useQuery<
+    AdminPlatformOrganizationsQuery,
+    AdminPlatformOrganizationsQueryVariables
+  >(AdminPlatformOrganizationsDocument, options)
 }
 export function useAdminPlatformOrganizationsLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
     AdminPlatformOrganizationsQuery,
     AdminPlatformOrganizationsQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<
+  return ApolloReactHooks.useLazyQuery<
     AdminPlatformOrganizationsQuery,
     AdminPlatformOrganizationsQueryVariables
   >(AdminPlatformOrganizationsDocument, options)
 }
 export function useAdminPlatformOrganizationsSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
         AdminPlatformOrganizationsQuery,
         AdminPlatformOrganizationsQueryVariables
       >,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<
     AdminPlatformOrganizationsQuery,
     AdminPlatformOrganizationsQueryVariables
   >(AdminPlatformOrganizationsDocument, options)
@@ -21969,40 +22174,43 @@ export const AdminUserManagementDocument = gql`
  * });
  */
 export function useAdminUserManagementQuery(
-  baseOptions?: Apollo.QueryHookOptions<
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
     AdminUserManagementQuery,
     AdminUserManagementQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<AdminUserManagementQuery, AdminUserManagementQueryVariables>(
+  return ApolloReactHooks.useQuery<AdminUserManagementQuery, AdminUserManagementQueryVariables>(
     AdminUserManagementDocument,
     options,
   )
 }
 export function useAdminUserManagementLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
     AdminUserManagementQuery,
     AdminUserManagementQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<AdminUserManagementQuery, AdminUserManagementQueryVariables>(
+  return ApolloReactHooks.useLazyQuery<AdminUserManagementQuery, AdminUserManagementQueryVariables>(
     AdminUserManagementDocument,
     options,
   )
 }
 export function useAdminUserManagementSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<AdminUserManagementQuery, AdminUserManagementQueryVariables>,
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        AdminUserManagementQuery,
+        AdminUserManagementQueryVariables
+      >,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<AdminUserManagementQuery, AdminUserManagementQueryVariables>(
-    AdminUserManagementDocument,
-    options,
-  )
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<
+    AdminUserManagementQuery,
+    AdminUserManagementQueryVariables
+  >(AdminUserManagementDocument, options)
 }
 export type AdminUserManagementQueryHookResult = ReturnType<typeof useAdminUserManagementQuery>
 export type AdminUserManagementLazyQueryHookResult = ReturnType<
@@ -22096,41 +22304,41 @@ export const AdminUserManagementDetailsDocument = gql`
  * });
  */
 export function useAdminUserManagementDetailsQuery(
-  baseOptions: Apollo.QueryHookOptions<
+  baseOptions: ApolloReactHooks.QueryHookOptions<
     AdminUserManagementDetailsQuery,
     AdminUserManagementDetailsQueryVariables
   > &
     ({ variables: AdminUserManagementDetailsQueryVariables; skip?: boolean } | { skip: boolean }),
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<AdminUserManagementDetailsQuery, AdminUserManagementDetailsQueryVariables>(
-    AdminUserManagementDetailsDocument,
-    options,
-  )
+  return ApolloReactHooks.useQuery<
+    AdminUserManagementDetailsQuery,
+    AdminUserManagementDetailsQueryVariables
+  >(AdminUserManagementDetailsDocument, options)
 }
 export function useAdminUserManagementDetailsLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
     AdminUserManagementDetailsQuery,
     AdminUserManagementDetailsQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<
+  return ApolloReactHooks.useLazyQuery<
     AdminUserManagementDetailsQuery,
     AdminUserManagementDetailsQueryVariables
   >(AdminUserManagementDetailsDocument, options)
 }
 export function useAdminUserManagementDetailsSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
         AdminUserManagementDetailsQuery,
         AdminUserManagementDetailsQueryVariables
       >,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<
     AdminUserManagementDetailsQuery,
     AdminUserManagementDetailsQueryVariables
   >(AdminUserManagementDetailsDocument, options)
@@ -22191,40 +22399,40 @@ export const AdminPlatformSecurityEventsDocument = gql`
  * });
  */
 export function useAdminPlatformSecurityEventsQuery(
-  baseOptions?: Apollo.QueryHookOptions<
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
     AdminPlatformSecurityEventsQuery,
     AdminPlatformSecurityEventsQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<
+  return ApolloReactHooks.useQuery<
     AdminPlatformSecurityEventsQuery,
     AdminPlatformSecurityEventsQueryVariables
   >(AdminPlatformSecurityEventsDocument, options)
 }
 export function useAdminPlatformSecurityEventsLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
     AdminPlatformSecurityEventsQuery,
     AdminPlatformSecurityEventsQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<
+  return ApolloReactHooks.useLazyQuery<
     AdminPlatformSecurityEventsQuery,
     AdminPlatformSecurityEventsQueryVariables
   >(AdminPlatformSecurityEventsDocument, options)
 }
 export function useAdminPlatformSecurityEventsSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
         AdminPlatformSecurityEventsQuery,
         AdminPlatformSecurityEventsQueryVariables
       >,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<
     AdminPlatformSecurityEventsQuery,
     AdminPlatformSecurityEventsQueryVariables
   >(AdminPlatformSecurityEventsDocument, options)
@@ -22289,43 +22497,43 @@ export const AdminPlatformAuditLogsDocument = gql`
  * });
  */
 export function useAdminPlatformAuditLogsQuery(
-  baseOptions?: Apollo.QueryHookOptions<
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
     AdminPlatformAuditLogsQuery,
     AdminPlatformAuditLogsQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<AdminPlatformAuditLogsQuery, AdminPlatformAuditLogsQueryVariables>(
-    AdminPlatformAuditLogsDocument,
-    options,
-  )
+  return ApolloReactHooks.useQuery<
+    AdminPlatformAuditLogsQuery,
+    AdminPlatformAuditLogsQueryVariables
+  >(AdminPlatformAuditLogsDocument, options)
 }
 export function useAdminPlatformAuditLogsLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
     AdminPlatformAuditLogsQuery,
     AdminPlatformAuditLogsQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<AdminPlatformAuditLogsQuery, AdminPlatformAuditLogsQueryVariables>(
-    AdminPlatformAuditLogsDocument,
-    options,
-  )
+  return ApolloReactHooks.useLazyQuery<
+    AdminPlatformAuditLogsQuery,
+    AdminPlatformAuditLogsQueryVariables
+  >(AdminPlatformAuditLogsDocument, options)
 }
 export function useAdminPlatformAuditLogsSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
         AdminPlatformAuditLogsQuery,
         AdminPlatformAuditLogsQueryVariables
       >,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<AdminPlatformAuditLogsQuery, AdminPlatformAuditLogsQueryVariables>(
-    AdminPlatformAuditLogsDocument,
-    options,
-  )
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<
+    AdminPlatformAuditLogsQuery,
+    AdminPlatformAuditLogsQueryVariables
+  >(AdminPlatformAuditLogsDocument, options)
 }
 export type AdminPlatformAuditLogsQueryHookResult = ReturnType<
   typeof useAdminPlatformAuditLogsQuery
@@ -22368,40 +22576,43 @@ export const AdminDashboardStatsDocument = gql`
  * });
  */
 export function useAdminDashboardStatsQuery(
-  baseOptions?: Apollo.QueryHookOptions<
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
     AdminDashboardStatsQuery,
     AdminDashboardStatsQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<AdminDashboardStatsQuery, AdminDashboardStatsQueryVariables>(
+  return ApolloReactHooks.useQuery<AdminDashboardStatsQuery, AdminDashboardStatsQueryVariables>(
     AdminDashboardStatsDocument,
     options,
   )
 }
 export function useAdminDashboardStatsLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
     AdminDashboardStatsQuery,
     AdminDashboardStatsQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<AdminDashboardStatsQuery, AdminDashboardStatsQueryVariables>(
+  return ApolloReactHooks.useLazyQuery<AdminDashboardStatsQuery, AdminDashboardStatsQueryVariables>(
     AdminDashboardStatsDocument,
     options,
   )
 }
 export function useAdminDashboardStatsSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<AdminDashboardStatsQuery, AdminDashboardStatsQueryVariables>,
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        AdminDashboardStatsQuery,
+        AdminDashboardStatsQueryVariables
+      >,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<AdminDashboardStatsQuery, AdminDashboardStatsQueryVariables>(
-    AdminDashboardStatsDocument,
-    options,
-  )
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<
+    AdminDashboardStatsQuery,
+    AdminDashboardStatsQueryVariables
+  >(AdminDashboardStatsDocument, options)
 }
 export type AdminDashboardStatsQueryHookResult = ReturnType<typeof useAdminDashboardStatsQuery>
 export type AdminDashboardStatsLazyQueryHookResult = ReturnType<
@@ -22445,13 +22656,13 @@ export type GenerateApiTokenMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useGenerateApiTokenMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     GenerateApiTokenMutation,
     GenerateApiTokenMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<GenerateApiTokenMutation, GenerateApiTokenMutationVariables>(
+  return ApolloReactHooks.useMutation<GenerateApiTokenMutation, GenerateApiTokenMutationVariables>(
     GenerateApiTokenDocument,
     options,
   )
@@ -22493,10 +22704,13 @@ export type RotateApiTokenMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useRotateApiTokenMutation(
-  baseOptions?: Apollo.MutationHookOptions<RotateApiTokenMutation, RotateApiTokenMutationVariables>,
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    RotateApiTokenMutation,
+    RotateApiTokenMutationVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<RotateApiTokenMutation, RotateApiTokenMutationVariables>(
+  return ApolloReactHooks.useMutation<RotateApiTokenMutation, RotateApiTokenMutationVariables>(
     RotateApiTokenDocument,
     options,
   )
@@ -22538,10 +22752,13 @@ export type RevokeApiTokenMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useRevokeApiTokenMutation(
-  baseOptions?: Apollo.MutationHookOptions<RevokeApiTokenMutation, RevokeApiTokenMutationVariables>,
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    RevokeApiTokenMutation,
+    RevokeApiTokenMutationVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<RevokeApiTokenMutation, RevokeApiTokenMutationVariables>(
+  return ApolloReactHooks.useMutation<RevokeApiTokenMutation, RevokeApiTokenMutationVariables>(
     RevokeApiTokenDocument,
     options,
   )
@@ -22578,26 +22795,32 @@ export const ApiTokenDocument = gql`
  * });
  */
 export function useApiTokenQuery(
-  baseOptions: Apollo.QueryHookOptions<ApiTokenQuery, ApiTokenQueryVariables> &
+  baseOptions: ApolloReactHooks.QueryHookOptions<ApiTokenQuery, ApiTokenQueryVariables> &
     ({ variables: ApiTokenQueryVariables; skip?: boolean } | { skip: boolean }),
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<ApiTokenQuery, ApiTokenQueryVariables>(ApiTokenDocument, options)
+  return ApolloReactHooks.useQuery<ApiTokenQuery, ApiTokenQueryVariables>(ApiTokenDocument, options)
 }
 export function useApiTokenLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<ApiTokenQuery, ApiTokenQueryVariables>,
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<ApiTokenQuery, ApiTokenQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<ApiTokenQuery, ApiTokenQueryVariables>(ApiTokenDocument, options)
+  return ApolloReactHooks.useLazyQuery<ApiTokenQuery, ApiTokenQueryVariables>(
+    ApiTokenDocument,
+    options,
+  )
 }
 export function useApiTokenSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<ApiTokenQuery, ApiTokenQueryVariables>,
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<ApiTokenQuery, ApiTokenQueryVariables>,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<ApiTokenQuery, ApiTokenQueryVariables>(ApiTokenDocument, options)
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<ApiTokenQuery, ApiTokenQueryVariables>(
+    ApiTokenDocument,
+    options,
+  )
 }
 export type ApiTokenQueryHookResult = ReturnType<typeof useApiTokenQuery>
 export type ApiTokenLazyQueryHookResult = ReturnType<typeof useApiTokenLazyQuery>
@@ -22633,25 +22856,31 @@ export const ApiTokensDocument = gql`
  * });
  */
 export function useApiTokensQuery(
-  baseOptions?: Apollo.QueryHookOptions<ApiTokensQuery, ApiTokensQueryVariables>,
+  baseOptions?: ApolloReactHooks.QueryHookOptions<ApiTokensQuery, ApiTokensQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<ApiTokensQuery, ApiTokensQueryVariables>(ApiTokensDocument, options)
+  return ApolloReactHooks.useQuery<ApiTokensQuery, ApiTokensQueryVariables>(
+    ApiTokensDocument,
+    options,
+  )
 }
 export function useApiTokensLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<ApiTokensQuery, ApiTokensQueryVariables>,
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<ApiTokensQuery, ApiTokensQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<ApiTokensQuery, ApiTokensQueryVariables>(ApiTokensDocument, options)
+  return ApolloReactHooks.useLazyQuery<ApiTokensQuery, ApiTokensQueryVariables>(
+    ApiTokensDocument,
+    options,
+  )
 }
 export function useApiTokensSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<ApiTokensQuery, ApiTokensQueryVariables>,
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<ApiTokensQuery, ApiTokensQueryVariables>,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<ApiTokensQuery, ApiTokensQueryVariables>(
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<ApiTokensQuery, ApiTokensQueryVariables>(
     ApiTokensDocument,
     options,
   )
@@ -22685,31 +22914,34 @@ export const ListApiTokensDocument = gql`
  * });
  */
 export function useListApiTokensQuery(
-  baseOptions?: Apollo.QueryHookOptions<ListApiTokensQuery, ListApiTokensQueryVariables>,
+  baseOptions?: ApolloReactHooks.QueryHookOptions<ListApiTokensQuery, ListApiTokensQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<ListApiTokensQuery, ListApiTokensQueryVariables>(
+  return ApolloReactHooks.useQuery<ListApiTokensQuery, ListApiTokensQueryVariables>(
     ListApiTokensDocument,
     options,
   )
 }
 export function useListApiTokensLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<ListApiTokensQuery, ListApiTokensQueryVariables>,
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    ListApiTokensQuery,
+    ListApiTokensQueryVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<ListApiTokensQuery, ListApiTokensQueryVariables>(
+  return ApolloReactHooks.useLazyQuery<ListApiTokensQuery, ListApiTokensQueryVariables>(
     ListApiTokensDocument,
     options,
   )
 }
 export function useListApiTokensSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<ListApiTokensQuery, ListApiTokensQueryVariables>,
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<ListApiTokensQuery, ListApiTokensQueryVariables>,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<ListApiTokensQuery, ListApiTokensQueryVariables>(
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<ListApiTokensQuery, ListApiTokensQueryVariables>(
     ListApiTokensDocument,
     options,
   )
@@ -22747,37 +22979,43 @@ export const ApiTokenPaginationDocument = gql`
  * });
  */
 export function useApiTokenPaginationQuery(
-  baseOptions?: Apollo.QueryHookOptions<ApiTokenPaginationQuery, ApiTokenPaginationQueryVariables>,
-) {
-  const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<ApiTokenPaginationQuery, ApiTokenPaginationQueryVariables>(
-    ApiTokenPaginationDocument,
-    options,
-  )
-}
-export function useApiTokenPaginationLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
     ApiTokenPaginationQuery,
     ApiTokenPaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<ApiTokenPaginationQuery, ApiTokenPaginationQueryVariables>(
+  return ApolloReactHooks.useQuery<ApiTokenPaginationQuery, ApiTokenPaginationQueryVariables>(
+    ApiTokenPaginationDocument,
+    options,
+  )
+}
+export function useApiTokenPaginationLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    ApiTokenPaginationQuery,
+    ApiTokenPaginationQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useLazyQuery<ApiTokenPaginationQuery, ApiTokenPaginationQueryVariables>(
     ApiTokenPaginationDocument,
     options,
   )
 }
 export function useApiTokenPaginationSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<ApiTokenPaginationQuery, ApiTokenPaginationQueryVariables>,
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        ApiTokenPaginationQuery,
+        ApiTokenPaginationQueryVariables
+      >,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<ApiTokenPaginationQuery, ApiTokenPaginationQueryVariables>(
-    ApiTokenPaginationDocument,
-    options,
-  )
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<
+    ApiTokenPaginationQuery,
+    ApiTokenPaginationQueryVariables
+  >(ApiTokenPaginationDocument, options)
 }
 export type ApiTokenPaginationQueryHookResult = ReturnType<typeof useApiTokenPaginationQuery>
 export type ApiTokenPaginationLazyQueryHookResult = ReturnType<
@@ -22821,10 +23059,13 @@ export type CreateAuditLogMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useCreateAuditLogMutation(
-  baseOptions?: Apollo.MutationHookOptions<CreateAuditLogMutation, CreateAuditLogMutationVariables>,
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    CreateAuditLogMutation,
+    CreateAuditLogMutationVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<CreateAuditLogMutation, CreateAuditLogMutationVariables>(
+  return ApolloReactHooks.useMutation<CreateAuditLogMutation, CreateAuditLogMutationVariables>(
     CreateAuditLogDocument,
     options,
   )
@@ -22865,10 +23106,13 @@ export type DeleteAuditLogMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useDeleteAuditLogMutation(
-  baseOptions?: Apollo.MutationHookOptions<DeleteAuditLogMutation, DeleteAuditLogMutationVariables>,
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    DeleteAuditLogMutation,
+    DeleteAuditLogMutationVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<DeleteAuditLogMutation, DeleteAuditLogMutationVariables>(
+  return ApolloReactHooks.useMutation<DeleteAuditLogMutation, DeleteAuditLogMutationVariables>(
     DeleteAuditLogDocument,
     options,
   )
@@ -22911,10 +23155,13 @@ export type UpdateAuditLogMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useUpdateAuditLogMutation(
-  baseOptions?: Apollo.MutationHookOptions<UpdateAuditLogMutation, UpdateAuditLogMutationVariables>,
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    UpdateAuditLogMutation,
+    UpdateAuditLogMutationVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<UpdateAuditLogMutation, UpdateAuditLogMutationVariables>(
+  return ApolloReactHooks.useMutation<UpdateAuditLogMutation, UpdateAuditLogMutationVariables>(
     UpdateAuditLogDocument,
     options,
   )
@@ -22951,26 +23198,32 @@ export const AuditLogDocument = gql`
  * });
  */
 export function useAuditLogQuery(
-  baseOptions: Apollo.QueryHookOptions<AuditLogQuery, AuditLogQueryVariables> &
+  baseOptions: ApolloReactHooks.QueryHookOptions<AuditLogQuery, AuditLogQueryVariables> &
     ({ variables: AuditLogQueryVariables; skip?: boolean } | { skip: boolean }),
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<AuditLogQuery, AuditLogQueryVariables>(AuditLogDocument, options)
+  return ApolloReactHooks.useQuery<AuditLogQuery, AuditLogQueryVariables>(AuditLogDocument, options)
 }
 export function useAuditLogLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<AuditLogQuery, AuditLogQueryVariables>,
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<AuditLogQuery, AuditLogQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<AuditLogQuery, AuditLogQueryVariables>(AuditLogDocument, options)
+  return ApolloReactHooks.useLazyQuery<AuditLogQuery, AuditLogQueryVariables>(
+    AuditLogDocument,
+    options,
+  )
 }
 export function useAuditLogSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<AuditLogQuery, AuditLogQueryVariables>,
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<AuditLogQuery, AuditLogQueryVariables>,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<AuditLogQuery, AuditLogQueryVariables>(AuditLogDocument, options)
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<AuditLogQuery, AuditLogQueryVariables>(
+    AuditLogDocument,
+    options,
+  )
 }
 export type AuditLogQueryHookResult = ReturnType<typeof useAuditLogQuery>
 export type AuditLogLazyQueryHookResult = ReturnType<typeof useAuditLogLazyQuery>
@@ -23006,25 +23259,31 @@ export const AuditLogsDocument = gql`
  * });
  */
 export function useAuditLogsQuery(
-  baseOptions?: Apollo.QueryHookOptions<AuditLogsQuery, AuditLogsQueryVariables>,
+  baseOptions?: ApolloReactHooks.QueryHookOptions<AuditLogsQuery, AuditLogsQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<AuditLogsQuery, AuditLogsQueryVariables>(AuditLogsDocument, options)
+  return ApolloReactHooks.useQuery<AuditLogsQuery, AuditLogsQueryVariables>(
+    AuditLogsDocument,
+    options,
+  )
 }
 export function useAuditLogsLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<AuditLogsQuery, AuditLogsQueryVariables>,
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<AuditLogsQuery, AuditLogsQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<AuditLogsQuery, AuditLogsQueryVariables>(AuditLogsDocument, options)
+  return ApolloReactHooks.useLazyQuery<AuditLogsQuery, AuditLogsQueryVariables>(
+    AuditLogsDocument,
+    options,
+  )
 }
 export function useAuditLogsSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<AuditLogsQuery, AuditLogsQueryVariables>,
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<AuditLogsQuery, AuditLogsQueryVariables>,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<AuditLogsQuery, AuditLogsQueryVariables>(
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<AuditLogsQuery, AuditLogsQueryVariables>(
     AuditLogsDocument,
     options,
   )
@@ -23059,37 +23318,43 @@ export const AuditLogPaginationDocument = gql`
  * });
  */
 export function useAuditLogPaginationQuery(
-  baseOptions?: Apollo.QueryHookOptions<AuditLogPaginationQuery, AuditLogPaginationQueryVariables>,
-) {
-  const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<AuditLogPaginationQuery, AuditLogPaginationQueryVariables>(
-    AuditLogPaginationDocument,
-    options,
-  )
-}
-export function useAuditLogPaginationLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
     AuditLogPaginationQuery,
     AuditLogPaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<AuditLogPaginationQuery, AuditLogPaginationQueryVariables>(
+  return ApolloReactHooks.useQuery<AuditLogPaginationQuery, AuditLogPaginationQueryVariables>(
+    AuditLogPaginationDocument,
+    options,
+  )
+}
+export function useAuditLogPaginationLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    AuditLogPaginationQuery,
+    AuditLogPaginationQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useLazyQuery<AuditLogPaginationQuery, AuditLogPaginationQueryVariables>(
     AuditLogPaginationDocument,
     options,
   )
 }
 export function useAuditLogPaginationSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<AuditLogPaginationQuery, AuditLogPaginationQueryVariables>,
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        AuditLogPaginationQuery,
+        AuditLogPaginationQueryVariables
+      >,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<AuditLogPaginationQuery, AuditLogPaginationQueryVariables>(
-    AuditLogPaginationDocument,
-    options,
-  )
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<
+    AuditLogPaginationQuery,
+    AuditLogPaginationQueryVariables
+  >(AuditLogPaginationDocument, options)
 }
 export type AuditLogPaginationQueryHookResult = ReturnType<typeof useAuditLogPaginationQuery>
 export type AuditLogPaginationLazyQueryHookResult = ReturnType<
@@ -23128,31 +23393,37 @@ export const ExportUserDataDocument = gql`
  * });
  */
 export function useExportUserDataQuery(
-  baseOptions?: Apollo.QueryHookOptions<ExportUserDataQuery, ExportUserDataQueryVariables>,
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    ExportUserDataQuery,
+    ExportUserDataQueryVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<ExportUserDataQuery, ExportUserDataQueryVariables>(
+  return ApolloReactHooks.useQuery<ExportUserDataQuery, ExportUserDataQueryVariables>(
     ExportUserDataDocument,
     options,
   )
 }
 export function useExportUserDataLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<ExportUserDataQuery, ExportUserDataQueryVariables>,
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    ExportUserDataQuery,
+    ExportUserDataQueryVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<ExportUserDataQuery, ExportUserDataQueryVariables>(
+  return ApolloReactHooks.useLazyQuery<ExportUserDataQuery, ExportUserDataQueryVariables>(
     ExportUserDataDocument,
     options,
   )
 }
 export function useExportUserDataSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<ExportUserDataQuery, ExportUserDataQueryVariables>,
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<ExportUserDataQuery, ExportUserDataQueryVariables>,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<ExportUserDataQuery, ExportUserDataQueryVariables>(
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<ExportUserDataQuery, ExportUserDataQueryVariables>(
     ExportUserDataDocument,
     options,
   )
@@ -23193,16 +23464,16 @@ export type DeleteUserAccountMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useDeleteUserAccountMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     DeleteUserAccountMutation,
     DeleteUserAccountMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<DeleteUserAccountMutation, DeleteUserAccountMutationVariables>(
-    DeleteUserAccountDocument,
-    options,
-  )
+  return ApolloReactHooks.useMutation<
+    DeleteUserAccountMutation,
+    DeleteUserAccountMutationVariables
+  >(DeleteUserAccountDocument, options)
 }
 export type DeleteUserAccountMutationHookResult = ReturnType<typeof useDeleteUserAccountMutation>
 export type DeleteUserAccountMutationResult = Apollo.MutationResult<DeleteUserAccountMutation>
@@ -23238,13 +23509,13 @@ export type TransferOrganizationOwnershipMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useTransferOrganizationOwnershipMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     TransferOrganizationOwnershipMutation,
     TransferOrganizationOwnershipMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<
+  return ApolloReactHooks.useMutation<
     TransferOrganizationOwnershipMutation,
     TransferOrganizationOwnershipMutationVariables
   >(TransferOrganizationOwnershipDocument, options)
@@ -23286,10 +23557,10 @@ export type LoginMutationFn = Apollo.MutationFunction<LoginMutation, LoginMutati
  * });
  */
 export function useLoginMutation(
-  baseOptions?: Apollo.MutationHookOptions<LoginMutation, LoginMutationVariables>,
+  baseOptions?: ApolloReactHooks.MutationHookOptions<LoginMutation, LoginMutationVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<LoginMutation, LoginMutationVariables>(LoginDocument, options)
+  return ApolloReactHooks.useMutation<LoginMutation, LoginMutationVariables>(LoginDocument, options)
 }
 export type LoginMutationHookResult = ReturnType<typeof useLoginMutation>
 export type LoginMutationResult = Apollo.MutationResult<LoginMutation>
@@ -23325,10 +23596,13 @@ export type RegisterMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useRegisterMutation(
-  baseOptions?: Apollo.MutationHookOptions<RegisterMutation, RegisterMutationVariables>,
+  baseOptions?: ApolloReactHooks.MutationHookOptions<RegisterMutation, RegisterMutationVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<RegisterMutation, RegisterMutationVariables>(RegisterDocument, options)
+  return ApolloReactHooks.useMutation<RegisterMutation, RegisterMutationVariables>(
+    RegisterDocument,
+    options,
+  )
 }
 export type RegisterMutationHookResult = ReturnType<typeof useRegisterMutation>
 export type RegisterMutationResult = Apollo.MutationResult<RegisterMutation>
@@ -23367,13 +23641,13 @@ export type RegisterWithInvitationMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useRegisterWithInvitationMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     RegisterWithInvitationMutation,
     RegisterWithInvitationMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<
+  return ApolloReactHooks.useMutation<
     RegisterWithInvitationMutation,
     RegisterWithInvitationMutationVariables
   >(RegisterWithInvitationDocument, options)
@@ -23411,10 +23685,13 @@ export type LogoutMutationFn = Apollo.MutationFunction<LogoutMutation, LogoutMut
  * });
  */
 export function useLogoutMutation(
-  baseOptions?: Apollo.MutationHookOptions<LogoutMutation, LogoutMutationVariables>,
+  baseOptions?: ApolloReactHooks.MutationHookOptions<LogoutMutation, LogoutMutationVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<LogoutMutation, LogoutMutationVariables>(LogoutDocument, options)
+  return ApolloReactHooks.useMutation<LogoutMutation, LogoutMutationVariables>(
+    LogoutDocument,
+    options,
+  )
 }
 export type LogoutMutationHookResult = ReturnType<typeof useLogoutMutation>
 export type LogoutMutationResult = Apollo.MutationResult<LogoutMutation>
@@ -23450,10 +23727,13 @@ export type ForgotPasswordMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useForgotPasswordMutation(
-  baseOptions?: Apollo.MutationHookOptions<ForgotPasswordMutation, ForgotPasswordMutationVariables>,
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    ForgotPasswordMutation,
+    ForgotPasswordMutationVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<ForgotPasswordMutation, ForgotPasswordMutationVariables>(
+  return ApolloReactHooks.useMutation<ForgotPasswordMutation, ForgotPasswordMutationVariables>(
     ForgotPasswordDocument,
     options,
   )
@@ -23495,10 +23775,13 @@ export type ResetPasswordMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useResetPasswordMutation(
-  baseOptions?: Apollo.MutationHookOptions<ResetPasswordMutation, ResetPasswordMutationVariables>,
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    ResetPasswordMutation,
+    ResetPasswordMutationVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<ResetPasswordMutation, ResetPasswordMutationVariables>(
+  return ApolloReactHooks.useMutation<ResetPasswordMutation, ResetPasswordMutationVariables>(
     ResetPasswordDocument,
     options,
   )
@@ -23540,10 +23823,13 @@ export type VerifyEmailMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useVerifyEmailMutation(
-  baseOptions?: Apollo.MutationHookOptions<VerifyEmailMutation, VerifyEmailMutationVariables>,
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    VerifyEmailMutation,
+    VerifyEmailMutationVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<VerifyEmailMutation, VerifyEmailMutationVariables>(
+  return ApolloReactHooks.useMutation<VerifyEmailMutation, VerifyEmailMutationVariables>(
     VerifyEmailDocument,
     options,
   )
@@ -23582,13 +23868,13 @@ export type ResendVerificationEmailMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useResendVerificationEmailMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     ResendVerificationEmailMutation,
     ResendVerificationEmailMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<
+  return ApolloReactHooks.useMutation<
     ResendVerificationEmailMutation,
     ResendVerificationEmailMutationVariables
   >(ResendVerificationEmailDocument, options)
@@ -23633,10 +23919,13 @@ export type EmulateUserMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useEmulateUserMutation(
-  baseOptions?: Apollo.MutationHookOptions<EmulateUserMutation, EmulateUserMutationVariables>,
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    EmulateUserMutation,
+    EmulateUserMutationVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<EmulateUserMutation, EmulateUserMutationVariables>(
+  return ApolloReactHooks.useMutation<EmulateUserMutation, EmulateUserMutationVariables>(
     EmulateUserDocument,
     options,
   )
@@ -23677,10 +23966,13 @@ export type EndEmulationMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useEndEmulationMutation(
-  baseOptions?: Apollo.MutationHookOptions<EndEmulationMutation, EndEmulationMutationVariables>,
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    EndEmulationMutation,
+    EndEmulationMutationVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<EndEmulationMutation, EndEmulationMutationVariables>(
+  return ApolloReactHooks.useMutation<EndEmulationMutation, EndEmulationMutationVariables>(
     EndEmulationDocument,
     options,
   )
@@ -23719,10 +24011,13 @@ export type ChangeEmailMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useChangeEmailMutation(
-  baseOptions?: Apollo.MutationHookOptions<ChangeEmailMutation, ChangeEmailMutationVariables>,
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    ChangeEmailMutation,
+    ChangeEmailMutationVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<ChangeEmailMutation, ChangeEmailMutationVariables>(
+  return ApolloReactHooks.useMutation<ChangeEmailMutation, ChangeEmailMutationVariables>(
     ChangeEmailDocument,
     options,
   )
@@ -23764,16 +24059,16 @@ export type VerifyEmailChangeMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useVerifyEmailChangeMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     VerifyEmailChangeMutation,
     VerifyEmailChangeMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<VerifyEmailChangeMutation, VerifyEmailChangeMutationVariables>(
-    VerifyEmailChangeDocument,
-    options,
-  )
+  return ApolloReactHooks.useMutation<
+    VerifyEmailChangeMutation,
+    VerifyEmailChangeMutationVariables
+  >(VerifyEmailChangeDocument, options)
 }
 export type VerifyEmailChangeMutationHookResult = ReturnType<typeof useVerifyEmailChangeMutation>
 export type VerifyEmailChangeMutationResult = Apollo.MutationResult<VerifyEmailChangeMutation>
@@ -23809,10 +24104,13 @@ export type ChangePasswordMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useChangePasswordMutation(
-  baseOptions?: Apollo.MutationHookOptions<ChangePasswordMutation, ChangePasswordMutationVariables>,
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    ChangePasswordMutation,
+    ChangePasswordMutationVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<ChangePasswordMutation, ChangePasswordMutationVariables>(
+  return ApolloReactHooks.useMutation<ChangePasswordMutation, ChangePasswordMutationVariables>(
     ChangePasswordDocument,
     options,
   )
@@ -23851,13 +24149,13 @@ export type LinkOAuthAccountMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useLinkOAuthAccountMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     LinkOAuthAccountMutation,
     LinkOAuthAccountMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<LinkOAuthAccountMutation, LinkOAuthAccountMutationVariables>(
+  return ApolloReactHooks.useMutation<LinkOAuthAccountMutation, LinkOAuthAccountMutationVariables>(
     LinkOAuthAccountDocument,
     options,
   )
@@ -23896,16 +24194,16 @@ export type UnlinkOAuthAccountMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useUnlinkOAuthAccountMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     UnlinkOAuthAccountMutation,
     UnlinkOAuthAccountMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<UnlinkOAuthAccountMutation, UnlinkOAuthAccountMutationVariables>(
-    UnlinkOAuthAccountDocument,
-    options,
-  )
+  return ApolloReactHooks.useMutation<
+    UnlinkOAuthAccountMutation,
+    UnlinkOAuthAccountMutationVariables
+  >(UnlinkOAuthAccountDocument, options)
 }
 export type UnlinkOAuthAccountMutationHookResult = ReturnType<typeof useUnlinkOAuthAccountMutation>
 export type UnlinkOAuthAccountMutationResult = Apollo.MutationResult<UnlinkOAuthAccountMutation>
@@ -23941,16 +24239,16 @@ export type InvalidateSessionMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useInvalidateSessionMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     InvalidateSessionMutation,
     InvalidateSessionMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<InvalidateSessionMutation, InvalidateSessionMutationVariables>(
-    InvalidateSessionDocument,
-    options,
-  )
+  return ApolloReactHooks.useMutation<
+    InvalidateSessionMutation,
+    InvalidateSessionMutationVariables
+  >(InvalidateSessionDocument, options)
 }
 export type InvalidateSessionMutationHookResult = ReturnType<typeof useInvalidateSessionMutation>
 export type InvalidateSessionMutationResult = Apollo.MutationResult<InvalidateSessionMutation>
@@ -23985,16 +24283,16 @@ export type InvalidateAllSessionsMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useInvalidateAllSessionsMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     InvalidateAllSessionsMutation,
     InvalidateAllSessionsMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<InvalidateAllSessionsMutation, InvalidateAllSessionsMutationVariables>(
-    InvalidateAllSessionsDocument,
-    options,
-  )
+  return ApolloReactHooks.useMutation<
+    InvalidateAllSessionsMutation,
+    InvalidateAllSessionsMutationVariables
+  >(InvalidateAllSessionsDocument, options)
 }
 export type InvalidateAllSessionsMutationHookResult = ReturnType<
   typeof useInvalidateAllSessionsMutation
@@ -24029,22 +24327,26 @@ export const MeDocument = gql`
  *   },
  * });
  */
-export function useMeQuery(baseOptions?: Apollo.QueryHookOptions<MeQuery, MeQueryVariables>) {
+export function useMeQuery(
+  baseOptions?: ApolloReactHooks.QueryHookOptions<MeQuery, MeQueryVariables>,
+) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<MeQuery, MeQueryVariables>(MeDocument, options)
+  return ApolloReactHooks.useQuery<MeQuery, MeQueryVariables>(MeDocument, options)
 }
 export function useMeLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<MeQuery, MeQueryVariables>,
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<MeQuery, MeQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<MeQuery, MeQueryVariables>(MeDocument, options)
+  return ApolloReactHooks.useLazyQuery<MeQuery, MeQueryVariables>(MeDocument, options)
 }
 export function useMeSuspenseQuery(
-  baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<MeQuery, MeQueryVariables>,
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<MeQuery, MeQueryVariables>,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<MeQuery, MeQueryVariables>(MeDocument, options)
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<MeQuery, MeQueryVariables>(MeDocument, options)
 }
 export type MeQueryHookResult = ReturnType<typeof useMeQuery>
 export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>
@@ -24076,40 +24378,40 @@ export const AvailableOAuthProvidersDocument = gql`
  * });
  */
 export function useAvailableOAuthProvidersQuery(
-  baseOptions?: Apollo.QueryHookOptions<
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
     AvailableOAuthProvidersQuery,
     AvailableOAuthProvidersQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<AvailableOAuthProvidersQuery, AvailableOAuthProvidersQueryVariables>(
-    AvailableOAuthProvidersDocument,
-    options,
-  )
+  return ApolloReactHooks.useQuery<
+    AvailableOAuthProvidersQuery,
+    AvailableOAuthProvidersQueryVariables
+  >(AvailableOAuthProvidersDocument, options)
 }
 export function useAvailableOAuthProvidersLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
     AvailableOAuthProvidersQuery,
     AvailableOAuthProvidersQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<AvailableOAuthProvidersQuery, AvailableOAuthProvidersQueryVariables>(
-    AvailableOAuthProvidersDocument,
-    options,
-  )
+  return ApolloReactHooks.useLazyQuery<
+    AvailableOAuthProvidersQuery,
+    AvailableOAuthProvidersQueryVariables
+  >(AvailableOAuthProvidersDocument, options)
 }
 export function useAvailableOAuthProvidersSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
         AvailableOAuthProvidersQuery,
         AvailableOAuthProvidersQueryVariables
       >,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<
     AvailableOAuthProvidersQuery,
     AvailableOAuthProvidersQueryVariables
   >(AvailableOAuthProvidersDocument, options)
@@ -24152,31 +24454,40 @@ export const GetUserSessionsDocument = gql`
  * });
  */
 export function useGetUserSessionsQuery(
-  baseOptions?: Apollo.QueryHookOptions<GetUserSessionsQuery, GetUserSessionsQueryVariables>,
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    GetUserSessionsQuery,
+    GetUserSessionsQueryVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<GetUserSessionsQuery, GetUserSessionsQueryVariables>(
+  return ApolloReactHooks.useQuery<GetUserSessionsQuery, GetUserSessionsQueryVariables>(
     GetUserSessionsDocument,
     options,
   )
 }
 export function useGetUserSessionsLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<GetUserSessionsQuery, GetUserSessionsQueryVariables>,
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    GetUserSessionsQuery,
+    GetUserSessionsQueryVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<GetUserSessionsQuery, GetUserSessionsQueryVariables>(
+  return ApolloReactHooks.useLazyQuery<GetUserSessionsQuery, GetUserSessionsQueryVariables>(
     GetUserSessionsDocument,
     options,
   )
 }
 export function useGetUserSessionsSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<GetUserSessionsQuery, GetUserSessionsQueryVariables>,
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        GetUserSessionsQuery,
+        GetUserSessionsQueryVariables
+      >,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<GetUserSessionsQuery, GetUserSessionsQueryVariables>(
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<GetUserSessionsQuery, GetUserSessionsQueryVariables>(
     GetUserSessionsDocument,
     options,
   )
@@ -24221,10 +24532,13 @@ export type Setup2FaMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useSetup2FaMutation(
-  baseOptions?: Apollo.MutationHookOptions<Setup2FaMutation, Setup2FaMutationVariables>,
+  baseOptions?: ApolloReactHooks.MutationHookOptions<Setup2FaMutation, Setup2FaMutationVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<Setup2FaMutation, Setup2FaMutationVariables>(Setup2FaDocument, options)
+  return ApolloReactHooks.useMutation<Setup2FaMutation, Setup2FaMutationVariables>(
+    Setup2FaDocument,
+    options,
+  )
 }
 export type Setup2FaMutationHookResult = ReturnType<typeof useSetup2FaMutation>
 export type Setup2FaMutationResult = Apollo.MutationResult<Setup2FaMutation>
@@ -24263,10 +24577,10 @@ export type Enable2FaMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useEnable2FaMutation(
-  baseOptions?: Apollo.MutationHookOptions<Enable2FaMutation, Enable2FaMutationVariables>,
+  baseOptions?: ApolloReactHooks.MutationHookOptions<Enable2FaMutation, Enable2FaMutationVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<Enable2FaMutation, Enable2FaMutationVariables>(
+  return ApolloReactHooks.useMutation<Enable2FaMutation, Enable2FaMutationVariables>(
     Enable2FaDocument,
     options,
   )
@@ -24305,10 +24619,13 @@ export type Disable2FaMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useDisable2FaMutation(
-  baseOptions?: Apollo.MutationHookOptions<Disable2FaMutation, Disable2FaMutationVariables>,
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    Disable2FaMutation,
+    Disable2FaMutationVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<Disable2FaMutation, Disable2FaMutationVariables>(
+  return ApolloReactHooks.useMutation<Disable2FaMutation, Disable2FaMutationVariables>(
     Disable2FaDocument,
     options,
   )
@@ -24347,10 +24664,13 @@ export type Verify2FaCodeMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useVerify2FaCodeMutation(
-  baseOptions?: Apollo.MutationHookOptions<Verify2FaCodeMutation, Verify2FaCodeMutationVariables>,
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    Verify2FaCodeMutation,
+    Verify2FaCodeMutationVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<Verify2FaCodeMutation, Verify2FaCodeMutationVariables>(
+  return ApolloReactHooks.useMutation<Verify2FaCodeMutation, Verify2FaCodeMutationVariables>(
     Verify2FaCodeDocument,
     options,
   )
@@ -24393,13 +24713,13 @@ export type Complete2FaLoginMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useComplete2FaLoginMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     Complete2FaLoginMutation,
     Complete2FaLoginMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<Complete2FaLoginMutation, Complete2FaLoginMutationVariables>(
+  return ApolloReactHooks.useMutation<Complete2FaLoginMutation, Complete2FaLoginMutationVariables>(
     Complete2FaLoginDocument,
     options,
   )
@@ -24432,25 +24752,28 @@ export const UptimeDocument = gql`
  * });
  */
 export function useUptimeQuery(
-  baseOptions?: Apollo.QueryHookOptions<UptimeQuery, UptimeQueryVariables>,
+  baseOptions?: ApolloReactHooks.QueryHookOptions<UptimeQuery, UptimeQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<UptimeQuery, UptimeQueryVariables>(UptimeDocument, options)
+  return ApolloReactHooks.useQuery<UptimeQuery, UptimeQueryVariables>(UptimeDocument, options)
 }
 export function useUptimeLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<UptimeQuery, UptimeQueryVariables>,
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<UptimeQuery, UptimeQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<UptimeQuery, UptimeQueryVariables>(UptimeDocument, options)
+  return ApolloReactHooks.useLazyQuery<UptimeQuery, UptimeQueryVariables>(UptimeDocument, options)
 }
 export function useUptimeSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<UptimeQuery, UptimeQueryVariables>,
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<UptimeQuery, UptimeQueryVariables>,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<UptimeQuery, UptimeQueryVariables>(UptimeDocument, options)
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<UptimeQuery, UptimeQueryVariables>(
+    UptimeDocument,
+    options,
+  )
 }
 export type UptimeQueryHookResult = ReturnType<typeof useUptimeQuery>
 export type UptimeLazyQueryHookResult = ReturnType<typeof useUptimeLazyQuery>
@@ -24487,10 +24810,13 @@ export type CreateCountryMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useCreateCountryMutation(
-  baseOptions?: Apollo.MutationHookOptions<CreateCountryMutation, CreateCountryMutationVariables>,
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    CreateCountryMutation,
+    CreateCountryMutationVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<CreateCountryMutation, CreateCountryMutationVariables>(
+  return ApolloReactHooks.useMutation<CreateCountryMutation, CreateCountryMutationVariables>(
     CreateCountryDocument,
     options,
   )
@@ -24531,10 +24857,13 @@ export type DeleteCountryMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useDeleteCountryMutation(
-  baseOptions?: Apollo.MutationHookOptions<DeleteCountryMutation, DeleteCountryMutationVariables>,
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    DeleteCountryMutation,
+    DeleteCountryMutationVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<DeleteCountryMutation, DeleteCountryMutationVariables>(
+  return ApolloReactHooks.useMutation<DeleteCountryMutation, DeleteCountryMutationVariables>(
     DeleteCountryDocument,
     options,
   )
@@ -24577,10 +24906,13 @@ export type UpdateCountryMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useUpdateCountryMutation(
-  baseOptions?: Apollo.MutationHookOptions<UpdateCountryMutation, UpdateCountryMutationVariables>,
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    UpdateCountryMutation,
+    UpdateCountryMutationVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<UpdateCountryMutation, UpdateCountryMutationVariables>(
+  return ApolloReactHooks.useMutation<UpdateCountryMutation, UpdateCountryMutationVariables>(
     UpdateCountryDocument,
     options,
   )
@@ -24617,26 +24949,32 @@ export const CountryDocument = gql`
  * });
  */
 export function useCountryQuery(
-  baseOptions: Apollo.QueryHookOptions<CountryQuery, CountryQueryVariables> &
+  baseOptions: ApolloReactHooks.QueryHookOptions<CountryQuery, CountryQueryVariables> &
     ({ variables: CountryQueryVariables; skip?: boolean } | { skip: boolean }),
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<CountryQuery, CountryQueryVariables>(CountryDocument, options)
+  return ApolloReactHooks.useQuery<CountryQuery, CountryQueryVariables>(CountryDocument, options)
 }
 export function useCountryLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<CountryQuery, CountryQueryVariables>,
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<CountryQuery, CountryQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<CountryQuery, CountryQueryVariables>(CountryDocument, options)
+  return ApolloReactHooks.useLazyQuery<CountryQuery, CountryQueryVariables>(
+    CountryDocument,
+    options,
+  )
 }
 export function useCountrySuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<CountryQuery, CountryQueryVariables>,
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<CountryQuery, CountryQueryVariables>,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<CountryQuery, CountryQueryVariables>(CountryDocument, options)
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<CountryQuery, CountryQueryVariables>(
+    CountryDocument,
+    options,
+  )
 }
 export type CountryQueryHookResult = ReturnType<typeof useCountryQuery>
 export type CountryLazyQueryHookResult = ReturnType<typeof useCountryLazyQuery>
@@ -24672,25 +25010,31 @@ export const CountriesDocument = gql`
  * });
  */
 export function useCountriesQuery(
-  baseOptions?: Apollo.QueryHookOptions<CountriesQuery, CountriesQueryVariables>,
+  baseOptions?: ApolloReactHooks.QueryHookOptions<CountriesQuery, CountriesQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<CountriesQuery, CountriesQueryVariables>(CountriesDocument, options)
+  return ApolloReactHooks.useQuery<CountriesQuery, CountriesQueryVariables>(
+    CountriesDocument,
+    options,
+  )
 }
 export function useCountriesLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<CountriesQuery, CountriesQueryVariables>,
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<CountriesQuery, CountriesQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<CountriesQuery, CountriesQueryVariables>(CountriesDocument, options)
+  return ApolloReactHooks.useLazyQuery<CountriesQuery, CountriesQueryVariables>(
+    CountriesDocument,
+    options,
+  )
 }
 export function useCountriesSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<CountriesQuery, CountriesQueryVariables>,
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<CountriesQuery, CountriesQueryVariables>,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<CountriesQuery, CountriesQueryVariables>(
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<CountriesQuery, CountriesQueryVariables>(
     CountriesDocument,
     options,
   )
@@ -24725,34 +25069,40 @@ export const CountryPaginationDocument = gql`
  * });
  */
 export function useCountryPaginationQuery(
-  baseOptions?: Apollo.QueryHookOptions<CountryPaginationQuery, CountryPaginationQueryVariables>,
-) {
-  const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<CountryPaginationQuery, CountryPaginationQueryVariables>(
-    CountryPaginationDocument,
-    options,
-  )
-}
-export function useCountryPaginationLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
     CountryPaginationQuery,
     CountryPaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<CountryPaginationQuery, CountryPaginationQueryVariables>(
+  return ApolloReactHooks.useQuery<CountryPaginationQuery, CountryPaginationQueryVariables>(
+    CountryPaginationDocument,
+    options,
+  )
+}
+export function useCountryPaginationLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    CountryPaginationQuery,
+    CountryPaginationQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useLazyQuery<CountryPaginationQuery, CountryPaginationQueryVariables>(
     CountryPaginationDocument,
     options,
   )
 }
 export function useCountryPaginationSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<CountryPaginationQuery, CountryPaginationQueryVariables>,
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        CountryPaginationQuery,
+        CountryPaginationQueryVariables
+      >,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<CountryPaginationQuery, CountryPaginationQueryVariables>(
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<CountryPaginationQuery, CountryPaginationQueryVariables>(
     CountryPaginationDocument,
     options,
   )
@@ -24797,10 +25147,13 @@ export type CreateEmailMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useCreateEmailMutation(
-  baseOptions?: Apollo.MutationHookOptions<CreateEmailMutation, CreateEmailMutationVariables>,
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    CreateEmailMutation,
+    CreateEmailMutationVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<CreateEmailMutation, CreateEmailMutationVariables>(
+  return ApolloReactHooks.useMutation<CreateEmailMutation, CreateEmailMutationVariables>(
     CreateEmailDocument,
     options,
   )
@@ -24841,10 +25194,13 @@ export type DeleteEmailMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useDeleteEmailMutation(
-  baseOptions?: Apollo.MutationHookOptions<DeleteEmailMutation, DeleteEmailMutationVariables>,
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    DeleteEmailMutation,
+    DeleteEmailMutationVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<DeleteEmailMutation, DeleteEmailMutationVariables>(
+  return ApolloReactHooks.useMutation<DeleteEmailMutation, DeleteEmailMutationVariables>(
     DeleteEmailDocument,
     options,
   )
@@ -24887,10 +25243,13 @@ export type UpdateEmailMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useUpdateEmailMutation(
-  baseOptions?: Apollo.MutationHookOptions<UpdateEmailMutation, UpdateEmailMutationVariables>,
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    UpdateEmailMutation,
+    UpdateEmailMutationVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<UpdateEmailMutation, UpdateEmailMutationVariables>(
+  return ApolloReactHooks.useMutation<UpdateEmailMutation, UpdateEmailMutationVariables>(
     UpdateEmailDocument,
     options,
   )
@@ -24927,24 +25286,26 @@ export const EmailDocument = gql`
  * });
  */
 export function useEmailQuery(
-  baseOptions: Apollo.QueryHookOptions<EmailQuery, EmailQueryVariables> &
+  baseOptions: ApolloReactHooks.QueryHookOptions<EmailQuery, EmailQueryVariables> &
     ({ variables: EmailQueryVariables; skip?: boolean } | { skip: boolean }),
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<EmailQuery, EmailQueryVariables>(EmailDocument, options)
+  return ApolloReactHooks.useQuery<EmailQuery, EmailQueryVariables>(EmailDocument, options)
 }
 export function useEmailLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<EmailQuery, EmailQueryVariables>,
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<EmailQuery, EmailQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<EmailQuery, EmailQueryVariables>(EmailDocument, options)
+  return ApolloReactHooks.useLazyQuery<EmailQuery, EmailQueryVariables>(EmailDocument, options)
 }
 export function useEmailSuspenseQuery(
-  baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<EmailQuery, EmailQueryVariables>,
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<EmailQuery, EmailQueryVariables>,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<EmailQuery, EmailQueryVariables>(EmailDocument, options)
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<EmailQuery, EmailQueryVariables>(EmailDocument, options)
 }
 export type EmailQueryHookResult = ReturnType<typeof useEmailQuery>
 export type EmailLazyQueryHookResult = ReturnType<typeof useEmailLazyQuery>
@@ -24980,25 +25341,28 @@ export const EmailsDocument = gql`
  * });
  */
 export function useEmailsQuery(
-  baseOptions?: Apollo.QueryHookOptions<EmailsQuery, EmailsQueryVariables>,
+  baseOptions?: ApolloReactHooks.QueryHookOptions<EmailsQuery, EmailsQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<EmailsQuery, EmailsQueryVariables>(EmailsDocument, options)
+  return ApolloReactHooks.useQuery<EmailsQuery, EmailsQueryVariables>(EmailsDocument, options)
 }
 export function useEmailsLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<EmailsQuery, EmailsQueryVariables>,
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<EmailsQuery, EmailsQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<EmailsQuery, EmailsQueryVariables>(EmailsDocument, options)
+  return ApolloReactHooks.useLazyQuery<EmailsQuery, EmailsQueryVariables>(EmailsDocument, options)
 }
 export function useEmailsSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<EmailsQuery, EmailsQueryVariables>,
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<EmailsQuery, EmailsQueryVariables>,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<EmailsQuery, EmailsQueryVariables>(EmailsDocument, options)
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<EmailsQuery, EmailsQueryVariables>(
+    EmailsDocument,
+    options,
+  )
 }
 export type EmailsQueryHookResult = ReturnType<typeof useEmailsQuery>
 export type EmailsLazyQueryHookResult = ReturnType<typeof useEmailsLazyQuery>
@@ -25030,31 +25394,40 @@ export const EmailPaginationDocument = gql`
  * });
  */
 export function useEmailPaginationQuery(
-  baseOptions?: Apollo.QueryHookOptions<EmailPaginationQuery, EmailPaginationQueryVariables>,
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    EmailPaginationQuery,
+    EmailPaginationQueryVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<EmailPaginationQuery, EmailPaginationQueryVariables>(
+  return ApolloReactHooks.useQuery<EmailPaginationQuery, EmailPaginationQueryVariables>(
     EmailPaginationDocument,
     options,
   )
 }
 export function useEmailPaginationLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<EmailPaginationQuery, EmailPaginationQueryVariables>,
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    EmailPaginationQuery,
+    EmailPaginationQueryVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<EmailPaginationQuery, EmailPaginationQueryVariables>(
+  return ApolloReactHooks.useLazyQuery<EmailPaginationQuery, EmailPaginationQueryVariables>(
     EmailPaginationDocument,
     options,
   )
 }
 export function useEmailPaginationSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<EmailPaginationQuery, EmailPaginationQueryVariables>,
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        EmailPaginationQuery,
+        EmailPaginationQueryVariables
+      >,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<EmailPaginationQuery, EmailPaginationQueryVariables>(
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<EmailPaginationQuery, EmailPaginationQueryVariables>(
     EmailPaginationDocument,
     options,
   )
@@ -25099,10 +25472,13 @@ export type CreateInviteMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useCreateInviteMutation(
-  baseOptions?: Apollo.MutationHookOptions<CreateInviteMutation, CreateInviteMutationVariables>,
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    CreateInviteMutation,
+    CreateInviteMutationVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<CreateInviteMutation, CreateInviteMutationVariables>(
+  return ApolloReactHooks.useMutation<CreateInviteMutation, CreateInviteMutationVariables>(
     CreateInviteDocument,
     options,
   )
@@ -25143,10 +25519,13 @@ export type DeleteInviteMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useDeleteInviteMutation(
-  baseOptions?: Apollo.MutationHookOptions<DeleteInviteMutation, DeleteInviteMutationVariables>,
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    DeleteInviteMutation,
+    DeleteInviteMutationVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<DeleteInviteMutation, DeleteInviteMutationVariables>(
+  return ApolloReactHooks.useMutation<DeleteInviteMutation, DeleteInviteMutationVariables>(
     DeleteInviteDocument,
     options,
   )
@@ -25189,10 +25568,13 @@ export type UpdateInviteMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useUpdateInviteMutation(
-  baseOptions?: Apollo.MutationHookOptions<UpdateInviteMutation, UpdateInviteMutationVariables>,
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    UpdateInviteMutation,
+    UpdateInviteMutationVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<UpdateInviteMutation, UpdateInviteMutationVariables>(
+  return ApolloReactHooks.useMutation<UpdateInviteMutation, UpdateInviteMutationVariables>(
     UpdateInviteDocument,
     options,
   )
@@ -25229,26 +25611,29 @@ export const InviteDocument = gql`
  * });
  */
 export function useInviteQuery(
-  baseOptions: Apollo.QueryHookOptions<InviteQuery, InviteQueryVariables> &
+  baseOptions: ApolloReactHooks.QueryHookOptions<InviteQuery, InviteQueryVariables> &
     ({ variables: InviteQueryVariables; skip?: boolean } | { skip: boolean }),
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<InviteQuery, InviteQueryVariables>(InviteDocument, options)
+  return ApolloReactHooks.useQuery<InviteQuery, InviteQueryVariables>(InviteDocument, options)
 }
 export function useInviteLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<InviteQuery, InviteQueryVariables>,
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<InviteQuery, InviteQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<InviteQuery, InviteQueryVariables>(InviteDocument, options)
+  return ApolloReactHooks.useLazyQuery<InviteQuery, InviteQueryVariables>(InviteDocument, options)
 }
 export function useInviteSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<InviteQuery, InviteQueryVariables>,
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<InviteQuery, InviteQueryVariables>,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<InviteQuery, InviteQueryVariables>(InviteDocument, options)
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<InviteQuery, InviteQueryVariables>(
+    InviteDocument,
+    options,
+  )
 }
 export type InviteQueryHookResult = ReturnType<typeof useInviteQuery>
 export type InviteLazyQueryHookResult = ReturnType<typeof useInviteLazyQuery>
@@ -25284,25 +25669,31 @@ export const InvitesDocument = gql`
  * });
  */
 export function useInvitesQuery(
-  baseOptions?: Apollo.QueryHookOptions<InvitesQuery, InvitesQueryVariables>,
+  baseOptions?: ApolloReactHooks.QueryHookOptions<InvitesQuery, InvitesQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<InvitesQuery, InvitesQueryVariables>(InvitesDocument, options)
+  return ApolloReactHooks.useQuery<InvitesQuery, InvitesQueryVariables>(InvitesDocument, options)
 }
 export function useInvitesLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<InvitesQuery, InvitesQueryVariables>,
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<InvitesQuery, InvitesQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<InvitesQuery, InvitesQueryVariables>(InvitesDocument, options)
+  return ApolloReactHooks.useLazyQuery<InvitesQuery, InvitesQueryVariables>(
+    InvitesDocument,
+    options,
+  )
 }
 export function useInvitesSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<InvitesQuery, InvitesQueryVariables>,
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<InvitesQuery, InvitesQueryVariables>,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<InvitesQuery, InvitesQueryVariables>(InvitesDocument, options)
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<InvitesQuery, InvitesQueryVariables>(
+    InvitesDocument,
+    options,
+  )
 }
 export type InvitesQueryHookResult = ReturnType<typeof useInvitesQuery>
 export type InvitesLazyQueryHookResult = ReturnType<typeof useInvitesLazyQuery>
@@ -25334,31 +25725,40 @@ export const InvitePaginationDocument = gql`
  * });
  */
 export function useInvitePaginationQuery(
-  baseOptions?: Apollo.QueryHookOptions<InvitePaginationQuery, InvitePaginationQueryVariables>,
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    InvitePaginationQuery,
+    InvitePaginationQueryVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<InvitePaginationQuery, InvitePaginationQueryVariables>(
+  return ApolloReactHooks.useQuery<InvitePaginationQuery, InvitePaginationQueryVariables>(
     InvitePaginationDocument,
     options,
   )
 }
 export function useInvitePaginationLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<InvitePaginationQuery, InvitePaginationQueryVariables>,
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    InvitePaginationQuery,
+    InvitePaginationQueryVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<InvitePaginationQuery, InvitePaginationQueryVariables>(
+  return ApolloReactHooks.useLazyQuery<InvitePaginationQuery, InvitePaginationQueryVariables>(
     InvitePaginationDocument,
     options,
   )
 }
 export function useInvitePaginationSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<InvitePaginationQuery, InvitePaginationQueryVariables>,
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        InvitePaginationQuery,
+        InvitePaginationQueryVariables
+      >,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<InvitePaginationQuery, InvitePaginationQueryVariables>(
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<InvitePaginationQuery, InvitePaginationQueryVariables>(
     InvitePaginationDocument,
     options,
   )
@@ -25403,10 +25803,13 @@ export type CreateLinkMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useCreateLinkMutation(
-  baseOptions?: Apollo.MutationHookOptions<CreateLinkMutation, CreateLinkMutationVariables>,
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    CreateLinkMutation,
+    CreateLinkMutationVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<CreateLinkMutation, CreateLinkMutationVariables>(
+  return ApolloReactHooks.useMutation<CreateLinkMutation, CreateLinkMutationVariables>(
     CreateLinkDocument,
     options,
   )
@@ -25447,10 +25850,13 @@ export type DeleteLinkMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useDeleteLinkMutation(
-  baseOptions?: Apollo.MutationHookOptions<DeleteLinkMutation, DeleteLinkMutationVariables>,
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    DeleteLinkMutation,
+    DeleteLinkMutationVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<DeleteLinkMutation, DeleteLinkMutationVariables>(
+  return ApolloReactHooks.useMutation<DeleteLinkMutation, DeleteLinkMutationVariables>(
     DeleteLinkDocument,
     options,
   )
@@ -25493,10 +25899,13 @@ export type UpdateLinkMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useUpdateLinkMutation(
-  baseOptions?: Apollo.MutationHookOptions<UpdateLinkMutation, UpdateLinkMutationVariables>,
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    UpdateLinkMutation,
+    UpdateLinkMutationVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<UpdateLinkMutation, UpdateLinkMutationVariables>(
+  return ApolloReactHooks.useMutation<UpdateLinkMutation, UpdateLinkMutationVariables>(
     UpdateLinkDocument,
     options,
   )
@@ -25533,24 +25942,26 @@ export const LinkDocument = gql`
  * });
  */
 export function useLinkQuery(
-  baseOptions: Apollo.QueryHookOptions<LinkQuery, LinkQueryVariables> &
+  baseOptions: ApolloReactHooks.QueryHookOptions<LinkQuery, LinkQueryVariables> &
     ({ variables: LinkQueryVariables; skip?: boolean } | { skip: boolean }),
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<LinkQuery, LinkQueryVariables>(LinkDocument, options)
+  return ApolloReactHooks.useQuery<LinkQuery, LinkQueryVariables>(LinkDocument, options)
 }
 export function useLinkLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<LinkQuery, LinkQueryVariables>,
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<LinkQuery, LinkQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<LinkQuery, LinkQueryVariables>(LinkDocument, options)
+  return ApolloReactHooks.useLazyQuery<LinkQuery, LinkQueryVariables>(LinkDocument, options)
 }
 export function useLinkSuspenseQuery(
-  baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<LinkQuery, LinkQueryVariables>,
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<LinkQuery, LinkQueryVariables>,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<LinkQuery, LinkQueryVariables>(LinkDocument, options)
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<LinkQuery, LinkQueryVariables>(LinkDocument, options)
 }
 export type LinkQueryHookResult = ReturnType<typeof useLinkQuery>
 export type LinkLazyQueryHookResult = ReturnType<typeof useLinkLazyQuery>
@@ -25586,23 +25997,25 @@ export const LinksDocument = gql`
  * });
  */
 export function useLinksQuery(
-  baseOptions?: Apollo.QueryHookOptions<LinksQuery, LinksQueryVariables>,
+  baseOptions?: ApolloReactHooks.QueryHookOptions<LinksQuery, LinksQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<LinksQuery, LinksQueryVariables>(LinksDocument, options)
+  return ApolloReactHooks.useQuery<LinksQuery, LinksQueryVariables>(LinksDocument, options)
 }
 export function useLinksLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<LinksQuery, LinksQueryVariables>,
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<LinksQuery, LinksQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<LinksQuery, LinksQueryVariables>(LinksDocument, options)
+  return ApolloReactHooks.useLazyQuery<LinksQuery, LinksQueryVariables>(LinksDocument, options)
 }
 export function useLinksSuspenseQuery(
-  baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<LinksQuery, LinksQueryVariables>,
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<LinksQuery, LinksQueryVariables>,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<LinksQuery, LinksQueryVariables>(LinksDocument, options)
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<LinksQuery, LinksQueryVariables>(LinksDocument, options)
 }
 export type LinksQueryHookResult = ReturnType<typeof useLinksQuery>
 export type LinksLazyQueryHookResult = ReturnType<typeof useLinksLazyQuery>
@@ -25634,31 +26047,37 @@ export const LinkPaginationDocument = gql`
  * });
  */
 export function useLinkPaginationQuery(
-  baseOptions?: Apollo.QueryHookOptions<LinkPaginationQuery, LinkPaginationQueryVariables>,
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    LinkPaginationQuery,
+    LinkPaginationQueryVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<LinkPaginationQuery, LinkPaginationQueryVariables>(
+  return ApolloReactHooks.useQuery<LinkPaginationQuery, LinkPaginationQueryVariables>(
     LinkPaginationDocument,
     options,
   )
 }
 export function useLinkPaginationLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<LinkPaginationQuery, LinkPaginationQueryVariables>,
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    LinkPaginationQuery,
+    LinkPaginationQueryVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<LinkPaginationQuery, LinkPaginationQueryVariables>(
+  return ApolloReactHooks.useLazyQuery<LinkPaginationQuery, LinkPaginationQueryVariables>(
     LinkPaginationDocument,
     options,
   )
 }
 export function useLinkPaginationSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<LinkPaginationQuery, LinkPaginationQueryVariables>,
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<LinkPaginationQuery, LinkPaginationQueryVariables>,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<LinkPaginationQuery, LinkPaginationQueryVariables>(
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<LinkPaginationQuery, LinkPaginationQueryVariables>(
     LinkPaginationDocument,
     options,
   )
@@ -25703,16 +26122,16 @@ export type CreateLoginAttemptMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useCreateLoginAttemptMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     CreateLoginAttemptMutation,
     CreateLoginAttemptMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<CreateLoginAttemptMutation, CreateLoginAttemptMutationVariables>(
-    CreateLoginAttemptDocument,
-    options,
-  )
+  return ApolloReactHooks.useMutation<
+    CreateLoginAttemptMutation,
+    CreateLoginAttemptMutationVariables
+  >(CreateLoginAttemptDocument, options)
 }
 export type CreateLoginAttemptMutationHookResult = ReturnType<typeof useCreateLoginAttemptMutation>
 export type CreateLoginAttemptMutationResult = Apollo.MutationResult<CreateLoginAttemptMutation>
@@ -25750,16 +26169,16 @@ export type DeleteLoginAttemptMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useDeleteLoginAttemptMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     DeleteLoginAttemptMutation,
     DeleteLoginAttemptMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<DeleteLoginAttemptMutation, DeleteLoginAttemptMutationVariables>(
-    DeleteLoginAttemptDocument,
-    options,
-  )
+  return ApolloReactHooks.useMutation<
+    DeleteLoginAttemptMutation,
+    DeleteLoginAttemptMutationVariables
+  >(DeleteLoginAttemptDocument, options)
 }
 export type DeleteLoginAttemptMutationHookResult = ReturnType<typeof useDeleteLoginAttemptMutation>
 export type DeleteLoginAttemptMutationResult = Apollo.MutationResult<DeleteLoginAttemptMutation>
@@ -25799,16 +26218,16 @@ export type UpdateLoginAttemptMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useUpdateLoginAttemptMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     UpdateLoginAttemptMutation,
     UpdateLoginAttemptMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<UpdateLoginAttemptMutation, UpdateLoginAttemptMutationVariables>(
-    UpdateLoginAttemptDocument,
-    options,
-  )
+  return ApolloReactHooks.useMutation<
+    UpdateLoginAttemptMutation,
+    UpdateLoginAttemptMutationVariables
+  >(UpdateLoginAttemptDocument, options)
 }
 export type UpdateLoginAttemptMutationHookResult = ReturnType<typeof useUpdateLoginAttemptMutation>
 export type UpdateLoginAttemptMutationResult = Apollo.MutationResult<UpdateLoginAttemptMutation>
@@ -25842,32 +26261,35 @@ export const LoginAttemptDocument = gql`
  * });
  */
 export function useLoginAttemptQuery(
-  baseOptions: Apollo.QueryHookOptions<LoginAttemptQuery, LoginAttemptQueryVariables> &
+  baseOptions: ApolloReactHooks.QueryHookOptions<LoginAttemptQuery, LoginAttemptQueryVariables> &
     ({ variables: LoginAttemptQueryVariables; skip?: boolean } | { skip: boolean }),
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<LoginAttemptQuery, LoginAttemptQueryVariables>(
+  return ApolloReactHooks.useQuery<LoginAttemptQuery, LoginAttemptQueryVariables>(
     LoginAttemptDocument,
     options,
   )
 }
 export function useLoginAttemptLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<LoginAttemptQuery, LoginAttemptQueryVariables>,
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    LoginAttemptQuery,
+    LoginAttemptQueryVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<LoginAttemptQuery, LoginAttemptQueryVariables>(
+  return ApolloReactHooks.useLazyQuery<LoginAttemptQuery, LoginAttemptQueryVariables>(
     LoginAttemptDocument,
     options,
   )
 }
 export function useLoginAttemptSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<LoginAttemptQuery, LoginAttemptQueryVariables>,
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<LoginAttemptQuery, LoginAttemptQueryVariables>,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<LoginAttemptQuery, LoginAttemptQueryVariables>(
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<LoginAttemptQuery, LoginAttemptQueryVariables>(
     LoginAttemptDocument,
     options,
   )
@@ -25909,31 +26331,34 @@ export const LoginAttemptsDocument = gql`
  * });
  */
 export function useLoginAttemptsQuery(
-  baseOptions?: Apollo.QueryHookOptions<LoginAttemptsQuery, LoginAttemptsQueryVariables>,
+  baseOptions?: ApolloReactHooks.QueryHookOptions<LoginAttemptsQuery, LoginAttemptsQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<LoginAttemptsQuery, LoginAttemptsQueryVariables>(
+  return ApolloReactHooks.useQuery<LoginAttemptsQuery, LoginAttemptsQueryVariables>(
     LoginAttemptsDocument,
     options,
   )
 }
 export function useLoginAttemptsLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<LoginAttemptsQuery, LoginAttemptsQueryVariables>,
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    LoginAttemptsQuery,
+    LoginAttemptsQueryVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<LoginAttemptsQuery, LoginAttemptsQueryVariables>(
+  return ApolloReactHooks.useLazyQuery<LoginAttemptsQuery, LoginAttemptsQueryVariables>(
     LoginAttemptsDocument,
     options,
   )
 }
 export function useLoginAttemptsSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<LoginAttemptsQuery, LoginAttemptsQueryVariables>,
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<LoginAttemptsQuery, LoginAttemptsQueryVariables>,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<LoginAttemptsQuery, LoginAttemptsQueryVariables>(
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<LoginAttemptsQuery, LoginAttemptsQueryVariables>(
     LoginAttemptsDocument,
     options,
   )
@@ -25971,43 +26396,43 @@ export const LoginAttemptPaginationDocument = gql`
  * });
  */
 export function useLoginAttemptPaginationQuery(
-  baseOptions?: Apollo.QueryHookOptions<
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
     LoginAttemptPaginationQuery,
     LoginAttemptPaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<LoginAttemptPaginationQuery, LoginAttemptPaginationQueryVariables>(
-    LoginAttemptPaginationDocument,
-    options,
-  )
+  return ApolloReactHooks.useQuery<
+    LoginAttemptPaginationQuery,
+    LoginAttemptPaginationQueryVariables
+  >(LoginAttemptPaginationDocument, options)
 }
 export function useLoginAttemptPaginationLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
     LoginAttemptPaginationQuery,
     LoginAttemptPaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<LoginAttemptPaginationQuery, LoginAttemptPaginationQueryVariables>(
-    LoginAttemptPaginationDocument,
-    options,
-  )
+  return ApolloReactHooks.useLazyQuery<
+    LoginAttemptPaginationQuery,
+    LoginAttemptPaginationQueryVariables
+  >(LoginAttemptPaginationDocument, options)
 }
 export function useLoginAttemptPaginationSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
         LoginAttemptPaginationQuery,
         LoginAttemptPaginationQueryVariables
       >,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<LoginAttemptPaginationQuery, LoginAttemptPaginationQueryVariables>(
-    LoginAttemptPaginationDocument,
-    options,
-  )
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<
+    LoginAttemptPaginationQuery,
+    LoginAttemptPaginationQueryVariables
+  >(LoginAttemptPaginationDocument, options)
 }
 export type LoginAttemptPaginationQueryHookResult = ReturnType<
   typeof useLoginAttemptPaginationQuery
@@ -26053,16 +26478,16 @@ export type CreateOAuthAccountMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useCreateOAuthAccountMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     CreateOAuthAccountMutation,
     CreateOAuthAccountMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<CreateOAuthAccountMutation, CreateOAuthAccountMutationVariables>(
-    CreateOAuthAccountDocument,
-    options,
-  )
+  return ApolloReactHooks.useMutation<
+    CreateOAuthAccountMutation,
+    CreateOAuthAccountMutationVariables
+  >(CreateOAuthAccountDocument, options)
 }
 export type CreateOAuthAccountMutationHookResult = ReturnType<typeof useCreateOAuthAccountMutation>
 export type CreateOAuthAccountMutationResult = Apollo.MutationResult<CreateOAuthAccountMutation>
@@ -26100,16 +26525,16 @@ export type DeleteOAuthAccountMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useDeleteOAuthAccountMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     DeleteOAuthAccountMutation,
     DeleteOAuthAccountMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<DeleteOAuthAccountMutation, DeleteOAuthAccountMutationVariables>(
-    DeleteOAuthAccountDocument,
-    options,
-  )
+  return ApolloReactHooks.useMutation<
+    DeleteOAuthAccountMutation,
+    DeleteOAuthAccountMutationVariables
+  >(DeleteOAuthAccountDocument, options)
 }
 export type DeleteOAuthAccountMutationHookResult = ReturnType<typeof useDeleteOAuthAccountMutation>
 export type DeleteOAuthAccountMutationResult = Apollo.MutationResult<DeleteOAuthAccountMutation>
@@ -26149,16 +26574,16 @@ export type UpdateOAuthAccountMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useUpdateOAuthAccountMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     UpdateOAuthAccountMutation,
     UpdateOAuthAccountMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<UpdateOAuthAccountMutation, UpdateOAuthAccountMutationVariables>(
-    UpdateOAuthAccountDocument,
-    options,
-  )
+  return ApolloReactHooks.useMutation<
+    UpdateOAuthAccountMutation,
+    UpdateOAuthAccountMutationVariables
+  >(UpdateOAuthAccountDocument, options)
 }
 export type UpdateOAuthAccountMutationHookResult = ReturnType<typeof useUpdateOAuthAccountMutation>
 export type UpdateOAuthAccountMutationResult = Apollo.MutationResult<UpdateOAuthAccountMutation>
@@ -26192,32 +26617,35 @@ export const OAuthAccountDocument = gql`
  * });
  */
 export function useOAuthAccountQuery(
-  baseOptions: Apollo.QueryHookOptions<OAuthAccountQuery, OAuthAccountQueryVariables> &
+  baseOptions: ApolloReactHooks.QueryHookOptions<OAuthAccountQuery, OAuthAccountQueryVariables> &
     ({ variables: OAuthAccountQueryVariables; skip?: boolean } | { skip: boolean }),
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<OAuthAccountQuery, OAuthAccountQueryVariables>(
+  return ApolloReactHooks.useQuery<OAuthAccountQuery, OAuthAccountQueryVariables>(
     OAuthAccountDocument,
     options,
   )
 }
 export function useOAuthAccountLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<OAuthAccountQuery, OAuthAccountQueryVariables>,
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    OAuthAccountQuery,
+    OAuthAccountQueryVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<OAuthAccountQuery, OAuthAccountQueryVariables>(
+  return ApolloReactHooks.useLazyQuery<OAuthAccountQuery, OAuthAccountQueryVariables>(
     OAuthAccountDocument,
     options,
   )
 }
 export function useOAuthAccountSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<OAuthAccountQuery, OAuthAccountQueryVariables>,
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<OAuthAccountQuery, OAuthAccountQueryVariables>,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<OAuthAccountQuery, OAuthAccountQueryVariables>(
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<OAuthAccountQuery, OAuthAccountQueryVariables>(
     OAuthAccountDocument,
     options,
   )
@@ -26259,31 +26687,34 @@ export const OAuthAccountsDocument = gql`
  * });
  */
 export function useOAuthAccountsQuery(
-  baseOptions?: Apollo.QueryHookOptions<OAuthAccountsQuery, OAuthAccountsQueryVariables>,
+  baseOptions?: ApolloReactHooks.QueryHookOptions<OAuthAccountsQuery, OAuthAccountsQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<OAuthAccountsQuery, OAuthAccountsQueryVariables>(
+  return ApolloReactHooks.useQuery<OAuthAccountsQuery, OAuthAccountsQueryVariables>(
     OAuthAccountsDocument,
     options,
   )
 }
 export function useOAuthAccountsLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<OAuthAccountsQuery, OAuthAccountsQueryVariables>,
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    OAuthAccountsQuery,
+    OAuthAccountsQueryVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<OAuthAccountsQuery, OAuthAccountsQueryVariables>(
+  return ApolloReactHooks.useLazyQuery<OAuthAccountsQuery, OAuthAccountsQueryVariables>(
     OAuthAccountsDocument,
     options,
   )
 }
 export function useOAuthAccountsSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<OAuthAccountsQuery, OAuthAccountsQueryVariables>,
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<OAuthAccountsQuery, OAuthAccountsQueryVariables>,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<OAuthAccountsQuery, OAuthAccountsQueryVariables>(
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<OAuthAccountsQuery, OAuthAccountsQueryVariables>(
     OAuthAccountsDocument,
     options,
   )
@@ -26321,43 +26752,43 @@ export const OAuthAccountPaginationDocument = gql`
  * });
  */
 export function useOAuthAccountPaginationQuery(
-  baseOptions?: Apollo.QueryHookOptions<
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
     OAuthAccountPaginationQuery,
     OAuthAccountPaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<OAuthAccountPaginationQuery, OAuthAccountPaginationQueryVariables>(
-    OAuthAccountPaginationDocument,
-    options,
-  )
+  return ApolloReactHooks.useQuery<
+    OAuthAccountPaginationQuery,
+    OAuthAccountPaginationQueryVariables
+  >(OAuthAccountPaginationDocument, options)
 }
 export function useOAuthAccountPaginationLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
     OAuthAccountPaginationQuery,
     OAuthAccountPaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<OAuthAccountPaginationQuery, OAuthAccountPaginationQueryVariables>(
-    OAuthAccountPaginationDocument,
-    options,
-  )
+  return ApolloReactHooks.useLazyQuery<
+    OAuthAccountPaginationQuery,
+    OAuthAccountPaginationQueryVariables
+  >(OAuthAccountPaginationDocument, options)
 }
 export function useOAuthAccountPaginationSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
         OAuthAccountPaginationQuery,
         OAuthAccountPaginationQueryVariables
       >,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<OAuthAccountPaginationQuery, OAuthAccountPaginationQueryVariables>(
-    OAuthAccountPaginationDocument,
-    options,
-  )
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<
+    OAuthAccountPaginationQuery,
+    OAuthAccountPaginationQueryVariables
+  >(OAuthAccountPaginationDocument, options)
 }
 export type OAuthAccountPaginationQueryHookResult = ReturnType<
   typeof useOAuthAccountPaginationQuery
@@ -26403,13 +26834,13 @@ export type CreateOrganizationMemberMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useCreateOrganizationMemberMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     CreateOrganizationMemberMutation,
     CreateOrganizationMemberMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<
+  return ApolloReactHooks.useMutation<
     CreateOrganizationMemberMutation,
     CreateOrganizationMemberMutationVariables
   >(CreateOrganizationMemberDocument, options)
@@ -26453,13 +26884,13 @@ export type DeleteOrganizationMemberMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useDeleteOrganizationMemberMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     DeleteOrganizationMemberMutation,
     DeleteOrganizationMemberMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<
+  return ApolloReactHooks.useMutation<
     DeleteOrganizationMemberMutation,
     DeleteOrganizationMemberMutationVariables
   >(DeleteOrganizationMemberDocument, options)
@@ -26508,13 +26939,13 @@ export type UpdateOrganizationMemberMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useUpdateOrganizationMemberMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     UpdateOrganizationMemberMutation,
     UpdateOrganizationMemberMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<
+  return ApolloReactHooks.useMutation<
     UpdateOrganizationMemberMutation,
     UpdateOrganizationMemberMutationVariables
   >(UpdateOrganizationMemberDocument, options)
@@ -26554,38 +26985,44 @@ export const OrganizationMemberDocument = gql`
  * });
  */
 export function useOrganizationMemberQuery(
-  baseOptions: Apollo.QueryHookOptions<OrganizationMemberQuery, OrganizationMemberQueryVariables> &
+  baseOptions: ApolloReactHooks.QueryHookOptions<
+    OrganizationMemberQuery,
+    OrganizationMemberQueryVariables
+  > &
     ({ variables: OrganizationMemberQueryVariables; skip?: boolean } | { skip: boolean }),
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<OrganizationMemberQuery, OrganizationMemberQueryVariables>(
+  return ApolloReactHooks.useQuery<OrganizationMemberQuery, OrganizationMemberQueryVariables>(
     OrganizationMemberDocument,
     options,
   )
 }
 export function useOrganizationMemberLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
     OrganizationMemberQuery,
     OrganizationMemberQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<OrganizationMemberQuery, OrganizationMemberQueryVariables>(
+  return ApolloReactHooks.useLazyQuery<OrganizationMemberQuery, OrganizationMemberQueryVariables>(
     OrganizationMemberDocument,
     options,
   )
 }
 export function useOrganizationMemberSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<OrganizationMemberQuery, OrganizationMemberQueryVariables>,
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        OrganizationMemberQuery,
+        OrganizationMemberQueryVariables
+      >,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<OrganizationMemberQuery, OrganizationMemberQueryVariables>(
-    OrganizationMemberDocument,
-    options,
-  )
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<
+    OrganizationMemberQuery,
+    OrganizationMemberQueryVariables
+  >(OrganizationMemberDocument, options)
 }
 export type OrganizationMemberQueryHookResult = ReturnType<typeof useOrganizationMemberQuery>
 export type OrganizationMemberLazyQueryHookResult = ReturnType<
@@ -26624,40 +27061,43 @@ export const OrganizationMembersDocument = gql`
  * });
  */
 export function useOrganizationMembersQuery(
-  baseOptions?: Apollo.QueryHookOptions<
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
     OrganizationMembersQuery,
     OrganizationMembersQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<OrganizationMembersQuery, OrganizationMembersQueryVariables>(
+  return ApolloReactHooks.useQuery<OrganizationMembersQuery, OrganizationMembersQueryVariables>(
     OrganizationMembersDocument,
     options,
   )
 }
 export function useOrganizationMembersLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
     OrganizationMembersQuery,
     OrganizationMembersQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<OrganizationMembersQuery, OrganizationMembersQueryVariables>(
+  return ApolloReactHooks.useLazyQuery<OrganizationMembersQuery, OrganizationMembersQueryVariables>(
     OrganizationMembersDocument,
     options,
   )
 }
 export function useOrganizationMembersSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<OrganizationMembersQuery, OrganizationMembersQueryVariables>,
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        OrganizationMembersQuery,
+        OrganizationMembersQueryVariables
+      >,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<OrganizationMembersQuery, OrganizationMembersQueryVariables>(
-    OrganizationMembersDocument,
-    options,
-  )
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<
+    OrganizationMembersQuery,
+    OrganizationMembersQueryVariables
+  >(OrganizationMembersDocument, options)
 }
 export type OrganizationMembersQueryHookResult = ReturnType<typeof useOrganizationMembersQuery>
 export type OrganizationMembersLazyQueryHookResult = ReturnType<
@@ -26696,40 +27136,40 @@ export const OrganizationMembersCountDocument = gql`
  * });
  */
 export function useOrganizationMembersCountQuery(
-  baseOptions?: Apollo.QueryHookOptions<
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
     OrganizationMembersCountQuery,
     OrganizationMembersCountQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<OrganizationMembersCountQuery, OrganizationMembersCountQueryVariables>(
-    OrganizationMembersCountDocument,
-    options,
-  )
+  return ApolloReactHooks.useQuery<
+    OrganizationMembersCountQuery,
+    OrganizationMembersCountQueryVariables
+  >(OrganizationMembersCountDocument, options)
 }
 export function useOrganizationMembersCountLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
     OrganizationMembersCountQuery,
     OrganizationMembersCountQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<OrganizationMembersCountQuery, OrganizationMembersCountQueryVariables>(
-    OrganizationMembersCountDocument,
-    options,
-  )
+  return ApolloReactHooks.useLazyQuery<
+    OrganizationMembersCountQuery,
+    OrganizationMembersCountQueryVariables
+  >(OrganizationMembersCountDocument, options)
 }
 export function useOrganizationMembersCountSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
         OrganizationMembersCountQuery,
         OrganizationMembersCountQueryVariables
       >,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<
     OrganizationMembersCountQuery,
     OrganizationMembersCountQueryVariables
   >(OrganizationMembersCountDocument, options)
@@ -26778,13 +27218,13 @@ export type UserCreateOrganizationMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useUserCreateOrganizationMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     UserCreateOrganizationMutation,
     UserCreateOrganizationMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<
+  return ApolloReactHooks.useMutation<
     UserCreateOrganizationMutation,
     UserCreateOrganizationMutationVariables
   >(UserCreateOrganizationDocument, options)
@@ -26826,13 +27266,13 @@ export type UserDeleteOrganizationMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useUserDeleteOrganizationMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     UserDeleteOrganizationMutation,
     UserDeleteOrganizationMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<
+  return ApolloReactHooks.useMutation<
     UserDeleteOrganizationMutation,
     UserDeleteOrganizationMutationVariables
   >(UserDeleteOrganizationDocument, options)
@@ -26878,13 +27318,13 @@ export type UserUpdateOrganizationMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useUserUpdateOrganizationMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     UserUpdateOrganizationMutation,
     UserUpdateOrganizationMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<
+  return ApolloReactHooks.useMutation<
     UserUpdateOrganizationMutation,
     UserUpdateOrganizationMutationVariables
   >(UserUpdateOrganizationDocument, options)
@@ -26926,13 +27366,13 @@ export type CreateOrganizationInvitationMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useCreateOrganizationInvitationMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     CreateOrganizationInvitationMutation,
     CreateOrganizationInvitationMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<
+  return ApolloReactHooks.useMutation<
     CreateOrganizationInvitationMutation,
     CreateOrganizationInvitationMutationVariables
   >(CreateOrganizationInvitationDocument, options)
@@ -26974,13 +27414,13 @@ export type ResendOrganizationInvitationMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useResendOrganizationInvitationMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     ResendOrganizationInvitationMutation,
     ResendOrganizationInvitationMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<
+  return ApolloReactHooks.useMutation<
     ResendOrganizationInvitationMutation,
     ResendOrganizationInvitationMutationVariables
   >(ResendOrganizationInvitationDocument, options)
@@ -27025,13 +27465,13 @@ export type AcceptOrganizationInvitationMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useAcceptOrganizationInvitationMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     AcceptOrganizationInvitationMutation,
     AcceptOrganizationInvitationMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<
+  return ApolloReactHooks.useMutation<
     AcceptOrganizationInvitationMutation,
     AcceptOrganizationInvitationMutationVariables
   >(AcceptOrganizationInvitationDocument, options)
@@ -27073,13 +27513,13 @@ export type RejectOrganizationInvitationMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useRejectOrganizationInvitationMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     RejectOrganizationInvitationMutation,
     RejectOrganizationInvitationMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<
+  return ApolloReactHooks.useMutation<
     RejectOrganizationInvitationMutation,
     RejectOrganizationInvitationMutationVariables
   >(RejectOrganizationInvitationDocument, options)
@@ -27121,16 +27561,16 @@ export type AddOrganizationMemberMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useAddOrganizationMemberMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     AddOrganizationMemberMutation,
     AddOrganizationMemberMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<AddOrganizationMemberMutation, AddOrganizationMemberMutationVariables>(
-    AddOrganizationMemberDocument,
-    options,
-  )
+  return ApolloReactHooks.useMutation<
+    AddOrganizationMemberMutation,
+    AddOrganizationMemberMutationVariables
+  >(AddOrganizationMemberDocument, options)
 }
 export type AddOrganizationMemberMutationHookResult = ReturnType<
   typeof useAddOrganizationMemberMutation
@@ -27169,13 +27609,13 @@ export type RemoveOrganizationMemberMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useRemoveOrganizationMemberMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     RemoveOrganizationMemberMutation,
     RemoveOrganizationMemberMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<
+  return ApolloReactHooks.useMutation<
     RemoveOrganizationMemberMutation,
     RemoveOrganizationMemberMutationVariables
   >(RemoveOrganizationMemberDocument, options)
@@ -27217,13 +27657,13 @@ export type UpdateOrganizationMemberRoleMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useUpdateOrganizationMemberRoleMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     UpdateOrganizationMemberRoleMutation,
     UpdateOrganizationMemberRoleMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<
+  return ApolloReactHooks.useMutation<
     UpdateOrganizationMemberRoleMutation,
     UpdateOrganizationMemberRoleMutationVariables
   >(UpdateOrganizationMemberRoleDocument, options)
@@ -27268,13 +27708,13 @@ export type SwitchActiveOrganizationMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useSwitchActiveOrganizationMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     SwitchActiveOrganizationMutation,
     SwitchActiveOrganizationMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<
+  return ApolloReactHooks.useMutation<
     SwitchActiveOrganizationMutation,
     SwitchActiveOrganizationMutationVariables
   >(SwitchActiveOrganizationDocument, options)
@@ -27313,31 +27753,40 @@ export const MyOrganizationsDocument = gql`
  * });
  */
 export function useMyOrganizationsQuery(
-  baseOptions?: Apollo.QueryHookOptions<MyOrganizationsQuery, MyOrganizationsQueryVariables>,
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    MyOrganizationsQuery,
+    MyOrganizationsQueryVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<MyOrganizationsQuery, MyOrganizationsQueryVariables>(
+  return ApolloReactHooks.useQuery<MyOrganizationsQuery, MyOrganizationsQueryVariables>(
     MyOrganizationsDocument,
     options,
   )
 }
 export function useMyOrganizationsLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<MyOrganizationsQuery, MyOrganizationsQueryVariables>,
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    MyOrganizationsQuery,
+    MyOrganizationsQueryVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<MyOrganizationsQuery, MyOrganizationsQueryVariables>(
+  return ApolloReactHooks.useLazyQuery<MyOrganizationsQuery, MyOrganizationsQueryVariables>(
     MyOrganizationsDocument,
     options,
   )
 }
 export function useMyOrganizationsSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<MyOrganizationsQuery, MyOrganizationsQueryVariables>,
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        MyOrganizationsQuery,
+        MyOrganizationsQueryVariables
+      >,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<MyOrganizationsQuery, MyOrganizationsQueryVariables>(
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<MyOrganizationsQuery, MyOrganizationsQueryVariables>(
     MyOrganizationsDocument,
     options,
   )
@@ -27383,35 +27832,41 @@ export const OrganizationRolesDocument = gql`
  * });
  */
 export function useOrganizationRolesQuery(
-  baseOptions: Apollo.QueryHookOptions<OrganizationRolesQuery, OrganizationRolesQueryVariables> &
+  baseOptions: ApolloReactHooks.QueryHookOptions<
+    OrganizationRolesQuery,
+    OrganizationRolesQueryVariables
+  > &
     ({ variables: OrganizationRolesQueryVariables; skip?: boolean } | { skip: boolean }),
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<OrganizationRolesQuery, OrganizationRolesQueryVariables>(
+  return ApolloReactHooks.useQuery<OrganizationRolesQuery, OrganizationRolesQueryVariables>(
     OrganizationRolesDocument,
     options,
   )
 }
 export function useOrganizationRolesLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
     OrganizationRolesQuery,
     OrganizationRolesQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<OrganizationRolesQuery, OrganizationRolesQueryVariables>(
+  return ApolloReactHooks.useLazyQuery<OrganizationRolesQuery, OrganizationRolesQueryVariables>(
     OrganizationRolesDocument,
     options,
   )
 }
 export function useOrganizationRolesSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<OrganizationRolesQuery, OrganizationRolesQueryVariables>,
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        OrganizationRolesQuery,
+        OrganizationRolesQueryVariables
+      >,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<OrganizationRolesQuery, OrganizationRolesQueryVariables>(
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<OrganizationRolesQuery, OrganizationRolesQueryVariables>(
     OrganizationRolesDocument,
     options,
   )
@@ -27462,41 +27917,41 @@ export const OrganizationInvitationsDocument = gql`
  * });
  */
 export function useOrganizationInvitationsQuery(
-  baseOptions: Apollo.QueryHookOptions<
+  baseOptions: ApolloReactHooks.QueryHookOptions<
     OrganizationInvitationsQuery,
     OrganizationInvitationsQueryVariables
   > &
     ({ variables: OrganizationInvitationsQueryVariables; skip?: boolean } | { skip: boolean }),
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<OrganizationInvitationsQuery, OrganizationInvitationsQueryVariables>(
-    OrganizationInvitationsDocument,
-    options,
-  )
+  return ApolloReactHooks.useQuery<
+    OrganizationInvitationsQuery,
+    OrganizationInvitationsQueryVariables
+  >(OrganizationInvitationsDocument, options)
 }
 export function useOrganizationInvitationsLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
     OrganizationInvitationsQuery,
     OrganizationInvitationsQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<OrganizationInvitationsQuery, OrganizationInvitationsQueryVariables>(
-    OrganizationInvitationsDocument,
-    options,
-  )
+  return ApolloReactHooks.useLazyQuery<
+    OrganizationInvitationsQuery,
+    OrganizationInvitationsQueryVariables
+  >(OrganizationInvitationsDocument, options)
 }
 export function useOrganizationInvitationsSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
         OrganizationInvitationsQuery,
         OrganizationInvitationsQueryVariables
       >,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<
     OrganizationInvitationsQuery,
     OrganizationInvitationsQueryVariables
   >(OrganizationInvitationsDocument, options)
@@ -27539,40 +27994,40 @@ export const MyOrganizationsWithMembersDocument = gql`
  * });
  */
 export function useMyOrganizationsWithMembersQuery(
-  baseOptions?: Apollo.QueryHookOptions<
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
     MyOrganizationsWithMembersQuery,
     MyOrganizationsWithMembersQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<MyOrganizationsWithMembersQuery, MyOrganizationsWithMembersQueryVariables>(
-    MyOrganizationsWithMembersDocument,
-    options,
-  )
+  return ApolloReactHooks.useQuery<
+    MyOrganizationsWithMembersQuery,
+    MyOrganizationsWithMembersQueryVariables
+  >(MyOrganizationsWithMembersDocument, options)
 }
 export function useMyOrganizationsWithMembersLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
     MyOrganizationsWithMembersQuery,
     MyOrganizationsWithMembersQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<
+  return ApolloReactHooks.useLazyQuery<
     MyOrganizationsWithMembersQuery,
     MyOrganizationsWithMembersQueryVariables
   >(MyOrganizationsWithMembersDocument, options)
 }
 export function useMyOrganizationsWithMembersSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
         MyOrganizationsWithMembersQuery,
         MyOrganizationsWithMembersQueryVariables
       >,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<
     MyOrganizationsWithMembersQuery,
     MyOrganizationsWithMembersQueryVariables
   >(MyOrganizationsWithMembersDocument, options)
@@ -27616,41 +28071,41 @@ export const UserOrganizationMembersDocument = gql`
  * });
  */
 export function useUserOrganizationMembersQuery(
-  baseOptions: Apollo.QueryHookOptions<
+  baseOptions: ApolloReactHooks.QueryHookOptions<
     UserOrganizationMembersQuery,
     UserOrganizationMembersQueryVariables
   > &
     ({ variables: UserOrganizationMembersQueryVariables; skip?: boolean } | { skip: boolean }),
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<UserOrganizationMembersQuery, UserOrganizationMembersQueryVariables>(
-    UserOrganizationMembersDocument,
-    options,
-  )
+  return ApolloReactHooks.useQuery<
+    UserOrganizationMembersQuery,
+    UserOrganizationMembersQueryVariables
+  >(UserOrganizationMembersDocument, options)
 }
 export function useUserOrganizationMembersLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
     UserOrganizationMembersQuery,
     UserOrganizationMembersQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<UserOrganizationMembersQuery, UserOrganizationMembersQueryVariables>(
-    UserOrganizationMembersDocument,
-    options,
-  )
+  return ApolloReactHooks.useLazyQuery<
+    UserOrganizationMembersQuery,
+    UserOrganizationMembersQueryVariables
+  >(UserOrganizationMembersDocument, options)
 }
 export function useUserOrganizationMembersSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
         UserOrganizationMembersQuery,
         UserOrganizationMembersQueryVariables
       >,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<
     UserOrganizationMembersQuery,
     UserOrganizationMembersQueryVariables
   >(UserOrganizationMembersDocument, options)
@@ -27698,44 +28153,44 @@ export const GetInvitationDetailsDocument = gql`
  * });
  */
 export function useGetInvitationDetailsQuery(
-  baseOptions: Apollo.QueryHookOptions<
+  baseOptions: ApolloReactHooks.QueryHookOptions<
     GetInvitationDetailsQuery,
     GetInvitationDetailsQueryVariables
   > &
     ({ variables: GetInvitationDetailsQueryVariables; skip?: boolean } | { skip: boolean }),
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<GetInvitationDetailsQuery, GetInvitationDetailsQueryVariables>(
+  return ApolloReactHooks.useQuery<GetInvitationDetailsQuery, GetInvitationDetailsQueryVariables>(
     GetInvitationDetailsDocument,
     options,
   )
 }
 export function useGetInvitationDetailsLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
     GetInvitationDetailsQuery,
     GetInvitationDetailsQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<GetInvitationDetailsQuery, GetInvitationDetailsQueryVariables>(
-    GetInvitationDetailsDocument,
-    options,
-  )
+  return ApolloReactHooks.useLazyQuery<
+    GetInvitationDetailsQuery,
+    GetInvitationDetailsQueryVariables
+  >(GetInvitationDetailsDocument, options)
 }
 export function useGetInvitationDetailsSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
         GetInvitationDetailsQuery,
         GetInvitationDetailsQueryVariables
       >,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<GetInvitationDetailsQuery, GetInvitationDetailsQueryVariables>(
-    GetInvitationDetailsDocument,
-    options,
-  )
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<
+    GetInvitationDetailsQuery,
+    GetInvitationDetailsQueryVariables
+  >(GetInvitationDetailsDocument, options)
 }
 export type GetInvitationDetailsQueryHookResult = ReturnType<typeof useGetInvitationDetailsQuery>
 export type GetInvitationDetailsLazyQueryHookResult = ReturnType<
@@ -27779,13 +28234,13 @@ export type CreatePermissionMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useCreatePermissionMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     CreatePermissionMutation,
     CreatePermissionMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<CreatePermissionMutation, CreatePermissionMutationVariables>(
+  return ApolloReactHooks.useMutation<CreatePermissionMutation, CreatePermissionMutationVariables>(
     CreatePermissionDocument,
     options,
   )
@@ -27826,13 +28281,13 @@ export type DeletePermissionMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useDeletePermissionMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     DeletePermissionMutation,
     DeletePermissionMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<DeletePermissionMutation, DeletePermissionMutationVariables>(
+  return ApolloReactHooks.useMutation<DeletePermissionMutation, DeletePermissionMutationVariables>(
     DeletePermissionDocument,
     options,
   )
@@ -27875,13 +28330,13 @@ export type UpdatePermissionMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useUpdatePermissionMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     UpdatePermissionMutation,
     UpdatePermissionMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<UpdatePermissionMutation, UpdatePermissionMutationVariables>(
+  return ApolloReactHooks.useMutation<UpdatePermissionMutation, UpdatePermissionMutationVariables>(
     UpdatePermissionDocument,
     options,
   )
@@ -27918,26 +28373,32 @@ export const PermissionDocument = gql`
  * });
  */
 export function usePermissionQuery(
-  baseOptions: Apollo.QueryHookOptions<PermissionQuery, PermissionQueryVariables> &
+  baseOptions: ApolloReactHooks.QueryHookOptions<PermissionQuery, PermissionQueryVariables> &
     ({ variables: PermissionQueryVariables; skip?: boolean } | { skip: boolean }),
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<PermissionQuery, PermissionQueryVariables>(PermissionDocument, options)
+  return ApolloReactHooks.useQuery<PermissionQuery, PermissionQueryVariables>(
+    PermissionDocument,
+    options,
+  )
 }
 export function usePermissionLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<PermissionQuery, PermissionQueryVariables>,
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<PermissionQuery, PermissionQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<PermissionQuery, PermissionQueryVariables>(PermissionDocument, options)
+  return ApolloReactHooks.useLazyQuery<PermissionQuery, PermissionQueryVariables>(
+    PermissionDocument,
+    options,
+  )
 }
 export function usePermissionSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<PermissionQuery, PermissionQueryVariables>,
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<PermissionQuery, PermissionQueryVariables>,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<PermissionQuery, PermissionQueryVariables>(
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<PermissionQuery, PermissionQueryVariables>(
     PermissionDocument,
     options,
   )
@@ -27976,28 +28437,31 @@ export const PermissionsDocument = gql`
  * });
  */
 export function usePermissionsQuery(
-  baseOptions?: Apollo.QueryHookOptions<PermissionsQuery, PermissionsQueryVariables>,
+  baseOptions?: ApolloReactHooks.QueryHookOptions<PermissionsQuery, PermissionsQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<PermissionsQuery, PermissionsQueryVariables>(PermissionsDocument, options)
+  return ApolloReactHooks.useQuery<PermissionsQuery, PermissionsQueryVariables>(
+    PermissionsDocument,
+    options,
+  )
 }
 export function usePermissionsLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<PermissionsQuery, PermissionsQueryVariables>,
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<PermissionsQuery, PermissionsQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<PermissionsQuery, PermissionsQueryVariables>(
+  return ApolloReactHooks.useLazyQuery<PermissionsQuery, PermissionsQueryVariables>(
     PermissionsDocument,
     options,
   )
 }
 export function usePermissionsSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<PermissionsQuery, PermissionsQueryVariables>,
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<PermissionsQuery, PermissionsQueryVariables>,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<PermissionsQuery, PermissionsQueryVariables>(
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<PermissionsQuery, PermissionsQueryVariables>(
     PermissionsDocument,
     options,
   )
@@ -28032,43 +28496,43 @@ export const PermissionPaginationDocument = gql`
  * });
  */
 export function usePermissionPaginationQuery(
-  baseOptions?: Apollo.QueryHookOptions<
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
     PermissionPaginationQuery,
     PermissionPaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<PermissionPaginationQuery, PermissionPaginationQueryVariables>(
+  return ApolloReactHooks.useQuery<PermissionPaginationQuery, PermissionPaginationQueryVariables>(
     PermissionPaginationDocument,
     options,
   )
 }
 export function usePermissionPaginationLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
     PermissionPaginationQuery,
     PermissionPaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<PermissionPaginationQuery, PermissionPaginationQueryVariables>(
-    PermissionPaginationDocument,
-    options,
-  )
+  return ApolloReactHooks.useLazyQuery<
+    PermissionPaginationQuery,
+    PermissionPaginationQueryVariables
+  >(PermissionPaginationDocument, options)
 }
 export function usePermissionPaginationSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
         PermissionPaginationQuery,
         PermissionPaginationQueryVariables
       >,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<PermissionPaginationQuery, PermissionPaginationQueryVariables>(
-    PermissionPaginationDocument,
-    options,
-  )
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<
+    PermissionPaginationQuery,
+    PermissionPaginationQueryVariables
+  >(PermissionPaginationDocument, options)
 }
 export type PermissionPaginationQueryHookResult = ReturnType<typeof usePermissionPaginationQuery>
 export type PermissionPaginationLazyQueryHookResult = ReturnType<
@@ -28112,16 +28576,16 @@ export type CreatePhoneNumberMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useCreatePhoneNumberMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     CreatePhoneNumberMutation,
     CreatePhoneNumberMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<CreatePhoneNumberMutation, CreatePhoneNumberMutationVariables>(
-    CreatePhoneNumberDocument,
-    options,
-  )
+  return ApolloReactHooks.useMutation<
+    CreatePhoneNumberMutation,
+    CreatePhoneNumberMutationVariables
+  >(CreatePhoneNumberDocument, options)
 }
 export type CreatePhoneNumberMutationHookResult = ReturnType<typeof useCreatePhoneNumberMutation>
 export type CreatePhoneNumberMutationResult = Apollo.MutationResult<CreatePhoneNumberMutation>
@@ -28159,16 +28623,16 @@ export type DeletePhoneNumberMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useDeletePhoneNumberMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     DeletePhoneNumberMutation,
     DeletePhoneNumberMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<DeletePhoneNumberMutation, DeletePhoneNumberMutationVariables>(
-    DeletePhoneNumberDocument,
-    options,
-  )
+  return ApolloReactHooks.useMutation<
+    DeletePhoneNumberMutation,
+    DeletePhoneNumberMutationVariables
+  >(DeletePhoneNumberDocument, options)
 }
 export type DeletePhoneNumberMutationHookResult = ReturnType<typeof useDeletePhoneNumberMutation>
 export type DeletePhoneNumberMutationResult = Apollo.MutationResult<DeletePhoneNumberMutation>
@@ -28208,16 +28672,16 @@ export type UpdatePhoneNumberMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useUpdatePhoneNumberMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     UpdatePhoneNumberMutation,
     UpdatePhoneNumberMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<UpdatePhoneNumberMutation, UpdatePhoneNumberMutationVariables>(
-    UpdatePhoneNumberDocument,
-    options,
-  )
+  return ApolloReactHooks.useMutation<
+    UpdatePhoneNumberMutation,
+    UpdatePhoneNumberMutationVariables
+  >(UpdatePhoneNumberDocument, options)
 }
 export type UpdatePhoneNumberMutationHookResult = ReturnType<typeof useUpdatePhoneNumberMutation>
 export type UpdatePhoneNumberMutationResult = Apollo.MutationResult<UpdatePhoneNumberMutation>
@@ -28251,29 +28715,32 @@ export const PhoneNumberDocument = gql`
  * });
  */
 export function usePhoneNumberQuery(
-  baseOptions: Apollo.QueryHookOptions<PhoneNumberQuery, PhoneNumberQueryVariables> &
+  baseOptions: ApolloReactHooks.QueryHookOptions<PhoneNumberQuery, PhoneNumberQueryVariables> &
     ({ variables: PhoneNumberQueryVariables; skip?: boolean } | { skip: boolean }),
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<PhoneNumberQuery, PhoneNumberQueryVariables>(PhoneNumberDocument, options)
+  return ApolloReactHooks.useQuery<PhoneNumberQuery, PhoneNumberQueryVariables>(
+    PhoneNumberDocument,
+    options,
+  )
 }
 export function usePhoneNumberLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<PhoneNumberQuery, PhoneNumberQueryVariables>,
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<PhoneNumberQuery, PhoneNumberQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<PhoneNumberQuery, PhoneNumberQueryVariables>(
+  return ApolloReactHooks.useLazyQuery<PhoneNumberQuery, PhoneNumberQueryVariables>(
     PhoneNumberDocument,
     options,
   )
 }
 export function usePhoneNumberSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<PhoneNumberQuery, PhoneNumberQueryVariables>,
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<PhoneNumberQuery, PhoneNumberQueryVariables>,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<PhoneNumberQuery, PhoneNumberQueryVariables>(
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<PhoneNumberQuery, PhoneNumberQueryVariables>(
     PhoneNumberDocument,
     options,
   )
@@ -28312,31 +28779,34 @@ export const PhoneNumbersDocument = gql`
  * });
  */
 export function usePhoneNumbersQuery(
-  baseOptions?: Apollo.QueryHookOptions<PhoneNumbersQuery, PhoneNumbersQueryVariables>,
+  baseOptions?: ApolloReactHooks.QueryHookOptions<PhoneNumbersQuery, PhoneNumbersQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<PhoneNumbersQuery, PhoneNumbersQueryVariables>(
+  return ApolloReactHooks.useQuery<PhoneNumbersQuery, PhoneNumbersQueryVariables>(
     PhoneNumbersDocument,
     options,
   )
 }
 export function usePhoneNumbersLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<PhoneNumbersQuery, PhoneNumbersQueryVariables>,
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    PhoneNumbersQuery,
+    PhoneNumbersQueryVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<PhoneNumbersQuery, PhoneNumbersQueryVariables>(
+  return ApolloReactHooks.useLazyQuery<PhoneNumbersQuery, PhoneNumbersQueryVariables>(
     PhoneNumbersDocument,
     options,
   )
 }
 export function usePhoneNumbersSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<PhoneNumbersQuery, PhoneNumbersQueryVariables>,
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<PhoneNumbersQuery, PhoneNumbersQueryVariables>,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<PhoneNumbersQuery, PhoneNumbersQueryVariables>(
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<PhoneNumbersQuery, PhoneNumbersQueryVariables>(
     PhoneNumbersDocument,
     options,
   )
@@ -28374,43 +28844,43 @@ export const PhoneNumberPaginationDocument = gql`
  * });
  */
 export function usePhoneNumberPaginationQuery(
-  baseOptions?: Apollo.QueryHookOptions<
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
     PhoneNumberPaginationQuery,
     PhoneNumberPaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<PhoneNumberPaginationQuery, PhoneNumberPaginationQueryVariables>(
+  return ApolloReactHooks.useQuery<PhoneNumberPaginationQuery, PhoneNumberPaginationQueryVariables>(
     PhoneNumberPaginationDocument,
     options,
   )
 }
 export function usePhoneNumberPaginationLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
     PhoneNumberPaginationQuery,
     PhoneNumberPaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<PhoneNumberPaginationQuery, PhoneNumberPaginationQueryVariables>(
-    PhoneNumberPaginationDocument,
-    options,
-  )
+  return ApolloReactHooks.useLazyQuery<
+    PhoneNumberPaginationQuery,
+    PhoneNumberPaginationQueryVariables
+  >(PhoneNumberPaginationDocument, options)
 }
 export function usePhoneNumberPaginationSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
         PhoneNumberPaginationQuery,
         PhoneNumberPaginationQueryVariables
       >,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<PhoneNumberPaginationQuery, PhoneNumberPaginationQueryVariables>(
-    PhoneNumberPaginationDocument,
-    options,
-  )
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<
+    PhoneNumberPaginationQuery,
+    PhoneNumberPaginationQueryVariables
+  >(PhoneNumberPaginationDocument, options)
 }
 export type PhoneNumberPaginationQueryHookResult = ReturnType<typeof usePhoneNumberPaginationQuery>
 export type PhoneNumberPaginationLazyQueryHookResult = ReturnType<
@@ -28454,10 +28924,13 @@ export type CreatePlanMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useCreatePlanMutation(
-  baseOptions?: Apollo.MutationHookOptions<CreatePlanMutation, CreatePlanMutationVariables>,
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    CreatePlanMutation,
+    CreatePlanMutationVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<CreatePlanMutation, CreatePlanMutationVariables>(
+  return ApolloReactHooks.useMutation<CreatePlanMutation, CreatePlanMutationVariables>(
     CreatePlanDocument,
     options,
   )
@@ -28498,10 +28971,13 @@ export type DeletePlanMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useDeletePlanMutation(
-  baseOptions?: Apollo.MutationHookOptions<DeletePlanMutation, DeletePlanMutationVariables>,
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    DeletePlanMutation,
+    DeletePlanMutationVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<DeletePlanMutation, DeletePlanMutationVariables>(
+  return ApolloReactHooks.useMutation<DeletePlanMutation, DeletePlanMutationVariables>(
     DeletePlanDocument,
     options,
   )
@@ -28544,10 +29020,13 @@ export type UpdatePlanMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useUpdatePlanMutation(
-  baseOptions?: Apollo.MutationHookOptions<UpdatePlanMutation, UpdatePlanMutationVariables>,
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    UpdatePlanMutation,
+    UpdatePlanMutationVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<UpdatePlanMutation, UpdatePlanMutationVariables>(
+  return ApolloReactHooks.useMutation<UpdatePlanMutation, UpdatePlanMutationVariables>(
     UpdatePlanDocument,
     options,
   )
@@ -28584,24 +29063,26 @@ export const PlanDocument = gql`
  * });
  */
 export function usePlanQuery(
-  baseOptions: Apollo.QueryHookOptions<PlanQuery, PlanQueryVariables> &
+  baseOptions: ApolloReactHooks.QueryHookOptions<PlanQuery, PlanQueryVariables> &
     ({ variables: PlanQueryVariables; skip?: boolean } | { skip: boolean }),
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<PlanQuery, PlanQueryVariables>(PlanDocument, options)
+  return ApolloReactHooks.useQuery<PlanQuery, PlanQueryVariables>(PlanDocument, options)
 }
 export function usePlanLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<PlanQuery, PlanQueryVariables>,
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<PlanQuery, PlanQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<PlanQuery, PlanQueryVariables>(PlanDocument, options)
+  return ApolloReactHooks.useLazyQuery<PlanQuery, PlanQueryVariables>(PlanDocument, options)
 }
 export function usePlanSuspenseQuery(
-  baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<PlanQuery, PlanQueryVariables>,
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<PlanQuery, PlanQueryVariables>,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<PlanQuery, PlanQueryVariables>(PlanDocument, options)
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<PlanQuery, PlanQueryVariables>(PlanDocument, options)
 }
 export type PlanQueryHookResult = ReturnType<typeof usePlanQuery>
 export type PlanLazyQueryHookResult = ReturnType<typeof usePlanLazyQuery>
@@ -28637,23 +29118,25 @@ export const PlansDocument = gql`
  * });
  */
 export function usePlansQuery(
-  baseOptions?: Apollo.QueryHookOptions<PlansQuery, PlansQueryVariables>,
+  baseOptions?: ApolloReactHooks.QueryHookOptions<PlansQuery, PlansQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<PlansQuery, PlansQueryVariables>(PlansDocument, options)
+  return ApolloReactHooks.useQuery<PlansQuery, PlansQueryVariables>(PlansDocument, options)
 }
 export function usePlansLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<PlansQuery, PlansQueryVariables>,
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<PlansQuery, PlansQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<PlansQuery, PlansQueryVariables>(PlansDocument, options)
+  return ApolloReactHooks.useLazyQuery<PlansQuery, PlansQueryVariables>(PlansDocument, options)
 }
 export function usePlansSuspenseQuery(
-  baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<PlansQuery, PlansQueryVariables>,
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<PlansQuery, PlansQueryVariables>,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<PlansQuery, PlansQueryVariables>(PlansDocument, options)
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<PlansQuery, PlansQueryVariables>(PlansDocument, options)
 }
 export type PlansQueryHookResult = ReturnType<typeof usePlansQuery>
 export type PlansLazyQueryHookResult = ReturnType<typeof usePlansLazyQuery>
@@ -28685,31 +29168,37 @@ export const PlanPaginationDocument = gql`
  * });
  */
 export function usePlanPaginationQuery(
-  baseOptions?: Apollo.QueryHookOptions<PlanPaginationQuery, PlanPaginationQueryVariables>,
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    PlanPaginationQuery,
+    PlanPaginationQueryVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<PlanPaginationQuery, PlanPaginationQueryVariables>(
+  return ApolloReactHooks.useQuery<PlanPaginationQuery, PlanPaginationQueryVariables>(
     PlanPaginationDocument,
     options,
   )
 }
 export function usePlanPaginationLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<PlanPaginationQuery, PlanPaginationQueryVariables>,
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    PlanPaginationQuery,
+    PlanPaginationQueryVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<PlanPaginationQuery, PlanPaginationQueryVariables>(
+  return ApolloReactHooks.useLazyQuery<PlanPaginationQuery, PlanPaginationQueryVariables>(
     PlanPaginationDocument,
     options,
   )
 }
 export function usePlanPaginationSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<PlanPaginationQuery, PlanPaginationQueryVariables>,
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<PlanPaginationQuery, PlanPaginationQueryVariables>,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<PlanPaginationQuery, PlanPaginationQueryVariables>(
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<PlanPaginationQuery, PlanPaginationQueryVariables>(
     PlanPaginationDocument,
     options,
   )
@@ -28748,28 +29237,31 @@ export const ActivePlansDocument = gql`
  * });
  */
 export function useActivePlansQuery(
-  baseOptions?: Apollo.QueryHookOptions<ActivePlansQuery, ActivePlansQueryVariables>,
+  baseOptions?: ApolloReactHooks.QueryHookOptions<ActivePlansQuery, ActivePlansQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<ActivePlansQuery, ActivePlansQueryVariables>(ActivePlansDocument, options)
+  return ApolloReactHooks.useQuery<ActivePlansQuery, ActivePlansQueryVariables>(
+    ActivePlansDocument,
+    options,
+  )
 }
 export function useActivePlansLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<ActivePlansQuery, ActivePlansQueryVariables>,
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<ActivePlansQuery, ActivePlansQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<ActivePlansQuery, ActivePlansQueryVariables>(
+  return ApolloReactHooks.useLazyQuery<ActivePlansQuery, ActivePlansQueryVariables>(
     ActivePlansDocument,
     options,
   )
 }
 export function useActivePlansSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<ActivePlansQuery, ActivePlansQueryVariables>,
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<ActivePlansQuery, ActivePlansQueryVariables>,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<ActivePlansQuery, ActivePlansQueryVariables>(
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<ActivePlansQuery, ActivePlansQueryVariables>(
     ActivePlansDocument,
     options,
   )
@@ -28809,10 +29301,13 @@ export type CreateRoleMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useCreateRoleMutation(
-  baseOptions?: Apollo.MutationHookOptions<CreateRoleMutation, CreateRoleMutationVariables>,
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    CreateRoleMutation,
+    CreateRoleMutationVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<CreateRoleMutation, CreateRoleMutationVariables>(
+  return ApolloReactHooks.useMutation<CreateRoleMutation, CreateRoleMutationVariables>(
     CreateRoleDocument,
     options,
   )
@@ -28853,10 +29348,13 @@ export type DeleteRoleMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useDeleteRoleMutation(
-  baseOptions?: Apollo.MutationHookOptions<DeleteRoleMutation, DeleteRoleMutationVariables>,
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    DeleteRoleMutation,
+    DeleteRoleMutationVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<DeleteRoleMutation, DeleteRoleMutationVariables>(
+  return ApolloReactHooks.useMutation<DeleteRoleMutation, DeleteRoleMutationVariables>(
     DeleteRoleDocument,
     options,
   )
@@ -28899,10 +29397,13 @@ export type UpdateRoleMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useUpdateRoleMutation(
-  baseOptions?: Apollo.MutationHookOptions<UpdateRoleMutation, UpdateRoleMutationVariables>,
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    UpdateRoleMutation,
+    UpdateRoleMutationVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<UpdateRoleMutation, UpdateRoleMutationVariables>(
+  return ApolloReactHooks.useMutation<UpdateRoleMutation, UpdateRoleMutationVariables>(
     UpdateRoleDocument,
     options,
   )
@@ -28939,24 +29440,26 @@ export const RoleDocument = gql`
  * });
  */
 export function useRoleQuery(
-  baseOptions: Apollo.QueryHookOptions<RoleQuery, RoleQueryVariables> &
+  baseOptions: ApolloReactHooks.QueryHookOptions<RoleQuery, RoleQueryVariables> &
     ({ variables: RoleQueryVariables; skip?: boolean } | { skip: boolean }),
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<RoleQuery, RoleQueryVariables>(RoleDocument, options)
+  return ApolloReactHooks.useQuery<RoleQuery, RoleQueryVariables>(RoleDocument, options)
 }
 export function useRoleLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<RoleQuery, RoleQueryVariables>,
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<RoleQuery, RoleQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<RoleQuery, RoleQueryVariables>(RoleDocument, options)
+  return ApolloReactHooks.useLazyQuery<RoleQuery, RoleQueryVariables>(RoleDocument, options)
 }
 export function useRoleSuspenseQuery(
-  baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<RoleQuery, RoleQueryVariables>,
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<RoleQuery, RoleQueryVariables>,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<RoleQuery, RoleQueryVariables>(RoleDocument, options)
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<RoleQuery, RoleQueryVariables>(RoleDocument, options)
 }
 export type RoleQueryHookResult = ReturnType<typeof useRoleQuery>
 export type RoleLazyQueryHookResult = ReturnType<typeof useRoleLazyQuery>
@@ -28992,23 +29495,25 @@ export const RolesDocument = gql`
  * });
  */
 export function useRolesQuery(
-  baseOptions?: Apollo.QueryHookOptions<RolesQuery, RolesQueryVariables>,
+  baseOptions?: ApolloReactHooks.QueryHookOptions<RolesQuery, RolesQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<RolesQuery, RolesQueryVariables>(RolesDocument, options)
+  return ApolloReactHooks.useQuery<RolesQuery, RolesQueryVariables>(RolesDocument, options)
 }
 export function useRolesLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<RolesQuery, RolesQueryVariables>,
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<RolesQuery, RolesQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<RolesQuery, RolesQueryVariables>(RolesDocument, options)
+  return ApolloReactHooks.useLazyQuery<RolesQuery, RolesQueryVariables>(RolesDocument, options)
 }
 export function useRolesSuspenseQuery(
-  baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<RolesQuery, RolesQueryVariables>,
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<RolesQuery, RolesQueryVariables>,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<RolesQuery, RolesQueryVariables>(RolesDocument, options)
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<RolesQuery, RolesQueryVariables>(RolesDocument, options)
 }
 export type RolesQueryHookResult = ReturnType<typeof useRolesQuery>
 export type RolesLazyQueryHookResult = ReturnType<typeof useRolesLazyQuery>
@@ -29040,31 +29545,37 @@ export const RolePaginationDocument = gql`
  * });
  */
 export function useRolePaginationQuery(
-  baseOptions?: Apollo.QueryHookOptions<RolePaginationQuery, RolePaginationQueryVariables>,
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    RolePaginationQuery,
+    RolePaginationQueryVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<RolePaginationQuery, RolePaginationQueryVariables>(
+  return ApolloReactHooks.useQuery<RolePaginationQuery, RolePaginationQueryVariables>(
     RolePaginationDocument,
     options,
   )
 }
 export function useRolePaginationLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<RolePaginationQuery, RolePaginationQueryVariables>,
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    RolePaginationQuery,
+    RolePaginationQueryVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<RolePaginationQuery, RolePaginationQueryVariables>(
+  return ApolloReactHooks.useLazyQuery<RolePaginationQuery, RolePaginationQueryVariables>(
     RolePaginationDocument,
     options,
   )
 }
 export function useRolePaginationSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<RolePaginationQuery, RolePaginationQueryVariables>,
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<RolePaginationQuery, RolePaginationQueryVariables>,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<RolePaginationQuery, RolePaginationQueryVariables>(
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<RolePaginationQuery, RolePaginationQueryVariables>(
     RolePaginationDocument,
     options,
   )
@@ -29104,31 +29615,40 @@ export const MySecurityEventsDocument = gql`
  * });
  */
 export function useMySecurityEventsQuery(
-  baseOptions?: Apollo.QueryHookOptions<MySecurityEventsQuery, MySecurityEventsQueryVariables>,
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    MySecurityEventsQuery,
+    MySecurityEventsQueryVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<MySecurityEventsQuery, MySecurityEventsQueryVariables>(
+  return ApolloReactHooks.useQuery<MySecurityEventsQuery, MySecurityEventsQueryVariables>(
     MySecurityEventsDocument,
     options,
   )
 }
 export function useMySecurityEventsLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<MySecurityEventsQuery, MySecurityEventsQueryVariables>,
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    MySecurityEventsQuery,
+    MySecurityEventsQueryVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<MySecurityEventsQuery, MySecurityEventsQueryVariables>(
+  return ApolloReactHooks.useLazyQuery<MySecurityEventsQuery, MySecurityEventsQueryVariables>(
     MySecurityEventsDocument,
     options,
   )
 }
 export function useMySecurityEventsSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<MySecurityEventsQuery, MySecurityEventsQueryVariables>,
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        MySecurityEventsQuery,
+        MySecurityEventsQueryVariables
+      >,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<MySecurityEventsQuery, MySecurityEventsQueryVariables>(
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<MySecurityEventsQuery, MySecurityEventsQueryVariables>(
     MySecurityEventsDocument,
     options,
   )
@@ -29173,16 +29693,16 @@ export type CreateSecurityEventMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useCreateSecurityEventMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     CreateSecurityEventMutation,
     CreateSecurityEventMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<CreateSecurityEventMutation, CreateSecurityEventMutationVariables>(
-    CreateSecurityEventDocument,
-    options,
-  )
+  return ApolloReactHooks.useMutation<
+    CreateSecurityEventMutation,
+    CreateSecurityEventMutationVariables
+  >(CreateSecurityEventDocument, options)
 }
 export type CreateSecurityEventMutationHookResult = ReturnType<
   typeof useCreateSecurityEventMutation
@@ -29222,16 +29742,16 @@ export type DeleteSecurityEventMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useDeleteSecurityEventMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     DeleteSecurityEventMutation,
     DeleteSecurityEventMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<DeleteSecurityEventMutation, DeleteSecurityEventMutationVariables>(
-    DeleteSecurityEventDocument,
-    options,
-  )
+  return ApolloReactHooks.useMutation<
+    DeleteSecurityEventMutation,
+    DeleteSecurityEventMutationVariables
+  >(DeleteSecurityEventDocument, options)
 }
 export type DeleteSecurityEventMutationHookResult = ReturnType<
   typeof useDeleteSecurityEventMutation
@@ -29273,16 +29793,16 @@ export type UpdateSecurityEventMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useUpdateSecurityEventMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     UpdateSecurityEventMutation,
     UpdateSecurityEventMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<UpdateSecurityEventMutation, UpdateSecurityEventMutationVariables>(
-    UpdateSecurityEventDocument,
-    options,
-  )
+  return ApolloReactHooks.useMutation<
+    UpdateSecurityEventMutation,
+    UpdateSecurityEventMutationVariables
+  >(UpdateSecurityEventDocument, options)
 }
 export type UpdateSecurityEventMutationHookResult = ReturnType<
   typeof useUpdateSecurityEventMutation
@@ -29318,32 +29838,35 @@ export const SecurityEventDocument = gql`
  * });
  */
 export function useSecurityEventQuery(
-  baseOptions: Apollo.QueryHookOptions<SecurityEventQuery, SecurityEventQueryVariables> &
+  baseOptions: ApolloReactHooks.QueryHookOptions<SecurityEventQuery, SecurityEventQueryVariables> &
     ({ variables: SecurityEventQueryVariables; skip?: boolean } | { skip: boolean }),
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<SecurityEventQuery, SecurityEventQueryVariables>(
+  return ApolloReactHooks.useQuery<SecurityEventQuery, SecurityEventQueryVariables>(
     SecurityEventDocument,
     options,
   )
 }
 export function useSecurityEventLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<SecurityEventQuery, SecurityEventQueryVariables>,
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    SecurityEventQuery,
+    SecurityEventQueryVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<SecurityEventQuery, SecurityEventQueryVariables>(
+  return ApolloReactHooks.useLazyQuery<SecurityEventQuery, SecurityEventQueryVariables>(
     SecurityEventDocument,
     options,
   )
 }
 export function useSecurityEventSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<SecurityEventQuery, SecurityEventQueryVariables>,
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<SecurityEventQuery, SecurityEventQueryVariables>,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<SecurityEventQuery, SecurityEventQueryVariables>(
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<SecurityEventQuery, SecurityEventQueryVariables>(
     SecurityEventDocument,
     options,
   )
@@ -29385,31 +29908,37 @@ export const SecurityEventsDocument = gql`
  * });
  */
 export function useSecurityEventsQuery(
-  baseOptions?: Apollo.QueryHookOptions<SecurityEventsQuery, SecurityEventsQueryVariables>,
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    SecurityEventsQuery,
+    SecurityEventsQueryVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<SecurityEventsQuery, SecurityEventsQueryVariables>(
+  return ApolloReactHooks.useQuery<SecurityEventsQuery, SecurityEventsQueryVariables>(
     SecurityEventsDocument,
     options,
   )
 }
 export function useSecurityEventsLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<SecurityEventsQuery, SecurityEventsQueryVariables>,
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    SecurityEventsQuery,
+    SecurityEventsQueryVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<SecurityEventsQuery, SecurityEventsQueryVariables>(
+  return ApolloReactHooks.useLazyQuery<SecurityEventsQuery, SecurityEventsQueryVariables>(
     SecurityEventsDocument,
     options,
   )
 }
 export function useSecurityEventsSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<SecurityEventsQuery, SecurityEventsQueryVariables>,
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<SecurityEventsQuery, SecurityEventsQueryVariables>,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<SecurityEventsQuery, SecurityEventsQueryVariables>(
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<SecurityEventsQuery, SecurityEventsQueryVariables>(
     SecurityEventsDocument,
     options,
   )
@@ -29449,40 +29978,40 @@ export const SecurityEventPaginationDocument = gql`
  * });
  */
 export function useSecurityEventPaginationQuery(
-  baseOptions?: Apollo.QueryHookOptions<
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
     SecurityEventPaginationQuery,
     SecurityEventPaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<SecurityEventPaginationQuery, SecurityEventPaginationQueryVariables>(
-    SecurityEventPaginationDocument,
-    options,
-  )
+  return ApolloReactHooks.useQuery<
+    SecurityEventPaginationQuery,
+    SecurityEventPaginationQueryVariables
+  >(SecurityEventPaginationDocument, options)
 }
 export function useSecurityEventPaginationLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
     SecurityEventPaginationQuery,
     SecurityEventPaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<SecurityEventPaginationQuery, SecurityEventPaginationQueryVariables>(
-    SecurityEventPaginationDocument,
-    options,
-  )
+  return ApolloReactHooks.useLazyQuery<
+    SecurityEventPaginationQuery,
+    SecurityEventPaginationQueryVariables
+  >(SecurityEventPaginationDocument, options)
 }
 export function useSecurityEventPaginationSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
         SecurityEventPaginationQuery,
         SecurityEventPaginationQueryVariables
       >,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<
     SecurityEventPaginationQuery,
     SecurityEventPaginationQueryVariables
   >(SecurityEventPaginationDocument, options)
@@ -29541,13 +30070,13 @@ export type UploadUserAvatarMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useUploadUserAvatarMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     UploadUserAvatarMutation,
     UploadUserAvatarMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<UploadUserAvatarMutation, UploadUserAvatarMutationVariables>(
+  return ApolloReactHooks.useMutation<UploadUserAvatarMutation, UploadUserAvatarMutationVariables>(
     UploadUserAvatarDocument,
     options,
   )
@@ -29600,13 +30129,13 @@ export type UploadOrganizationLogoMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useUploadOrganizationLogoMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     UploadOrganizationLogoMutation,
     UploadOrganizationLogoMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<
+  return ApolloReactHooks.useMutation<
     UploadOrganizationLogoMutation,
     UploadOrganizationLogoMutationVariables
   >(UploadOrganizationLogoDocument, options)
@@ -29662,10 +30191,13 @@ export type UploadFileMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useUploadFileMutation(
-  baseOptions?: Apollo.MutationHookOptions<UploadFileMutation, UploadFileMutationVariables>,
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    UploadFileMutation,
+    UploadFileMutationVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<UploadFileMutation, UploadFileMutationVariables>(
+  return ApolloReactHooks.useMutation<UploadFileMutation, UploadFileMutationVariables>(
     UploadFileDocument,
     options,
   )
@@ -29704,10 +30236,13 @@ export type DeleteFileMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useDeleteFileMutation(
-  baseOptions?: Apollo.MutationHookOptions<DeleteFileMutation, DeleteFileMutationVariables>,
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    DeleteFileMutation,
+    DeleteFileMutationVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<DeleteFileMutation, DeleteFileMutationVariables>(
+  return ApolloReactHooks.useMutation<DeleteFileMutation, DeleteFileMutationVariables>(
     DeleteFileDocument,
     options,
   )
@@ -29756,25 +30291,31 @@ export const UserFilesDocument = gql`
  * });
  */
 export function useUserFilesQuery(
-  baseOptions?: Apollo.QueryHookOptions<UserFilesQuery, UserFilesQueryVariables>,
+  baseOptions?: ApolloReactHooks.QueryHookOptions<UserFilesQuery, UserFilesQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<UserFilesQuery, UserFilesQueryVariables>(UserFilesDocument, options)
+  return ApolloReactHooks.useQuery<UserFilesQuery, UserFilesQueryVariables>(
+    UserFilesDocument,
+    options,
+  )
 }
 export function useUserFilesLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<UserFilesQuery, UserFilesQueryVariables>,
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<UserFilesQuery, UserFilesQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<UserFilesQuery, UserFilesQueryVariables>(UserFilesDocument, options)
+  return ApolloReactHooks.useLazyQuery<UserFilesQuery, UserFilesQueryVariables>(
+    UserFilesDocument,
+    options,
+  )
 }
 export function useUserFilesSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<UserFilesQuery, UserFilesQueryVariables>,
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<UserFilesQuery, UserFilesQueryVariables>,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<UserFilesQuery, UserFilesQueryVariables>(
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<UserFilesQuery, UserFilesQueryVariables>(
     UserFilesDocument,
     options,
   )
@@ -29822,35 +30363,41 @@ export const OrganizationFilesDocument = gql`
  * });
  */
 export function useOrganizationFilesQuery(
-  baseOptions: Apollo.QueryHookOptions<OrganizationFilesQuery, OrganizationFilesQueryVariables> &
+  baseOptions: ApolloReactHooks.QueryHookOptions<
+    OrganizationFilesQuery,
+    OrganizationFilesQueryVariables
+  > &
     ({ variables: OrganizationFilesQueryVariables; skip?: boolean } | { skip: boolean }),
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<OrganizationFilesQuery, OrganizationFilesQueryVariables>(
+  return ApolloReactHooks.useQuery<OrganizationFilesQuery, OrganizationFilesQueryVariables>(
     OrganizationFilesDocument,
     options,
   )
 }
 export function useOrganizationFilesLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
     OrganizationFilesQuery,
     OrganizationFilesQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<OrganizationFilesQuery, OrganizationFilesQueryVariables>(
+  return ApolloReactHooks.useLazyQuery<OrganizationFilesQuery, OrganizationFilesQueryVariables>(
     OrganizationFilesDocument,
     options,
   )
 }
 export function useOrganizationFilesSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<OrganizationFilesQuery, OrganizationFilesQueryVariables>,
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        OrganizationFilesQuery,
+        OrganizationFilesQueryVariables
+      >,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<OrganizationFilesQuery, OrganizationFilesQueryVariables>(
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<OrganizationFilesQuery, OrganizationFilesQueryVariables>(
     OrganizationFilesDocument,
     options,
   )
@@ -29888,32 +30435,35 @@ export const GetSignedUrlDocument = gql`
  * });
  */
 export function useGetSignedUrlQuery(
-  baseOptions: Apollo.QueryHookOptions<GetSignedUrlQuery, GetSignedUrlQueryVariables> &
+  baseOptions: ApolloReactHooks.QueryHookOptions<GetSignedUrlQuery, GetSignedUrlQueryVariables> &
     ({ variables: GetSignedUrlQueryVariables; skip?: boolean } | { skip: boolean }),
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<GetSignedUrlQuery, GetSignedUrlQueryVariables>(
+  return ApolloReactHooks.useQuery<GetSignedUrlQuery, GetSignedUrlQueryVariables>(
     GetSignedUrlDocument,
     options,
   )
 }
 export function useGetSignedUrlLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<GetSignedUrlQuery, GetSignedUrlQueryVariables>,
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    GetSignedUrlQuery,
+    GetSignedUrlQueryVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<GetSignedUrlQuery, GetSignedUrlQueryVariables>(
+  return ApolloReactHooks.useLazyQuery<GetSignedUrlQuery, GetSignedUrlQueryVariables>(
     GetSignedUrlDocument,
     options,
   )
 }
 export function useGetSignedUrlSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<GetSignedUrlQuery, GetSignedUrlQueryVariables>,
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<GetSignedUrlQuery, GetSignedUrlQueryVariables>,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<GetSignedUrlQuery, GetSignedUrlQueryVariables>(
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<GetSignedUrlQuery, GetSignedUrlQueryVariables>(
     GetSignedUrlDocument,
     options,
   )
@@ -29956,13 +30506,13 @@ export type CreateStoredFileMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useCreateStoredFileMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     CreateStoredFileMutation,
     CreateStoredFileMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<CreateStoredFileMutation, CreateStoredFileMutationVariables>(
+  return ApolloReactHooks.useMutation<CreateStoredFileMutation, CreateStoredFileMutationVariables>(
     CreateStoredFileDocument,
     options,
   )
@@ -30003,13 +30553,13 @@ export type DeleteStoredFileMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useDeleteStoredFileMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     DeleteStoredFileMutation,
     DeleteStoredFileMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<DeleteStoredFileMutation, DeleteStoredFileMutationVariables>(
+  return ApolloReactHooks.useMutation<DeleteStoredFileMutation, DeleteStoredFileMutationVariables>(
     DeleteStoredFileDocument,
     options,
   )
@@ -30052,13 +30602,13 @@ export type UpdateStoredFileMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useUpdateStoredFileMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     UpdateStoredFileMutation,
     UpdateStoredFileMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<UpdateStoredFileMutation, UpdateStoredFileMutationVariables>(
+  return ApolloReactHooks.useMutation<UpdateStoredFileMutation, UpdateStoredFileMutationVariables>(
     UpdateStoredFileDocument,
     options,
   )
@@ -30095,26 +30645,32 @@ export const StoredFileDocument = gql`
  * });
  */
 export function useStoredFileQuery(
-  baseOptions: Apollo.QueryHookOptions<StoredFileQuery, StoredFileQueryVariables> &
+  baseOptions: ApolloReactHooks.QueryHookOptions<StoredFileQuery, StoredFileQueryVariables> &
     ({ variables: StoredFileQueryVariables; skip?: boolean } | { skip: boolean }),
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<StoredFileQuery, StoredFileQueryVariables>(StoredFileDocument, options)
+  return ApolloReactHooks.useQuery<StoredFileQuery, StoredFileQueryVariables>(
+    StoredFileDocument,
+    options,
+  )
 }
 export function useStoredFileLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<StoredFileQuery, StoredFileQueryVariables>,
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<StoredFileQuery, StoredFileQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<StoredFileQuery, StoredFileQueryVariables>(StoredFileDocument, options)
+  return ApolloReactHooks.useLazyQuery<StoredFileQuery, StoredFileQueryVariables>(
+    StoredFileDocument,
+    options,
+  )
 }
 export function useStoredFileSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<StoredFileQuery, StoredFileQueryVariables>,
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<StoredFileQuery, StoredFileQueryVariables>,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<StoredFileQuery, StoredFileQueryVariables>(
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<StoredFileQuery, StoredFileQueryVariables>(
     StoredFileDocument,
     options,
   )
@@ -30153,28 +30709,31 @@ export const StoredFilesDocument = gql`
  * });
  */
 export function useStoredFilesQuery(
-  baseOptions?: Apollo.QueryHookOptions<StoredFilesQuery, StoredFilesQueryVariables>,
+  baseOptions?: ApolloReactHooks.QueryHookOptions<StoredFilesQuery, StoredFilesQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<StoredFilesQuery, StoredFilesQueryVariables>(StoredFilesDocument, options)
+  return ApolloReactHooks.useQuery<StoredFilesQuery, StoredFilesQueryVariables>(
+    StoredFilesDocument,
+    options,
+  )
 }
 export function useStoredFilesLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<StoredFilesQuery, StoredFilesQueryVariables>,
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<StoredFilesQuery, StoredFilesQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<StoredFilesQuery, StoredFilesQueryVariables>(
+  return ApolloReactHooks.useLazyQuery<StoredFilesQuery, StoredFilesQueryVariables>(
     StoredFilesDocument,
     options,
   )
 }
 export function useStoredFilesSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<StoredFilesQuery, StoredFilesQueryVariables>,
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<StoredFilesQuery, StoredFilesQueryVariables>,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<StoredFilesQuery, StoredFilesQueryVariables>(
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<StoredFilesQuery, StoredFilesQueryVariables>(
     StoredFilesDocument,
     options,
   )
@@ -30209,43 +30768,43 @@ export const StoredFilePaginationDocument = gql`
  * });
  */
 export function useStoredFilePaginationQuery(
-  baseOptions?: Apollo.QueryHookOptions<
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
     StoredFilePaginationQuery,
     StoredFilePaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<StoredFilePaginationQuery, StoredFilePaginationQueryVariables>(
+  return ApolloReactHooks.useQuery<StoredFilePaginationQuery, StoredFilePaginationQueryVariables>(
     StoredFilePaginationDocument,
     options,
   )
 }
 export function useStoredFilePaginationLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
     StoredFilePaginationQuery,
     StoredFilePaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<StoredFilePaginationQuery, StoredFilePaginationQueryVariables>(
-    StoredFilePaginationDocument,
-    options,
-  )
+  return ApolloReactHooks.useLazyQuery<
+    StoredFilePaginationQuery,
+    StoredFilePaginationQueryVariables
+  >(StoredFilePaginationDocument, options)
 }
 export function useStoredFilePaginationSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
         StoredFilePaginationQuery,
         StoredFilePaginationQueryVariables
       >,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<StoredFilePaginationQuery, StoredFilePaginationQueryVariables>(
-    StoredFilePaginationDocument,
-    options,
-  )
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<
+    StoredFilePaginationQuery,
+    StoredFilePaginationQueryVariables
+  >(StoredFilePaginationDocument, options)
 }
 export type StoredFilePaginationQueryHookResult = ReturnType<typeof useStoredFilePaginationQuery>
 export type StoredFilePaginationLazyQueryHookResult = ReturnType<
@@ -30289,16 +30848,16 @@ export type CreateSubscriptionMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useCreateSubscriptionMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     CreateSubscriptionMutation,
     CreateSubscriptionMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<CreateSubscriptionMutation, CreateSubscriptionMutationVariables>(
-    CreateSubscriptionDocument,
-    options,
-  )
+  return ApolloReactHooks.useMutation<
+    CreateSubscriptionMutation,
+    CreateSubscriptionMutationVariables
+  >(CreateSubscriptionDocument, options)
 }
 export type CreateSubscriptionMutationHookResult = ReturnType<typeof useCreateSubscriptionMutation>
 export type CreateSubscriptionMutationResult = Apollo.MutationResult<CreateSubscriptionMutation>
@@ -30336,16 +30895,16 @@ export type DeleteSubscriptionMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useDeleteSubscriptionMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     DeleteSubscriptionMutation,
     DeleteSubscriptionMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<DeleteSubscriptionMutation, DeleteSubscriptionMutationVariables>(
-    DeleteSubscriptionDocument,
-    options,
-  )
+  return ApolloReactHooks.useMutation<
+    DeleteSubscriptionMutation,
+    DeleteSubscriptionMutationVariables
+  >(DeleteSubscriptionDocument, options)
 }
 export type DeleteSubscriptionMutationHookResult = ReturnType<typeof useDeleteSubscriptionMutation>
 export type DeleteSubscriptionMutationResult = Apollo.MutationResult<DeleteSubscriptionMutation>
@@ -30385,16 +30944,16 @@ export type UpdateSubscriptionMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useUpdateSubscriptionMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     UpdateSubscriptionMutation,
     UpdateSubscriptionMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<UpdateSubscriptionMutation, UpdateSubscriptionMutationVariables>(
-    UpdateSubscriptionDocument,
-    options,
-  )
+  return ApolloReactHooks.useMutation<
+    UpdateSubscriptionMutation,
+    UpdateSubscriptionMutationVariables
+  >(UpdateSubscriptionDocument, options)
 }
 export type UpdateSubscriptionMutationHookResult = ReturnType<typeof useUpdateSubscriptionMutation>
 export type UpdateSubscriptionMutationResult = Apollo.MutationResult<UpdateSubscriptionMutation>
@@ -30428,32 +30987,35 @@ export const SubscriptionDocument = gql`
  * });
  */
 export function useSubscriptionQuery(
-  baseOptions: Apollo.QueryHookOptions<SubscriptionQuery, SubscriptionQueryVariables> &
+  baseOptions: ApolloReactHooks.QueryHookOptions<SubscriptionQuery, SubscriptionQueryVariables> &
     ({ variables: SubscriptionQueryVariables; skip?: boolean } | { skip: boolean }),
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<SubscriptionQuery, SubscriptionQueryVariables>(
+  return ApolloReactHooks.useQuery<SubscriptionQuery, SubscriptionQueryVariables>(
     SubscriptionDocument,
     options,
   )
 }
 export function useSubscriptionLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<SubscriptionQuery, SubscriptionQueryVariables>,
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    SubscriptionQuery,
+    SubscriptionQueryVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<SubscriptionQuery, SubscriptionQueryVariables>(
+  return ApolloReactHooks.useLazyQuery<SubscriptionQuery, SubscriptionQueryVariables>(
     SubscriptionDocument,
     options,
   )
 }
 export function useSubscriptionSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<SubscriptionQuery, SubscriptionQueryVariables>,
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<SubscriptionQuery, SubscriptionQueryVariables>,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<SubscriptionQuery, SubscriptionQueryVariables>(
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<SubscriptionQuery, SubscriptionQueryVariables>(
     SubscriptionDocument,
     options,
   )
@@ -30495,31 +31057,34 @@ export const SubscriptionsDocument = gql`
  * });
  */
 export function useSubscriptionsQuery(
-  baseOptions?: Apollo.QueryHookOptions<SubscriptionsQuery, SubscriptionsQueryVariables>,
+  baseOptions?: ApolloReactHooks.QueryHookOptions<SubscriptionsQuery, SubscriptionsQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<SubscriptionsQuery, SubscriptionsQueryVariables>(
+  return ApolloReactHooks.useQuery<SubscriptionsQuery, SubscriptionsQueryVariables>(
     SubscriptionsDocument,
     options,
   )
 }
 export function useSubscriptionsLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<SubscriptionsQuery, SubscriptionsQueryVariables>,
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    SubscriptionsQuery,
+    SubscriptionsQueryVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<SubscriptionsQuery, SubscriptionsQueryVariables>(
+  return ApolloReactHooks.useLazyQuery<SubscriptionsQuery, SubscriptionsQueryVariables>(
     SubscriptionsDocument,
     options,
   )
 }
 export function useSubscriptionsSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<SubscriptionsQuery, SubscriptionsQueryVariables>,
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<SubscriptionsQuery, SubscriptionsQueryVariables>,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<SubscriptionsQuery, SubscriptionsQueryVariables>(
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<SubscriptionsQuery, SubscriptionsQueryVariables>(
     SubscriptionsDocument,
     options,
   )
@@ -30557,43 +31122,43 @@ export const SubscriptionPaginationDocument = gql`
  * });
  */
 export function useSubscriptionPaginationQuery(
-  baseOptions?: Apollo.QueryHookOptions<
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
     SubscriptionPaginationQuery,
     SubscriptionPaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<SubscriptionPaginationQuery, SubscriptionPaginationQueryVariables>(
-    SubscriptionPaginationDocument,
-    options,
-  )
+  return ApolloReactHooks.useQuery<
+    SubscriptionPaginationQuery,
+    SubscriptionPaginationQueryVariables
+  >(SubscriptionPaginationDocument, options)
 }
 export function useSubscriptionPaginationLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
     SubscriptionPaginationQuery,
     SubscriptionPaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<SubscriptionPaginationQuery, SubscriptionPaginationQueryVariables>(
-    SubscriptionPaginationDocument,
-    options,
-  )
+  return ApolloReactHooks.useLazyQuery<
+    SubscriptionPaginationQuery,
+    SubscriptionPaginationQueryVariables
+  >(SubscriptionPaginationDocument, options)
 }
 export function useSubscriptionPaginationSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
         SubscriptionPaginationQuery,
         SubscriptionPaginationQueryVariables
       >,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<SubscriptionPaginationQuery, SubscriptionPaginationQueryVariables>(
-    SubscriptionPaginationDocument,
-    options,
-  )
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<
+    SubscriptionPaginationQuery,
+    SubscriptionPaginationQueryVariables
+  >(SubscriptionPaginationDocument, options)
 }
 export type SubscriptionPaginationQueryHookResult = ReturnType<
   typeof useSubscriptionPaginationQuery
@@ -30633,40 +31198,43 @@ export const CurrentSubscriptionDocument = gql`
  * });
  */
 export function useCurrentSubscriptionQuery(
-  baseOptions?: Apollo.QueryHookOptions<
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
     CurrentSubscriptionQuery,
     CurrentSubscriptionQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<CurrentSubscriptionQuery, CurrentSubscriptionQueryVariables>(
+  return ApolloReactHooks.useQuery<CurrentSubscriptionQuery, CurrentSubscriptionQueryVariables>(
     CurrentSubscriptionDocument,
     options,
   )
 }
 export function useCurrentSubscriptionLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
     CurrentSubscriptionQuery,
     CurrentSubscriptionQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<CurrentSubscriptionQuery, CurrentSubscriptionQueryVariables>(
+  return ApolloReactHooks.useLazyQuery<CurrentSubscriptionQuery, CurrentSubscriptionQueryVariables>(
     CurrentSubscriptionDocument,
     options,
   )
 }
 export function useCurrentSubscriptionSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<CurrentSubscriptionQuery, CurrentSubscriptionQueryVariables>,
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        CurrentSubscriptionQuery,
+        CurrentSubscriptionQueryVariables
+      >,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<CurrentSubscriptionQuery, CurrentSubscriptionQueryVariables>(
-    CurrentSubscriptionDocument,
-    options,
-  )
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<
+    CurrentSubscriptionQuery,
+    CurrentSubscriptionQueryVariables
+  >(CurrentSubscriptionDocument, options)
 }
 export type CurrentSubscriptionQueryHookResult = ReturnType<typeof useCurrentSubscriptionQuery>
 export type CurrentSubscriptionLazyQueryHookResult = ReturnType<
@@ -30707,16 +31275,16 @@ export type CreateCheckoutSessionMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useCreateCheckoutSessionMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     CreateCheckoutSessionMutation,
     CreateCheckoutSessionMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<CreateCheckoutSessionMutation, CreateCheckoutSessionMutationVariables>(
-    CreateCheckoutSessionDocument,
-    options,
-  )
+  return ApolloReactHooks.useMutation<
+    CreateCheckoutSessionMutation,
+    CreateCheckoutSessionMutationVariables
+  >(CreateCheckoutSessionDocument, options)
 }
 export type CreateCheckoutSessionMutationHookResult = ReturnType<
   typeof useCreateCheckoutSessionMutation
@@ -30754,16 +31322,16 @@ export type CreatePortalSessionMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useCreatePortalSessionMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     CreatePortalSessionMutation,
     CreatePortalSessionMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<CreatePortalSessionMutation, CreatePortalSessionMutationVariables>(
-    CreatePortalSessionDocument,
-    options,
-  )
+  return ApolloReactHooks.useMutation<
+    CreatePortalSessionMutation,
+    CreatePortalSessionMutationVariables
+  >(CreatePortalSessionDocument, options)
 }
 export type CreatePortalSessionMutationHookResult = ReturnType<
   typeof useCreatePortalSessionMutation
@@ -30803,16 +31371,16 @@ export type CancelSubscriptionMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useCancelSubscriptionMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     CancelSubscriptionMutation,
     CancelSubscriptionMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<CancelSubscriptionMutation, CancelSubscriptionMutationVariables>(
-    CancelSubscriptionDocument,
-    options,
-  )
+  return ApolloReactHooks.useMutation<
+    CancelSubscriptionMutation,
+    CancelSubscriptionMutationVariables
+  >(CancelSubscriptionDocument, options)
 }
 export type CancelSubscriptionMutationHookResult = ReturnType<typeof useCancelSubscriptionMutation>
 export type CancelSubscriptionMutationResult = Apollo.MutationResult<CancelSubscriptionMutation>
@@ -30851,13 +31419,13 @@ export type CreateTeamMemberMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useCreateTeamMemberMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     CreateTeamMemberMutation,
     CreateTeamMemberMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<CreateTeamMemberMutation, CreateTeamMemberMutationVariables>(
+  return ApolloReactHooks.useMutation<CreateTeamMemberMutation, CreateTeamMemberMutationVariables>(
     CreateTeamMemberDocument,
     options,
   )
@@ -30898,13 +31466,13 @@ export type DeleteTeamMemberMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useDeleteTeamMemberMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     DeleteTeamMemberMutation,
     DeleteTeamMemberMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<DeleteTeamMemberMutation, DeleteTeamMemberMutationVariables>(
+  return ApolloReactHooks.useMutation<DeleteTeamMemberMutation, DeleteTeamMemberMutationVariables>(
     DeleteTeamMemberDocument,
     options,
   )
@@ -30947,13 +31515,13 @@ export type UpdateTeamMemberMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useUpdateTeamMemberMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     UpdateTeamMemberMutation,
     UpdateTeamMemberMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<UpdateTeamMemberMutation, UpdateTeamMemberMutationVariables>(
+  return ApolloReactHooks.useMutation<UpdateTeamMemberMutation, UpdateTeamMemberMutationVariables>(
     UpdateTeamMemberDocument,
     options,
   )
@@ -30990,26 +31558,32 @@ export const TeamMemberDocument = gql`
  * });
  */
 export function useTeamMemberQuery(
-  baseOptions: Apollo.QueryHookOptions<TeamMemberQuery, TeamMemberQueryVariables> &
+  baseOptions: ApolloReactHooks.QueryHookOptions<TeamMemberQuery, TeamMemberQueryVariables> &
     ({ variables: TeamMemberQueryVariables; skip?: boolean } | { skip: boolean }),
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<TeamMemberQuery, TeamMemberQueryVariables>(TeamMemberDocument, options)
+  return ApolloReactHooks.useQuery<TeamMemberQuery, TeamMemberQueryVariables>(
+    TeamMemberDocument,
+    options,
+  )
 }
 export function useTeamMemberLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<TeamMemberQuery, TeamMemberQueryVariables>,
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<TeamMemberQuery, TeamMemberQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<TeamMemberQuery, TeamMemberQueryVariables>(TeamMemberDocument, options)
+  return ApolloReactHooks.useLazyQuery<TeamMemberQuery, TeamMemberQueryVariables>(
+    TeamMemberDocument,
+    options,
+  )
 }
 export function useTeamMemberSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<TeamMemberQuery, TeamMemberQueryVariables>,
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<TeamMemberQuery, TeamMemberQueryVariables>,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<TeamMemberQuery, TeamMemberQueryVariables>(
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<TeamMemberQuery, TeamMemberQueryVariables>(
     TeamMemberDocument,
     options,
   )
@@ -31048,28 +31622,31 @@ export const TeamMembersDocument = gql`
  * });
  */
 export function useTeamMembersQuery(
-  baseOptions?: Apollo.QueryHookOptions<TeamMembersQuery, TeamMembersQueryVariables>,
+  baseOptions?: ApolloReactHooks.QueryHookOptions<TeamMembersQuery, TeamMembersQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<TeamMembersQuery, TeamMembersQueryVariables>(TeamMembersDocument, options)
+  return ApolloReactHooks.useQuery<TeamMembersQuery, TeamMembersQueryVariables>(
+    TeamMembersDocument,
+    options,
+  )
 }
 export function useTeamMembersLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<TeamMembersQuery, TeamMembersQueryVariables>,
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<TeamMembersQuery, TeamMembersQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<TeamMembersQuery, TeamMembersQueryVariables>(
+  return ApolloReactHooks.useLazyQuery<TeamMembersQuery, TeamMembersQueryVariables>(
     TeamMembersDocument,
     options,
   )
 }
 export function useTeamMembersSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<TeamMembersQuery, TeamMembersQueryVariables>,
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<TeamMembersQuery, TeamMembersQueryVariables>,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<TeamMembersQuery, TeamMembersQueryVariables>(
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<TeamMembersQuery, TeamMembersQueryVariables>(
     TeamMembersDocument,
     options,
   )
@@ -31104,43 +31681,43 @@ export const TeamMemberPaginationDocument = gql`
  * });
  */
 export function useTeamMemberPaginationQuery(
-  baseOptions?: Apollo.QueryHookOptions<
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
     TeamMemberPaginationQuery,
     TeamMemberPaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<TeamMemberPaginationQuery, TeamMemberPaginationQueryVariables>(
+  return ApolloReactHooks.useQuery<TeamMemberPaginationQuery, TeamMemberPaginationQueryVariables>(
     TeamMemberPaginationDocument,
     options,
   )
 }
 export function useTeamMemberPaginationLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
     TeamMemberPaginationQuery,
     TeamMemberPaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<TeamMemberPaginationQuery, TeamMemberPaginationQueryVariables>(
-    TeamMemberPaginationDocument,
-    options,
-  )
+  return ApolloReactHooks.useLazyQuery<
+    TeamMemberPaginationQuery,
+    TeamMemberPaginationQueryVariables
+  >(TeamMemberPaginationDocument, options)
 }
 export function useTeamMemberPaginationSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
         TeamMemberPaginationQuery,
         TeamMemberPaginationQueryVariables
       >,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<TeamMemberPaginationQuery, TeamMemberPaginationQueryVariables>(
-    TeamMemberPaginationDocument,
-    options,
-  )
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<
+    TeamMemberPaginationQuery,
+    TeamMemberPaginationQueryVariables
+  >(TeamMemberPaginationDocument, options)
 }
 export type TeamMemberPaginationQueryHookResult = ReturnType<typeof useTeamMemberPaginationQuery>
 export type TeamMemberPaginationLazyQueryHookResult = ReturnType<
@@ -31184,10 +31761,13 @@ export type CreateTeamMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useCreateTeamMutation(
-  baseOptions?: Apollo.MutationHookOptions<CreateTeamMutation, CreateTeamMutationVariables>,
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    CreateTeamMutation,
+    CreateTeamMutationVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<CreateTeamMutation, CreateTeamMutationVariables>(
+  return ApolloReactHooks.useMutation<CreateTeamMutation, CreateTeamMutationVariables>(
     CreateTeamDocument,
     options,
   )
@@ -31228,10 +31808,13 @@ export type DeleteTeamMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useDeleteTeamMutation(
-  baseOptions?: Apollo.MutationHookOptions<DeleteTeamMutation, DeleteTeamMutationVariables>,
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    DeleteTeamMutation,
+    DeleteTeamMutationVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<DeleteTeamMutation, DeleteTeamMutationVariables>(
+  return ApolloReactHooks.useMutation<DeleteTeamMutation, DeleteTeamMutationVariables>(
     DeleteTeamDocument,
     options,
   )
@@ -31274,10 +31857,13 @@ export type UpdateTeamMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useUpdateTeamMutation(
-  baseOptions?: Apollo.MutationHookOptions<UpdateTeamMutation, UpdateTeamMutationVariables>,
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    UpdateTeamMutation,
+    UpdateTeamMutationVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<UpdateTeamMutation, UpdateTeamMutationVariables>(
+  return ApolloReactHooks.useMutation<UpdateTeamMutation, UpdateTeamMutationVariables>(
     UpdateTeamDocument,
     options,
   )
@@ -31314,24 +31900,26 @@ export const TeamDocument = gql`
  * });
  */
 export function useTeamQuery(
-  baseOptions: Apollo.QueryHookOptions<TeamQuery, TeamQueryVariables> &
+  baseOptions: ApolloReactHooks.QueryHookOptions<TeamQuery, TeamQueryVariables> &
     ({ variables: TeamQueryVariables; skip?: boolean } | { skip: boolean }),
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<TeamQuery, TeamQueryVariables>(TeamDocument, options)
+  return ApolloReactHooks.useQuery<TeamQuery, TeamQueryVariables>(TeamDocument, options)
 }
 export function useTeamLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<TeamQuery, TeamQueryVariables>,
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<TeamQuery, TeamQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<TeamQuery, TeamQueryVariables>(TeamDocument, options)
+  return ApolloReactHooks.useLazyQuery<TeamQuery, TeamQueryVariables>(TeamDocument, options)
 }
 export function useTeamSuspenseQuery(
-  baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<TeamQuery, TeamQueryVariables>,
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<TeamQuery, TeamQueryVariables>,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<TeamQuery, TeamQueryVariables>(TeamDocument, options)
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<TeamQuery, TeamQueryVariables>(TeamDocument, options)
 }
 export type TeamQueryHookResult = ReturnType<typeof useTeamQuery>
 export type TeamLazyQueryHookResult = ReturnType<typeof useTeamLazyQuery>
@@ -31367,23 +31955,25 @@ export const TeamsDocument = gql`
  * });
  */
 export function useTeamsQuery(
-  baseOptions?: Apollo.QueryHookOptions<TeamsQuery, TeamsQueryVariables>,
+  baseOptions?: ApolloReactHooks.QueryHookOptions<TeamsQuery, TeamsQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<TeamsQuery, TeamsQueryVariables>(TeamsDocument, options)
+  return ApolloReactHooks.useQuery<TeamsQuery, TeamsQueryVariables>(TeamsDocument, options)
 }
 export function useTeamsLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<TeamsQuery, TeamsQueryVariables>,
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<TeamsQuery, TeamsQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<TeamsQuery, TeamsQueryVariables>(TeamsDocument, options)
+  return ApolloReactHooks.useLazyQuery<TeamsQuery, TeamsQueryVariables>(TeamsDocument, options)
 }
 export function useTeamsSuspenseQuery(
-  baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<TeamsQuery, TeamsQueryVariables>,
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<TeamsQuery, TeamsQueryVariables>,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<TeamsQuery, TeamsQueryVariables>(TeamsDocument, options)
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<TeamsQuery, TeamsQueryVariables>(TeamsDocument, options)
 }
 export type TeamsQueryHookResult = ReturnType<typeof useTeamsQuery>
 export type TeamsLazyQueryHookResult = ReturnType<typeof useTeamsLazyQuery>
@@ -31415,31 +32005,37 @@ export const TeamPaginationDocument = gql`
  * });
  */
 export function useTeamPaginationQuery(
-  baseOptions?: Apollo.QueryHookOptions<TeamPaginationQuery, TeamPaginationQueryVariables>,
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    TeamPaginationQuery,
+    TeamPaginationQueryVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<TeamPaginationQuery, TeamPaginationQueryVariables>(
+  return ApolloReactHooks.useQuery<TeamPaginationQuery, TeamPaginationQueryVariables>(
     TeamPaginationDocument,
     options,
   )
 }
 export function useTeamPaginationLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<TeamPaginationQuery, TeamPaginationQueryVariables>,
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    TeamPaginationQuery,
+    TeamPaginationQueryVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<TeamPaginationQuery, TeamPaginationQueryVariables>(
+  return ApolloReactHooks.useLazyQuery<TeamPaginationQuery, TeamPaginationQueryVariables>(
     TeamPaginationDocument,
     options,
   )
 }
 export function useTeamPaginationSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<TeamPaginationQuery, TeamPaginationQueryVariables>,
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<TeamPaginationQuery, TeamPaginationQueryVariables>,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<TeamPaginationQuery, TeamPaginationQueryVariables>(
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<TeamPaginationQuery, TeamPaginationQueryVariables>(
     TeamPaginationDocument,
     options,
   )
@@ -31484,16 +32080,16 @@ export type CreateUserPreferenceMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useCreateUserPreferenceMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     CreateUserPreferenceMutation,
     CreateUserPreferenceMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<CreateUserPreferenceMutation, CreateUserPreferenceMutationVariables>(
-    CreateUserPreferenceDocument,
-    options,
-  )
+  return ApolloReactHooks.useMutation<
+    CreateUserPreferenceMutation,
+    CreateUserPreferenceMutationVariables
+  >(CreateUserPreferenceDocument, options)
 }
 export type CreateUserPreferenceMutationHookResult = ReturnType<
   typeof useCreateUserPreferenceMutation
@@ -31533,16 +32129,16 @@ export type DeleteUserPreferenceMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useDeleteUserPreferenceMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     DeleteUserPreferenceMutation,
     DeleteUserPreferenceMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<DeleteUserPreferenceMutation, DeleteUserPreferenceMutationVariables>(
-    DeleteUserPreferenceDocument,
-    options,
-  )
+  return ApolloReactHooks.useMutation<
+    DeleteUserPreferenceMutation,
+    DeleteUserPreferenceMutationVariables
+  >(DeleteUserPreferenceDocument, options)
 }
 export type DeleteUserPreferenceMutationHookResult = ReturnType<
   typeof useDeleteUserPreferenceMutation
@@ -31584,16 +32180,16 @@ export type UpdateUserPreferenceMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useUpdateUserPreferenceMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     UpdateUserPreferenceMutation,
     UpdateUserPreferenceMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<UpdateUserPreferenceMutation, UpdateUserPreferenceMutationVariables>(
-    UpdateUserPreferenceDocument,
-    options,
-  )
+  return ApolloReactHooks.useMutation<
+    UpdateUserPreferenceMutation,
+    UpdateUserPreferenceMutationVariables
+  >(UpdateUserPreferenceDocument, options)
 }
 export type UpdateUserPreferenceMutationHookResult = ReturnType<
   typeof useUpdateUserPreferenceMutation
@@ -31629,32 +32225,38 @@ export const UserPreferenceDocument = gql`
  * });
  */
 export function useUserPreferenceQuery(
-  baseOptions: Apollo.QueryHookOptions<UserPreferenceQuery, UserPreferenceQueryVariables> &
+  baseOptions: ApolloReactHooks.QueryHookOptions<
+    UserPreferenceQuery,
+    UserPreferenceQueryVariables
+  > &
     ({ variables: UserPreferenceQueryVariables; skip?: boolean } | { skip: boolean }),
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<UserPreferenceQuery, UserPreferenceQueryVariables>(
+  return ApolloReactHooks.useQuery<UserPreferenceQuery, UserPreferenceQueryVariables>(
     UserPreferenceDocument,
     options,
   )
 }
 export function useUserPreferenceLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<UserPreferenceQuery, UserPreferenceQueryVariables>,
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    UserPreferenceQuery,
+    UserPreferenceQueryVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<UserPreferenceQuery, UserPreferenceQueryVariables>(
+  return ApolloReactHooks.useLazyQuery<UserPreferenceQuery, UserPreferenceQueryVariables>(
     UserPreferenceDocument,
     options,
   )
 }
 export function useUserPreferenceSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<UserPreferenceQuery, UserPreferenceQueryVariables>,
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<UserPreferenceQuery, UserPreferenceQueryVariables>,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<UserPreferenceQuery, UserPreferenceQueryVariables>(
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<UserPreferenceQuery, UserPreferenceQueryVariables>(
     UserPreferenceDocument,
     options,
   )
@@ -31693,31 +32295,40 @@ export const UserPreferencesDocument = gql`
  * });
  */
 export function useUserPreferencesQuery(
-  baseOptions?: Apollo.QueryHookOptions<UserPreferencesQuery, UserPreferencesQueryVariables>,
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    UserPreferencesQuery,
+    UserPreferencesQueryVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<UserPreferencesQuery, UserPreferencesQueryVariables>(
+  return ApolloReactHooks.useQuery<UserPreferencesQuery, UserPreferencesQueryVariables>(
     UserPreferencesDocument,
     options,
   )
 }
 export function useUserPreferencesLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<UserPreferencesQuery, UserPreferencesQueryVariables>,
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    UserPreferencesQuery,
+    UserPreferencesQueryVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<UserPreferencesQuery, UserPreferencesQueryVariables>(
+  return ApolloReactHooks.useLazyQuery<UserPreferencesQuery, UserPreferencesQueryVariables>(
     UserPreferencesDocument,
     options,
   )
 }
 export function useUserPreferencesSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<UserPreferencesQuery, UserPreferencesQueryVariables>,
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        UserPreferencesQuery,
+        UserPreferencesQueryVariables
+      >,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<UserPreferencesQuery, UserPreferencesQueryVariables>(
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<UserPreferencesQuery, UserPreferencesQueryVariables>(
     UserPreferencesDocument,
     options,
   )
@@ -31762,16 +32373,16 @@ export type CreateUserSessionMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useCreateUserSessionMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     CreateUserSessionMutation,
     CreateUserSessionMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<CreateUserSessionMutation, CreateUserSessionMutationVariables>(
-    CreateUserSessionDocument,
-    options,
-  )
+  return ApolloReactHooks.useMutation<
+    CreateUserSessionMutation,
+    CreateUserSessionMutationVariables
+  >(CreateUserSessionDocument, options)
 }
 export type CreateUserSessionMutationHookResult = ReturnType<typeof useCreateUserSessionMutation>
 export type CreateUserSessionMutationResult = Apollo.MutationResult<CreateUserSessionMutation>
@@ -31809,16 +32420,16 @@ export type DeleteUserSessionMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useDeleteUserSessionMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     DeleteUserSessionMutation,
     DeleteUserSessionMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<DeleteUserSessionMutation, DeleteUserSessionMutationVariables>(
-    DeleteUserSessionDocument,
-    options,
-  )
+  return ApolloReactHooks.useMutation<
+    DeleteUserSessionMutation,
+    DeleteUserSessionMutationVariables
+  >(DeleteUserSessionDocument, options)
 }
 export type DeleteUserSessionMutationHookResult = ReturnType<typeof useDeleteUserSessionMutation>
 export type DeleteUserSessionMutationResult = Apollo.MutationResult<DeleteUserSessionMutation>
@@ -31858,16 +32469,16 @@ export type UpdateUserSessionMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useUpdateUserSessionMutation(
-  baseOptions?: Apollo.MutationHookOptions<
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
     UpdateUserSessionMutation,
     UpdateUserSessionMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<UpdateUserSessionMutation, UpdateUserSessionMutationVariables>(
-    UpdateUserSessionDocument,
-    options,
-  )
+  return ApolloReactHooks.useMutation<
+    UpdateUserSessionMutation,
+    UpdateUserSessionMutationVariables
+  >(UpdateUserSessionDocument, options)
 }
 export type UpdateUserSessionMutationHookResult = ReturnType<typeof useUpdateUserSessionMutation>
 export type UpdateUserSessionMutationResult = Apollo.MutationResult<UpdateUserSessionMutation>
@@ -31901,29 +32512,32 @@ export const UserSessionDocument = gql`
  * });
  */
 export function useUserSessionQuery(
-  baseOptions: Apollo.QueryHookOptions<UserSessionQuery, UserSessionQueryVariables> &
+  baseOptions: ApolloReactHooks.QueryHookOptions<UserSessionQuery, UserSessionQueryVariables> &
     ({ variables: UserSessionQueryVariables; skip?: boolean } | { skip: boolean }),
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<UserSessionQuery, UserSessionQueryVariables>(UserSessionDocument, options)
+  return ApolloReactHooks.useQuery<UserSessionQuery, UserSessionQueryVariables>(
+    UserSessionDocument,
+    options,
+  )
 }
 export function useUserSessionLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<UserSessionQuery, UserSessionQueryVariables>,
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<UserSessionQuery, UserSessionQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<UserSessionQuery, UserSessionQueryVariables>(
+  return ApolloReactHooks.useLazyQuery<UserSessionQuery, UserSessionQueryVariables>(
     UserSessionDocument,
     options,
   )
 }
 export function useUserSessionSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<UserSessionQuery, UserSessionQueryVariables>,
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<UserSessionQuery, UserSessionQueryVariables>,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<UserSessionQuery, UserSessionQueryVariables>(
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<UserSessionQuery, UserSessionQueryVariables>(
     UserSessionDocument,
     options,
   )
@@ -31962,31 +32576,34 @@ export const UserSessionsDocument = gql`
  * });
  */
 export function useUserSessionsQuery(
-  baseOptions?: Apollo.QueryHookOptions<UserSessionsQuery, UserSessionsQueryVariables>,
+  baseOptions?: ApolloReactHooks.QueryHookOptions<UserSessionsQuery, UserSessionsQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<UserSessionsQuery, UserSessionsQueryVariables>(
+  return ApolloReactHooks.useQuery<UserSessionsQuery, UserSessionsQueryVariables>(
     UserSessionsDocument,
     options,
   )
 }
 export function useUserSessionsLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<UserSessionsQuery, UserSessionsQueryVariables>,
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    UserSessionsQuery,
+    UserSessionsQueryVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<UserSessionsQuery, UserSessionsQueryVariables>(
+  return ApolloReactHooks.useLazyQuery<UserSessionsQuery, UserSessionsQueryVariables>(
     UserSessionsDocument,
     options,
   )
 }
 export function useUserSessionsSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<UserSessionsQuery, UserSessionsQueryVariables>,
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<UserSessionsQuery, UserSessionsQueryVariables>,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<UserSessionsQuery, UserSessionsQueryVariables>(
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<UserSessionsQuery, UserSessionsQueryVariables>(
     UserSessionsDocument,
     options,
   )
@@ -32024,43 +32641,43 @@ export const UserSessionPaginationDocument = gql`
  * });
  */
 export function useUserSessionPaginationQuery(
-  baseOptions?: Apollo.QueryHookOptions<
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
     UserSessionPaginationQuery,
     UserSessionPaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<UserSessionPaginationQuery, UserSessionPaginationQueryVariables>(
+  return ApolloReactHooks.useQuery<UserSessionPaginationQuery, UserSessionPaginationQueryVariables>(
     UserSessionPaginationDocument,
     options,
   )
 }
 export function useUserSessionPaginationLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
     UserSessionPaginationQuery,
     UserSessionPaginationQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<UserSessionPaginationQuery, UserSessionPaginationQueryVariables>(
-    UserSessionPaginationDocument,
-    options,
-  )
+  return ApolloReactHooks.useLazyQuery<
+    UserSessionPaginationQuery,
+    UserSessionPaginationQueryVariables
+  >(UserSessionPaginationDocument, options)
 }
 export function useUserSessionPaginationSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
         UserSessionPaginationQuery,
         UserSessionPaginationQueryVariables
       >,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<UserSessionPaginationQuery, UserSessionPaginationQueryVariables>(
-    UserSessionPaginationDocument,
-    options,
-  )
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<
+    UserSessionPaginationQuery,
+    UserSessionPaginationQueryVariables
+  >(UserSessionPaginationDocument, options)
 }
 export type UserSessionPaginationQueryHookResult = ReturnType<typeof useUserSessionPaginationQuery>
 export type UserSessionPaginationLazyQueryHookResult = ReturnType<
@@ -32104,10 +32721,13 @@ export type CreateUserMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useCreateUserMutation(
-  baseOptions?: Apollo.MutationHookOptions<CreateUserMutation, CreateUserMutationVariables>,
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    CreateUserMutation,
+    CreateUserMutationVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<CreateUserMutation, CreateUserMutationVariables>(
+  return ApolloReactHooks.useMutation<CreateUserMutation, CreateUserMutationVariables>(
     CreateUserDocument,
     options,
   )
@@ -32148,10 +32768,13 @@ export type DeleteUserMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useDeleteUserMutation(
-  baseOptions?: Apollo.MutationHookOptions<DeleteUserMutation, DeleteUserMutationVariables>,
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    DeleteUserMutation,
+    DeleteUserMutationVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<DeleteUserMutation, DeleteUserMutationVariables>(
+  return ApolloReactHooks.useMutation<DeleteUserMutation, DeleteUserMutationVariables>(
     DeleteUserDocument,
     options,
   )
@@ -32194,10 +32817,13 @@ export type UpdateUserMutationFn = Apollo.MutationFunction<
  * });
  */
 export function useUpdateUserMutation(
-  baseOptions?: Apollo.MutationHookOptions<UpdateUserMutation, UpdateUserMutationVariables>,
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    UpdateUserMutation,
+    UpdateUserMutationVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useMutation<UpdateUserMutation, UpdateUserMutationVariables>(
+  return ApolloReactHooks.useMutation<UpdateUserMutation, UpdateUserMutationVariables>(
     UpdateUserDocument,
     options,
   )
@@ -32234,24 +32860,26 @@ export const UserDocument = gql`
  * });
  */
 export function useUserQuery(
-  baseOptions: Apollo.QueryHookOptions<UserQuery, UserQueryVariables> &
+  baseOptions: ApolloReactHooks.QueryHookOptions<UserQuery, UserQueryVariables> &
     ({ variables: UserQueryVariables; skip?: boolean } | { skip: boolean }),
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<UserQuery, UserQueryVariables>(UserDocument, options)
+  return ApolloReactHooks.useQuery<UserQuery, UserQueryVariables>(UserDocument, options)
 }
 export function useUserLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<UserQuery, UserQueryVariables>,
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<UserQuery, UserQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<UserQuery, UserQueryVariables>(UserDocument, options)
+  return ApolloReactHooks.useLazyQuery<UserQuery, UserQueryVariables>(UserDocument, options)
 }
 export function useUserSuspenseQuery(
-  baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<UserQuery, UserQueryVariables>,
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<UserQuery, UserQueryVariables>,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<UserQuery, UserQueryVariables>(UserDocument, options)
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<UserQuery, UserQueryVariables>(UserDocument, options)
 }
 export type UserQueryHookResult = ReturnType<typeof useUserQuery>
 export type UserLazyQueryHookResult = ReturnType<typeof useUserLazyQuery>
@@ -32287,23 +32915,25 @@ export const UsersDocument = gql`
  * });
  */
 export function useUsersQuery(
-  baseOptions?: Apollo.QueryHookOptions<UsersQuery, UsersQueryVariables>,
+  baseOptions?: ApolloReactHooks.QueryHookOptions<UsersQuery, UsersQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<UsersQuery, UsersQueryVariables>(UsersDocument, options)
+  return ApolloReactHooks.useQuery<UsersQuery, UsersQueryVariables>(UsersDocument, options)
 }
 export function useUsersLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<UsersQuery, UsersQueryVariables>,
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<UsersQuery, UsersQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<UsersQuery, UsersQueryVariables>(UsersDocument, options)
+  return ApolloReactHooks.useLazyQuery<UsersQuery, UsersQueryVariables>(UsersDocument, options)
 }
 export function useUsersSuspenseQuery(
-  baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<UsersQuery, UsersQueryVariables>,
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<UsersQuery, UsersQueryVariables>,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<UsersQuery, UsersQueryVariables>(UsersDocument, options)
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<UsersQuery, UsersQueryVariables>(UsersDocument, options)
 }
 export type UsersQueryHookResult = ReturnType<typeof useUsersQuery>
 export type UsersLazyQueryHookResult = ReturnType<typeof useUsersLazyQuery>
@@ -32335,31 +32965,37 @@ export const UserPaginationDocument = gql`
  * });
  */
 export function useUserPaginationQuery(
-  baseOptions?: Apollo.QueryHookOptions<UserPaginationQuery, UserPaginationQueryVariables>,
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    UserPaginationQuery,
+    UserPaginationQueryVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<UserPaginationQuery, UserPaginationQueryVariables>(
+  return ApolloReactHooks.useQuery<UserPaginationQuery, UserPaginationQueryVariables>(
     UserPaginationDocument,
     options,
   )
 }
 export function useUserPaginationLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<UserPaginationQuery, UserPaginationQueryVariables>,
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    UserPaginationQuery,
+    UserPaginationQueryVariables
+  >,
 ) {
   const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<UserPaginationQuery, UserPaginationQueryVariables>(
+  return ApolloReactHooks.useLazyQuery<UserPaginationQuery, UserPaginationQueryVariables>(
     UserPaginationDocument,
     options,
   )
 }
 export function useUserPaginationSuspenseQuery(
   baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<UserPaginationQuery, UserPaginationQueryVariables>,
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<UserPaginationQuery, UserPaginationQueryVariables>,
 ) {
   const options =
-    baseOptions === Apollo.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
-  return Apollo.useSuspenseQuery<UserPaginationQuery, UserPaginationQueryVariables>(
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<UserPaginationQuery, UserPaginationQueryVariables>(
     UserPaginationDocument,
     options,
   )

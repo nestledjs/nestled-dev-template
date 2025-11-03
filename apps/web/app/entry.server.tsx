@@ -13,7 +13,7 @@ import { isbot } from 'isbot'
 import type { RenderToPipeableStreamOptions } from 'react-dom/server'
 import { renderToPipeableStream } from 'react-dom/server'
 import { makeClient } from '@nestled-template/shared/apollo'
-import { ApolloProvider } from '@apollo/client/index.js'
+import { ApolloProvider } from '@apollo/client/react'
 import { disableFragmentWarnings } from 'graphql-tag'
 
 disableFragmentWarnings()

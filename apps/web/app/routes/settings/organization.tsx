@@ -11,7 +11,8 @@ import {
   useUploadOrganizationLogoMutation,
   useUserUpdateOrganizationMutation,
 } from '@nestled-template/shared/sdk'
-import { QueryRef, useApolloClient, useReadQuery } from '@apollo/client'
+import type { QueryRef } from '@apollo/client'
+import { useApolloClient, useReadQuery } from '@apollo/client/react'
 import { AvatarUpload } from '@nestled-template/web-ui'
 
 export const loader = apolloLoader()(({ preloadQuery }) => {

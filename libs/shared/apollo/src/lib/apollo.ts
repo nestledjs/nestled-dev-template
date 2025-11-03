@@ -1,11 +1,11 @@
-import { ApolloLink, from, split, Operation } from '@apollo/client'
+import { ApolloLink, Operation } from '@apollo/client'
 import { ApolloClient } from '@apollo/client-integration-react-router'
 import { setContext } from '@apollo/client/link/context'
 import { onError } from '@apollo/client/link/error'
 import { GraphQLWsLink } from '@apollo/client/link/subscriptions'
 import { getMainDefinition } from '@apollo/client/utilities'
 import { createClient } from 'graphql-ws'
-import createUploadLink from 'apollo-upload-client/createUploadLink.mjs'
+import UploadHttpLink from 'apollo-upload-client/UploadHttpLink.mjs'
 import { createCache } from './cache-config'
 
 export type ClientOptions = {
@@ -193,18 +193,18 @@ function createWebSocketLink(wsUri: string, token: string | null): GraphQLWsLink
 
 function createLinkChain(uri: string, token: string | null, isDev: boolean): ApolloLink {
   const wsUri = uri.replace(/^http/, 'ws')
-  const uploadLink = createUploadLink({
+  const uploadLink = new UploadHttpLink({
     uri,
     credentials: 'include',
     headers: {
       'apollo-require-preflight': 'true', // Prevent CSRF blocking
     },
-  }) as any
+  })
   const isServer = typeof window === 'undefined'
 
   const splitLink = isServer
     ? uploadLink
-    : split(
+    : ApolloLink.split(
         ({ query }) => {
           const def = getMainDefinition(query)
           return def.kind === 'OperationDefinition' && def.operation === 'subscription'
@@ -220,7 +220,7 @@ function createLinkChain(uri: string, token: string | null, isDev: boolean): Apo
     splitLink,
   ]
 
-  return from(links)
+  return ApolloLink.from(links)
 }
 
 export function makeClient(request?: Request, options?: ClientOptions) {

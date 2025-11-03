@@ -1,40 +1,14 @@
-import { useQuery } from '@apollo/client'
-import * as Sdk from '@nestled-template/shared/sdk'
-import { DATABASE_MODELS } from '@nestled-template/shared/sdk'
+import { useQuery } from '@apollo/client/react'
 import { WebUiDataTable, WebUiErrorBoundary } from '@nestled-template/web-ui'
 import { getPluralName } from '@nestledjs/helpers'
 import { AdminLocalStorage } from '../utils/secure-storage'
 import { formatFieldName, kebabCase } from '../utils/string-utils'
-
 import { useCallback, useEffect, useMemo } from 'react'
-import { Link, useParams } from 'react-router' // Import from our library
+import { Link, useParams } from 'react-router'
 import { DateRangeFilter, NumberRangeFilter, RelationFilterField } from '../components/filters'
 import { useAdminList } from '../hooks/useAdminList'
 import { getAdminDocuments } from '../utils/graphql-utils'
-
-// Helper function to get enum values
-function getEnumValues(enumType: string): string[] | null {
-  try {
-    const enumObject = (Sdk as any)[enumType]
-
-    if (!enumObject || typeof enumObject !== 'object') {
-      return null
-    }
-
-    const values = Object.values(enumObject).filter(value => typeof value === 'string')
-
-    if (values.length === 0) {
-      const keys = Object.keys(enumObject).filter(key => isNaN(Number(key)))
-      return keys.length > 0 ? keys : null
-    }
-
-    return values as string[]
-  } catch (error) {
-    console.warn(`Failed to get enum values for type ${enumType}:`, error)
-    return null
-  }
-}
-// moved imports to top
+import { useAdminDataContext } from '../context/AdminDataContext'
 
 interface AdminDataListPageProps {
   /** Optional model name - if not provided, will read from route params */
@@ -43,6 +17,30 @@ interface AdminDataListPageProps {
 
 export function AdminDataListPage({ modelName: propModelName }: AdminDataListPageProps = {}) {
   const params = useParams()
+  const { sdk, databaseModels, basePath = '/admin/data' } = useAdminDataContext()
+
+  // Helper function to get enum values from SDK
+  const getEnumValues = useCallback((enumType: string): string[] | null => {
+    try {
+      const enumObject = (sdk as any)[enumType]
+
+      if (!enumObject || typeof enumObject !== 'object') {
+        return null
+      }
+
+      const values = Object.values(enumObject).filter(value => typeof value === 'string')
+
+      if (values.length === 0) {
+        const keys = Object.keys(enumObject).filter(key => isNaN(Number(key)))
+        return keys.length > 0 ? keys : null
+      }
+
+      return values as string[]
+    } catch (error) {
+      console.warn(`Failed to get enum values for type ${enumType}:`, error)
+      return null
+    }
+  }, [sdk])
 
   // Consolidated state management with useReducer for better performance
   const { state, dispatch } = useAdminList()
@@ -112,17 +110,17 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
   const model = useMemo(() => {
     if (propModelName) {
       // Direct model name provided
-      return DATABASE_MODELS.find((m: any) => m.name === propModelName)
+      return databaseModels.find((m: any) => m.name === propModelName)
     }
 
     if (!pluralParam) return undefined
     // Convert kebab-case URL param back to find matching model
     // URL: "event-recurring-patterns" should match model where kebabCase(getPluralName(model.name)) === pluralParam
-    return DATABASE_MODELS.find((m: any) => {
+    return databaseModels.find((m: any) => {
       const modelUrlName = kebabCase(getPluralName(m.name))
       return modelUrlName.toLowerCase() === pluralParam.toLowerCase()
     })
-  }, [propModelName, pluralParam])
+  }, [propModelName, pluralParam, databaseModels])
 
   // Get GraphQL documents based on model
   const documents = useMemo(() => {
@@ -134,8 +132,8 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
         delete: undefined,
         create: undefined,
       }
-    return getAdminDocuments(model)
-  }, [model])
+    return getAdminDocuments(sdk, model)
+  }, [sdk, model])
 
   const { listQuery: query } = documents
 
@@ -429,7 +427,7 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
               </p>
               <div className="mt-6">
                 <Link
-                  to="/admin/data"
+                  to={basePath}
                   className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-web hover:bg-green-web-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-web"
                 >
                   Return to Data Browser
@@ -476,7 +474,7 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
                   Reload Page
                 </button>
                 <Link
-                  to="/admin/data"
+                  to={basePath}
                   className="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-web"
                 >
                   Return to Data Browser
@@ -490,7 +488,7 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
   }
 
   // Calculate create link
-  const createLink = `/admin/data/${kebabCase(model.name)}/create`
+  const createLink = `${basePath}/${kebabCase(model.name)}/create`
 
   // Column selector dropdown
   const columnSelector = (

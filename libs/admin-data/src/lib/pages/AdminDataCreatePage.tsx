@@ -1,11 +1,8 @@
-import { gql, useMutation } from '@apollo/client'
+import { gql } from '@apollo/client'
+import { useMutation } from '@apollo/client/react'
 import { CheckCircleIcon, ExclamationCircleIcon } from '@heroicons/react/24/outline'
-import { DATABASE_MODELS } from '@nestled-template/shared/sdk'
 import { formTheme } from '@nestled-template/shared/styles'
-// Helper functions for admin data management
-function findModelByName(name: string) {
-  return DATABASE_MODELS.find(model => model.name === name)
-}
+import { useAdminDataContext } from '../context/AdminDataContext'
 
 function toReadableText(text: string): string {
   return text.replace(/([a-z])([A-Z])/g, '$1 $2').replace(/^./, str => str.toUpperCase())
@@ -41,21 +38,7 @@ const toKebabCase = (str: string): string => {
     .toLowerCase() // Convert to lowercase
 }
 
-// Validate data type against allowed models
-function validateDataType(dataType: string | undefined): string | null {
-  const sanitized = sanitizeInput(dataType)
-  if (!sanitized) return null
-
-  // Convert kebab-case to PascalCase (course-chapter -> CourseChapter)
-  const properCaseDataType = sanitized
-    .split('-')
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-    .join('')
-
-  // Check if this data type exists in our models
-  const model = DATABASE_MODELS.find(m => m.name === properCaseDataType)
-  return model ? properCaseDataType : null
-}
+// Validation functions moved into component to access databaseModels from context
 
 // Check if user has access to this data type (basic implementation)
 function checkAccess(dataType: string): boolean {
@@ -70,6 +53,28 @@ function checkAccess(dataType: string): boolean {
 
 export function AdminDataCreatePage() {
   const { dataType } = useParams()
+  const { databaseModels, basePath = '/admin/data' } = useAdminDataContext()
+
+  // Helper function to find model by name
+  const findModelByName = (name: string) => {
+    return databaseModels.find(model => model.name === name)
+  }
+
+  // Validate data type against allowed models
+  const validateDataType = (dataType: string | undefined): string | null => {
+    const sanitized = sanitizeInput(dataType)
+    if (!sanitized) return null
+
+    // Convert kebab-case to PascalCase (course-chapter -> CourseChapter)
+    const properCaseDataType = sanitized
+      .split('-')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join('')
+
+    // Check if this data type exists in our models
+    const model = databaseModels.find(m => m.name === properCaseDataType)
+    return model ? properCaseDataType : null
+  }
 
   // Security validation
   const validatedDataType = validateDataType(dataType)
@@ -94,7 +99,7 @@ export function AdminDataCreatePage() {
               </p>
               <div className="mt-6">
                 <Link
-                  to="/admin/data"
+                  to={basePath}
                   className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-web hover:bg-green-web-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-web"
                 >
                   Return to Data Browser
@@ -120,7 +125,7 @@ export function AdminDataCreatePage() {
               </p>
               <div className="mt-6">
                 <Link
-                  to="/admin/data"
+                  to={basePath}
                   className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-web hover:bg-green-web-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-web"
                 >
                   Return to Data Browser
@@ -146,7 +151,7 @@ export function AdminDataCreatePage() {
               </p>
               <div className="mt-6">
                 <Link
-                  to="/admin/data"
+                  to={basePath}
                   className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-web hover:bg-green-web-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-web"
                 >
                   Return to Data Browser
@@ -160,15 +165,16 @@ export function AdminDataCreatePage() {
   }
 
   // At this point we know model exists and is valid
-  return <AdminDataCreatePageContent model={model!} />
+  return <AdminDataCreatePageContent model={model!} basePath={basePath} />
 }
 
 // =================================
 // CONTENT COMPONENT
 // =================================
 
-function AdminDataCreatePageContent({ model }: Readonly<{ model: any }>) {
+function AdminDataCreatePageContent({ model, basePath }: Readonly<{ model: any; basePath: string }>) {
   const navigate = useNavigate()
+  const { sdk } = useAdminDataContext()
 
   // State
   const [submissionState, setSubmissionState] = useState<{
@@ -179,12 +185,12 @@ function AdminDataCreatePageContent({ model }: Readonly<{ model: any }>) {
   // Get GraphQL documents with error handling (memoized to prevent render loops)
   const documents = useMemo(() => {
     try {
-      return getAdminDocuments(model)
+      return getAdminDocuments(sdk, model)
     } catch (error) {
       console.error('[AdminDataCreatePage] Error getting documents:', error)
       return null
     }
-  }, [model])
+  }, [sdk, model])
 
   const CREATE_MUTATION = useMemo(() => {
     if (!documents?.create) return null
@@ -226,7 +232,7 @@ function AdminDataCreatePageContent({ model }: Readonly<{ model: any }>) {
               </p>
               <div className="mt-6">
                 <Link
-                  to="/admin/data"
+                  to={basePath}
                   className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-web hover:bg-green-web-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-web"
                 >
                   Return to Data Browser
@@ -240,7 +246,7 @@ function AdminDataCreatePageContent({ model }: Readonly<{ model: any }>) {
   }
 
   // Build form fields
-  const formFields = buildFormFields(model, 'create')
+  const formFields = buildFormFields(sdk, model, 'create')
 
   // Handle form submission
   const handleSubmit = async (formData: Record<string, unknown>) => {
