@@ -1,23 +1,24 @@
-import { useQuery } from '@apollo/client'
-import { DATABASE_MODELS } from '@nestled-template/shared/sdk'
+import { useQuery } from '@apollo/client/react'
 import { useMemo } from 'react'
+import { useAdminDataContext } from '../context/AdminDataContext'
 import { getAdminDocuments } from '../utils/graphql-utils'
 import { getSmartSearchFields } from '../utils/string-utils'
-import { useDebounce } from './useDebounce' // Custom hook for relation data fetching and management
+import { useDebounce } from './useDebounce'
 
 // Custom hook for relation data fetching and management
 export function useRelationData(relatedModelName: string, searchTerm: string, isOpen: boolean) {
+  const { sdk, databaseModels } = useAdminDataContext()
   const debouncedSearchTerm = useDebounce(searchTerm, 300)
 
   // Get the related model and its GraphQL documents
   const relatedModel = useMemo(
-    () => DATABASE_MODELS.find((m: any) => m.name === relatedModelName),
-    [relatedModelName],
+    () => databaseModels.find((m: any) => m.name === relatedModelName),
+    [databaseModels, relatedModelName],
   )
 
   const relatedDocuments = useMemo(
-    () => (relatedModel ? getAdminDocuments(relatedModel) : { listQuery: undefined }),
-    [relatedModel],
+    () => (relatedModel ? getAdminDocuments(sdk, relatedModel) : { listQuery: undefined }),
+    [sdk, relatedModel],
   )
 
   const relatedDataPath = useMemo(

@@ -47,7 +47,7 @@ export default defineConfig(() => ({
     tailwindcss(),
   ],
   optimizeDeps: {
-    include: ['@apollo/client/core', '@apollo/client/hooks'],
+    include: ['@apollo/client/core', '@apollo/client/react'],
   },
   ssr: {
     noExternal: [

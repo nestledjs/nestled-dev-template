@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useQuery } from '@apollo/client'
+import { useQuery } from '@apollo/client/react'
 import { AdminPlatformOrganizationsDocument } from '@nestled-template/shared/sdk'
 import { MagnifyingGlassIcon, BuildingOfficeIcon, UsersIcon, CreditCardIcon, CheckCircleIcon, XCircleIcon } from '@heroicons/react/24/outline'
 import { clsx } from 'clsx'

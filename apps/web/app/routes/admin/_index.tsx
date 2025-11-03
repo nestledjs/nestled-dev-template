@@ -1,5 +1,5 @@
 import { Link } from 'react-router'
-import { useQuery } from '@apollo/client'
+import { useQuery } from '@apollo/client/react'
 import { AdminDashboardStatsDocument } from '@nestled-template/shared/sdk'
 import {
   UsersIcon,

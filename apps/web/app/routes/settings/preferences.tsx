@@ -3,7 +3,8 @@ import { useLoaderData, redirect } from 'react-router'
 import { Cog6ToothIcon } from '@heroicons/react/24/outline'
 import { apolloLoader } from '@nestled-template/shared/apollo'
 import { MeDocument, MeQuery } from '@nestled-template/shared/sdk'
-import { QueryRef, useReadQuery } from '@apollo/client/react'
+import type { QueryRef } from '@apollo/client'
+import { useReadQuery } from '@apollo/client/react'
 
 export const loader = apolloLoader()(({ preloadQuery }) => {
   const meQueryRef = preloadQuery<MeQuery>(MeDocument)

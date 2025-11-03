@@ -17,7 +17,8 @@ import {
   useExportUserDataLazyQuery,
   useResendVerificationEmailMutation,
 } from '@nestled-template/shared/sdk'
-import { QueryRef, useReadQuery } from '@apollo/client'
+import type { QueryRef } from '@apollo/client'
+import { useReadQuery } from '@apollo/client/react'
 import TransferOwnershipModal from '../../components/TransferOwnershipModal'
 
 export const loader = apolloLoader()(({ preloadQuery }) => {

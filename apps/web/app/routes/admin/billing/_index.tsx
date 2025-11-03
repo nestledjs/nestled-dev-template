@@ -1,6 +1,6 @@
 import { Link } from 'react-router'
-import { useQuery, useMutation } from '@apollo/client'
 import { gql } from '@apollo/client'
+import { useQuery, useMutation } from '@apollo/client/react'
 import { ArrowPathIcon, CreditCardIcon, CurrencyDollarIcon, UserGroupIcon } from '@heroicons/react/24/outline'
 import { useState } from 'react'
 

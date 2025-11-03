@@ -21,7 +21,8 @@ import {
   useUpdateUserMutation,
   useUploadUserAvatarMutation,
 } from '@nestled-template/shared/sdk'
-import { QueryRef, useApolloClient, useReadQuery } from '@apollo/client/react'
+import type { QueryRef } from '@apollo/client'
+import { useApolloClient, useReadQuery } from '@apollo/client/react'
 import { Form, FormFieldClass } from '@nestledjs/forms'
 import { formTheme } from '@nestled-template/shared/styles'
 import { AvatarUpload } from '@nestled-template/web-ui'

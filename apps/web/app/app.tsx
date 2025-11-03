@@ -1,7 +1,7 @@
 import { Outlet, useLoaderData } from 'react-router'
 import { GlobalContextProvider } from '@nestled-template/web'
 import type { QueryRef } from '@apollo/client'
-import { useReadQuery } from '@apollo/client'
+import { useReadQuery } from '@apollo/client/react'
 import { MeQuery } from '@nestled-template/shared/sdk'
 import { useEffect, useState } from 'react'
 import { isViteCacheError, isNetworkError } from '@nestled-template/shared/utils'

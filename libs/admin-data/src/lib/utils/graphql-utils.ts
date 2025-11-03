@@ -1,4 +1,3 @@
-import * as Sdk from '@nestled-template/shared/sdk'
 import { type FormField, FormFieldClass } from '@nestledjs/forms'
 import { getPluralName } from '@nestledjs/helpers'
 import type { DatabaseModel } from '../types'
@@ -7,10 +6,10 @@ import type { DatabaseModel } from '../types'
  * Dynamically get enum values from the SDK
  * This makes the utility portable across different projects by avoiding hardcoded enum imports
  */
-function getEnumValues(enumType: string): string[] | null {
+function getEnumValues(sdk: any, enumType: string): string[] | null {
   try {
     // Try to get the enum from the SDK
-    const enumObject = (Sdk as any)[enumType]
+    const enumObject = (sdk as any)[enumType]
 
     if (!enumObject || typeof enumObject !== 'object') {
       return null
@@ -50,7 +49,7 @@ function normalizeModelNameForDocument(modelName: string): string {
 /**
  * Get GraphQL documents for admin CRUD operations
  */
-export function getAdminDocuments(model: DatabaseModel) {
+export function getAdminDocuments(sdk: any, model: DatabaseModel) {
   if (!model || !model.name) {
     throw new Error('Invalid model provided to getAdminDocuments')
   }
@@ -67,11 +66,11 @@ export function getAdminDocuments(model: DatabaseModel) {
   const createDocumentName = `__AdminCreate${normalizedModelName}Document`
 
   const documents = {
-    query: (Sdk as Record<string, any>)[singleQueryDocumentName], // For single item
-    listQuery: (Sdk as Record<string, any>)[listQueryDocumentName], // For lists
-    update: (Sdk as Record<string, any>)[updateDocumentName],
-    delete: (Sdk as Record<string, any>)[deleteDocumentName],
-    create: (Sdk as Record<string, any>)[createDocumentName],
+    query: (sdk as Record<string, any>)[singleQueryDocumentName], // For single item
+    listQuery: (sdk as Record<string, any>)[listQueryDocumentName], // For lists
+    update: (sdk as Record<string, any>)[updateDocumentName],
+    delete: (sdk as Record<string, any>)[deleteDocumentName],
+    create: (sdk as Record<string, any>)[createDocumentName],
   }
 
   // Validate that required documents exist
@@ -88,7 +87,7 @@ export function getAdminDocuments(model: DatabaseModel) {
       normalizedModelName,
       normalizedPluralName,
       missingDocuments,
-      availableDocuments: Object.keys(Sdk).filter(
+      availableDocuments: Object.keys(sdk).filter(
         key => key.includes('Admin') && key.includes('Document'),
       ),
     })
@@ -126,6 +125,7 @@ export function getMutationName(
  * Build form fields for a model and operation
  */
 export function buildFormFields(
+  sdk: any,
   model: DatabaseModel,
   operation: 'create' | 'update',
   currentItem?: any,
@@ -249,7 +249,7 @@ export function buildFormFields(
 
       default:
         // Handle enum fields first (check if field type exists in the SDK)
-        const enumValues = getEnumValues(field.type)
+        const enumValues = getEnumValues(sdk, field.type)
         if (enumValues) {
           const selectOptions = enumValues.map((value: string) => ({
             value,
@@ -287,7 +287,7 @@ export function buildFormFields(
           const adminDocumentName = `__Admin${field.type}sDocument` // e.g., __AdminCoursesDocument
           const regularDocumentName = `${field.type}sDocument` // e.g., CoursesDocument (fallback)
           const relationDocument =
-            (Sdk as any)[adminDocumentName] || (Sdk as any)[regularDocumentName]
+            (sdk as any)[adminDocumentName] || (sdk as any)[regularDocumentName]
 
           if (relationDocument) {
             // Use single field based on model type (like existing working examples)

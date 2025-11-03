@@ -6,6 +6,11 @@ export function kebabCase(name: string): string {
     .toLowerCase()
 }
 
+// Helper to convert PascalCase or camelCase to spaced words
+export function spacedWords(name: string): string {
+  return name.replace(/([a-z])([A-Z])/g, '$1 $2').replace(/([A-Z])([A-Z][a-z])/g, '$1 $2')
+}
+
 // Helper to format field name for display
 export function formatFieldName(fieldName: string): string {
   return fieldName

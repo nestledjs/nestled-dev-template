@@ -28,7 +28,7 @@ import {
 import clsx from 'clsx'
 import { ArrowLeftCircleIcon, ArrowRightCircleIcon } from '@heroicons/react/24/solid'
 import { Link, Outlet, useMatches } from 'react-router'
-import { useApolloClient } from '@apollo/client'
+import { useApolloClient } from '@apollo/client/react'
 import { useEmulateUserMutation, User, UsersDocument } from '@nestled-template/shared/sdk'
 import Cookies from 'js-cookie'
 import { useAtom } from 'jotai/index'

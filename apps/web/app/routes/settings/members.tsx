@@ -26,7 +26,8 @@ import {
   useOrganizationRolesQuery,
   useOrganizationInvitationsQuery,
 } from '@nestled-template/shared/sdk'
-import { QueryRef, useReadQuery } from '@apollo/client'
+import type { QueryRef } from '@apollo/client'
+import { useReadQuery } from '@apollo/client/react'
 
 export const loader = apolloLoader()(({ preloadQuery }) => {
   const myOrganizationsQueryRef = preloadQuery<MyOrganizationsWithMembersQuery>(MyOrganizationsWithMembersDocument)

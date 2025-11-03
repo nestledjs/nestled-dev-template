@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useQuery, useMutation } from '@apollo/client'
+import { useQuery, useMutation } from '@apollo/client/react'
 import { AdminUserManagementDocument, EmulateUserDocument, AdminUserManagementDetailsDocument } from '@nestled-template/shared/sdk'
 import { MagnifyingGlassIcon, ShieldCheckIcon, LockClosedIcon, CheckCircleIcon, XCircleIcon, ExclamationTriangleIcon, EyeIcon } from '@heroicons/react/24/outline'
 import { clsx } from 'clsx'
