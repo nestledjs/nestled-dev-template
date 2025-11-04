@@ -3,7 +3,6 @@ import { useMutation, useQuery } from '@apollo/client/react'
 import { loadDevMessages, loadErrorMessages } from '@apollo/client/dev'
 import { CheckCircleIcon, ExclamationCircleIcon } from '@heroicons/react/24/outline'
 import { TrashIcon } from '@heroicons/react/24/solid'
-import { formTheme } from '@nestled-template/shared/styles'
 import { useAdminDataContext } from '../context/AdminDataContext'
 
 function toLowerCamelCase(name: string): string {
@@ -22,7 +21,7 @@ function getModelResponseFieldName(modelName: string): string {
 function toReadableText(text: string): string {
   return text.replace(/([a-z])([A-Z])/g, '$1 $2').replace(/^./, str => str.toUpperCase())
 }
-import { WebUiErrorBoundary } from '@nestled-template/web-ui'
+import { ErrorBoundary } from '@nestledjs/shared-components'
 import { Form } from '@nestledjs/forms'
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router'
@@ -74,7 +73,7 @@ const validateId = (id: string | undefined): string | null => {
 
 export function AdminDataEditPage() {
   const { dataType, id } = useParams()
-  const { databaseModels, basePath = '/admin/data' } = useAdminDataContext()
+  const { databaseModels, basePath = '/admin/data', formTheme } = useAdminDataContext()
 
   // Helper function to find model by name
   const findModelByName = (name: string) => {
@@ -167,14 +166,14 @@ export function AdminDataEditPage() {
   }
 
   // At this point we know model exists and is valid
-  return <AdminDataEditPageContent model={model!} id={validatedId!} basePath={basePath} />
+  return <AdminDataEditPageContent model={model!} id={validatedId!} basePath={basePath} formTheme={formTheme} />
 }
 
 // =================================
 // CONTENT COMPONENT
 // =================================
 
-function AdminDataEditPageContent({ model, id, basePath }: Readonly<{ model: any; id: string; basePath: string }>) {
+function AdminDataEditPageContent({ model, id, basePath, formTheme }: Readonly<{ model: any; id: string; basePath: string; formTheme: any }>) {
   const navigate = useNavigate()
   const { sdk } = useAdminDataContext()
 
@@ -379,7 +378,7 @@ function AdminDataEditPageContent({ model, id, basePath }: Readonly<{ model: any
   }
 
   // Get the item data
-  const item = data?.[responseFieldName]
+  const item = (data as any)?.[responseFieldName]
 
   if (!item) {
     return (
@@ -548,11 +547,11 @@ function AdminDataEditPageContent({ model, id, basePath }: Readonly<{ model: any
         },
       })
 
-      if (result.errors) {
-        console.error('GraphQL errors:', result.errors)
+      if ((result as any).errors) {
+        console.error('GraphQL errors:', (result as any).errors)
         setSubmissionState({
           status: 'error',
-          message: result.errors.map(err => err.message).join(', '),
+          message: (result as any).errors.map((err: any) => err.message).join(', '),
         })
         return
       }
@@ -584,11 +583,11 @@ function AdminDataEditPageContent({ model, id, basePath }: Readonly<{ model: any
         },
       })
 
-      if (result.errors) {
-        console.error('GraphQL errors:', result.errors)
+      if ((result as any).errors) {
+        console.error('GraphQL errors:', (result as any).errors)
         setDeleteState({
           status: 'error',
-          message: result.errors.map(err => err.message).join(', '),
+          message: (result as any).errors.map((err: any) => err.message).join(', '),
         })
         return
       }
@@ -774,5 +773,5 @@ function AdminDataEditPageContent({ model, id, basePath }: Readonly<{ model: any
 }
 
 export function AdminDataEditErrorBoundary({ error }: Readonly<{ error: Error }>) {
-  return <WebUiErrorBoundary error={error} />
+  return <ErrorBoundary error={error} />
 }

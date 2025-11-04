@@ -1,5 +1,5 @@
 import { useQuery } from '@apollo/client/react'
-import { WebUiDataTable, WebUiErrorBoundary } from '@nestled-template/web-ui'
+import { DataTable, ErrorBoundary } from '@nestledjs/shared-components'
 import { getPluralName } from '@nestledjs/helpers'
 import { AdminLocalStorage } from '../utils/secure-storage'
 import { formatFieldName, kebabCase } from '../utils/string-utils'
@@ -303,7 +303,7 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
   }
 
   // Main GraphQL query with comprehensive error handling
-  const { data, loading, error, networkStatus, refetch } = useQuery(query ?? (Sdk as any).__AdminUsersDocument, {
+  const { data, loading, error, networkStatus, refetch } = useQuery(query ?? (sdk as any).__AdminUsersDocument, {
     variables,
     skip: !model || !query,
     errorPolicy: 'all', // Continue processing even if there are GraphQL errors
@@ -322,12 +322,13 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
       console.warn('[AdminList] GraphQL error:', error.message)
 
       // Check for specific error types
-      if (error.networkError) {
-        console.error('[AdminList] Network error:', error.networkError)
+      const apolloError = error as any
+      if (apolloError.networkError) {
+        console.error('[AdminList] Network error:', apolloError.networkError)
       }
 
-      if (error.graphQLErrors?.length > 0) {
-        console.error('[AdminList] GraphQL errors:', error.graphQLErrors)
+      if (apolloError.graphQLErrors?.length > 0) {
+        console.error('[AdminList] GraphQL errors:', apolloError.graphQLErrors)
       }
     }
 
@@ -341,13 +342,14 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
     }
 
     try {
-      let processedItems = dataPath && data[dataPath] ? data[dataPath] : []
+      const anyData = data as any
+      let processedItems = dataPath && anyData[dataPath] ? anyData[dataPath] : []
       const processedPagination =
-        paginationPath && data[paginationPath] ? data[paginationPath] : undefined
+        paginationPath && anyData[paginationPath] ? anyData[paginationPath] : undefined
 
       // Fallback: if no items found, try to find array data in the response
       if (!processedItems || processedItems.length === 0) {
-        for (const [key, value] of Object.entries(data)) {
+        for (const [key, value] of Object.entries(anyData)) {
           if (Array.isArray(value)) {
             // If this looks like the right data (first item has an 'id' field), use it
             if (value.length > 0 && value[0]?.id) {
@@ -901,7 +903,7 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
     <>
       {filterPanel}
       {searchFilter}
-      <WebUiDataTable
+      <DataTable
         data={items}
         path={createLink.replace('/create', '')}
         fields={visibleColumns.length > 0 ? visibleColumns : fieldNames}
@@ -915,5 +917,5 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
 }
 
 export function AdminDataErrorBoundary({ error }: Readonly<{ error: Error }>) {
-  return <WebUiErrorBoundary error={error} />
+  return <ErrorBoundary error={error} />
 }

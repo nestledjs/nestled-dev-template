@@ -1,9 +1,8 @@
 import React from 'react'
-import { useLoaderData, redirect } from 'react-router'
+import { useLoaderData } from 'react-router'
 import { Cog6ToothIcon } from '@heroicons/react/24/outline'
-import { apolloLoader } from '@nestled-template/shared/apollo'
+import { apolloLoader, ReadQueryDataState } from '@nestled-template/shared/apollo'
 import { MeDocument, MeQuery } from '@nestled-template/shared/sdk'
-import type { QueryRef } from '@apollo/client'
 import { useReadQuery } from '@apollo/client/react'
 
 export const loader = apolloLoader()(({ preloadQuery }) => {
@@ -12,8 +11,8 @@ export const loader = apolloLoader()(({ preloadQuery }) => {
 })
 
 export default function ApplicationPreferences() {
-  const loaderData = useLoaderData() as { meQueryRef: QueryRef<MeQuery> }
-  const { data } = useReadQuery(loaderData.meQueryRef)
+  const loaderData = useLoaderData()
+  const { data } = useReadQuery<MeQuery, ReadQueryDataState>(loaderData.meQueryRef)
   const user = data?.me
 
   // Only super admins can access this page

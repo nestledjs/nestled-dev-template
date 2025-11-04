@@ -36,10 +36,27 @@
       "@nestled-template/shared/styles": ["libs/shared/styles/src/index.ts"],
       "@nestled-template/shared/utils": ["libs/shared/utils/src/index.ts"],
       "@nestled-template/web": ["libs/web/src/index.ts"],
-      "@nestled-template/web-ui": ["libs/web-ui/src/index.ts"]
+      "@nestled-template/web-ui": ["libs/web-ui/src/index.ts"],
+      "@nestledjs/shared-components": ["libs/shared-components/src/index.ts"]
     },
     "esModuleInterop": true
   },
-  "exclude": ["node_modules", "tmp"],
+  "exclude": [
+    "node_modules",
+    "tmp",
+    "dist",
+    "build",
+    "coverage",
+    ".next",
+    ".turbo",
+    ".nx",
+    "cypress",
+    "**/*.spec.ts",
+    "**/*.spec.tsx",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "libs/api/prisma/src/lib/prisma-generated",
+    "libs/shared/sdk/src/generated"
+  ],
   "include": ["vite-env.d.ts"]
 }
