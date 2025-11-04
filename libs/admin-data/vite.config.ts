@@ -5,7 +5,9 @@ import dts from 'vite-plugin-dts'
 
 export default defineConfig({
   plugins: [
-    react(),
+    react({
+      jsxRuntime: 'classic',
+    }),
     dts({
       outDir: resolve(__dirname, '../../dist/libs/admin-data'),
       entryRoot: resolve(__dirname, 'src'),
@@ -29,6 +31,7 @@ export default defineConfig({
         entryFileNames: '[name].js',
       },
     },
+    minify: false, // Disable minification to prevent SSR issues
     outDir: resolve(__dirname, '../../dist/libs/admin-data'),
     emptyOutDir: true,
   },
