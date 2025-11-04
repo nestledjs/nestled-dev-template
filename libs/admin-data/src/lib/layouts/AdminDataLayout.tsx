@@ -119,7 +119,7 @@ export function AdminDataLayout() {
   }
 
   const content = (
-    <div className="max-w-full mx-auto h-full flex flex-col">
+    <div className="max-w-full mx-auto flex flex-col">
       {/* Notification Toast */}
       {notification && (
         <div className={`mb-4 px-4 py-3 rounded-md border ${
@@ -225,7 +225,7 @@ export function AdminDataLayout() {
       </div>
 
       {/* Page Content */}
-      <div className="flex-1 overflow-auto">
+      <div>
         <Outlet />
       </div>
     </div>
@@ -233,8 +233,8 @@ export function AdminDataLayout() {
 
   if (isFullscreen) {
     return (
-      <div className="fixed inset-0 z-50 bg-white dark:bg-gray-900 overflow-hidden flex flex-col">
-        <div className="h-full w-full overflow-auto p-6 md:p-8 lg:p-12">
+      <div className="fixed inset-0 z-50 bg-white dark:bg-gray-900 flex flex-col">
+        <div className="w-full p-6 md:p-8 lg:p-12">
           {content}
         </div>
       </div>
@@ -242,8 +242,8 @@ export function AdminDataLayout() {
   }
 
   return (
-    <div className="h-full overflow-hidden flex flex-col">
-      <main className="h-full w-full overflow-auto p-6 md:p-8 lg:p-12">
+    <div className="flex flex-col">
+      <main className="w-full p-6 md:p-8 lg:p-12">
         {content}
       </main>
     </div>

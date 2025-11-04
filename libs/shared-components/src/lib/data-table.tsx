@@ -146,9 +146,9 @@ export function DataTable(props: DataTableProps) {
       {props?.additionalFilters && props.additionalFilters}
 
       <>
-        <div className="-mx-4 mt-8 overflow-x-auto shadow ring-1 ring-black ring-opacity-5 sm:-mx-6 md:mx-0 md:rounded-lg">
-          <table className="min-w-full divide-y divide-gray-300">
-            <thead className="bg-gray-50">
+        <div className="-mx-4 mt-8 overflow-x-auto overflow-y-hidden shadow ring-1 ring-black ring-opacity-5 sm:-mx-6 md:mx-0 md:rounded-lg">
+          <table className="min-w-full divide-y divide-gray-300 md:rounded-lg">
+            <thead className="bg-gray-50 md:rounded-t-lg">
               <tr>
                 {/* Edit column moved to far left */}
                 <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">
@@ -236,7 +236,7 @@ export function DataTable(props: DataTableProps) {
                 {/* Removed trailing Edit column */}
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200 bg-white">
+            <tbody className="divide-y divide-gray-200 bg-white md:rounded-b-lg">
               {props?.data?.map((item: typeof props.data[0]) => {
                 return (
                   <tr key={item.id}>
