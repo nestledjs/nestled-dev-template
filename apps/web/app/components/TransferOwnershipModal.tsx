@@ -8,7 +8,11 @@ interface TransferOwnershipModalProps {
   onSuccess: () => void
 }
 
-export default function TransferOwnershipModal({ isOpen, onClose, onSuccess }: TransferOwnershipModalProps) {
+export default function TransferOwnershipModal({
+  isOpen,
+  onClose,
+  onSuccess,
+}: Readonly<TransferOwnershipModalProps>) {
   const [selectedOrganization, setSelectedOrganization] = useState<string>('')
   const [selectedNewOwner, setSelectedNewOwner] = useState<string>('')
   const [confirmText, setConfirmText] = useState('')
@@ -21,17 +25,20 @@ export default function TransferOwnershipModal({ isOpen, onClose, onSuccess }: T
   const currentUserId = meData?.me?.id
 
   // Filter organizations where current user is the owner
-  const ownedOrganizations = organizationsData?.myOrganizations?.filter(org => 
-    org.members?.some(member => 
-      member.role?.name === 'Owner' && member.user?.id === currentUserId
-    )
-  ) || []
+  const ownedOrganizations =
+    organizationsData?.myOrganizations?.filter(org =>
+      org.members?.some(
+        member => member.role?.name === 'Owner' && member.user?.id === currentUserId,
+      ),
+    ) || []
 
   // Get members of selected organization (excluding current user as owner)
-  const selectedOrgMembers = selectedOrganization 
-    ? ownedOrganizations.find(org => org.id === selectedOrganization)?.members?.filter(member => 
-        member.user?.id !== currentUserId // Can't transfer to yourself
-      ) || []
+  const selectedOrgMembers = selectedOrganization
+    ? ownedOrganizations
+        .find(org => org.id === selectedOrganization)
+        ?.members?.filter(
+          member => member.user?.id !== currentUserId, // Can't transfer to yourself
+        ) || []
     : []
 
   const handleTransfer = async () => {
@@ -46,9 +53,9 @@ export default function TransferOwnershipModal({ isOpen, onClose, onSuccess }: T
         variables: {
           input: {
             organizationId: selectedOrganization,
-            newOwnerUserId: selectedNewOwner
-          }
-        }
+            newOwnerUserId: selectedNewOwner,
+          },
+        },
       })
 
       alert('Organization ownership transferred successfully!')
@@ -75,11 +82,11 @@ export default function TransferOwnershipModal({ isOpen, onClose, onSuccess }: T
     <div className="fixed inset-0 z-50 overflow-y-auto">
       <div className="flex min-h-screen items-center justify-center px-4 py-6">
         {/* Backdrop */}
-        <div 
+        <div
           className="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity"
           onClick={handleClose}
         />
-        
+
         {/* Modal */}
         <div className="relative w-full max-w-md rounded-xl border border-zinc-200 dark:border-white/10 bg-white dark:bg-zinc-900 p-6 shadow-xl">
           {/* Header */}
@@ -102,7 +109,9 @@ export default function TransferOwnershipModal({ isOpen, onClose, onSuccess }: T
 
           {loading ? (
             <div className="text-center py-8">
-              <div className="text-sm text-zinc-600 dark:text-zinc-400">Loading organizations...</div>
+              <div className="text-sm text-zinc-600 dark:text-zinc-400">
+                Loading organizations...
+              </div>
             </div>
           ) : ownedOrganizations.length === 0 ? (
             <div className="text-center py-8">
@@ -119,14 +128,14 @@ export default function TransferOwnershipModal({ isOpen, onClose, onSuccess }: T
                 </label>
                 <select
                   value={selectedOrganization}
-                  onChange={(e) => {
+                  onChange={e => {
                     setSelectedOrganization(e.target.value)
                     setSelectedNewOwner('') // Reset new owner when org changes
                   }}
                   className="w-full rounded-lg border border-zinc-200 dark:border-white/10 bg-white dark:bg-zinc-800 px-3 py-2 text-sm text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
                 >
                   <option value="">Choose an organization...</option>
-                  {ownedOrganizations.map((org) => (
+                  {ownedOrganizations.map(org => (
                     <option key={org.id} value={org.id}>
                       {org.name}
                     </option>
@@ -147,11 +156,11 @@ export default function TransferOwnershipModal({ isOpen, onClose, onSuccess }: T
                   ) : (
                     <select
                       value={selectedNewOwner}
-                      onChange={(e) => setSelectedNewOwner(e.target.value)}
+                      onChange={e => setSelectedNewOwner(e.target.value)}
                       className="w-full rounded-lg border border-zinc-200 dark:border-white/10 bg-white dark:bg-zinc-800 px-3 py-2 text-sm text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
                     >
                       <option value="">Choose new owner...</option>
-                      {selectedOrgMembers.map((member) => (
+                      {selectedOrgMembers.map(member => (
                         <option key={member.id} value={member.user?.id}>
                           {member.user?.firstName} {member.user?.lastName} ({member.role?.name})
                         </option>
@@ -171,7 +180,8 @@ export default function TransferOwnershipModal({ isOpen, onClose, onSuccess }: T
                         Warning: This action cannot be undone
                       </h4>
                       <p className="text-sm text-amber-700 dark:text-amber-400">
-                        You will lose ownership privileges and the new owner will have full control of the organization.
+                        You will lose ownership privileges and the new owner will have full control
+                        of the organization.
                       </p>
                     </div>
                   </div>
@@ -187,7 +197,7 @@ export default function TransferOwnershipModal({ isOpen, onClose, onSuccess }: T
                   <input
                     type="text"
                     value={confirmText}
-                    onChange={(e) => setConfirmText(e.target.value)}
+                    onChange={e => setConfirmText(e.target.value)}
                     placeholder="Type TRANSFER to confirm"
                     className="w-full rounded-lg border border-zinc-200 dark:border-white/10 bg-white dark:bg-zinc-800 px-3 py-2 text-sm text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
                   />
@@ -198,7 +208,13 @@ export default function TransferOwnershipModal({ isOpen, onClose, onSuccess }: T
               <div className="flex gap-3 pt-4">
                 <button
                   onClick={handleTransfer}
-                  disabled={!selectedOrganization || !selectedNewOwner || confirmText !== 'TRANSFER' || isTransferring || selectedOrgMembers.length === 0}
+                  disabled={
+                    !selectedOrganization ||
+                    !selectedNewOwner ||
+                    confirmText !== 'TRANSFER' ||
+                    isTransferring ||
+                    selectedOrgMembers.length === 0
+                  }
                   className="flex-1 px-4 py-2 bg-amber-500 hover:bg-amber-600 disabled:bg-amber-300 disabled:cursor-not-allowed text-white rounded-lg text-sm font-medium transition-colors"
                 >
                   {isTransferring ? 'Transferring...' : 'Transfer Ownership'}

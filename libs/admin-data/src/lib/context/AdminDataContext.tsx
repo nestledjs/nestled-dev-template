@@ -7,6 +7,8 @@ export interface AdminDataContextValue {
   databaseModels: any[]
   /** Base path for admin data routes (e.g., "/admin/data") */
   basePath?: string
+  /** Form theme configuration for @nestledjs/forms */
+  formTheme: any
 }
 
 const AdminDataContext = createContext<AdminDataContextValue | null>(null)
@@ -19,6 +21,8 @@ export interface AdminDataProviderProps {
   databaseModels: any[]
   /** Optional base path for routes (defaults to "/admin/data") */
   basePath?: string
+  /** Form theme configuration for @nestledjs/forms */
+  formTheme: any
 }
 
 /**
@@ -30,7 +34,12 @@ export interface AdminDataProviderProps {
  * import { DATABASE_MODELS } from '@your-project/shared/sdk'
  * import { AdminDataProvider } from '@nestledjs/admin-data'
  *
- * <AdminDataProvider sdk={Sdk} databaseModels={DATABASE_MODELS} basePath="/admin/data">
+ * <AdminDataProvider
+ *   sdk={Sdk}
+ *   databaseModels={DATABASE_MODELS}
+ *   formTheme={formTheme}
+ *   basePath="/admin/data"
+ * >
  *   <AdminDataLayout />
  * </AdminDataProvider>
  * ```
@@ -39,10 +48,11 @@ export function AdminDataProvider({
   children,
   sdk,
   databaseModels,
-  basePath = '/admin/data'
+  basePath = '/admin/data',
+  formTheme
 }: AdminDataProviderProps) {
   return (
-    <AdminDataContext.Provider value={{ sdk, databaseModels, basePath }}>
+    <AdminDataContext.Provider value={{ sdk, databaseModels, basePath, formTheme }}>
       {children}
     </AdminDataContext.Provider>
   )

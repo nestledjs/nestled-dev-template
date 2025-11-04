@@ -1,10 +1,11 @@
 import * as Sdk from '@nestled-template/shared/sdk'
 import { DATABASE_MODELS } from '@nestled-template/shared/sdk'
 import { AdminDataProvider, AdminDataLayout } from '@nestled-template/admin-data'
+import { formTheme } from '@nestled-template/shared/styles'
 
 export default function DataLayoutRoute() {
   return (
-    <AdminDataProvider sdk={Sdk} databaseModels={DATABASE_MODELS} basePath="/admin/data">
+    <AdminDataProvider sdk={Sdk} databaseModels={DATABASE_MODELS} basePath="/admin/data" formTheme={formTheme}>
       <AdminDataLayout />
     </AdminDataProvider>
   )

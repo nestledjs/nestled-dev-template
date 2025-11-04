@@ -84,7 +84,7 @@ export function useRelationData(relatedModelName: string, searchTerm: string, is
     if (!relatedData) return []
 
     try {
-      const items = relatedData[relatedDataPath] || []
+      const items = (relatedData as any)[relatedDataPath] || []
 
       // Validate that items is an array
       if (!Array.isArray(items)) {

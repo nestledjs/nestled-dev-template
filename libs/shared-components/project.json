@@ -1,20 +1,21 @@
 {
-  "name": "admin-data",
+  "name": "shared-components",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/admin-data/src",
+  "sourceRoot": "libs/shared-components/src",
   "projectType": "library",
   "tags": ["publishable"],
   "targets": {
     "build": {
       "executor": "nx:run-commands",
-      "outputs": ["{workspaceRoot}/dist/libs/admin-data"],
+      "outputs": ["{workspaceRoot}/dist/libs/shared-components"],
       "options": {
         "commands": [
           "vite build",
-          "cp README.md ../../dist/libs/admin-data/",
-          "cp package.json ../../dist/libs/admin-data/"
+          "cp README.md ../../dist/libs/shared-components/",
+          "cp LICENSE ../../dist/libs/shared-components/",
+          "cp package.json ../../dist/libs/shared-components/"
         ],
-        "cwd": "libs/admin-data",
+        "cwd": "libs/shared-components",
         "parallel": false
       }
     },
@@ -22,7 +23,7 @@
       "executor": "nx:run-commands",
       "dependsOn": ["build"],
       "options": {
-        "command": "npm publish dist/libs/admin-data --access public"
+        "command": "npm publish dist/libs/shared-components --access public"
       }
     },
     "version": {

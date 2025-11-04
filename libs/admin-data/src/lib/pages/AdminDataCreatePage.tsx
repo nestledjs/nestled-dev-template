@@ -1,13 +1,12 @@
 import { gql } from '@apollo/client'
 import { useMutation } from '@apollo/client/react'
 import { CheckCircleIcon, ExclamationCircleIcon } from '@heroicons/react/24/outline'
-import { formTheme } from '@nestled-template/shared/styles'
 import { useAdminDataContext } from '../context/AdminDataContext'
 
 function toReadableText(text: string): string {
   return text.replace(/([a-z])([A-Z])/g, '$1 $2').replace(/^./, str => str.toUpperCase())
 }
-import { WebUiErrorBoundary } from '@nestled-template/web-ui'
+import { ErrorBoundary } from '@nestledjs/shared-components'
 import { Form } from '@nestledjs/forms'
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router'
@@ -53,7 +52,7 @@ function checkAccess(dataType: string): boolean {
 
 export function AdminDataCreatePage() {
   const { dataType } = useParams()
-  const { databaseModels, basePath = '/admin/data' } = useAdminDataContext()
+  const { databaseModels, basePath = '/admin/data', formTheme } = useAdminDataContext()
 
   // Helper function to find model by name
   const findModelByName = (name: string) => {
@@ -165,14 +164,14 @@ export function AdminDataCreatePage() {
   }
 
   // At this point we know model exists and is valid
-  return <AdminDataCreatePageContent model={model!} basePath={basePath} />
+  return <AdminDataCreatePageContent model={model!} basePath={basePath} formTheme={formTheme} />
 }
 
 // =================================
 // CONTENT COMPONENT
 // =================================
 
-function AdminDataCreatePageContent({ model, basePath }: Readonly<{ model: any; basePath: string }>) {
+function AdminDataCreatePageContent({ model, basePath, formTheme }: Readonly<{ model: any; basePath: string; formTheme: any }>) {
   const navigate = useNavigate()
   const { sdk } = useAdminDataContext()
 
@@ -263,11 +262,11 @@ function AdminDataCreatePageContent({ model, basePath }: Readonly<{ model: any; 
         },
       })
 
-      if (result.errors) {
-        console.error('GraphQL errors:', result.errors)
+      if ((result as any).errors) {
+        console.error('GraphQL errors:', (result as any).errors)
         setSubmissionState({
           status: 'error',
-          message: result.errors.map(err => err.message).join(', '),
+          message: (result as any).errors.map((err: any) => err.message).join(', '),
         })
         return
       }
@@ -412,5 +411,5 @@ function AdminDataCreatePageContent({ model, basePath }: Readonly<{ model: any; 
 }
 
 export function AdminDataCreateErrorBoundary({ error }: Readonly<{ error: Error }>) {
-  return <WebUiErrorBoundary error={error} />
+  return <ErrorBoundary error={error} />
 }
