@@ -1,4 +1,4 @@
-import { createContext, useContext, type ReactNode } from 'react'
+import React, { createContext, useContext, type ReactNode } from 'react'
 
 export interface AdminDataContextValue {
   /** The SDK namespace for dynamic GraphQL document lookups */
