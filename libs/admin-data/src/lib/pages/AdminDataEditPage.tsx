@@ -345,7 +345,7 @@ function AdminDataEditPageContent({ model, id, basePath, formTheme }: Readonly<{
                   Try Again
                 </button>
                 <Link
-                  to={`/admin/data/${toKebabCase(model.pluralName)}`}
+                  to={`${basePath}/${toKebabCase(model.pluralName)}`}
                   className="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-web"
                 >
                   Back to List
@@ -394,7 +394,7 @@ function AdminDataEditPageContent({ model, id, basePath, formTheme }: Readonly<{
               </p>
               <div className="mt-6">
                 <Link
-                  to={`/admin/data/${toKebabCase(model.pluralName)}`}
+                  to={`${basePath}/${toKebabCase(model.pluralName)}`}
                   className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-web hover:bg-green-web-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-web"
                 >
                   Back to List
@@ -599,7 +599,7 @@ function AdminDataEditPageContent({ model, id, basePath, formTheme }: Readonly<{
 
       // Redirect after a brief delay
       setTimeout(() => {
-        navigate(`/admin/data/${toKebabCase(model.pluralName)}`)
+        navigate(`${basePath}/${toKebabCase(model.pluralName)}`)
       }, 1500)
     } catch (error) {
       console.error('Error deleting record:', error)
@@ -617,7 +617,7 @@ function AdminDataEditPageContent({ model, id, basePath, formTheme }: Readonly<{
           <nav className="flex mb-6" aria-label="Breadcrumb">
             <ol className="flex items-center space-x-4">
               <li>
-                <Link to="/admin/data" className="text-gray-400 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-400">
+                <Link to={basePath} className="text-gray-400 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-400">
                   Data Browser
                 </Link>
               </li>
@@ -635,7 +635,7 @@ function AdminDataEditPageContent({ model, id, basePath, formTheme }: Readonly<{
                     />
                   </svg>
                   <Link
-                    to={`/admin/data/${toKebabCase(model.pluralName)}`}
+                    to={`${basePath}/${toKebabCase(model.pluralName)}`}
                     className="ml-4 text-gray-400 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-400"
                   >
                     {toReadableText(model.pluralName)}

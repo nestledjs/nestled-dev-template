@@ -278,7 +278,7 @@ function AdminDataCreatePageContent({ model, basePath, formTheme }: Readonly<{ m
 
       // Redirect after a brief delay to show success message
       setTimeout(() => {
-        navigate(`/admin/data/${toKebabCase(model.pluralName)}`)
+        navigate(`${basePath}/${toKebabCase(model.pluralName)}`)
       }, 1500)
     } catch (error) {
       console.error('Error creating record:', error)
@@ -306,7 +306,7 @@ function AdminDataCreatePageContent({ model, basePath, formTheme }: Readonly<{ m
           <nav className="flex mb-6" aria-label="Breadcrumb">
             <ol className="flex items-center space-x-4">
               <li>
-                <Link to="/admin/data" className="text-gray-400 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-400">
+                <Link to={basePath} className="text-gray-400 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-400">
                   Data Browser
                 </Link>
               </li>
@@ -324,7 +324,7 @@ function AdminDataCreatePageContent({ model, basePath, formTheme }: Readonly<{ m
                     />
                   </svg>
                   <Link
-                    to={`/admin/data/${toKebabCase(model.pluralName)}`}
+                    to={`${basePath}/${toKebabCase(model.pluralName)}`}
                     className="ml-4 text-gray-400 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-400"
                   >
                     {toReadableText(model.pluralName)}
