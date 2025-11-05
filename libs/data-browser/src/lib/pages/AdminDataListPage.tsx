@@ -145,8 +145,15 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
           // e.g., userId -> user: { id: "..." }
           filters[relationField.name] = { id: value }
         } else {
-          // Regular scalar field
-          filters[key] = value
+          // Check if this is a regular scalar field that exists on the model
+          const scalarField = model.fields.find((f: any) => f.name === key && !f.relationName)
+          if (scalarField) {
+            // Regular scalar field that exists on the model
+            filters[key] = value
+          } else {
+            // Field doesn't exist on this model - skip it
+            console.warn(`[AdminList] URL parameter "${key}" does not exist on model "${model.name}" - ignoring`)
+          }
         }
       }
     }
