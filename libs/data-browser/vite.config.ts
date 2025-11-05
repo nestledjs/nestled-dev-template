@@ -14,6 +14,7 @@ export default defineConfig({
       tsconfigPath: resolve(__dirname, './tsconfig.lib.json'),
     }),
   ],
+  mode: 'production',
   build: {
     lib: {
       entry: resolve(__dirname, 'src/index.ts'),
