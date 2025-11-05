@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo } from 'react'
 import { useQuery } from '@apollo/client/react'
 import { DataTable, ErrorBoundary } from '@nestledjs/shared-components'
-import { getPluralName } from '@nestledjs/helpers'
+import { getPluralName } from '../utils/get-plural-names'
 import { AdminLocalStorage } from '../utils/secure-storage'
 import { formatFieldName, kebabCase } from '../utils/string-utils'
 import { Link, useParams, useSearchParams } from 'react-router'
@@ -38,7 +38,6 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
 
       return values as string[]
     } catch (error) {
-      console.warn(`Failed to get enum values for type ${enumType}:`, error)
       return null
     }
   }, [sdk])
@@ -150,26 +149,16 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
           if (scalarField) {
             // Regular scalar field that exists on the model
             filters[key] = value
-          } else {
-            // Field doesn't exist on this model - skip it
-            console.warn(`[AdminList] URL parameter "${key}" does not exist on model "${model.name}" - ignoring`)
           }
+          // Field doesn't exist on this model - skip it
         }
       }
     }
     return filters
   }, [searchParams, model])
 
-  // Initialize filters from URL parameters on mount
-  useEffect(() => {
-    if (Object.keys(urlFilters).length > 0) {
-      dispatch({ type: 'SET_FILTERS', payload: urlFilters })
-      // Also show the filters panel so user can see what's filtered
-      if (!showFilters) {
-        dispatch({ type: 'TOGGLE_FILTERS' })
-      }
-    }
-  }, [urlFilters, showFilters])
+  // Track URL filters to apply them after model initialization
+  const hasUrlFilters = Object.keys(urlFilters).length > 0
 
   // Get GraphQL documents based on model
   const documents = useMemo(() => {
@@ -284,7 +273,14 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
     dispatch({ type: 'SET_DEBOUNCED_SEARCH', payload: '' })
     dispatch({ type: 'RESET_FILTERS' })
     dispatch({ type: 'RESET_PAGINATION' })
-  }, [model?.name, fieldNames, searchableFieldNames, getDefaultSearchFields, setVisibleColumns, setSearchFields, dispatch])
+
+    // Apply URL filters after reset (must be last to take precedence)
+    if (hasUrlFilters) {
+      dispatch({ type: 'SET_FILTERS', payload: urlFilters })
+      // Also show the filters panel so user can see what's filtered
+      dispatch({ type: 'SET_SHOW_FILTERS', payload: true })
+    }
+  }, [model?.name, fieldNames, searchableFieldNames, getDefaultSearchFields, setVisibleColumns, setSearchFields, dispatch, urlFilters])
 
   // Memoized sort handler that prevents unnecessary re-renders
   const setSortSafely = useCallback(
@@ -368,16 +364,14 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
   const { validatedItems, validatedPagination, dataError } = useMemo(() => {
     // Handle GraphQL errors
     if (error) {
-      console.warn('[AdminList] GraphQL error:', error.message)
-
       // Check for specific error types
       const apolloError = error as any
       if (apolloError.networkError) {
-        console.error('[AdminList] Network error:', apolloError.networkError)
+        // Network error occurred
       }
 
       if (apolloError.graphQLErrors?.length > 0) {
-        console.error('[AdminList] GraphQL errors:', apolloError.graphQLErrors)
+        // GraphQL errors occurred
       }
     }
 
@@ -411,7 +405,6 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
 
       // Validate items array
       if (!Array.isArray(processedItems)) {
-        console.warn('[AdminList] Expected array but got:', typeof processedItems)
         return {
           validatedItems: [],
           validatedPagination: processedPagination,
@@ -422,12 +415,10 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
       // Validate and filter each item
       const filteredItems = processedItems.filter((item, index) => {
         if (!item || typeof item !== 'object') {
-          console.warn(`[AdminList] Invalid item at index ${index}:`, item)
           return false
         }
 
         if (!item.id) {
-          console.warn(`[AdminList] Item missing ID at index ${index}:`, item)
           return false
         }
 
@@ -440,7 +431,6 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
         dataError: null,
       }
     } catch (err) {
-      console.error('[AdminList] Error processing data:', err)
       return {
         validatedItems: [],
         validatedPagination: undefined,

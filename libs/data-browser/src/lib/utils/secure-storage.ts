@@ -97,23 +97,20 @@ export const SecureAdminLocalStorage = {
       
       // Check size limit
       if (stored.length > MAX_CONFIG_SIZE) {
-        console.warn('[AdminLocalStorage] Config exceeds size limit, resetting')
         localStorage.removeItem(ADMIN_CONFIG_KEY)
         return { version: ADMIN_CONFIG_VERSION, models: {} }
       }
-      
+
       const parsed = JSON.parse(stored)
-      
+
       if (!validateAdminConfig(parsed)) {
-        console.warn('[AdminLocalStorage] Invalid config detected, resetting')
         localStorage.removeItem(ADMIN_CONFIG_KEY)
         return { version: ADMIN_CONFIG_VERSION, models: {} }
       }
       
       return parsed
-      
+
     } catch (error) {
-      console.warn('[AdminLocalStorage] Failed to load config:', error)
       // Clear potentially corrupted data
       try {
         localStorage.removeItem(ADMIN_CONFIG_KEY)
@@ -129,23 +126,20 @@ export const SecureAdminLocalStorage = {
     try {
       // Validate input
       if (!validateAdminConfig(config)) {
-        console.warn('[AdminLocalStorage] Invalid config provided')
         return false
       }
-      
+
       const serialized = JSON.stringify(config)
-      
+
       // Check size limit
       if (serialized.length > MAX_CONFIG_SIZE) {
-        console.warn('[AdminLocalStorage] Config too large to store')
         return false
       }
-      
+
       localStorage.setItem(ADMIN_CONFIG_KEY, serialized)
       return true
-      
+
     } catch (error) {
-      console.warn('[AdminLocalStorage] Failed to save config:', error)
       return false
     }
   },
@@ -233,12 +227,10 @@ export const SecureAdminLocalStorage = {
       const config = SecureAdminLocalStorage.getConfig()
       // Double-check validation before export
       if (!validateAdminConfig(config)) {
-        console.warn('[AdminLocalStorage] Cannot export invalid config')
         return null
       }
       return JSON.stringify(config, null, 2)
     } catch (error) {
-      console.warn('[AdminLocalStorage] Failed to export config:', error)
       return null
     }
   },
@@ -249,18 +241,16 @@ export const SecureAdminLocalStorage = {
       // Sanitize input string
       const sanitizedJson = sanitizeString(configJson)
       if (!sanitizedJson || sanitizedJson.length > MAX_CONFIG_SIZE) {
-        console.warn('[AdminLocalStorage] Invalid or oversized config JSON')
         return false
       }
-      
+
       const config = JSON.parse(sanitizedJson) as AdminConfig
-      
+
       // Comprehensive validation with security checks
       if (!validateAdminConfig(config)) {
-        console.warn('[AdminLocalStorage] Failed config validation during import')
         return false
       }
-      
+
       // Additional security: Check for suspicious patterns
       const serialized = JSON.stringify(config)
       const suspiciousPatterns = [
@@ -270,18 +260,16 @@ export const SecureAdminLocalStorage = {
         /eval\s*\(/i,
         /function\s*\(/i
       ]
-      
+
       for (const pattern of suspiciousPatterns) {
         if (pattern.test(serialized)) {
-          console.warn('[AdminLocalStorage] Suspicious content detected in config')
     return false
   }
 }
-      
+
       return SecureAdminLocalStorage.setConfig(config)
-      
+
     } catch (error) {
-      console.warn('[AdminLocalStorage] Failed to import config:', error)
       return false
     }
   },
@@ -292,7 +280,6 @@ export const SecureAdminLocalStorage = {
       localStorage.removeItem(ADMIN_CONFIG_KEY)
       return true
     } catch (error) {
-      console.warn('[AdminLocalStorage] Failed to clear config:', error)
       return false
     }
   }

@@ -64,7 +64,6 @@ const validateId = (id: string | undefined): string | null => {
 
   // Basic ID format validation (adjust based on your ID format)
   if (!/^[a-zA-Z0-9_-]+$/.test(sanitized)) {
-    console.warn(`[Security] Invalid ID format attempted: ${id}`)
     return null
   }
 
@@ -96,7 +95,6 @@ export function AdminDataEditPage() {
     // Check if this data type exists in our models
     const model = databaseModels.find(m => m.name === properCaseDataType)
     if (!model) {
-      console.warn(`[Security] Invalid dataType attempted: ${dataType}`)
       return null
     }
 
@@ -195,7 +193,6 @@ function AdminDataEditPageContent({ model, id, basePath, formTheme }: Readonly<{
     try {
       return getAdminDocuments(sdk, model)
     } catch (error) {
-      console.error('[AdminDataEditPage] Error getting documents:', error)
       return null
     }
   }, [sdk, model])
@@ -209,7 +206,6 @@ function AdminDataEditPageContent({ model, id, basePath, formTheme }: Readonly<{
       }
       return gql(documents.query)
     } catch (error) {
-      console.error('[AdminDataEditPage] Error parsing QUERY:', error)
       return null
     }
   }, [documents])
@@ -223,7 +219,6 @@ function AdminDataEditPageContent({ model, id, basePath, formTheme }: Readonly<{
       }
       return gql(documents.update)
     } catch (error) {
-      console.error('[AdminDataEditPage] Error parsing UPDATE mutation:', error)
       return null
     }
   }, [documents])
@@ -237,7 +232,6 @@ function AdminDataEditPageContent({ model, id, basePath, formTheme }: Readonly<{
       }
       return gql(documents.delete)
     } catch (error) {
-      console.error('[AdminDataEditPage] Error parsing DELETE mutation:', error)
       return null
     }
   }, [documents])
@@ -454,7 +448,6 @@ function AdminDataEditPageContent({ model, id, basePath, formTheme }: Readonly<{
                 value = isoString.substring(0, 16)
               }
             } catch (e) {
-              console.warn(`Failed to convert date value for field ${field.name}:`, e)
               value = ''
             }
           } else {
@@ -473,7 +466,6 @@ function AdminDataEditPageContent({ model, id, basePath, formTheme }: Readonly<{
 
         // Safety check: convert any remaining non-primitive values to strings
         if (value !== null && typeof value === 'object') {
-          console.warn(`Field ${field.name} has object value, converting to string:`, value)
           // If it's an object with an id, use the id
           if (typeof value === 'object' && 'id' in value) {
             value = (value as any).id
@@ -490,7 +482,6 @@ function AdminDataEditPageContent({ model, id, basePath, formTheme }: Readonly<{
     for (const [key, value] of Object.entries(initialValues)) {
       // Convert undefined to empty string (form library can't handle undefined)
       if (value === undefined) {
-        console.warn(`[AdminDataEditPage] Found undefined value for field ${key}, converting to empty string`)
         initialValues[key] = ''
         continue
       }
@@ -506,7 +497,6 @@ function AdminDataEditPageContent({ model, id, basePath, formTheme }: Readonly<{
       }
 
       // Convert any remaining objects to primitives
-      console.warn(`[AdminDataEditPage] Found non-primitive value for field ${key}, converting:`, value)
       if ('id' in value && typeof (value as any).id === 'string') {
         initialValues[key] = (value as any).id
       } else if (value instanceof Date) {
@@ -520,15 +510,6 @@ function AdminDataEditPageContent({ model, id, basePath, formTheme }: Readonly<{
         initialValues[key] = ''
       }
     }
-
-    // Debug: Log the final initialValues to see what we're passing to the form
-    console.log('[AdminDataEditPage] Final initialValues:', initialValues)
-    console.log('[AdminDataEditPage] Value types:', Object.entries(initialValues).map(([key, val]) => ({
-      key,
-      type: typeof val,
-      isDate: val instanceof Date,
-      value: val
-    })))
   }
 
   // Handle form submission
@@ -548,7 +529,6 @@ function AdminDataEditPageContent({ model, id, basePath, formTheme }: Readonly<{
       })
 
       if ((result as any).errors) {
-        console.error('GraphQL errors:', (result as any).errors)
         setSubmissionState({
           status: 'error',
           message: (result as any).errors.map((err: any) => err.message).join(', '),
@@ -564,7 +544,6 @@ function AdminDataEditPageContent({ model, id, basePath, formTheme }: Readonly<{
       // Refetch the data to show updated values
       await refetch()
     } catch (error) {
-      console.error('Error updating record:', error)
       setSubmissionState({
         status: 'error',
         message: error instanceof Error ? error.message : 'An unexpected error occurred',
@@ -584,7 +563,6 @@ function AdminDataEditPageContent({ model, id, basePath, formTheme }: Readonly<{
       })
 
       if ((result as any).errors) {
-        console.error('GraphQL errors:', (result as any).errors)
         setDeleteState({
           status: 'error',
           message: (result as any).errors.map((err: any) => err.message).join(', '),
@@ -602,7 +580,6 @@ function AdminDataEditPageContent({ model, id, basePath, formTheme }: Readonly<{
         navigate(`${basePath}/${toKebabCase(model.pluralName)}`)
       }, 1500)
     } catch (error) {
-      console.error('Error deleting record:', error)
       setDeleteState({
         status: 'error',
         message: error instanceof Error ? error.message : 'An unexpected error occurred',
