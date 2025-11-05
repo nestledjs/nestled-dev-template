@@ -6,7 +6,7 @@ import dts from 'vite-plugin-dts'
 export default defineConfig({
   plugins: [
     react({
-      jsxRuntime: 'classic',
+      jsxRuntime: 'automatic',
     }),
     dts({
       outDir: resolve(__dirname, '../../dist/libs/data-browser'),
