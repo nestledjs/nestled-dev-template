@@ -10,7 +10,7 @@
       "outputs": ["{workspaceRoot}/dist/libs/shared-components"],
       "options": {
         "commands": [
-          "vite build",
+          "NODE_ENV=production vite build --mode production",
           "cp README.md ../../dist/libs/shared-components/",
           "cp LICENSE ../../dist/libs/shared-components/",
           "cp package.json ../../dist/libs/shared-components/"
