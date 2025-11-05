@@ -1,6 +1,6 @@
 {
   "name": "@nestledjs/data-browser",
-  "version": "0.1.12",
+  "version": "0.1.13",
   "description": "Universal admin data browser for Nestled framework projects with full CRUD operations",
   "main": "./index.js",
   "module": "./index.js",
@@ -32,7 +32,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/nestledjs/nestled_template.git",
-    "directory": "libs/admin-data"
+    "directory": "libs/data-browser"
   },
   "peerDependencies": {
     "@apollo/client": "^4.0.0",
