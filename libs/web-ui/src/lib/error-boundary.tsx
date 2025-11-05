@@ -46,13 +46,23 @@ function renderStringWithEmbeddedJson(str: string) {
     }
   }
   // Fallback: previous logic for generic JSON blocks
-  const jsonRegex = /([\[{][\s\S]*[\]}])/g
+  // Limit string length to prevent ReDoS attacks
+  const MAX_STRING_LENGTH = 10000
+  const safeStr = str.length > MAX_STRING_LENGTH ? str.slice(0, MAX_STRING_LENGTH) + '...' : str
+
+  // Use safer regex with possessive quantifier simulation (limit backtracking)
+  // Match opening bracket/brace, then up to 5000 chars (reasonable for error messages), then closing
+  const jsonRegex = /([\[{][\s\S]{0,5000}?[\]}])/g
   const parts: (string | object)[] = []
   let lastIndex = 0
   let match
-  while ((match = jsonRegex.exec(str)) !== null) {
+  let iterations = 0
+  const MAX_ITERATIONS = 100 // Prevent infinite loops
+
+  while ((match = jsonRegex.exec(safeStr)) !== null && iterations < MAX_ITERATIONS) {
+    iterations++
     if (match.index > lastIndex) {
-      parts.push(str.slice(lastIndex, match.index))
+      parts.push(safeStr.slice(lastIndex, match.index))
     }
     try {
       const parsed = JSON5.parse(match[0])
@@ -62,8 +72,8 @@ function renderStringWithEmbeddedJson(str: string) {
     }
     lastIndex = match.index + match[0].length
   }
-  if (lastIndex < str.length) {
-    parts.push(str.slice(lastIndex))
+  if (lastIndex < safeStr.length) {
+    parts.push(safeStr.slice(lastIndex))
   }
   return (
     <>
