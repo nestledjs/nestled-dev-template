@@ -160,16 +160,8 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
     return filters
   }, [searchParams, model])
 
-  // Initialize filters from URL parameters on mount
-  useEffect(() => {
-    if (Object.keys(urlFilters).length > 0) {
-      dispatch({ type: 'SET_FILTERS', payload: urlFilters })
-      // Also show the filters panel so user can see what's filtered
-      if (!showFilters) {
-        dispatch({ type: 'TOGGLE_FILTERS' })
-      }
-    }
-  }, [urlFilters, showFilters])
+  // Track URL filters to apply them after model initialization
+  const hasUrlFilters = Object.keys(urlFilters).length > 0
 
   // Get GraphQL documents based on model
   const documents = useMemo(() => {
@@ -284,7 +276,14 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
     dispatch({ type: 'SET_DEBOUNCED_SEARCH', payload: '' })
     dispatch({ type: 'RESET_FILTERS' })
     dispatch({ type: 'RESET_PAGINATION' })
-  }, [model?.name, fieldNames, searchableFieldNames, getDefaultSearchFields, setVisibleColumns, setSearchFields, dispatch])
+
+    // Apply URL filters after reset (must be last to take precedence)
+    if (hasUrlFilters) {
+      dispatch({ type: 'SET_FILTERS', payload: urlFilters })
+      // Also show the filters panel so user can see what's filtered
+      dispatch({ type: 'SET_SHOW_FILTERS', payload: true })
+    }
+  }, [model?.name, fieldNames, searchableFieldNames, getDefaultSearchFields, setVisibleColumns, setSearchFields, dispatch, hasUrlFilters, urlFilters])
 
   // Memoized sort handler that prevents unnecessary re-renders
   const setSortSafely = useCallback(

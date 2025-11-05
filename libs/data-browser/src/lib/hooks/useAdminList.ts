@@ -26,6 +26,8 @@ function adminListReducer(state: AdminListState, action: AdminListAction): Admin
       return { ...state, filters: action.payload }
     case 'TOGGLE_FILTERS':
       return { ...state, showFilters: !state.showFilters }
+    case 'SET_SHOW_FILTERS':
+      return { ...state, showFilters: action.payload }
     case 'RESET_PAGINATION':
       return { ...state, skip: 0 }
     case 'RESET_FILTERS':
