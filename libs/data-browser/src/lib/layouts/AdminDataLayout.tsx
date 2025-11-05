@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useRef } from 'react'
-import { getPluralName } from '@nestledjs/helpers'
+import { getPluralName } from '../utils/get-plural-names'
 import { Outlet, useNavigate, useParams } from 'react-router'
 import { AdminLocalStorage } from '../utils/secure-storage'
 import { kebabCase, spacedWords } from '../utils/string-utils'

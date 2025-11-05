@@ -186,7 +186,6 @@ function AdminDataCreatePageContent({ model, basePath, formTheme }: Readonly<{ m
     try {
       return getAdminDocuments(sdk, model)
     } catch (error) {
-      console.error('[AdminDataCreatePage] Error getting documents:', error)
       return null
     }
   }, [sdk, model])
@@ -201,7 +200,6 @@ function AdminDataCreatePageContent({ model, basePath, formTheme }: Readonly<{ m
 
       return gql(documents.create)
     } catch (error) {
-      console.error('[AdminDataCreatePage] Error parsing CREATE mutation:', error)
       return null
     }
   }, [documents])
@@ -263,7 +261,6 @@ function AdminDataCreatePageContent({ model, basePath, formTheme }: Readonly<{ m
       })
 
       if ((result as any).errors) {
-        console.error('GraphQL errors:', (result as any).errors)
         setSubmissionState({
           status: 'error',
           message: (result as any).errors.map((err: any) => err.message).join(', '),
@@ -281,7 +278,6 @@ function AdminDataCreatePageContent({ model, basePath, formTheme }: Readonly<{ m
         navigate(`${basePath}/${toKebabCase(model.pluralName)}`)
       }, 1500)
     } catch (error) {
-      console.error('Error creating record:', error)
       setSubmissionState({
         status: 'error',
         message: error instanceof Error ? error.message : 'An unexpected error occurred',

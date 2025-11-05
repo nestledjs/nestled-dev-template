@@ -30,7 +30,6 @@ This package requires a Nestled framework project with:
 - **Apollo Client v4+** for GraphQL operations
 - **React Router v7+** for routing
 - **@nestledjs/forms** for form generation
-- **@nestledjs/helpers** for utility functions
 - **Prisma** for database models
 - **Generated GraphQL SDK** with admin CRUD operations
 
@@ -40,7 +39,6 @@ This package requires a Nestled framework project with:
 {
   "@apollo/client": "^4.0.0",
   "@nestledjs/forms": "^0.5.0",
-  "@nestledjs/helpers": "^0.1.0",
   "react": "^19.0.0",
   "react-router": "^7.0.0"
 }

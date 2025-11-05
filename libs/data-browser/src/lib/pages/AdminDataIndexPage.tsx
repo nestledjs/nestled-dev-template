@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router'
-import { getPluralName } from '@nestledjs/helpers'
+import { getPluralName } from '../utils/get-plural-names'
 import { useAdminDataContext } from '../context/AdminDataContext'
 import { kebabCase, spacedWords } from '../utils/string-utils'
 
