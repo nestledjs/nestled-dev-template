@@ -1,12 +1,13 @@
-import React, { useEffect, useMemo, useState } from 'react'
 import { gql } from '@apollo/client'
 import { useMutation, useQuery } from '@apollo/client/react'
 import { loadDevMessages, loadErrorMessages } from '@apollo/client/dev'
 import { CheckCircleIcon, ExclamationCircleIcon } from '@heroicons/react/24/outline'
 import { TrashIcon } from '@heroicons/react/24/solid'
-import { ErrorBoundary } from '@nestledjs/shared-components'
-import { Form } from '@nestledjs/forms'
-import { useAdminDataContext } from '../context/AdminDataContext'
+import { DATABASE_MODELS } from '@biztobiz/shared/sdk'
+// Helper functions for admin data management
+function findModelByName(name: string) {
+  return DATABASE_MODELS.find(model => model.name === name)
+}
 
 function toLowerCamelCase(name: string): string {
   if (!name) return ''
@@ -24,6 +25,10 @@ function getModelResponseFieldName(modelName: string): string {
 function toReadableText(text: string): string {
   return text.replace(/([a-z])([A-Z])/g, '$1 $2').replace(/^./, str => str.toUpperCase())
 }
+import { WebUiErrorBoundary } from '@biztobiz/web-ui'
+import { formatUtcForDateInput } from '@biztobiz/shared/utils'
+import { Form } from '@nestledjs/forms'
+import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router'
 
 import { buildFormFields, cleanFormInput, getAdminDocuments } from '../utils/graphql-utils' // Load Apollo error messages in development
@@ -54,7 +59,26 @@ const toKebabCase = (str: string): string => {
     .toLowerCase() // Convert to lowercase
 }
 
-// Validation functions moved into component to access databaseModels from context
+const validateDataType = (dataType: string | undefined): string | null => {
+  if (!dataType) return null
+
+  const sanitized = sanitizeInput(dataType)
+  if (!sanitized) return null
+
+  // Convert kebab-case to PascalCase (course-chapter -> CourseChapter)
+  const properCaseDataType = sanitized
+    .split('-')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join('')
+
+  // Check if this data type exists in our models
+  const model = DATABASE_MODELS.find(m => m.name === properCaseDataType)
+  if (!model) {
+    return null
+  }
+
+  return properCaseDataType
+}
 
 const validateId = (id: string | undefined): string | null => {
   if (!id) return null
@@ -64,7 +88,6 @@ const validateId = (id: string | undefined): string | null => {
 
   // Basic ID format validation (adjust based on your ID format)
   if (!/^[a-zA-Z0-9_-]+$/.test(sanitized)) {
-    console.warn(`[Security] Invalid ID format attempted: ${id}`)
     return null
   }
 
@@ -73,35 +96,6 @@ const validateId = (id: string | undefined): string | null => {
 
 export function AdminDataEditPage() {
   const { dataType, id } = useParams()
-  const { databaseModels, basePath = '/admin/data', formTheme } = useAdminDataContext()
-
-  // Helper function to find model by name
-  const findModelByName = (name: string) => {
-    return databaseModels.find(model => model.name === name)
-  }
-
-  // Validate data type
-  const validateDataType = (dataType: string | undefined): string | null => {
-    if (!dataType) return null
-
-    const sanitized = sanitizeInput(dataType)
-    if (!sanitized) return null
-
-    // Convert kebab-case to PascalCase (course-chapter -> CourseChapter)
-    const properCaseDataType = sanitized
-      .split('-')
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-      .join('')
-
-    // Check if this data type exists in our models
-    const model = databaseModels.find(m => m.name === properCaseDataType)
-    if (!model) {
-      console.warn(`[Security] Invalid dataType attempted: ${dataType}`)
-      return null
-    }
-
-    return properCaseDataType
-  }
 
   // Security validation
   const validatedDataType = validateDataType(dataType)
@@ -115,18 +109,18 @@ export function AdminDataEditPage() {
   // Render error states
   if (shouldShowUnauthorized) {
     return (
-      <div className="flex flex-col justify-center py-12">
-        <div className="mt-8 mx-auto w-full max-w-md">
-          <div className="bg-white dark:bg-gray-800 py-8 px-4 shadow sm:rounded-lg sm:px-10">
+      <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+        <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+          <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
             <div className="text-center">
               <ExclamationCircleIcon className="mx-auto h-12 w-12 text-red-400" />
-              <h2 className="mt-4 text-lg font-medium text-gray-900 dark:text-gray-100">Unauthorized</h2>
-              <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+              <h2 className="mt-4 text-lg font-medium text-gray-900">Unauthorized</h2>
+              <p className="mt-2 text-sm text-gray-600">
                 Invalid data type, ID, or insufficient permissions.
               </p>
               <div className="mt-6">
                 <Link
-                  to={basePath}
+                  to="/admin/data"
                   className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-web hover:bg-green-web-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-web"
                 >
                   Return to Data Browser
@@ -141,18 +135,18 @@ export function AdminDataEditPage() {
 
   if (shouldShowModelNotFound) {
     return (
-      <div className="flex flex-col justify-center py-12">
-        <div className="mt-8 mx-auto w-full max-w-md">
-          <div className="bg-white dark:bg-gray-800 py-8 px-4 shadow sm:rounded-lg sm:px-10">
+      <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+        <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+          <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
             <div className="text-center">
               <ExclamationCircleIcon className="mx-auto h-12 w-12 text-yellow-400" />
-              <h2 className="mt-4 text-lg font-medium text-gray-900 dark:text-gray-100">Model Not Found</h2>
-              <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+              <h2 className="mt-4 text-lg font-medium text-gray-900">Model Not Found</h2>
+              <p className="mt-2 text-sm text-gray-600">
                 The data model for "{validatedDataType}" could not be found.
               </p>
               <div className="mt-6">
                 <Link
-                  to={basePath}
+                  to="/admin/data"
                   className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-web hover:bg-green-web-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-web"
                 >
                   Return to Data Browser
@@ -166,16 +160,15 @@ export function AdminDataEditPage() {
   }
 
   // At this point we know model exists and is valid
-  return <AdminDataEditPageContent model={model!} id={validatedId!} basePath={basePath} formTheme={formTheme} />
+  return <AdminDataEditPageContent model={model!} id={validatedId!} />
 }
 
 // =================================
 // CONTENT COMPONENT
 // =================================
 
-function AdminDataEditPageContent({ model, id, basePath, formTheme }: Readonly<{ model: any; id: string; basePath: string; formTheme: any }>) {
+function AdminDataEditPageContent({ model, id }: Readonly<{ model: any; id: string }>) {
   const navigate = useNavigate()
-  const { sdk } = useAdminDataContext()
 
   // State
   const [submissionState, setSubmissionState] = useState<{
@@ -193,12 +186,11 @@ function AdminDataEditPageContent({ model, id, basePath, formTheme }: Readonly<{
   // Get GraphQL documents with error handling (memoized to prevent render loops)
   const documents = useMemo(() => {
     try {
-      return getAdminDocuments(sdk, model)
+      return getAdminDocuments(model)
     } catch (error) {
-      console.error('[AdminDataEditPage] Error getting documents:', error)
       return null
     }
-  }, [sdk, model])
+  }, [model])
 
   const QUERY = useMemo(() => {
     if (!documents?.query) return null
@@ -209,7 +201,6 @@ function AdminDataEditPageContent({ model, id, basePath, formTheme }: Readonly<{
       }
       return gql(documents.query)
     } catch (error) {
-      console.error('[AdminDataEditPage] Error parsing QUERY:', error)
       return null
     }
   }, [documents])
@@ -223,7 +214,6 @@ function AdminDataEditPageContent({ model, id, basePath, formTheme }: Readonly<{
       }
       return gql(documents.update)
     } catch (error) {
-      console.error('[AdminDataEditPage] Error parsing UPDATE mutation:', error)
       return null
     }
   }, [documents])
@@ -237,7 +227,6 @@ function AdminDataEditPageContent({ model, id, basePath, formTheme }: Readonly<{
       }
       return gql(documents.delete)
     } catch (error) {
-      console.error('[AdminDataEditPage] Error parsing DELETE mutation:', error)
       return null
     }
   }, [documents])
@@ -245,6 +234,9 @@ function AdminDataEditPageContent({ model, id, basePath, formTheme }: Readonly<{
   // Variables for GraphQL operations
   const idVariableName = getModelIdVariableName(model.name)
   const responseFieldName = getModelResponseFieldName(model.name)
+
+  // Check if we're in SSR to prevent timeout issues
+  const isSSR = typeof window === 'undefined'
 
   // Query for existing data - use skip to prevent running when documents are missing
   const { data, loading, error, refetch } = useQuery(
@@ -257,7 +249,7 @@ function AdminDataEditPageContent({ model, id, basePath, formTheme }: Readonly<{
     {
       variables: { [idVariableName]: id },
       errorPolicy: 'all',
-      skip: !QUERY || !id,
+      skip: !QUERY || !id || isSSR, // Skip during SSR to prevent timeout
     },
   )
 
@@ -280,6 +272,12 @@ function AdminDataEditPageContent({ model, id, basePath, formTheme }: Readonly<{
   )
 
   // ALL useEffect hooks MUST be called before any early returns
+  // Reset submission state when ID changes (e.g., after redirect to new ID)
+  useEffect(() => {
+    setSubmissionState({ status: 'idle' })
+    setDeleteState({ status: 'idle' })
+  }, [id])
+
   // Clear submission state after errors
   useEffect(() => {
     if (submissionState.status === 'error') {
@@ -302,19 +300,19 @@ function AdminDataEditPageContent({ model, id, basePath, formTheme }: Readonly<{
   // Early returns after ALL hooks are called
   if (!documents || !QUERY || !UPDATE_MUTATION || !DELETE_MUTATION) {
     return (
-      <div className="flex flex-col justify-center py-12">
-        <div className="mt-8 mx-auto w-full max-w-2xl">
-          <div className="bg-white dark:bg-gray-800 py-8 px-4 shadow sm:rounded-lg sm:px-10">
+      <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+        <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-2xl">
+          <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
             <div className="text-center">
               <ExclamationCircleIcon className="mx-auto h-12 w-12 text-red-400" />
-              <h2 className="mt-4 text-lg font-medium text-gray-900 dark:text-gray-100">GraphQL Schema Error</h2>
-              <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+              <h2 className="mt-4 text-lg font-medium text-gray-900">GraphQL Schema Error</h2>
+              <p className="mt-2 text-sm text-gray-600">
                 Unable to load GraphQL documents for this model. Please ensure the API server is
                 running and the GraphQL schema is up to date.
               </p>
               <div className="mt-6">
                 <Link
-                  to={basePath}
+                  to="/admin/data"
                   className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-web hover:bg-green-web-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-web"
                 >
                   Return to Data Browser
@@ -330,13 +328,13 @@ function AdminDataEditPageContent({ model, id, basePath, formTheme }: Readonly<{
   // Handle query errors
   if (error) {
     return (
-      <div className="flex flex-col justify-center py-12">
-        <div className="mt-8 mx-auto w-full max-w-md">
-          <div className="bg-white dark:bg-gray-800 py-8 px-4 shadow sm:rounded-lg sm:px-10">
+      <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+        <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+          <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
             <div className="text-center">
               <ExclamationCircleIcon className="mx-auto h-12 w-12 text-red-400" />
-              <h2 className="mt-4 text-lg font-medium text-gray-900 dark:text-gray-100">Error Loading Data</h2>
-              <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">{error.message}</p>
+              <h2 className="mt-4 text-lg font-medium text-gray-900">Error Loading Data</h2>
+              <p className="mt-2 text-sm text-gray-600">{error.message}</p>
               <div className="mt-6 space-y-3">
                 <button
                   onClick={() => refetch()}
@@ -345,7 +343,7 @@ function AdminDataEditPageContent({ model, id, basePath, formTheme }: Readonly<{
                   Try Again
                 </button>
                 <Link
-                  to={`${basePath}/${toKebabCase(model.pluralName)}`}
+                  to={`/admin/data/${toKebabCase(model.pluralName)}`}
                   className="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-web"
                 >
                   Back to List
@@ -361,13 +359,13 @@ function AdminDataEditPageContent({ model, id, basePath, formTheme }: Readonly<{
   // Show loading state
   if (loading) {
     return (
-      <div className="flex flex-col justify-center py-12">
-        <div className="mt-8 mx-auto w-full max-w-md">
-          <div className="bg-white dark:bg-gray-800 py-8 px-4 shadow sm:rounded-lg sm:px-10">
+      <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+        <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+          <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
             <div className="text-center">
               <div className="mx-auto h-12 w-12 border-4 border-green-web border-t-transparent rounded-full animate-spin" />
-              <h2 className="mt-4 text-lg font-medium text-gray-900 dark:text-gray-100">Loading...</h2>
-              <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+              <h2 className="mt-4 text-lg font-medium text-gray-900">Loading...</h2>
+              <p className="mt-2 text-sm text-gray-600">
                 Loading {toReadableText(model.name)} data...
               </p>
             </div>
@@ -378,23 +376,23 @@ function AdminDataEditPageContent({ model, id, basePath, formTheme }: Readonly<{
   }
 
   // Get the item data
-  const item = (data as any)?.[responseFieldName]
+  const item = data?.[responseFieldName]
 
   if (!item) {
     return (
-      <div className="flex flex-col justify-center py-12">
-        <div className="mt-8 mx-auto w-full max-w-md">
-          <div className="bg-white dark:bg-gray-800 py-8 px-4 shadow sm:rounded-lg sm:px-10">
+      <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+        <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+          <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
             <div className="text-center">
               <ExclamationCircleIcon className="mx-auto h-12 w-12 text-yellow-400" />
-              <h2 className="mt-4 text-lg font-medium text-gray-900 dark:text-gray-100">Not Found</h2>
-              <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+              <h2 className="mt-4 text-lg font-medium text-gray-900">Not Found</h2>
+              <p className="mt-2 text-sm text-gray-600">
                 The {toReadableText(model.name)} you're looking for doesn't exist or has been
                 deleted.
               </p>
               <div className="mt-6">
                 <Link
-                  to={`${basePath}/${toKebabCase(model.pluralName)}`}
+                  to={`/admin/data/${toKebabCase(model.pluralName)}`}
                   className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-web hover:bg-green-web-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-web"
                 >
                   Back to List
@@ -407,8 +405,13 @@ function AdminDataEditPageContent({ model, id, basePath, formTheme }: Readonly<{
     )
   }
 
-  // Build form fields without values (we'll use defaultValues prop instead)
-  const formFields = buildFormFields(sdk, model, 'update', item, submissionState.status === 'loading', basePath)
+  // Build form fields with initial values
+  const formFields = buildFormFields(
+    model,
+    'update',
+    item,
+    submissionState.status === 'loading',
+  )
 
   // Extract initial values for the Form component
   const initialValues: Record<string, any> = {}
@@ -419,6 +422,7 @@ function AdminDataEditPageContent({ model, id, basePath, formTheme }: Readonly<{
       if (field.isReadOnly || field.isGenerated) return false
       if (field.isUpdatedAt || field.name === 'createdAt') return false
       if (field.relationName && field.isList) return false
+      if (field.relationName && (!field.relationFromFields || field.relationFromFields.length === 0)) return false
       return true
     })
 
@@ -429,39 +433,11 @@ function AdminDataEditPageContent({ model, id, basePath, formTheme }: Readonly<{
       if (field.relationName && !field.isList) {
         const relationFieldName = field.relationFromFields?.[0] || field.name
         value = item[relationFieldName]
-
-        // Extract ID from object, or convert to empty string if it's still an object
-        if (value && typeof value === 'object') {
-          value = value.id || ''
+        if (value && typeof value === 'object' && value.id) {
+          value = value.id
         }
-
         initialValues[relationFieldName] = value || ''
       } else {
-        // Convert Date objects and timestamps to proper format for date/datetime fields
-        if (field.type.toLowerCase() === 'datetime' || field.type.toLowerCase() === 'date') {
-          if (value !== null && value !== undefined && value !== '') {
-            try {
-              // Handle Date objects, ISO strings, and timestamps
-              const dateValue = value instanceof Date ? value : new Date(value)
-
-              if (field.type.toLowerCase() === 'date') {
-                // Date fields: YYYY-MM-DD format
-                value = dateValue.toISOString().split('T')[0]
-              } else {
-                // DateTime fields: YYYY-MM-DDTHH:mm format (for datetime-local input)
-                const isoString = dateValue.toISOString()
-                // Extract YYYY-MM-DDTHH:mm (remove seconds and timezone)
-                value = isoString.substring(0, 16)
-              }
-            } catch (e) {
-              console.warn(`Failed to convert date value for field ${field.name}:`, e)
-              value = ''
-            }
-          } else {
-            value = ''
-          }
-        }
-
         // Convert null to empty string for form fields
         if (value === null && field.type.toLowerCase() !== 'boolean') {
           value = ''
@@ -470,65 +446,17 @@ function AdminDataEditPageContent({ model, id, basePath, formTheme }: Readonly<{
         if (field.type.toLowerCase() === 'boolean') {
           value = Boolean(value)
         }
-
-        // Safety check: convert any remaining non-primitive values to strings
-        if (value !== null && typeof value === 'object') {
-          console.warn(`Field ${field.name} has object value, converting to string:`, value)
-          // If it's an object with an id, use the id
-          if (typeof value === 'object' && 'id' in value) {
-            value = (value as any).id
-          } else {
-            value = ''
-          }
+        // For date/dateTime fields, normalize to YYYY-MM-DD so date inputs pre-populate correctly
+        if (
+          field.type &&
+          (field.type.toLowerCase() === 'date' || field.type.toLowerCase() === 'datetime')
+        ) {
+          initialValues[field.name] = formatUtcForDateInput(value as any)
+        } else {
+          initialValues[field.name] = value
         }
-
-        initialValues[field.name] = value
       }
     })
-
-    // Final safety check: convert undefined and remaining objects
-    for (const [key, value] of Object.entries(initialValues)) {
-      // Convert undefined to empty string (form library can't handle undefined)
-      if (value === undefined) {
-        console.warn(`[AdminDataEditPage] Found undefined value for field ${key}, converting to empty string`)
-        initialValues[key] = ''
-        continue
-      }
-
-      // Skip null values - forms can handle null
-      if (value === null) {
-        continue
-      }
-
-      // Skip primitives - they're already in the correct format
-      if (typeof value !== 'object') {
-        continue
-      }
-
-      // Convert any remaining objects to primitives
-      console.warn(`[AdminDataEditPage] Found non-primitive value for field ${key}, converting:`, value)
-      if ('id' in value && typeof (value as any).id === 'string') {
-        initialValues[key] = (value as any).id
-      } else if (value instanceof Date) {
-        // This shouldn't happen if date conversion above worked, but handle it just in case
-        const field = model.fields.find((f: any) => f.name === key)
-        initialValues[key] = field?.type.toLowerCase() === 'date'
-          ? value.toISOString().split('T')[0]
-          : value.toISOString()
-      } else {
-        // Convert everything else to empty string for safety
-        initialValues[key] = ''
-      }
-    }
-
-    // Debug: Log the final initialValues to see what we're passing to the form
-    console.log('[AdminDataEditPage] Final initialValues:', initialValues)
-    console.log('[AdminDataEditPage] Value types:', Object.entries(initialValues).map(([key, val]) => ({
-      key,
-      type: typeof val,
-      isDate: val instanceof Date,
-      value: val
-    })))
   }
 
   // Handle form submission
@@ -539,6 +467,10 @@ function AdminDataEditPageContent({ model, id, basePath, formTheme }: Readonly<{
       // Clean the form input
       const cleanedInput = cleanFormInput(formData, model)
 
+      // Check if ID is being changed
+      const newId = typeof cleanedInput.id === 'string' ? cleanedInput.id : (cleanedInput.id ? String(cleanedInput.id) : '')
+      const isIdChanged = newId && newId !== '' && newId !== id
+
       // Execute mutation
       const result = await updateMutation({
         variables: {
@@ -547,24 +479,32 @@ function AdminDataEditPageContent({ model, id, basePath, formTheme }: Readonly<{
         },
       })
 
-      if ((result as any).errors) {
-        console.error('GraphQL errors:', (result as any).errors)
+      if (result.errors) {
         setSubmissionState({
           status: 'error',
-          message: (result as any).errors.map((err: any) => err.message).join(', '),
+          message: result.errors.map(err => err.message).join(', '),
         })
         return
       }
 
-      setSubmissionState({
-        status: 'success',
-        message: `${toReadableText(model.name)} updated successfully!`,
-      })
-
-      // Refetch the data to show updated values
-      await refetch()
+      // If ID changed, keep loading state and redirect
+      if (isIdChanged) {
+        setSubmissionState({
+          status: 'loading',
+          message: `${toReadableText(model.name)} updated! Redirecting to new ID...`,
+        })
+        setTimeout(() => {
+          navigate(`/admin/data/${toKebabCase(model.name)}/${newId}`)
+        }, 1500)
+      } else {
+        setSubmissionState({
+          status: 'success',
+          message: `${toReadableText(model.name)} updated successfully!`,
+        })
+        // Refetch the data to show updated values
+        await refetch()
+      }
     } catch (error) {
-      console.error('Error updating record:', error)
       setSubmissionState({
         status: 'error',
         message: error instanceof Error ? error.message : 'An unexpected error occurred',
@@ -581,13 +521,20 @@ function AdminDataEditPageContent({ model, id, basePath, formTheme }: Readonly<{
         variables: {
           [idVariableName]: id,
         },
+        update: (cache) => {
+          // Remove the deleted item from the cache
+          cache.evict({
+            id: cache.identify({ __typename: model.name, id }),
+          })
+          // Trigger garbage collection to clean up orphaned references
+          cache.gc()
+        },
       })
 
-      if ((result as any).errors) {
-        console.error('GraphQL errors:', (result as any).errors)
+      if (result.errors) {
         setDeleteState({
           status: 'error',
-          message: (result as any).errors.map((err: any) => err.message).join(', '),
+          message: result.errors.map(err => err.message).join(', '),
         })
         return
       }
@@ -599,10 +546,9 @@ function AdminDataEditPageContent({ model, id, basePath, formTheme }: Readonly<{
 
       // Redirect after a brief delay
       setTimeout(() => {
-        navigate(`${basePath}/${toKebabCase(model.pluralName)}`)
+        navigate(`/admin/data/${toKebabCase(model.pluralName)}`)
       }, 1500)
     } catch (error) {
-      console.error('Error deleting record:', error)
       setDeleteState({
         status: 'error',
         message: error instanceof Error ? error.message : 'An unexpected error occurred',
@@ -611,20 +557,21 @@ function AdminDataEditPageContent({ model, id, basePath, formTheme }: Readonly<{
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="mb-8">
+    <div className="min-h-screen bg-gray-50 pt-6 pb-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-3xl mx-auto">
+        {/* Header */}
+        <div className="mb-8">
           <nav className="flex mb-6" aria-label="Breadcrumb">
             <ol className="flex items-center space-x-4">
               <li>
-                <Link to={basePath} className="text-gray-400 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-400">
+                <Link to="/admin/data" className="text-gray-400 hover:text-gray-500">
                   Data Browser
                 </Link>
               </li>
               <li>
                 <div className="flex items-center">
                   <svg
-                    className="flex-shrink-0 h-5 w-5 text-gray-300 dark:text-gray-600"
+                    className="flex-shrink-0 h-5 w-5 text-gray-300"
                     fill="currentColor"
                     viewBox="0 0 20 20"
                   >
@@ -635,8 +582,8 @@ function AdminDataEditPageContent({ model, id, basePath, formTheme }: Readonly<{
                     />
                   </svg>
                   <Link
-                    to={`${basePath}/${toKebabCase(model.pluralName)}`}
-                    className="ml-4 text-gray-400 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-400"
+                    to={`/admin/data/${toKebabCase(model.pluralName)}`}
+                    className="ml-4 text-gray-400 hover:text-gray-500"
                   >
                     {toReadableText(model.pluralName)}
                   </Link>
@@ -645,7 +592,7 @@ function AdminDataEditPageContent({ model, id, basePath, formTheme }: Readonly<{
               <li>
                 <div className="flex items-center">
                   <svg
-                    className="flex-shrink-0 h-5 w-5 text-gray-300 dark:text-gray-600"
+                    className="flex-shrink-0 h-5 w-5 text-gray-300"
                     fill="currentColor"
                     viewBox="0 0 20 20"
                   >
@@ -655,13 +602,13 @@ function AdminDataEditPageContent({ model, id, basePath, formTheme }: Readonly<{
                       clipRule="evenodd"
                     />
                   </svg>
-                  <span className="ml-4 text-gray-500 dark:text-gray-400">Edit</span>
+                  <span className="ml-4 text-gray-500">Edit</span>
                 </div>
               </li>
             </ol>
           </nav>
           <div className="flex items-center justify-between">
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Edit {toReadableText(model.name)}</h1>
+            <h1 className="text-3xl font-bold text-gray-900">Edit {toReadableText(model.name)}</h1>
             <button
               onClick={() => setShowDeleteConfirm(true)}
               disabled={deleteState.status === 'loading'}
@@ -675,18 +622,18 @@ function AdminDataEditPageContent({ model, id, basePath, formTheme }: Readonly<{
 
         {/* Delete Confirmation Modal */}
         {showDeleteConfirm && (
-          <div className="fixed inset-0 bg-gray-600 dark:bg-gray-900 bg-opacity-50 dark:bg-opacity-75 overflow-y-auto h-full w-full z-50 flex items-center justify-center">
-            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl max-w-md w-full mx-4">
+          <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50 flex items-center justify-center">
+            <div className="bg-white p-6 rounded-lg shadow-xl max-w-md w-full mx-4">
               <div className="flex items-center">
                 <div className="flex-shrink-0">
                   <ExclamationCircleIcon className="h-6 w-6 text-red-600" />
                 </div>
                 <div className="ml-3">
-                  <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
+                  <h3 className="text-lg font-medium text-gray-900">
                     Delete {toReadableText(model.name)}
                   </h3>
                   <div className="mt-2">
-                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                    <p className="text-sm text-gray-500">
                       Are you sure you want to delete this{' '}
                       {toReadableText(model.name).toLowerCase()}? This action cannot be undone.
                     </p>
@@ -756,7 +703,12 @@ function AdminDataEditPageContent({ model, id, basePath, formTheme }: Readonly<{
         )}
 
         {/* Form */}
-        <div className="bg-white dark:bg-gray-800 shadow-sm rounded-lg">
+        <div className="bg-white shadow-sm rounded-lg relative">
+          {(submissionState.status === 'loading' || deleteState.status === 'loading') && (
+            <div className="absolute inset-0 bg-white/60 backdrop-blur-[1px] flex items-center justify-center rounded-lg z-10">
+              <div className="h-10 w-10 border-4 border-green-web border-t-transparent rounded-full animate-spin" />
+            </div>
+          )}
           <div className="px-6 py-8">
             <Form
               id={`edit-${model.name.toLowerCase()}-form`}
@@ -764,14 +716,14 @@ function AdminDataEditPageContent({ model, id, basePath, formTheme }: Readonly<{
               submit={handleSubmit}
               disabled={submissionState.status === 'loading' || deleteState.status === 'loading'}
               defaultValues={initialValues}
-              theme={formTheme}
             />
           </div>
         </div>
+      </div>
     </div>
   )
 }
 
 export function AdminDataEditErrorBoundary({ error }: Readonly<{ error: Error }>) {
-  return <ErrorBoundary error={error} />
+  return <WebUiErrorBoundary error={error} />
 }

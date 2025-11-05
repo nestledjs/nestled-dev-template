@@ -811,7 +811,9 @@ importers:
         specifier: ^8.18.1
         version: 8.18.1
 
-  libs/admin-data:
+  libs/api/prisma/src/lib/prisma-generated: {}
+
+  libs/data-browser:
     dependencies:
       '@apollo/client':
         specifier: ^4.0.0
@@ -821,10 +823,10 @@ importers:
         version: 2.2.0(react@19.1.0)
       '@nestledjs/forms':
         specifier: ^0.5.0
-        version: 0.5.1(@mdxeditor/editor@3.39.1(@codemirror/language@6.11.2)(@lezer/highlight@1.2.1)(@types/react-dom@19.1.0(@types/react@19.1.0))(@types/react@19.1.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(yjs@13.6.27))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+        version: 0.5.3(@mdxeditor/editor@3.39.1(@codemirror/language@6.11.2)(@lezer/highlight@1.2.1)(@types/react-dom@19.1.0(@types/react@19.1.0))(@types/react@19.1.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(yjs@13.6.27))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@nestledjs/helpers':
         specifier: ^0.1.0
-        version: 0.1.5
+        version: 0.1.7
       '@nestledjs/shared-components':
         specifier: ^0.1.12
         version: 0.1.12(@heroicons/react@2.2.0(react@19.1.0))(react-router@7.9.5(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react@19.1.0)
@@ -834,8 +836,6 @@ importers:
       react-router:
         specifier: ^7.0.0
         version: 7.9.5(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
-
-  libs/api/prisma/src/lib/prisma-generated: {}
 
   libs/shared-components:
     dependencies:
@@ -3935,16 +3935,6 @@ packages:
     peerDependencies:
       '@nestledjs/utils': 0.2.6
 
-  '@nestledjs/forms@0.5.1':
-    resolution: {integrity: sha512-TPvM4rK5LED539w8YuVikTdq5RGVW70Eawc81quICPZlUL+AJzyqDXUE0PSfFXMKQBrC//0/w2b4kAAKACu9jA==}
-    peerDependencies:
-      '@mdxeditor/editor': ^3.39.1
-      react: '>=18.0.0'
-      react-dom: '>=18.0.0'
-    peerDependenciesMeta:
-      '@mdxeditor/editor':
-        optional: true
-
   '@nestledjs/forms@0.5.3':
     resolution: {integrity: sha512-hlEsvy5REd6GdNVjAdN9kxxcAtzs8TbfySFoBBeHCZtQp4nZbcFpldCtVDSF3tfGoJ0AYRwN8ddybQ6iM8ncDQ==}
     peerDependencies:
@@ -3957,9 +3947,6 @@ packages:
 
   '@nestledjs/generators@0.2.3':
     resolution: {integrity: sha512-U5Xd0TNhU3D6sINpXDmGYQsbOcVt58MpYgIvbb2t7EMN6HkB9Gvth7BW5suURDf/GKMtU+094b0tWxDLVEO25g==}
-
-  '@nestledjs/helpers@0.1.5':
-    resolution: {integrity: sha512-pPV43sVtdy8I4D8n3mIb/dOGjMnJiAZiI5McJBXBYFSIypj0V1TJ9RGLhl0kkwfPjcQKvp+AxC8YriRdHnbkSg==}
 
   '@nestledjs/helpers@0.1.7':
     resolution: {integrity: sha512-q+OXdIskK0iBbBW35Rqn+9ruSjp/WAlBl/aWtRgcQurNe7NqqOnRfFsm9fDvMIz0Mx1ooqWv8+JA/uuAEso9kw==}
@@ -20298,18 +20285,6 @@ snapshots:
     transitivePeerDependencies:
       - nx
 
-  '@nestledjs/forms@0.5.1(@mdxeditor/editor@3.39.1(@codemirror/language@6.11.2)(@lezer/highlight@1.2.1)(@types/react-dom@19.1.0(@types/react@19.1.0))(@types/react@19.1.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(yjs@13.6.27))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
-    dependencies:
-      '@hookform/resolvers': 3.10.0(react-hook-form@7.60.0(react@19.1.0))
-      date-fns: 4.1.0
-      react: 19.1.0
-      react-dom: 19.1.0(react@19.1.0)
-      react-hook-form: 7.60.0(react@19.1.0)
-      react-phone-number-input: 3.4.12(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
-      zod: 3.25.56
-    optionalDependencies:
-      '@mdxeditor/editor': 3.39.1(@codemirror/language@6.11.2)(@lezer/highlight@1.2.1)(@types/react-dom@19.1.0(@types/react@19.1.0))(@types/react@19.1.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(yjs@13.6.27)
-
   '@nestledjs/forms@0.5.3(@mdxeditor/editor@3.39.1(@codemirror/language@6.11.2)(@lezer/highlight@1.2.1)(@types/react-dom@19.1.0(@types/react@19.1.0))(@types/react@19.1.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(yjs@13.6.27))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
     dependencies:
       '@hookform/resolvers': 3.10.0(react-hook-form@7.60.0(react@19.1.0))
@@ -20365,11 +20340,6 @@ snapshots:
       - vue-tsc
       - webpack
       - webpack-cli
-
-  '@nestledjs/helpers@0.1.5':
-    dependencies:
-      pluralize: 8.0.0
-      tslib: 2.8.1
 
   '@nestledjs/helpers@0.1.7':
     dependencies:

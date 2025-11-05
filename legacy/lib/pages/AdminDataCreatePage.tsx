@@ -1,14 +1,18 @@
-import React, { useEffect, useMemo, useState } from 'react'
 import { gql } from '@apollo/client'
 import { useMutation } from '@apollo/client/react'
 import { CheckCircleIcon, ExclamationCircleIcon } from '@heroicons/react/24/outline'
-import { ErrorBoundary } from '@nestledjs/shared-components'
-import { Form } from '@nestledjs/forms'
-import { useAdminDataContext } from '../context/AdminDataContext'
+import { DATABASE_MODELS } from '@biztobiz/shared/sdk'
+// Helper functions for admin data management
+function findModelByName(name: string) {
+  return DATABASE_MODELS.find(model => model.name === name)
+}
 
 function toReadableText(text: string): string {
   return text.replace(/([a-z])([A-Z])/g, '$1 $2').replace(/^./, str => str.toUpperCase())
 }
+import { WebUiErrorBoundary } from '@biztobiz/web-ui'
+import { Form } from '@nestledjs/forms'
+import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router'
 
 import { buildFormFields, cleanFormInput, getAdminDocuments } from '../utils/graphql-utils' // =================================
@@ -37,7 +41,21 @@ const toKebabCase = (str: string): string => {
     .toLowerCase() // Convert to lowercase
 }
 
-// Validation functions moved into component to access databaseModels from context
+// Validate data type against allowed models
+function validateDataType(dataType: string | undefined): string | null {
+  const sanitized = sanitizeInput(dataType)
+  if (!sanitized) return null
+
+  // Convert kebab-case to PascalCase (course-chapter -> CourseChapter)
+  const properCaseDataType = sanitized
+    .split('-')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join('')
+
+  // Check if this data type exists in our models
+  const model = DATABASE_MODELS.find(m => m.name === properCaseDataType)
+  return model ? properCaseDataType : null
+}
 
 // Check if user has access to this data type (basic implementation)
 function checkAccess(dataType: string): boolean {
@@ -52,28 +70,6 @@ function checkAccess(dataType: string): boolean {
 
 export function AdminDataCreatePage() {
   const { dataType } = useParams()
-  const { databaseModels, basePath = '/admin/data', formTheme } = useAdminDataContext()
-
-  // Helper function to find model by name
-  const findModelByName = (name: string) => {
-    return databaseModels.find(model => model.name === name)
-  }
-
-  // Validate data type against allowed models
-  const validateDataType = (dataType: string | undefined): string | null => {
-    const sanitized = sanitizeInput(dataType)
-    if (!sanitized) return null
-
-    // Convert kebab-case to PascalCase (course-chapter -> CourseChapter)
-    const properCaseDataType = sanitized
-      .split('-')
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-      .join('')
-
-    // Check if this data type exists in our models
-    const model = databaseModels.find(m => m.name === properCaseDataType)
-    return model ? properCaseDataType : null
-  }
 
   // Security validation
   const validatedDataType = validateDataType(dataType)
@@ -87,18 +83,18 @@ export function AdminDataCreatePage() {
   // Render error states
   if (shouldShowUnauthorized) {
     return (
-      <div className="flex flex-col justify-center py-12">
-        <div className="mt-8 mx-auto w-full max-w-md">
-          <div className="bg-white dark:bg-gray-800 py-8 px-4 shadow sm:rounded-lg sm:px-10">
+      <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+        <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+          <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
             <div className="text-center">
               <ExclamationCircleIcon className="mx-auto h-12 w-12 text-red-400" />
-              <h2 className="mt-4 text-lg font-medium text-gray-900 dark:text-gray-100">Unauthorized</h2>
-              <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+              <h2 className="mt-4 text-lg font-medium text-gray-900">Unauthorized</h2>
+              <p className="mt-2 text-sm text-gray-600">
                 Invalid data type or insufficient permissions.
               </p>
               <div className="mt-6">
                 <Link
-                  to={basePath}
+                  to="/admin/data"
                   className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-web hover:bg-green-web-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-web"
                 >
                   Return to Data Browser
@@ -113,18 +109,18 @@ export function AdminDataCreatePage() {
 
   if (shouldShowAccessDenied) {
     return (
-      <div className="flex flex-col justify-center py-12">
-        <div className="mt-8 mx-auto w-full max-w-md">
-          <div className="bg-white dark:bg-gray-800 py-8 px-4 shadow sm:rounded-lg sm:px-10">
+      <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+        <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+          <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
             <div className="text-center">
               <ExclamationCircleIcon className="mx-auto h-12 w-12 text-red-400" />
-              <h2 className="mt-4 text-lg font-medium text-gray-900 dark:text-gray-100">Access Denied</h2>
-              <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+              <h2 className="mt-4 text-lg font-medium text-gray-900">Access Denied</h2>
+              <p className="mt-2 text-sm text-gray-600">
                 You don't have permission to create {toReadableText(validatedDataType!)} records.
               </p>
               <div className="mt-6">
                 <Link
-                  to={basePath}
+                  to="/admin/data"
                   className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-web hover:bg-green-web-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-web"
                 >
                   Return to Data Browser
@@ -139,18 +135,18 @@ export function AdminDataCreatePage() {
 
   if (shouldShowModelNotFound) {
     return (
-      <div className="flex flex-col justify-center py-12">
-        <div className="mt-8 mx-auto w-full max-w-md">
-          <div className="bg-white dark:bg-gray-800 py-8 px-4 shadow sm:rounded-lg sm:px-10">
+      <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+        <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+          <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
             <div className="text-center">
               <ExclamationCircleIcon className="mx-auto h-12 w-12 text-yellow-400" />
-              <h2 className="mt-4 text-lg font-medium text-gray-900 dark:text-gray-100">Model Not Found</h2>
-              <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+              <h2 className="mt-4 text-lg font-medium text-gray-900">Model Not Found</h2>
+              <p className="mt-2 text-sm text-gray-600">
                 The data model for "{validatedDataType}" could not be found.
               </p>
               <div className="mt-6">
                 <Link
-                  to={basePath}
+                  to="/admin/data"
                   className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-web hover:bg-green-web-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-web"
                 >
                   Return to Data Browser
@@ -164,16 +160,15 @@ export function AdminDataCreatePage() {
   }
 
   // At this point we know model exists and is valid
-  return <AdminDataCreatePageContent model={model!} basePath={basePath} formTheme={formTheme} />
+  return <AdminDataCreatePageContent model={model!} />
 }
 
 // =================================
 // CONTENT COMPONENT
 // =================================
 
-function AdminDataCreatePageContent({ model, basePath, formTheme }: Readonly<{ model: any; basePath: string; formTheme: any }>) {
+function AdminDataCreatePageContent({ model }: Readonly<{ model: any }>) {
   const navigate = useNavigate()
-  const { sdk } = useAdminDataContext()
 
   // State
   const [submissionState, setSubmissionState] = useState<{
@@ -184,12 +179,11 @@ function AdminDataCreatePageContent({ model, basePath, formTheme }: Readonly<{ m
   // Get GraphQL documents with error handling (memoized to prevent render loops)
   const documents = useMemo(() => {
     try {
-      return getAdminDocuments(sdk, model)
+      return getAdminDocuments(model)
     } catch (error) {
-      console.error('[AdminDataCreatePage] Error getting documents:', error)
       return null
     }
-  }, [sdk, model])
+  }, [model])
 
   const CREATE_MUTATION = useMemo(() => {
     if (!documents?.create) return null
@@ -201,7 +195,6 @@ function AdminDataCreatePageContent({ model, basePath, formTheme }: Readonly<{ m
 
       return gql(documents.create)
     } catch (error) {
-      console.error('[AdminDataCreatePage] Error parsing CREATE mutation:', error)
       return null
     }
   }, [documents])
@@ -219,19 +212,19 @@ function AdminDataCreatePageContent({ model, basePath, formTheme }: Readonly<{ m
   // Early return AFTER all hooks are called
   if (!documents || !CREATE_MUTATION) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+      <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
         <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-2xl">
-          <div className="bg-white dark:bg-gray-800 py-8 px-4 shadow sm:rounded-lg sm:px-10">
+          <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
             <div className="text-center">
               <ExclamationCircleIcon className="mx-auto h-12 w-12 text-red-400" />
-              <h2 className="mt-4 text-lg font-medium text-gray-900 dark:text-gray-100">GraphQL Schema Error</h2>
-              <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+              <h2 className="mt-4 text-lg font-medium text-gray-900">GraphQL Schema Error</h2>
+              <p className="mt-2 text-sm text-gray-600">
                 Unable to load GraphQL documents for this model. Please ensure the API server is
                 running and the GraphQL schema is up to date.
               </p>
               <div className="mt-6">
                 <Link
-                  to={basePath}
+                  to="/admin/data"
                   className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-web hover:bg-green-web-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-web"
                 >
                   Return to Data Browser
@@ -245,7 +238,7 @@ function AdminDataCreatePageContent({ model, basePath, formTheme }: Readonly<{ m
   }
 
   // Build form fields
-  const formFields = buildFormFields(sdk, model, 'create', undefined, submissionState.status === 'loading', basePath)
+  const formFields = buildFormFields(model, 'create')
 
   // Handle form submission
   const handleSubmit = async (formData: Record<string, unknown>) => {
@@ -262,11 +255,10 @@ function AdminDataCreatePageContent({ model, basePath, formTheme }: Readonly<{ m
         },
       })
 
-      if ((result as any).errors) {
-        console.error('GraphQL errors:', (result as any).errors)
+      if (result.errors) {
         setSubmissionState({
           status: 'error',
-          message: (result as any).errors.map((err: any) => err.message).join(', '),
+          message: result.errors.map(err => err.message).join(', '),
         })
         return
       }
@@ -278,10 +270,9 @@ function AdminDataCreatePageContent({ model, basePath, formTheme }: Readonly<{ m
 
       // Redirect after a brief delay to show success message
       setTimeout(() => {
-        navigate(`${basePath}/${toKebabCase(model.pluralName)}`)
+        navigate(`/admin/data/${toKebabCase(model.pluralName)}`)
       }, 1500)
     } catch (error) {
-      console.error('Error creating record:', error)
       setSubmissionState({
         status: 'error',
         message: error instanceof Error ? error.message : 'An unexpected error occurred',
@@ -300,20 +291,21 @@ function AdminDataCreatePageContent({ model, basePath, formTheme }: Readonly<{ m
   }, [submissionState.status])
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="mb-8">
+    <div className="min-h-screen bg-gray-50 pt-6 pb-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-3xl mx-auto">
+        {/* Header */}
+        <div className="mb-8">
           <nav className="flex mb-6" aria-label="Breadcrumb">
             <ol className="flex items-center space-x-4">
               <li>
-                <Link to={basePath} className="text-gray-400 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-400">
+                <Link to="/admin/data" className="text-gray-400 hover:text-gray-500">
                   Data Browser
                 </Link>
               </li>
               <li>
                 <div className="flex items-center">
                   <svg
-                    className="flex-shrink-0 h-5 w-5 text-gray-300 dark:text-gray-600"
+                    className="flex-shrink-0 h-5 w-5 text-gray-300"
                     fill="currentColor"
                     viewBox="0 0 20 20"
                   >
@@ -324,8 +316,8 @@ function AdminDataCreatePageContent({ model, basePath, formTheme }: Readonly<{ m
                     />
                   </svg>
                   <Link
-                    to={`${basePath}/${toKebabCase(model.pluralName)}`}
-                    className="ml-4 text-gray-400 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-400"
+                    to={`/admin/data/${toKebabCase(model.pluralName)}`}
+                    className="ml-4 text-gray-400 hover:text-gray-500"
                   >
                     {toReadableText(model.pluralName)}
                   </Link>
@@ -334,7 +326,7 @@ function AdminDataCreatePageContent({ model, basePath, formTheme }: Readonly<{ m
               <li>
                 <div className="flex items-center">
                   <svg
-                    className="flex-shrink-0 h-5 w-5 text-gray-300 dark:text-gray-600"
+                    className="flex-shrink-0 h-5 w-5 text-gray-300"
                     fill="currentColor"
                     viewBox="0 0 20 20"
                   >
@@ -344,12 +336,12 @@ function AdminDataCreatePageContent({ model, basePath, formTheme }: Readonly<{ m
                       clipRule="evenodd"
                     />
                   </svg>
-                  <span className="ml-4 text-gray-500 dark:text-gray-400">Create New</span>
+                  <span className="ml-4 text-gray-500">Create New</span>
                 </div>
               </li>
             </ol>
           </nav>
-          <h1 className="mt-4 text-3xl font-bold text-gray-900 dark:text-gray-100">
+          <h1 className="mt-4 text-3xl font-bold text-gray-900">
             Create {toReadableText(model.name)}
           </h1>
         </div>
@@ -395,21 +387,21 @@ function AdminDataCreatePageContent({ model, basePath, formTheme }: Readonly<{ m
         )}
 
         {/* Form */}
-        <div className="bg-white dark:bg-gray-800 shadow-sm rounded-lg">
+        <div className="bg-white shadow-sm rounded-lg">
           <div className="px-6 py-8">
             <Form
               id={`create-${model.name.toLowerCase()}-form`}
               fields={formFields}
               submit={handleSubmit}
               disabled={submissionState.status === 'loading'}
-              theme={formTheme}
             />
           </div>
         </div>
+      </div>
     </div>
   )
 }
 
 export function AdminDataCreateErrorBoundary({ error }: Readonly<{ error: Error }>) {
-  return <ErrorBoundary error={error} />
+  return <WebUiErrorBoundary error={error} />
 }

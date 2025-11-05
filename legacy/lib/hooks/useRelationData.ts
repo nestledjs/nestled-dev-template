@@ -1,24 +1,23 @@
 import { useQuery } from '@apollo/client/react'
+import { DATABASE_MODELS } from '@biztobiz/shared/sdk'
 import { useMemo } from 'react'
-import { useAdminDataContext } from '../context/AdminDataContext'
 import { getAdminDocuments } from '../utils/graphql-utils'
 import { getSmartSearchFields } from '../utils/string-utils'
-import { useDebounce } from './useDebounce'
+import { useDebounce } from './useDebounce' // Custom hook for relation data fetching and management
 
 // Custom hook for relation data fetching and management
-export function useRelationData(relatedModelName: string, searchTerm: string, isOpen: boolean, currentValueId?: string) {
-  const { sdk, databaseModels } = useAdminDataContext()
+export function useRelationData(relatedModelName: string, searchTerm: string, isOpen: boolean) {
   const debouncedSearchTerm = useDebounce(searchTerm, 300)
 
   // Get the related model and its GraphQL documents
   const relatedModel = useMemo(
-    () => databaseModels.find((m: any) => m.name === relatedModelName),
-    [databaseModels, relatedModelName],
+    () => DATABASE_MODELS.find((m: any) => m.name === relatedModelName),
+    [relatedModelName],
   )
 
   const relatedDocuments = useMemo(
-    () => (relatedModel ? getAdminDocuments(sdk, relatedModel) : { listQuery: undefined }),
-    [sdk, relatedModel],
+    () => (relatedModel ? getAdminDocuments(relatedModel) : { listQuery: undefined }),
+    [relatedModel],
   )
 
   const relatedDataPath = useMemo(
@@ -68,8 +67,7 @@ export function useRelationData(relatedModelName: string, searchTerm: string, is
     error: relationError,
   } = useQuery(relatedDocuments.listQuery, {
     variables: queryVariables,
-    // Don't skip if we have a currentValueId to display, even if dropdown is closed
-    skip: !relatedDocuments.listQuery || (!isOpen && !currentValueId),
+    skip: !relatedDocuments.listQuery || !isOpen,
     errorPolicy: 'all', // Continue processing even if there are GraphQL errors
     notifyOnNetworkStatusChange: true,
     fetchPolicy: 'cache-first', // Use cache for better performance
@@ -85,7 +83,7 @@ export function useRelationData(relatedModelName: string, searchTerm: string, is
     if (!relatedData) return []
 
     try {
-      const items = (relatedData as any)[relatedDataPath] || []
+      const items = relatedData[relatedDataPath] || []
 
       // Validate that items is an array
       if (!Array.isArray(items)) {

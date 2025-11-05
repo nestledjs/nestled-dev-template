@@ -230,7 +230,7 @@ export function AdminDataLayout() {
 
   if (isFullscreen) {
     return (
-      <div className="fixed inset-0 z-50 bg-white dark:bg-gray-900 flex flex-col">
+      <div className="fixed inset-0 z-50 bg-white dark:bg-gray-900 flex flex-col overflow-auto">
         <div className="w-full p-6 md:p-8 lg:p-12">
           {content}
         </div>
