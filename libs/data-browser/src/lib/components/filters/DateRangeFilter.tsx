@@ -7,11 +7,11 @@ interface DateRangeFilterProps {
 }
 
 // Component for date range filtering
-export function DateRangeFilter({ 
-  fieldName, 
-  currentValue, 
-  onChange 
-}: DateRangeFilterProps) {
+export function DateRangeFilter({
+  fieldName,
+  currentValue,
+  onChange
+}: Readonly<DateRangeFilterProps>) {
   // Parse current value if it's a range object
   const fromDate = currentValue?.gte ? new Date(currentValue.gte).toISOString().split('T')[0] : ''
   const toDate = currentValue?.lte ? new Date(currentValue.lte).toISOString().split('T')[0] : ''
@@ -58,8 +58,9 @@ export function DateRangeFilter({
       </label>
       <div className="grid grid-cols-2 gap-2">
         <div>
-          <label className="block text-xs text-gray-500 mb-1">From</label>
+          <label htmlFor={`${fieldName}-from`} className="block text-xs text-gray-500 mb-1">From</label>
           <input
+            id={`${fieldName}-from`}
             type="date"
             value={fromDate}
             onChange={(e) => handleFromChange(e.target.value)}
@@ -67,8 +68,9 @@ export function DateRangeFilter({
           />
         </div>
         <div>
-          <label className="block text-xs text-gray-500 mb-1">To</label>
+          <label htmlFor={`${fieldName}-to`} className="block text-xs text-gray-500 mb-1">To</label>
           <input
+            id={`${fieldName}-to`}
             type="date"
             value={toDate}
             onChange={(e) => handleToChange(e.target.value)}
