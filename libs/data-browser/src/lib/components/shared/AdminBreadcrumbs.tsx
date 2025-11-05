@@ -70,10 +70,6 @@ export function AdminBreadcrumbs({
     )
   }
 
-  const shouldShowSeparator = (index: number) => {
-    return showHome || index > 0
-  }
-
   return (
     <nav className={`flex ${className}`} aria-label="Breadcrumb">
       <ol className="flex items-center space-x-4">

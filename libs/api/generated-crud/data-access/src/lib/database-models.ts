@@ -39,6 +39,7 @@ export interface DatabaseModel {
     update?: string
     delete?: string
   }
+  idFieldType?: string
 }
 
 export const DATABASE_MODELS: DatabaseModel[] = [
@@ -287,6 +288,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       update: 'admin',
       delete: 'admin',
     },
+    idFieldType: 'String',
   },
   {
     name: 'ApiToken',
@@ -448,6 +450,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       update: 'admin',
       delete: 'admin',
     },
+    idFieldType: 'String',
   },
   {
     name: 'AuditLog',
@@ -624,6 +627,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       update: 'admin',
       delete: 'admin',
     },
+    idFieldType: 'String',
   },
   {
     name: 'Country',
@@ -849,6 +853,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       update: 'admin',
       delete: 'admin',
     },
+    idFieldType: 'String',
   },
   {
     name: 'Email',
@@ -1068,6 +1073,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       update: 'admin',
       delete: 'admin',
     },
+    idFieldType: 'String',
   },
   {
     name: 'Invite',
@@ -1274,6 +1280,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       update: 'admin',
       delete: 'admin',
     },
+    idFieldType: 'String',
   },
   {
     name: 'Link',
@@ -1424,6 +1431,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       update: 'admin',
       delete: 'admin',
     },
+    idFieldType: 'String',
   },
   {
     name: 'LoginAttempt',
@@ -1598,6 +1606,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       update: 'admin',
       delete: 'admin',
     },
+    idFieldType: 'String',
   },
   {
     name: 'OAuthAccount',
@@ -1719,6 +1728,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       update: 'admin',
       delete: 'admin',
     },
+    idFieldType: 'String',
   },
   {
     name: 'Organization',
@@ -1974,6 +1984,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       update: 'admin',
       delete: 'admin',
     },
+    idFieldType: 'String',
   },
   {
     name: 'OrganizationMember',
@@ -2127,6 +2138,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       update: 'admin',
       delete: 'admin',
     },
+    idFieldType: 'String',
   },
   {
     name: 'Permission',
@@ -2218,6 +2230,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       update: 'admin',
       delete: 'admin',
     },
+    idFieldType: 'String',
   },
   {
     name: 'PhoneNumber',
@@ -2383,6 +2396,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       update: 'admin',
       delete: 'admin',
     },
+    idFieldType: 'String',
   },
   {
     name: 'Plan',
@@ -2596,6 +2610,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       update: 'admin',
       delete: 'admin',
     },
+    idFieldType: 'String',
   },
   {
     name: 'Role',
@@ -2751,6 +2766,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       update: 'admin',
       delete: 'admin',
     },
+    idFieldType: 'String',
   },
   {
     name: 'SecurityEvent',
@@ -2898,6 +2914,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       update: 'admin',
       delete: 'admin',
     },
+    idFieldType: 'String',
   },
   {
     name: 'Subscription',
@@ -3154,6 +3171,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       update: 'admin',
       delete: 'admin',
     },
+    idFieldType: 'String',
   },
   {
     name: 'Team',
@@ -3291,6 +3309,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       update: 'admin',
       delete: 'admin',
     },
+    idFieldType: 'String',
   },
   {
     name: 'TeamMember',
@@ -3444,6 +3463,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       update: 'admin',
       delete: 'admin',
     },
+    idFieldType: 'String',
   },
   {
     name: 'StoredFile',
@@ -3724,6 +3744,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       update: 'admin',
       delete: 'admin',
     },
+    idFieldType: 'String',
   },
   {
     name: 'User',
@@ -4348,6 +4369,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       update: 'admin',
       delete: 'admin',
     },
+    idFieldType: 'String',
   },
   {
     name: 'UserPreference',
@@ -4469,6 +4491,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       update: 'user',
       delete: 'user',
     },
+    idFieldType: 'String',
   },
   {
     name: 'UserSession',
@@ -4635,6 +4658,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       update: 'admin',
       delete: 'admin',
     },
+    idFieldType: 'String',
   },
 ]
 

@@ -14,19 +14,19 @@ export function NumberRangeFilter({
   onChange 
 }: Readonly<NumberRangeFilterProps>) {
   // Parse current value if it's a range object
-  const minValue = currentValue?.gte !== undefined ? currentValue.gte.toString() : ''
-  const maxValue = currentValue?.lte !== undefined ? currentValue.lte.toString() : ''
+  const minValue = currentValue?.gte === undefined ? '' : currentValue.gte.toString()
+  const maxValue = currentValue?.lte === undefined ? '' : currentValue.lte.toString()
   
   const parseNumber = (value: string) => {
     if (!value) return undefined
     
     // Parse based on field type
     if (fieldType === 'int' || fieldType === 'bigint') {
-      const parsed = parseInt(value, 10)
-      return isNaN(parsed) ? undefined : parsed
+      const parsed = Number.parseInt(value, 10)
+      return Number.isNaN(parsed) ? undefined : parsed
     } else if (fieldType === 'float' || fieldType === 'decimal') {
-      const parsed = parseFloat(value)
-      return isNaN(parsed) ? undefined : parsed
+      const parsed = Number.parseFloat(value)
+      return Number.isNaN(parsed) ? undefined : parsed
     }
     return undefined
   }
@@ -34,11 +34,11 @@ export function NumberRangeFilter({
   const handleMinChange = (value: string) => {
     const newValue = { ...currentValue }
     const parsedValue = parseNumber(value)
-    
-    if (parsedValue !== undefined) {
-      newValue.gte = parsedValue
-    } else {
+
+    if (parsedValue === undefined) {
       delete newValue.gte
+    } else {
+      newValue.gte = parsedValue
     }
     
     // If no min or max value, clear the filter entirely
@@ -52,11 +52,11 @@ export function NumberRangeFilter({
   const handleMaxChange = (value: string) => {
     const newValue = { ...currentValue }
     const parsedValue = parseNumber(value)
-    
-    if (parsedValue !== undefined) {
-      newValue.lte = parsedValue
-    } else {
+
+    if (parsedValue === undefined) {
       delete newValue.lte
+    } else {
+      newValue.lte = parsedValue
     }
     
     // If no min or max value, clear the filter entirely
@@ -77,8 +77,9 @@ export function NumberRangeFilter({
       </label>
       <div className="grid grid-cols-2 gap-2">
         <div>
-          <label className="block text-xs text-gray-500 mb-1">Min</label>
+          <label htmlFor={`${fieldName}-min`} className="block text-xs text-gray-500 mb-1">Min</label>
           <input
+            id={`${fieldName}-min`}
             type="number"
             step={step}
             value={minValue}
@@ -88,8 +89,9 @@ export function NumberRangeFilter({
           />
         </div>
         <div>
-          <label className="block text-xs text-gray-500 mb-1">Max</label>
+          <label htmlFor={`${fieldName}-max`} className="block text-xs text-gray-500 mb-1">Max</label>
           <input
+            id={`${fieldName}-max`}
             type="number"
             step={step}
             value={maxValue}

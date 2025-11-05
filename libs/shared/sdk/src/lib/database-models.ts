@@ -39,6 +39,7 @@ export interface DatabaseModel {
     update?: string
     delete?: string
   }
+  idFieldType?: string
 }
 
 export const DATABASE_MODELS: DatabaseModel[] = [
@@ -263,6 +264,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
     modelPropertyName: 'address',
     pluralModelName: 'Addresses',
     pluralModelPropertyName: 'addresses',
+    idFieldType: 'String',
   },
   {
     name: 'ApiToken',
@@ -406,6 +408,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
     modelPropertyName: 'apiToken',
     pluralModelName: 'ApiTokens',
     pluralModelPropertyName: 'apiTokens',
+    idFieldType: 'String',
   },
   {
     name: 'AuditLog',
@@ -563,6 +566,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
     modelPropertyName: 'auditLog',
     pluralModelName: 'AuditLogs',
     pluralModelPropertyName: 'auditLogs',
+    idFieldType: 'String',
   },
   {
     name: 'Country',
@@ -765,6 +769,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
     modelPropertyName: 'country',
     pluralModelName: 'Countries',
     pluralModelPropertyName: 'countries',
+    idFieldType: 'String',
   },
   {
     name: 'Email',
@@ -962,6 +967,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
     modelPropertyName: 'email',
     pluralModelName: 'Emails',
     pluralModelPropertyName: 'emails',
+    idFieldType: 'String',
   },
   {
     name: 'Invite',
@@ -1147,6 +1153,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
     modelPropertyName: 'invite',
     pluralModelName: 'Invites',
     pluralModelPropertyName: 'invites',
+    idFieldType: 'String',
   },
   {
     name: 'Link',
@@ -1280,6 +1287,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
     modelPropertyName: 'link',
     pluralModelName: 'Links',
     pluralModelPropertyName: 'links',
+    idFieldType: 'String',
   },
   {
     name: 'LoginAttempt',
@@ -1435,6 +1443,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
     modelPropertyName: 'loginAttempt',
     pluralModelName: 'LoginAttempts',
     pluralModelPropertyName: 'loginAttempts',
+    idFieldType: 'String',
   },
   {
     name: 'OAuthAccount',
@@ -1541,6 +1550,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
     modelPropertyName: 'oAuthAccount',
     pluralModelName: 'OAuthAccounts',
     pluralModelPropertyName: 'oAuthAccounts',
+    idFieldType: 'String',
   },
   {
     name: 'Organization',
@@ -1773,6 +1783,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
     modelPropertyName: 'organization',
     pluralModelName: 'Organizations',
     pluralModelPropertyName: 'organizations',
+    idFieldType: 'String',
   },
   {
     name: 'OrganizationMember',
@@ -1909,6 +1920,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
     modelPropertyName: 'organizationMember',
     pluralModelName: 'OrganizationMembers',
     pluralModelPropertyName: 'organizationMembers',
+    idFieldType: 'String',
   },
   {
     name: 'Permission',
@@ -1987,6 +1999,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
     modelPropertyName: 'permission',
     pluralModelName: 'Permissions',
     pluralModelPropertyName: 'permissions',
+    idFieldType: 'String',
   },
   {
     name: 'PhoneNumber',
@@ -2134,6 +2147,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
     modelPropertyName: 'phoneNumber',
     pluralModelName: 'PhoneNumbers',
     pluralModelPropertyName: 'phoneNumbers',
+    idFieldType: 'String',
   },
   {
     name: 'Plan',
@@ -2325,6 +2339,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
     modelPropertyName: 'plan',
     pluralModelName: 'Plans',
     pluralModelPropertyName: 'plans',
+    idFieldType: 'String',
   },
   {
     name: 'Role',
@@ -2463,6 +2478,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
     modelPropertyName: 'role',
     pluralModelName: 'Roles',
     pluralModelPropertyName: 'roles',
+    idFieldType: 'String',
   },
   {
     name: 'SecurityEvent',
@@ -2593,6 +2609,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
     modelPropertyName: 'securityEvent',
     pluralModelName: 'SecurityEvents',
     pluralModelPropertyName: 'securityEvents',
+    idFieldType: 'String',
   },
   {
     name: 'Subscription',
@@ -2824,6 +2841,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
     modelPropertyName: 'subscription',
     pluralModelName: 'Subscriptions',
     pluralModelPropertyName: 'subscriptions',
+    idFieldType: 'String',
   },
   {
     name: 'Team',
@@ -2945,6 +2963,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
     modelPropertyName: 'team',
     pluralModelName: 'Teams',
     pluralModelPropertyName: 'teams',
+    idFieldType: 'String',
   },
   {
     name: 'TeamMember',
@@ -3081,6 +3100,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
     modelPropertyName: 'teamMember',
     pluralModelName: 'TeamMembers',
     pluralModelPropertyName: 'teamMembers',
+    idFieldType: 'String',
   },
   {
     name: 'StoredFile',
@@ -3334,6 +3354,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
     modelPropertyName: 'storedFile',
     pluralModelName: 'StoredFiles',
     pluralModelPropertyName: 'storedFiles',
+    idFieldType: 'String',
   },
   {
     name: 'User',
@@ -3908,6 +3929,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
     modelPropertyName: 'user',
     pluralModelName: 'Users',
     pluralModelPropertyName: 'users',
+    idFieldType: 'String',
   },
   {
     name: 'UserPreference',
@@ -4021,6 +4043,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       update: 'user',
       delete: 'user',
     },
+    idFieldType: 'String',
   },
   {
     name: 'UserSession',
@@ -4169,6 +4192,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
     modelPropertyName: 'userSession',
     pluralModelName: 'UserSessions',
     pluralModelPropertyName: 'userSessions',
+    idFieldType: 'String',
   },
 ]
 

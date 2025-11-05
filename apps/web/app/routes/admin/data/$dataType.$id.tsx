@@ -1,4 +1,4 @@
-import { AdminDataEditErrorBoundary, AdminDataEditPage } from '@nestled-template/admin-data'
+import { AdminDataEditErrorBoundary, AdminDataEditPage } from '@nestled-template/data-browser'
 
 export default function EditDataRoute() {
   return <AdminDataEditPage />
