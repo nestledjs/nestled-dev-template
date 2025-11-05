@@ -140,7 +140,8 @@
     }
   },
   "release": {
-    "projects": ["shared-components", "admin-data"],
+    "projects": ["shared-components", "data-browser"],
+    "projectsRelationship": "independent",
     "version": {
       "generatorOptions": {
         "currentVersionResolver": "git-tag",

@@ -1,6 +1,6 @@
 {
   "name": "@nestledjs/shared-components",
-  "version": "0.1.12",
+  "version": "0.1.13",
   "description": "Reusable React components for Nestled framework projects including DataTable and ErrorBoundary",
   "main": "./index.js",
   "module": "./index.js",
