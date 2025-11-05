@@ -280,7 +280,7 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
       // Also show the filters panel so user can see what's filtered
       dispatch({ type: 'SET_SHOW_FILTERS', payload: true })
     }
-  }, [model?.name, fieldNames, searchableFieldNames, getDefaultSearchFields, setVisibleColumns, setSearchFields, dispatch, hasUrlFilters, urlFilters])
+  }, [model?.name, fieldNames, searchableFieldNames, getDefaultSearchFields, setVisibleColumns, setSearchFields, dispatch, urlFilters])
 
   // Memoized sort handler that prevents unnecessary re-renders
   const setSortSafely = useCallback(
