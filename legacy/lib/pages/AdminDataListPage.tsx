@@ -1,14 +1,40 @@
-import React, { useCallback, useEffect, useMemo } from 'react'
 import { useQuery } from '@apollo/client/react'
-import { DataTable, ErrorBoundary } from '@nestledjs/shared-components'
-import { getPluralName } from '@nestledjs/helpers'
+import * as Sdk from '@biztobiz/shared/sdk'
+import { DATABASE_MODELS } from '@biztobiz/shared/sdk'
+import { WebUiDataTable, WebUiErrorBoundary } from '@biztobiz/web-ui'
+
 import { AdminLocalStorage } from '../utils/secure-storage'
 import { formatFieldName, kebabCase } from '../utils/string-utils'
-import { Link, useParams, useSearchParams } from 'react-router'
+
+import { useCallback, useEffect, useMemo } from 'react'
+import { Link, useParams } from 'react-router' // Import from our library
 import { DateRangeFilter, NumberRangeFilter, RelationFilterField } from '../components/filters'
 import { useAdminList } from '../hooks/useAdminList'
 import { getAdminDocuments } from '../utils/graphql-utils'
-import { useAdminDataContext } from '../context/AdminDataContext'
+import { getPluralName } from '@biztobiz/shared/utils'
+
+// Helper function to get enum values
+function getEnumValues(enumType: string): string[] | null {
+  try {
+    const enumObject = (Sdk as any)[enumType]
+
+    if (!enumObject || typeof enumObject !== 'object') {
+      return null
+    }
+
+    const values = Object.values(enumObject).filter(value => typeof value === 'string')
+
+    if (values.length === 0) {
+      const keys = Object.keys(enumObject).filter(key => isNaN(Number(key)))
+      return keys.length > 0 ? keys : null
+    }
+
+    return values as string[]
+  } catch (error) {
+    return null
+  }
+}
+// moved imports to top
 
 interface AdminDataListPageProps {
   /** Optional model name - if not provided, will read from route params */
@@ -17,31 +43,6 @@ interface AdminDataListPageProps {
 
 export function AdminDataListPage({ modelName: propModelName }: AdminDataListPageProps = {}) {
   const params = useParams()
-  const [searchParams] = useSearchParams()
-  const { sdk, databaseModels, basePath = '/admin/data' } = useAdminDataContext()
-
-  // Helper function to get enum values from SDK
-  const getEnumValues = useCallback((enumType: string): string[] | null => {
-    try {
-      const enumObject = (sdk as any)[enumType]
-
-      if (!enumObject || typeof enumObject !== 'object') {
-        return null
-      }
-
-      const values = Object.values(enumObject).filter(value => typeof value === 'string')
-
-      if (values.length === 0) {
-        const keys = Object.keys(enumObject).filter(key => isNaN(Number(key)))
-        return keys.length > 0 ? keys : null
-      }
-
-      return values as string[]
-    } catch (error) {
-      console.warn(`Failed to get enum values for type ${enumType}:`, error)
-      return null
-    }
-  }, [sdk])
 
   // Consolidated state management with useReducer for better performance
   const { state, dispatch } = useAdminList()
@@ -111,58 +112,17 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
   const model = useMemo(() => {
     if (propModelName) {
       // Direct model name provided
-      return databaseModels.find((m: any) => m.name === propModelName)
+      return DATABASE_MODELS.find((m: any) => m.name === propModelName)
     }
 
     if (!pluralParam) return undefined
     // Convert kebab-case URL param back to find matching model
     // URL: "event-recurring-patterns" should match model where kebabCase(getPluralName(model.name)) === pluralParam
-    return databaseModels.find((m: any) => {
+    return DATABASE_MODELS.find((m: any) => {
       const modelUrlName = kebabCase(getPluralName(m.name))
       return modelUrlName.toLowerCase() === pluralParam.toLowerCase()
     })
-  }, [propModelName, pluralParam, databaseModels])
-
-  // Parse URL filter parameters (e.g., ?userId=abc-123)
-  // Must come AFTER model is defined
-  const urlFilters = useMemo(() => {
-    if (!model) return {}
-
-    const filters: Record<string, any> = {}
-    for (const [key, value] of searchParams.entries()) {
-      // Skip pagination and search params
-      if (key !== 'page' && key !== 'search' && key !== 'sort') {
-        // Check if this is a foreign key field (e.g., userId)
-        // If so, find the corresponding relation field (e.g., user)
-        const relationField = model.fields.find((f: any) =>
-          f.relationName &&
-          !f.isList &&
-          f.relationFromFields?.[0] === key
-        )
-
-        if (relationField) {
-          // This is a foreign key - map it to the relation field for the UI
-          // e.g., userId -> user: { id: "..." }
-          filters[relationField.name] = { id: value }
-        } else {
-          // Regular scalar field
-          filters[key] = value
-        }
-      }
-    }
-    return filters
-  }, [searchParams, model])
-
-  // Initialize filters from URL parameters on mount
-  useEffect(() => {
-    if (Object.keys(urlFilters).length > 0) {
-      dispatch({ type: 'SET_FILTERS', payload: urlFilters })
-      // Also show the filters panel so user can see what's filtered
-      if (!showFilters) {
-        dispatch({ type: 'TOGGLE_FILTERS' })
-      }
-    }
-  }, [urlFilters, showFilters])
+  }, [propModelName, pluralParam])
 
   // Get GraphQL documents based on model
   const documents = useMemo(() => {
@@ -174,8 +134,8 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
         delete: undefined,
         create: undefined,
       }
-    return getAdminDocuments(sdk, model)
-  }, [sdk, model])
+    return getAdminDocuments(model)
+  }, [model])
 
   const { listQuery: query } = documents
 
@@ -268,8 +228,7 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
     // Search fields (per model), sanitized to valid fields
     const storedSearch = AdminLocalStorage.getSearchFields(model.name)
     const defaults = getDefaultSearchFields(searchableFieldNames)
-    // Don't limit stored preferences - user may have selected more than 2 fields
-    const filteredSearch = (storedSearch || defaults).filter((f: string) => searchableFieldNames.includes(f))
+    const filteredSearch = (storedSearch || defaults).filter((f: string) => searchableFieldNames.includes(f)).slice(0, 2)
     setSearchFields(filteredSearch)
 
     // Clear per-model transient state
@@ -344,13 +303,17 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
     },
   }
 
+  // Check if we're in SSR to prevent timeout issues
+  const isSSR = typeof window === 'undefined'
+
   // Main GraphQL query with comprehensive error handling
-  const { data, loading, error, networkStatus, refetch } = useQuery(query ?? (sdk as any).__AdminUsersDocument, {
+  const { data, loading, error, networkStatus, refetch } = useQuery(query ?? Sdk.UsersDocument, {
     variables,
-    skip: !model || !query,
+    skip: !model || !query || isSSR, // Skip during SSR to prevent timeout
     errorPolicy: 'all', // Continue processing even if there are GraphQL errors
     notifyOnNetworkStatusChange: true,
-    fetchPolicy: 'cache-first',
+    fetchPolicy: 'cache-and-network', // Use cache but also fetch fresh data
+    nextFetchPolicy: 'cache-first', // After initial load, use cache-first
     // Add timeout for network requests
     context: {
       timeout: 30000, // 30 second timeout
@@ -361,16 +324,12 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
   const { validatedItems, validatedPagination, dataError } = useMemo(() => {
     // Handle GraphQL errors
     if (error) {
-      console.warn('[AdminList] GraphQL error:', error.message)
 
       // Check for specific error types
-      const apolloError = error as any
-      if (apolloError.networkError) {
-        console.error('[AdminList] Network error:', apolloError.networkError)
+      if (error.networkError) {
       }
 
-      if (apolloError.graphQLErrors?.length > 0) {
-        console.error('[AdminList] GraphQL errors:', apolloError.graphQLErrors)
+      if (error.graphQLErrors?.length > 0) {
       }
     }
 
@@ -384,14 +343,13 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
     }
 
     try {
-      const anyData = data as any
-      let processedItems = dataPath && anyData[dataPath] ? anyData[dataPath] : []
+      let processedItems = dataPath && data[dataPath] ? data[dataPath] : []
       const processedPagination =
-        paginationPath && anyData[paginationPath] ? anyData[paginationPath] : undefined
+        paginationPath && data[paginationPath] ? data[paginationPath] : undefined
 
       // Fallback: if no items found, try to find array data in the response
       if (!processedItems || processedItems.length === 0) {
-        for (const [key, value] of Object.entries(anyData)) {
+        for (const [key, value] of Object.entries(data)) {
           if (Array.isArray(value)) {
             // If this looks like the right data (first item has an 'id' field), use it
             if (value.length > 0 && value[0]?.id) {
@@ -404,7 +362,6 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
 
       // Validate items array
       if (!Array.isArray(processedItems)) {
-        console.warn('[AdminList] Expected array but got:', typeof processedItems)
         return {
           validatedItems: [],
           validatedPagination: processedPagination,
@@ -415,12 +372,10 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
       // Validate and filter each item
       const filteredItems = processedItems.filter((item, index) => {
         if (!item || typeof item !== 'object') {
-          console.warn(`[AdminList] Invalid item at index ${index}:`, item)
           return false
         }
 
         if (!item.id) {
-          console.warn(`[AdminList] Item missing ID at index ${index}:`, item)
           return false
         }
 
@@ -433,7 +388,6 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
         dataError: null,
       }
     } catch (err) {
-      console.error('[AdminList] Error processing data:', err)
       return {
         validatedItems: [],
         validatedPagination: undefined,
@@ -471,7 +425,7 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
               </p>
               <div className="mt-6">
                 <Link
-                  to={basePath}
+                  to="/admin/data"
                   className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-web hover:bg-green-web-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-web"
                 >
                   Return to Data Browser
@@ -518,7 +472,7 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
                   Reload Page
                 </button>
                 <Link
-                  to={basePath}
+                  to="/admin/data"
                   className="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-web"
                 >
                   Return to Data Browser
@@ -532,7 +486,7 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
   }
 
   // Calculate create link
-  const createLink = `${basePath}/${kebabCase(model.name)}/create`
+  const createLink = `/admin/data/${kebabCase(model.name)}/create`
 
   // Column selector dropdown
   const columnSelector = (
@@ -945,7 +899,7 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
     <>
       {filterPanel}
       {searchFilter}
-      <DataTable
+      <WebUiDataTable
         data={items}
         path={createLink.replace('/create', '')}
         fields={visibleColumns.length > 0 ? visibleColumns : fieldNames}
@@ -959,5 +913,5 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
 }
 
 export function AdminDataErrorBoundary({ error }: Readonly<{ error: Error }>) {
-  return <ErrorBoundary error={error} />
+  return <WebUiErrorBoundary error={error} />
 }

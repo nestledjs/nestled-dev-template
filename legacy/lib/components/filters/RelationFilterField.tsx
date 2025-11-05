@@ -29,12 +29,7 @@ export function RelationFilterField({
   
   // Custom hooks for behavior
   useClickOutside(dropdownRef, handleCloseDropdown, isOpen)
-  const { relatedItems, loading, error: relationError, hasDocument } = useRelationData(
-    relatedModelName,
-    searchTerm,
-    isOpen,
-    currentValue?.id // Pass current value ID so it can be loaded even when dropdown is closed
-  )
+  const { relatedItems, loading, error: relationError, hasDocument } = useRelationData(relatedModelName, searchTerm, isOpen)
   
   // Find current item to display
   const currentItem = useMemo(() => 

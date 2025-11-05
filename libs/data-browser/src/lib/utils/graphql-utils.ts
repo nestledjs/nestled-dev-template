@@ -1,6 +1,9 @@
+import React from 'react'
+import { Link } from 'react-router'
 import { type FormField, FormFieldClass } from '@nestledjs/forms'
 import { getPluralName } from '@nestledjs/helpers'
 import type { DatabaseModel } from '../types'
+import { RelationFieldWrapper } from '../components/RelationFieldWrapper'
 
 /**
  * Dynamically get enum values from the SDK
@@ -122,6 +125,23 @@ export function getMutationName(
 }
 
 /**
+ * Convert model name to kebab-case for URLs
+ */
+function toKebabCase(str: string): string {
+  return str
+    .replace(/([a-z])([A-Z])/g, '$1-$2')
+    .toLowerCase()
+}
+
+/**
+ * Convert string to lowerCamelCase
+ */
+function toLowerCamelCase(str: string): string {
+  if (!str) return ''
+  return str.charAt(0).toLowerCase() + str.slice(1)
+}
+
+/**
  * Build form fields for a model and operation
  */
 export function buildFormFields(
@@ -130,6 +150,7 @@ export function buildFormFields(
   operation: 'create' | 'update',
   currentItem?: any,
   isSubmitting?: boolean,
+  basePath: string = '/admin/data',
 ): FormField[] {
   // Filter out computed/readonly fields for forms
   const editableFields = model.fields.filter((field: any) => {
@@ -142,14 +163,21 @@ export function buildFormFields(
     // Skip timestamps for manual editing (they're auto-managed)
     if (field.isUpdatedAt || field.name === 'createdAt') return false
 
-    // Skip relation fields for now (they need special handling)
-    if (field.relationName && field.isList) return false
+    // Keep list relations for special handling (we'll show "See Related" links)
+    // Keep single relations for dropdown handling
 
     return true
   })
 
+  // Separate list relationships from regular fields
+  const regularFields = editableFields.filter((f: any) => !(f.relationName && f.isList))
+  const listRelationFields = editableFields.filter((f: any) => f.relationName && f.isList)
+
   // Convert to form field format using FormFieldClass
-  const formFields = editableFields.map((field: any) => {
+  const formFields: FormField[] = []
+
+  // Process regular fields first
+  regularFields.forEach((field: any) => {
     const label = field.name
       .replace(/([a-z])([A-Z])/g, '$1 $2')
       .replace(/^./, (str: string) => str.toUpperCase())
@@ -205,28 +233,34 @@ export function buildFormFields(
     }
 
     // Determine field type based on Prisma type
+    let formField: FormField
+
     switch (field.type.toLowerCase()) {
       case 'string':
         if (field.name.toLowerCase().includes('email')) {
-          return FormFieldClass.email(field.name, options)
+          formField = FormFieldClass.email(field.name, options)
         }
         // For long text fields, use textarea
-        if (
+        else if (
           field.name.toLowerCase().includes('description') ||
           field.name.toLowerCase().includes('content') ||
           field.name.toLowerCase().includes('notes')
         ) {
-          return FormFieldClass.textArea(field.name, options)
+          formField = FormFieldClass.textArea(field.name, options)
+        } else {
+          formField = FormFieldClass.text(field.name, options)
         }
-        return FormFieldClass.text(field.name, options)
+        break
 
       case 'int':
       case 'bigint':
-        return FormFieldClass.text(field.name, options)
+        formField = FormFieldClass.text(field.name, options)
+        break
 
       case 'float':
       case 'decimal':
-        return FormFieldClass.text(field.name, options)
+        formField = FormFieldClass.text(field.name, options)
+        break
 
       case 'boolean': {
         // Boolean fields should never be "required" in forms, even if required in DB
@@ -234,21 +268,24 @@ export function buildFormFields(
         // For boolean fields, convert null/undefined to false for checkbox display
         const booleanValue =
           currentItem && operation === 'update' ? Boolean(currentItem[field.name]) : false
-        return FormFieldClass.checkbox(field.name, {
+        formField = FormFieldClass.checkbox(field.name, {
           ...options,
           required: false,
           ...(operation === 'update' && { value: booleanValue }),
         })
+        break
       }
 
       case 'datetime':
-        return FormFieldClass.dateTimePicker(field.name, options)
+        formField = FormFieldClass.dateTimePicker(field.name, options)
+        break
 
       case 'date':
-        return FormFieldClass.datePicker(field.name, options)
+        formField = FormFieldClass.datePicker(field.name, options)
+        break
 
-      default:
-        // Handle enum fields first (check if field type exists in the SDK)
+      default: {
+        // Handle enum fields (check if field type exists in the SDK)
         const enumValues = getEnumValues(sdk, field.type)
         if (enumValues) {
           const selectOptions = enumValues.map((value: string) => ({
@@ -259,10 +296,11 @@ export function buildFormFields(
               .replace(/^./, (str: string) => str.toUpperCase()),
           }))
 
-          return FormFieldClass.select(field.name, {
+          formField = FormFieldClass.select(field.name, {
             ...options,
             options: selectOptions,
           })
+          break
         }
 
         // Handle relation fields with Apollo-powered select dropdowns
@@ -284,8 +322,10 @@ export function buildFormFields(
 
           // Use Apollo-powered select for relationships
           // Try to get the Admin GraphQL document for the relation type (with __ prefix)
-          const adminDocumentName = `__Admin${field.type}sDocument` // e.g., __AdminCoursesDocument
-          const regularDocumentName = `${field.type}sDocument` // e.g., CoursesDocument (fallback)
+          // Use proper pluralization from getPluralName helper
+          const properPluralName = getPluralName(field.type)
+          const adminDocumentName = `__Admin${properPluralName}Document` // e.g., __AdminCoursesDocument
+          const regularDocumentName = `${properPluralName}Document` // e.g., CoursesDocument (fallback)
           const relationDocument =
             (sdk as any)[adminDocumentName] || (sdk as any)[regularDocumentName]
 
@@ -327,10 +367,10 @@ export function buildFormFields(
               }
             }
 
-            return FormFieldClass.searchSelectApollo(relationFieldName, {
+            formField = FormFieldClass.searchSelectApollo(relationFieldName, {
               label: label, // Remove "ID" suffix - just use the field name
               required: options.required,
-              dataType: field.type.toLowerCase() + 's', // e.g., Course → courses
+              dataType: properPluralName.charAt(0).toLowerCase() + properPluralName.slice(1), // e.g., Course → courses (camelCase)
               document: relationDocument,
               searchFields: [searchField], // For searching
               selectOptionsFunction: (items: unknown[]) => {
@@ -352,18 +392,33 @@ export function buildFormFields(
               },
               ...(initialOptions.length > 0 && { initialOptions }), // Provide initial options if available
               ...(relationValue !== undefined && { value: relationValue }),
+              // Add custom wrapper to show view record link
+              customWrapper: (fieldElement: React.ReactNode) => {
+                return React.createElement(
+                  RelationFieldWrapper,
+                  {
+                    relationType: field.type,
+                    initialValue: relationValue,
+                    fieldName: relationFieldName,
+                    basePath,
+                  },
+                  fieldElement
+                )
+              },
             })
+            break
           } else {
             // Fallback to text input if document not found
             console.warn(
               `GraphQL document ${adminDocumentName} or ${regularDocumentName} not found for relation ${field.type}. Using text input instead.`,
             )
-            return FormFieldClass.text(relationFieldName, {
+            formField = FormFieldClass.text(relationFieldName, {
               label: `${label} ID`,
               required: options.required,
               helpText: 'Enter the ID of the related record',
               ...(relationValue !== undefined && { value: relationValue }),
             })
+            break
           }
         }
 
@@ -377,13 +432,88 @@ export function buildFormFields(
               .replace(/^./, (str: string) => str.toUpperCase()),
           }))
 
-          return FormFieldClass.select(field.name, {
+          formField = FormFieldClass.select(field.name, {
             ...options,
             options: selectOptions,
           })
+          break
         }
 
-        return FormFieldClass.text(field.name, options)
+        formField = FormFieldClass.text(field.name, options)
+        break
+      }
+    }
+
+    // Push the form field
+    formFields.push(formField)
+  })
+
+  // Now process list relationship fields (they go at the bottom)
+  listRelationFields.forEach((field: any) => {
+    const label = field.name
+      .replace(/([a-z])([A-Z])/g, '$1 $2')
+      .replace(/^./, (str: string) => str.toUpperCase())
+
+    // Only show list relationships on update operations
+    if (operation === 'update' && currentItem) {
+      const pluralModelName = getPluralName(field.type)
+      const relatedModelKebab = toKebabCase(pluralModelName)
+      const displayName = field.type.replace(/([a-z])([A-Z])/g, '$1 $2')
+      const pluralDisplayName = getPluralName(displayName)
+
+      // Determine the foreign key field name on the related model
+      const foreignKeyFieldName = field.relationToFields?.[0] || `${toLowerCamelCase(model.name)}Id`
+
+      // Create the filter URL with the foreign key
+      const filterUrl = `${basePath}/${relatedModelKebab}?${foreignKeyFieldName}=${currentItem.id}`
+
+      // Get count if available in the current item data
+      const countData = currentItem._count?.[field.name]
+      const countText = countData !== undefined ? ` (${countData})` : ''
+
+      const formField = FormFieldClass.content(field.name, {
+        content: React.createElement('div', { className: 'py-2' }, [
+          React.createElement(
+            'label',
+            {
+              key: 'label',
+              className: 'block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1',
+            },
+            label,
+          ),
+          React.createElement(
+            Link,
+            {
+              key: 'link',
+              to: filterUrl,
+              className:
+                'inline-flex items-center text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 hover:underline',
+            },
+            [
+              React.createElement(
+                'svg',
+                {
+                  key: 'icon',
+                  className: 'h-4 w-4 mr-1',
+                  fill: 'none',
+                  stroke: 'currentColor',
+                  viewBox: '0 0 24 24',
+                  xmlns: 'http://www.w3.org/2000/svg',
+                },
+                React.createElement('path', {
+                  strokeLinecap: 'round',
+                  strokeLinejoin: 'round',
+                  strokeWidth: 2,
+                  d: 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2',
+                }),
+              ),
+              `See Related ${pluralDisplayName}${countText}`,
+            ],
+          ),
+        ]),
+      })
+
+      formFields.push(formField)
     }
   })
 
