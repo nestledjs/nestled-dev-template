@@ -5,13 +5,16 @@ import dts from 'vite-plugin-dts'
 
 export default defineConfig({
   plugins: [
-    react(),
+    react({
+      jsxRuntime: 'automatic',
+    }),
     dts({
       outDir: resolve(__dirname, '../../dist/libs/shared-components'),
       entryRoot: resolve(__dirname, 'src'),
       tsconfigPath: resolve(__dirname, './tsconfig.lib.json'),
     }),
   ],
+  mode: 'production',
   build: {
     lib: {
       entry: resolve(__dirname, 'src/index.ts'),
