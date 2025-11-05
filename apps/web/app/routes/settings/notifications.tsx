@@ -91,7 +91,6 @@ export const loader = () => ({})
 export default function NotificationsSettings() {
   const { data } = useQuery<MeQuery>(MeDocument)
   const { data: preferencesData } = useQuery<UserPreferencesQuery>(UserPreferencesDocument)
-  const user = data?.me
   const preferences = preferencesData?.userPreferences || []
 
   const [formSuccess, setFormSuccess] = useState<string | null>(null)

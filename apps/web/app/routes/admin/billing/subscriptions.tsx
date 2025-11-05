@@ -1,7 +1,6 @@
 import { gql } from '@apollo/client'
 import { useQuery } from '@apollo/client/react'
 import { useState } from 'react'
-import { Link } from 'react-router'
 
 const ADMIN_SUBSCRIPTIONS_QUERY = gql`
   query AdminSubscriptions($input: ListSubscriptionInput) {

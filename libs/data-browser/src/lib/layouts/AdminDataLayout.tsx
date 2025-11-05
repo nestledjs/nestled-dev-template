@@ -75,20 +75,19 @@ export function AdminDataLayout() {
     link.download = `admin-data-preferences-${new Date().toISOString().split('T')[0]}.json`
     document.body.appendChild(link)
     link.click()
-    document.body.removeChild(link)
+    link.remove()
     URL.revokeObjectURL(url)
 
     showNotification('success', 'Preferences exported successfully')
   }
 
   // Import preferences
-  const handleImport = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImport = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
     if (!file) return
 
-    const reader = new FileReader()
-    reader.onload = (e) => {
-      const content = e.target?.result as string
+    try {
+      const content = await file.text()
       if (!content) {
         showNotification('error', 'Failed to read file')
         return
@@ -98,19 +97,17 @@ export function AdminDataLayout() {
       if (success) {
         showNotification('success', 'Preferences imported successfully. Refreshing...')
         // Refresh the page to apply new preferences
-        setTimeout(() => window.location.reload(), 1500)
+        setTimeout(() => globalThis.location.reload(), 1500)
       } else {
         showNotification('error', 'Invalid preferences file')
       }
-    }
-    reader.onerror = () => {
+    } catch {
       showNotification('error', 'Failed to read file')
-    }
-    reader.readAsText(file)
-
-    // Reset file input
-    if (fileInputRef.current) {
-      fileInputRef.current.value = ''
+    } finally {
+      // Reset file input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ''
+      }
     }
   }
 
