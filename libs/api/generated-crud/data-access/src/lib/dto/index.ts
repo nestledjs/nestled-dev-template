@@ -11,6 +11,7 @@ import {
   TwoFactorMethod,
 } from '@nestled-template/api/core/models'
 import { GraphQLJSON } from 'graphql-type-json'
+
 import { CorePagingInput } from '@nestled-template/api/core/data-access'
 
 @InputType()

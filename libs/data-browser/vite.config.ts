@@ -9,7 +9,7 @@ export default defineConfig({
       jsxRuntime: 'classic',
     }),
     dts({
-      outDir: resolve(__dirname, '../../dist/libs/admin-data'),
+      outDir: resolve(__dirname, '../../dist/libs/data-browser'),
       entryRoot: resolve(__dirname, 'src'),
       tsconfigPath: resolve(__dirname, './tsconfig.lib.json'),
     }),
@@ -32,7 +32,7 @@ export default defineConfig({
       },
     },
     minify: false, // Disable minification to prevent SSR issues
-    outDir: resolve(__dirname, '../../dist/libs/admin-data'),
+    outDir: resolve(__dirname, '../../dist/libs/data-browser'),
     emptyOutDir: true,
   },
 })

@@ -1,3 +1,4 @@
+import React from 'react'
 import JSON5 from 'json5'
 
 // Helper: extract and pretty-print JSON-like substrings from a string
