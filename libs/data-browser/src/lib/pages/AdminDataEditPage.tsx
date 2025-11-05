@@ -175,7 +175,7 @@ export function AdminDataEditPage() {
 
 function AdminDataEditPageContent({ model, id, basePath, formTheme }: Readonly<{ model: any; id: string; basePath: string; formTheme: any }>) {
   const navigate = useNavigate()
-  const { sdk } = useAdminDataContext()
+  const { sdk, databaseModels } = useAdminDataContext()
 
   // State
   const [submissionState, setSubmissionState] = useState<{

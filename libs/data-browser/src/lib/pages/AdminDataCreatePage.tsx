@@ -173,7 +173,7 @@ export function AdminDataCreatePage() {
 
 function AdminDataCreatePageContent({ model, basePath, formTheme }: Readonly<{ model: any; basePath: string; formTheme: any }>) {
   const navigate = useNavigate()
-  const { sdk } = useAdminDataContext()
+  const { sdk, databaseModels } = useAdminDataContext()
 
   // State
   const [submissionState, setSubmissionState] = useState<{
