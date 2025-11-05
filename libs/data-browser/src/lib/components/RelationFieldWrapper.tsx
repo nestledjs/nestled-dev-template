@@ -1,8 +1,8 @@
 import { Link } from 'react-router'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 
 interface RelationFieldWrapperProps {
-  readonly children?: React.ReactNode
+  readonly children?: ReactNode
   readonly relationType?: string
   readonly initialValue?: string
   readonly fieldName?: string
