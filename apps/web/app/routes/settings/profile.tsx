@@ -154,9 +154,7 @@ export default function ProfileSettings() {
       required: true,
     }),
     FormFieldClass.content('emailVerificationStatus', {
-      content: (
-        <>
-          {primaryEmail && !user.emailValidated && (
+      content: primaryEmail && !user.emailValidated && (
             <div className="-mt-2 mb-4">
               <p className="text-sm text-amber-600 dark:text-amber-400">
                 <span aria-hidden="true">⚠️</span> Email not verified
@@ -170,7 +168,7 @@ export default function ProfileSettings() {
                     })
                     setVerificationMessage('Verification email sent! Please check your inbox.')
                     setTimeout(() => setVerificationMessage(null), 5000)
-                  } catch (error) {
+                  } catch {
                     setVerificationMessage('Failed to send verification email. Please try again.')
                     setTimeout(() => setVerificationMessage(null), 5000)
                   }
@@ -185,9 +183,7 @@ export default function ProfileSettings() {
                 </p>
               )}
             </div>
-          )}
-        </>
-      ),
+          ),
     }),
     FormFieldClass.content('buttons', {
       content: (

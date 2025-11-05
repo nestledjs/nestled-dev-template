@@ -55,7 +55,7 @@ export default function BillingSettings() {
   }
 
   const handleCancelSubscription = async () => {
-    if (!confirm('Are you sure you want to cancel your subscription? You will retain access until the end of your billing period.')) {
+    if (!window.confirm('Are you sure you want to cancel your subscription? You will retain access until the end of your billing period.')) {
       return
     }
 

@@ -1,4 +1,4 @@
-import React, { createContext, useContext, type ReactNode } from 'react'
+import React, { createContext, useContext, useMemo, type ReactNode } from 'react'
 
 export interface AdminDataContextValue {
   /** The SDK namespace for dynamic GraphQL document lookups */
@@ -50,9 +50,14 @@ export function AdminDataProvider({
   databaseModels,
   basePath = '/admin/data',
   formTheme
-}: AdminDataProviderProps) {
+}: Readonly<AdminDataProviderProps>) {
+  const value = useMemo(
+    () => ({ sdk, databaseModels, basePath, formTheme }),
+    [sdk, databaseModels, basePath, formTheme]
+  )
+
   return (
-    <AdminDataContext.Provider value={{ sdk, databaseModels, basePath, formTheme }}>
+    <AdminDataContext.Provider value={value}>
       {children}
     </AdminDataContext.Provider>
   )

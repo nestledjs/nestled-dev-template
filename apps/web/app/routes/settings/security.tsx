@@ -125,7 +125,7 @@ export default function SecuritySettings() {
   }
 
   async function handleInvalidateSession(sessionId: string) {
-    if (!confirm('Are you sure you want to log out of this session?')) {
+    if (!window.confirm('Are you sure you want to log out of this session?')) {
       return
     }
 
@@ -141,7 +141,7 @@ export default function SecuritySettings() {
 
   async function handleInvalidateAllSessions() {
     if (
-      !confirm(
+      !window.confirm(
         'Are you sure you want to log out of all other sessions? This will not affect your current session.',
       )
     ) {

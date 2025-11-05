@@ -1,4 +1,4 @@
-import { AdminDataCreateErrorBoundary, AdminDataCreatePage } from '@nestled-template/admin-data'
+import { AdminDataCreateErrorBoundary, AdminDataCreatePage } from '@nestled-template/data-browser'
 
 export default function CreateDataRoute() {
   return <AdminDataCreatePage />

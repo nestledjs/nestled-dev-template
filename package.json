@@ -4,7 +4,7 @@
   "license": "MIT",
   "scripts": {
     "pre-publish": "pnpm exec nx affected -t lint build test:unit --base=develop",
-    "pub-build": "nx run-many -t build -p shared-components,admin-data",
+    "pub-build": "nx run-many -t build -p shared-components,data-browser",
     "pub-version": "nx release version && pnpm pub-build",
     "pub-release": "nx release version && pnpm pub-build && nx release publish",
     "db-update": "nx g @nestledjs/api:generate-crud && pnpm generate:models && nx g @nestledjs/shared:sdk && nx g @nestledjs/api:custom",
@@ -12,7 +12,6 @@
     "build:web": "nx run web:react-router:build",
     "start:api": "node dist/apps/api/main.js",
     "start:web": "node apps/web/server.js",
-    "nestled:update": "pnpm uninstall @nestledjs/api @nestledjs/config @nestledjs/forms @nestledjs/plugins @nestledjs/shared @nestledjs/utils @nestledjs/web @nestledjs/helpers && pnpm install @nestledjs/api @nestledjs/config @nestledjs/forms @nestledjs/plugins @nestledjs/shared @nestledjs/utils @nestledjs/web @nestledjs/helpers",
     "vite:clean": "rm -rf node_modules/.vite  && rm -rf dist",
     "docker:build": "docker build -f .dev/Dockerfile -t nestled-template .",
     "docker:down": "docker compose -f .dev/docker-compose.yml -p nestled-template down",
@@ -91,9 +90,9 @@
     "@nestjs/jwt": "^11.0.0",
     "@nestjs/passport": "^11.0.5",
     "@nestjs/platform-express": "^11.1.3",
-    "@nestledjs/forms": "^0.5.1",
-    "@nestledjs/generators": "^0.1.28",
-    "@nestledjs/helpers": "^0.1.5",
+    "@nestledjs/forms": "^0.5.3",
+    "@nestledjs/generators": "^0.2.3",
+    "@nestledjs/helpers": "^0.1.7",
     "@nx/devkit": "21.2.3",
     "@octokit/oauth-app": "^8.0.2",
     "@prisma/client": "^6.18.0",
@@ -170,11 +169,12 @@
     "@babel/preset-react": "^7.14.5",
     "@eslint/js": "^9.8.0",
     "@faker-js/faker": "^8.4.1",
-    "@graphql-codegen/cli": "^5.0.7",
-    "@graphql-codegen/introspection": "^4.0.3",
-    "@graphql-codegen/typescript": "^4.1.6",
-    "@graphql-codegen/typescript-document-nodes": "^4.0.16",
-    "@graphql-codegen/typescript-operations": "^4.6.1",
+    "@graphql-codegen/cli": "^6.0.1",
+    "@graphql-codegen/client-preset": "^5.1.0",
+    "@graphql-codegen/introspection": "^5.0.0",
+    "@graphql-codegen/typescript": "^5.0.2",
+    "@graphql-codegen/typescript-document-nodes": "^5.0.2",
+    "@graphql-codegen/typescript-operations": "^5.0.2",
     "@graphql-codegen/typescript-react-apollo": "^4.3.3",
     "@nestjs/schematics": "^11.0.5",
     "@nestjs/testing": "^11.1.3",
@@ -262,7 +262,27 @@
   "pnpm": {
     "overrides": {
       "stylus": "github:stylus/stylus#0.64.0"
-    }
+    },
+    "onlyBuiltDependencies": [
+      "@apollo/protobufjs",
+      "@nestjs/core",
+      "@parcel/watcher",
+      "@prisma/client",
+      "@prisma/engines",
+      "@prisma/extension-optimize",
+      "@swc/core",
+      "@tailwindcss/oxide",
+      "core-js",
+      "es5-ext",
+      "esbuild",
+      "express",
+      "ioredis",
+      "nx",
+      "prisma",
+      "prisma-graphql-type-decimal",
+      "type-graphql",
+      "unrs-resolver"
+    ]
   },
   "nx": {
     "includedScripts": []
