@@ -408,7 +408,7 @@ function AdminDataEditPageContent({ model, id, basePath, formTheme }: Readonly<{
   }
 
   // Build form fields without values (we'll use defaultValues prop instead)
-  const formFields = buildFormFields(sdk, model, 'update', item, submissionState.status === 'loading', basePath)
+  const formFields = buildFormFields(sdk, model, 'update', item, submissionState.status === 'loading', basePath, databaseModels)
 
   // Extract initial values for the Form component
   const initialValues: Record<string, any> = {}

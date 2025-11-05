@@ -142,6 +142,34 @@ function toLowerCamelCase(str: string): string {
 }
 
 /**
+ * Find the foreign key field name on a related model that points back to the current model
+ * For list relations (one-to-many), we need to find the field on the related model
+ */
+function findForeignKeyFieldName(
+  relatedModel: DatabaseModel | undefined,
+  currentModelName: string,
+  relationName?: string,
+): string | null {
+  if (!relatedModel) return null
+
+  // Find the field on the related model that points back to the current model
+  const foreignKeyField = relatedModel.fields.find((f: any) => {
+    // Must be a relation field pointing to the current model
+    if (f.type !== currentModelName) return false
+    if (!f.relationName) return false
+    if (f.isList) return false // Must be a single relation (foreign key side)
+
+    // If we have a specific relation name (for multiple relations between same models), match it
+    if (relationName && f.relationName !== relationName) return false
+
+    return true
+  })
+
+  // Return the foreign key field name (e.g., "userId", "sentById", etc.)
+  return foreignKeyField?.relationFromFields?.[0] || null
+}
+
+/**
  * Build form fields for a model and operation
  */
 export function buildFormFields(
@@ -151,6 +179,7 @@ export function buildFormFields(
   currentItem?: any,
   isSubmitting?: boolean,
   basePath: string = '/admin/data',
+  databaseModels?: DatabaseModel[],
 ): FormField[] {
   // Filter out computed/readonly fields for forms
   const editableFields = model.fields.filter((field: any) => {
@@ -462,7 +491,11 @@ export function buildFormFields(
       const pluralDisplayName = getPluralName(displayName)
 
       // Determine the foreign key field name on the related model
-      const foreignKeyFieldName = field.relationToFields?.[0] || `${toLowerCamelCase(model.name)}Id`
+      // Look up the related model and find the actual foreign key field
+      const relatedModel = databaseModels?.find((m: DatabaseModel) => m.name === field.type)
+      const foreignKeyFieldName =
+        findForeignKeyFieldName(relatedModel, model.name, field.relationName) ||
+        `${toLowerCamelCase(model.name)}Id` // Fallback to convention
 
       // Create the filter URL with the foreign key
       const filterUrl = `${basePath}/${relatedModelKebab}?${foreignKeyFieldName}=${currentItem.id}`

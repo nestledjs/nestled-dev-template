@@ -245,7 +245,7 @@ function AdminDataCreatePageContent({ model, basePath, formTheme }: Readonly<{ m
   }
 
   // Build form fields
-  const formFields = buildFormFields(sdk, model, 'create', undefined, submissionState.status === 'loading', basePath)
+  const formFields = buildFormFields(sdk, model, 'create', undefined, submissionState.status === 'loading', basePath, databaseModels)
 
   // Handle form submission
   const handleSubmit = async (formData: Record<string, unknown>) => {
