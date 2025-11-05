@@ -119,7 +119,7 @@ export function AdminDataLayout() {
   }
 
   const content = (
-    <div className="max-w-full mx-auto flex flex-col">
+    <div className="max-w-full mx-auto flex flex-col p-0.5">
       {/* Notification Toast */}
       {notification && (
         <div className={`mb-4 px-4 py-3 rounded-md border ${

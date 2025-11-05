@@ -92,4 +92,12 @@ export class ConfigService {
       currency: this.config.get<string>('STRIPE_CURRENCY') || 'usd',
     }
   }
+
+  get prismaOptimizeEnabled(): boolean {
+    return this.config.get<boolean>('prisma.optimize.enabled') ?? false
+  }
+
+  get prismaOptimizeApiKey(): string | undefined {
+    return this.config.get<string>('prisma.optimize.apiKey')
+  }
 }

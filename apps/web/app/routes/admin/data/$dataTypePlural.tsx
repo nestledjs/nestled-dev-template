@@ -1,4 +1,4 @@
-import { AdminDataErrorBoundary, AdminDataListPage } from '@nestled-template/admin-data'
+import { AdminDataErrorBoundary, AdminDataListPage } from '@nestled-template/data-browser'
 
 export default function DataListRoute() {
   return <AdminDataListPage />

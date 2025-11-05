@@ -181,7 +181,7 @@ export default function AdminLayout() {
           </nav>
 
           {/* Main Content Area */}
-          <div className="flex-1 min-w-0">
+          <div className="flex-1 overflow-x-auto">
             <Outlet />
           </div>
         </div>
