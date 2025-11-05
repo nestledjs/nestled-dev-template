@@ -1,9 +1,10 @@
 import React from 'react'
 import { Link } from 'react-router'
 import { type FormField, FormFieldClass } from '@nestledjs/forms'
-import { getPluralName } from '@nestledjs/helpers'
+
 import type { DatabaseModel } from '../types'
 import { RelationFieldWrapper } from '../components/RelationFieldWrapper'
+import { getPluralName } from './get-plural-names'
 
 /**
  * Dynamically get enum values from the SDK
@@ -29,7 +30,6 @@ function getEnumValues(sdk: any, enumType: string): string[] | null {
 
     return values as string[]
   } catch (error) {
-    console.warn(`Failed to get enum values for type ${enumType}:`, error)
     return null
   }
 }
@@ -85,16 +85,6 @@ export function getAdminDocuments(sdk: any, model: DatabaseModel) {
   if (!documents.delete) missingDocuments.push(deleteDocumentName)
 
   if (missingDocuments.length > 0) {
-    console.error(`[GraphQL Documents] Missing documents for model "${model.name}":`, {
-      model: model.name,
-      normalizedModelName,
-      normalizedPluralName,
-      missingDocuments,
-      availableDocuments: Object.keys(sdk).filter(
-        key => key.includes('Admin') && key.includes('Document'),
-      ),
-    })
-
     throw new Error(
       `Missing GraphQL documents for model "${model.name}": ${missingDocuments.join(', ')}. Please ensure the API server is running and the GraphQL schema is up to date.`,
     )
@@ -178,7 +168,7 @@ export function buildFormFields(
   operation: 'create' | 'update',
   currentItem?: any,
   isSubmitting?: boolean,
-  basePath: string = '/admin/data',
+  basePath = '/admin/data',
   databaseModels?: DatabaseModel[],
 ): FormField[] {
   // Filter out computed/readonly fields for forms
@@ -230,7 +220,6 @@ export function buildFormFields(
             initialValue = isoString.substring(0, 16)
           }
         } catch (e) {
-          console.warn(`Failed to convert date value for field ${field.name}:`, e)
           initialValue = ''
         }
       }
@@ -438,9 +427,6 @@ export function buildFormFields(
             break
           } else {
             // Fallback to text input if document not found
-            console.warn(
-              `GraphQL document ${adminDocumentName} or ${regularDocumentName} not found for relation ${field.type}. Using text input instead.`,
-            )
             formField = FormFieldClass.text(relationFieldName, {
               label: `${label} ID`,
               required: options.required,
@@ -600,7 +586,6 @@ function convertStringValue(value: string, field?: any): string | number | boole
       const date = new Date(value)
       return date.toISOString()
     } catch (e) {
-      console.warn(`Failed to convert datetime-local value: ${value}`)
       return value
     }
   }

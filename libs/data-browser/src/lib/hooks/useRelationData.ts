@@ -78,7 +78,6 @@ export function useRelationData(relatedModelName: string, searchTerm: string, is
   // Validate and sanitize relation data
   const relatedItems = useMemo(() => {
     if (relationError) {
-      console.warn('[RelationData] GraphQL error:', relationError.message)
       return []
     }
 
@@ -89,7 +88,6 @@ export function useRelationData(relatedModelName: string, searchTerm: string, is
 
       // Validate that items is an array
       if (!Array.isArray(items)) {
-        console.warn('[RelationData] Expected array but got:', typeof items)
         return []
       }
 
@@ -100,7 +98,6 @@ export function useRelationData(relatedModelName: string, searchTerm: string, is
         return true
       })
     } catch (error) {
-      console.error('[RelationData] Error processing relation data:', error)
       return []
     }
   }, [relatedData, relatedDataPath, relationError])

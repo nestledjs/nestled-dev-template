@@ -25,6 +25,7 @@ export type AdminListAction =
   | { type: 'TOGGLE_SEARCH_FIELD_SELECTOR' }
   | { type: 'SET_FILTERS'; payload: Record<string, unknown> }
   | { type: 'TOGGLE_FILTERS' }
+  | { type: 'SET_SHOW_FILTERS'; payload: boolean }
   | { type: 'RESET_PAGINATION' }
   | { type: 'RESET_FILTERS' }
 
