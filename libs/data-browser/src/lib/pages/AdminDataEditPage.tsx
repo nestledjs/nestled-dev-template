@@ -533,6 +533,8 @@ function AdminDataEditPageContent({ model, id, basePath, formTheme }: Readonly<{
           status: 'error',
           message: (result as any).errors.map((err: any) => err.message).join(', '),
         })
+        // Scroll to top to show error message
+        window.scrollTo({ top: 0, behavior: 'smooth' })
         return
       }
 
@@ -541,6 +543,9 @@ function AdminDataEditPageContent({ model, id, basePath, formTheme }: Readonly<{
         message: `${toReadableText(model.name)} updated successfully!`,
       })
 
+      // Scroll to top to show success message
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+
       // Refetch the data to show updated values
       await refetch()
     } catch (error) {
@@ -548,6 +553,8 @@ function AdminDataEditPageContent({ model, id, basePath, formTheme }: Readonly<{
         status: 'error',
         message: error instanceof Error ? error.message : 'An unexpected error occurred',
       })
+      // Scroll to top to show error message
+      window.scrollTo({ top: 0, behavior: 'smooth' })
     }
   }
 
