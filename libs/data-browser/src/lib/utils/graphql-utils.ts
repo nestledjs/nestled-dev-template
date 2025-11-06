@@ -594,12 +594,19 @@ function convertStringValue(value: string, field?: any): string | number | boole
   if (value === 'true') return true
   if (value === 'false') return false
 
-  // Handle numeric strings (from form inputs)
-  const numericPattern = /^\d+(\.\d+)?$/
-  if (numericPattern.test(value)) {
-    const numericValue = Number(value)
-    if (!isNaN(numericValue)) {
-      return numericValue
+  // Only convert to number if the field type is numeric
+  // Check field type to avoid converting String fields that contain numbers (like lat/long stored as strings)
+  const fieldType = field?.type?.toLowerCase()
+  const isNumericField = fieldType && ['int', 'bigint', 'float', 'decimal'].includes(fieldType)
+
+  // Handle numeric strings (from form inputs) - only if field type is numeric
+  if (isNumericField) {
+    const numericPattern = /^-?\d+(\.\d+)?$/
+    if (numericPattern.test(value)) {
+      const numericValue = Number(value)
+      if (!isNaN(numericValue)) {
+        return numericValue
+      }
     }
   }
 
