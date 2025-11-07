@@ -323,10 +323,21 @@ export function buildFormFields(
 
         // Handle relation fields with Apollo-powered select dropdowns
         if (field.relationName && !field.isList) {
-          const relationFieldName = field.relationFromFields?.[0] || field.name
+          // CRITICAL FIX: Always use the foreign key field name, not the relation field name
+          // This ensures the form submits with "avatarId" instead of "avatar"
+          const relationFieldName = field.relationFromFields?.[0] || `${field.name}Id`
+          
           // For relation fields, get the foreign key value or extract ID from relation object
           let relationValue =
             currentItem && operation === 'update' ? currentItem[relationFieldName] : undefined
+
+          // If we didn't find the foreign key value, try to get it from the relation object
+          if (relationValue === undefined && currentItem && operation === 'update') {
+            const relationObject = currentItem[field.name]
+            if (relationObject && typeof relationObject === 'object' && relationObject.id) {
+              relationValue = relationObject.id
+            }
+          }
 
           // If relationValue is an object (like {__typename: 'Course', id: '...' }), extract the ID
           if (relationValue && typeof relationValue === 'object' && relationValue.id) {

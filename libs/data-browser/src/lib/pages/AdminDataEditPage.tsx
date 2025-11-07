@@ -421,8 +421,18 @@ function AdminDataEditPageContent({ model, id, basePath, formTheme }: Readonly<{
 
       // Handle relation fields - get the foreign key value
       if (field.relationName && !field.isList) {
-        const relationFieldName = field.relationFromFields?.[0] || field.name
+        // CRITICAL FIX: Always use the foreign key field name, not the relation field name
+        // This ensures consistency with the form field names (avatarId instead of avatar)
+        const relationFieldName = field.relationFromFields?.[0] || `${field.name}Id`
         value = item[relationFieldName]
+
+        // If we didn't find the foreign key value, try to get it from the relation object
+        if (value === undefined) {
+          const relationObject = item[field.name]
+          if (relationObject && typeof relationObject === 'object' && relationObject.id) {
+            value = relationObject.id
+          }
+        }
 
         // Extract ID from object, or convert to empty string if it's still an object
         if (value && typeof value === 'object') {
