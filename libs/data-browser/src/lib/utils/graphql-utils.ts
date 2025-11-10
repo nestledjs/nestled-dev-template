@@ -671,9 +671,8 @@ export function cleanFormInput(
       // Find the field definition to help with type conversion
       const field = model?.fields?.find((f: any) => f.name === key)
       const convertedValue = convertStringValue(value, field)
-      if (convertedValue !== null) {
-        cleaned[key] = convertedValue
-      }
+      // Always include the value, even if null (null clears the field)
+      cleaned[key] = convertedValue
       continue
     }
 
