@@ -26,7 +26,8 @@ export interface Paging {
 
 // Inlined utility
 function toCount(p: Paging | null) {
-  if ((p?.take ?? 0) + (p?.skip ?? 0) > (p?.count ?? 0)) return p?.count
+  // Use filteredTotal (total after filters) rather than count (items in current page)
+  if ((p?.take ?? 0) + (p?.skip ?? 0) > (p?.filteredTotal ?? 0)) return p?.filteredTotal
   return (p?.take ?? 0) + (p?.skip ?? 0)
 }
 
@@ -326,10 +327,10 @@ export function DataTable(props: DataTableProps) {
               <p className="text-sm text-gray-700">
                 Showing{' '}
                 <span className="font-medium">
-                  {props?.pagination?.count === 0 ? 0 : (props?.pagination?.skip ?? 0) + 1}
+                  {props?.pagination?.filteredTotal === 0 ? 0 : (props?.pagination?.skip ?? 0) + 1}
                 </span>{' '}
                 to <span className="font-medium">{toCount(props?.pagination)}</span> of{' '}
-                <span className="font-medium">{props.pagination.count}</span> results
+                <span className="font-medium">{props.pagination.filteredTotal}</span> results
               </p>
             </div>
             <div className="flex-1 flex justify-between sm:justify-end">
@@ -343,7 +344,7 @@ export function DataTable(props: DataTableProps) {
                   Previous
                 </div>
               ) : null}
-              {(props?.pagination?.skip ?? 0) + (props?.pagination?.take ?? 0) < (props?.pagination?.count ?? 0) ? (
+              {(props?.pagination?.skip ?? 0) + (props?.pagination?.take ?? 0) < (props?.pagination?.filteredTotal ?? 0) ? (
                 <div
                   onClick={() => {
                     props.setSkip?.((props?.pagination?.skip ?? 0) + (props?.pagination?.take ?? 0))
