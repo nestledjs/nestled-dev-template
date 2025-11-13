@@ -1,3 +1,4 @@
+import { describe, it, expect } from 'vitest'
 import axios from 'axios'
 import { TestHelpers } from './support/test-helpers'
 import { UserFactory } from './support/factories/user.factory'

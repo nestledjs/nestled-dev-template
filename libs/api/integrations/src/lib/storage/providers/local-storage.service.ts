@@ -72,7 +72,10 @@ export class LocalStorageService implements IStorageService, OnModuleInit {
     try {
       await fs.unlink(filePath)
     } catch (error) {
-      if (error.code !== 'ENOENT') throw error
+      // Ignore ENOENT (file not found) errors, throw others
+      if (error && typeof error === 'object' && 'code' in error && error.code !== 'ENOENT') {
+        throw error
+      }
     }
   }
 

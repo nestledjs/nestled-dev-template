@@ -63,7 +63,7 @@ export default function Login() {
         setFormError('Invalid login credentials')
       }
     } catch (error) {
-      setFormError((error as Error)?.message ?? 'Something went wrong')
+      setFormError((error as Error)?.message || 'Something went wrong')
     }
   }
 

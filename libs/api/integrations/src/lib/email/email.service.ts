@@ -60,7 +60,8 @@ export class EmailService {
       this.logger.log(`Email sent successfully to ${options.to}: ${result.messageId}`)
       return result
     } catch (error) {
-      this.logger.error(`Failed to send email to ${options.to}:`, error.message)
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+      this.logger.error(`Failed to send email to ${options.to}:`, errorMessage)
       throw error
     }
   }
@@ -94,7 +95,8 @@ export class EmailService {
       this.logger.log(`Templated email sent successfully to ${to}: ${result.messageId}`)
       return result
     } catch (error) {
-      this.logger.error(`Failed to send templated email to ${to}:`, error.message)
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+      this.logger.error(`Failed to send templated email to ${to}:`, errorMessage)
       throw error
     }
   }
@@ -154,7 +156,8 @@ export class EmailService {
     try {
       return await this.provider.validateConnection()
     } catch (error) {
-      this.logger.error('Email connection test failed:', error.message)
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+      this.logger.error('Email connection test failed:', errorMessage)
       return false
     }
   }

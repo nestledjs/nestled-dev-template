@@ -76,7 +76,8 @@ export class TenancyMiddleware implements NestMiddleware {
       if (error instanceof ForbiddenException) {
         throw error
       }
-      this.logger.error(`Error in tenancy middleware: ${error.message}`, error.stack)
+      const err = error as Error
+      this.logger.error(`Error in tenancy middleware: ${err.message}`, err.stack)
       next(error)
     }
   }

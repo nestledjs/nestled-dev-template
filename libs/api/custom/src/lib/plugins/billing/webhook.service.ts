@@ -119,7 +119,9 @@ export class WebhookService {
         eventsArray.slice(-5000).forEach(id => this.processedEvents.add(id))
       }
     } catch (error) {
-      this.logger.error(`Error processing webhook event ${event.id}: ${error.message}`, error.stack)
+      const errorMessage = error instanceof Error ? error.message : String(error)
+      const errorStack = error instanceof Error ? error.stack : undefined
+      this.logger.error(`Error processing webhook event ${event.id}: ${errorMessage}`, errorStack)
       throw error
     }
   }
@@ -132,7 +134,7 @@ export class WebhookService {
     this.logger.log(`Checkout session completed: ${session.id}`)
 
     const { customer, subscription, metadata } = session
-    const organizationId = metadata?.organizationId
+    const organizationId = metadata?.['organizationId']
 
     if (!organizationId) {
       this.logger.error(`No organizationId in checkout session metadata: ${session.id}`)
@@ -152,7 +154,7 @@ export class WebhookService {
       where: { organizationId },
       create: {
         organizationId,
-        planId: metadata?.planId || '', // This should be set from the checkout metadata
+        planId: metadata?.['planId'] || '', // This should be set from the checkout metadata
         stripeCustomerId: customerId,
         stripeSubscriptionId: subscriptionId,
         status: SubscriptionStatus.ACTIVE,

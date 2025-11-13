@@ -19,7 +19,7 @@ export default function ResendVerification() {
         setFormMessage({ type: 'error', text: 'Unable to send verification email. Please try again.' })
       }
     } catch (error) {
-      setFormMessage({ type: 'error', text: (error as Error).message ?? 'Something went wrong' })
+      setFormMessage({ type: 'error', text: (error as Error).message || 'Something went wrong' })
     }
   }
 

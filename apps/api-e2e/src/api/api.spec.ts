@@ -1,3 +1,4 @@
+import { describe, it, expect } from 'vitest'
 import axios from 'axios'
 
 describe('GET /api', () => {

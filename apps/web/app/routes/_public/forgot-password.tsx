@@ -30,7 +30,7 @@ export default function ForgotPassword() {
     } catch (error) {
       setFormMessage({
         type: 'error',
-        text: (error as Error).message ?? 'Something went wrong',
+        text: (error as Error).message || 'Something went wrong',
       })
     }
   }

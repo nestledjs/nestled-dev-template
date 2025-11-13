@@ -38,7 +38,7 @@ export default function Register() {
         setFormError('Unable to register. Please try again.')
       }
     } catch (error) {
-      setFormError((error as Error)?.message ?? 'Something went wrong')
+      setFormError((error as Error)?.message || 'Something went wrong')
     }
   }
 

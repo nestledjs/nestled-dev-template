@@ -171,10 +171,11 @@ export default function AdminSecurityEventsPage() {
       <div className="rounded-xl border border-zinc-200 dark:border-white/10 bg-white dark:bg-white/5 p-6 backdrop-blur space-y-4">
         {/* Event Type Filter */}
         <div>
-          <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
+          <label htmlFor="eventType" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
             Event Type
           </label>
           <select
+            id="eventType"
             value={filters.eventType || ''}
             onChange={(e) => {
               setFilters((f) => ({
@@ -197,7 +198,7 @@ export default function AdminSecurityEventsPage() {
         {/* Search Filters */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
+            <label htmlFor="userId" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
               User ID
             </label>
             <div className="relative">
@@ -205,6 +206,7 @@ export default function AdminSecurityEventsPage() {
                 <MagnifyingGlassIcon className="h-5 w-5 text-zinc-400 dark:text-zinc-500" />
               </div>
               <input
+                id="userId"
                 type="text"
                 value={filters.userId}
                 onChange={(e) => {
@@ -218,10 +220,11 @@ export default function AdminSecurityEventsPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
+            <label htmlFor="ipAddress" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
               IP Address
             </label>
             <input
+              id="ipAddress"
               type="text"
               value={filters.ipAddress}
               onChange={(e) => {
@@ -237,10 +240,11 @@ export default function AdminSecurityEventsPage() {
         {/* Date Range Filters */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
+            <label htmlFor="startDate" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
               Start Date
             </label>
             <input
+              id="startDate"
               type="datetime-local"
               value={filters.startDate ? new Date(filters.startDate).toISOString().slice(0, 16) : ''}
               onChange={(e) => {
@@ -252,10 +256,11 @@ export default function AdminSecurityEventsPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
+            <label htmlFor="endDate" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
               End Date
             </label>
             <input
+              id="endDate"
               type="datetime-local"
               value={filters.endDate ? new Date(filters.endDate).toISOString().slice(0, 16) : ''}
               onChange={(e) => {

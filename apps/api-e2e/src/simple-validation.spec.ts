@@ -1,3 +1,4 @@
+import { describe, it, expect } from 'vitest'
 import { UserFactory } from './support/factories/user.factory'
 
 describe('Simple Test Infrastructure Validation', () => {

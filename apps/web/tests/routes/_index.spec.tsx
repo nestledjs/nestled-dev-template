@@ -1,11 +1,11 @@
 import React from 'react'
 import { render } from '@testing-library/react'
-import { createRoutesStub } from 'react-router'
+import { createTestRouter } from "../helpers/createTestRouter"
 import App from '../../app/app'
 
 describe('App Component', () => {
   test('renders without crashing when no meQueryRef provided', () => {
-    const ReactRouterStub = createRoutesStub([
+    const ReactRouterStub = createTestRouter([
       {
         path: '/',
         Component: App,
@@ -17,7 +17,7 @@ describe('App Component', () => {
   })
 
   test('renders without crashing when meQueryRef is undefined', () => {
-    const ReactRouterStub = createRoutesStub([
+    const ReactRouterStub = createTestRouter([
       {
         path: '/',
         Component: App,
