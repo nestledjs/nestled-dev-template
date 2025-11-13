@@ -5,6 +5,14 @@
   "projectType": "library",
   "tags": ["publishable"],
   "targets": {
+    "test": {
+      "executor": "@nx/vite:test",
+      "outputs": ["{workspaceRoot}/coverage/libs/data-browser"],
+      "options": {
+        "passWithNoTests": false,
+        "reportsDirectory": "../../coverage/libs/data-browser"
+      }
+    },
     "build": {
       "executor": "nx:run-commands",
       "outputs": ["{workspaceRoot}/dist/libs/data-browser"],
