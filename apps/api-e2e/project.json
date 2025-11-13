@@ -24,7 +24,8 @@
       ],
       "options": {
         "config": "apps/api-e2e/vitest.config.ts",
-        "passWithNoTests": true
+        "passWithNoTests": false,
+        "reporter": "verbose"
       }
     }
   }

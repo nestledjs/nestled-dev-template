@@ -23,6 +23,7 @@ import { GeneratedStoredFileResolver } from './stored-file.resolver'
 import { GeneratedUserResolver } from './user.resolver'
 import { GeneratedUserPreferenceResolver } from './user-preference.resolver'
 import { GeneratedUserSessionResolver } from './user-session.resolver'
+import { GeneratedPasswordHistoryResolver } from './password-history.resolver'
 
 @Module({
   imports: [ApiCrudDataAccessModule],
@@ -50,6 +51,7 @@ import { GeneratedUserSessionResolver } from './user-session.resolver'
     GeneratedUserResolver,
     GeneratedUserPreferenceResolver,
     GeneratedUserSessionResolver,
+    GeneratedPasswordHistoryResolver,
   ],
 })
 export class ApiGeneratedCrudFeatureModule {}

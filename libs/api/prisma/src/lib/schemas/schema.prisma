@@ -352,6 +352,7 @@ model User {
   twoFactorRecoveryCodes    String[]
   twoFactorMethod           TwoFactorMethod      @default(NONE)
   activeSessions            UserSession[]
+  passwordHistory           PasswordHistory[]
   loginAttempts             LoginAttempt[]
   lastSuccessfulLogin       DateTime?
   lastFailedLogin           DateTime?
@@ -393,6 +394,17 @@ model UserSession {
   ipAddress         String?
   isValid           Boolean  @default(true)
   twoFactorVerified Boolean  @default(false)
+}
+
+/// @skipCrud
+model PasswordHistory {
+  id             String   @id @default(uuid())
+  createdAt      DateTime @default(now())
+  userId         String
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  passwordHash   String
+
+  @@index([userId, createdAt])
 }
 
 // Enums (Alphabetical Order)

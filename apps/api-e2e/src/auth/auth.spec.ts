@@ -71,11 +71,12 @@ describe('Authentication E2E', () => {
     })
 
     it('should login case-insensitive email', async () => {
-      const userData = UserFactory.create({ email: 'test@example.com' })
+      const uniqueEmail = TestHelpers.generateTestEmail('casetest')
+      const userData = UserFactory.create({ email: uniqueEmail })
       await TestHelpers.registerUser(userData)
-      
-      const loggedInUser = await TestHelpers.loginUser('TEST@EXAMPLE.COM', userData.password)
-      expect(loggedInUser.email).toBe('test@example.com')
+
+      const loggedInUser = await TestHelpers.loginUser(uniqueEmail.toUpperCase(), userData.password)
+      expect(loggedInUser.email).toBe(uniqueEmail.toLowerCase())
     })
   })
 
@@ -201,7 +202,7 @@ describe('Authentication E2E', () => {
 
   describe('Input Validation', () => {
     it('should validate required fields in registration', async () => {
-      await expect(TestHelpers.graphql(`
+      const response = await TestHelpers.graphql(`
         mutation Register($input: RegisterInput!) {
           register(input: $input) {
             token
@@ -214,7 +215,16 @@ describe('Authentication E2E', () => {
           email: '',
           password: ''
         }
-      })).rejects.toThrow()
+      })
+
+      // GraphQL returns 200 with errors in response body
+      expect(response.status).toBe(200)
+      expect(response.data.errors).toBeDefined()
+      expect(response.data.errors.length).toBeGreaterThan(0)
+
+      // Should have validation errors
+      const errorMessage = JSON.stringify(response.data.errors)
+      expect(errorMessage).toContain('should not be empty')
     })
 
     it('should validate email format', async () => {
@@ -244,12 +254,11 @@ describe('Authentication E2E', () => {
     })
 
     it('should use proper HTTP status codes for auth failures', async () => {
-      try {
-        await TestHelpers.loginUser('invalid@example.com', 'wrongpassword')
-      } catch (error: any) {
-        // Should be 401 or 403, not 500
-        expect([401, 403]).toContain(error.response?.status)
-      }
+      // GraphQL returns 200 with errors in response, not HTTP error codes
+      // The TestHelpers.loginUser will throw when it detects errors in the response
+      await expect(
+        TestHelpers.loginUser('invalid@example.com', 'wrongpassword')
+      ).rejects.toThrow(/Login failed/)
     })
   })
 })

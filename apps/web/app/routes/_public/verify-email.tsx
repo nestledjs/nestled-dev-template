@@ -40,7 +40,7 @@ export default function VerifyEmail() {
           })
           .catch(err => {
             setStatus('error')
-            setMessage(err?.message ?? 'Invalid or expired verification token.')
+            setMessage(err?.message || 'Invalid or expired verification token.')
           })
       })
   }, [params, verifyEmailMutation, verifyEmailChangeMutation])

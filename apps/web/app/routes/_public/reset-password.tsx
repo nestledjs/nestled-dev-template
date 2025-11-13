@@ -36,7 +36,7 @@ export default function ResetPassword() {
         setFormMessage({ type: 'error', text: 'Unable to reset password. The token may have expired.' })
       }
     } catch (error) {
-      setFormMessage({ type: 'error', text: (error as Error).message ?? 'Something went wrong' })
+      setFormMessage({ type: 'error', text: (error as Error).message || 'Something went wrong' })
     }
   }
 

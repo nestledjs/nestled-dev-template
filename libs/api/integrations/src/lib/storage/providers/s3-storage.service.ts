@@ -23,8 +23,8 @@ import * as path from 'path'
 @Injectable()
 export class S3StorageService implements IStorageService, OnModuleInit {
   private readonly logger = new Logger(S3StorageService.name)
-  private readonly s3Client: S3Client
-  private readonly bucket: string
+  private readonly s3Client!: S3Client
+  private readonly bucket!: string
   private readonly region: string
   private readonly cdnUrl?: string
 
@@ -32,14 +32,14 @@ export class S3StorageService implements IStorageService, OnModuleInit {
     const storageProvider = this.configService.get<string>('STORAGE_PROVIDER', 'local')
     const accessKeyId = this.configService.get<string>('AWS_ACCESS_KEY_ID')
     const secretAccessKey = this.configService.get<string>('AWS_SECRET_ACCESS_KEY')
-    this.bucket = this.configService.get<string>('AWS_S3_BUCKET')
+    const bucket = this.configService.get<string>('AWS_S3_BUCKET')
     this.region = this.configService.get<string>('AWS_S3_REGION', 'us-east-1')
     const endpoint = this.configService.get<string>('AWS_S3_ENDPOINT')
     const forcePathStyle = this.configService.get<string>('AWS_S3_FORCE_PATH_STYLE') === 'true'
     this.cdnUrl = this.configService.get<string>('AWS_S3_CDN_URL')
 
     // Only validate credentials if S3 is the active storage provider
-    if (storageProvider === 's3' && (!accessKeyId || !secretAccessKey || !this.bucket)) {
+    if (storageProvider === 's3' && (!accessKeyId || !secretAccessKey || !bucket)) {
       throw new Error('AWS S3 credentials not configured. Required: AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_S3_BUCKET')
     }
 
@@ -48,11 +48,13 @@ export class S3StorageService implements IStorageService, OnModuleInit {
       return
     }
 
+    // After validation, we know these values are defined
+    this.bucket = bucket!
     this.s3Client = new S3Client({
       region: this.region,
       credentials: {
-        accessKeyId,
-        secretAccessKey,
+        accessKeyId: accessKeyId!,
+        secretAccessKey: secretAccessKey!,
       },
       endpoint,
       forcePathStyle,
@@ -156,8 +158,15 @@ export class S3StorageService implements IStorageService, OnModuleInit {
       await this.s3Client.send(command)
       return true
     } catch (error) {
-      if (error.name === 'NotFound' || error.$metadata?.httpStatusCode === 404) {
+      // Check if error is NotFound (file doesn't exist)
+      if (error && typeof error === 'object' && 'name' in error && error.name === 'NotFound') {
         return false
+      }
+      if (error && typeof error === 'object' && '$metadata' in error) {
+        const metadata = error.$metadata as { httpStatusCode?: number }
+        if (metadata.httpStatusCode === 404) {
+          return false
+        }
       }
       throw error
     }

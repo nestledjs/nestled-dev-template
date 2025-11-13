@@ -31,6 +31,7 @@ import {
   UserModule,
   UserPreferenceModule,
   UserSessionModule,
+  PasswordHistoryModule,
 } from '@nestled-template/api/custom'
 import { StripeModule } from '@nestled-template/api/integrations'
 import { ApiCoreFeatureModule } from '@nestled-template/api/core/feature'
@@ -71,6 +72,7 @@ export const defaultModules = [
   RoleModule,
   SubscriptionModule,
   StoredFileModule,
+  PasswordHistoryModule,
 ]
 // Manually maintained plugin modules (never overwritten by generator)
 export const pluginModules = [

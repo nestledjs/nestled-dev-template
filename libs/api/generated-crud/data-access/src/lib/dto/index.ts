@@ -2102,6 +2102,9 @@ export class CreateUserInput {
   activeSessionsIds?: string[]
 
   @Field(() => [String], { nullable: true })
+  passwordHistoryIds?: string[]
+
+  @Field(() => [String], { nullable: true })
   loginAttemptsIds?: string[]
 
   @Field(() => [String], { nullable: true })
@@ -2231,6 +2234,9 @@ export class UpdateUserInput {
   activeSessionsIds?: string[]
 
   @Field(() => [String], { nullable: true })
+  passwordHistoryIds?: string[]
+
+  @Field(() => [String], { nullable: true })
   loginAttemptsIds?: string[]
 
   @Field(() => [String], { nullable: true })
@@ -2358,6 +2364,9 @@ export class ListUserInput extends CorePagingInput {
 
   @Field(() => [String], { nullable: true })
   activeSessionsIds?: string[]
+
+  @Field(() => [String], { nullable: true })
+  passwordHistoryIds?: string[]
 
   @Field(() => [String], { nullable: true })
   loginAttemptsIds?: string[]
@@ -2532,4 +2541,49 @@ export class ListUserSessionInput extends CorePagingInput {
 
   @Field({ nullable: true })
   twoFactorVerified?: boolean
+}
+
+@InputType()
+export class CreatePasswordHistoryInput {
+  @Field({ nullable: true })
+  id?: string
+
+  @Field(() => Date, { nullable: true })
+  createdAt?: Date
+
+  @Field({ nullable: false })
+  userId!: string
+
+  @Field({ nullable: false })
+  passwordHash!: string
+}
+
+@InputType()
+export class UpdatePasswordHistoryInput {
+  @Field({ nullable: true })
+  id?: string
+
+  @Field(() => Date, { nullable: true })
+  createdAt?: Date
+
+  @Field({ nullable: true })
+  userId?: string
+
+  @Field({ nullable: true })
+  passwordHash?: string
+}
+
+@InputType()
+export class ListPasswordHistoryInput extends CorePagingInput {
+  @Field({ nullable: true })
+  id?: string
+
+  @Field(() => Date, { nullable: true })
+  createdAt?: Date
+
+  @Field({ nullable: true })
+  userId?: string
+
+  @Field({ nullable: true })
+  passwordHash?: string
 }

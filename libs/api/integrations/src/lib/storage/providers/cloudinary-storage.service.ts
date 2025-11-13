@@ -23,16 +23,16 @@ import * as path from 'path'
 @Injectable()
 export class CloudinaryStorageService implements IStorageService, OnModuleInit {
   private readonly logger = new Logger(CloudinaryStorageService.name)
-  private readonly cloudName: string
+  private readonly cloudName!: string
 
   constructor(private readonly configService: ConfigService) {
     const storageProvider = this.configService.get<string>('STORAGE_PROVIDER', 'local')
-    this.cloudName = this.configService.get<string>('CLOUDINARY_CLOUD_NAME')
+    const cloudName = this.configService.get<string>('CLOUDINARY_CLOUD_NAME')
     const apiKey = this.configService.get<string>('CLOUDINARY_API_KEY')
     const apiSecret = this.configService.get<string>('CLOUDINARY_API_SECRET')
 
     // Only validate credentials if Cloudinary is the active storage provider
-    if (storageProvider === 'cloudinary' && (!this.cloudName || !apiKey || !apiSecret)) {
+    if (storageProvider === 'cloudinary' && (!cloudName || !apiKey || !apiSecret)) {
       throw new Error('Cloudinary credentials not configured. Required: CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET')
     }
 
@@ -41,10 +41,12 @@ export class CloudinaryStorageService implements IStorageService, OnModuleInit {
       return
     }
 
+    // After validation, we know these values are defined
+    this.cloudName = cloudName!
     cloudinary.config({
-      cloud_name: this.cloudName,
-      api_key: apiKey,
-      api_secret: apiSecret,
+      cloud_name: cloudName!,
+      api_key: apiKey!,
+      api_secret: apiSecret!,
     })
   }
 
@@ -80,10 +82,14 @@ export class CloudinaryStorageService implements IStorageService, OnModuleInit {
           ...(options.quality && { quality: options.quality }),
           ...(options.format && { format: options.format }),
         },
-        (error, result: UploadApiResponse) => {
+        (error, result) => {
           if (error) {
             this.logger.error('Cloudinary upload failed', error)
             return reject(error)
+          }
+
+          if (!result) {
+            return reject(new Error('Cloudinary upload succeeded but no result returned'))
           }
 
           const uploadResult: UploadResult = {
@@ -152,8 +158,12 @@ export class CloudinaryStorageService implements IStorageService, OnModuleInit {
       await cloudinary.api.resource(providerFileId)
       return true
     } catch (error) {
-      if (error.error?.http_code === 404) {
-        return false
+      // Check if error is a 404 (resource not found)
+      if (error && typeof error === 'object' && 'error' in error) {
+        const apiError = error.error as { http_code?: number }
+        if (apiError?.http_code === 404) {
+          return false
+        }
       }
       throw error
     }

@@ -336,6 +336,13 @@ input CreateOrganizationMemberInput {
   userId: String!
 }
 
+input CreatePasswordHistoryInput {
+  createdAt: Timestamp
+  id: String
+  passwordHash: String!
+  userId: String!
+}
+
 input CreatePermissionInput {
   action: String!
   description: String
@@ -482,6 +489,7 @@ input CreateUserInput {
   oAuthAccountsIds: [String!]
   organizationsIds: [String!]
   password: String
+  passwordHistoryIds: [String!]
   passwordResetExpires: Timestamp
   passwordResetToken: String
   phoneNumbersIds: [String!]
@@ -874,6 +882,20 @@ input ListOrganizationMemberInput {
   userId: String
 }
 
+input ListPasswordHistoryInput {
+  createdAt: Timestamp
+  filters: JSONObject
+  id: String
+  orderBy: String
+  orderDirection: String
+  passwordHash: String
+  search: String
+  searchFields: [String!]
+  skip: Float = 0
+  take: Float = 20
+  userId: String
+}
+
 input ListPermissionInput {
   action: String
   description: String
@@ -1086,6 +1108,7 @@ input ListUserInput {
   orderDirection: String
   organizationsIds: [String!]
   password: String
+  passwordHistoryIds: [String!]
   passwordResetExpires: Timestamp
   passwordResetToken: String
   phoneNumbersIds: [String!]
@@ -1183,6 +1206,7 @@ type Mutation {
   createOrganization(input: CreateOrganizationInput!): Organization
   createOrganizationInvitation(input: CreateInvitationInput!): String!
   createOrganizationMember(input: CreateOrganizationMemberInput!): OrganizationMember
+  createPasswordHistory(input: CreatePasswordHistoryInput!): PasswordHistory
   createPermission(input: CreatePermissionInput!): Permission
   createPhoneNumber(input: CreatePhoneNumberInput!): PhoneNumber
   createPlan(input: CreatePlanInput!): Plan
@@ -1208,6 +1232,7 @@ type Mutation {
   deleteOAuthAccount(oAuthAccountId: String!): OAuthAccount
   deleteOrganization(organizationId: String!): Organization
   deleteOrganizationMember(organizationMemberId: String!): OrganizationMember
+  deletePasswordHistory(passwordHistoryId: String!): PasswordHistory
   deletePermission(permissionId: String!): Permission
   deletePhoneNumber(phoneNumberId: String!): PhoneNumber
   deletePlan(planId: String!): Plan
@@ -1263,6 +1288,7 @@ type Mutation {
   updateOrganization(input: UpdateOrganizationInput!, organizationId: String!): Organization
   updateOrganizationMember(input: UpdateOrganizationMemberInput!, organizationMemberId: String!): OrganizationMember
   updateOrganizationMemberRole(input: UpdateMemberRoleInput!): Boolean!
+  updatePasswordHistory(input: UpdatePasswordHistoryInput!, passwordHistoryId: String!): PasswordHistory
   updatePermission(input: UpdatePermissionInput!, permissionId: String!): Permission
   updatePhoneNumber(input: UpdatePhoneNumberInput!, phoneNumberId: String!): PhoneNumber
   updatePlan(input: UpdatePlanInput!, planId: String!): Plan
@@ -1337,6 +1363,14 @@ type OrganizationMember {
   role: Role
   roleId: String!
   updatedAt: Timestamp!
+  user: User
+  userId: String!
+}
+
+type PasswordHistory {
+  createdAt: Timestamp!
+  id: String!
+  passwordHash: String!
   user: User
   userId: String!
 }
@@ -1442,6 +1476,9 @@ type Query {
   organizationRoles(organizationId: String!): [Role!]!
   organizations(input: ListOrganizationInput): [Organization!]
   organizationsCount(input: ListOrganizationInput): CorePaging
+  passwordHistories(input: ListPasswordHistoryInput): [PasswordHistory!]
+  passwordHistoriesCount(input: ListPasswordHistoryInput): CorePaging
+  passwordHistory(passwordHistoryId: String!): PasswordHistory
   permission(permissionId: String!): Permission
   permissions(input: ListPermissionInput): [Permission!]
   permissionsCount(input: ListPermissionInput): CorePaging
@@ -1853,6 +1890,13 @@ input UpdateOrganizationMemberInput {
   userId: String
 }
 
+input UpdatePasswordHistoryInput {
+  createdAt: Timestamp
+  id: String
+  passwordHash: String
+  userId: String
+}
+
 input UpdatePermissionInput {
   action: String
   description: String
@@ -1999,6 +2043,7 @@ input UpdateUserInput {
   oAuthAccountsIds: [String!]
   organizationsIds: [String!]
   password: String
+  passwordHistoryIds: [String!]
   passwordResetExpires: Timestamp
   passwordResetToken: String
   phoneNumbersIds: [String!]
@@ -2090,6 +2135,7 @@ type User {
   organizations: [OrganizationMember!]
   originalAdminId: String
   password: String
+  passwordHistory: [PasswordHistory!]
   passwordResetExpires: Timestamp
   passwordResetToken: String
   phoneNumbers: [PhoneNumber!]

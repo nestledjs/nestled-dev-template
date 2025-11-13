@@ -24,17 +24,17 @@ import * as path from 'path'
 @Injectable()
 export class ImageKitStorageService implements IStorageService, OnModuleInit {
   private readonly logger = new Logger(ImageKitStorageService.name)
-  private readonly imagekit: ImageKit
-  private readonly urlEndpoint: string
+  private readonly imagekit!: ImageKit
+  private readonly urlEndpoint!: string
 
   constructor(private readonly configService: ConfigService) {
     const storageProvider = this.configService.get<string>('STORAGE_PROVIDER', 'local')
     const publicKey = this.configService.get<string>('IMAGEKIT_PUBLIC_KEY')
     const privateKey = this.configService.get<string>('IMAGEKIT_PRIVATE_KEY')
-    this.urlEndpoint = this.configService.get<string>('IMAGEKIT_URL_ENDPOINT')
+    const urlEndpoint = this.configService.get<string>('IMAGEKIT_URL_ENDPOINT')
 
     // Only validate credentials if ImageKit is the active storage provider
-    if (storageProvider === 'imagekit' && (!publicKey || !privateKey || !this.urlEndpoint)) {
+    if (storageProvider === 'imagekit' && (!publicKey || !privateKey || !urlEndpoint)) {
       throw new Error('ImageKit credentials not configured. Required: IMAGEKIT_PUBLIC_KEY, IMAGEKIT_PRIVATE_KEY, IMAGEKIT_URL_ENDPOINT')
     }
 
@@ -43,10 +43,12 @@ export class ImageKitStorageService implements IStorageService, OnModuleInit {
       return
     }
 
+    // After validation, we know these values are defined
+    this.urlEndpoint = urlEndpoint!
     this.imagekit = new ImageKit({
-      publicKey,
-      privateKey,
-      urlEndpoint: this.urlEndpoint,
+      publicKey: publicKey!,
+      privateKey: privateKey!,
+      urlEndpoint: urlEndpoint!,
     })
   }
 
@@ -141,7 +143,8 @@ export class ImageKitStorageService implements IStorageService, OnModuleInit {
       await this.imagekit.getFileDetails(providerFileId)
       return true
     } catch (error) {
-      if (error.message?.includes('404') || error.message?.includes('not found')) {
+      // Check if error indicates file not found
+      if (error instanceof Error && (error.message.includes('404') || error.message.includes('not found'))) {
         return false
       }
       throw error

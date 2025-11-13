@@ -10,6 +10,7 @@ mutation UploadUserAvatar($file: Upload!) {
     width
     height
     provider
+    folder
     metadata
     createdAt
   }
@@ -27,6 +28,7 @@ mutation UploadOrganizationLogo($file: Upload!, $organizationId: String!) {
     width
     height
     provider
+    folder
     metadata
     createdAt
   }

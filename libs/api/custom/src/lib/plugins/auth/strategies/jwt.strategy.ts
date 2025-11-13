@@ -37,13 +37,21 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     })
   }
 
-  async validate(payload: { userId: string; isEmulating?: boolean; originalAdminId?: string }): Promise<User> {
+  async validate(payload: { userId: string; sessionId?: string; isEmulating?: boolean; originalAdminId?: string }): Promise<User> {
     if (!payload || !payload.userId) {
       throw new UnauthorizedException('Invalid JWT payload.')
     }
     const user = await this.auth.validateUser(payload.userId)
     if (!user) {
       throw new UnauthorizedException('User from token not found or invalid.')
+    }
+
+    // Validate session if sessionId is present in the token
+    if (payload.sessionId) {
+      const isSessionValid = await this.auth.isSessionValid(payload.sessionId)
+      if (!isSessionValid) {
+        throw new UnauthorizedException('Session has been invalidated.')
+      }
     }
 
     // Attach emulation metadata to user object if present in JWT

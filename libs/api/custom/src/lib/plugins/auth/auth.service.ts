@@ -37,6 +37,15 @@ export class AuthService {
   ) {}
 
   /**
+   * Adds a delay to slow down brute force attacks
+   * Random delay between 100-200ms makes timing attacks harder
+   */
+  private async addBruteForceDelay(): Promise<void> {
+    const delay = 100 + Math.random() * 100 // 100-200ms random delay
+    await new Promise(resolve => setTimeout(resolve, delay))
+  }
+
+  /**
    * Determines if user should be granted super admin privileges
    * First user to register in an empty database becomes super admin
    */
@@ -82,7 +91,7 @@ export class AuthService {
       }
     }
 
-    return this.data.user
+    const user = await this.data.user
       .create({
         data: {
           firstName: input.firstName,
@@ -103,7 +112,7 @@ export class AuthService {
       .catch(e => {
         if (e instanceof PrismaClientKnownRequestError) {
           if (e.code === 'P2002') {
-            const target = e.meta?.target as string[] | string | undefined
+            const target = e.meta?.['target'] as string[] | string | undefined
             const targetStr = Array.isArray(target) ? target.join(',') : target || ''
             if (targetStr.includes('email')) {
               throw new BadRequestException('This email is already in use')
@@ -113,7 +122,20 @@ export class AuthService {
             throw new BadRequestException('This information is already in use')
           }
         }
+        throw e
       })
+
+    // Save initial password to history
+    if (user) {
+      await this.data.passwordHistory.create({
+        data: {
+          userId: user.id,
+          passwordHash: hashedPassword
+        }
+      })
+    }
+
+    return user
   }
 
   /**
@@ -327,6 +349,8 @@ export class AuthService {
           reason: 'INVALID_EMAIL',
         },
       })
+      // Add delay to slow down brute force attacks
+      await this.addBruteForceDelay()
       throw new BadRequestException(genericError)
     }
 
@@ -343,6 +367,8 @@ export class AuthService {
           reason: 'ACCOUNT_LOCKED',
         },
       })
+      // Add delay to slow down brute force attacks
+      await this.addBruteForceDelay()
       throw new BadRequestException(`Account is locked. Please try again in ${minutesLeft} minutes.`)
     }
 
@@ -356,6 +382,8 @@ export class AuthService {
           reason: 'ACCOUNT_DISABLED',
         },
       })
+      // Add delay to slow down brute force attacks
+      await this.addBruteForceDelay()
       throw new BadRequestException('Account has been disabled. Please contact support.')
     }
 
@@ -368,6 +396,8 @@ export class AuthService {
           reason: 'INVALID_PASSWORD',
         },
       })
+      // Add delay to slow down brute force attacks
+      await this.addBruteForceDelay()
       throw new BadRequestException(genericError)
     }
 
@@ -410,11 +440,15 @@ export class AuthService {
           userAgent: sessionInfo?.userAgent,
         })
 
+        // Add delay to slow down brute force attacks
+        await this.addBruteForceDelay()
         throw new BadRequestException(
           'Too many failed login attempts. Account locked for 15 minutes.'
         )
       }
 
+      // Add delay to slow down brute force attacks
+      await this.addBruteForceDelay()
       throw new BadRequestException(genericError)
     }
 
@@ -669,11 +703,39 @@ export class AuthService {
       throw new BadRequestException('Current password is incorrect')
     }
 
-    // Hash and update to new password
+    // Hash new password
     const hashedNewPassword = hashPassword(input.newPassword)
+
+    // Check if new password matches current password
+    if (validatePassword(input.newPassword, user.password)) {
+      throw new BadRequestException('New password cannot be the same as your current password')
+    }
+
+    // Check password history (prevent reuse of last 5 passwords)
+    const passwordHistory = await this.data.passwordHistory.findMany({
+      where: { userId },
+      orderBy: { createdAt: 'desc' },
+      take: 5
+    })
+
+    for (const historicalPassword of passwordHistory) {
+      if (validatePassword(input.newPassword, historicalPassword.passwordHash)) {
+        throw new BadRequestException('This password was used recently. Please choose a different password.')
+      }
+    }
+
+    // Update password
     await this.data.user.update({
       where: { id: userId },
       data: { password: hashedNewPassword }
+    })
+
+    // Save current password to history
+    await this.data.passwordHistory.create({
+      data: {
+        userId,
+        passwordHash: user.password
+      }
     })
 
     // Log security event with IP context
@@ -699,7 +761,9 @@ export class AuthService {
       })
     }
 
-    Logger.log(`Password changed for user ${userId}`)
+    // Invalidate all existing sessions for security (user will need to re-login)
+    await this.sessionService.invalidateAllUserSessions(userId)
+    Logger.log(`Password changed for user ${userId} - all sessions invalidated`)
 
     return true
   }
@@ -834,6 +898,25 @@ export class AuthService {
     }
 
     const hashedPassword = hashPassword(password)
+
+    // Check if new password matches current password
+    if (user.password && validatePassword(password, user.password)) {
+      throw new BadRequestException('New password cannot be the same as your current password')
+    }
+
+    // Check password history (prevent reuse of last 5 passwords)
+    const passwordHistory = await this.data.passwordHistory.findMany({
+      where: { userId: user.id },
+      orderBy: { createdAt: 'desc' },
+      take: 5
+    })
+
+    for (const historicalPassword of passwordHistory) {
+      if (validatePassword(password, historicalPassword.passwordHash)) {
+        throw new BadRequestException('This password was used recently. Please choose a different password.')
+      }
+    }
+
     const updatedUser = await this.data.user.update({
       where: { id: user.id },
       data: {
@@ -842,6 +925,16 @@ export class AuthService {
         password: hashedPassword,
       },
     })
+
+    // Save old password to history if it exists
+    if (user.password) {
+      await this.data.passwordHistory.create({
+        data: {
+          userId: user.id,
+          passwordHash: user.password
+        }
+      })
+    }
 
     // Log security event with IP context
     await this.securityEvents.logPasswordChanged(user.id, {
@@ -1022,6 +1115,11 @@ export class AuthService {
     const issuer = this.config.get('twoFactor.issuer')
 
     const { secret, otpauthUrl } = generate2FASecret(issuer, primaryEmail)
+
+    if (!otpauthUrl) {
+      throw new BadRequestException('Failed to generate 2FA URL')
+    }
+
     const qrCode = await generateQRCode(otpauthUrl)
 
     // Store secret temporarily (encrypted) - user must verify before it's fully enabled
@@ -1586,5 +1684,18 @@ export class AuthService {
     )
 
     return true
+  }
+
+  async isSessionValid(sessionId: string): Promise<boolean> {
+    try {
+      const session = await this.data.userSession.findUnique({
+        where: { id: sessionId },
+        select: { isValid: true },
+      })
+      return session?.isValid ?? false
+    } catch (error) {
+      Logger.error('Error checking session validity', error)
+      return false
+    }
   }
 }

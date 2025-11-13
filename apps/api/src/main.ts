@@ -1,4 +1,4 @@
-import { Logger } from '@nestjs/common'
+import { Logger, ValidationPipe } from '@nestjs/common'
 import { NestFactory } from '@nestjs/core'
 import { ConfigService } from '@nestled-template/api/config'
 import cookieParser from 'cookie-parser'
@@ -11,6 +11,18 @@ import { AppModule } from './app.module'
 async function bootstrap() {
   const app = await NestFactory.create(AppModule)
   app.enableShutdownHooks()
+
+  // Enable validation globally
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: false, // Allow fields without decorators (for generated DTOs)
+      forbidNonWhitelisted: false,
+      transform: true,
+      skipMissingProperties: false, // Validate even if properties are present but empty
+      forbidUnknownValues: false,
+    })
+  )
+
   const configService = app.get(ConfigService)
 
   // Get individual properties with fallbacks

@@ -179,7 +179,25 @@ export class OrganizationService {
       throw new ForbiddenException('Only organization owners can delete the organization')
     }
 
-    // Delete the organization (cascade will handle related records)
+    // Manually cascade delete related records before deleting organization
+    // This is necessary because the database schema doesn't have cascade deletes configured
+
+    // Delete all pending invitations
+    await this.data.invite.deleteMany({
+      where: { organizationId }
+    })
+
+    // Delete all organization members
+    await this.data.organizationMember.deleteMany({
+      where: { organizationId }
+    })
+
+    // Delete all roles (Prisma will handle disconnecting permissions via implicit many-to-many)
+    await this.data.role.deleteMany({
+      where: { organizationId }
+    })
+
+    // Delete the organization
     await this.data.organization.delete({
       where: { id: organizationId }
     })
@@ -386,7 +404,9 @@ export class OrganizationService {
 
     Logger.log(`User ${userId} invited ${input.email} to organization ${input.organizationId}`)
 
-    return invite.id
+    // Return the token so it can be used to accept the invitation
+    // In production, users get this token from the email link
+    return token
   }
 
   /**
@@ -555,6 +575,7 @@ export class OrganizationService {
     }
 
     // Add user to organization
+    Logger.log(`Adding user ${userId} to organization ${invite.organizationId} with role ${invite.roleId} (${invite.role?.name})`)
     await this.data.organizationMember.create({
       data: {
         userId,
@@ -654,7 +675,11 @@ export class OrganizationService {
     const memberships = await this.data.organizationMember.findMany({
       where: { userId },
       include: {
-        organization: true,
+        organization: {
+          include: {
+            images: true
+          }
+        },
         role: true
       }
     })

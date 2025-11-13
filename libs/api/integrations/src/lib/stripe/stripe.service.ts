@@ -11,9 +11,16 @@ import Stripe from 'stripe'
 @Injectable()
 export class StripeService implements OnModuleInit {
   private readonly logger = new Logger(StripeService.name)
-  private stripe: Stripe
+  private stripe!: Stripe
 
   constructor(private readonly configService: ConfigService) {}
+
+  /**
+   * Helper method to safely extract error message from unknown error type
+   */
+  private getErrorMessage(error: unknown): string {
+    return error instanceof Error ? error.message : 'Unknown error'
+  }
 
   onModuleInit() {
     const { secretKey } = this.configService.stripe
@@ -68,7 +75,7 @@ export class StripeService implements OnModuleInit {
         metadata: params.metadata,
       })
     } catch (error) {
-      this.logger.error(`Failed to create product: ${error.message}`)
+      this.logger.error(`Failed to create product: ${this.getErrorMessage(error)}`)
       throw error
     }
   }
@@ -86,7 +93,7 @@ export class StripeService implements OnModuleInit {
     try {
       return await this.stripe.products.update(productId, params)
     } catch (error) {
-      this.logger.error(`Failed to update product ${productId}: ${error.message}`)
+      this.logger.error(`Failed to update product ${productId}: ${this.getErrorMessage(error)}`)
       throw error
     }
   }
@@ -95,7 +102,7 @@ export class StripeService implements OnModuleInit {
     try {
       return await this.stripe.products.retrieve(productId)
     } catch (error) {
-      this.logger.error(`Failed to get product ${productId}: ${error.message}`)
+      this.logger.error(`Failed to get product ${productId}: ${this.getErrorMessage(error)}`)
       throw error
     }
   }
@@ -107,7 +114,7 @@ export class StripeService implements OnModuleInit {
     try {
       return await this.stripe.products.list(params)
     } catch (error) {
-      this.logger.error(`Failed to list products: ${error.message}`)
+      this.logger.error(`Failed to list products: ${this.getErrorMessage(error)}`)
       throw error
     }
   }
@@ -150,7 +157,7 @@ export class StripeService implements OnModuleInit {
 
       return await this.stripe.prices.create(priceParams)
     } catch (error) {
-      this.logger.error(`Failed to create price: ${error.message}`)
+      this.logger.error(`Failed to create price: ${this.getErrorMessage(error)}`)
       throw error
     }
   }
@@ -166,7 +173,7 @@ export class StripeService implements OnModuleInit {
     try {
       return await this.stripe.prices.update(priceId, params)
     } catch (error) {
-      this.logger.error(`Failed to update price ${priceId}: ${error.message}`)
+      this.logger.error(`Failed to update price ${priceId}: ${this.getErrorMessage(error)}`)
       throw error
     }
   }
@@ -175,7 +182,7 @@ export class StripeService implements OnModuleInit {
     try {
       return await this.stripe.prices.retrieve(priceId)
     } catch (error) {
-      this.logger.error(`Failed to get price ${priceId}: ${error.message}`)
+      this.logger.error(`Failed to get price ${priceId}: ${this.getErrorMessage(error)}`)
       throw error
     }
   }
@@ -192,7 +199,7 @@ export class StripeService implements OnModuleInit {
         limit: params?.limit,
       })
     } catch (error) {
-      this.logger.error(`Failed to list prices: ${error.message}`)
+      this.logger.error(`Failed to list prices: ${this.getErrorMessage(error)}`)
       throw error
     }
   }
@@ -219,7 +226,7 @@ export class StripeService implements OnModuleInit {
         metadata: params.metadata,
       })
     } catch (error) {
-      this.logger.error(`Failed to create customer: ${error.message}`)
+      this.logger.error(`Failed to create customer: ${this.getErrorMessage(error)}`)
       throw error
     }
   }
@@ -236,7 +243,7 @@ export class StripeService implements OnModuleInit {
     try {
       return await this.stripe.customers.update(customerId, params)
     } catch (error) {
-      this.logger.error(`Failed to update customer ${customerId}: ${error.message}`)
+      this.logger.error(`Failed to update customer ${customerId}: ${this.getErrorMessage(error)}`)
       throw error
     }
   }
@@ -245,7 +252,7 @@ export class StripeService implements OnModuleInit {
     try {
       return await this.stripe.customers.retrieve(customerId)
     } catch (error) {
-      this.logger.error(`Failed to get customer ${customerId}: ${error.message}`)
+      this.logger.error(`Failed to get customer ${customerId}: ${this.getErrorMessage(error)}`)
       throw error
     }
   }
@@ -255,7 +262,7 @@ export class StripeService implements OnModuleInit {
     try {
       return await this.stripe.customers.del(customerId)
     } catch (error) {
-      this.logger.error(`Failed to delete customer ${customerId}: ${error.message}`)
+      this.logger.error(`Failed to delete customer ${customerId}: ${this.getErrorMessage(error)}`)
       throw error
     }
   }
@@ -280,7 +287,7 @@ export class StripeService implements OnModuleInit {
         expand: ['latest_invoice', 'customer'],
       })
     } catch (error) {
-      this.logger.error(`Failed to create subscription: ${error.message}`)
+      this.logger.error(`Failed to create subscription: ${this.getErrorMessage(error)}`)
       throw error
     }
   }
@@ -316,7 +323,7 @@ export class StripeService implements OnModuleInit {
 
       return await this.stripe.subscriptions.update(subscriptionId, updateParams)
     } catch (error) {
-      this.logger.error(`Failed to update subscription ${subscriptionId}: ${error.message}`)
+      this.logger.error(`Failed to update subscription ${subscriptionId}: ${this.getErrorMessage(error)}`)
       throw error
     }
   }
@@ -335,7 +342,7 @@ export class StripeService implements OnModuleInit {
         })
       }
     } catch (error) {
-      this.logger.error(`Failed to cancel subscription ${subscriptionId}: ${error.message}`)
+      this.logger.error(`Failed to cancel subscription ${subscriptionId}: ${this.getErrorMessage(error)}`)
       throw error
     }
   }
@@ -346,7 +353,7 @@ export class StripeService implements OnModuleInit {
         expand: ['latest_invoice', 'customer', 'default_payment_method'],
       })
     } catch (error) {
-      this.logger.error(`Failed to get subscription ${subscriptionId}: ${error.message}`)
+      this.logger.error(`Failed to get subscription ${subscriptionId}: ${this.getErrorMessage(error)}`)
       throw error
     }
   }
@@ -363,7 +370,7 @@ export class StripeService implements OnModuleInit {
         limit: params?.limit,
       })
     } catch (error) {
-      this.logger.error(`Failed to list subscriptions: ${error.message}`)
+      this.logger.error(`Failed to list subscriptions: ${this.getErrorMessage(error)}`)
       throw error
     }
   }
@@ -408,7 +415,7 @@ export class StripeService implements OnModuleInit {
 
       return await this.stripe.checkout.sessions.create(sessionParams)
     } catch (error) {
-      this.logger.error(`Failed to create checkout session: ${error.message}`)
+      this.logger.error(`Failed to create checkout session: ${this.getErrorMessage(error)}`)
       throw error
     }
   }
@@ -419,7 +426,7 @@ export class StripeService implements OnModuleInit {
         expand: ['subscription', 'customer'],
       })
     } catch (error) {
-      this.logger.error(`Failed to get checkout session ${sessionId}: ${error.message}`)
+      this.logger.error(`Failed to get checkout session ${sessionId}: ${this.getErrorMessage(error)}`)
       throw error
     }
   }
@@ -439,7 +446,7 @@ export class StripeService implements OnModuleInit {
         return_url: params.returnUrl,
       })
     } catch (error) {
-      this.logger.error(`Failed to create portal session: ${error.message}`)
+      this.logger.error(`Failed to create portal session: ${this.getErrorMessage(error)}`)
       throw error
     }
   }
@@ -468,7 +475,7 @@ export class StripeService implements OnModuleInit {
         },
       })
     } catch (error) {
-      this.logger.error(`Failed to create payment intent: ${error.message}`)
+      this.logger.error(`Failed to create payment intent: ${this.getErrorMessage(error)}`)
       throw error
     }
   }
@@ -478,7 +485,7 @@ export class StripeService implements OnModuleInit {
     try {
       return await this.stripe.paymentIntents.confirm(paymentIntentId)
     } catch (error) {
-      this.logger.error(`Failed to confirm payment intent ${paymentIntentId}: ${error.message}`)
+      this.logger.error(`Failed to confirm payment intent ${paymentIntentId}: ${this.getErrorMessage(error)}`)
       throw error
     }
   }
@@ -488,7 +495,7 @@ export class StripeService implements OnModuleInit {
     try {
       return await this.stripe.paymentIntents.cancel(paymentIntentId)
     } catch (error) {
-      this.logger.error(`Failed to cancel payment intent ${paymentIntentId}: ${error.message}`)
+      this.logger.error(`Failed to cancel payment intent ${paymentIntentId}: ${this.getErrorMessage(error)}`)
       throw error
     }
   }
@@ -514,7 +521,7 @@ export class StripeService implements OnModuleInit {
     try {
       return this.stripe.webhooks.constructEvent(payload, signature, webhookSecret)
     } catch (error) {
-      this.logger.error(`Webhook signature verification failed: ${error.message}`)
+      this.logger.error(`Webhook signature verification failed: ${this.getErrorMessage(error)}`)
       throw error
     }
   }
@@ -527,7 +534,7 @@ export class StripeService implements OnModuleInit {
     try {
       return await this.stripe.invoices.retrieve(invoiceId)
     } catch (error) {
-      this.logger.error(`Failed to get invoice ${invoiceId}: ${error.message}`)
+      this.logger.error(`Failed to get invoice ${invoiceId}: ${this.getErrorMessage(error)}`)
       throw error
     }
   }
@@ -546,7 +553,7 @@ export class StripeService implements OnModuleInit {
         limit: params?.limit,
       })
     } catch (error) {
-      this.logger.error(`Failed to list invoices: ${error.message}`)
+      this.logger.error(`Failed to list invoices: ${this.getErrorMessage(error)}`)
       throw error
     }
   }

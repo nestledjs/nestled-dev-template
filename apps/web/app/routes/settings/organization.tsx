@@ -10,6 +10,7 @@ import {
   MyOrganizationsQuery,
   useUploadOrganizationLogoMutation,
   useUserUpdateOrganizationMutation,
+  useDeleteFileMutation,
 } from '@nestled-template/shared/sdk'
 import type { QueryRef } from '@apollo/client'
 import { useApolloClient, useReadQuery } from '@apollo/client/react'
@@ -31,6 +32,7 @@ export default function OrganizationSettings() {
   const [formSuccess, setFormSuccess] = useState<string | null>(null)
   const [updateOrganization] = useUserUpdateOrganizationMutation()
   const [uploadOrganizationLogo] = useUploadOrganizationLogoMutation()
+  const [deleteFile] = useDeleteFileMutation()
   const revalidator = useRevalidator()
   const client = useApolloClient()
 
@@ -90,10 +92,24 @@ export default function OrganizationSettings() {
   }
 
   const handleLogoRemove = async () => {
-    // For now, we'll implement a simple removal
-    // In a real app, you might want to call a deleteFile mutation
-    setFormSuccess('Logo removed successfully!')
-    setTimeout(() => setFormSuccess(null), 3000)
+    if (!organizationLogo) return
+
+    try {
+      await deleteFile({
+        variables: {
+          uploadId: organizationLogo.id,
+        },
+      })
+
+      // Refresh organization data to remove the logo from UI
+      await client.refetchQueries({ include: [MyOrganizationsDocument] })
+      setFormSuccess('Logo removed successfully!')
+      setTimeout(() => setFormSuccess(null), 3000)
+    } catch (error: any) {
+      console.error('Logo removal failed:', error)
+      setFormError(error.message || 'Failed to remove logo')
+      setTimeout(() => setFormError(null), 5000)
+    }
   }
 
   const organizationFields = [

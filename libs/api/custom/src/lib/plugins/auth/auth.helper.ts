@@ -37,9 +37,9 @@ export function randomId(length = 8): string {
  * Generate a username slug from first and last name
  * Format: firstname.lastname (lowercase, alphanumeric only)
  */
-export function generateUsernameSlug(firstName: string, lastName: string): string {
-  const cleanFirst = firstName.toLowerCase().replace(/[^a-z0-9]/g, '')
-  const cleanLast = lastName.toLowerCase().replace(/[^a-z0-9]/g, '')
+export function generateUsernameSlug(firstName?: string, lastName?: string): string {
+  const cleanFirst = (firstName || '').toLowerCase().replace(/[^a-z0-9]/g, '') || 'user'
+  const cleanLast = (lastName || '').toLowerCase().replace(/[^a-z0-9]/g, '') || randomId(4)
   return `${cleanFirst}.${cleanLast}`
 }
 

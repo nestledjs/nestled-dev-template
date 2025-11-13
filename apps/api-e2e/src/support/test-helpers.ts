@@ -32,7 +32,7 @@ export class TestHelpers {
   // Auth helpers
   static async registerUser(userData?: CreateUserData): Promise<TestUser> {
     const user = UserFactory.create(userData)
-    
+
     const registerMutation = `
       mutation Register($input: RegisterInput!) {
         register(input: $input) {
@@ -41,7 +41,10 @@ export class TestHelpers {
             id
             firstName
             lastName
-            email
+            emails {
+              email
+              primary
+            }
             emailValidated
           }
         }
@@ -54,6 +57,7 @@ export class TestHelpers {
         lastName: user.lastName,
         email: user.email,
         password: user.password,
+        organizationName: user.organizationName,
       },
     })
 
@@ -62,9 +66,10 @@ export class TestHelpers {
     }
 
     const result = response.data.data.register
+    const primaryEmail = result.user.emails?.find((e: any) => e.primary)?.email || user.email
     return {
       id: result.user.id,
-      email: result.user.email,
+      email: primaryEmail,
       firstName: result.user.firstName,
       lastName: result.user.lastName,
       tokens: {
@@ -82,7 +87,10 @@ export class TestHelpers {
             id
             firstName
             lastName
-            email
+            emails {
+              email
+              primary
+            }
             emailValidated
           }
         }
@@ -98,9 +106,10 @@ export class TestHelpers {
     }
 
     const result = response.data.data.login
+    const primaryEmail = result.user.emails?.find((e: any) => e.primary)?.email || email
     return {
       id: result.user.id,
-      email: result.user.email,
+      email: primaryEmail,
       firstName: result.user.firstName,
       lastName: result.user.lastName,
       tokens: {
@@ -193,9 +202,11 @@ export class TestHelpers {
           id
           firstName
           lastName
-          email
+          emails {
+            email
+            primary
+          }
           emailValidated
-          role
         }
       }
     `
@@ -206,7 +217,13 @@ export class TestHelpers {
       throw new Error(`Get current user failed: ${JSON.stringify(response.data.errors)}`)
     }
 
-    return response.data.data.me
+    const result = response.data.data.me
+    const primaryEmail = result.emails?.find((e: any) => e.primary)?.email
+
+    return {
+      ...result,
+      email: primaryEmail,
+    }
   }
 
   // Database cleanup helpers

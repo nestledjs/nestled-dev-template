@@ -378,6 +378,13 @@ export type CreateOrganizationMemberInput = {
   userId: Scalars['String']['input']
 }
 
+export type CreatePasswordHistoryInput = {
+  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
+  id?: InputMaybe<Scalars['String']['input']>
+  passwordHash: Scalars['String']['input']
+  userId: Scalars['String']['input']
+}
+
 export type CreatePermissionInput = {
   action: Scalars['String']['input']
   description?: InputMaybe<Scalars['String']['input']>
@@ -524,6 +531,7 @@ export type CreateUserInput = {
   oAuthAccountsIds?: InputMaybe<Array<Scalars['String']['input']>>
   organizationsIds?: InputMaybe<Array<Scalars['String']['input']>>
   password?: InputMaybe<Scalars['String']['input']>
+  passwordHistoryIds?: InputMaybe<Array<Scalars['String']['input']>>
   passwordResetExpires?: InputMaybe<Scalars['Timestamp']['input']>
   passwordResetToken?: InputMaybe<Scalars['String']['input']>
   phoneNumbersIds?: InputMaybe<Array<Scalars['String']['input']>>
@@ -904,6 +912,20 @@ export type ListOrganizationMemberInput = {
   userId?: InputMaybe<Scalars['String']['input']>
 }
 
+export type ListPasswordHistoryInput = {
+  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
+  filters?: InputMaybe<Scalars['JSONObject']['input']>
+  id?: InputMaybe<Scalars['String']['input']>
+  orderBy?: InputMaybe<Scalars['String']['input']>
+  orderDirection?: InputMaybe<Scalars['String']['input']>
+  passwordHash?: InputMaybe<Scalars['String']['input']>
+  search?: InputMaybe<Scalars['String']['input']>
+  searchFields?: InputMaybe<Array<Scalars['String']['input']>>
+  skip?: InputMaybe<Scalars['Float']['input']>
+  take?: InputMaybe<Scalars['Float']['input']>
+  userId?: InputMaybe<Scalars['String']['input']>
+}
+
 export type ListPermissionInput = {
   action?: InputMaybe<Scalars['String']['input']>
   description?: InputMaybe<Scalars['String']['input']>
@@ -1116,6 +1138,7 @@ export type ListUserInput = {
   orderDirection?: InputMaybe<Scalars['String']['input']>
   organizationsIds?: InputMaybe<Array<Scalars['String']['input']>>
   password?: InputMaybe<Scalars['String']['input']>
+  passwordHistoryIds?: InputMaybe<Array<Scalars['String']['input']>>
   passwordResetExpires?: InputMaybe<Scalars['Timestamp']['input']>
   passwordResetToken?: InputMaybe<Scalars['String']['input']>
   phoneNumbersIds?: InputMaybe<Array<Scalars['String']['input']>>
@@ -1215,6 +1238,7 @@ export type Mutation = {
   createOrganization?: Maybe<Organization>
   createOrganizationInvitation: Scalars['String']['output']
   createOrganizationMember?: Maybe<OrganizationMember>
+  createPasswordHistory?: Maybe<PasswordHistory>
   createPermission?: Maybe<Permission>
   createPhoneNumber?: Maybe<PhoneNumber>
   createPlan?: Maybe<Plan>
@@ -1240,6 +1264,7 @@ export type Mutation = {
   deleteOAuthAccount?: Maybe<OAuthAccount>
   deleteOrganization?: Maybe<Organization>
   deleteOrganizationMember?: Maybe<OrganizationMember>
+  deletePasswordHistory?: Maybe<PasswordHistory>
   deletePermission?: Maybe<Permission>
   deletePhoneNumber?: Maybe<PhoneNumber>
   deletePlan?: Maybe<Plan>
@@ -1295,6 +1320,7 @@ export type Mutation = {
   updateOrganization?: Maybe<Organization>
   updateOrganizationMember?: Maybe<OrganizationMember>
   updateOrganizationMemberRole: Scalars['Boolean']['output']
+  updatePasswordHistory?: Maybe<PasswordHistory>
   updatePermission?: Maybe<Permission>
   updatePhoneNumber?: Maybe<PhoneNumber>
   updatePlan?: Maybe<Plan>
@@ -1411,6 +1437,10 @@ export type MutationCreateOrganizationMemberArgs = {
   input: CreateOrganizationMemberInput
 }
 
+export type MutationCreatePasswordHistoryArgs = {
+  input: CreatePasswordHistoryInput
+}
+
 export type MutationCreatePermissionArgs = {
   input: CreatePermissionInput
 }
@@ -1505,6 +1535,10 @@ export type MutationDeleteOrganizationArgs = {
 
 export type MutationDeleteOrganizationMemberArgs = {
   organizationMemberId: Scalars['String']['input']
+}
+
+export type MutationDeletePasswordHistoryArgs = {
+  passwordHistoryId: Scalars['String']['input']
 }
 
 export type MutationDeletePermissionArgs = {
@@ -1710,6 +1744,11 @@ export type MutationUpdateOrganizationMemberRoleArgs = {
   input: UpdateMemberRoleInput
 }
 
+export type MutationUpdatePasswordHistoryArgs = {
+  input: UpdatePasswordHistoryInput
+  passwordHistoryId: Scalars['String']['input']
+}
+
 export type MutationUpdatePermissionArgs = {
   input: UpdatePermissionInput
   permissionId: Scalars['String']['input']
@@ -1878,6 +1917,15 @@ export type OrganizationMember = {
   userId: Scalars['String']['output']
 }
 
+export type PasswordHistory = {
+  __typename?: 'PasswordHistory'
+  createdAt: Scalars['Timestamp']['output']
+  id: Scalars['String']['output']
+  passwordHash: Scalars['String']['output']
+  user?: Maybe<User>
+  userId: Scalars['String']['output']
+}
+
 export type Permission = {
   __typename?: 'Permission'
   action: Scalars['String']['output']
@@ -1983,6 +2031,9 @@ export type Query = {
   organizationRoles: Array<Role>
   organizations?: Maybe<Array<Organization>>
   organizationsCount?: Maybe<CorePaging>
+  passwordHistories?: Maybe<Array<PasswordHistory>>
+  passwordHistoriesCount?: Maybe<CorePaging>
+  passwordHistory?: Maybe<PasswordHistory>
   permission?: Maybe<Permission>
   permissions?: Maybe<Array<Permission>>
   permissionsCount?: Maybe<CorePaging>
@@ -2206,6 +2257,18 @@ export type QueryOrganizationsArgs = {
 
 export type QueryOrganizationsCountArgs = {
   input?: InputMaybe<ListOrganizationInput>
+}
+
+export type QueryPasswordHistoriesArgs = {
+  input?: InputMaybe<ListPasswordHistoryInput>
+}
+
+export type QueryPasswordHistoriesCountArgs = {
+  input?: InputMaybe<ListPasswordHistoryInput>
+}
+
+export type QueryPasswordHistoryArgs = {
+  passwordHistoryId: Scalars['String']['input']
 }
 
 export type QueryPermissionArgs = {
@@ -2742,6 +2805,13 @@ export type UpdateOrganizationMemberInput = {
   userId?: InputMaybe<Scalars['String']['input']>
 }
 
+export type UpdatePasswordHistoryInput = {
+  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
+  id?: InputMaybe<Scalars['String']['input']>
+  passwordHash?: InputMaybe<Scalars['String']['input']>
+  userId?: InputMaybe<Scalars['String']['input']>
+}
+
 export type UpdatePermissionInput = {
   action?: InputMaybe<Scalars['String']['input']>
   description?: InputMaybe<Scalars['String']['input']>
@@ -2888,6 +2958,7 @@ export type UpdateUserInput = {
   oAuthAccountsIds?: InputMaybe<Array<Scalars['String']['input']>>
   organizationsIds?: InputMaybe<Array<Scalars['String']['input']>>
   password?: InputMaybe<Scalars['String']['input']>
+  passwordHistoryIds?: InputMaybe<Array<Scalars['String']['input']>>
   passwordResetExpires?: InputMaybe<Scalars['Timestamp']['input']>
   passwordResetToken?: InputMaybe<Scalars['String']['input']>
   phoneNumbersIds?: InputMaybe<Array<Scalars['String']['input']>>
@@ -2978,6 +3049,7 @@ export type User = {
   organizations?: Maybe<Array<OrganizationMember>>
   originalAdminId?: Maybe<Scalars['String']['output']>
   password?: Maybe<Scalars['String']['output']>
+  passwordHistory?: Maybe<Array<PasswordHistory>>
   passwordResetExpires?: Maybe<Scalars['Timestamp']['output']>
   passwordResetToken?: Maybe<Scalars['String']['output']>
   phoneNumbers?: Maybe<Array<PhoneNumber>>
@@ -4781,6 +4853,130 @@ export type __AdminOrganizationPaginationQueryVariables = Exact<{
 }>
 
 export type __AdminOrganizationPaginationQuery = {
+  __typename?: 'Query'
+  counters?: {
+    __typename?: 'CorePaging'
+    count?: number | null
+    take?: number | null
+    page?: number | null
+    skip?: number | null
+    total?: number | null
+    filteredTotal?: number | null
+    pages?: number | null
+    hasNext?: boolean | null
+    hasPrev?: boolean | null
+  } | null
+}
+
+export type __AdminPasswordHistoryListFragment = {
+  __typename?: 'PasswordHistory'
+  id: string
+  createdAt: any
+  userId: string
+  passwordHash: string
+  user?: { __typename?: 'User'; id: string } | null
+}
+
+export type __AdminPasswordHistoryDetailsFragment = {
+  __typename?: 'PasswordHistory'
+  id: string
+  createdAt: any
+  userId: string
+  passwordHash: string
+  user?: { __typename?: 'User'; id: string } | null
+}
+
+export type __AdminCreatePasswordHistoryMutationVariables = Exact<{
+  input: CreatePasswordHistoryInput
+}>
+
+export type __AdminCreatePasswordHistoryMutation = {
+  __typename?: 'Mutation'
+  createPasswordHistory?: {
+    __typename?: 'PasswordHistory'
+    id: string
+    createdAt: any
+    userId: string
+    passwordHash: string
+    user?: { __typename?: 'User'; id: string } | null
+  } | null
+}
+
+export type __AdminDeletePasswordHistoryMutationVariables = Exact<{
+  passwordHistoryId: Scalars['String']['input']
+}>
+
+export type __AdminDeletePasswordHistoryMutation = {
+  __typename?: 'Mutation'
+  deletePasswordHistory?: { __typename?: 'PasswordHistory'; id: string } | null
+}
+
+export type __AdminUpdatePasswordHistoryMutationVariables = Exact<{
+  passwordHistoryId: Scalars['String']['input']
+  input: UpdatePasswordHistoryInput
+}>
+
+export type __AdminUpdatePasswordHistoryMutation = {
+  __typename?: 'Mutation'
+  updatePasswordHistory?: {
+    __typename?: 'PasswordHistory'
+    id: string
+    createdAt: any
+    userId: string
+    passwordHash: string
+    user?: { __typename?: 'User'; id: string } | null
+  } | null
+}
+
+export type __AdminPasswordHistoryQueryVariables = Exact<{
+  passwordHistoryId: Scalars['String']['input']
+}>
+
+export type __AdminPasswordHistoryQuery = {
+  __typename?: 'Query'
+  passwordHistory?: {
+    __typename?: 'PasswordHistory'
+    id: string
+    createdAt: any
+    userId: string
+    passwordHash: string
+    user?: { __typename?: 'User'; id: string } | null
+  } | null
+}
+
+export type __AdminPasswordHistoriesQueryVariables = Exact<{
+  input?: InputMaybe<ListPasswordHistoryInput>
+}>
+
+export type __AdminPasswordHistoriesQuery = {
+  __typename?: 'Query'
+  passwordHistories?: Array<{
+    __typename?: 'PasswordHistory'
+    id: string
+    createdAt: any
+    userId: string
+    passwordHash: string
+    user?: { __typename?: 'User'; id: string } | null
+  }> | null
+  counters?: {
+    __typename?: 'CorePaging'
+    count?: number | null
+    take?: number | null
+    page?: number | null
+    skip?: number | null
+    total?: number | null
+    filteredTotal?: number | null
+    pages?: number | null
+    hasNext?: boolean | null
+    hasPrev?: boolean | null
+  } | null
+}
+
+export type __AdminPasswordHistoryPaginationQueryVariables = Exact<{
+  input?: InputMaybe<ListPasswordHistoryInput>
+}>
+
+export type __AdminPasswordHistoryPaginationQuery = {
   __typename?: 'Query'
   counters?: {
     __typename?: 'CorePaging'
@@ -9747,6 +9943,118 @@ export type GetInvitationDetailsQuery = {
   }
 }
 
+export type PasswordHistoryListFragment = {
+  __typename?: 'PasswordHistory'
+  id: string
+  createdAt: any
+  passwordHash: string
+}
+
+export type PasswordHistoryDetailsFragment = {
+  __typename?: 'PasswordHistory'
+  id: string
+  createdAt: any
+  passwordHash: string
+}
+
+export type CreatePasswordHistoryMutationVariables = Exact<{
+  input: CreatePasswordHistoryInput
+}>
+
+export type CreatePasswordHistoryMutation = {
+  __typename?: 'Mutation'
+  createPasswordHistory?: {
+    __typename?: 'PasswordHistory'
+    id: string
+    createdAt: any
+    passwordHash: string
+  } | null
+}
+
+export type DeletePasswordHistoryMutationVariables = Exact<{
+  passwordHistoryId: Scalars['String']['input']
+}>
+
+export type DeletePasswordHistoryMutation = {
+  __typename?: 'Mutation'
+  deletePasswordHistory?: { __typename?: 'PasswordHistory'; id: string } | null
+}
+
+export type UpdatePasswordHistoryMutationVariables = Exact<{
+  passwordHistoryId: Scalars['String']['input']
+  input: UpdatePasswordHistoryInput
+}>
+
+export type UpdatePasswordHistoryMutation = {
+  __typename?: 'Mutation'
+  updatePasswordHistory?: {
+    __typename?: 'PasswordHistory'
+    id: string
+    createdAt: any
+    passwordHash: string
+  } | null
+}
+
+export type PasswordHistoryQueryVariables = Exact<{
+  passwordHistoryId: Scalars['String']['input']
+}>
+
+export type PasswordHistoryQuery = {
+  __typename?: 'Query'
+  passwordHistory?: {
+    __typename?: 'PasswordHistory'
+    id: string
+    createdAt: any
+    passwordHash: string
+  } | null
+}
+
+export type PasswordHistoriesQueryVariables = Exact<{
+  input?: InputMaybe<ListPasswordHistoryInput>
+}>
+
+export type PasswordHistoriesQuery = {
+  __typename?: 'Query'
+  passwordHistories?: Array<{
+    __typename?: 'PasswordHistory'
+    id: string
+    createdAt: any
+    passwordHash: string
+  }> | null
+  counters?: {
+    __typename?: 'CorePaging'
+    count?: number | null
+    take?: number | null
+    page?: number | null
+    skip?: number | null
+    total?: number | null
+    filteredTotal?: number | null
+    pages?: number | null
+    hasNext?: boolean | null
+    hasPrev?: boolean | null
+  } | null
+}
+
+export type PasswordHistoryPaginationQueryVariables = Exact<{
+  input?: InputMaybe<ListPasswordHistoryInput>
+}>
+
+export type PasswordHistoryPaginationQuery = {
+  __typename?: 'Query'
+  counters?: {
+    __typename?: 'CorePaging'
+    count?: number | null
+    take?: number | null
+    page?: number | null
+    skip?: number | null
+    total?: number | null
+    filteredTotal?: number | null
+    pages?: number | null
+    hasNext?: boolean | null
+    hasPrev?: boolean | null
+  } | null
+}
+
 export type PermissionListFragment = {
   __typename?: 'Permission'
   id: string
@@ -10445,6 +10753,7 @@ export type UploadUserAvatarMutation = {
     width?: number | null
     height?: number | null
     provider: StorageProvider
+    folder?: string | null
     metadata?: any | null
     createdAt: any
   }
@@ -10469,6 +10778,7 @@ export type UploadOrganizationLogoMutation = {
     width?: number | null
     height?: number | null
     provider: StorageProvider
+    folder?: string | null
     metadata?: any | null
     createdAt: any
   }
@@ -12035,6 +12345,23 @@ export const __AdminOrganizationDetailsFragmentDoc = gql`
   }
   ${__AdminOrganizationListFragmentDoc}
 `
+export const __AdminPasswordHistoryListFragmentDoc = gql`
+  fragment __AdminPasswordHistoryList on PasswordHistory {
+    id
+    createdAt
+    userId
+    passwordHash
+    user {
+      id
+    }
+  }
+`
+export const __AdminPasswordHistoryDetailsFragmentDoc = gql`
+  fragment __AdminPasswordHistoryDetails on PasswordHistory {
+    ...__AdminPasswordHistoryList
+  }
+  ${__AdminPasswordHistoryListFragmentDoc}
+`
 export const __AdminPermissionListFragmentDoc = gql`
   fragment __AdminPermissionList on Permission {
     id
@@ -12638,6 +12965,19 @@ export const OrganizationDetailsFragmentDoc = gql`
     }
   }
   ${OrganizationListFragmentDoc}
+`
+export const PasswordHistoryListFragmentDoc = gql`
+  fragment PasswordHistoryList on PasswordHistory {
+    id
+    createdAt
+    passwordHash
+  }
+`
+export const PasswordHistoryDetailsFragmentDoc = gql`
+  fragment PasswordHistoryDetails on PasswordHistory {
+    ...PasswordHistoryList
+  }
+  ${PasswordHistoryListFragmentDoc}
 `
 export const PermissionListFragmentDoc = gql`
   fragment PermissionList on Permission {
@@ -17005,6 +17345,398 @@ export type __AdminOrganizationPaginationSuspenseQueryHookResult = ReturnType<
 export type __AdminOrganizationPaginationQueryResult = Apollo.QueryResult<
   __AdminOrganizationPaginationQuery,
   __AdminOrganizationPaginationQueryVariables
+>
+export const __AdminCreatePasswordHistoryDocument = gql`
+  mutation __AdminCreatePasswordHistory($input: CreatePasswordHistoryInput!) {
+    createPasswordHistory(input: $input) {
+      ...__AdminPasswordHistoryDetails
+    }
+  }
+  ${__AdminPasswordHistoryDetailsFragmentDoc}
+`
+export type __AdminCreatePasswordHistoryMutationFn = Apollo.MutationFunction<
+  __AdminCreatePasswordHistoryMutation,
+  __AdminCreatePasswordHistoryMutationVariables
+>
+
+/**
+ * __use__AdminCreatePasswordHistoryMutation__
+ *
+ * To run a mutation, you first call `use__AdminCreatePasswordHistoryMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `use__AdminCreatePasswordHistoryMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [adminCreatePasswordHistoryMutation, { data, loading, error }] = use__AdminCreatePasswordHistoryMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function use__AdminCreatePasswordHistoryMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    __AdminCreatePasswordHistoryMutation,
+    __AdminCreatePasswordHistoryMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useMutation<
+    __AdminCreatePasswordHistoryMutation,
+    __AdminCreatePasswordHistoryMutationVariables
+  >(__AdminCreatePasswordHistoryDocument, options)
+}
+export type __AdminCreatePasswordHistoryMutationHookResult = ReturnType<
+  typeof use__AdminCreatePasswordHistoryMutation
+>
+export type __AdminCreatePasswordHistoryMutationResult =
+  Apollo.MutationResult<__AdminCreatePasswordHistoryMutation>
+export type __AdminCreatePasswordHistoryMutationOptions = Apollo.BaseMutationOptions<
+  __AdminCreatePasswordHistoryMutation,
+  __AdminCreatePasswordHistoryMutationVariables
+>
+export const __AdminDeletePasswordHistoryDocument = gql`
+  mutation __AdminDeletePasswordHistory($passwordHistoryId: String!) {
+    deletePasswordHistory(passwordHistoryId: $passwordHistoryId) {
+      id
+    }
+  }
+`
+export type __AdminDeletePasswordHistoryMutationFn = Apollo.MutationFunction<
+  __AdminDeletePasswordHistoryMutation,
+  __AdminDeletePasswordHistoryMutationVariables
+>
+
+/**
+ * __use__AdminDeletePasswordHistoryMutation__
+ *
+ * To run a mutation, you first call `use__AdminDeletePasswordHistoryMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `use__AdminDeletePasswordHistoryMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [adminDeletePasswordHistoryMutation, { data, loading, error }] = use__AdminDeletePasswordHistoryMutation({
+ *   variables: {
+ *      passwordHistoryId: // value for 'passwordHistoryId'
+ *   },
+ * });
+ */
+export function use__AdminDeletePasswordHistoryMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    __AdminDeletePasswordHistoryMutation,
+    __AdminDeletePasswordHistoryMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useMutation<
+    __AdminDeletePasswordHistoryMutation,
+    __AdminDeletePasswordHistoryMutationVariables
+  >(__AdminDeletePasswordHistoryDocument, options)
+}
+export type __AdminDeletePasswordHistoryMutationHookResult = ReturnType<
+  typeof use__AdminDeletePasswordHistoryMutation
+>
+export type __AdminDeletePasswordHistoryMutationResult =
+  Apollo.MutationResult<__AdminDeletePasswordHistoryMutation>
+export type __AdminDeletePasswordHistoryMutationOptions = Apollo.BaseMutationOptions<
+  __AdminDeletePasswordHistoryMutation,
+  __AdminDeletePasswordHistoryMutationVariables
+>
+export const __AdminUpdatePasswordHistoryDocument = gql`
+  mutation __AdminUpdatePasswordHistory(
+    $passwordHistoryId: String!
+    $input: UpdatePasswordHistoryInput!
+  ) {
+    updatePasswordHistory(passwordHistoryId: $passwordHistoryId, input: $input) {
+      ...__AdminPasswordHistoryDetails
+    }
+  }
+  ${__AdminPasswordHistoryDetailsFragmentDoc}
+`
+export type __AdminUpdatePasswordHistoryMutationFn = Apollo.MutationFunction<
+  __AdminUpdatePasswordHistoryMutation,
+  __AdminUpdatePasswordHistoryMutationVariables
+>
+
+/**
+ * __use__AdminUpdatePasswordHistoryMutation__
+ *
+ * To run a mutation, you first call `use__AdminUpdatePasswordHistoryMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `use__AdminUpdatePasswordHistoryMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [adminUpdatePasswordHistoryMutation, { data, loading, error }] = use__AdminUpdatePasswordHistoryMutation({
+ *   variables: {
+ *      passwordHistoryId: // value for 'passwordHistoryId'
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function use__AdminUpdatePasswordHistoryMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    __AdminUpdatePasswordHistoryMutation,
+    __AdminUpdatePasswordHistoryMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useMutation<
+    __AdminUpdatePasswordHistoryMutation,
+    __AdminUpdatePasswordHistoryMutationVariables
+  >(__AdminUpdatePasswordHistoryDocument, options)
+}
+export type __AdminUpdatePasswordHistoryMutationHookResult = ReturnType<
+  typeof use__AdminUpdatePasswordHistoryMutation
+>
+export type __AdminUpdatePasswordHistoryMutationResult =
+  Apollo.MutationResult<__AdminUpdatePasswordHistoryMutation>
+export type __AdminUpdatePasswordHistoryMutationOptions = Apollo.BaseMutationOptions<
+  __AdminUpdatePasswordHistoryMutation,
+  __AdminUpdatePasswordHistoryMutationVariables
+>
+export const __AdminPasswordHistoryDocument = gql`
+  query __AdminPasswordHistory($passwordHistoryId: String!) {
+    passwordHistory(passwordHistoryId: $passwordHistoryId) {
+      ...__AdminPasswordHistoryDetails
+    }
+  }
+  ${__AdminPasswordHistoryDetailsFragmentDoc}
+`
+
+/**
+ * __use__AdminPasswordHistoryQuery__
+ *
+ * To run a query within a React component, call `use__AdminPasswordHistoryQuery` and pass it any options that fit your needs.
+ * When your component renders, `use__AdminPasswordHistoryQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = use__AdminPasswordHistoryQuery({
+ *   variables: {
+ *      passwordHistoryId: // value for 'passwordHistoryId'
+ *   },
+ * });
+ */
+export function use__AdminPasswordHistoryQuery(
+  baseOptions: ApolloReactHooks.QueryHookOptions<
+    __AdminPasswordHistoryQuery,
+    __AdminPasswordHistoryQueryVariables
+  > &
+    ({ variables: __AdminPasswordHistoryQueryVariables; skip?: boolean } | { skip: boolean }),
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useQuery<
+    __AdminPasswordHistoryQuery,
+    __AdminPasswordHistoryQueryVariables
+  >(__AdminPasswordHistoryDocument, options)
+}
+export function use__AdminPasswordHistoryLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    __AdminPasswordHistoryQuery,
+    __AdminPasswordHistoryQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useLazyQuery<
+    __AdminPasswordHistoryQuery,
+    __AdminPasswordHistoryQueryVariables
+  >(__AdminPasswordHistoryDocument, options)
+}
+export function use__AdminPasswordHistorySuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        __AdminPasswordHistoryQuery,
+        __AdminPasswordHistoryQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<
+    __AdminPasswordHistoryQuery,
+    __AdminPasswordHistoryQueryVariables
+  >(__AdminPasswordHistoryDocument, options)
+}
+export type __AdminPasswordHistoryQueryHookResult = ReturnType<
+  typeof use__AdminPasswordHistoryQuery
+>
+export type __AdminPasswordHistoryLazyQueryHookResult = ReturnType<
+  typeof use__AdminPasswordHistoryLazyQuery
+>
+export type __AdminPasswordHistorySuspenseQueryHookResult = ReturnType<
+  typeof use__AdminPasswordHistorySuspenseQuery
+>
+export type __AdminPasswordHistoryQueryResult = Apollo.QueryResult<
+  __AdminPasswordHistoryQuery,
+  __AdminPasswordHistoryQueryVariables
+>
+export const __AdminPasswordHistoriesDocument = gql`
+  query __AdminPasswordHistories($input: ListPasswordHistoryInput) {
+    passwordHistories(input: $input) {
+      ...__AdminPasswordHistoryList
+    }
+    counters: passwordHistoriesCount(input: $input) {
+      ...CorePagingDetails
+    }
+  }
+  ${__AdminPasswordHistoryListFragmentDoc}
+  ${CorePagingDetailsFragmentDoc}
+`
+
+/**
+ * __use__AdminPasswordHistoriesQuery__
+ *
+ * To run a query within a React component, call `use__AdminPasswordHistoriesQuery` and pass it any options that fit your needs.
+ * When your component renders, `use__AdminPasswordHistoriesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = use__AdminPasswordHistoriesQuery({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function use__AdminPasswordHistoriesQuery(
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    __AdminPasswordHistoriesQuery,
+    __AdminPasswordHistoriesQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useQuery<
+    __AdminPasswordHistoriesQuery,
+    __AdminPasswordHistoriesQueryVariables
+  >(__AdminPasswordHistoriesDocument, options)
+}
+export function use__AdminPasswordHistoriesLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    __AdminPasswordHistoriesQuery,
+    __AdminPasswordHistoriesQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useLazyQuery<
+    __AdminPasswordHistoriesQuery,
+    __AdminPasswordHistoriesQueryVariables
+  >(__AdminPasswordHistoriesDocument, options)
+}
+export function use__AdminPasswordHistoriesSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        __AdminPasswordHistoriesQuery,
+        __AdminPasswordHistoriesQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<
+    __AdminPasswordHistoriesQuery,
+    __AdminPasswordHistoriesQueryVariables
+  >(__AdminPasswordHistoriesDocument, options)
+}
+export type __AdminPasswordHistoriesQueryHookResult = ReturnType<
+  typeof use__AdminPasswordHistoriesQuery
+>
+export type __AdminPasswordHistoriesLazyQueryHookResult = ReturnType<
+  typeof use__AdminPasswordHistoriesLazyQuery
+>
+export type __AdminPasswordHistoriesSuspenseQueryHookResult = ReturnType<
+  typeof use__AdminPasswordHistoriesSuspenseQuery
+>
+export type __AdminPasswordHistoriesQueryResult = Apollo.QueryResult<
+  __AdminPasswordHistoriesQuery,
+  __AdminPasswordHistoriesQueryVariables
+>
+export const __AdminPasswordHistoryPaginationDocument = gql`
+  query __AdminPasswordHistoryPagination($input: ListPasswordHistoryInput) {
+    counters: passwordHistoriesCount(input: $input) {
+      ...CorePagingDetails
+    }
+  }
+  ${CorePagingDetailsFragmentDoc}
+`
+
+/**
+ * __use__AdminPasswordHistoryPaginationQuery__
+ *
+ * To run a query within a React component, call `use__AdminPasswordHistoryPaginationQuery` and pass it any options that fit your needs.
+ * When your component renders, `use__AdminPasswordHistoryPaginationQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = use__AdminPasswordHistoryPaginationQuery({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function use__AdminPasswordHistoryPaginationQuery(
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    __AdminPasswordHistoryPaginationQuery,
+    __AdminPasswordHistoryPaginationQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useQuery<
+    __AdminPasswordHistoryPaginationQuery,
+    __AdminPasswordHistoryPaginationQueryVariables
+  >(__AdminPasswordHistoryPaginationDocument, options)
+}
+export function use__AdminPasswordHistoryPaginationLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    __AdminPasswordHistoryPaginationQuery,
+    __AdminPasswordHistoryPaginationQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useLazyQuery<
+    __AdminPasswordHistoryPaginationQuery,
+    __AdminPasswordHistoryPaginationQueryVariables
+  >(__AdminPasswordHistoryPaginationDocument, options)
+}
+export function use__AdminPasswordHistoryPaginationSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        __AdminPasswordHistoryPaginationQuery,
+        __AdminPasswordHistoryPaginationQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<
+    __AdminPasswordHistoryPaginationQuery,
+    __AdminPasswordHistoryPaginationQueryVariables
+  >(__AdminPasswordHistoryPaginationDocument, options)
+}
+export type __AdminPasswordHistoryPaginationQueryHookResult = ReturnType<
+  typeof use__AdminPasswordHistoryPaginationQuery
+>
+export type __AdminPasswordHistoryPaginationLazyQueryHookResult = ReturnType<
+  typeof use__AdminPasswordHistoryPaginationLazyQuery
+>
+export type __AdminPasswordHistoryPaginationSuspenseQueryHookResult = ReturnType<
+  typeof use__AdminPasswordHistoryPaginationSuspenseQuery
+>
+export type __AdminPasswordHistoryPaginationQueryResult = Apollo.QueryResult<
+  __AdminPasswordHistoryPaginationQuery,
+  __AdminPasswordHistoryPaginationQueryVariables
 >
 export const __AdminCreatePermissionDocument = gql`
   mutation __AdminCreatePermission($input: CreatePermissionInput!) {
@@ -28203,6 +28935,387 @@ export type GetInvitationDetailsQueryResult = Apollo.QueryResult<
   GetInvitationDetailsQuery,
   GetInvitationDetailsQueryVariables
 >
+export const CreatePasswordHistoryDocument = gql`
+  mutation createPasswordHistory($input: CreatePasswordHistoryInput!) {
+    createPasswordHistory(input: $input) {
+      ...PasswordHistoryDetails
+    }
+  }
+  ${PasswordHistoryDetailsFragmentDoc}
+`
+export type CreatePasswordHistoryMutationFn = Apollo.MutationFunction<
+  CreatePasswordHistoryMutation,
+  CreatePasswordHistoryMutationVariables
+>
+
+/**
+ * __useCreatePasswordHistoryMutation__
+ *
+ * To run a mutation, you first call `useCreatePasswordHistoryMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreatePasswordHistoryMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createPasswordHistoryMutation, { data, loading, error }] = useCreatePasswordHistoryMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreatePasswordHistoryMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    CreatePasswordHistoryMutation,
+    CreatePasswordHistoryMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useMutation<
+    CreatePasswordHistoryMutation,
+    CreatePasswordHistoryMutationVariables
+  >(CreatePasswordHistoryDocument, options)
+}
+export type CreatePasswordHistoryMutationHookResult = ReturnType<
+  typeof useCreatePasswordHistoryMutation
+>
+export type CreatePasswordHistoryMutationResult =
+  Apollo.MutationResult<CreatePasswordHistoryMutation>
+export type CreatePasswordHistoryMutationOptions = Apollo.BaseMutationOptions<
+  CreatePasswordHistoryMutation,
+  CreatePasswordHistoryMutationVariables
+>
+export const DeletePasswordHistoryDocument = gql`
+  mutation deletePasswordHistory($passwordHistoryId: String!) {
+    deletePasswordHistory(passwordHistoryId: $passwordHistoryId) {
+      id
+    }
+  }
+`
+export type DeletePasswordHistoryMutationFn = Apollo.MutationFunction<
+  DeletePasswordHistoryMutation,
+  DeletePasswordHistoryMutationVariables
+>
+
+/**
+ * __useDeletePasswordHistoryMutation__
+ *
+ * To run a mutation, you first call `useDeletePasswordHistoryMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeletePasswordHistoryMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deletePasswordHistoryMutation, { data, loading, error }] = useDeletePasswordHistoryMutation({
+ *   variables: {
+ *      passwordHistoryId: // value for 'passwordHistoryId'
+ *   },
+ * });
+ */
+export function useDeletePasswordHistoryMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    DeletePasswordHistoryMutation,
+    DeletePasswordHistoryMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useMutation<
+    DeletePasswordHistoryMutation,
+    DeletePasswordHistoryMutationVariables
+  >(DeletePasswordHistoryDocument, options)
+}
+export type DeletePasswordHistoryMutationHookResult = ReturnType<
+  typeof useDeletePasswordHistoryMutation
+>
+export type DeletePasswordHistoryMutationResult =
+  Apollo.MutationResult<DeletePasswordHistoryMutation>
+export type DeletePasswordHistoryMutationOptions = Apollo.BaseMutationOptions<
+  DeletePasswordHistoryMutation,
+  DeletePasswordHistoryMutationVariables
+>
+export const UpdatePasswordHistoryDocument = gql`
+  mutation updatePasswordHistory($passwordHistoryId: String!, $input: UpdatePasswordHistoryInput!) {
+    updatePasswordHistory(passwordHistoryId: $passwordHistoryId, input: $input) {
+      ...PasswordHistoryDetails
+    }
+  }
+  ${PasswordHistoryDetailsFragmentDoc}
+`
+export type UpdatePasswordHistoryMutationFn = Apollo.MutationFunction<
+  UpdatePasswordHistoryMutation,
+  UpdatePasswordHistoryMutationVariables
+>
+
+/**
+ * __useUpdatePasswordHistoryMutation__
+ *
+ * To run a mutation, you first call `useUpdatePasswordHistoryMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdatePasswordHistoryMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updatePasswordHistoryMutation, { data, loading, error }] = useUpdatePasswordHistoryMutation({
+ *   variables: {
+ *      passwordHistoryId: // value for 'passwordHistoryId'
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useUpdatePasswordHistoryMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    UpdatePasswordHistoryMutation,
+    UpdatePasswordHistoryMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useMutation<
+    UpdatePasswordHistoryMutation,
+    UpdatePasswordHistoryMutationVariables
+  >(UpdatePasswordHistoryDocument, options)
+}
+export type UpdatePasswordHistoryMutationHookResult = ReturnType<
+  typeof useUpdatePasswordHistoryMutation
+>
+export type UpdatePasswordHistoryMutationResult =
+  Apollo.MutationResult<UpdatePasswordHistoryMutation>
+export type UpdatePasswordHistoryMutationOptions = Apollo.BaseMutationOptions<
+  UpdatePasswordHistoryMutation,
+  UpdatePasswordHistoryMutationVariables
+>
+export const PasswordHistoryDocument = gql`
+  query PasswordHistory($passwordHistoryId: String!) {
+    passwordHistory(passwordHistoryId: $passwordHistoryId) {
+      ...PasswordHistoryDetails
+    }
+  }
+  ${PasswordHistoryDetailsFragmentDoc}
+`
+
+/**
+ * __usePasswordHistoryQuery__
+ *
+ * To run a query within a React component, call `usePasswordHistoryQuery` and pass it any options that fit your needs.
+ * When your component renders, `usePasswordHistoryQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = usePasswordHistoryQuery({
+ *   variables: {
+ *      passwordHistoryId: // value for 'passwordHistoryId'
+ *   },
+ * });
+ */
+export function usePasswordHistoryQuery(
+  baseOptions: ApolloReactHooks.QueryHookOptions<
+    PasswordHistoryQuery,
+    PasswordHistoryQueryVariables
+  > &
+    ({ variables: PasswordHistoryQueryVariables; skip?: boolean } | { skip: boolean }),
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useQuery<PasswordHistoryQuery, PasswordHistoryQueryVariables>(
+    PasswordHistoryDocument,
+    options,
+  )
+}
+export function usePasswordHistoryLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    PasswordHistoryQuery,
+    PasswordHistoryQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useLazyQuery<PasswordHistoryQuery, PasswordHistoryQueryVariables>(
+    PasswordHistoryDocument,
+    options,
+  )
+}
+export function usePasswordHistorySuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        PasswordHistoryQuery,
+        PasswordHistoryQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<PasswordHistoryQuery, PasswordHistoryQueryVariables>(
+    PasswordHistoryDocument,
+    options,
+  )
+}
+export type PasswordHistoryQueryHookResult = ReturnType<typeof usePasswordHistoryQuery>
+export type PasswordHistoryLazyQueryHookResult = ReturnType<typeof usePasswordHistoryLazyQuery>
+export type PasswordHistorySuspenseQueryHookResult = ReturnType<
+  typeof usePasswordHistorySuspenseQuery
+>
+export type PasswordHistoryQueryResult = Apollo.QueryResult<
+  PasswordHistoryQuery,
+  PasswordHistoryQueryVariables
+>
+export const PasswordHistoriesDocument = gql`
+  query PasswordHistories($input: ListPasswordHistoryInput) {
+    passwordHistories(input: $input) {
+      ...PasswordHistoryList
+    }
+    counters: passwordHistoriesCount(input: $input) {
+      ...CorePagingDetails
+    }
+  }
+  ${PasswordHistoryListFragmentDoc}
+  ${CorePagingDetailsFragmentDoc}
+`
+
+/**
+ * __usePasswordHistoriesQuery__
+ *
+ * To run a query within a React component, call `usePasswordHistoriesQuery` and pass it any options that fit your needs.
+ * When your component renders, `usePasswordHistoriesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = usePasswordHistoriesQuery({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function usePasswordHistoriesQuery(
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    PasswordHistoriesQuery,
+    PasswordHistoriesQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useQuery<PasswordHistoriesQuery, PasswordHistoriesQueryVariables>(
+    PasswordHistoriesDocument,
+    options,
+  )
+}
+export function usePasswordHistoriesLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    PasswordHistoriesQuery,
+    PasswordHistoriesQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useLazyQuery<PasswordHistoriesQuery, PasswordHistoriesQueryVariables>(
+    PasswordHistoriesDocument,
+    options,
+  )
+}
+export function usePasswordHistoriesSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        PasswordHistoriesQuery,
+        PasswordHistoriesQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<PasswordHistoriesQuery, PasswordHistoriesQueryVariables>(
+    PasswordHistoriesDocument,
+    options,
+  )
+}
+export type PasswordHistoriesQueryHookResult = ReturnType<typeof usePasswordHistoriesQuery>
+export type PasswordHistoriesLazyQueryHookResult = ReturnType<typeof usePasswordHistoriesLazyQuery>
+export type PasswordHistoriesSuspenseQueryHookResult = ReturnType<
+  typeof usePasswordHistoriesSuspenseQuery
+>
+export type PasswordHistoriesQueryResult = Apollo.QueryResult<
+  PasswordHistoriesQuery,
+  PasswordHistoriesQueryVariables
+>
+export const PasswordHistoryPaginationDocument = gql`
+  query PasswordHistoryPagination($input: ListPasswordHistoryInput) {
+    counters: passwordHistoriesCount(input: $input) {
+      ...CorePagingDetails
+    }
+  }
+  ${CorePagingDetailsFragmentDoc}
+`
+
+/**
+ * __usePasswordHistoryPaginationQuery__
+ *
+ * To run a query within a React component, call `usePasswordHistoryPaginationQuery` and pass it any options that fit your needs.
+ * When your component renders, `usePasswordHistoryPaginationQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = usePasswordHistoryPaginationQuery({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function usePasswordHistoryPaginationQuery(
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    PasswordHistoryPaginationQuery,
+    PasswordHistoryPaginationQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useQuery<
+    PasswordHistoryPaginationQuery,
+    PasswordHistoryPaginationQueryVariables
+  >(PasswordHistoryPaginationDocument, options)
+}
+export function usePasswordHistoryPaginationLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    PasswordHistoryPaginationQuery,
+    PasswordHistoryPaginationQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useLazyQuery<
+    PasswordHistoryPaginationQuery,
+    PasswordHistoryPaginationQueryVariables
+  >(PasswordHistoryPaginationDocument, options)
+}
+export function usePasswordHistoryPaginationSuspenseQuery(
+  baseOptions?:
+    | ApolloReactHooks.SkipToken
+    | ApolloReactHooks.SuspenseQueryHookOptions<
+        PasswordHistoryPaginationQuery,
+        PasswordHistoryPaginationQueryVariables
+      >,
+) {
+  const options =
+    baseOptions === ApolloReactHooks.skipToken ? baseOptions : { ...defaultOptions, ...baseOptions }
+  return ApolloReactHooks.useSuspenseQuery<
+    PasswordHistoryPaginationQuery,
+    PasswordHistoryPaginationQueryVariables
+  >(PasswordHistoryPaginationDocument, options)
+}
+export type PasswordHistoryPaginationQueryHookResult = ReturnType<
+  typeof usePasswordHistoryPaginationQuery
+>
+export type PasswordHistoryPaginationLazyQueryHookResult = ReturnType<
+  typeof usePasswordHistoryPaginationLazyQuery
+>
+export type PasswordHistoryPaginationSuspenseQueryHookResult = ReturnType<
+  typeof usePasswordHistoryPaginationSuspenseQuery
+>
+export type PasswordHistoryPaginationQueryResult = Apollo.QueryResult<
+  PasswordHistoryPaginationQuery,
+  PasswordHistoryPaginationQueryVariables
+>
 export const CreatePermissionDocument = gql`
   mutation createPermission($input: CreatePermissionInput!) {
     createPermission(input: $input) {
@@ -30042,6 +31155,7 @@ export const UploadUserAvatarDocument = gql`
       width
       height
       provider
+      folder
       metadata
       createdAt
     }
@@ -30100,6 +31214,7 @@ export const UploadOrganizationLogoDocument = gql`
       width
       height
       provider
+      folder
       metadata
       createdAt
     }

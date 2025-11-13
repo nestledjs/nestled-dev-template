@@ -3,8 +3,8 @@ import { Field, InputType } from '@nestjs/graphql'
 @InputType()
 export class TransferOwnershipInput {
   @Field()
-  organizationId: string
+  organizationId!: string
 
   @Field()
-  newOwnerUserId: string
+  newOwnerUserId!: string
 }

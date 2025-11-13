@@ -858,6 +858,9 @@ export class User {
   @Field(() => [UserSession], { nullable: true })
   activeSessions?: Partial<UserSession>[] | null;
 
+  @Field(() => [PasswordHistory], { nullable: true })
+  passwordHistory?: Partial<PasswordHistory>[] | null;
+
   @Field(() => [LoginAttempt], { nullable: true })
   loginAttempts?: Partial<LoginAttempt>[] | null;
 
@@ -961,6 +964,25 @@ export class UserSession {
 
   @Field(() => Boolean)
   twoFactorVerified!: boolean;
+
+}
+
+@ObjectType({ description: undefined })
+export class PasswordHistory {
+  @Field(() => String)
+  id!: string;
+
+  @Field(() => Date)
+  createdAt!: Date;
+
+  @Field(() => String)
+  userId!: string;
+
+  @Field(() => User, { nullable: true })
+  user?: Partial<User> | null;
+
+  @Field(() => String)
+  passwordHash!: string;
 
 }
 

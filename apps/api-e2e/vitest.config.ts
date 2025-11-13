@@ -1,11 +1,22 @@
 import { defineConfig } from 'vitest/config'
+import { resolve } from 'path'
 
 export default defineConfig({
+  resolve: {
+    alias: {
+      '@nestled-template/api/prisma': resolve(__dirname, '../../libs/api/prisma/src/index.ts'),
+      '@nestled-template/api/core/data-access': resolve(__dirname, '../../libs/api/core/data-access/src/index.ts'),
+      '@nestled-template/api/utils': resolve(__dirname, '../../libs/api/utils/src/index.ts'),
+      '@nestled-template/api/custom': resolve(__dirname, '../../libs/api/custom/src/index.ts'),
+    },
+  },
   test: {
     name: 'api-e2e',
+    root: resolve(__dirname),
     environment: 'node',
-    globalSetup: './src/support/global-setup.ts',
-    setupFiles: ['./src/support/test-setup.ts'],
+    globalSetup: resolve(__dirname, './src/support/global-setup.ts'),
+    setupFiles: [resolve(__dirname, './src/support/test-setup.ts')],
+    include: [resolve(__dirname, './src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}')],
     testTimeout: 30000,
     pool: 'forks',
     poolOptions: {

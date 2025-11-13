@@ -127,10 +127,11 @@ export default function AdminAuditLogsPage() {
         {/* Search Filters Row 1 */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
+            <label htmlFor="action" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
               Action
             </label>
             <input
+              id="action"
               type="text"
               value={filters.action}
               onChange={(e) => {
@@ -143,10 +144,11 @@ export default function AdminAuditLogsPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
+            <label htmlFor="entityType" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
               Entity Type
             </label>
             <input
+              id="entityType"
               type="text"
               value={filters.entityType}
               onChange={(e) => {
@@ -162,7 +164,7 @@ export default function AdminAuditLogsPage() {
         {/* Search Filters Row 2 */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
+            <label htmlFor="userId" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
               User ID
             </label>
             <div className="relative">
@@ -170,6 +172,7 @@ export default function AdminAuditLogsPage() {
                 <MagnifyingGlassIcon className="h-5 w-5 text-zinc-400 dark:text-zinc-500" />
               </div>
               <input
+                id="userId"
                 type="text"
                 value={filters.userId}
                 onChange={(e) => {
@@ -183,10 +186,11 @@ export default function AdminAuditLogsPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
+            <label htmlFor="organizationId" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
               Organization ID
             </label>
             <input
+              id="organizationId"
               type="text"
               value={filters.organizationId}
               onChange={(e) => {
@@ -202,10 +206,11 @@ export default function AdminAuditLogsPage() {
         {/* Date Range Filters */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
+            <label htmlFor="startDate" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
               Start Date
             </label>
             <input
+              id="startDate"
               type="datetime-local"
               value={filters.startDate ? new Date(filters.startDate).toISOString().slice(0, 16) : ''}
               onChange={(e) => {
@@ -217,10 +222,11 @@ export default function AdminAuditLogsPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
+            <label htmlFor="endDate" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
               End Date
             </label>
             <input
+              id="endDate"
               type="datetime-local"
               value={filters.endDate ? new Date(filters.endDate).toISOString().slice(0, 16) : ''}
               onChange={(e) => {

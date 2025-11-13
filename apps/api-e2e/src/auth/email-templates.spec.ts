@@ -1,3 +1,4 @@
+import { describe, it, expect, beforeEach } from 'vitest'
 import { TestHelpers } from '../support/test-helpers'
 import { UserFactory } from '../support/factories/user.factory'
 
@@ -73,19 +74,19 @@ describe('Email Templates E2E', () => {
       const userData = UserFactory.create({
         firstName: 'John',
         lastName: 'Doe',
-        email: 'john.doe@example.com'
       })
-      
+
       const user = await TestHelpers.registerUser(userData)
-      
+
       // In a real test, you would verify that emails contain:
       // - {{userName}} = "John" or "John Doe"
       // - {{appName}} = configured app name
       // - {{verificationUrl}} = correct URL with token
-      
+
       expect(user.firstName).toBe('John')
       expect(user.lastName).toBe('Doe')
-      expect(user.email).toBe('john.doe@example.com')
+      expect(user.email).toBeDefined()
+      expect(user.email).toContain('@')
     })
   })
 

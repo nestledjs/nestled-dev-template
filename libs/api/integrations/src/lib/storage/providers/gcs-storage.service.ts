@@ -25,20 +25,20 @@ import * as path from 'path'
 @Injectable()
 export class GcsStorageService implements IStorageService, OnModuleInit {
   private readonly logger = new Logger(GcsStorageService.name)
-  private readonly storage: Storage
-  private readonly bucket: Bucket
-  private readonly bucketName: string
+  private readonly storage!: Storage
+  private readonly bucket!: Bucket
+  private readonly bucketName!: string
   private readonly cdnUrl?: string
 
   constructor(private readonly configService: ConfigService) {
     const storageProvider = this.configService.get<string>('STORAGE_PROVIDER', 'local')
     const projectId = this.configService.get<string>('GCS_PROJECT_ID')
-    this.bucketName = this.configService.get<string>('GCS_BUCKET')
+    const bucketName = this.configService.get<string>('GCS_BUCKET')
     const keyFilename = this.configService.get<string>('GCS_KEY_FILE')
     this.cdnUrl = this.configService.get<string>('GCS_CDN_URL')
 
     // Only validate credentials if GCS is the active storage provider
-    if (storageProvider === 'gcs' && (!projectId || !this.bucketName)) {
+    if (storageProvider === 'gcs' && (!projectId || !bucketName)) {
       throw new Error('Google Cloud Storage not configured. Required: GCS_PROJECT_ID, GCS_BUCKET')
     }
 
@@ -47,12 +47,14 @@ export class GcsStorageService implements IStorageService, OnModuleInit {
       return
     }
 
+    // After validation, we know these values are defined
+    this.bucketName = bucketName!
     this.storage = new Storage({
-      projectId,
+      projectId: projectId!,
       ...(keyFilename && { keyFilename }),
     })
 
-    this.bucket = this.storage.bucket(this.bucketName)
+    this.bucket = this.storage.bucket(bucketName!)
   }
 
   async onModuleInit() {

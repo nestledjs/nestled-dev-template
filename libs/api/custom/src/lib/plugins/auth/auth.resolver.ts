@@ -114,7 +114,17 @@ export class AuthResolver {
     Logger.log('LOGOUT ++++++++')
 
     // Get session ID from JWT and invalidate it
-    const token = context.req.cookies?.[this.service.getCookieName()]
+    // Check both cookie and Authorization header
+    let token = context.req.cookies?.[this.service.getCookieName()]
+
+    // If no cookie token, check Authorization header
+    if (!token) {
+      const authHeader = context.req.headers?.authorization
+      if (authHeader?.startsWith('Bearer ')) {
+        token = authHeader.substring(7)
+      }
+    }
+
     if (token) {
       const decoded = (this.service as any).jwtService.decode(token) as any
       const sessionId = decoded?.sessionId

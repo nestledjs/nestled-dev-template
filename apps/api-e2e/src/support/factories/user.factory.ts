@@ -5,6 +5,7 @@ export interface CreateUserData {
   lastName?: string
   email?: string
   password?: string
+  organizationName?: string
   verified?: boolean
 }
 
@@ -15,6 +16,7 @@ export class UserFactory {
       lastName: overrides.lastName ?? faker.person.lastName(),
       email: overrides.email ?? faker.internet.email().toLowerCase(),
       password: overrides.password ?? 'TestPassword123!',
+      organizationName: overrides.organizationName ?? faker.company.name(),
       verified: overrides.verified ?? false,
     }
   }

@@ -1,20 +1,26 @@
-# API E2E Tests
+# API E2E Testing Suite
 
-Comprehensive end-to-end tests for the NestJS API, focusing on authentication flows and email template integration.
+Comprehensive end-to-end tests for the NestJS API, with emphasis on **CRITICAL SECURITY TESTS** for multi-tenancy, permissions, and authentication.
 
 ## 🚀 Features
 
+- **🔴 CRITICAL Security Tests** - Data isolation, permission enforcement, auth security (MUST PASS)
 - **Complete Auth Testing** - Registration, login, verification, password reset
+- **Multi-Tenant Testing** - Cross-organization isolation and context switching
+- **RBAC Testing** - Role-based permission enforcement
 - **Email Template Testing** - Verification of Handlebars email templates
 - **Database Management** - Automatic setup/teardown with test isolation
 - **Test Data Factories** - Faker.js-powered realistic test data
-- **Security Testing** - Input validation, XSS protection, auth failures
 - **GraphQL Integration** - Full GraphQL mutation/query testing
 
 ## 📁 Structure
 
 ```
 src/
+├── security/               # 🔴 CRITICAL SECURITY TESTS (MUST PASS)
+│   ├── data-isolation.spec.ts    # Multi-tenant data isolation
+│   ├── permissions.spec.ts       # RBAC permission enforcement
+│   └── auth-security.spec.ts     # Authentication security
 ├── api/                    # Basic API tests
 ├── auth/                   # Authentication flow tests
 │   ├── auth.spec.ts       # Complete auth flows
@@ -67,17 +73,59 @@ pnpm nx test api-e2e --watch
 
 ### Specific Test Suites
 ```bash
-# Auth flow tests only
+# 🔴 CRITICAL: All security tests (MUST PASS)
+pnpm nx test api-e2e --testPathPattern=security
+
+# Data isolation tests (CRITICAL)
+pnpm nx test api-e2e --testPathPattern=data-isolation
+
+# Permission enforcement tests (CRITICAL)
+pnpm nx test api-e2e --testPathPattern=permissions
+
+# Auth security tests (CRITICAL)
+pnpm nx test api-e2e --testPathPattern=auth-security
+
+# Auth flow tests
 pnpm nx test api-e2e --testPathPattern=auth.spec.ts
 
-# Email template tests only
+# Email template tests
 pnpm nx test api-e2e --testPathPattern=email-templates.spec.ts
-
-# Basic API tests
-pnpm nx test api-e2e --testPathPattern=api.spec.ts
 ```
 
 ## 📝 Test Categories
+
+### 🔴 CRITICAL: Security Tests (security/)
+
+**These tests MUST pass before any production deployment. Failures represent CRITICAL SECURITY VULNERABILITIES.**
+
+#### Data Isolation (`security/data-isolation.spec.ts`)
+- ✅ Users cannot query another organization's data
+- ✅ Users cannot update another organization's data
+- ✅ Users cannot delete another organization's data
+- ✅ Organization switching updates context correctly
+- ✅ Direct organizationId manipulation is blocked
+- ✅ Prisma extension auto-filters by organizationId
+
+#### Permission Enforcement (`security/permissions.spec.ts`)
+- ✅ Owner permissions (full access to organization)
+- ✅ Admin permissions (invite members, manage settings)
+- ✅ Member permissions (read-only access)
+- ✅ Permission guards block unauthorized actions
+- ✅ Role hierarchy is respected (Owner > Admin > Member)
+- ✅ Cannot escalate privileges without permission
+
+#### Authentication Security (`security/auth-security.spec.ts`)
+- ✅ Account locks after 5 failed login attempts
+- ✅ Lock duration is 15 minutes
+- ✅ Failed attempts reset on successful login
+- ✅ JWT tokens are validated correctly
+- ✅ Expired tokens are rejected
+- ✅ Sessions invalidate on password change
+- ✅ Manual logout invalidates sessions
+- ✅ Weak passwords are rejected
+- ✅ Passwords are hashed with Argon2
+- ✅ Password reuse is prevented
+- ✅ Brute force attacks are rate limited
 
 ### Authentication Tests (`auth/auth.spec.ts`)
 - ✅ User registration with validation
@@ -138,27 +186,44 @@ await TestHelpers.resetPassword(token, newPassword)
 
 ## 🏗️ Database Management
 
-### Automatic Setup
-- Creates test database schema
-- Runs migrations
-- Generates Prisma client
-- Sets up test environment
+### Automatic Setup (Before Each Test Run)
+
+The test suite **automatically** handles database setup in `global-setup.ts`:
+
+1. **Schema Sync** - Ensures test database schema is up to date (`prisma db push`)
+2. **Database Seeding** - Seeds required data:
+   - ✅ **Permissions** (member:invite, organization:update, etc.) - **CRITICAL for tests to work**
+   - ✅ **Countries** - ISO 3166 country data
+   - ✅ **Test Users** - Pre-configured test accounts
+3. **API Readiness** - Waits for API server to be available
+
+**No manual setup required!** Just run `pnpm nx test api-e2e` and everything is handled automatically.
+
+### Why Seeding Is Critical
+
+The permission system requires global permissions to be seeded before organizations can be created. Without seeding:
+- ❌ Organization roles (Owner, Admin, Member) will have **no permissions**
+- ❌ Users won't be able to invite members, update orgs, etc.
+- ❌ Permission tests will fail
 
 ### Automatic Cleanup
-- Resets database after all tests
-- Removes test data
-- Tears down connections
+- Database state is isolated per test file
+- Test data is generated with unique identifiers
+- No manual cleanup needed between test runs
 
 ### Manual Database Operations
 ```bash
-# Reset test database
-pnpm prisma migrate reset --force --skip-seed
+# Manually seed test database (if needed)
+DATABASE_URL="postgresql://user@localhost:5432/nestled_template_test" pnpm prisma:seed
 
-# Generate client
-pnpm prisma generate
+# Reset test database completely
+DATABASE_URL="postgresql://user@localhost:5432/nestled_template_test" pnpm prisma migrate reset
 
 # View test database
 pnpm prisma studio --url="$TEST_DATABASE_URL"
+
+# Run migration on test database
+DATABASE_URL="postgresql://user@localhost:5432/nestled_template_test" pnpm prisma db push
 ```
 
 ## 🔍 Debugging
@@ -192,12 +257,22 @@ axios.interceptors.request.use(request => {
 
 ### GitHub Actions
 ```yaml
+- name: Setup Test Database
+  run: |
+    # Start PostgreSQL service (GitHub Actions has this pre-installed)
+    sudo systemctl start postgresql
+
+    # Create test database
+    sudo -u postgres psql -c "CREATE DATABASE nestled_template_test;"
+
 - name: Run E2E Tests
   run: |
     pnpm nx test api-e2e
   env:
-    TEST_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test_db
+    TEST_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/nestled_template_test
     NODE_ENV: test
+
+# Note: Database seeding happens automatically in global-setup.ts
 ```
 
 ### Docker Testing
@@ -210,7 +285,20 @@ services:
       POSTGRES_DB: nestled_template_test
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+# Note: Tests automatically seed the database, no separate seed step needed
 ```
+
+### Important CI/CD Notes
+- ✅ **Database seeding is automatic** - No need for separate seed commands
+- ✅ **Schema migrations are automatic** - `global-setup.ts` runs `prisma db push`
+- ✅ **Clean slate every run** - Each test run seeds a fresh database
+- ⚠️ **API must be running** - Tests expect API server at `localhost:3000`
 
 ## 📈 Coverage Goals
 
