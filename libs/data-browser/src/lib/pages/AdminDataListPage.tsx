@@ -184,9 +184,10 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
   }, [model, pluralParam])
 
   // Calculate pagination path for GraphQL response
+  // All admin queries use 'counters' as the alias for pagination metadata
   const paginationPath = useMemo(() => {
-    return model ? `${model.pluralModelPropertyName}_meta` : `${dataPath}_meta`
-  }, [model, dataPath])
+    return 'counters'
+  }, [])
 
   // Get all field names from model
   const fieldNames = useMemo(() => {
