@@ -1,7 +1,7 @@
 import { useMutation } from '@apollo/client/react'
 import { EndEmulationDocument } from '@nestled-template/shared/sdk'
 import { ShieldExclamationIcon, XMarkIcon, ExclamationTriangleIcon } from '@heroicons/react/24/solid'
-import { useGlobalCtx } from '../global-context'
+import { useGlobalCtx } from '../contexts'
 import { useState } from 'react'
 
 /**

@@ -1,5 +1,4 @@
-/* eslint-disable-next-line */
-import { clsx } from 'clsx'
+import { cn } from '@nestled-template/shared/utils'
 import { useEffect, useState } from 'react'
 
 export interface WebUiAvatarProps {
@@ -83,7 +82,9 @@ export function WebUiAvatar({
   }
 
   return (
-    <span className={`relative inline-block ${sizeMapping[size]} ${shapeMapping[shape]} bg-gray-100`}>
+    <span
+      className={`relative inline-block ${sizeMapping[size]} ${shapeMapping[shape]} bg-gray-100`}
+    >
       <div
         className={`absolute inset-0 flex items-center justify-center transition-opacity duration-500 ${
           loaded ? 'opacity-0' : 'opacity-100'
@@ -95,7 +96,7 @@ export function WebUiAvatar({
           </svg>
         )}
         {placeholder === 'initials' && (
-          <span className={clsx('font-medium leading-none text-zinc-400', textSizeMapping[size])}>
+          <span className={cn('font-medium leading-none text-zinc-400', textSizeMapping[size])}>
             {placeholderInitials}
           </span>
         )}
@@ -105,7 +106,7 @@ export function WebUiAvatar({
         <img
           src={src}
           alt={name}
-          className={clsx(
+          className={cn(
             'object-cover absolute inset-0',
             sizeMapping[size],
             shapeMapping[shape],

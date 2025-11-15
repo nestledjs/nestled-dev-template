@@ -1,4 +1,4 @@
-import clsx from 'clsx'
+import cn from 'cn'
 import React from 'react'
 
 export interface WebUiContainerProps {
@@ -21,7 +21,7 @@ export function WebUiContainer(props: Readonly<WebUiContainerProps>) {
   return (
     <div
       id={props?.id}
-      className={clsx(
+      className={cn(
         props?.className ?? '',
         'relative w-full',
         props?.hideOverflow ? 'overflow-hidden' : '',
@@ -29,11 +29,11 @@ export function WebUiContainer(props: Readonly<WebUiContainerProps>) {
     >
       {props?.blur ? (
         <div
-          className={clsx(
+          className={cn(
             'rounded-full z-0 absolute h-5/6 w-5/6 blur-3xl',
             'bg-radial-[at_50%_50%] from-sky-600 to-transparent to-75%',
             horizontalBlur,
-            verticalBlur
+            verticalBlur,
           )}
         />
       ) : null}

@@ -1,8 +1,20 @@
 import { useState } from 'react'
-import { useQuery, useMutation } from '@apollo/client/react'
-import { AdminUserManagementDocument, EmulateUserDocument, AdminUserManagementDetailsDocument } from '@nestled-template/shared/sdk'
-import { MagnifyingGlassIcon, ShieldCheckIcon, LockClosedIcon, CheckCircleIcon, XCircleIcon, ExclamationTriangleIcon, EyeIcon } from '@heroicons/react/24/outline'
-import { clsx } from 'clsx'
+import { useMutation, useQuery } from '@apollo/client/react'
+import {
+  AdminUserManagementDetailsDocument,
+  AdminUserManagementDocument,
+  EmulateUserDocument,
+} from '@nestled-template/shared/sdk'
+import {
+  CheckCircleIcon,
+  ExclamationTriangleIcon,
+  EyeIcon,
+  LockClosedIcon,
+  MagnifyingGlassIcon,
+  ShieldCheckIcon,
+  XCircleIcon,
+} from '@heroicons/react/24/outline'
+import { cn } from '@nestled-template/shared/utils'
 import { useNavigate } from 'react-router'
 
 export default function AdminUsersPage() {
@@ -18,7 +30,10 @@ export default function AdminUsersPage() {
   const pageSize = 50
 
   // UI state for confirmation dialog and error messages
-  const [confirmEmulation, setConfirmEmulation] = useState<{ userId: string; userEmail: string } | null>(null)
+  const [confirmEmulation, setConfirmEmulation] = useState<{
+    userId: string
+    userEmail: string
+  } | null>(null)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null)
 
@@ -36,11 +51,14 @@ export default function AdminUsersPage() {
   })
 
   // Query user details
-  const { data: detailsData, loading: loadingDetails } = useQuery(AdminUserManagementDetailsDocument, {
-    variables: { userId: selectedUserId! },
-    skip: !selectedUserId,
-    fetchPolicy: 'network-only',
-  })
+  const { data: detailsData, loading: loadingDetails } = useQuery(
+    AdminUserManagementDetailsDocument,
+    {
+      variables: { userId: selectedUserId! },
+      skip: !selectedUserId,
+      fetchPolicy: 'network-only',
+    },
+  )
 
   const userDetails = detailsData?.adminUserDetails
 
@@ -50,7 +68,7 @@ export default function AdminUsersPage() {
       // Reload the page to switch to the emulated user's session
       window.location.href = '/members/dashboard'
     },
-    onError: (error) => {
+    onError: error => {
       setErrorMessage(error.message)
       setTimeout(() => setErrorMessage(null), 5000)
     },
@@ -107,7 +125,7 @@ export default function AdminUsersPage() {
             <input
               type="text"
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={e => setSearch(e.target.value)}
               placeholder="Search by email, name, or ID..."
               className="block w-full rounded-lg border border-zinc-300 dark:border-white/10 bg-white dark:bg-white/5 py-2 pl-10 pr-3 text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
             />
@@ -117,13 +135,16 @@ export default function AdminUsersPage() {
           <div className="flex flex-wrap gap-2">
             <button
               onClick={() =>
-                setFilters((f) => ({ ...f, isSuperAdmin: f.isSuperAdmin === true ? undefined : true }))
+                setFilters(f => ({
+                  ...f,
+                  isSuperAdmin: f.isSuperAdmin === true ? undefined : true,
+                }))
               }
-              className={clsx(
+              className={cn(
                 'inline-flex items-center gap-2 rounded-lg border px-3 py-1.5 text-sm font-medium transition',
                 filters.isSuperAdmin === true
                   ? 'border-emerald-500 dark:border-emerald-400 bg-emerald-50 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300'
-                  : 'border-zinc-300 dark:border-white/10 bg-white dark:bg-white/5 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-white/10'
+                  : 'border-zinc-300 dark:border-white/10 bg-white dark:bg-white/5 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-white/10',
               )}
             >
               <ShieldCheckIcon className="h-4 w-4" />
@@ -132,16 +153,16 @@ export default function AdminUsersPage() {
 
             <button
               onClick={() =>
-                setFilters((f) => ({
+                setFilters(f => ({
                   ...f,
                   emailVerified: f.emailVerified === true ? undefined : true,
                 }))
               }
-              className={clsx(
+              className={cn(
                 'inline-flex items-center gap-2 rounded-lg border px-3 py-1.5 text-sm font-medium transition',
                 filters.emailVerified === true
                   ? 'border-emerald-500 dark:border-emerald-400 bg-emerald-50 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300'
-                  : 'border-zinc-300 dark:border-white/10 bg-white dark:bg-white/5 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-white/10'
+                  : 'border-zinc-300 dark:border-white/10 bg-white dark:bg-white/5 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-white/10',
               )}
             >
               <CheckCircleIcon className="h-4 w-4" />
@@ -150,16 +171,16 @@ export default function AdminUsersPage() {
 
             <button
               onClick={() =>
-                setFilters((f) => ({
+                setFilters(f => ({
                   ...f,
                   twoFactorEnabled: f.twoFactorEnabled === true ? undefined : true,
                 }))
               }
-              className={clsx(
+              className={cn(
                 'inline-flex items-center gap-2 rounded-lg border px-3 py-1.5 text-sm font-medium transition',
                 filters.twoFactorEnabled === true
                   ? 'border-emerald-500 dark:border-emerald-400 bg-emerald-50 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300'
-                  : 'border-zinc-300 dark:border-white/10 bg-white dark:bg-white/5 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-white/10'
+                  : 'border-zinc-300 dark:border-white/10 bg-white dark:bg-white/5 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-white/10',
               )}
             >
               <ShieldCheckIcon className="h-4 w-4" />
@@ -168,23 +189,23 @@ export default function AdminUsersPage() {
 
             <button
               onClick={() =>
-                setFilters((f) => ({
+                setFilters(f => ({
                   ...f,
                   accountLocked: f.accountLocked === true ? undefined : true,
                 }))
               }
-              className={clsx(
+              className={cn(
                 'inline-flex items-center gap-2 rounded-lg border px-3 py-1.5 text-sm font-medium transition',
                 filters.accountLocked === true
                   ? 'border-red-500 dark:border-red-400 bg-red-50 dark:bg-red-500/20 text-red-700 dark:text-red-300'
-                  : 'border-zinc-300 dark:border-white/10 bg-white dark:bg-white/5 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-white/10'
+                  : 'border-zinc-300 dark:border-white/10 bg-white dark:bg-white/5 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-white/10',
               )}
             >
               <LockClosedIcon className="h-4 w-4" />
               Locked Accounts
             </button>
 
-            {(search || Object.values(filters).some((v) => v !== undefined)) && (
+            {(search || Object.values(filters).some(v => v !== undefined)) && (
               <button
                 onClick={() => {
                   setSearch('')
@@ -248,10 +269,12 @@ export default function AdminUsersPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-zinc-200 dark:divide-white/10 bg-white dark:bg-white/5">
-                {users.map((user) => {
-                  const email = user.emails?.find((e) => e.primary)?.email || 'No email'
-                  const emailVerified = user.emails?.find((e) => e.primary)?.verified || false
-                  const isLocked = user.lockedUntil ? new Date(user.lockedUntil) > new Date() : false
+                {users.map(user => {
+                  const email = user.emails?.find(e => e.primary)?.email || 'No email'
+                  const emailVerified = user.emails?.find(e => e.primary)?.verified || false
+                  const isLocked = user.lockedUntil
+                    ? new Date(user.lockedUntil) > new Date()
+                    : false
 
                   return (
                     <tr key={user.id} className="hover:bg-zinc-50 dark:hover:bg-white/5 transition">
@@ -270,7 +293,9 @@ export default function AdminUsersPage() {
                               )}
                             </div>
                             <div className="text-sm text-zinc-500 dark:text-zinc-400">{email}</div>
-                            <div className="text-xs text-zinc-400 dark:text-zinc-500">ID: {user.id.slice(0, 8)}...</div>
+                            <div className="text-xs text-zinc-400 dark:text-zinc-500">
+                              ID: {user.id.slice(0, 8)}...
+                            </div>
                           </div>
                         </div>
                       </td>
@@ -303,7 +328,7 @@ export default function AdminUsersPage() {
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex flex-wrap gap-1">
-                          {user.organizations?.slice(0, 2).map((org) => (
+                          {user.organizations?.slice(0, 2).map(org => (
                             <span
                               key={org.id}
                               className="inline-flex items-center rounded-full bg-zinc-100 dark:bg-white/10 px-2 py-0.5 text-xs text-zinc-700 dark:text-zinc-300"
@@ -356,14 +381,14 @@ export default function AdminUsersPage() {
           </div>
           <div className="flex gap-2">
             <button
-              onClick={() => setPage((p) => Math.max(0, p - 1))}
+              onClick={() => setPage(p => Math.max(0, p - 1))}
               disabled={page === 0}
               className="rounded-lg border border-zinc-300 dark:border-white/10 bg-white dark:bg-white/5 px-4 py-2 text-sm font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed transition"
             >
               Previous
             </button>
             <button
-              onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
+              onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))}
               disabled={page >= totalPages - 1}
               className="rounded-lg border border-zinc-300 dark:border-white/10 bg-white dark:bg-white/5 px-4 py-2 text-sm font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed transition"
             >
@@ -387,10 +412,14 @@ export default function AdminUsersPage() {
                     Emulate User?
                   </h3>
                   <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-2">
-                    You are about to emulate: <span className="font-medium text-zinc-900 dark:text-white">{confirmEmulation.userEmail}</span>
+                    You are about to emulate:{' '}
+                    <span className="font-medium text-zinc-900 dark:text-white">
+                      {confirmEmulation.userEmail}
+                    </span>
                   </p>
                   <p className="text-sm text-zinc-600 dark:text-zinc-400">
-                    This will log you in as this user. You can return to your admin account at any time using the banner at the top.
+                    This will log you in as this user. You can return to your admin account at any
+                    time using the banner at the top.
                   </p>
                 </div>
               </div>
@@ -421,7 +450,9 @@ export default function AdminUsersPage() {
             <div className="flex items-start gap-3">
               <ExclamationTriangleIcon className="h-5 w-5 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" />
               <div className="flex-1">
-                <h4 className="text-sm font-semibold text-red-900 dark:text-red-200 mb-1">Failed to Emulate User</h4>
+                <h4 className="text-sm font-semibold text-red-900 dark:text-red-200 mb-1">
+                  Failed to Emulate User
+                </h4>
                 <p className="text-sm text-red-700 dark:text-red-300">{errorMessage}</p>
               </div>
               <button
@@ -461,21 +492,33 @@ export default function AdminUsersPage() {
                   {/* Basic Info */}
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="text-sm font-medium text-zinc-500 dark:text-zinc-400">Name</label>
+                      <label className="text-sm font-medium text-zinc-500 dark:text-zinc-400">
+                        Name
+                      </label>
                       <p className="mt-1 text-base font-medium text-zinc-900 dark:text-white">
                         {userDetails.firstName} {userDetails.lastName}
                       </p>
                     </div>
                     <div>
-                      <label className="text-sm font-medium text-zinc-500 dark:text-zinc-400">User ID</label>
-                      <p className="mt-1 text-sm text-zinc-900 dark:text-white font-mono">{userDetails.id}</p>
+                      <label className="text-sm font-medium text-zinc-500 dark:text-zinc-400">
+                        User ID
+                      </label>
+                      <p className="mt-1 text-sm text-zinc-900 dark:text-white font-mono">
+                        {userDetails.id}
+                      </p>
                     </div>
                     <div>
-                      <label className="text-sm font-medium text-zinc-500 dark:text-zinc-400">Created</label>
-                      <p className="mt-1 text-sm text-zinc-900 dark:text-white">{formatDate(userDetails.createdAt)}</p>
+                      <label className="text-sm font-medium text-zinc-500 dark:text-zinc-400">
+                        Created
+                      </label>
+                      <p className="mt-1 text-sm text-zinc-900 dark:text-white">
+                        {formatDate(userDetails.createdAt)}
+                      </p>
                     </div>
                     <div>
-                      <label className="text-sm font-medium text-zinc-500 dark:text-zinc-400">Last Login</label>
+                      <label className="text-sm font-medium text-zinc-500 dark:text-zinc-400">
+                        Last Login
+                      </label>
                       <p className="mt-1 text-sm text-zinc-900 dark:text-white">
                         {formatDate(userDetails.lastSuccessfulLogin)}
                       </p>
@@ -484,14 +527,18 @@ export default function AdminUsersPage() {
 
                   {/* Emails */}
                   <div>
-                    <label className="text-sm font-medium text-zinc-500 dark:text-zinc-400">Email Addresses</label>
+                    <label className="text-sm font-medium text-zinc-500 dark:text-zinc-400">
+                      Email Addresses
+                    </label>
                     <div className="mt-2 space-y-2">
-                      {userDetails.emails?.map((email) => (
+                      {userDetails.emails?.map(email => (
                         <div
                           key={email.id}
                           className="flex items-center justify-between rounded-lg border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-white/5 px-4 py-2"
                         >
-                          <span className="text-sm text-zinc-900 dark:text-white">{email.email}</span>
+                          <span className="text-sm text-zinc-900 dark:text-white">
+                            {email.email}
+                          </span>
                           <div className="flex items-center gap-2">
                             {email.primary && (
                               <span className="inline-flex items-center rounded-full bg-emerald-100 dark:bg-emerald-500/20 px-2 py-0.5 text-xs font-medium text-emerald-800 dark:text-emerald-300">
@@ -517,10 +564,14 @@ export default function AdminUsersPage() {
 
                   {/* Security Status */}
                   <div>
-                    <label className="text-sm font-medium text-zinc-500 dark:text-zinc-400">Security Status</label>
+                    <label className="text-sm font-medium text-zinc-500 dark:text-zinc-400">
+                      Security Status
+                    </label>
                     <div className="mt-2 grid grid-cols-2 gap-4">
                       <div className="flex items-center justify-between rounded-lg border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-white/5 px-4 py-3">
-                        <span className="text-sm text-zinc-700 dark:text-zinc-300">Two-Factor Auth</span>
+                        <span className="text-sm text-zinc-700 dark:text-zinc-300">
+                          Two-Factor Auth
+                        </span>
                         {userDetails.twoFactorEnabled ? (
                           <span className="inline-flex items-center text-sm text-green-700 dark:text-green-400 font-medium">
                             <CheckCircleIcon className="mr-1 h-4 w-4" />
@@ -533,8 +584,11 @@ export default function AdminUsersPage() {
                         )}
                       </div>
                       <div className="flex items-center justify-between rounded-lg border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-white/5 px-4 py-3">
-                        <span className="text-sm text-zinc-700 dark:text-zinc-300">Account Status</span>
-                        {userDetails.lockedUntil && new Date(userDetails.lockedUntil) > new Date() ? (
+                        <span className="text-sm text-zinc-700 dark:text-zinc-300">
+                          Account Status
+                        </span>
+                        {userDetails.lockedUntil &&
+                        new Date(userDetails.lockedUntil) > new Date() ? (
                           <span className="inline-flex items-center text-sm text-red-700 dark:text-red-400 font-medium">
                             <LockClosedIcon className="mr-1 h-4 w-4" />
                             Locked
@@ -559,9 +613,11 @@ export default function AdminUsersPage() {
                   {/* Organizations */}
                   {userDetails.organizations && userDetails.organizations.length > 0 && (
                     <div>
-                      <label className="text-sm font-medium text-zinc-500 dark:text-zinc-400">Organizations</label>
+                      <label className="text-sm font-medium text-zinc-500 dark:text-zinc-400">
+                        Organizations
+                      </label>
                       <div className="mt-2 space-y-2">
-                        {userDetails.organizations.map((org) => (
+                        {userDetails.organizations.map(org => (
                           <div
                             key={org.id}
                             className="flex items-center justify-between rounded-lg border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-white/5 px-4 py-3"
@@ -587,13 +643,13 @@ export default function AdminUsersPage() {
                   {userDetails.activeSessions && userDetails.activeSessions.length > 0 && (
                     <div>
                       <label className="text-sm font-medium text-zinc-500 dark:text-zinc-400">
-                        Active Sessions ({userDetails.activeSessions.filter((s) => s.isValid).length})
+                        Active Sessions ({userDetails.activeSessions.filter(s => s.isValid).length})
                       </label>
                       <div className="mt-2 space-y-2">
                         {userDetails.activeSessions
-                          .filter((s) => s.isValid)
+                          .filter(s => s.isValid)
                           .slice(0, 5)
-                          .map((session) => (
+                          .map(session => (
                             <div
                               key={session.id}
                               className="flex items-center justify-between rounded-lg border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-white/5 px-4 py-2 text-sm"
@@ -602,7 +658,9 @@ export default function AdminUsersPage() {
                                 <p className="text-zinc-900 dark:text-white font-medium">
                                   {session.deviceInfo || 'Unknown Device'}
                                 </p>
-                                <p className="text-xs text-zinc-500 dark:text-zinc-400">{session.ipAddress}</p>
+                                <p className="text-xs text-zinc-500 dark:text-zinc-400">
+                                  {session.ipAddress}
+                                </p>
                               </div>
                               <span className="text-xs text-zinc-500 dark:text-zinc-400">
                                 {formatDate(session.lastActiveAt)}
@@ -616,16 +674,20 @@ export default function AdminUsersPage() {
                   {/* Recent Activity */}
                   {userDetails.AuditLog && userDetails.AuditLog.length > 0 && (
                     <div>
-                      <label className="text-sm font-medium text-zinc-500 dark:text-zinc-400">Recent Activity</label>
+                      <label className="text-sm font-medium text-zinc-500 dark:text-zinc-400">
+                        Recent Activity
+                      </label>
                       <div className="mt-2 space-y-2 max-h-64 overflow-y-auto">
-                        {userDetails.AuditLog.slice(0, 10).map((log) => (
+                        {userDetails.AuditLog.slice(0, 10).map(log => (
                           <div
                             key={log.id}
                             className="rounded-lg border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-white/5 px-4 py-2"
                           >
                             <div className="flex items-start justify-between">
                               <div>
-                                <p className="text-sm font-medium text-zinc-900 dark:text-white">{log.action}</p>
+                                <p className="text-sm font-medium text-zinc-900 dark:text-white">
+                                  {log.action}
+                                </p>
                                 <p className="text-xs text-zinc-500 dark:text-zinc-400">
                                   {log.entityType} · {log.entityId.slice(0, 8)}
                                 </p>

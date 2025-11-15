@@ -53,4 +53,3 @@ vitest.config.*.timestamp*
 prisma-generated
 
 storybook-static
-/nestled-templatenow/

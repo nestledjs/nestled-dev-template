@@ -1,6 +1,6 @@
 import { ChevronRightIcon } from '@heroicons/react/24/outline'
 import { ReactNode } from 'react'
-import clsx from 'clsx'
+import cn from 'cn'
 
 export interface WebUiSimpleListItemProps {
   type?: 'li' | 'div'
@@ -46,14 +46,14 @@ export function WebUiSimpleListItem(props: WebUiSimpleListItemProps) {
   const selectedClasses = props?.selected ? 'bg-sky-100' : 'bg-white'
   return props?.type === 'div' ? (
     <div
-      className={clsx(globalClasses, selectedClasses, 'border-2 border-zinc-100')}
+      className={cn(globalClasses, selectedClasses, 'border-2 border-zinc-100')}
       onClick={props?.onClick}
     >
       <InnerList {...props} />
     </div>
   ) : (
     <li
-      className={clsx(globalClasses, selectedClasses, 'border-2 border-zinc-100')}
+      className={cn(globalClasses, selectedClasses, 'border-2 border-zinc-100')}
       onClick={props?.onClick}
     >
       <InnerList {...props} />

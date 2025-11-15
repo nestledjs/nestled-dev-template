@@ -1,11 +1,11 @@
 import { useState } from 'react'
 import { CheckIcon, ChevronUpDownIcon, XMarkIcon } from '@heroicons/react/20/solid'
 import { Combobox } from '@headlessui/react'
+import { cn } from '@nestled-template/shared/utils' // Deprecated component; chapters no longer in schema. Remove usage and do not export.
 // Deprecated component; chapters no longer in schema. Remove usage and do not export.
 // Leaving file to avoid broken imports during cleanup.
 // import { useChaptersQuery, Chapter } from '@nestled-template/shared/sdk'
 type Chapter = any
-import { clsx } from 'clsx'
 
 interface WebChapterSelectProps {
   selectedChapter?: Chapter | null
@@ -19,16 +19,18 @@ export function WebChapterSelect(props: Readonly<WebChapterSelectProps>) {
   const [isOpen, setIsOpen] = useState(false)
 
   // Build search input using search and searchFields (like in WebListChapters)
-  const searchInput = query.trim() ? {
-    take: 50, // More chapters than the default 20
-    search: query.trim(),
-    searchFields: ['name', 'city', 'state'],
-  } : { take: 50 }
+  const searchInput = query.trim()
+    ? {
+        take: 50, // More chapters than the default 20
+        search: query.trim(),
+        searchFields: ['name', 'city', 'state'],
+      }
+    : { take: 50 }
 
   const { data, loading } = useChaptersQuery({
     variables: { input: searchInput },
     // Only fetch when we have a search term or want initial results
-    skip: false
+    skip: false,
   })
 
   const chapters = data?.chapters || []
@@ -56,7 +58,9 @@ export function WebChapterSelect(props: Readonly<WebChapterSelectProps>) {
 
   return (
     <Combobox as="div" value={props?.selectedChapter} onChange={handleChapterSelect}>
-      <Combobox.Label className="block text-sm font-medium text-gray-700">{props.label}</Combobox.Label>
+      <Combobox.Label className="block text-sm font-medium text-gray-700">
+        {props.label}
+      </Combobox.Label>
       <div className="relative mt-1">
         <Combobox.Input
           className="w-full rounded-md border border-gray-300 bg-white py-2 pl-3 pr-10 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:text-sm"
@@ -77,9 +81,7 @@ export function WebChapterSelect(props: Readonly<WebChapterSelectProps>) {
           </button>
         )}
 
-        <Combobox.Button
-          className="absolute inset-y-0 right-0 flex items-center rounded-r-md px-2 focus:outline-none"
-        >
+        <Combobox.Button className="absolute inset-y-0 right-0 flex items-center rounded-r-md px-2 focus:outline-none">
           <ChevronUpDownIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
         </Combobox.Button>
 
@@ -101,44 +103,49 @@ export function WebChapterSelect(props: Readonly<WebChapterSelectProps>) {
             <div className="py-2 px-3 text-gray-500">Start typing to search chapters...</div>
           )}
 
-            {chapters.map((chapter) => (
-              <Combobox.Option
-                key={chapter.id}
-                value={chapter}
-                className={({ active }) =>
-                  clsx(
-                    'relative cursor-default select-none py-2 pl-3 pr-9',
-                    active ? 'bg-indigo-600 text-white' : 'text-gray-900'
-                  )
-                }
-              >
-                {({ active, selected }) => (
-                  <>
-                    <div className="flex flex-col">
-                      <span className={clsx('truncate', selected && 'font-semibold')}>
-                        {chapter.name}
-                      </span>
-                      {(chapter.city || chapter.state) && (
-                        <span className={clsx('text-sm truncate', active ? 'text-indigo-200' : 'text-gray-500')}>
-                          {[chapter.city, chapter.state].filter(Boolean).join(', ')}
-                        </span>
-                      )}
-                    </div>
-
-                    {selected && (
+          {chapters.map(chapter => (
+            <Combobox.Option
+              key={chapter.id}
+              value={chapter}
+              className={({ active }) =>
+                cn(
+                  'relative cursor-default select-none py-2 pl-3 pr-9',
+                  active ? 'bg-indigo-600 text-white' : 'text-gray-900',
+                )
+              }
+            >
+              {({ active, selected }) => (
+                <>
+                  <div className="flex flex-col">
+                    <span className={cn('truncate', selected && 'font-semibold')}>
+                      {chapter.name}
+                    </span>
+                    {(chapter.city || chapter.state) && (
                       <span
-                        className={clsx(
-                          'absolute inset-y-0 right-0 flex items-center pr-4',
-                          active ? 'text-white' : 'text-indigo-600'
+                        className={cn(
+                          'text-sm truncate',
+                          active ? 'text-indigo-200' : 'text-gray-500',
                         )}
                       >
-                        <CheckIcon className="h-5 w-5" aria-hidden="true" />
+                        {[chapter.city, chapter.state].filter(Boolean).join(', ')}
                       </span>
                     )}
-                  </>
-                )}
-              </Combobox.Option>
-            ))}
+                  </div>
+
+                  {selected && (
+                    <span
+                      className={cn(
+                        'absolute inset-y-0 right-0 flex items-center pr-4',
+                        active ? 'text-white' : 'text-indigo-600',
+                      )}
+                    >
+                      <CheckIcon className="h-5 w-5" aria-hidden="true" />
+                    </span>
+                  )}
+                </>
+              )}
+            </Combobox.Option>
+          ))}
         </Combobox.Options>
       </div>
     </Combobox>

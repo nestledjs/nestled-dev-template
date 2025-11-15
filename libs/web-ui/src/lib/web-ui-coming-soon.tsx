@@ -1,4 +1,4 @@
-import { clsx } from 'clsx'
+import { cn } from '@nestled-template/shared/utils'
 
 interface WebUiComingSoonProps {
   fullScreen?: boolean
@@ -6,7 +6,7 @@ interface WebUiComingSoonProps {
 export function WebUiComingSoon({ fullScreen = true }: WebUiComingSoonProps) {
   return (
     <div
-      className={clsx(
+      className={cn(
         ' flex flex-col items-center justify-center',
         fullScreen ? 'h-[calc(100vh-20rem)] w-screen' : 'h-fit w-full',
       )}

@@ -1,6 +1,6 @@
 import React, { createContext, useContext, ReactNode } from 'react'
 import { useCurrentSubscriptionQuery, Subscription, Plan } from '@nestled-template/shared/sdk'
-import { useGlobalCtx } from '../global-context'
+import { useGlobalCtx } from './global.context'
 
 export interface SubscriptionContextType {
   // Subscription state

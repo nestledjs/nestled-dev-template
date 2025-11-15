@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import clsx from 'clsx'
+import cn from 'cn'
 
 export function WebUiLoading({ className }: { className?: string }) {
   const [showLoading, setShowLoading] = useState(false)
@@ -20,7 +20,7 @@ export function WebUiLoading({ className }: { className?: string }) {
   }
 
   return (
-    <div className={clsx('w-full h-full flex items-center justify-center', className || '')}>
+    <div className={cn('w-full h-full flex items-center justify-center', className || '')}>
       <div className="flex space-x-2">
         <div
           role="presentation"

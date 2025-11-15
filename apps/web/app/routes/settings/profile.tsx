@@ -26,7 +26,7 @@ import { useApolloClient, useReadQuery } from '@apollo/client/react'
 import { Form, FormFieldClass } from '@nestledjs/forms'
 import { formTheme } from '@nestled-template/shared/styles'
 import { AvatarUpload } from '@nestled-template/web-ui'
-import TransferOwnershipModal from '../../components/TransferOwnershipModal'
+import TransferOwnershipModal from '../../../../../libs/web/src/lib/modals/TransferOwnershipModal'
 
 export const loader = apolloLoader()(({ preloadQuery }) => {
   const meQueryRef = preloadQuery<MeQuery>(MeDocument)
@@ -155,35 +155,33 @@ export default function ProfileSettings() {
     }),
     FormFieldClass.content('emailVerificationStatus', {
       content: primaryEmail && !user.emailValidated && (
-            <div className="-mt-2 mb-4">
-              <p className="text-sm text-amber-600 dark:text-amber-400">
-                <span aria-hidden="true">⚠️</span> Email not verified
-              </p>
-              <button
-                type="button"
-                onClick={async () => {
-                  try {
-                    await resendVerificationEmail({
-                      variables: { email: primaryEmail.email },
-                    })
-                    setVerificationMessage('Verification email sent! Please check your inbox.')
-                    setTimeout(() => setVerificationMessage(null), 5000)
-                  } catch {
-                    setVerificationMessage('Failed to send verification email. Please try again.')
-                    setTimeout(() => setVerificationMessage(null), 5000)
-                  }
-                }}
-                className="text-sm text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 underline mt-1"
-              >
-                Click here to resend verification email
-              </button>
-              {verificationMessage && (
-                <p className="text-sm mt-1 text-zinc-600 dark:text-zinc-400">
-                  {verificationMessage}
-                </p>
-              )}
-            </div>
-          ),
+        <div className="-mt-2 mb-4">
+          <p className="text-sm text-amber-600 dark:text-amber-400">
+            <span aria-hidden="true">⚠️</span> Email not verified
+          </p>
+          <button
+            type="button"
+            onClick={async () => {
+              try {
+                await resendVerificationEmail({
+                  variables: { email: primaryEmail.email },
+                })
+                setVerificationMessage('Verification email sent! Please check your inbox.')
+                setTimeout(() => setVerificationMessage(null), 5000)
+              } catch {
+                setVerificationMessage('Failed to send verification email. Please try again.')
+                setTimeout(() => setVerificationMessage(null), 5000)
+              }
+            }}
+            className="text-sm text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 underline mt-1"
+          >
+            Click here to resend verification email
+          </button>
+          {verificationMessage && (
+            <p className="text-sm mt-1 text-zinc-600 dark:text-zinc-400">{verificationMessage}</p>
+          )}
+        </div>
+      ),
     }),
     FormFieldClass.content('buttons', {
       content: (

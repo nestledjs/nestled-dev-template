@@ -1,18 +1,18 @@
 import React from 'react'
 import { Link, Navigate, Outlet, useLocation } from 'react-router'
 import {
+  BuildingOfficeIcon,
   ChartBarSquareIcon,
   Cog6ToothIcon,
+  CreditCardIcon,
+  DocumentMagnifyingGlassIcon,
   HomeIcon,
   ShieldCheckIcon,
   TableCellsIcon,
   UsersIcon,
-  BuildingOfficeIcon,
-  DocumentMagnifyingGlassIcon,
-  CreditCardIcon,
 } from '@heroicons/react/24/outline'
 import { useGlobalCtx } from '@nestled-template/web'
-import { clsx } from 'clsx'
+import { cn } from '@nestled-template/shared/utils'
 
 interface NavItem {
   name: string
@@ -146,11 +146,11 @@ export default function AdminLayout() {
                     </h3>
                   </div>
                   <ul className="space-y-1">
-                    {section.items.map((item) => (
+                    {section.items.map(item => (
                       <li key={item.name}>
                         <Link
                           to={item.href}
-                          className={clsx(
+                          className={cn(
                             'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
                             isActive(item.href)
                               ? 'bg-emerald-500 text-white'
@@ -161,7 +161,7 @@ export default function AdminLayout() {
                           <div className="flex-1 min-w-0">
                             <div className="truncate">{item.name}</div>
                             <div
-                              className={clsx(
+                              className={cn(
                                 'text-xs truncate',
                                 isActive(item.href)
                                   ? 'text-emerald-100'

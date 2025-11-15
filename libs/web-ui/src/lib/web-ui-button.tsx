@@ -1,6 +1,6 @@
 import { cloneElement, ReactElement, ReactNode } from 'react'
 import { Link } from 'react-router'
-import { clsx } from 'clsx'
+import { cn } from '@nestled-template/shared/utils'
 
 interface WebUiButtonProps {
   buttonType?:
@@ -43,29 +43,29 @@ export const WebUiButton = ({
   }[size]
 
   const buttonStyles = {
-    Primary: clsx(
+    Primary: cn(
       'bg-orange-500 text-white',
       disabled
         ? 'opacity-50 cursor-not-allowed'
         : 'hover:bg-orange-400 focus-visible:outline-orange-500',
     ),
-    Secondary: clsx(
+    Secondary: cn(
       'ring-1 ring-inset ring-zinc-300 bg-white text-zinc-900',
       disabled ? 'opacity-50 cursor-not-allowed' : 'hover:bg-zinc-50',
     ),
-    SecondaryDark: clsx(
+    SecondaryDark: cn(
       'bg-white/10 text-white',
       disabled ? 'opacity-50 cursor-not-allowed' : 'hover:bg-white/20',
     ),
-    Soft: clsx(
+    Soft: cn(
       'bg-sky-50 text-sky-600',
       disabled ? 'opacity-50 cursor-not-allowed' : 'hover:bg-sky-100',
     ),
-    Transparent: clsx(
+    Transparent: cn(
       'bg-transparent text-zinc-900',
       disabled ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100',
     ),
-    TransparentLight: clsx(
+    TransparentLight: cn(
       'bg-transparent text-white',
       disabled ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100',
     ),
@@ -85,7 +85,7 @@ export const WebUiButton = ({
       onClick={disabled ? undefined : onClick}
       type="button"
       aria-disabled={disabled}
-      className={clsx(
+      className={cn(
         'inline-flex justify-center no-underline items-center gap-x-1.5',
         roundedStyles,
         sizeStyles,
@@ -104,7 +104,7 @@ export const WebUiButton = ({
       onClick={onClick}
       type="button"
       disabled={disabled}
-      className={clsx(
+      className={cn(
         'inline-flex justify-center items-center gap-x-1.5',
         roundedStyles,
         sizeStyles,

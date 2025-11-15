@@ -25,15 +25,15 @@ import {
   UsersIcon,
   XMarkIcon,
 } from '@heroicons/react/24/outline'
-import clsx from 'clsx'
+import cn from 'cn'
 import { ArrowLeftCircleIcon, ArrowRightCircleIcon } from '@heroicons/react/24/solid'
 import { Link, Outlet, useMatches } from 'react-router'
 import { useApolloClient } from '@apollo/client/react'
 import { useEmulateUserMutation, User, UsersDocument } from '@nestled-template/shared/sdk'
 import Cookies from 'js-cookie'
 import { useAtom } from 'jotai/index'
-import { leaderSelectedChapterAtom } from './global-storage'
-import { getMobileSidebarHeaderText } from './mobile-sidebar-header'
+import { leaderSelectedChapterAtom } from '../state/global-storage'
+import { getMobileSidebarHeaderText } from '../utils/mobile-sidebar-header'
 import { Form, FormFieldClass } from '@nestledjs/forms'
 import { formTheme } from '@nestled-template/shared/styles'
 
@@ -206,10 +206,10 @@ function SidebarNavigationList({
   return (
     <ul className="-mx-2 space-y-2">
       {items.map(item => (
-        <li key={item.name} className={clsx(item?.hide ? 'hidden' : '')}>
+        <li key={item.name} className={cn(item?.hide ? 'hidden' : '')}>
           <NavigationLink
             href={item.href}
-            className={clsx(
+            className={cn(
               item.current
                 ? 'bg-zinc-800 text-white'
                 : 'text-zinc-400 hover:text-white hover:bg-zinc-800',
@@ -230,7 +230,7 @@ function SidebarNavigationList({
       {role === 'Admin' && !activeUser && setOpenEmulate ? (
         <li>
           <button
-            className={clsx(
+            className={cn(
               'text-zinc-400 hover:text-white hover:bg-zinc-800',
               'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold cursor-pointer',
             )}
@@ -244,7 +244,7 @@ function SidebarNavigationList({
       {activeUser && restoreAdminUser ? (
         <li>
           <button
-            className={clsx(
+            className={cn(
               'text-zinc-400 hover:text-white hover:bg-zinc-800',
               'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold cursor-pointer',
             )}
@@ -275,7 +275,7 @@ function SidebarProfileSection({
       <li>
         <Link
           to={'/settings/profile'}
-          className={clsx(
+          className={cn(
             'flex items-center gap-x-4 px-6 py-3 text-sm font-semibold leading-6 text-white hover:bg-zinc-800',
             sidebarExpanded ? '' : 'justify-center',
           )}
@@ -295,7 +295,7 @@ function SidebarProfileSection({
       </li>
       <li>
         <span
-          className={clsx(
+          className={cn(
             'flex items-center gap-x-4 px-6 py-3 text-sm font-semibold leading-6 text-white hover:bg-zinc-800',
             sidebarExpanded ? 'justify-end' : 'justify-center',
           )}
@@ -583,7 +583,7 @@ export function WebSidebar(props: Readonly<WebUiSidebarProps>) {
         {/* Sidebar component, swap this element with another sidebar if you like */}
         <div className="flex grow flex-col gap-y-5 overflow-y-auto  px-8">
           <div
-            className={clsx(
+            className={cn(
               'flex h-16 shrink-0 items-center',
               sidebarExpanded ? '' : 'justify-center',
             )}
@@ -654,7 +654,7 @@ export function WebSidebar(props: Readonly<WebUiSidebarProps>) {
       </div>
 
       <main
-        className={clsx(
+        className={cn(
           sidebarExpanded ? 'lg:pl-60' : 'lg:pl-24',
           'flex flex-col lg:flex-row bg-zinc-100 flex-grow min-h-full',
         )}
@@ -748,7 +748,10 @@ function EmulateUserDialog({
                               })),
                             required: true,
                           }),
-                          FormFieldClass.button('submit', { text: 'Emulate User', fullWidth: true }),
+                          FormFieldClass.button('submit', {
+                            text: 'Emulate User',
+                            fullWidth: true,
+                          }),
                         ]}
                         submit={(val: any) => {
                           if (!val?.userId) {
