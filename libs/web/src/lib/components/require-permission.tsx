@@ -1,5 +1,5 @@
 import React, { ReactNode } from 'react'
-import { useGlobalCtx } from '../global-context'
+import { useGlobalCtx } from '../contexts'
 
 interface RequirePermissionProps {
   children: ReactNode

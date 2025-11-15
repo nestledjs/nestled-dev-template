@@ -1,16 +1,19 @@
 import { useState } from 'react'
 import { useQuery } from '@apollo/client/react'
-import { AdminPlatformAuditLogsDocument } from '@nestled-template/shared/sdk'
 import {
-  MagnifyingGlassIcon,
+  AdminPlatformAuditLogsDocument,
+  AdminPlatformAuditLogsQuery,
+} from '@nestled-template/shared/sdk'
+import {
   DocumentMagnifyingGlassIcon,
-  PlusCircleIcon,
-  PencilSquareIcon,
-  TrashIcon,
   EyeIcon,
+  MagnifyingGlassIcon,
+  PencilSquareIcon,
+  PlusCircleIcon,
+  TrashIcon,
   XCircleIcon,
 } from '@heroicons/react/24/outline'
-import { clsx } from 'clsx'
+import { cn } from '@nestled-template/shared/utils' // Action type configurations for badge styling
 
 // Action type configurations for badge styling
 const getActionConfig = (action: string) => {
@@ -24,7 +27,11 @@ const getActionConfig = (action: string) => {
     }
   }
 
-  if (actionLower.includes('update') || actionLower.includes('edit') || actionLower.includes('change')) {
+  if (
+    actionLower.includes('update') ||
+    actionLower.includes('edit') ||
+    actionLower.includes('change')
+  ) {
     return {
       label: action,
       icon: PencilSquareIcon,
@@ -40,7 +47,11 @@ const getActionConfig = (action: string) => {
     }
   }
 
-  if (actionLower.includes('read') || actionLower.includes('view') || actionLower.includes('access')) {
+  if (
+    actionLower.includes('read') ||
+    actionLower.includes('view') ||
+    actionLower.includes('access')
+  ) {
     return {
       label: action,
       icon: EyeIcon,
@@ -67,21 +78,24 @@ export default function AdminAuditLogsPage() {
   const [page, setPage] = useState(0)
   const pageSize = 50
 
-  const { data, loading, error } = useQuery(AdminPlatformAuditLogsDocument, {
-    variables: {
-      filters: {
-        userId: filters.userId || undefined,
-        organizationId: filters.organizationId || undefined,
-        action: filters.action || undefined,
-        entityType: filters.entityType || undefined,
-        startDate: filters.startDate,
-        endDate: filters.endDate,
-        skip: page * pageSize,
-        take: pageSize,
+  const { data, loading, error } = useQuery<AdminPlatformAuditLogsQuery>(
+    AdminPlatformAuditLogsDocument,
+    {
+      variables: {
+        filters: {
+          userId: filters.userId || undefined,
+          organizationId: filters.organizationId || undefined,
+          action: filters.action || undefined,
+          entityType: filters.entityType || undefined,
+          startDate: filters.startDate,
+          endDate: filters.endDate,
+          skip: page * pageSize,
+          take: pageSize,
+        },
       },
+      fetchPolicy: 'network-only',
     },
-    fetchPolicy: 'network-only',
-  })
+  )
 
   const logs = data?.adminAuditLogs?.logs || []
   const total = data?.adminAuditLogs?.total || 0
@@ -110,7 +124,12 @@ export default function AdminAuditLogsPage() {
   }
 
   const hasActiveFilters =
-    filters.userId || filters.organizationId || filters.action || filters.entityType || filters.startDate || filters.endDate
+    filters.userId ||
+    filters.organizationId ||
+    filters.action ||
+    filters.entityType ||
+    filters.startDate ||
+    filters.endDate
 
   return (
     <div className="space-y-6">
@@ -127,15 +146,18 @@ export default function AdminAuditLogsPage() {
         {/* Search Filters Row 1 */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label htmlFor="action" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
+            <label
+              htmlFor="action"
+              className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2"
+            >
               Action
             </label>
             <input
               id="action"
               type="text"
               value={filters.action}
-              onChange={(e) => {
-                setFilters((f) => ({ ...f, action: e.target.value }))
+              onChange={e => {
+                setFilters(f => ({ ...f, action: e.target.value }))
                 setPage(0)
               }}
               placeholder="Search by action (e.g., create, update, delete)..."
@@ -144,15 +166,18 @@ export default function AdminAuditLogsPage() {
           </div>
 
           <div>
-            <label htmlFor="entityType" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
+            <label
+              htmlFor="entityType"
+              className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2"
+            >
               Entity Type
             </label>
             <input
               id="entityType"
               type="text"
               value={filters.entityType}
-              onChange={(e) => {
-                setFilters((f) => ({ ...f, entityType: e.target.value }))
+              onChange={e => {
+                setFilters(f => ({ ...f, entityType: e.target.value }))
                 setPage(0)
               }}
               placeholder="Search by entity type (e.g., User, Organization)..."
@@ -164,7 +189,10 @@ export default function AdminAuditLogsPage() {
         {/* Search Filters Row 2 */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label htmlFor="userId" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
+            <label
+              htmlFor="userId"
+              className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2"
+            >
               User ID
             </label>
             <div className="relative">
@@ -175,8 +203,8 @@ export default function AdminAuditLogsPage() {
                 id="userId"
                 type="text"
                 value={filters.userId}
-                onChange={(e) => {
-                  setFilters((f) => ({ ...f, userId: e.target.value }))
+                onChange={e => {
+                  setFilters(f => ({ ...f, userId: e.target.value }))
                   setPage(0)
                 }}
                 placeholder="Search by user ID..."
@@ -186,15 +214,18 @@ export default function AdminAuditLogsPage() {
           </div>
 
           <div>
-            <label htmlFor="organizationId" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
+            <label
+              htmlFor="organizationId"
+              className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2"
+            >
               Organization ID
             </label>
             <input
               id="organizationId"
               type="text"
               value={filters.organizationId}
-              onChange={(e) => {
-                setFilters((f) => ({ ...f, organizationId: e.target.value }))
+              onChange={e => {
+                setFilters(f => ({ ...f, organizationId: e.target.value }))
                 setPage(0)
               }}
               placeholder="Search by organization ID..."
@@ -206,15 +237,23 @@ export default function AdminAuditLogsPage() {
         {/* Date Range Filters */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label htmlFor="startDate" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
+            <label
+              htmlFor="startDate"
+              className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2"
+            >
               Start Date
             </label>
             <input
               id="startDate"
               type="datetime-local"
-              value={filters.startDate ? new Date(filters.startDate).toISOString().slice(0, 16) : ''}
-              onChange={(e) => {
-                setFilters((f) => ({ ...f, startDate: e.target.value ? new Date(e.target.value) : undefined }))
+              value={
+                filters.startDate ? new Date(filters.startDate).toISOString().slice(0, 16) : ''
+              }
+              onChange={e => {
+                setFilters(f => ({
+                  ...f,
+                  startDate: e.target.value ? new Date(e.target.value) : undefined,
+                }))
                 setPage(0)
               }}
               className="block w-full rounded-lg border border-zinc-300 dark:border-white/10 bg-white dark:bg-white/5 py-2 px-3 text-zinc-900 dark:text-white focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
@@ -222,15 +261,21 @@ export default function AdminAuditLogsPage() {
           </div>
 
           <div>
-            <label htmlFor="endDate" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
+            <label
+              htmlFor="endDate"
+              className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2"
+            >
               End Date
             </label>
             <input
               id="endDate"
               type="datetime-local"
               value={filters.endDate ? new Date(filters.endDate).toISOString().slice(0, 16) : ''}
-              onChange={(e) => {
-                setFilters((f) => ({ ...f, endDate: e.target.value ? new Date(e.target.value) : undefined }))
+              onChange={e => {
+                setFilters(f => ({
+                  ...f,
+                  endDate: e.target.value ? new Date(e.target.value) : undefined,
+                }))
                 setPage(0)
               }}
               className="block w-full rounded-lg border border-zinc-300 dark:border-white/10 bg-white dark:bg-white/5 py-2 px-3 text-zinc-900 dark:text-white focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
@@ -266,11 +311,15 @@ export default function AdminAuditLogsPage() {
           </div>
         ) : error ? (
           <div className="p-12 text-center">
-            <p className="text-red-600 dark:text-red-400">Error loading audit logs: {error.message}</p>
+            <p className="text-red-600 dark:text-red-400">
+              Error loading audit logs: {error.message}
+            </p>
           </div>
         ) : logs.length === 0 ? (
           <div className="p-12 text-center text-zinc-500 dark:text-zinc-400">
-            {hasActiveFilters ? 'No audit logs found matching your filters' : 'No audit logs recorded yet'}
+            {hasActiveFilters
+              ? 'No audit logs found matching your filters'
+              : 'No audit logs recorded yet'}
           </div>
         ) : (
           <div className="p-6 space-y-4">
@@ -287,7 +336,7 @@ export default function AdminAuditLogsPage() {
                 >
                   {/* Icon */}
                   <div
-                    className={clsx(
+                    className={cn(
                       'flex-shrink-0 h-10 w-10 rounded-lg flex items-center justify-center',
                       config.color === 'emerald' && 'bg-emerald-100 dark:bg-emerald-500/20',
                       config.color === 'blue' && 'bg-blue-100 dark:bg-blue-500/20',
@@ -297,7 +346,7 @@ export default function AdminAuditLogsPage() {
                     )}
                   >
                     <Icon
-                      className={clsx(
+                      className={cn(
                         'h-5 w-5',
                         config.color === 'emerald' && 'text-emerald-600 dark:text-emerald-400',
                         config.color === 'blue' && 'text-blue-600 dark:text-blue-400',
@@ -314,7 +363,7 @@ export default function AdminAuditLogsPage() {
                       <div>
                         <div className="flex items-center gap-2 mb-1">
                           <span
-                            className={clsx(
+                            className={cn(
                               'inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium',
                               config.color === 'emerald' &&
                                 'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300',
@@ -338,14 +387,16 @@ export default function AdminAuditLogsPage() {
                           Entity ID: {log.entityId}
                         </p>
                         <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-zinc-600 dark:text-zinc-400">
-                          <span>User: {userName} ({userEmail})</span>
-                          {log.organization && (
-                            <span>Organization: {log.organization.name}</span>
-                          )}
+                          <span>
+                            User: {userName} ({userEmail})
+                          </span>
+                          {log.organization && <span>Organization: {log.organization.name}</span>}
                         </div>
                       </div>
                       <div className="flex-shrink-0 text-right">
-                        <div className="text-xs text-zinc-500 dark:text-zinc-400">{formatDate(log.createdAt)}</div>
+                        <div className="text-xs text-zinc-500 dark:text-zinc-400">
+                          {formatDate(log.createdAt)}
+                        </div>
                         <div className="text-xs text-zinc-400 dark:text-zinc-500 mt-0.5">
                           {log.id.slice(0, 8)}
                         </div>
@@ -381,14 +432,14 @@ export default function AdminAuditLogsPage() {
           </div>
           <div className="flex gap-2">
             <button
-              onClick={() => setPage((p) => Math.max(0, p - 1))}
+              onClick={() => setPage(p => Math.max(0, p - 1))}
               disabled={page === 0}
               className="rounded-lg border border-zinc-300 dark:border-white/10 bg-white dark:bg-white/5 px-4 py-2 text-sm font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed transition"
             >
               Previous
             </button>
             <button
-              onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
+              onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))}
               disabled={page >= totalPages - 1}
               className="rounded-lg border border-zinc-300 dark:border-white/10 bg-white dark:bg-white/5 px-4 py-2 text-sm font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed transition"
             >

@@ -11,7 +11,7 @@ import {
 import { useGlobalCtx } from '@nestled-template/web'
 import { useMyOrganizationsWithMembersQuery } from '@nestled-template/shared/sdk'
 import { Avatar } from '@nestled-template/web-ui'
-import { clsx } from 'clsx'
+import { cn } from '@nestled-template/shared/utils'
 
 interface NavItem {
   name: string
@@ -78,7 +78,6 @@ export default function SettingsLayout() {
       description: 'Subscription and payment settings',
     },
   ]
-
 
   const isActive = (href: string) => {
     return location.pathname === href || location.pathname.startsWith(`${href}/`)
@@ -179,7 +178,7 @@ export default function SettingsLayout() {
                       <li key={item.name}>
                         <Link
                           to={item.href}
-                          className={clsx(
+                          className={cn(
                             'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
                             isActive(item.href)
                               ? 'bg-emerald-500 text-white'
@@ -190,7 +189,7 @@ export default function SettingsLayout() {
                           <div className="flex-1 min-w-0">
                             <div className="truncate">{item.name}</div>
                             <div
-                              className={clsx(
+                              className={cn(
                                 'text-xs truncate',
                                 isActive(item.href)
                                   ? 'text-emerald-100'
@@ -240,7 +239,7 @@ export default function SettingsLayout() {
                       <li key={item.name}>
                         <Link
                           to={item.href}
-                          className={clsx(
+                          className={cn(
                             'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
                             isActive(item.href)
                               ? 'bg-emerald-500 text-white'
@@ -251,7 +250,7 @@ export default function SettingsLayout() {
                           <div className="flex-1 min-w-0">
                             <div className="truncate">{item.name}</div>
                             <div
-                              className={clsx(
+                              className={cn(
                                 'text-xs truncate',
                                 isActive(item.href)
                                   ? 'text-emerald-100'

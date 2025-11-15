@@ -1,8 +1,13 @@
 import React from 'react'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import TransferOwnershipModal from '../../app/components/TransferOwnershipModal'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+import TransferOwnershipModal from '../../../../libs/web/src/lib/modals/TransferOwnershipModal'
+import {
+  useMeQuery,
+  useMyOrganizationsWithMembersQuery,
+  useTransferOrganizationOwnershipMutation,
+} from '@nestled-template/shared/sdk'
 
 // Mock external dependencies
 vi.mock('@nestled-template/shared/sdk', () => ({
@@ -10,12 +15,6 @@ vi.mock('@nestled-template/shared/sdk', () => ({
   useMeQuery: vi.fn(),
   useTransferOrganizationOwnershipMutation: vi.fn(),
 }))
-
-import {
-  useMyOrganizationsWithMembersQuery,
-  useMeQuery,
-  useTransferOrganizationOwnershipMutation,
-} from '@nestled-template/shared/sdk'
 
 describe('TransferOwnershipModal Component', () => {
   let mockTransferOwnership: ReturnType<typeof vi.fn>
@@ -88,11 +87,7 @@ describe('TransferOwnershipModal Component', () => {
 
   const renderModal = (isOpen = true) => {
     return render(
-      <TransferOwnershipModal
-        isOpen={isOpen}
-        onClose={mockOnClose}
-        onSuccess={mockOnSuccess}
-      />
+      <TransferOwnershipModal isOpen={isOpen} onClose={mockOnClose} onSuccess={mockOnSuccess} />,
     )
   }
 
@@ -120,7 +115,9 @@ describe('TransferOwnershipModal Component', () => {
       const { container } = renderModal(true)
 
       // Find close button by its icon container
-      const closeButton = container.querySelector('button .h-5.w-5.text-zinc-500')?.closest('button')
+      const closeButton = container
+        .querySelector('button .h-5.w-5.text-zinc-500')
+        ?.closest('button')
       expect(closeButton).toBeInTheDocument()
     })
   })
@@ -256,7 +253,9 @@ describe('TransferOwnershipModal Component', () => {
       await user.selectOptions(orgSelect, 'org-2')
 
       await waitFor(() => {
-        expect(screen.getByText('No other members available to transfer ownership to.')).toBeInTheDocument()
+        expect(
+          screen.getByText('No other members available to transfer ownership to.'),
+        ).toBeInTheDocument()
       })
     })
   })
@@ -276,7 +275,9 @@ describe('TransferOwnershipModal Component', () => {
       const user = userEvent.setup()
       const { container } = renderModal(true)
 
-      const closeButton = container.querySelector('button .h-5.w-5.text-zinc-500')?.closest('button')!
+      const closeButton = container
+        .querySelector('button .h-5.w-5.text-zinc-500')
+        ?.closest('button')!
       await user.click(closeButton)
 
       expect(mockOnClose).toHaveBeenCalled()

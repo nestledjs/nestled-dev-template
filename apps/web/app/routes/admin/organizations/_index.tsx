@@ -1,8 +1,14 @@
 import { useState } from 'react'
 import { useQuery } from '@apollo/client/react'
 import { AdminPlatformOrganizationsDocument } from '@nestled-template/shared/sdk'
-import { MagnifyingGlassIcon, BuildingOfficeIcon, UsersIcon, CheckCircleIcon, XCircleIcon } from '@heroicons/react/24/outline'
-import { clsx } from 'clsx'
+import {
+  BuildingOfficeIcon,
+  CheckCircleIcon,
+  MagnifyingGlassIcon,
+  UsersIcon,
+  XCircleIcon,
+} from '@heroicons/react/24/outline'
+import { cn } from '@nestled-template/shared/utils'
 import { Link } from 'react-router'
 
 export default function AdminOrganizationsPage() {
@@ -56,7 +62,9 @@ export default function AdminOrganizationsPage() {
     <div className="space-y-6">
       {/* Header */}
       <div className="rounded-xl border border-zinc-200 dark:border-white/10 bg-white dark:bg-white/5 p-6 backdrop-blur">
-        <h2 className="text-2xl font-bold text-zinc-900 dark:text-white">Organization Management</h2>
+        <h2 className="text-2xl font-bold text-zinc-900 dark:text-white">
+          Organization Management
+        </h2>
         <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
           View and manage all organizations on the platform
         </p>
@@ -71,7 +79,7 @@ export default function AdminOrganizationsPage() {
           <input
             type="text"
             value={search}
-            onChange={(e) => {
+            onChange={e => {
               setSearch(e.target.value)
               setPage(0)
             }}
@@ -91,11 +99,15 @@ export default function AdminOrganizationsPage() {
         {loading ? (
           <div className="p-12 text-center">
             <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-emerald-600 dark:border-emerald-400 border-r-transparent"></div>
-            <p className="mt-4 text-sm text-zinc-600 dark:text-zinc-400">Loading organizations...</p>
+            <p className="mt-4 text-sm text-zinc-600 dark:text-zinc-400">
+              Loading organizations...
+            </p>
           </div>
         ) : error ? (
           <div className="p-12 text-center">
-            <p className="text-red-600 dark:text-red-400">Error loading organizations: {error.message}</p>
+            <p className="text-red-600 dark:text-red-400">
+              Error loading organizations: {error.message}
+            </p>
           </div>
         ) : organizations.length === 0 ? (
           <div className="p-12 text-center text-zinc-500 dark:text-zinc-400">
@@ -127,7 +139,8 @@ export default function AdminOrganizationsPage() {
                 {organizations.map((org: any) => {
                   const subscription = getSubscriptionStatus(org)
                   const memberCount = org.members?.length || 0
-                  const ownerCount = org.members?.filter((m: any) => m.role?.name === 'Owner').length || 0
+                  const ownerCount =
+                    org.members?.filter((m: any) => m.role?.name === 'Owner').length || 0
 
                   return (
                     <tr key={org.id} className="hover:bg-zinc-50 dark:hover:bg-white/5 transition">
@@ -162,11 +175,11 @@ export default function AdminOrganizationsPage() {
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex flex-col gap-1">
                           <span
-                            className={clsx(
+                            className={cn(
                               'inline-flex items-center gap-1 text-xs font-medium',
                               subscription.color === 'emerald'
                                 ? 'text-emerald-700 dark:text-emerald-400'
-                                : 'text-zinc-500 dark:text-zinc-400'
+                                : 'text-zinc-500 dark:text-zinc-400',
                             )}
                           >
                             {subscription.color === 'emerald' ? (
@@ -177,7 +190,8 @@ export default function AdminOrganizationsPage() {
                             {subscription.status}
                           </span>
                           <span className="text-xs text-zinc-600 dark:text-zinc-400">
-                            {subscription.plan} {subscription.price !== '0' && `($${subscription.price}/mo)`}
+                            {subscription.plan}{' '}
+                            {subscription.price !== '0' && `($${subscription.price}/mo)`}
                           </span>
                         </div>
                       </td>
@@ -209,14 +223,14 @@ export default function AdminOrganizationsPage() {
           </div>
           <div className="flex gap-2">
             <button
-              onClick={() => setPage((p) => Math.max(0, p - 1))}
+              onClick={() => setPage(p => Math.max(0, p - 1))}
               disabled={page === 0}
               className="rounded-lg border border-zinc-300 dark:border-white/10 bg-white dark:bg-white/5 px-4 py-2 text-sm font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed transition"
             >
               Previous
             </button>
             <button
-              onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
+              onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))}
               disabled={page >= totalPages - 1}
               className="rounded-lg border border-zinc-300 dark:border-white/10 bg-white dark:bg-white/5 px-4 py-2 text-sm font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed transition"
             >

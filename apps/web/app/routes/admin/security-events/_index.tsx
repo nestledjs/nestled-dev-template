@@ -1,18 +1,20 @@
 import { useState } from 'react'
 import { useQuery } from '@apollo/client/react'
-import { AdminPlatformSecurityEventsDocument, SecurityEventType } from '@nestled-template/shared/sdk'
 import {
+  AdminPlatformSecurityEventsDocument,
+  SecurityEventType,
+} from '@nestled-template/shared/sdk'
+import {
+  ExclamationTriangleIcon,
+  KeyIcon,
+  LockClosedIcon,
   MagnifyingGlassIcon,
   ShieldCheckIcon,
   ShieldExclamationIcon,
-  LockClosedIcon,
-  KeyIcon,
   UserCircleIcon,
   XCircleIcon,
-  CheckCircleIcon,
-  ExclamationTriangleIcon,
 } from '@heroicons/react/24/outline'
-import { clsx } from 'clsx'
+import { cn } from '@nestled-template/shared/utils'
 
 const EVENT_TYPE_CONFIG: Record<
   SecurityEventType,
@@ -171,14 +173,17 @@ export default function AdminSecurityEventsPage() {
       <div className="rounded-xl border border-zinc-200 dark:border-white/10 bg-white dark:bg-white/5 p-6 backdrop-blur space-y-4">
         {/* Event Type Filter */}
         <div>
-          <label htmlFor="eventType" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
+          <label
+            htmlFor="eventType"
+            className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2"
+          >
             Event Type
           </label>
           <select
             id="eventType"
             value={filters.eventType || ''}
-            onChange={(e) => {
-              setFilters((f) => ({
+            onChange={e => {
+              setFilters(f => ({
                 ...f,
                 eventType: e.target.value ? (e.target.value as SecurityEventType) : undefined,
               }))
@@ -198,7 +203,10 @@ export default function AdminSecurityEventsPage() {
         {/* Search Filters */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label htmlFor="userId" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
+            <label
+              htmlFor="userId"
+              className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2"
+            >
               User ID
             </label>
             <div className="relative">
@@ -209,8 +217,8 @@ export default function AdminSecurityEventsPage() {
                 id="userId"
                 type="text"
                 value={filters.userId}
-                onChange={(e) => {
-                  setFilters((f) => ({ ...f, userId: e.target.value }))
+                onChange={e => {
+                  setFilters(f => ({ ...f, userId: e.target.value }))
                   setPage(0)
                 }}
                 placeholder="Search by user ID..."
@@ -220,15 +228,18 @@ export default function AdminSecurityEventsPage() {
           </div>
 
           <div>
-            <label htmlFor="ipAddress" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
+            <label
+              htmlFor="ipAddress"
+              className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2"
+            >
               IP Address
             </label>
             <input
               id="ipAddress"
               type="text"
               value={filters.ipAddress}
-              onChange={(e) => {
-                setFilters((f) => ({ ...f, ipAddress: e.target.value }))
+              onChange={e => {
+                setFilters(f => ({ ...f, ipAddress: e.target.value }))
                 setPage(0)
               }}
               placeholder="Search by IP address..."
@@ -240,15 +251,23 @@ export default function AdminSecurityEventsPage() {
         {/* Date Range Filters */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label htmlFor="startDate" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
+            <label
+              htmlFor="startDate"
+              className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2"
+            >
               Start Date
             </label>
             <input
               id="startDate"
               type="datetime-local"
-              value={filters.startDate ? new Date(filters.startDate).toISOString().slice(0, 16) : ''}
-              onChange={(e) => {
-                setFilters((f) => ({ ...f, startDate: e.target.value ? new Date(e.target.value) : undefined }))
+              value={
+                filters.startDate ? new Date(filters.startDate).toISOString().slice(0, 16) : ''
+              }
+              onChange={e => {
+                setFilters(f => ({
+                  ...f,
+                  startDate: e.target.value ? new Date(e.target.value) : undefined,
+                }))
                 setPage(0)
               }}
               className="block w-full rounded-lg border border-zinc-300 dark:border-white/10 bg-white dark:bg-white/5 py-2 px-3 text-zinc-900 dark:text-white focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
@@ -256,15 +275,21 @@ export default function AdminSecurityEventsPage() {
           </div>
 
           <div>
-            <label htmlFor="endDate" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
+            <label
+              htmlFor="endDate"
+              className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2"
+            >
               End Date
             </label>
             <input
               id="endDate"
               type="datetime-local"
               value={filters.endDate ? new Date(filters.endDate).toISOString().slice(0, 16) : ''}
-              onChange={(e) => {
-                setFilters((f) => ({ ...f, endDate: e.target.value ? new Date(e.target.value) : undefined }))
+              onChange={e => {
+                setFilters(f => ({
+                  ...f,
+                  endDate: e.target.value ? new Date(e.target.value) : undefined,
+                }))
                 setPage(0)
               }}
               className="block w-full rounded-lg border border-zinc-300 dark:border-white/10 bg-white dark:bg-white/5 py-2 px-3 text-zinc-900 dark:text-white focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
@@ -296,7 +321,9 @@ export default function AdminSecurityEventsPage() {
         {loading ? (
           <div className="p-12 text-center">
             <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-emerald-600 dark:border-emerald-400 border-r-transparent"></div>
-            <p className="mt-4 text-sm text-zinc-600 dark:text-zinc-400">Loading security events...</p>
+            <p className="mt-4 text-sm text-zinc-600 dark:text-zinc-400">
+              Loading security events...
+            </p>
           </div>
         ) : error ? (
           <div className="p-12 text-center">
@@ -304,7 +331,9 @@ export default function AdminSecurityEventsPage() {
           </div>
         ) : events.length === 0 ? (
           <div className="p-12 text-center text-zinc-500 dark:text-zinc-400">
-            {hasActiveFilters ? 'No events found matching your filters' : 'No security events recorded yet'}
+            {hasActiveFilters
+              ? 'No events found matching your filters'
+              : 'No security events recorded yet'}
           </div>
         ) : (
           <div className="p-6 space-y-4">
@@ -320,7 +349,7 @@ export default function AdminSecurityEventsPage() {
                 >
                   {/* Icon */}
                   <div
-                    className={clsx(
+                    className={cn(
                       'flex-shrink-0 h-10 w-10 rounded-lg flex items-center justify-center',
                       config.color === 'emerald' && 'bg-emerald-100 dark:bg-emerald-500/20',
                       config.color === 'amber' && 'bg-amber-100 dark:bg-amber-500/20',
@@ -331,7 +360,7 @@ export default function AdminSecurityEventsPage() {
                     )}
                   >
                     <Icon
-                      className={clsx(
+                      className={cn(
                         'h-5 w-5',
                         config.color === 'emerald' && 'text-emerald-600 dark:text-emerald-400',
                         config.color === 'amber' && 'text-amber-600 dark:text-amber-400',
@@ -349,7 +378,7 @@ export default function AdminSecurityEventsPage() {
                       <div>
                         <div className="flex items-center gap-2 mb-1">
                           <span
-                            className={clsx(
+                            className={cn(
                               'inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium',
                               config.color === 'emerald' &&
                                 'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300',
@@ -368,17 +397,23 @@ export default function AdminSecurityEventsPage() {
                             {config.label}
                           </span>
                         </div>
-                        <p className="text-sm text-zinc-900 dark:text-white font-medium">{config.description}</p>
+                        <p className="text-sm text-zinc-900 dark:text-white font-medium">
+                          {config.description}
+                        </p>
                         <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-zinc-600 dark:text-zinc-400">
                           <span>
                             User: {event.user?.firstName} {event.user?.lastName} ({userEmail})
                           </span>
                           {event.ipAddress && <span>IP: {event.ipAddress}</span>}
-                          {event.userAgent && <span className="max-w-xs truncate">Device: {event.userAgent}</span>}
+                          {event.userAgent && (
+                            <span className="max-w-xs truncate">Device: {event.userAgent}</span>
+                          )}
                         </div>
                       </div>
                       <div className="flex-shrink-0 text-right">
-                        <div className="text-xs text-zinc-500 dark:text-zinc-400">{formatDate(event.createdAt)}</div>
+                        <div className="text-xs text-zinc-500 dark:text-zinc-400">
+                          {formatDate(event.createdAt)}
+                        </div>
                         <div className="text-xs text-zinc-400 dark:text-zinc-500 mt-0.5">
                           {event.id.slice(0, 8)}
                         </div>
@@ -412,14 +447,14 @@ export default function AdminSecurityEventsPage() {
           </div>
           <div className="flex gap-2">
             <button
-              onClick={() => setPage((p) => Math.max(0, p - 1))}
+              onClick={() => setPage(p => Math.max(0, p - 1))}
               disabled={page === 0}
               className="rounded-lg border border-zinc-300 dark:border-white/10 bg-white dark:bg-white/5 px-4 py-2 text-sm font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed transition"
             >
               Previous
             </button>
             <button
-              onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
+              onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))}
               disabled={page >= totalPages - 1}
               className="rounded-lg border border-zinc-300 dark:border-white/10 bg-white dark:bg-white/5 px-4 py-2 text-sm font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed transition"
             >

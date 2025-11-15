@@ -123,7 +123,7 @@ Build a complete user interface with authentication flows, organization manageme
   - [x] Backend implementation for ownership transfer
   - [x] Organization transfer modal with member selection and validation
   - [x] Improved UX with in-page success/error feedback (no alerts)
-  - [ ] Update personal information (name, email, avatar) - needs file upload system
+  - [x] Update personal information (name, email, avatar) - needs file upload system
   - [ ] Manage connected OAuth accounts - future enhancement
 
 - [x] **Create `/settings/security` page** ✅ COMPLETE
@@ -166,7 +166,7 @@ Build a complete user interface with authentication flows, organization manageme
 ### Organization Settings
 - [x] **Create `/settings/organization` page**
   - [x] Update organization name and details
-  - [ ] Upload organization logo/avatar (TODO - needs file upload system)
+  - [x] Upload organization logo/avatar (TODO - needs file upload system)
   - [ ] Set organization preferences (timezone, locale) (future enhancement)
   - [x] View organization creation date and stats
   - [x] Danger zone: delete organization (UI ready, needs backend implementation)

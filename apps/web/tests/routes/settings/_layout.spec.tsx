@@ -16,15 +16,21 @@ vi.mock('@nestled-template/web', () => ({
 
 // Mock web-ui components
 vi.mock('@nestled-template/web-ui', () => ({
-  Avatar: ({ imageUrl, fallbackText }: any) => (
-    <div data-testid="avatar">
-      {imageUrl ? (
-        <img src={imageUrl} alt="avatar" />
-      ) : (
+  Avatar: ({ imageUrl, fallbackText }: any) => {
+    if (imageUrl) {
+      return (
+        <div data-testid="avatar">
+          <img src={imageUrl} alt="avatar" />
+        </div>
+      )
+    }
+
+    return (
+      <div data-testid="avatar">
         <span data-testid="avatar-fallback">{fallbackText}</span>
-      )}
-    </div>
-  ),
+      </div>
+    )
+  },
 }))
 
 import { useMyOrganizationsWithMembersQuery } from '@nestled-template/shared/sdk'

@@ -11,7 +11,7 @@ Run `nx test web-ui` to execute the unit tests via [Vitest](https://vitest.dev/)
 - Always update `@nestled-template` imports to `@nestled-template`, and maintain a mapping table for known package moves.
 - Consolidate UI components into a single WebUI project, using barrel files for folders with multiple components.
 - Refactor complex functions for readability, prefer nullish coalescing, and preserve exact Tailwind styles.
-- Always use `clsx` instead of `classnames` for class composition.
+- Always use `cn` instead of `classnames` for class composition.
 - For forms migrated to `@nestledjs/forms`, remove the `buttonText` prop and add a `button` field as the last field, and always provide an `id` prop in kebab-case.
 - Check all imports against `package.json` and the WebUI folder; notify the user with a red X if a dependency or UI library is missing, but never remove or fix broken imports just for linter errors.
 - UI components must be dry: they should not use atoms, context, global state, or Apollo hooks; if they do, notify the user and do not write a story or keep them in the UI library.
