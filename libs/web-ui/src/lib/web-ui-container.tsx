@@ -1,5 +1,6 @@
-import cn from 'cn'
+
 import React from 'react'
+import { cn } from '@nestled-template/shared/utils'
 
 export interface WebUiContainerProps {
   children: React.ReactNode

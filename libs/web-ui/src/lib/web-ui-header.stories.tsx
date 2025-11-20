@@ -17,7 +17,7 @@ const meta = {
     navigation,
     logo: 'https://placehold.co/40x40',
     icon: 'https://placehold.co/40x40',
-    siteName: 'Biz to Biz Now',
+    siteName: 'Your Site',
     isAuthenticated: false,
   },
 } satisfies Meta<typeof WebUiHeader>;
@@ -43,4 +43,4 @@ export const Authenticated: Story = {
     const canvas = within(canvasElement);
     await expect(canvas.getByText('Go to Dashboard')).toBeInTheDocument();
   },
-}; 
+};

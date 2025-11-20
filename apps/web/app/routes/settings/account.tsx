@@ -19,7 +19,7 @@ import {
 } from '@nestled-template/shared/sdk'
 import type { QueryRef } from '@apollo/client'
 import { useReadQuery } from '@apollo/client/react'
-import TransferOwnershipModal from '../../../../../libs/web/src/lib/modals/TransferOwnershipModal'
+import TransferOwnershipModal from '../../../../../libs/web/src/lib/modals/transfer-ownership-modal'
 
 export const loader = apolloLoader()(({ preloadQuery }) => {
   const meQueryRef = preloadQuery<MeQuery>(MeDocument)

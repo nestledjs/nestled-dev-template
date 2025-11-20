@@ -1,6 +1,6 @@
 import { ChevronRightIcon } from '@heroicons/react/24/outline'
 import { ReactNode } from 'react'
-import cn from 'cn'
+import { cn } from '@nestled-template/shared/utils'
 
 export interface WebUiSimpleListItemProps {
   type?: 'li' | 'div'

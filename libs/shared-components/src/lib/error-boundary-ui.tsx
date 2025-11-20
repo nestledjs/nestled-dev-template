@@ -142,13 +142,11 @@ export function ErrorBoundaryUi({ error }: { error: Error }) {
             {errors.map((err: any, i: number) => (
               <li key={i} className="mb-2">
                 <div className="font-medium text-gray-900">{renderPretty(err?.message || String(err))}</div>
-                {/* Show stack if available */}
-                {err?.stack && (
-                  <details className="mt-2">
-                    <summary className="cursor-pointer text-xs text-gray-500">Stack trace</summary>
-                    <pre className="bg-gray-100 rounded p-2 overflow-x-auto text-left text-xs font-mono max-h-40 whitespace-pre-wrap">{err.stack}</pre>
-                  </details>
-                )}
+                {/* Show stack if available - always render to prevent hydration mismatch */}
+                <details className="mt-2" style={{ display: err?.stack ? 'block' : 'none' }}>
+                  <summary className="cursor-pointer text-xs text-gray-500">Stack trace</summary>
+                  <pre className="bg-gray-100 rounded p-2 overflow-x-auto text-left text-xs font-mono max-h-40 whitespace-pre-wrap">{err?.stack || ''}</pre>
+                </details>
                 {/* Show extra fields prettily if present */}
                 {Object.keys(err || {})
                   .filter((k) => !['message', 'stack', 'name'].includes(k))

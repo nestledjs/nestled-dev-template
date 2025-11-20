@@ -26,7 +26,7 @@ import { useApolloClient, useReadQuery } from '@apollo/client/react'
 import { Form, FormFieldClass } from '@nestledjs/forms'
 import { formTheme } from '@nestled-template/shared/styles'
 import { AvatarUpload } from '@nestled-template/web-ui'
-import TransferOwnershipModal from '../../../../../libs/web/src/lib/modals/TransferOwnershipModal'
+import TransferOwnershipModal from '../../../../../libs/web/src/lib/modals/transfer-ownership-modal'
 
 export const loader = apolloLoader()(({ preloadQuery }) => {
   const meQueryRef = preloadQuery<MeQuery>(MeDocument)

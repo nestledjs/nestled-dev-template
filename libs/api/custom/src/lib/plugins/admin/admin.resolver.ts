@@ -104,6 +104,79 @@ export class AdminDashboardStats {
   activeSubscriptions!: number
 }
 
+@ObjectType()
+export class AdminAnalyticsEndpoint {
+  @Field()
+  name!: string
+
+  @Field(() => Int)
+  requests!: number
+
+  @Field()
+  avgResponseTime!: number
+
+  @Field()
+  errorRate!: number
+}
+
+@ObjectType()
+export class AdminAnalyticsFeature {
+  @Field()
+  featureName!: string
+
+  @Field(() => Int)
+  uniqueUsers!: number
+
+  @Field(() => Int)
+  totalUses!: number
+
+  @Field()
+  adoptionRate!: number
+}
+
+@ObjectType()
+export class AdminAnalytics {
+  // User Activity Metrics
+  @Field(() => Int)
+  dailyActiveUsers!: number
+
+  @Field()
+  dauChange!: number
+
+  @Field(() => Int)
+  monthlyActiveUsers!: number
+
+  @Field()
+  mauChange!: number
+
+  @Field(() => Int)
+  newUsersToday!: number
+
+  @Field()
+  avgSessionDuration!: number
+
+  // System Performance Metrics
+  @Field()
+  avgApiResponseTime!: number
+
+  @Field(() => Int)
+  totalGraphQLOperations!: number
+
+  @Field()
+  errorRate!: number
+
+  @Field()
+  systemUptime!: number
+
+  // Top Endpoints
+  @Field(() => [AdminAnalyticsEndpoint])
+  topEndpoints!: AdminAnalyticsEndpoint[]
+
+  // Feature Usage
+  @Field(() => [AdminAnalyticsFeature])
+  featureUsage!: AdminAnalyticsFeature[]
+}
+
 @InputType()
 export class AdminOrganizationFiltersInput {
   @Field({ nullable: true })
@@ -207,6 +280,16 @@ export class AdminResolver {
   @UseGuards(GqlAuthAdminGuard)
   async adminDashboardStats(): Promise<AdminDashboardStats> {
     return this.service.getDashboardStats()
+  }
+
+  /**
+   * Get comprehensive analytics data
+   * Super admin only
+   */
+  @Query(() => AdminAnalytics)
+  @UseGuards(GqlAuthAdminGuard)
+  async adminAnalytics(): Promise<AdminAnalytics> {
+    return this.service.getAnalytics()
   }
 
   /**

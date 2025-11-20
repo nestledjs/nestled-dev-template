@@ -15,7 +15,7 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   play: async ({ canvasElement }: StoryContext) => {
     const canvas = within(canvasElement);
-    await expect(canvas.getByText(/Biz to Biz Now/)).toBeInTheDocument();
+    await expect(canvas.getByText(/Your Site/)).toBeInTheDocument();
     await expect(canvas.getByText('Privacy Policy')).toBeInTheDocument();
   },
-}; 
+};
