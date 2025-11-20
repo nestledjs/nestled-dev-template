@@ -691,13 +691,22 @@ export class OrganizationService {
    * Get organization members with roles
    */
   async getOrganizationMembers(userId: string, organizationId: string) {
-    // Verify user is a member
-    const member = await this.data.organizationMember.findFirst({
-      where: { userId, organizationId }
+    // Check if user is a super admin
+    const user = await this.data.user.findUnique({
+      where: { id: userId },
+      select: { isSuperAdmin: true }
     })
 
-    if (!member) {
-      throw new ForbiddenException('You are not a member of this organization')
+    // Super admins can view all organization members without membership check
+    if (!user?.isSuperAdmin) {
+      // Verify user is a member
+      const member = await this.data.organizationMember.findFirst({
+        where: { userId, organizationId }
+      })
+
+      if (!member) {
+        throw new ForbiddenException('You are not a member of this organization')
+      }
     }
 
     // Get all members
@@ -753,13 +762,22 @@ export class OrganizationService {
    * Get organization roles
    */
   async getOrganizationRoles(userId: string, organizationId: string) {
-    // Verify user is a member
-    const member = await this.data.organizationMember.findFirst({
-      where: { userId, organizationId }
+    // Check if user is a super admin
+    const user = await this.data.user.findUnique({
+      where: { id: userId },
+      select: { isSuperAdmin: true }
     })
 
-    if (!member) {
-      throw new ForbiddenException('You are not a member of this organization')
+    // Super admins can view all organization roles without membership check
+    if (!user?.isSuperAdmin) {
+      // Verify user is a member
+      const member = await this.data.organizationMember.findFirst({
+        where: { userId, organizationId }
+      })
+
+      if (!member) {
+        throw new ForbiddenException('You are not a member of this organization')
+      }
     }
 
     const roles = await this.data.role.findMany({

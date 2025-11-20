@@ -39,6 +39,35 @@ enum AddressType {
   WORK
 }
 
+type AdminAnalytics {
+  avgApiResponseTime: Float!
+  avgSessionDuration: Float!
+  dailyActiveUsers: Int!
+  dauChange: Float!
+  errorRate: Float!
+  featureUsage: [AdminAnalyticsFeature!]!
+  mauChange: Float!
+  monthlyActiveUsers: Int!
+  newUsersToday: Int!
+  systemUptime: Float!
+  topEndpoints: [AdminAnalyticsEndpoint!]!
+  totalGraphQLOperations: Int!
+}
+
+type AdminAnalyticsEndpoint {
+  avgResponseTime: Float!
+  errorRate: Float!
+  name: String!
+  requests: Int!
+}
+
+type AdminAnalyticsFeature {
+  adoptionRate: Float!
+  featureName: String!
+  totalUses: Int!
+  uniqueUsers: Int!
+}
+
 input AdminAuditLogFiltersInput {
   action: String
   endDate: Timestamp
@@ -1424,6 +1453,7 @@ type Query {
   address(addressId: String!): Address
   addresses(input: ListAddressInput): [Address!]
   addressesCount(input: ListAddressInput): CorePaging
+  adminAnalytics: AdminAnalytics!
   adminAuditLogs(filters: AdminAuditLogFiltersInput): AdminAuditLogsResponse!
   adminDashboardStats: AdminDashboardStats!
   adminOrganizations(filters: AdminOrganizationFiltersInput): AdminOrganizationsResponse!

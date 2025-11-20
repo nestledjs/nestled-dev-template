@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import cn from 'cn'
+import { cn } from '@nestled-template/shared/utils'
+
 
 export function WebUiLoading({ className }: { className?: string }) {
   const [showLoading, setShowLoading] = useState(false)

@@ -91,3 +91,40 @@ query AdminUserManagementDetails($userId: String!) {
     }
   }
 }
+
+query AdminAnalytics {
+  adminAnalytics {
+    dailyActiveUsers
+    dauChange
+    monthlyActiveUsers
+    mauChange
+    newUsersToday
+    avgSessionDuration
+    avgApiResponseTime
+    totalGraphQLOperations
+    errorRate
+    systemUptime
+    topEndpoints {
+      name
+      requests
+      avgResponseTime
+      errorRate
+    }
+    featureUsage {
+      featureName
+      uniqueUsers
+      totalUses
+      adoptionRate
+    }
+  }
+}
+
+query AdminDashboardStats {
+  adminDashboardStats {
+    totalUsers
+    totalOrganizations
+    activeSessions
+    recentSecurityEvents
+    activeSubscriptions
+  }
+}

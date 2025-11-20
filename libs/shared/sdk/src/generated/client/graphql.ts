@@ -70,6 +70,38 @@ export enum AddressType {
   Work = 'WORK',
 }
 
+export type AdminAnalytics = {
+  __typename?: 'AdminAnalytics'
+  avgApiResponseTime: Scalars['Float']['output']
+  avgSessionDuration: Scalars['Float']['output']
+  dailyActiveUsers: Scalars['Int']['output']
+  dauChange: Scalars['Float']['output']
+  errorRate: Scalars['Float']['output']
+  featureUsage: Array<AdminAnalyticsFeature>
+  mauChange: Scalars['Float']['output']
+  monthlyActiveUsers: Scalars['Int']['output']
+  newUsersToday: Scalars['Int']['output']
+  systemUptime: Scalars['Float']['output']
+  topEndpoints: Array<AdminAnalyticsEndpoint>
+  totalGraphQLOperations: Scalars['Int']['output']
+}
+
+export type AdminAnalyticsEndpoint = {
+  __typename?: 'AdminAnalyticsEndpoint'
+  avgResponseTime: Scalars['Float']['output']
+  errorRate: Scalars['Float']['output']
+  name: Scalars['String']['output']
+  requests: Scalars['Int']['output']
+}
+
+export type AdminAnalyticsFeature = {
+  __typename?: 'AdminAnalyticsFeature'
+  adoptionRate: Scalars['Float']['output']
+  featureName: Scalars['String']['output']
+  totalUses: Scalars['Int']['output']
+  uniqueUsers: Scalars['Int']['output']
+}
+
 export type AdminAuditLogFiltersInput = {
   action?: InputMaybe<Scalars['String']['input']>
   endDate?: InputMaybe<Scalars['Timestamp']['input']>
@@ -1977,6 +2009,7 @@ export type Query = {
   address?: Maybe<Address>
   addresses?: Maybe<Array<Address>>
   addressesCount?: Maybe<CorePaging>
+  adminAnalytics: AdminAnalytics
   adminAuditLogs: AdminAuditLogsResponse
   adminDashboardStats: AdminDashboardStats
   adminOrganizations: AdminOrganizationsResponse
@@ -5836,6 +5869,53 @@ export type AdminUserManagementDetailsQuery = {
   }
 }
 
+export type AdminAnalyticsQueryVariables = Exact<{ [key: string]: never }>
+
+export type AdminAnalyticsQuery = {
+  __typename?: 'Query'
+  adminAnalytics: {
+    __typename?: 'AdminAnalytics'
+    dailyActiveUsers: number
+    dauChange: number
+    monthlyActiveUsers: number
+    mauChange: number
+    newUsersToday: number
+    avgSessionDuration: number
+    avgApiResponseTime: number
+    totalGraphQLOperations: number
+    errorRate: number
+    systemUptime: number
+    topEndpoints: Array<{
+      __typename?: 'AdminAnalyticsEndpoint'
+      name: string
+      requests: number
+      avgResponseTime: number
+      errorRate: number
+    }>
+    featureUsage: Array<{
+      __typename?: 'AdminAnalyticsFeature'
+      featureName: string
+      uniqueUsers: number
+      totalUses: number
+      adoptionRate: number
+    }>
+  }
+}
+
+export type AdminDashboardStatsQueryVariables = Exact<{ [key: string]: never }>
+
+export type AdminDashboardStatsQuery = {
+  __typename?: 'Query'
+  adminDashboardStats: {
+    __typename?: 'AdminDashboardStats'
+    totalUsers: number
+    totalOrganizations: number
+    activeSessions: number
+    recentSecurityEvents: number
+    activeSubscriptions: number
+  }
+}
+
 export type AdminPlatformSecurityEventsQueryVariables = Exact<{
   filters?: InputMaybe<AdminSecurityEventFiltersInput>
 }>
@@ -5894,20 +5974,6 @@ export type AdminPlatformAuditLogsQuery = {
       } | null
       organization?: { __typename?: 'Organization'; id: string; name: string } | null
     }>
-  }
-}
-
-export type AdminDashboardStatsQueryVariables = Exact<{ [key: string]: never }>
-
-export type AdminDashboardStatsQuery = {
-  __typename?: 'Query'
-  adminDashboardStats: {
-    __typename?: 'AdminDashboardStats'
-    totalUsers: number
-    totalOrganizations: number
-    activeSessions: number
-    recentSecurityEvents: number
-    activeSubscriptions: number
   }
 }
 
@@ -25132,6 +25198,95 @@ export const AdminUserManagementDetailsDocument = {
   AdminUserManagementDetailsQuery,
   AdminUserManagementDetailsQueryVariables
 >
+export const AdminAnalyticsDocument = {
+  kind: 'Document',
+  definitions: [
+    {
+      kind: 'OperationDefinition',
+      operation: 'query',
+      name: { kind: 'Name', value: 'AdminAnalytics' },
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'adminAnalytics' },
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [
+                { kind: 'Field', name: { kind: 'Name', value: 'dailyActiveUsers' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'dauChange' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'monthlyActiveUsers' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'mauChange' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'newUsersToday' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'avgSessionDuration' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'avgApiResponseTime' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'totalGraphQLOperations' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'errorRate' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'systemUptime' } },
+                {
+                  kind: 'Field',
+                  name: { kind: 'Name', value: 'topEndpoints' },
+                  selectionSet: {
+                    kind: 'SelectionSet',
+                    selections: [
+                      { kind: 'Field', name: { kind: 'Name', value: 'name' } },
+                      { kind: 'Field', name: { kind: 'Name', value: 'requests' } },
+                      { kind: 'Field', name: { kind: 'Name', value: 'avgResponseTime' } },
+                      { kind: 'Field', name: { kind: 'Name', value: 'errorRate' } },
+                    ],
+                  },
+                },
+                {
+                  kind: 'Field',
+                  name: { kind: 'Name', value: 'featureUsage' },
+                  selectionSet: {
+                    kind: 'SelectionSet',
+                    selections: [
+                      { kind: 'Field', name: { kind: 'Name', value: 'featureName' } },
+                      { kind: 'Field', name: { kind: 'Name', value: 'uniqueUsers' } },
+                      { kind: 'Field', name: { kind: 'Name', value: 'totalUses' } },
+                      { kind: 'Field', name: { kind: 'Name', value: 'adoptionRate' } },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<AdminAnalyticsQuery, AdminAnalyticsQueryVariables>
+export const AdminDashboardStatsDocument = {
+  kind: 'Document',
+  definitions: [
+    {
+      kind: 'OperationDefinition',
+      operation: 'query',
+      name: { kind: 'Name', value: 'AdminDashboardStats' },
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'adminDashboardStats' },
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [
+                { kind: 'Field', name: { kind: 'Name', value: 'totalUsers' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'totalOrganizations' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'activeSessions' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'recentSecurityEvents' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'activeSubscriptions' } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<AdminDashboardStatsQuery, AdminDashboardStatsQueryVariables>
 export const AdminPlatformSecurityEventsDocument = {
   kind: 'Document',
   definitions: [
@@ -25305,35 +25460,6 @@ export const AdminPlatformAuditLogsDocument = {
     },
   ],
 } as unknown as DocumentNode<AdminPlatformAuditLogsQuery, AdminPlatformAuditLogsQueryVariables>
-export const AdminDashboardStatsDocument = {
-  kind: 'Document',
-  definitions: [
-    {
-      kind: 'OperationDefinition',
-      operation: 'query',
-      name: { kind: 'Name', value: 'AdminDashboardStats' },
-      selectionSet: {
-        kind: 'SelectionSet',
-        selections: [
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'adminDashboardStats' },
-            selectionSet: {
-              kind: 'SelectionSet',
-              selections: [
-                { kind: 'Field', name: { kind: 'Name', value: 'totalUsers' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'totalOrganizations' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'activeSessions' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'recentSecurityEvents' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'activeSubscriptions' } },
-              ],
-            },
-          },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<AdminDashboardStatsQuery, AdminDashboardStatsQueryVariables>
 export const GenerateApiTokenDocument = {
   kind: 'Document',
   definitions: [

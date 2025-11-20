@@ -17,22 +17,7 @@ export default function LogoutRoute() {
 
   useEffect(() => {
     async function doLogout() {
-      try {
-        // Server-side logout (clears httpOnly session cookie)
-        await apollo.mutate({ mutation: LOGOUT_MUTATION })
-      } catch (e) {
-        // Continue even if mutation fails
-        console.warn('[logout] logoutMutation failed (continuing):', (e as Error)?.message)
-      }
-
-      try {
-        // Clear client-side state and caches
-        await apollo.clearStore()
-      } catch (e) {
-        console.warn('[logout] apollo.clearStore failed (continuing):', (e as Error)?.message)
-      }
-
-      // Remove any non-httpOnly cookies we set client-side
+      // Remove any non-httpOnly cookies we set client-side first
       const cookieNames = ['__user', '__leaderChapter', '__originalUser']
       for (const name of cookieNames) {
         try {
@@ -42,11 +27,31 @@ export default function LogoutRoute() {
         }
       }
 
-      // Navigate to login
+      try {
+        // Server-side logout (clears httpOnly session cookie)
+        await apollo.mutate({ mutation: LOGOUT_MUTATION })
+      } catch (e) {
+        // Continue even if mutation fails
+        console.warn('[logout] logoutMutation failed (continuing):', (e as Error)?.message)
+      }
+
+      try {
+        // Clear Apollo cache without refetching queries
+        // Use stop() to prevent any in-flight queries from refetching
+        apollo.stop()
+        await apollo.clearStore()
+      } catch (e) {
+        console.warn('[logout] apollo.clearStore failed (continuing):', (e as Error)?.message)
+      }
+
+      // Navigate to login - this will unmount all components and prevent further queries
       navigate('/login', { replace: true })
     }
 
-    doLogout().catch(() => navigate('/login', { replace: true }))
+    doLogout().catch((e) => {
+      console.error('[logout] Unexpected error during logout:', e)
+      navigate('/login', { replace: true })
+    })
   }, [apollo, navigate])
 
   return <WebUiLoading />
