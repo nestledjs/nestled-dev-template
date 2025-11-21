@@ -47,15 +47,15 @@ export default defineConfig(() => ({
     tailwindcss(),
   ],
   optimizeDeps: {
-    include: ['@apollo/client/core', '@apollo/client/react'],
+    include: ['@apollo/client', '@apollo/client/react'],
   },
   ssr: {
     noExternal: [
-      // Add any package that causes ESM/CJS issues during SSR.
-      // A regex is robust to catch all sub-imports like '@apollo/client'.
       '@nestledjs/forms',
       /^@apollo\/client/,
     ],
+    // Keep data-browser external
+    external: ['@nestledjs/data-browser'],
   },
   build: {
     outDir: '../../dist/apps/web',
