@@ -5,7 +5,7 @@ import { getPluralName } from '../utils/get-plural-names'
 import { AdminLocalStorage } from '../utils/secure-storage'
 import { formatFieldName, kebabCase } from '../utils/string-utils'
 import { Link, useParams, useSearchParams } from 'react-router'
-import { DateRangeFilter, NumberRangeFilter, RelationFilterField } from '../components/filters'
+import { DateRangeFilter, EnumFilter, NumberRangeFilter, RelationFilterField } from '../components/filters'
 import { useAdminList } from '../hooks/useAdminList'
 import { getAdminDocuments } from '../utils/graphql-utils'
 import { useAdminDataContext } from '../context/AdminDataContext'
@@ -779,23 +779,13 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
             const enumValues = getEnumValues(field.type)
             if (enumValues) {
               return (
-                <div key={fieldName} className="space-y-1">
-                  <label className="block text-sm font-medium text-gray-700">
-                    {formatFieldName(fieldName)}
-                  </label>
-                  <select
-                    value={typeof currentValue === 'string' ? currentValue : ''}
-                    onChange={e => handleChange(e.target.value || undefined)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-web focus:border-green-web text-sm"
-                  >
-                    <option value="">All</option>
-                    {enumValues.map((val: string) => (
-                      <option key={val} value={val}>
-                        {val}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+                <EnumFilter
+                  key={fieldName}
+                  fieldName={fieldName}
+                  currentValue={currentValue}
+                  onChange={handleChange}
+                  enumValues={enumValues}
+                />
               )
             }
           }
