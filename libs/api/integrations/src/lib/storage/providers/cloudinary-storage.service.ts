@@ -24,9 +24,11 @@ import * as path from 'path'
 export class CloudinaryStorageService implements IStorageService, OnModuleInit {
   private readonly logger = new Logger(CloudinaryStorageService.name)
   private readonly cloudName!: string
+  private readonly isActiveProvider: boolean
 
   constructor(private readonly configService: ConfigService) {
     const storageProvider = this.configService.get<string>('STORAGE_PROVIDER', 'local')
+    this.isActiveProvider = storageProvider === 'cloudinary'
     const cloudName = this.configService.get<string>('CLOUDINARY_CLOUD_NAME')
     const apiKey = this.configService.get<string>('CLOUDINARY_API_KEY')
     const apiSecret = this.configService.get<string>('CLOUDINARY_API_SECRET')
@@ -51,6 +53,7 @@ export class CloudinaryStorageService implements IStorageService, OnModuleInit {
   }
 
   async onModuleInit() {
+    if (!this.isActiveProvider) return
     this.logger.log(`Cloudinary Storage initialized: cloud=${this.cloudName}`)
   }
 

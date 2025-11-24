@@ -26,9 +26,11 @@ export class ImageKitStorageService implements IStorageService, OnModuleInit {
   private readonly logger = new Logger(ImageKitStorageService.name)
   private readonly imagekit!: ImageKit
   private readonly urlEndpoint!: string
+  private readonly isActiveProvider: boolean
 
   constructor(private readonly configService: ConfigService) {
     const storageProvider = this.configService.get<string>('STORAGE_PROVIDER', 'local')
+    this.isActiveProvider = storageProvider === 'imagekit'
     const publicKey = this.configService.get<string>('IMAGEKIT_PUBLIC_KEY')
     const privateKey = this.configService.get<string>('IMAGEKIT_PRIVATE_KEY')
     const urlEndpoint = this.configService.get<string>('IMAGEKIT_URL_ENDPOINT')
@@ -53,6 +55,7 @@ export class ImageKitStorageService implements IStorageService, OnModuleInit {
   }
 
   async onModuleInit() {
+    if (!this.isActiveProvider) return
     this.logger.log(`ImageKit Storage initialized: endpoint=${this.urlEndpoint}`)
   }
 
@@ -68,13 +71,10 @@ export class ImageKitStorageService implements IStorageService, OnModuleInit {
         folder: options.folder,
         useUniqueFileName: false, // We already made it unique
         isPrivateFile: !options.isPublic,
-        customMetadata: {
-          ...(options.userId && { userId: options.userId }),
-          ...(options.organizationId && { organizationId: options.organizationId }),
-          ...(options.metadata && this.stringifyMetadata(options.metadata)),
-        },
-        // Transformation options
-        transformation: this.buildTransformation(options),
+        // Note: customMetadata and transformation are omitted
+        // - customMetadata requires pre-defined fields in ImageKit dashboard
+        // - transformation on upload is limited; use URL transformations instead
+        // We store metadata in our database instead
       })
 
       return {

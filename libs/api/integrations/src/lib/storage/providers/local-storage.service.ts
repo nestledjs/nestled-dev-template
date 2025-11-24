@@ -15,13 +15,19 @@ export class LocalStorageService implements IStorageService, OnModuleInit {
   private readonly logger = new Logger(LocalStorageService.name)
   private readonly storagePath: string
   private readonly baseUrl: string
+  private readonly isActiveProvider: boolean
 
   constructor(private readonly configService: ConfigService) {
     this.storagePath = this.configService.get<string>('LOCAL_STORAGE_PATH', './uploads')
     this.baseUrl = this.configService.get<string>('API_URL', 'http://localhost:3000')
+    this.isActiveProvider = this.configService.get<string>('STORAGE_PROVIDER', 'local') === 'local'
   }
 
   async onModuleInit() {
+    // Only initialize and warn if local storage is the active provider
+    if (!this.isActiveProvider) {
+      return
+    }
     await this.ensureDirectory(this.storagePath)
     this.logger.warn('⚠️  WARNING: Using local storage - files will be lost on restart!')
     this.logger.warn('⚠️  For production, set STORAGE_PROVIDER to: s3, cloudinary, imagekit, or gcs')
