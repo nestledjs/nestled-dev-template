@@ -13,7 +13,8 @@ const hasValidRedisUrl = REDIS_URL && !REDIS_URL.includes('localhost') && REDIS_
 const secure = REDIS_URL ? /rediss:/.test(REDIS_URL) : false
 
 if (hasValidRedisUrl) {
-  Logger.log(`Redis: Connecting to ${REDIS_URL.replace(/\/\/.*@/, '//<redacted>@')} (password: ${REDIS_PASSWORD ? 'provided' : 'none'})`)
+  // Use non-greedy quantifier to prevent ReDoS vulnerability
+  Logger.log(`Redis: Connecting to ${REDIS_URL.replace(/\/\/[^@]*@/, '//<redacted>@')} (password: ${REDIS_PASSWORD ? 'provided' : 'none'})`)
 } else {
   Logger.warn('Redis: No valid URL. Using in-memory PubSub (subscriptions will not work across instances).')
 }
