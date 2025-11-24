@@ -1,7 +1,7 @@
 import { Logger } from '@nestjs/common'
 import { RedisPubSub } from 'graphql-redis-subscriptions'
 import { PubSub } from 'graphql-subscriptions'
-import Redis from 'ioredis'
+import Redis, { RedisOptions } from 'ioredis'
 
 // Railway provides REDIS_URL (private) and REDIS_PASSWORD separately
 // Also support REDIS_TLS_URL for Heroku-style configs
@@ -41,7 +41,7 @@ function createPubSub(): RedisPubSub | PubSub {
     return new PubSub()
   }
 
-  const options: Redis.RedisOptions = {
+  const options: RedisOptions = {
     // Railway provides password separately, not embedded in URL
     ...(REDIS_PASSWORD && { password: REDIS_PASSWORD }),
     // TLS for secure connections (rediss://)
