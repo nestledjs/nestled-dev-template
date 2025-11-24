@@ -17,7 +17,7 @@ const VALID_API_PREFIXES = [
   '/graphql', // GraphQL endpoint
   '/api/uptime', // Core feature controller
   '/api/webhooks/stripe', // Stripe webhook
-  '/api/api/auth', // OAuth controller (google/github)
+  '/api/auth', // OAuth controller (google/github)
   '/uploads', // Static file uploads
 ]
 
@@ -140,19 +140,23 @@ async function bootstrap() {
   // Add early request filter after CORS is configured
   app.use(earlyRequestFilter)
 
+  // Create body parsers once at startup (not per-request) for efficiency
+  const stripeRawBodyParser = express.raw({
+    type: 'application/json',
+    verify: (req: any, _res, buf) => {
+      req.rawBody = buf
+    },
+  })
+  const jsonBodyParser = express.json()
+
   // Custom body parsing logic
   app.use((req: Request, res: Response, next: NextFunction) => {
     if (req.originalUrl.startsWith(`/${GLOBAL_PREFIX}/webhooks/stripe`)) {
       // For Stripe webhooks, use express.raw to preserve the raw body for HMAC verification
-      express.raw({
-        type: 'application/json',
-        verify: (req: any, res, buf) => {
-          req.rawBody = buf
-        },
-      })(req, res, next)
+      stripeRawBodyParser(req, res, next)
     } else {
       // For all other routes, use the standard express.json parser
-      express.json()(req, res, next)
+      jsonBodyParser(req, res, next)
     }
   })
   app.use(express.urlencoded({ extended: true }))
