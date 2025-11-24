@@ -8,8 +8,12 @@ import Redis from 'ioredis'
 const REDIS_URL = process.env['REDIS_TLS_URL'] ?? process.env['REDIS_URL'] ?? ''
 const REDIS_PASSWORD = process.env['REDIS_PASSWORD'] ?? ''
 
-// Check if we have a valid Redis URL (not localhost and not empty)
-const hasValidRedisUrl = REDIS_URL && !REDIS_URL.includes('localhost') && REDIS_URL.length > 10
+// Check if we have a valid Redis URL (proper protocol, not localhost)
+const hasValidRedisUrl =
+  typeof REDIS_URL === 'string' &&
+  (REDIS_URL.startsWith('redis://') || REDIS_URL.startsWith('rediss://')) &&
+  !REDIS_URL.includes('localhost') &&
+  REDIS_URL.trim().length > 0
 const secure = REDIS_URL ? /rediss:/.test(REDIS_URL) : false
 
 if (hasValidRedisUrl) {
