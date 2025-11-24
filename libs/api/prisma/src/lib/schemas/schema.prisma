@@ -1,7 +1,7 @@
 generator client {
   provider        = "prisma-client-js"
   previewFeatures = []
-  binaryTargets   = ["linux-musl-openssl-3.0.x"]
+  binaryTargets   = ["native", "linux-musl-openssl-3.0.x"]
   output          = "../prisma-generated"
 }
 
@@ -398,11 +398,11 @@ model UserSession {
 
 /// @skipCrud
 model PasswordHistory {
-  id             String   @id @default(uuid())
-  createdAt      DateTime @default(now())
-  userId         String
-  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  passwordHash   String
+  id           String   @id @default(uuid())
+  createdAt    DateTime @default(now())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  passwordHash String
 
   @@index([userId, createdAt])
 }
