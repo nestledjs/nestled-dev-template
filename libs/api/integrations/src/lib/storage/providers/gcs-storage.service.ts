@@ -29,9 +29,11 @@ export class GcsStorageService implements IStorageService, OnModuleInit {
   private readonly bucket!: Bucket
   private readonly bucketName!: string
   private readonly cdnUrl?: string
+  private readonly isActiveProvider: boolean
 
   constructor(private readonly configService: ConfigService) {
     const storageProvider = this.configService.get<string>('STORAGE_PROVIDER', 'local')
+    this.isActiveProvider = storageProvider === 'gcs'
     const projectId = this.configService.get<string>('GCS_PROJECT_ID')
     const bucketName = this.configService.get<string>('GCS_BUCKET')
     const keyFilename = this.configService.get<string>('GCS_KEY_FILE')
@@ -58,6 +60,7 @@ export class GcsStorageService implements IStorageService, OnModuleInit {
   }
 
   async onModuleInit() {
+    if (!this.isActiveProvider) return
     this.logger.log(`Google Cloud Storage initialized: bucket=${this.bucketName}`)
   }
 

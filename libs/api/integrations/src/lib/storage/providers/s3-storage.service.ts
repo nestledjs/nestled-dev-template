@@ -27,9 +27,11 @@ export class S3StorageService implements IStorageService, OnModuleInit {
   private readonly bucket!: string
   private readonly region: string
   private readonly cdnUrl?: string
+  private readonly isActiveProvider: boolean
 
   constructor(private readonly configService: ConfigService) {
     const storageProvider = this.configService.get<string>('STORAGE_PROVIDER', 'local')
+    this.isActiveProvider = storageProvider === 's3'
     const accessKeyId = this.configService.get<string>('AWS_ACCESS_KEY_ID')
     const secretAccessKey = this.configService.get<string>('AWS_SECRET_ACCESS_KEY')
     const bucket = this.configService.get<string>('AWS_S3_BUCKET')
@@ -62,6 +64,7 @@ export class S3StorageService implements IStorageService, OnModuleInit {
   }
 
   async onModuleInit() {
+    if (!this.isActiveProvider) return
     this.logger.log(`S3 Storage initialized: bucket=${this.bucket}, region=${this.region}`)
   }
 

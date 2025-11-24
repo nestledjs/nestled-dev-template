@@ -32,6 +32,7 @@ export class StorageService {
       folder?: string
       organizationId?: string
       metadata?: Record<string, any>
+      isPublic?: boolean
     },
   ): Promise<StoredFile> {
     const { createReadStream, filename, mimetype } = fileUpload
@@ -46,7 +47,7 @@ export class StorageService {
       filename,
       mimeType: mimetype,
       folder: options?.folder,
-      isPublic: false,
+      isPublic: options?.isPublic ?? false,
       userId,
       organizationId: options?.organizationId,
       metadata: options?.metadata,
@@ -79,16 +80,19 @@ export class StorageService {
 
   /**
    * Upload user avatar
+   * Folder structure: user_avatars/{userId}/filename.ext
    */
   async uploadUserAvatar(fileUpload: FileUpload, userId: string): Promise<StoredFile> {
     return this.uploadFile(fileUpload, userId, {
-      folder: 'avatars',
+      folder: `user_avatars/${userId}`,
       metadata: { type: 'avatar' },
+      isPublic: true,
     })
   }
 
   /**
-   * Upload organization logo
+   * Upload organization avatar
+   * Folder structure: org_avatars/{organizationId}/filename.ext
    */
   async uploadOrganizationLogo(
     fileUpload: FileUpload,
@@ -96,9 +100,10 @@ export class StorageService {
     organizationId: string,
   ): Promise<StoredFile> {
     return this.uploadFile(fileUpload, userId, {
-      folder: 'logos',
+      folder: `org_avatars/${organizationId}`,
       organizationId,
-      metadata: { type: 'logo' },
+      metadata: { type: 'avatar' },
+      isPublic: true,
     })
   }
 
