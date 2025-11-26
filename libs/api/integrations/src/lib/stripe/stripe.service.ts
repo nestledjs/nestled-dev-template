@@ -26,8 +26,8 @@ export class StripeService implements OnModuleInit {
     const { secretKey } = this.configService.stripe
 
     if (!secretKey) {
-      this.logger.error('STRIPE_SECRET_KEY is not configured. Billing features will not work.')
-      throw new Error('STRIPE_SECRET_KEY is required for billing integration')
+      this.logger.warn('STRIPE_SECRET_KEY is not configured. Billing features will not work.')
+      return // Gracefully handle missing configuration
     }
 
     if (!secretKey.startsWith('sk_')) {
@@ -51,10 +51,20 @@ export class StripeService implements OnModuleInit {
   }
 
   /**
+   * Check if Stripe is properly configured
+   */
+  private ensureStripeConfigured(): void {
+    if (!this.stripe) {
+      throw new Error('Stripe is not configured. Please set STRIPE_SECRET_KEY environment variable.')
+    }
+  }
+
+  /**
    * Get the raw Stripe client instance
    * Use this sparingly - prefer specific methods below
    */
   getClient(): Stripe {
+    this.ensureStripeConfigured()
     return this.stripe
   }
 
@@ -67,6 +77,7 @@ export class StripeService implements OnModuleInit {
     description?: string
     metadata?: Stripe.MetadataParam
   }): Promise<Stripe.Product> {
+    this.ensureStripeConfigured()
     this.logger.log(`Creating Stripe product: ${params.name}`)
     try {
       return await this.stripe.products.create({
@@ -218,6 +229,7 @@ export class StripeService implements OnModuleInit {
     name?: string
     metadata?: Stripe.MetadataParam
   }): Promise<Stripe.Customer> {
+    this.ensureStripeConfigured()
     this.logger.log(`Creating Stripe customer: ${params.email}`)
     try {
       return await this.stripe.customers.create({
@@ -277,6 +289,7 @@ export class StripeService implements OnModuleInit {
     trialPeriodDays?: number
     metadata?: Stripe.MetadataParam
   }): Promise<Stripe.Subscription> {
+    this.ensureStripeConfigured()
     this.logger.log(`Creating subscription for customer: ${params.customerId}`)
     try {
       return await this.stripe.subscriptions.create({
@@ -512,6 +525,7 @@ export class StripeService implements OnModuleInit {
     payload: string | Buffer,
     signature: string,
   ): Stripe.Event {
+    this.ensureStripeConfigured()
     const { webhookSecret } = this.configService.stripe
 
     if (!webhookSecret) {

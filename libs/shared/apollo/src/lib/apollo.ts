@@ -1,3 +1,33 @@
+// Crypto polyfill for older Node.js environments (like Railway)
+if (typeof globalThis !== 'undefined' && typeof globalThis.crypto === 'undefined') {
+  try {
+    // Try to use Node.js crypto module for Web Crypto API
+    const { webcrypto } = require('crypto')
+    if (webcrypto) {
+      globalThis.crypto = webcrypto
+    }
+  } catch (e) {
+    // Fallback: minimal crypto polyfill for basic operations
+    globalThis.crypto = {
+      randomUUID: () => {
+        // Simple UUID v4 generator without crypto dependency
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+          const r = Math.random() * 16 | 0
+          const v = c === 'x' ? r : (r & 0x3 | 0x8)
+          return v.toString(16)
+        })
+      },
+      getRandomValues: (array) => {
+        // Simple random values generator
+        for (let i = 0; i < array.length; i++) {
+          array[i] = Math.random() * 256 | 0
+        }
+        return array
+      }
+    }
+  }
+}
+
 import { ApolloLink, Operation } from '@apollo/client'
 import { ApolloClient } from '@apollo/client-integration-react-router'
 import { setContext } from '@apollo/client/link/context'
