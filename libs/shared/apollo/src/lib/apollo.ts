@@ -1,10 +1,10 @@
 // Crypto polyfill for older Node.js environments (like Railway)
 // Note: Using require() instead of import for synchronous polyfill initialization
-if (typeof globalThis !== 'undefined' && typeof globalThis.crypto === 'undefined') {
+if (globalThis !== undefined && globalThis.crypto === undefined) {
   let cryptoModule
   try {
     // Try to load Node.js crypto module
-    cryptoModule = require('crypto')
+    cryptoModule = require('node:crypto')
   } catch (e) {
     // Final fallback: fail explicitly rather than provide insecure crypto
     console.error('[Apollo] CRITICAL: Failed to load Node.js crypto module:', e.message)
