@@ -1,5 +1,5 @@
 import { render, screen, fireEvent } from '@testing-library/react'
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { EnumFilter } from './EnumFilter'
 
 describe('EnumFilter', () => {
@@ -25,10 +25,10 @@ describe('EnumFilter', () => {
   it('renders all enum options plus "All values" option', () => {
     render(<EnumFilter {...defaultProps} />)
     
-    expect(screen.getByDisplayValue('All values')).toBeInTheDocument()
-    expect(screen.getByDisplayValue('Active')).toBeInTheDocument()
-    expect(screen.getByDisplayValue('Inactive')).toBeInTheDocument()
-    expect(screen.getByDisplayValue('Pending')).toBeInTheDocument()
+    expect(screen.getByRole('option', { name: 'All values' })).toBeInTheDocument()
+    expect(screen.getByRole('option', { name: 'Active' })).toBeInTheDocument()
+    expect(screen.getByRole('option', { name: 'Inactive' })).toBeInTheDocument()
+    expect(screen.getByRole('option', { name: 'Pending' })).toBeInTheDocument()
   })
 
   it('displays current value when set', () => {
@@ -67,8 +67,8 @@ describe('EnumFilter', () => {
     const camelCaseEnums = ['activeStatus', 'inactiveStatus', 'pendingApproval']
     render(<EnumFilter {...defaultProps} enumValues={camelCaseEnums} />)
     
-    expect(screen.getByDisplayValue('Active Status')).toBeInTheDocument()
-    expect(screen.getByDisplayValue('Inactive Status')).toBeInTheDocument()
-    expect(screen.getByDisplayValue('Pending Approval')).toBeInTheDocument()
+    expect(screen.getByRole('option', { name: 'Active Status' })).toBeInTheDocument()
+    expect(screen.getByRole('option', { name: 'Inactive Status' })).toBeInTheDocument()
+    expect(screen.getByRole('option', { name: 'Pending Approval' })).toBeInTheDocument()
   })
 })
