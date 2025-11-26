@@ -2,8 +2,8 @@ import { formatFieldName } from '../../utils/string-utils'
 
 interface EnumFilterProps {
   fieldName: string
-  currentValue: any
-  onChange: (value: any) => void
+  currentValue: string | undefined | null
+  onChange: (value: string | undefined) => void
   enumValues: string[]
 }
 
@@ -29,7 +29,7 @@ export function EnumFilter({
       </label>
       <select
         id={fieldName}
-        value={currentValue || ''}
+        value={currentValue ?? ''}
         onChange={(e) => handleChange(e.target.value)}
         className="w-full px-2 py-1 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-web focus:border-green-web"
       >
