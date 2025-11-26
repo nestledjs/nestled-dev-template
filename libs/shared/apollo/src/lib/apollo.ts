@@ -1,28 +1,48 @@
 // Crypto polyfill for older Node.js environments (like Railway)
+// Note: Using require() instead of import for synchronous polyfill initialization
 if (typeof globalThis !== 'undefined' && typeof globalThis.crypto === 'undefined') {
+  let cryptoModule
   try {
-    // Try to use Node.js crypto module for Web Crypto API
-    const { webcrypto } = require('crypto')
-    if (webcrypto) {
-      globalThis.crypto = webcrypto
-    }
+    // Try to load Node.js crypto module
+    cryptoModule = require('crypto')
   } catch (e) {
-    // Fallback: minimal crypto polyfill for basic operations
-    globalThis.crypto = {
-      randomUUID: () => {
-        // Simple UUID v4 generator without crypto dependency
-        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-          const r = Math.random() * 16 | 0
-          const v = c === 'x' ? r : (r & 0x3 | 0x8)
-          return v.toString(16)
-        })
-      },
-      getRandomValues: (array) => {
-        // Simple random values generator
-        for (let i = 0; i < array.length; i++) {
-          array[i] = Math.random() * 256 | 0
+    // Final fallback: fail explicitly rather than provide insecure crypto
+    console.error('[Apollo] CRITICAL: Failed to load Node.js crypto module:', e.message)
+    console.error('[Apollo] This environment lacks both globalThis.crypto and Node.js crypto module')
+    throw new Error('Cryptographically secure random number generation is not available in this environment. Please use a newer Node.js version or ensure crypto APIs are available.')
+  }
+
+  if (cryptoModule) {
+    // First preference: Use webcrypto if available (Node.js 16+)
+    if (cryptoModule.webcrypto) {
+      console.log('[Apollo] Using Node.js webcrypto for crypto polyfill (Node.js 16+)')
+      globalThis.crypto = cryptoModule.webcrypto
+    } else {
+      // Fallback: Create Web Crypto API interface using crypto.randomBytes (Node.js 12+)
+      console.log('[Apollo] Using crypto.randomBytes() polyfill for Web Crypto API (Node.js 12-15)')
+      globalThis.crypto = {
+        randomUUID: () => {
+          // Generate cryptographically secure UUID v4 using Node.js crypto
+          const bytes = cryptoModule.randomBytes(16)
+          bytes[6] = (bytes[6] & 0x0f) | 0x40  // Version 4
+          bytes[8] = (bytes[8] & 0x3f) | 0x80  // Variant bits
+          const hex = bytes.toString('hex')
+          return [
+            hex.slice(0, 8),
+            hex.slice(8, 12), 
+            hex.slice(12, 16),
+            hex.slice(16, 20),
+            hex.slice(20, 32)
+          ].join('-')
+        },
+        getRandomValues: (array) => {
+          // Generate cryptographically secure random values using Node.js crypto
+          const bytes = cryptoModule.randomBytes(array.length)
+          for (let i = 0; i < array.length; i++) {
+            array[i] = bytes[i]
+          }
+          return array
         }
-        return array
       }
     }
   }
