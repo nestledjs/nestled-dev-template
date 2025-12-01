@@ -4,12 +4,17 @@ import userEvent from '@testing-library/user-event'
 import { createTestRouter } from "../../helpers/createTestRouter"
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import ForgotPassword from '../../../app/routes/_public/forgot-password'
-import { useForgotPasswordMutation } from '@nestled-template/shared/sdk'
+import { useMutation } from '@apollo/client/react'
+import { ForgotPassword, type ForgotPasswordMutation } from '@nestled-template/shared/sdk'
+import { useMutation } from '@apollo/client/react'
+
+vi.mock('@apollo/client/react', () => ({
+  useMutation: vi.fn(),
+  useQuery: vi.fn(),
+}))
 
 // Mock the SDK mutation
-vi.mock('@nestled-template/shared/sdk', () => ({
-  useForgotPasswordMutation: vi.fn(),
-}))
+
 
 // Mock the AuthLayout component
 vi.mock('@nestled-template/web', () => ({
@@ -88,7 +93,7 @@ describe('ForgotPassword Component', () => {
   beforeEach(() => {
     mockForgotPasswordMutation = vi.fn()
 
-    vi.mocked(useForgotPasswordMutation).mockReturnValue([mockForgotPasswordMutation, { loading: false }] as any)
+    vi.mocked(ForgotPassword, type ForgotPasswordMutation).mockReturnValue([mockForgotPasswordMutation, { loading: false }] as any)
   })
 
   const renderForgotPassword = () => {
@@ -282,7 +287,7 @@ describe('ForgotPassword Component', () => {
 
   describe('Loading State', () => {
     it('should show loading text on button during submission', () => {
-      vi.mocked(useForgotPasswordMutation).mockReturnValue([mockForgotPasswordMutation, { loading: true }] as any)
+      vi.mocked(ForgotPassword, type ForgotPasswordMutation).mockReturnValue([mockForgotPasswordMutation, { loading: true }] as any)
 
       renderForgotPassword()
 
@@ -293,7 +298,7 @@ describe('ForgotPassword Component', () => {
     })
 
     it('should show normal button text when not loading', () => {
-      vi.mocked(useForgotPasswordMutation).mockReturnValue([mockForgotPasswordMutation, { loading: false }] as any)
+      vi.mocked(ForgotPassword, type ForgotPasswordMutation).mockReturnValue([mockForgotPasswordMutation, { loading: false }] as any)
 
       renderForgotPassword()
 

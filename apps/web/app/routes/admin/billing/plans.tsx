@@ -1,8 +1,28 @@
-import { gql } from '@apollo/client'
+import { gql, type TypedDocumentNode } from '@apollo/client'
 import { useQuery } from '@apollo/client/react'
 import { CheckCircleIcon, XCircleIcon } from '@heroicons/react/24/outline'
 
-const ADMIN_PLANS_QUERY = gql`
+type Plan = {
+  id: string
+  createdAt: string
+  updatedAt: string
+  name: string
+  description?: string
+  price: string
+  interval: string
+  features?: string[]
+  limits?: Record<string, any>
+  active: boolean
+  stripeProductId?: string
+  stripePriceId?: string
+  trialPeriodDays?: number
+}
+
+type AdminPlansQuery = {
+  plans: Plan[]
+}
+
+const ADMIN_PLANS_QUERY: TypedDocumentNode<AdminPlansQuery> = gql`
   query AdminPlans {
     plans {
       id
@@ -112,21 +132,25 @@ export default function AdminBillingPlans() {
               )}
 
               {/* Limits */}
-              {plan.limits && typeof plan.limits === 'object' && Object.keys(plan.limits).length > 0 && (
-                <div className="p-6">
-                  <h4 className="text-sm font-medium text-gray-900 mb-3">Limits</h4>
-                  <dl className="space-y-2">
-                    {Object.entries(plan.limits).map(([key, value]) => (
-                      <div key={key} className="flex justify-between text-sm">
-                        <dt className="text-gray-600 capitalize">{key.replace(/([A-Z])/g, ' $1').toLowerCase()}</dt>
-                        <dd className="font-medium text-gray-900">
-                          {value === -1 || value === null ? 'Unlimited' : value?.toString()}
-                        </dd>
-                      </div>
-                    ))}
-                  </dl>
-                </div>
-              )}
+              {plan.limits &&
+                typeof plan.limits === 'object' &&
+                Object.keys(plan.limits).length > 0 && (
+                  <div className="p-6">
+                    <h4 className="text-sm font-medium text-gray-900 mb-3">Limits</h4>
+                    <dl className="space-y-2">
+                      {Object.entries(plan.limits).map(([key, value]) => (
+                        <div key={key} className="flex justify-between text-sm">
+                          <dt className="text-gray-600 capitalize">
+                            {key.replace(/([A-Z])/g, ' $1').toLowerCase()}
+                          </dt>
+                          <dd className="font-medium text-gray-900">
+                            {value === -1 || value === null ? 'Unlimited' : value?.toString()}
+                          </dd>
+                        </div>
+                      ))}
+                    </dl>
+                  </div>
+                )}
 
               {/* Stripe IDs */}
               <div className="p-6 bg-gray-50">

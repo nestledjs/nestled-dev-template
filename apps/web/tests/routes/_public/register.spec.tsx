@@ -4,12 +4,17 @@ import userEvent from '@testing-library/user-event'
 import { createTestRouter } from "../../helpers/createTestRouter"
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import Register from '../../../app/routes/_public/register'
-import { useRegisterMutation } from '@nestled-template/shared/sdk'
+import { useMutation } from '@apollo/client/react'
+import { Register, type RegisterMutation } from '@nestled-template/shared/sdk'
+import { useMutation } from '@apollo/client/react'
+
+vi.mock('@apollo/client/react', () => ({
+  useMutation: vi.fn(),
+  useQuery: vi.fn(),
+}))
 
 // Mock the SDK mutation
-vi.mock('@nestled-template/shared/sdk', () => ({
-  useRegisterMutation: vi.fn(),
-}))
+
 
 // Mock form theme
 vi.mock('@nestled-template/shared/styles', () => ({
@@ -95,7 +100,7 @@ describe('Register Component', () => {
     mockRegisterMutation = vi.fn()
     mockNavigate = vi.fn()
 
-    vi.mocked(useRegisterMutation).mockReturnValue([mockRegisterMutation, { loading: false }] as any)
+    vi.mocked(Register, type RegisterMutation).mockReturnValue([mockRegisterMutation, { loading: false }] as any)
   })
 
   const renderRegister = async () => {
@@ -347,7 +352,7 @@ describe('Register Component', () => {
 
   describe('Loading State', () => {
     it('should disable submit button during registration', async () => {
-      vi.mocked(useRegisterMutation).mockReturnValue([mockRegisterMutation, { loading: true }] as any)
+      vi.mocked(Register, type RegisterMutation).mockReturnValue([mockRegisterMutation, { loading: true }] as any)
 
       await renderRegister()
 
@@ -357,7 +362,7 @@ describe('Register Component', () => {
     })
 
     it('should show normal button text when not loading', async () => {
-      vi.mocked(useRegisterMutation).mockReturnValue([mockRegisterMutation, { loading: false }] as any)
+      vi.mocked(Register, type RegisterMutation).mockReturnValue([mockRegisterMutation, { loading: false }] as any)
 
       await renderRegister()
 

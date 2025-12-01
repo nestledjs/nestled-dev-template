@@ -1,8 +1,48 @@
-import { gql } from '@apollo/client'
+import { gql, type TypedDocumentNode } from '@apollo/client'
 import { useQuery } from '@apollo/client/react'
 import { useState } from 'react'
 
-const ADMIN_SUBSCRIPTIONS_QUERY = gql`
+type Subscription = {
+  id: string
+  createdAt: string
+  updatedAt: string
+  organizationId: string
+  organization?: {
+    id: string
+    name: string
+    emails?: Array<{
+      email: string
+      primary: boolean
+    }>
+  }
+  planId: string
+  plan?: {
+    id: string
+    name: string
+    price: string
+    interval: string
+  }
+  stripeCustomerId?: string
+  stripeSubscriptionId?: string
+  stripePriceId?: string
+  stripeCurrentPeriodEnd?: string
+  trialStart?: string
+  trialEnd?: string
+  cancelAt?: string
+  canceledAt?: string
+  cancelAtPeriodEnd: boolean
+  status: string
+}
+
+type AdminSubscriptionsQuery = {
+  subscriptions: Subscription[]
+  subscriptionsCount: {
+    total: number
+    count: number
+  }
+}
+
+const ADMIN_SUBSCRIPTIONS_QUERY: TypedDocumentNode<AdminSubscriptionsQuery> = gql`
   query AdminSubscriptions($input: ListSubscriptionInput) {
     subscriptions(input: $input) {
       id
@@ -112,7 +152,7 @@ export default function AdminBillingSubscriptions() {
               type="text"
               id="search"
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={e => setSearch(e.target.value)}
               placeholder="Search by organization name..."
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
             />
@@ -125,7 +165,7 @@ export default function AdminBillingSubscriptions() {
             <select
               id="status"
               value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
+              onChange={e => setStatusFilter(e.target.value)}
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
             >
               <option value="">All Statuses</option>

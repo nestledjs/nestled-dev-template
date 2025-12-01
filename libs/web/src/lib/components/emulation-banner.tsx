@@ -1,5 +1,5 @@
 import { useMutation } from '@apollo/client/react'
-import { EndEmulationDocument } from '@nestled-template/shared/sdk'
+import { EndEmulation, type EndEmulationMutation } from '@nestled-template/shared/sdk'
 import { ShieldExclamationIcon, XMarkIcon, ExclamationTriangleIcon } from '@heroicons/react/24/solid'
 import { useGlobalCtx } from '../contexts'
 import { useState } from 'react'
@@ -17,7 +17,7 @@ export function EmulationBanner() {
   const isEmulating = !!(user as any)?.isEmulating
   const originalAdminId = (user as any)?.originalAdminId || null
 
-  const [endEmulation, { loading }] = useMutation(EndEmulationDocument, {
+  const [endEmulation, { loading }] = useMutation<EndEmulationMutation>(EndEmulation, {
     onCompleted: () => {
       // Reload page to switch back to admin session
       window.location.href = '/admin/users'

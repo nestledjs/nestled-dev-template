@@ -1,7 +1,7 @@
 import { ApolloHydrationHelper } from '@apollo/client-integration-react-router'
 import '@nestled-template/shared/styles'
 import { apolloLoader } from '@nestled-template/shared/apollo'
-import { MeDocument, MeQuery } from '@nestled-template/shared/sdk'
+import { Me, type MeQuery } from '@nestled-template/shared/sdk'
 import { getCookie, isJwtExpired, isNetworkError } from '@nestled-template/shared/utils'
 import { WebUiErrorBoundary } from '@nestled-template/web-ui'
 import { ReactNode } from 'react'
@@ -64,7 +64,7 @@ export const loader = apolloLoader()(({ preloadQuery, request }) => {
   // If accessing a private route with authentication, preload the Me query
   if (isPrivateRoute && isAuthenticated) {
     try {
-      const meQueryRef = preloadQuery<MeQuery>(MeDocument)
+      const meQueryRef = preloadQuery<MeQuery>(Me)
       return { meQueryRef, theme }
     } catch (error) {
       console.error('[Root Loader] Error during Me query preload:', error)
@@ -108,7 +108,7 @@ export const loader = apolloLoader()(({ preloadQuery, request }) => {
   // For public routes, if authenticated preload Me so user is globally available
   if (isAuthenticated) {
     try {
-      const meQueryRef = preloadQuery<MeQuery>(MeDocument)
+      const meQueryRef = preloadQuery<MeQuery>(Me)
       return { meQueryRef, theme }
     } catch (error) {
       // On error for public pages, just continue without user

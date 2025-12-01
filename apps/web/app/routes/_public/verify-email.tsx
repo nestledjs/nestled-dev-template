@@ -1,14 +1,20 @@
 import React, { useEffect, useState } from 'react'
 import { Link, useSearchParams } from 'react-router'
-import { useVerifyEmailMutation, useVerifyEmailChangeMutation } from '@nestled-template/shared/sdk'
+import { useMutation } from '@apollo/client/react'
+import {
+  VerifyEmail,
+  VerifyEmailChange,
+  type VerifyEmailMutation,
+  type VerifyEmailChangeMutation,
+} from '@nestled-template/shared/sdk'
 import { AuthLayout } from '@nestled-template/web'
 
-export default function VerifyEmail() {
+export default function VerifyEmailPage() {
   const [params] = useSearchParams()
   const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle')
   const [message, setMessage] = useState<string>('Verifying your email...')
-  const [verifyEmailMutation] = useVerifyEmailMutation()
-  const [verifyEmailChangeMutation] = useVerifyEmailChangeMutation()
+  const [verifyEmailMutation] = useMutation<VerifyEmailMutation>(VerifyEmail)
+  const [verifyEmailChangeMutation] = useMutation<VerifyEmailChangeMutation>(VerifyEmailChange)
 
   useEffect(() => {
     const token = params.get('token') || ''
@@ -23,7 +29,9 @@ export default function VerifyEmail() {
       .then(({ data }) => {
         if (data?.verifyEmailChange?.id) {
           setStatus('success')
-          setMessage('Your email has been verified successfully! You can now log in with your new email address.')
+          setMessage(
+            'Your email has been verified successfully! You can now log in with your new email address.',
+          )
         }
       })
       .catch(() => {
@@ -48,9 +56,7 @@ export default function VerifyEmail() {
   return (
     <AuthLayout
       title="Email Verification"
-      subtitle={
-        status === 'idle' ? 'Verifying your email address...' : undefined
-      }
+      subtitle={status === 'idle' ? 'Verifying your email address...' : undefined}
     >
       <div className="text-center">
         {status === 'success' && (

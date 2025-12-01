@@ -1,7 +1,10 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react'
+import { useQuery, useMutation } from '@apollo/client/react'
 import {
-  useMyOrganizationsQuery,
-  useSwitchActiveOrganizationMutation,
+  MyOrganizations,
+  SwitchActiveOrganization,
+  type MyOrganizationsQuery,
+  type SwitchActiveOrganizationMutation,
   User,
   Organization,
   OrganizationMember,
@@ -48,17 +51,17 @@ export function AuthProvider({ children, initialUser = null }: AuthProviderProps
   const [originalUser, setOriginalUser] = useState<AuthUser | null>(null)
 
   // Fetch user's organizations
-  const { data: orgsData, loading: orgsLoading, refetch: refetchOrgs } = useMyOrganizationsQuery({
+  const { data: orgsData, loading: orgsLoading, refetch: refetchOrgs } = useQuery<MyOrganizationsQuery>(MyOrganizations, {
     skip: !user?.id,
   })
 
-  const [switchOrgMutation] = useSwitchActiveOrganizationMutation()
+  const [switchOrgMutation] = useMutation<SwitchActiveOrganizationMutation>(SwitchActiveOrganization)
 
   const organizations = orgsData?.myOrganizations || []
-  const activeOrganization = organizations.find(org => org.id === user?.activeOrganizationId) || organizations[0] || null
+  const activeOrganization = organizations.find(org => org.id === (user as any)?.activeOrganizationId) || organizations[0] || null
 
   // Find the current user's membership in the active organization
-  const activeOrganizationMember = activeOrganization?.members?.find(
+  const activeOrganizationMember = (activeOrganization as any)?.members?.find(
     (member: any) => member.userId === user?.id
   ) || null
 
@@ -119,8 +122,8 @@ export function AuthProvider({ children, initialUser = null }: AuthProviderProps
     user,
     isAuthenticated,
     isLoading,
-    organizations,
-    activeOrganization,
+    organizations: organizations as any,
+    activeOrganization: activeOrganization as any,
     activeOrganizationMember,
     isEmulating,
     originalUser,
@@ -168,7 +171,7 @@ export function useHasAnyPermission(permissions: string[]): boolean {
 
   return permissions.some(permission => {
     const [subject, action] = permission.split(':')
-    return activeOrganizationMember.role.permissions.some(
+    return activeOrganizationMember.role?.permissions?.some(
       (p: any) => p.subject === subject && p.action === action
     )
   })
@@ -184,7 +187,7 @@ export function useHasAllPermissions(permissions: string[]): boolean {
 
   return permissions.every(permission => {
     const [subject, action] = permission.split(':')
-    return activeOrganizationMember.role.permissions.some(
+    return activeOrganizationMember.role?.permissions?.some(
       (p: any) => p.subject === subject && p.action === action
     )
   })

@@ -1,11 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router'
-import {
-  ChartBarIcon,
-  UsersIcon,
-  CogIcon,
-  DocumentTextIcon
-} from '@heroicons/react/24/outline'
+import { ChartBarIcon, UsersIcon, CogIcon, DocumentTextIcon } from '@heroicons/react/24/outline'
 
 export default function MembersDashboard() {
   const quickLinks = [
@@ -77,39 +72,37 @@ export default function MembersDashboard() {
                 <ChartBarIcon className="h-6 w-6 text-sky-600 dark:text-sky-400" />
               </div>
             </div>
-            <p className="mt-2 text-xs text-sky-600 dark:text-sky-400">
-              +8% from last month
-            </p>
+            <p className="mt-2 text-xs text-sky-600 dark:text-sky-400">+8% from last month</p>
           </div>
 
           <div className="rounded-xl border border-zinc-200 dark:border-white/10 bg-white dark:bg-white/5 p-6 backdrop-blur">
             <div className="flex items-center">
               <div className="flex-1">
-                <p className="text-sm font-medium text-zinc-600 dark:text-zinc-400">Active Projects</p>
+                <p className="text-sm font-medium text-zinc-600 dark:text-zinc-400">
+                  Active Projects
+                </p>
                 <p className="mt-2 text-3xl font-bold text-zinc-900 dark:text-white">42</p>
               </div>
               <div className="rounded-lg bg-violet-100 dark:bg-violet-500/10 p-3">
                 <DocumentTextIcon className="h-6 w-6 text-violet-600 dark:text-violet-400" />
               </div>
             </div>
-            <p className="mt-2 text-xs text-violet-600 dark:text-violet-400">
-              3 new this week
-            </p>
+            <p className="mt-2 text-xs text-violet-600 dark:text-violet-400">3 new this week</p>
           </div>
 
           <div className="rounded-xl border border-zinc-200 dark:border-white/10 bg-white dark:bg-white/5 p-6 backdrop-blur">
             <div className="flex items-center">
               <div className="flex-1">
-                <p className="text-sm font-medium text-zinc-600 dark:text-zinc-400">Completion Rate</p>
+                <p className="text-sm font-medium text-zinc-600 dark:text-zinc-400">
+                  Completion Rate
+                </p>
                 <p className="mt-2 text-3xl font-bold text-zinc-900 dark:text-white">94%</p>
               </div>
               <div className="rounded-lg bg-amber-100 dark:bg-amber-500/10 p-3">
                 <ChartBarIcon className="h-6 w-6 text-amber-600 dark:text-amber-400" />
               </div>
             </div>
-            <p className="mt-2 text-xs text-amber-600 dark:text-amber-400">
-              Above target
-            </p>
+            <p className="mt-2 text-xs text-amber-600 dark:text-amber-400">Above target</p>
           </div>
         </div>
 
@@ -120,7 +113,7 @@ export default function MembersDashboard() {
           </p>
 
           <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {quickLinks.map((link) => (
+            {quickLinks.map(link => (
               <Link
                 key={link.name}
                 to={link.href}

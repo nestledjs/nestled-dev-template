@@ -24,9 +24,7 @@ export default function CheckoutCancel() {
 
           {/* Information Box */}
           <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-6 mb-8 text-left">
-            <h3 className="font-semibold text-gray-900 dark:text-white mb-3">
-              What happened?
-            </h3>
+            <h3 className="font-semibold text-gray-900 dark:text-white mb-3">What happened?</h3>
             <p className="text-gray-600 dark:text-gray-400 mb-4">
               You closed the checkout page before completing your purchase. This could be because:
             </p>
@@ -44,9 +42,7 @@ export default function CheckoutCancel() {
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-left">
               <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
-                <h4 className="font-semibold text-gray-900 dark:text-white mb-2">
-                  Try Again
-                </h4>
+                <h4 className="font-semibold text-gray-900 dark:text-white mb-2">Try Again</h4>
                 <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
                   Ready to subscribe? View our plans and complete your purchase.
                 </p>
@@ -58,9 +54,7 @@ export default function CheckoutCancel() {
                 </Link>
               </div>
               <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
-                <h4 className="font-semibold text-gray-900 dark:text-white mb-2">
-                  Need Help?
-                </h4>
+                <h4 className="font-semibold text-gray-900 dark:text-white mb-2">Need Help?</h4>
                 <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
                   Have questions about our plans or payment options?
                 </p>
@@ -93,7 +87,8 @@ export default function CheckoutCancel() {
           {/* Reassurance Message */}
           <div className="mt-8 p-4 bg-gray-50 dark:bg-gray-900/50 rounded-lg">
             <p className="text-sm text-gray-600 dark:text-gray-400">
-              <strong>Don't worry!</strong> You can subscribe at any time. All your data is safe and waiting for you.
+              <strong>Don't worry!</strong> You can subscribe at any time. All your data is safe and
+              waiting for you.
             </p>
           </div>
         </div>

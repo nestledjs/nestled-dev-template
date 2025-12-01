@@ -2,11 +2,11 @@ import React from 'react'
 import { useLoaderData } from 'react-router'
 import { Cog6ToothIcon } from '@heroicons/react/24/outline'
 import { apolloLoader, ReadQueryDataState } from '@nestled-template/shared/apollo'
-import { MeDocument, MeQuery } from '@nestled-template/shared/sdk'
+import { Me, MeQuery } from '@nestled-template/shared/sdk'
 import { useReadQuery } from '@apollo/client/react'
 
 export const loader = apolloLoader()(({ preloadQuery }) => {
-  const meQueryRef = preloadQuery<MeQuery>(MeDocument)
+  const meQueryRef = preloadQuery<MeQuery>(Me)
   return { meQueryRef }
 })
 
@@ -49,7 +49,8 @@ export default function ApplicationPreferences() {
             Application Preferences
           </h3>
           <p className="text-sm text-zinc-600 dark:text-zinc-400 max-w-md mx-auto">
-            Global application settings, feature flags, and system configurations will be available here soon.
+            Global application settings, feature flags, and system configurations will be available
+            here soon.
           </p>
         </div>
       </div>

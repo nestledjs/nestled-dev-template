@@ -1,6 +1,14 @@
 import React, { useState } from 'react'
 import { XMarkIcon, ExclamationTriangleIcon, ArrowsRightLeftIcon } from '@heroicons/react/24/outline'
-import { useMyOrganizationsWithMembersQuery, useTransferOrganizationOwnershipMutation, useMeQuery } from '@nestled-template/shared/sdk'
+import { useQuery, useMutation } from '@apollo/client/react'
+import {
+  MyOrganizationsWithMembers,
+  TransferOrganizationOwnership,
+  Me,
+  type MyOrganizationsWithMembersQuery,
+  type TransferOrganizationOwnershipMutation,
+  type MeQuery
+} from '@nestled-template/shared/sdk'
 
 interface TransferOwnershipModalProps {
   isOpen: boolean
@@ -18,9 +26,9 @@ export default function TransferOwnershipModal({
   const [confirmText, setConfirmText] = useState('')
   const [isTransferring, setIsTransferring] = useState(false)
 
-  const { data: meData } = useMeQuery()
-  const { data: organizationsData, loading } = useMyOrganizationsWithMembersQuery()
-  const [transferOwnershipMutation] = useTransferOrganizationOwnershipMutation()
+  const { data: meData } = useQuery<MeQuery>(Me)
+  const { data: organizationsData, loading } = useQuery<MyOrganizationsWithMembersQuery>(MyOrganizationsWithMembers)
+  const [transferOwnershipMutation] = useMutation<TransferOrganizationOwnershipMutation>(TransferOrganizationOwnership)
 
   const currentUserId = meData?.me?.id
 

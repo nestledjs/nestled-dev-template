@@ -2,15 +2,20 @@ import React, { useState } from 'react'
 import { Link } from 'react-router'
 import { Form, FormFieldClass } from '@nestledjs/forms'
 import { AuthLayout } from '@nestled-template/web'
-import { ForgotPasswordInput, useForgotPasswordMutation } from '@nestled-template/shared/sdk'
+import {
+  ForgotPasswordInput,
+  ForgotPassword,
+  type ForgotPasswordMutation,
+} from '@nestled-template/shared/sdk'
 import { formTheme } from '@nestled-template/shared/styles'
+import { useMutation } from '@apollo/client/react'
 
-export default function ForgotPassword() {
+export default function ForgotPasswordPage() {
   const [formMessage, setFormMessage] = useState<{
     type: 'success' | 'error'
     text: string
   } | null>(null)
-  const [forgotPasswordMutation, { loading }] = useForgotPasswordMutation()
+  const [forgotPasswordMutation, { loading }] = useMutation<ForgotPasswordMutation>(ForgotPassword)
 
   async function handleForgotPassword(input: ForgotPasswordInput) {
     setFormMessage(null)
@@ -45,7 +50,10 @@ export default function ForgotPassword() {
   ]
 
   return (
-    <AuthLayout title="Forgot Your Password?" subtitle="Enter your email to request a password reset">
+    <AuthLayout
+      title="Forgot Your Password?"
+      subtitle="Enter your email to request a password reset"
+    >
       <div className="space-y-6">
         <p className="text-center text-sm text-zinc-400">
           <Link to="/login" className="font-semibold text-emerald-400 hover:text-emerald-300">

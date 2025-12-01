@@ -2,17 +2,18 @@ import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router'
 import { Form, FormFieldClass } from '@nestledjs/forms'
 import { AuthLayout } from '@nestled-template/web'
-import { RegisterInput, useRegisterMutation } from '@nestled-template/shared/sdk'
+import { RegisterInput, Register, type RegisterMutation } from '@nestled-template/shared/sdk'
 import { formTheme } from '@nestled-template/shared/styles'
+import { useMutation } from '@apollo/client/react'
 
 interface RegisterFormInput extends RegisterInput {
   organizationName: string
 }
 
-export default function Register() {
+export default function RegisterPage() {
   const navigate = useNavigate()
   const [formError, setFormError] = useState<string | null>(null)
-  const [registerMutation, { loading }] = useRegisterMutation()
+  const [registerMutation, { loading }] = useMutation<RegisterMutation>(Register)
 
   async function processRegister(input: RegisterFormInput) {
     setFormError(null)
@@ -25,8 +26,8 @@ export default function Register() {
           input: {
             ...registerInput,
             organizationName, // Backend now handles this in register mutation
-          }
-        }
+          },
+        },
       })
 
       const token = data?.register?.token
@@ -49,25 +50,27 @@ export default function Register() {
       label: 'Organization Name',
       required: true,
       placeholder: 'Acme Inc.',
-      helperText: 'You can invite team members after signing up'
+      helpText: 'You can invite team members after signing up',
     }),
     FormFieldClass.email('email', { label: 'Email', required: true }),
     FormFieldClass.password('password', {
       label: 'Password',
       required: true,
-      minLength: 8,
-      helperText: 'Must be at least 8 characters'
+      helpText: 'Must be at least 8 characters',
     }),
     FormFieldClass.button('submit', {
       fullWidth: true,
       text: loading ? 'Creating Account...' : 'Create Account',
       type: 'submit',
-      disabled: loading
+      disabled: loading,
     }),
   ]
 
   return (
-    <AuthLayout title="Create your account" subtitle="Get started with your organization in minutes">
+    <AuthLayout
+      title="Create your account"
+      subtitle="Get started with your organization in minutes"
+    >
       <div className="space-y-6">
         <p className="text-center text-sm text-zinc-400">
           Already have an account?{' '}
@@ -83,13 +86,15 @@ export default function Register() {
         <Form id="register-form" theme={formTheme} fields={fields} submit={processRegister} />
         <p className="text-xs text-center text-zinc-500">
           By creating an account, you agree to our{' '}
-          <Link to="/terms" className="text-emerald-400 hover:text-emerald-300">Terms of Service</Link>
-          {' '}and{' '}
-          <Link to="/privacy" className="text-emerald-400 hover:text-emerald-300">Privacy Policy</Link>
+          <Link to="/terms" className="text-emerald-400 hover:text-emerald-300">
+            Terms of Service
+          </Link>{' '}
+          and{' '}
+          <Link to="/privacy" className="text-emerald-400 hover:text-emerald-300">
+            Privacy Policy
+          </Link>
         </p>
       </div>
     </AuthLayout>
   )
 }
-
-

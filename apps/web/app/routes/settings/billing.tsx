@@ -1,6 +1,12 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router'
-import { CreditCardIcon, DocumentTextIcon, ArrowUpIcon, BanknotesIcon } from '@heroicons/react/24/outline'
+import {
+  CreditCardIcon,
+  DocumentTextIcon,
+  ArrowUpIcon,
+  BanknotesIcon,
+} from '@heroicons/react/24/outline'
+import { useMutation } from '@apollo/client/react'
 import {
   RequireOwner,
   useSubscription,
@@ -10,8 +16,10 @@ import {
   useGlobalCtx,
 } from '@nestled-template/web'
 import {
-  useCreatePortalSessionMutation,
-  useCancelSubscriptionMutation,
+  CreatePortalSession,
+  CancelSubscription,
+  type CreatePortalSessionMutation,
+  type CancelSubscriptionMutation,
 } from '@nestled-template/shared/sdk'
 
 export default function BillingSettings() {
@@ -31,11 +39,11 @@ export default function BillingSettings() {
     trialEndsAt,
   } = useSubscription()
 
-  const [createPortalSession] = useCreatePortalSessionMutation()
-  const [cancelSubscription] = useCancelSubscriptionMutation()
+  const [createPortalSession] = useMutation<CreatePortalSessionMutation>(CreatePortalSession)
+  const [cancelSubscription] = useMutation<CancelSubscriptionMutation>(CancelSubscription)
 
   // Get usage limits
-  const memberCount = activeOrganization?._count?.members || 0
+  const memberCount = (activeOrganization as any)?._count?.members || 0
   const teamMemberLimit = useLimit('max_team_members', memberCount)
   const storageLimit = useLimit('max_storage_gb', 0) // TODO: Implement storage tracking
 
@@ -55,7 +63,11 @@ export default function BillingSettings() {
   }
 
   const handleCancelSubscription = async () => {
-    if (!window.confirm('Are you sure you want to cancel your subscription? You will retain access until the end of your billing period.')) {
+    if (
+      !window.confirm(
+        'Are you sure you want to cancel your subscription? You will retain access until the end of your billing period.',
+      )
+    ) {
       return
     }
 
@@ -100,9 +112,7 @@ export default function BillingSettings() {
               <CreditCardIcon className="h-6 w-6 text-amber-400" />
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-amber-300">
-                Permission Required
-              </h3>
+              <h3 className="text-lg font-semibold text-amber-300">Permission Required</h3>
               <p className="text-sm text-zinc-400 mt-1">
                 Only organization owners can manage billing settings.
               </p>
@@ -131,9 +141,7 @@ export default function BillingSettings() {
 
         {/* Current Plan */}
         <div className="rounded-xl border border-white/10 bg-white/5 p-6 shadow-2xl backdrop-blur">
-          <h3 className="text-lg font-semibold text-white mb-4">
-            Current Plan
-          </h3>
+          <h3 className="text-lg font-semibold text-white mb-4">Current Plan</h3>
 
           <div className="flex items-center justify-between p-6 rounded-lg bg-gradient-to-br from-emerald-500/5 to-sky-500/5 border border-white/10">
             <div className="flex-1">
@@ -141,7 +149,9 @@ export default function BillingSettings() {
                 <h4 className="text-2xl font-extrabold tracking-tight text-white">
                   {plan?.name || 'No Plan'}
                 </h4>
-                <span className={`inline-flex items-center rounded-full border px-3 py-1 text-xs ${getStatusBadge()}`}>
+                <span
+                  className={`inline-flex items-center rounded-full border px-3 py-1 text-xs ${getStatusBadge()}`}
+                >
                   {getPlanStatus()}
                 </span>
               </div>
@@ -149,9 +159,7 @@ export default function BillingSettings() {
                 <>
                   <p className="text-lg text-zinc-300 mt-1">
                     ${parseFloat(plan.price || '0').toFixed(2)}
-                    <span className="text-sm text-zinc-400">
-                      /{plan.interval}
-                    </span>
+                    <span className="text-sm text-zinc-400">/{plan.interval}</span>
                   </p>
                   {isTrialing && trialEndsAt && (
                     <p className="text-sm text-sky-300 mt-2">
@@ -160,14 +168,21 @@ export default function BillingSettings() {
                   )}
                   {periodEndsAt && !isTrialing && (
                     <p className="text-sm text-zinc-400 mt-2">
-                      {isCanceled ? 'Access until' : 'Next billing date'}: {periodEndsAt.toLocaleDateString()}
+                      {isCanceled ? 'Access until' : 'Next billing date'}:{' '}
+                      {periodEndsAt.toLocaleDateString()}
                     </p>
                   )}
                 </>
               )}
               {!plan && (
                 <p className="text-sm text-zinc-300 mt-2">
-                  You don't have an active subscription. <Link to="/pricing" className="text-emerald-300 hover:text-emerald-200 transition">Browse plans</Link>
+                  You don't have an active subscription.{' '}
+                  <Link
+                    to="/pricing"
+                    className="text-emerald-300 hover:text-emerald-200 transition"
+                  >
+                    Browse plans
+                  </Link>
                 </p>
               )}
             </div>
@@ -202,9 +217,7 @@ export default function BillingSettings() {
               <div className="rounded-lg bg-sky-500/10 p-2">
                 <BanknotesIcon className="h-5 w-5 text-sky-300" />
               </div>
-              <h3 className="text-lg font-semibold text-white">
-                Usage & Limits
-              </h3>
+              <h3 className="text-lg font-semibold text-white">Usage & Limits</h3>
             </div>
 
             <div className="space-y-6">
@@ -212,11 +225,10 @@ export default function BillingSettings() {
               {teamMemberLimit.hasLimit && (
                 <div>
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-medium text-zinc-300">
-                      Team Members
-                    </span>
+                    <span className="text-sm font-medium text-zinc-300">Team Members</span>
                     <span className="text-sm text-zinc-400">
-                      {memberCount} / {teamMemberLimit.limit === -1 ? 'Unlimited' : teamMemberLimit.limit}
+                      {memberCount} /{' '}
+                      {teamMemberLimit.limit === -1 ? 'Unlimited' : teamMemberLimit.limit}
                     </span>
                   </div>
                   {teamMemberLimit.limit !== -1 && (
@@ -224,13 +236,19 @@ export default function BillingSettings() {
                       <div className="w-full bg-zinc-800 rounded-full h-2">
                         <div
                           className={`h-2 rounded-full transition-all ${
-                            teamMemberLimit.isAtLimit ? 'bg-rose-500' : teamMemberLimit.percentUsed >= 80 ? 'bg-amber-500' : 'bg-emerald-500'
+                            teamMemberLimit.isAtLimit
+                              ? 'bg-rose-500'
+                              : teamMemberLimit.percentUsed >= 80
+                                ? 'bg-amber-500'
+                                : 'bg-emerald-500'
                           }`}
                           style={{ width: `${Math.min(teamMemberLimit.percentUsed, 100)}%` }}
                         />
                       </div>
                       {teamMemberLimit.percentUsed >= 80 && (
-                        <p className={`text-xs mt-2 ${teamMemberLimit.isAtLimit ? 'text-rose-400' : 'text-amber-400'}`}>
+                        <p
+                          className={`text-xs mt-2 ${teamMemberLimit.isAtLimit ? 'text-rose-400' : 'text-amber-400'}`}
+                        >
                           {teamMemberLimit.isAtLimit
                             ? 'You have reached your member limit. Upgrade to add more members.'
                             : `You are approaching your member limit (${teamMemberLimit.remaining} remaining). Consider upgrading soon.`}
@@ -245,9 +263,7 @@ export default function BillingSettings() {
               {storageLimit.hasLimit && (
                 <div>
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-medium text-zinc-300">
-                      Storage
-                    </span>
+                    <span className="text-sm font-medium text-zinc-300">Storage</span>
                     <span className="text-sm text-zinc-400">
                       0 GB / {storageLimit.limit === -1 ? 'Unlimited' : `${storageLimit.limit} GB`}
                     </span>
@@ -260,9 +276,7 @@ export default function BillingSettings() {
                       />
                     </div>
                   )}
-                  <p className="text-xs text-zinc-400 mt-2">
-                    Storage tracking coming soon
-                  </p>
+                  <p className="text-xs text-zinc-400 mt-2">Storage tracking coming soon</p>
                 </div>
               )}
             </div>
@@ -272,12 +286,11 @@ export default function BillingSettings() {
         {/* Stripe Customer Portal */}
         {hasActiveSubscription && (
           <div className="rounded-xl border border-white/10 bg-white/5 p-6 shadow-2xl backdrop-blur">
-            <h3 className="text-lg font-semibold text-white mb-4">
-              Manage Billing
-            </h3>
+            <h3 className="text-lg font-semibold text-white mb-4">Manage Billing</h3>
 
             <p className="text-sm text-zinc-300 mb-4">
-              Use the Stripe Customer Portal to manage your subscription, update payment methods, view invoices, and more.
+              Use the Stripe Customer Portal to manage your subscription, update payment methods,
+              view invoices, and more.
             </p>
 
             <button
@@ -294,11 +307,10 @@ export default function BillingSettings() {
         {!hasActiveSubscription && (
           <div className="rounded-xl border-2 border-dashed border-white/20 bg-white/5 p-8 backdrop-blur text-center">
             <CreditCardIcon className="h-12 w-12 text-zinc-500 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-white mb-2">
-              No Active Subscription
-            </h3>
+            <h3 className="text-lg font-semibold text-white mb-2">No Active Subscription</h3>
             <p className="text-sm text-zinc-300 mb-6 max-w-md mx-auto">
-              Subscribe to a plan to unlock premium features, increase your limits, and get the most out of your account.
+              Subscribe to a plan to unlock premium features, increase your limits, and get the most
+              out of your account.
             </p>
             <div className="flex gap-3 justify-center">
               <Link
@@ -319,10 +331,7 @@ export default function BillingSettings() {
       </div>
 
       {/* Upgrade Modal */}
-      <UpgradeModal
-        isOpen={showUpgrade}
-        onClose={() => setShowUpgrade(false)}
-      />
+      <UpgradeModal isOpen={showUpgrade} onClose={() => setShowUpgrade(false)} />
     </RequireOwner>
   )
 }

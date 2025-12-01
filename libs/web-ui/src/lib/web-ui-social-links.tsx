@@ -53,7 +53,7 @@ export function WebUiSocialLinks(props: SocialLinksProps) {
     }
   }
 
-  const member = props?.member
+  const member = props?.member as any
 
   const facebookLink = member?.facebook ? generateLink(member.facebook, 'facebook') : null
   const twitterLink = member?.twitter ? generateLink(member.twitter, 'twitter') : null

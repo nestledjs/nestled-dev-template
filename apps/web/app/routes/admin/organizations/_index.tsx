@@ -1,6 +1,9 @@
 import { useState } from 'react'
 import { useQuery } from '@apollo/client/react'
-import { AdminPlatformOrganizationsDocument } from '@nestled-template/shared/sdk'
+import {
+  AdminPlatformOrganizations,
+  type AdminPlatformOrganizationsQuery,
+} from '@nestled-template/shared/sdk'
 import {
   BuildingOfficeIcon,
   CheckCircleIcon,
@@ -16,7 +19,7 @@ export default function AdminOrganizationsPage() {
   const [page, setPage] = useState(0)
   const pageSize = 50
 
-  const { data, loading, error } = useQuery(AdminPlatformOrganizationsDocument, {
+  const { data, loading, error } = useQuery<AdminPlatformOrganizationsQuery>(AdminPlatformOrganizations, {
     variables: {
       filters: {
         take: pageSize,

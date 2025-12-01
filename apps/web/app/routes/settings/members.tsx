@@ -13,25 +13,34 @@ import { Form, FormFieldClass } from '@nestledjs/forms'
 import { formTheme } from '@nestled-template/shared/styles'
 import { apolloLoader } from '@nestled-template/shared/apollo'
 import {
-  MeDocument,
-  MeQuery,
-  MyOrganizationsWithMembersDocument,
-  MyOrganizationsWithMembersQuery,
-  useAddOrganizationMemberMutation,
-  useCreateOrganizationInvitationMutation,
-  useResendOrganizationInvitationMutation,
-  useRemoveOrganizationMemberMutation,
-  useUpdateOrganizationMemberRoleMutation,
-  useUserOrganizationMembersQuery,
-  useOrganizationRolesQuery,
-  useOrganizationInvitationsQuery,
+  Me,
+  type MeQuery,
+  MyOrganizationsWithMembers,
+  type MyOrganizationsWithMembersQuery,
+  CreateOrganizationInvitation,
+  ResendOrganizationInvitation,
+  AddOrganizationMember,
+  RemoveOrganizationMember,
+  UpdateOrganizationMemberRole,
+  UserOrganizationMembers,
+  OrganizationRoles,
+  OrganizationInvitations,
+  type CreateOrganizationInvitationMutation,
+  type ResendOrganizationInvitationMutation,
+  type AddOrganizationMemberMutation,
+  type RemoveOrganizationMemberMutation,
+  type UpdateOrganizationMemberRoleMutation,
+  type UserOrganizationMembersQuery,
+  type OrganizationRolesQuery,
+  type OrganizationInvitationsQuery,
 } from '@nestled-template/shared/sdk'
-import type { QueryRef } from '@apollo/client'
-import { useReadQuery } from '@apollo/client/react'
+import { useReadQuery, type QueryRef, useQuery, useMutation } from '@apollo/client/react'
 
 export const loader = apolloLoader()(({ preloadQuery }) => {
-  const myOrganizationsQueryRef = preloadQuery<MyOrganizationsWithMembersQuery>(MyOrganizationsWithMembersDocument)
-  const meQueryRef = preloadQuery<MeQuery>(MeDocument)
+  const myOrganizationsQueryRef = preloadQuery<MyOrganizationsWithMembersQuery>(
+    MyOrganizationsWithMembers,
+  )
+  const meQueryRef = preloadQuery<MeQuery>(Me)
   return { myOrganizationsQueryRef, meQueryRef }
 })
 
@@ -58,27 +67,40 @@ export default function MembersSettings() {
     onConfirm: () => void
   } | null>(null)
 
-  const [inviteMember] = useCreateOrganizationInvitationMutation()
-  const [resendInvitation] = useResendOrganizationInvitationMutation()
-  const [addMember] = useAddOrganizationMemberMutation()
-  const [removeMember] = useRemoveOrganizationMemberMutation()
-  const [updateMemberRole] = useUpdateOrganizationMemberRoleMutation()
+  const [inviteMember] = useMutation<CreateOrganizationInvitationMutation>(
+    CreateOrganizationInvitation,
+  )
+  const [resendInvitation] = useMutation<ResendOrganizationInvitationMutation>(
+    ResendOrganizationInvitation,
+  )
+  const [addMember] = useMutation<AddOrganizationMemberMutation>(AddOrganizationMember)
+  const [removeMember] = useMutation<RemoveOrganizationMemberMutation>(RemoveOrganizationMember)
+  const [updateMemberRole] = useMutation<UpdateOrganizationMemberRoleMutation>(
+    UpdateOrganizationMemberRole,
+  )
 
-  const { data, loading, error, refetch } = useUserOrganizationMembersQuery({
+  const { data, loading, error, refetch } = useQuery<UserOrganizationMembersQuery>(
+    UserOrganizationMembers,
+    {
+      variables: {
+        organizationId: activeOrganization?.id || '',
+      },
+      skip: !activeOrganization?.id,
+    },
+  )
+
+  const { data: rolesData } = useQuery<OrganizationRolesQuery>(OrganizationRoles, {
     variables: {
       organizationId: activeOrganization?.id || '',
     },
     skip: !activeOrganization?.id,
   })
 
-  const { data: rolesData } = useOrganizationRolesQuery({
-    variables: {
-      organizationId: activeOrganization?.id || '',
-    },
-    skip: !activeOrganization?.id,
-  })
-
-  const { data: invitationsData, loading: invitationsLoading, refetch: refetchInvitations } = useOrganizationInvitationsQuery({
+  const {
+    data: invitationsData,
+    loading: invitationsLoading,
+    refetch: refetchInvitations,
+  } = useQuery<OrganizationInvitationsQuery>(OrganizationInvitations, {
     variables: {
       organizationId: activeOrganization?.id || '',
     },
@@ -87,7 +109,8 @@ export default function MembersSettings() {
 
   const members = data?.userOrganizationMembers || []
   const roles = rolesData?.organizationRoles || []
-  const invitations = invitationsData?.organizationInvitations?.filter((inv: any) => inv.status === 'PENDING') || []
+  const invitations =
+    invitationsData?.organizationInvitations?.filter((inv: any) => inv.status === 'PENDING') || []
 
   async function handleInviteMember(input: { email: string; roleId: string }) {
     setFormError(null)
@@ -187,7 +210,9 @@ export default function MembersSettings() {
         },
       })
 
-      setFormSuccess(`Role updated successfully for ${editingMember.user.firstName} ${editingMember.user.lastName}`)
+      setFormSuccess(
+        `Role updated successfully for ${editingMember.user.firstName} ${editingMember.user.lastName}`,
+      )
       setEditingMember(null)
       refetch()
     } catch (error) {
@@ -340,7 +365,7 @@ export default function MembersSettings() {
                 </label>
                 <select
                   defaultValue={editingMember.role?.id}
-                  onChange={(e) => {
+                  onChange={e => {
                     if (e.target.value) {
                       handleUpdateMemberRole(e.target.value)
                     }
@@ -446,7 +471,8 @@ export default function MembersSettings() {
                         )}
                       </h4>
                       <p className="text-xs text-zinc-600 dark:text-zinc-400">
-                        {member.user?.emails?.find((e: any) => e.primary)?.email || member.user?.emails?.[0]?.email}
+                        {member.user?.emails?.find((e: any) => e.primary)?.email ||
+                          member.user?.emails?.[0]?.email}
                       </p>
                     </div>
                   </div>
@@ -500,7 +526,9 @@ export default function MembersSettings() {
           {invitationsLoading && (
             <div className="text-center py-8">
               <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-sky-500 border-r-transparent"></div>
-              <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">Loading invitations...</p>
+              <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
+                Loading invitations...
+              </p>
             </div>
           )}
 

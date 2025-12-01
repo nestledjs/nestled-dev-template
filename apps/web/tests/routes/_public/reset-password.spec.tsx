@@ -4,12 +4,17 @@ import userEvent from '@testing-library/user-event'
 import { createTestRouter } from "../../helpers/createTestRouter"
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import ResetPassword from '../../../app/routes/_public/reset-password'
-import { useResetPasswordMutation } from '@nestled-template/shared/sdk'
+import { useMutation } from '@apollo/client/react'
+import { ResetPassword, type ResetPasswordMutation } from '@nestled-template/shared/sdk'
+import { useMutation } from '@apollo/client/react'
+
+vi.mock('@apollo/client/react', () => ({
+  useMutation: vi.fn(),
+  useQuery: vi.fn(),
+}))
 
 // Mock the SDK mutation
-vi.mock('@nestled-template/shared/sdk', () => ({
-  useResetPasswordMutation: vi.fn(),
-}))
+
 
 // Mock the AuthLayout component
 vi.mock('@nestled-template/web', () => ({
@@ -95,7 +100,7 @@ describe('ResetPassword Component', () => {
     mockResetPasswordMutation = vi.fn()
     mockNavigate = vi.fn()
 
-    vi.mocked(useResetPasswordMutation).mockReturnValue([mockResetPasswordMutation, { loading: false }] as any)
+    vi.mocked(ResetPassword, type ResetPasswordMutation).mockReturnValue([mockResetPasswordMutation, { loading: false }] as any)
   })
 
   const renderResetPassword = (token = 'valid-token-123') => {
@@ -343,7 +348,7 @@ describe('ResetPassword Component', () => {
 
   describe('Loading State', () => {
     it('should show loading text on button during submission', () => {
-      vi.mocked(useResetPasswordMutation).mockReturnValue([mockResetPasswordMutation, { loading: true }] as any)
+      vi.mocked(ResetPassword, type ResetPasswordMutation).mockReturnValue([mockResetPasswordMutation, { loading: true }] as any)
 
       renderResetPassword()
 
@@ -354,7 +359,7 @@ describe('ResetPassword Component', () => {
     })
 
     it('should show normal button text when not loading', () => {
-      vi.mocked(useResetPasswordMutation).mockReturnValue([mockResetPasswordMutation, { loading: false }] as any)
+      vi.mocked(ResetPassword, type ResetPasswordMutation).mockReturnValue([mockResetPasswordMutation, { loading: false }] as any)
 
       renderResetPassword()
 
