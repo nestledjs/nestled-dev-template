@@ -35,7 +35,7 @@ vi.mock('@nestled-template/web', () => ({
 // Mock the Form component from @nestledjs/forms
 vi.mock('@nestledjs/forms', () => ({
   Form: ({ id, fields, submit }: any) => {
-    const handleSubmit = (e: any) => {
+    const handleSubmit = (e) => {
       e.preventDefault()
       const formData = new FormData(e.target)
       const values: Record<string, any> = {}
@@ -100,7 +100,7 @@ describe('Register Component', () => {
     mockRegisterMutation = vi.fn()
     mockNavigate = vi.fn()
 
-    vi.mocked(Register, type RegisterMutation).mockReturnValue([mockRegisterMutation, { loading: false }] as any)
+    vi.mocked(useMutation).mockReturnValue([mockRegisterMutation, { loading: false }] as any)
   })
 
   const renderRegister = async () => {
@@ -352,7 +352,7 @@ describe('Register Component', () => {
 
   describe('Loading State', () => {
     it('should disable submit button during registration', async () => {
-      vi.mocked(Register, type RegisterMutation).mockReturnValue([mockRegisterMutation, { loading: true }] as any)
+      vi.mocked(useMutation).mockReturnValue([mockRegisterMutation, { loading: true }] as any)
 
       await renderRegister()
 
@@ -362,7 +362,7 @@ describe('Register Component', () => {
     })
 
     it('should show normal button text when not loading', async () => {
-      vi.mocked(Register, type RegisterMutation).mockReturnValue([mockRegisterMutation, { loading: false }] as any)
+      vi.mocked(useMutation).mockReturnValue([mockRegisterMutation, { loading: false }] as any)
 
       await renderRegister()
 

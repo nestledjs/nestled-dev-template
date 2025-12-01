@@ -4,12 +4,14 @@ import { createTestRouter } from "../../helpers/createTestRouter"
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { getCookie } from '@nestled-template/shared/utils'
 
+import PublicLayout, { loader } from '../../../app/routes/_public/_layout'
+
 // Mock dependencies BEFORE importing the component
 const mockGetCookie = vi.fn()
 const mockUseGlobalCtx = vi.fn()
 
 vi.mock('@nestled-template/shared/utils', () => ({
-  getCookie: (...args: any[]) => mockGetCookie(...args),
+  getCookie: (...args: unknown[]) => mockGetCookie(...args),
 }))
 
 vi.mock('@nestled-template/web-ui', () => ({
@@ -30,8 +32,6 @@ vi.mock('@nestled-template/web-ui', () => ({
 vi.mock('@nestled-template/web', () => ({
   useGlobalCtx: () => mockUseGlobalCtx(),
 }))
-
-import PublicLayout, { loader } from '../../../app/routes/_public/_layout'
 
 describe('Public Layout (_public/_layout)', () => {
   beforeEach(() => {

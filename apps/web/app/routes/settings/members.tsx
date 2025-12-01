@@ -55,7 +55,7 @@ export default function MembersSettings() {
   const activeOrganization = organizations[0] || null
   const user = meData?.me
   const activeOrganizationMember =
-    activeOrganization?.members?.find((member: any) => member.userId === user?.id) || null
+    activeOrganization?.members?.find((member) => member.userId === user?.id) || null
   const [showInviteForm, setShowInviteForm] = useState(false)
   const [formError, setFormError] = useState<string | null>(null)
   const [formSuccess, setFormSuccess] = useState<string | null>(null)
@@ -110,7 +110,7 @@ export default function MembersSettings() {
   const members = data?.userOrganizationMembers || []
   const roles = rolesData?.organizationRoles || []
   const invitations =
-    invitationsData?.organizationInvitations?.filter((inv: any) => inv.status === 'PENDING') || []
+    invitationsData?.organizationInvitations?.filter((inv) => inv.status === 'PENDING') || []
 
   async function handleInviteMember(input: { email: string; roleId: string }) {
     setFormError(null)
@@ -231,7 +231,7 @@ export default function MembersSettings() {
       required: true,
       options: [
         { value: '', label: 'Select a role...' },
-        ...roles.map((role: any) => ({
+        ...roles.map((role) => ({
           value: role.id,
           label: role.name,
         })),
@@ -373,7 +373,7 @@ export default function MembersSettings() {
                   className="w-full px-3 py-2 bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 rounded-lg text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-sky-500"
                 >
                   <option value="">Select a role...</option>
-                  {roles.map((role: any) => (
+                  {roles.map((role) => (
                     <option key={role.id} value={role.id}>
                       {role.name}
                     </option>
@@ -451,7 +451,7 @@ export default function MembersSettings() {
 
           {!loading && !error && members.length > 0 && (
             <div className="space-y-3">
-              {members.map((member: any) => (
+              {members.map((member) => (
                 <div
                   key={member.id}
                   className="flex items-center justify-between p-4 rounded-lg bg-zinc-50 dark:bg-white/5 border border-zinc-200 dark:border-white/10"
@@ -471,7 +471,7 @@ export default function MembersSettings() {
                         )}
                       </h4>
                       <p className="text-xs text-zinc-600 dark:text-zinc-400">
-                        {member.user?.emails?.find((e: any) => e.primary)?.email ||
+                        {member.user?.emails?.find((e) => e.primary)?.email ||
                           member.user?.emails?.[0]?.email}
                       </p>
                     </div>
@@ -541,7 +541,7 @@ export default function MembersSettings() {
 
           {!invitationsLoading && invitations.length > 0 && (
             <div className="space-y-3">
-              {invitations.map((invitation: any) => (
+              {invitations.map((invitation) => (
                 <div
                   key={invitation.id}
                   className="flex items-center justify-between p-4 rounded-lg bg-zinc-50 dark:bg-white/5 border border-zinc-200 dark:border-white/10"

@@ -5,6 +5,12 @@ import { createTestRouter } from "../../helpers/createTestRouter"
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import BillingSettings from '../../../app/routes/settings/billing'
 
+import {
+  useCreatePortalSessionMutation,
+  useCancelSubscriptionMutation,
+} from '@nestled-template/shared/sdk'
+import { useSubscription, useLimit, useGlobalCtx } from '@nestled-template/web'
+
 // Mock SDK hooks
 vi.mock('@nestled-template/shared/sdk', () => ({
   useCreatePortalSessionMutation: vi.fn(),
@@ -25,12 +31,6 @@ vi.mock('@nestled-template/web', () => ({
     ) : null,
   useGlobalCtx: vi.fn(),
 }))
-
-import {
-  useCreatePortalSessionMutation,
-  useCancelSubscriptionMutation,
-} from '@nestled-template/shared/sdk'
-import { useSubscription, useLimit, useGlobalCtx } from '@nestled-template/web'
 
 describe('BillingSettings Component', () => {
   const mockActiveOrganization = {
@@ -350,7 +350,9 @@ describe('BillingSettings Component', () => {
     it('should handle cancel when confirmed', async () => {
       const user = userEvent.setup()
       const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(true)
-      const alertSpy = vi.spyOn(window, 'alert').mockImplementation(() => {})
+      const alertSpy = vi.spyOn(window, 'alert').mockImplementation(() => {
+        // No-op for test
+      })
 
       vi.mocked(useSubscription).mockReturnValue({
         subscription: { id: 'sub-123' },
@@ -414,7 +416,9 @@ describe('BillingSettings Component', () => {
     it('should handle cancel error', async () => {
       const user = userEvent.setup()
       const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(true)
-      const alertSpy = vi.spyOn(window, 'alert').mockImplementation(() => {})
+      const alertSpy = vi.spyOn(window, 'alert').mockImplementation(() => {
+        // No-op for test
+      })
 
       vi.mocked(useSubscription).mockReturnValue({
         subscription: { id: 'sub-123' },
@@ -666,7 +670,9 @@ describe('BillingSettings Component', () => {
 
     it('should handle portal session error', async () => {
       const user = userEvent.setup()
-      const alertSpy = vi.spyOn(window, 'alert').mockImplementation(() => {})
+      const alertSpy = vi.spyOn(window, 'alert').mockImplementation(() => {
+        // No-op for test
+      })
 
       vi.mocked(useSubscription).mockReturnValue({
         subscription: { id: 'sub-123' },

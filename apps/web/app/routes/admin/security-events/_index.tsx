@@ -132,6 +132,8 @@ export default function AdminSecurityEventsPage() {
     fetchPolicy: 'network-only',
   })
 
+  type SecurityEvent = NonNullable<AdminPlatformSecurityEventsQuery['adminSecurityEvents']['events'][number]>
+
   const events = data?.adminSecurityEvents?.events || []
   const total = data?.adminSecurityEvents?.total || 0
   const totalPages = Math.ceil(total / pageSize)
@@ -338,7 +340,7 @@ export default function AdminSecurityEventsPage() {
           </div>
         ) : (
           <div className="p-6 space-y-4">
-            {events.map((event: any) => {
+            {events.map((event) => {
               const config = EVENT_TYPE_CONFIG[event.eventType as SecurityEventType]
               const Icon = config.icon
               const userEmail = event.user?.emails?.[0]?.email || 'Unknown user'

@@ -6,6 +6,14 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import AcceptInvitation from '../../app/routes/accept-invitation'
 import { GlobalContextProvider } from '@nestled-template/web'
 
+import {
+  useGetInvitationDetailsQuery,
+  useAcceptOrganizationInvitationMutation,
+  useLoginMutation,
+  useRegisterWithInvitationMutation,
+} from '@nestled-template/shared/sdk'
+import { useGlobalCtx } from '@nestled-template/web'
+
 // Mock SDK hooks
 vi.mock('@nestled-template/shared/sdk', () => ({
   useGetInvitationDetailsQuery: vi.fn(),
@@ -22,14 +30,6 @@ vi.mock('@nestled-template/web', async () => {
     useGlobalCtx: vi.fn(),
   }
 })
-
-import {
-  useGetInvitationDetailsQuery,
-  useAcceptOrganizationInvitationMutation,
-  useLoginMutation,
-  useRegisterWithInvitationMutation,
-} from '@nestled-template/shared/sdk'
-import { useGlobalCtx } from '@nestled-template/web'
 
 describe('AcceptInvitation Component', () => {
   const mockInvitationDetails = {

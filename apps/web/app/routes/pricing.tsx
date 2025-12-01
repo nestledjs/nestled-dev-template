@@ -77,7 +77,7 @@ export default function PricingPage() {
         {/* Plans Grid */}
         {!loading && plans.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
-            {plans.map((plan: any) => {
+            {plans.map((plan) => {
               const isCurrent = isCurrentPlan(plan.id)
               const features = Array.isArray(plan.features)
                 ? plan.features
@@ -159,8 +159,8 @@ export default function PricingPage() {
 
                   {/* CTA Button */}
                   <button
-                    onClick={() => handleSubscribe(plan.stripePriceId)}
-                    disabled={isCurrent || checkoutLoading}
+                    onClick={() => plan.stripePriceId && handleSubscribe(plan.stripePriceId)}
+                    disabled={isCurrent || checkoutLoading || !plan.stripePriceId}
                     className={`w-full rounded-lg py-2.5 px-5 font-semibold text-center transition ${
                       isCurrent
                         ? 'border border-white/10 bg-white/5 text-zinc-400 cursor-not-allowed'

@@ -91,6 +91,8 @@ export default function AdminAuditLogsPage() {
     fetchPolicy: 'network-only',
   })
 
+  type AuditLog = NonNullable<AdminPlatformAuditLogsQuery['adminAuditLogs']['logs'][number]>
+
   const logs = data?.adminAuditLogs?.logs || []
   const total = data?.adminAuditLogs?.total || 0
   const totalPages = Math.ceil(total / pageSize)
@@ -317,7 +319,7 @@ export default function AdminAuditLogsPage() {
           </div>
         ) : (
           <div className="p-6 space-y-4">
-            {logs.map((log: any) => {
+            {logs.map((log) => {
               const config = getActionConfig(log.action)
               const Icon = config.icon
               const userEmail = log.user?.emails?.[0]?.email || 'System'

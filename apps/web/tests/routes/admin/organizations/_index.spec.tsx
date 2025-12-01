@@ -8,7 +8,7 @@ import AdminOrganizationsPage from '../../../../app/routes/admin/organizations/_
 // Mock Apollo Client
 const mockUseQuery = vi.fn()
 vi.mock('@apollo/client/react', () => ({
-  useQuery: (...args: any[]) => mockUseQuery(...args),
+  useQuery: (...args: unknown[]) => mockUseQuery(...args),
 }))
 
 // Mock SDK

@@ -35,7 +35,7 @@ vi.mock('@nestled-template/shared/styles', () => ({
 // Mock the Form component from @nestledjs/forms
 vi.mock('@nestledjs/forms', () => ({
   Form: ({ id, fields, submit }: any) => {
-    const handleSubmit = (e: any) => {
+    const handleSubmit = (e) => {
       e.preventDefault()
       const formData = new FormData(e.target)
       const values: Record<string, any> = {}
@@ -100,7 +100,7 @@ describe('ResetPassword Component', () => {
     mockResetPasswordMutation = vi.fn()
     mockNavigate = vi.fn()
 
-    vi.mocked(ResetPassword, type ResetPasswordMutation).mockReturnValue([mockResetPasswordMutation, { loading: false }] as any)
+    vi.mocked(useMutation).mockReturnValue([mockResetPasswordMutation, { loading: false }] as any)
   })
 
   const renderResetPassword = (token = 'valid-token-123') => {
@@ -348,7 +348,7 @@ describe('ResetPassword Component', () => {
 
   describe('Loading State', () => {
     it('should show loading text on button during submission', () => {
-      vi.mocked(ResetPassword, type ResetPasswordMutation).mockReturnValue([mockResetPasswordMutation, { loading: true }] as any)
+      vi.mocked(useMutation).mockReturnValue([mockResetPasswordMutation, { loading: true }] as any)
 
       renderResetPassword()
 
@@ -359,7 +359,7 @@ describe('ResetPassword Component', () => {
     })
 
     it('should show normal button text when not loading', () => {
-      vi.mocked(ResetPassword, type ResetPasswordMutation).mockReturnValue([mockResetPasswordMutation, { loading: false }] as any)
+      vi.mocked(useMutation).mockReturnValue([mockResetPasswordMutation, { loading: false }] as any)
 
       renderResetPassword()
 

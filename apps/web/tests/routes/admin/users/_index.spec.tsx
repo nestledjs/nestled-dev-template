@@ -10,8 +10,8 @@ const mockUseQuery = vi.fn()
 const mockUseMutation = vi.fn()
 
 vi.mock('@apollo/client/react', () => ({
-  useQuery: (...args: any[]) => mockUseQuery(...args),
-  useMutation: (...args: any[]) => mockUseMutation(...args),
+  useQuery: (...args: unknown[]) => mockUseQuery(...args),
+  useMutation: (...args: unknown[]) => mockUseMutation(...args),
 }))
 
 // Mock SDK
@@ -668,7 +668,9 @@ describe('Admin Users Management Page', () => {
     })
 
     it('should disable emulate button while emulation is in progress', async () => {
-      const mockEmulate = vi.fn().mockImplementation(() => new Promise(() => {}))
+      const mockEmulate = vi.fn().mockImplementation(() => new Promise(() => {
+        // Never resolves
+      }))
       mockUseQuery.mockImplementation(() => ({
         data: mockUsersData,
         loading: false,
