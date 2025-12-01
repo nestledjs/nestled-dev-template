@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import { Link } from 'react-router'
 import {
   CreditCardIcon,
-  DocumentTextIcon,
   ArrowUpIcon,
   BanknotesIcon,
 } from '@heroicons/react/24/outline'
@@ -21,6 +20,13 @@ import {
   type CreatePortalSessionMutation,
   type CancelSubscriptionMutation,
 } from '@nestled-template/shared/sdk'
+
+// Helper function to determine progress bar color based on usage
+const getProgressBarColor = (isAtLimit: boolean, percentUsed: number) => {
+  if (isAtLimit) return 'bg-rose-500'
+  if (percentUsed >= 80) return 'bg-amber-500'
+  return 'bg-emerald-500'
+}
 
 export default function BillingSettings() {
   const [showUpgrade, setShowUpgrade] = useState(false)
@@ -235,13 +241,7 @@ export default function BillingSettings() {
                     <>
                       <div className="w-full bg-zinc-800 rounded-full h-2">
                         <div
-                          className={`h-2 rounded-full transition-all ${
-                            teamMemberLimit.isAtLimit
-                              ? 'bg-rose-500'
-                              : teamMemberLimit.percentUsed >= 80
-                                ? 'bg-amber-500'
-                                : 'bg-emerald-500'
-                          }`}
+                          className={`h-2 rounded-full transition-all ${getProgressBarColor(teamMemberLimit.isAtLimit, teamMemberLimit.percentUsed)}`}
                           style={{ width: `${Math.min(teamMemberLimit.percentUsed, 100)}%` }}
                         />
                       </div>

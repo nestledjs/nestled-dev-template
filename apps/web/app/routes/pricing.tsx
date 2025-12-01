@@ -19,6 +19,12 @@ export default function PricingPage() {
 
   const plans = data?.plans || []
 
+  const getButtonText = (checkoutLoading: boolean, isCurrent: boolean, user: unknown) => {
+    if (checkoutLoading) return 'Loading...'
+    if (isCurrent) return 'Current Plan'
+    return user ? 'Subscribe Now' : 'Get Started'
+  }
+
   const handleSubscribe = async (stripePriceId: string) => {
     if (!user) {
       // Redirect to login with return URL
@@ -167,13 +173,7 @@ export default function PricingPage() {
                         : 'bg-emerald-500 text-zinc-950 shadow-lg shadow-emerald-500/20 hover:bg-emerald-400'
                     }`}
                   >
-                    {checkoutLoading
-                      ? 'Loading...'
-                      : isCurrent
-                        ? 'Current Plan'
-                        : user
-                          ? 'Subscribe Now'
-                          : 'Get Started'}
+                    {getButtonText(checkoutLoading, isCurrent, user)}
                   </button>
                 </div>
               )

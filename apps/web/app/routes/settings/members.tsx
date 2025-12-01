@@ -73,7 +73,6 @@ export default function MembersSettings() {
   const [resendInvitation] = useMutation<ResendOrganizationInvitationMutation>(
     ResendOrganizationInvitation,
   )
-  const [addMember] = useMutation<AddOrganizationMemberMutation>(AddOrganizationMember)
   const [removeMember] = useMutation<RemoveOrganizationMemberMutation>(RemoveOrganizationMember)
   const [updateMemberRole] = useMutation<UpdateOrganizationMemberRoleMutation>(
     UpdateOrganizationMemberRole,

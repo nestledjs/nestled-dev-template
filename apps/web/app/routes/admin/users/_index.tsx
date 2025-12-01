@@ -41,7 +41,7 @@ export default function AdminUsersPage() {
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null)
 
   // Query users
-  const { data, loading, error, refetch } = useQuery<AdminUserManagementQuery>(AdminUserManagement, {
+  const { data, loading, error } = useQuery<AdminUserManagementQuery>(AdminUserManagement, {
     variables: {
       filters: {
         search: search || undefined,

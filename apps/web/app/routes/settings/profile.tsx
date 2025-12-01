@@ -214,6 +214,46 @@ export default function ProfileSettings() {
     }
   }
 
+  // Helper function to validate username
+  function validateUsername(username: string): { valid: boolean; error?: string } {
+    const cleanedUsername = username.toLowerCase().replace(/[^a-z0-9.]/g, '')
+    if (cleanedUsername !== username) {
+      return { valid: false, error: 'Username can only contain lowercase letters, numbers, and periods' }
+    }
+    if (cleanedUsername.length < 3) {
+      return { valid: false, error: 'Username must be at least 3 characters' }
+    }
+    return { valid: true }
+  }
+
+  // Helper function to get error message based on error type
+  function getErrorMessage(error: Error): string {
+    if (error.message?.includes('Template email send failed')) {
+      return 'Email service is not configured. Profile updates saved but verification email could not be sent.'
+    }
+    if (error.message?.includes('Template') && error.message?.includes('not found')) {
+      return 'Email templates are not properly configured. Please contact support.'
+    }
+    if (error.message?.includes('Unique constraint') || error.message?.includes('displayName')) {
+      return 'This username is already taken. Please choose another.'
+    }
+    return error.message || 'Failed to update profile'
+  }
+
+  // Helper function to collect user updates
+  function collectUserUpdates(
+    values: { firstName?: string; lastName?: string; displayName?: string },
+    user: { firstName?: string; lastName?: string; displayName?: string } | null,
+  ): Record<string, string | undefined> {
+    const updates: Record<string, string | undefined> = {}
+    if (values.firstName !== user?.firstName) updates.firstName = values.firstName
+    if (values.lastName !== user?.lastName) updates.lastName = values.lastName
+    if (values.displayName && values.displayName !== user?.displayName) {
+      updates.displayName = values.displayName.toLowerCase().replace(/[^a-z0-9.]/g, '')
+    }
+    return updates
+  }
+
   async function handleSubmit(values: {
     firstName?: string
     lastName?: string
@@ -228,34 +268,18 @@ export default function ProfileSettings() {
     setMessage(null)
 
     try {
-      let emailChanged = false
-
-      // Validate and sanitize displayName if changed
+      // Validate username if changed
       if (values.displayName && values.displayName !== user?.displayName) {
-        const cleanedUsername = values.displayName.toLowerCase().replace(/[^a-z0-9.]/g, '')
-        if (cleanedUsername !== values.displayName) {
-          setMessage({
-            type: 'error',
-            text: 'Username can only contain lowercase letters, numbers, and periods',
-          })
-          setLoading(false)
-          return
-        }
-        if (cleanedUsername.length < 3) {
-          setMessage({ type: 'error', text: 'Username must be at least 3 characters' })
+        const validation = validateUsername(values.displayName)
+        if (!validation.valid) {
+          setMessage({ type: 'error', text: validation.error! })
           setLoading(false)
           return
         }
       }
 
-      // Update user fields if changed (excluding password)
-      const updates: Record<string, string | undefined> = {}
-      if (values.firstName !== user?.firstName) updates.firstName = values.firstName
-      if (values.lastName !== user?.lastName) updates.lastName = values.lastName
-      if (values.displayName && values.displayName !== user?.displayName) {
-        updates.displayName = values.displayName.toLowerCase().replace(/[^a-z0-9.]/g, '')
-      }
-
+      // Update user fields if changed
+      const updates = collectUserUpdates(values, user)
       if (Object.keys(updates).length > 0 && user?.id) {
         await updateUser({
           variables: {
@@ -266,7 +290,8 @@ export default function ProfileSettings() {
       }
 
       // Handle email change with verification
-      if (values.email !== primaryEmail?.email) {
+      const emailChanged = values.email !== primaryEmail?.email
+      if (emailChanged) {
         await changeEmail({
           variables: {
             input: {
@@ -274,43 +299,19 @@ export default function ProfileSettings() {
             },
           },
         })
-        emailChanged = true
       }
 
       await client.refetchQueries({ include: [Me] })
 
-      if (emailChanged) {
-        setMessage({
-          type: 'success',
-          text: 'Profile updated! A verification email has been sent to your new address. Please verify to complete the email change.',
-        })
-      } else {
-        setMessage({ type: 'success', text: 'Profile updated successfully!' })
-      }
+      setMessage({
+        type: 'success',
+        text: emailChanged
+          ? 'Profile updated! A verification email has been sent to your new address. Please verify to complete the email change.'
+          : 'Profile updated successfully!',
+      })
     } catch (error) {
       console.error('Profile update error:', error)
-      const err = error as Error
-      if (err.message?.includes('Template email send failed')) {
-        setMessage({
-          type: 'error',
-          text: 'Email service is not configured. Profile updates saved but verification email could not be sent.',
-        })
-      } else if (err.message?.includes('Template') && err.message?.includes('not found')) {
-        setMessage({
-          type: 'error',
-          text: 'Email templates are not properly configured. Please contact support.',
-        })
-      } else if (
-        err.message?.includes('Unique constraint') ||
-        err.message?.includes('displayName')
-      ) {
-        setMessage({
-          type: 'error',
-          text: 'This username is already taken. Please choose another.',
-        })
-      } else {
-        setMessage({ type: 'error', text: err.message || 'Failed to update profile' })
-      }
+      setMessage({ type: 'error', text: getErrorMessage(error as Error) })
     } finally {
       setLoading(false)
     }
