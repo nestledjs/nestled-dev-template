@@ -4,7 +4,6 @@ import { createTestRouter } from "../../helpers/createTestRouter"
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import SettingsLayout from '../../../app/routes/settings/_layout'
 
-import { MyOrganizationsWithMembers, type MyOrganizationsWithMembersQuery } from '@nestled-template/shared/sdk'
 import { useQuery } from '@apollo/client/react'
 import { useGlobalCtx } from '@nestled-template/web'
 

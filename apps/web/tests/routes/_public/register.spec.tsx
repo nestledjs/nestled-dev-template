@@ -5,8 +5,6 @@ import { createTestRouter } from "../../helpers/createTestRouter"
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import Register from '../../../app/routes/_public/register'
 import { useMutation } from '@apollo/client/react'
-import { Register, type RegisterMutation } from '@nestled-template/shared/sdk'
-import { useMutation } from '@apollo/client/react'
 
 vi.mock('@apollo/client/react', () => ({
   useMutation: vi.fn(),

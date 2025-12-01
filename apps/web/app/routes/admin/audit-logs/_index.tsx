@@ -10,7 +10,39 @@ import {
   TrashIcon,
   XCircleIcon,
 } from '@heroicons/react/24/outline'
-import { cn } from '@nestled-template/shared/utils' // Action type configurations for badge styling
+import { cn } from '@nestled-template/shared/utils'
+
+// Color class mappings to reduce cognitive complexity
+const getColorClasses = (color: string) => {
+  const colorMap = {
+    emerald: {
+      iconBg: 'bg-emerald-100 dark:bg-emerald-500/20',
+      iconText: 'text-emerald-600 dark:text-emerald-400',
+      badgeBg: 'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300',
+    },
+    blue: {
+      iconBg: 'bg-blue-100 dark:bg-blue-500/20',
+      iconText: 'text-blue-600 dark:text-blue-400',
+      badgeBg: 'bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-300',
+    },
+    red: {
+      iconBg: 'bg-red-100 dark:bg-red-500/20',
+      iconText: 'text-red-600 dark:text-red-400',
+      badgeBg: 'bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-300',
+    },
+    purple: {
+      iconBg: 'bg-purple-100 dark:bg-purple-500/20',
+      iconText: 'text-purple-600 dark:text-purple-400',
+      badgeBg: 'bg-purple-100 dark:bg-purple-500/20 text-purple-700 dark:text-purple-300',
+    },
+    zinc: {
+      iconBg: 'bg-zinc-200 dark:bg-zinc-700',
+      iconText: 'text-zinc-600 dark:text-zinc-400',
+      badgeBg: 'bg-zinc-200 dark:bg-zinc-700 text-zinc-700 dark:text-zinc-300',
+    },
+  }
+  return colorMap[color as keyof typeof colorMap] || colorMap.zinc
+}
 
 // Action type configurations for badge styling
 const getActionConfig = (action: string) => {
@@ -321,6 +353,7 @@ export default function AdminAuditLogsPage() {
           <div className="p-6 space-y-4">
             {logs.map((log) => {
               const config = getActionConfig(log.action)
+              const colorClasses = getColorClasses(config.color)
               const Icon = config.icon
               const userEmail = log.user?.emails?.[0]?.email || 'System'
               const userName = log.user ? `${log.user.firstName} ${log.user.lastName}` : 'System'
@@ -331,26 +364,8 @@ export default function AdminAuditLogsPage() {
                   className="flex gap-4 p-4 rounded-lg border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-white/5 hover:bg-zinc-100 dark:hover:bg-white/10 transition"
                 >
                   {/* Icon */}
-                  <div
-                    className={cn(
-                      'flex-shrink-0 h-10 w-10 rounded-lg flex items-center justify-center',
-                      config.color === 'emerald' && 'bg-emerald-100 dark:bg-emerald-500/20',
-                      config.color === 'blue' && 'bg-blue-100 dark:bg-blue-500/20',
-                      config.color === 'red' && 'bg-red-100 dark:bg-red-500/20',
-                      config.color === 'purple' && 'bg-purple-100 dark:bg-purple-500/20',
-                      config.color === 'zinc' && 'bg-zinc-200 dark:bg-zinc-700',
-                    )}
-                  >
-                    <Icon
-                      className={cn(
-                        'h-5 w-5',
-                        config.color === 'emerald' && 'text-emerald-600 dark:text-emerald-400',
-                        config.color === 'blue' && 'text-blue-600 dark:text-blue-400',
-                        config.color === 'red' && 'text-red-600 dark:text-red-400',
-                        config.color === 'purple' && 'text-purple-600 dark:text-purple-400',
-                        config.color === 'zinc' && 'text-zinc-600 dark:text-zinc-400',
-                      )}
-                    />
+                  <div className={cn('flex-shrink-0 h-10 w-10 rounded-lg flex items-center justify-center', colorClasses.iconBg)}>
+                    <Icon className={cn('h-5 w-5', colorClasses.iconText)} />
                   </div>
 
                   {/* Content */}
@@ -358,21 +373,7 @@ export default function AdminAuditLogsPage() {
                     <div className="flex items-start justify-between gap-4">
                       <div>
                         <div className="flex items-center gap-2 mb-1">
-                          <span
-                            className={cn(
-                              'inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium',
-                              config.color === 'emerald' &&
-                                'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300',
-                              config.color === 'blue' &&
-                                'bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-300',
-                              config.color === 'red' &&
-                                'bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-300',
-                              config.color === 'purple' &&
-                                'bg-purple-100 dark:bg-purple-500/20 text-purple-700 dark:text-purple-300',
-                              config.color === 'zinc' &&
-                                'bg-zinc-200 dark:bg-zinc-700 text-zinc-700 dark:text-zinc-300',
-                            )}
-                          >
+                          <span className={cn('inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium', colorClasses.badgeBg)}>
                             {config.label}
                           </span>
                           <span className="text-xs text-zinc-500 dark:text-zinc-400">
