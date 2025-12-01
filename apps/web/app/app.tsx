@@ -1,20 +1,19 @@
 import { Outlet, useLoaderData } from 'react-router'
 import { GlobalContextProvider } from '@nestled-template/web'
-import type { QueryRef } from '@apollo/client'
-import { useReadQuery } from '@apollo/client/react'
-import { MeQuery } from '@nestled-template/shared/sdk'
+import { useReadQuery, type QueryRef } from '@apollo/client/react'
+import type { MeQuery } from '@nestled-template/shared/sdk'
 import { useEffect, useState } from 'react'
 import { isViteCacheError, isNetworkError } from '@nestled-template/shared/utils'
 import { WebUiServiceUnavailable, WebUiViteCacheError } from '@nestled-template/web-ui'
 
-export function loader({ context }: { context: { meQueryRef?: QueryRef<MeQuery, unknown> } }) {
+export function loader({ context }: { context: { meQueryRef?: QueryRef<MeQuery> } }) {
   const { meQueryRef } = context
   return { meQueryRef }
 }
 
 export function App() {
   const data = useLoaderData() as {
-    meQueryRef?: QueryRef<MeQuery, unknown>
+    meQueryRef?: QueryRef<MeQuery>
     serviceUnavailable?: boolean
   }
   const { meQueryRef, serviceUnavailable: loaderServiceUnavailable } = data
@@ -109,9 +108,9 @@ export function App() {
   return <AppWithUser meQueryRef={meQueryRef} />
 }
 
-function AppWithUser({ meQueryRef }: { meQueryRef: QueryRef<MeQuery, unknown> }) {
-  const { data } = useReadQuery<MeQuery>(meQueryRef)
-  const user = data?.me
+function AppWithUser({ meQueryRef }: { meQueryRef: QueryRef<MeQuery> }) {
+  const { data } = useReadQuery(meQueryRef)
+  const user = data?.me as any
   return (
     <GlobalContextProvider key={user?.id ?? 'nouser'} user={user}>
       <Outlet />

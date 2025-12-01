@@ -7,4 +7,3 @@ export default function DataListRoute() {
 export function ErrorBoundary({ error }: Readonly<{ error: Error }>) {
   return <AdminDataErrorBoundary error={error} />
 }
-

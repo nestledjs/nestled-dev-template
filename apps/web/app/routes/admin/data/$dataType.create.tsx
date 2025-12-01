@@ -7,4 +7,3 @@ export default function CreateDataRoute() {
 export function ErrorBoundary({ error }: Readonly<{ error: Error }>) {
   return <AdminDataCreateErrorBoundary error={error} />
 }
-

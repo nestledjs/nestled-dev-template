@@ -4,10 +4,13 @@ import { createTestRouter } from "../../helpers/createTestRouter"
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import SettingsLayout from '../../../app/routes/settings/_layout'
 
-// Mock SDK
-vi.mock('@nestled-template/shared/sdk', () => ({
-  useMyOrganizationsWithMembersQuery: vi.fn(),
+vi.mock('@apollo/client/react', () => ({
+  useMutation: vi.fn(),
+  useQuery: vi.fn(),
 }))
+
+// Mock SDK
+
 
 // Mock web components
 vi.mock('@nestled-template/web', () => ({
@@ -33,7 +36,8 @@ vi.mock('@nestled-template/web-ui', () => ({
   },
 }))
 
-import { useMyOrganizationsWithMembersQuery } from '@nestled-template/shared/sdk'
+import { MyOrganizationsWithMembers, type MyOrganizationsWithMembersQuery } from '@nestled-template/shared/sdk'
+import { useQuery } from '@apollo/client/react'
 import { useGlobalCtx } from '@nestled-template/web'
 
 describe('SettingsLayout Component', () => {
@@ -76,7 +80,7 @@ describe('SettingsLayout Component', () => {
       activeOrganizationMember: null,
     })
 
-    vi.mocked(useMyOrganizationsWithMembersQuery).mockReturnValue({
+    vi.mocked(MyOrganizationsWithMembers, type MyOrganizationsWithMembersQuery).mockReturnValue({
       data: {
         myOrganizations: [mockOrganization],
       },
@@ -134,7 +138,7 @@ describe('SettingsLayout Component', () => {
     })
 
     it('should handle missing organization name', () => {
-      vi.mocked(useMyOrganizationsWithMembersQuery).mockReturnValue({
+      vi.mocked(MyOrganizationsWithMembers, type MyOrganizationsWithMembersQuery).mockReturnValue({
         data: {
           myOrganizations: [],
         },
@@ -193,7 +197,7 @@ describe('SettingsLayout Component', () => {
     })
 
     it('should fallback to "Organization Settings" when no role', () => {
-      vi.mocked(useMyOrganizationsWithMembersQuery).mockReturnValue({
+      vi.mocked(MyOrganizationsWithMembers, type MyOrganizationsWithMembersQuery).mockReturnValue({
         data: {
           myOrganizations: [
             {
@@ -297,7 +301,7 @@ describe('SettingsLayout Component', () => {
     })
 
     it('should hide billing from members without permission', () => {
-      vi.mocked(useMyOrganizationsWithMembersQuery).mockReturnValue({
+      vi.mocked(MyOrganizationsWithMembers, type MyOrganizationsWithMembersQuery).mockReturnValue({
         data: {
           myOrganizations: [
             {
@@ -340,7 +344,7 @@ describe('SettingsLayout Component', () => {
     })
 
     it('should hide organization settings when no organization', () => {
-      vi.mocked(useMyOrganizationsWithMembersQuery).mockReturnValue({
+      vi.mocked(MyOrganizationsWithMembers, type MyOrganizationsWithMembersQuery).mockReturnValue({
         data: {
           myOrganizations: [],
         },
@@ -398,7 +402,7 @@ describe('SettingsLayout Component', () => {
         ],
       }
 
-      vi.mocked(useMyOrganizationsWithMembersQuery).mockReturnValue({
+      vi.mocked(MyOrganizationsWithMembers, type MyOrganizationsWithMembersQuery).mockReturnValue({
         data: {
           myOrganizations: [orgWithLogo],
         },

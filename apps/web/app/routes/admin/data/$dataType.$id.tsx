@@ -7,4 +7,3 @@ export default function EditDataRoute() {
 export function ErrorBoundary({ error }: Readonly<{ error: Error }>) {
   return <AdminDataEditErrorBoundary error={error} />
 }
-

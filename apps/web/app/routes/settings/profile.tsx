@@ -11,25 +11,31 @@ import {
 } from '@heroicons/react/24/outline'
 import { apolloLoader } from '@nestled-template/shared/apollo'
 import {
-  MeDocument,
-  MeQuery,
-  useChangeEmailMutation,
-  useDeleteFileMutation,
-  useDeleteUserAccountMutation,
-  useExportUserDataLazyQuery,
-  useResendVerificationEmailMutation,
-  useUpdateUserMutation,
-  useUploadUserAvatarMutation,
+  Me,
+  type MeQuery,
+  UpdateUser,
+  ChangeEmail,
+  ResendVerificationEmail,
+  DeleteUserAccount,
+  ExportUserData,
+  UploadUserAvatar,
+  DeleteFile,
+  type UpdateUserMutation,
+  type ChangeEmailMutation,
+  type ResendVerificationEmailMutation,
+  type DeleteUserAccountMutation,
+  type ExportUserDataQuery,
+  type UploadUserAvatarMutation,
+  type DeleteFileMutation,
 } from '@nestled-template/shared/sdk'
-import type { QueryRef } from '@apollo/client'
-import { useApolloClient, useReadQuery } from '@apollo/client/react'
+import { useApolloClient, useReadQuery, type QueryRef, useLazyQuery, useMutation } from '@apollo/client/react'
 import { Form, FormFieldClass } from '@nestledjs/forms'
 import { formTheme } from '@nestled-template/shared/styles'
 import { AvatarUpload } from '@nestled-template/web-ui'
 import TransferOwnershipModal from '../../../../../libs/web/src/lib/modals/transfer-ownership-modal'
 
 export const loader = apolloLoader()(({ preloadQuery }) => {
-  const meQueryRef = preloadQuery<MeQuery>(MeDocument)
+  const meQueryRef = preloadQuery<MeQuery>(Me)
   return { meQueryRef }
 })
 
@@ -39,13 +45,14 @@ export default function ProfileSettings() {
   const user = data?.me
   const client = useApolloClient()
 
-  const [updateUser] = useUpdateUserMutation()
-  const [changeEmail] = useChangeEmailMutation()
-  const [resendVerificationEmail] = useResendVerificationEmailMutation()
-  const [deleteAccountMutation] = useDeleteUserAccountMutation()
-  const [exportUserData] = useExportUserDataLazyQuery()
-  const [uploadUserAvatar] = useUploadUserAvatarMutation()
-  const [deleteFile] = useDeleteFileMutation()
+  const [updateUser] = useMutation<UpdateUserMutation>(UpdateUser)
+  const [changeEmail] = useMutation<ChangeEmailMutation>(ChangeEmail)
+  const [resendVerificationEmail] =
+    useMutation<ResendVerificationEmailMutation>(ResendVerificationEmail)
+  const [deleteAccountMutation] = useMutation<DeleteUserAccountMutation>(DeleteUserAccount)
+  const [exportUserData] = useLazyQuery<ExportUserDataQuery>(ExportUserData)
+  const [uploadUserAvatar] = useMutation<UploadUserAvatarMutation>(UploadUserAvatar)
+  const [deleteFile] = useMutation<DeleteFileMutation>(DeleteFile)
 
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const [deleteConfirmText, setDeleteConfirmText] = useState('')
@@ -78,7 +85,7 @@ export default function ProfileSettings() {
 
       if (result.data?.uploadUserAvatar) {
         // Refresh user data to show new avatar
-        await client.refetchQueries({ include: [MeDocument] })
+        await client.refetchQueries({ include: [Me] })
         setMessage({ type: 'success', text: 'Avatar uploaded successfully!' })
         setTimeout(() => setMessage(null), 3000)
       }
@@ -102,7 +109,7 @@ export default function ProfileSettings() {
       })
 
       // Refresh user data to remove avatar from UI
-      await client.refetchQueries({ include: [MeDocument] })
+      await client.refetchQueries({ include: [Me] })
       setMessage({ type: 'success', text: 'Avatar removed successfully!' })
       setTimeout(() => setMessage(null), 3000)
     } catch (error: any) {
@@ -261,7 +268,7 @@ export default function ProfileSettings() {
         emailChanged = true
       }
 
-      await client.refetchQueries({ include: [MeDocument] })
+      await client.refetchQueries({ include: [Me] })
 
       if (emailChanged) {
         setMessage({

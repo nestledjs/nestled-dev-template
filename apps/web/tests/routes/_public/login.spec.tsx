@@ -3,8 +3,10 @@ import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { createTestRouter } from "../../helpers/createTestRouter"
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import Login, { loader } from '../../../app/routes/_public/login'
+import LoginPage, { loader } from '../../../app/routes/_public/login'
+import { useMutation } from '@apollo/client/react'
 import { getCookie, getJsonCookie } from '@nestled-template/shared/utils'
+import { Login, Complete2FaLogin, type LoginMutation, type Complete2FaLoginMutation } from '@nestled-template/shared/sdk'
 
 // Mock only the essential external dependencies
 vi.mock('@nestled-template/shared/utils', () => ({
@@ -12,12 +14,9 @@ vi.mock('@nestled-template/shared/utils', () => ({
   getJsonCookie: vi.fn(),
 }))
 
-vi.mock('@nestled-template/shared/sdk', () => ({
-  useLoginMutation: vi.fn(),
-  useComplete2FaLoginMutation: vi.fn(),
+vi.mock('@apollo/client/react', () => ({
+  useMutation: vi.fn(),
 }))
-
-import { useLoginMutation, useComplete2FaLoginMutation } from '@nestled-template/shared/sdk'
 
 describe('Login Component', () => {
   let mockLoginMutation: ReturnType<typeof vi.fn>
@@ -27,8 +26,7 @@ describe('Login Component', () => {
     mockLoginMutation = vi.fn()
     mockComplete2FAMutation = vi.fn()
 
-    vi.mocked(useLoginMutation).mockReturnValue([mockLoginMutation] as any)
-    vi.mocked(useComplete2FaLoginMutation).mockReturnValue([mockComplete2FAMutation] as any)
+    vi.mocked(useMutation).mockReturnValue([mockLoginMutation, { loading: false }] as any)
     vi.mocked(getCookie).mockReturnValue(null)
     vi.mocked(getJsonCookie).mockReturnValue(null)
   })
@@ -37,7 +35,7 @@ describe('Login Component', () => {
     const ReactRouterStub = createTestRouter([
       {
         path: '/login',
-        Component: Login,
+        Component: LoginPage,
         loader: () => loaderData,
       },
     ])

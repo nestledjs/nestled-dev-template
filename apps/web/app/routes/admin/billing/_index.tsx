@@ -1,10 +1,63 @@
 import { Link } from 'react-router'
-import { gql } from '@apollo/client'
+import { gql, type TypedDocumentNode } from '@apollo/client'
 import { useQuery, useMutation } from '@apollo/client/react'
-import { ArrowPathIcon, CreditCardIcon, CurrencyDollarIcon, UserGroupIcon } from '@heroicons/react/24/outline'
+import {
+  ArrowPathIcon,
+  CreditCardIcon,
+  CurrencyDollarIcon,
+  UserGroupIcon,
+} from '@heroicons/react/24/outline'
 import { useState } from 'react'
 
-const ADMIN_PLANS_QUERY = gql`
+type Plan = {
+  id: string
+  name: string
+  description?: string
+  price: string
+  interval: string
+  active: boolean
+  stripeProductId?: string
+  stripePriceId?: string
+  trialPeriodDays?: number
+}
+
+type Subscription = {
+  id: string
+  status: string
+  organizationId: string
+  organization?: {
+    id: string
+    name: string
+  }
+  plan?: {
+    id: string
+    name: string
+    price: string
+  }
+  stripeCurrentPeriodEnd?: string
+}
+
+type AdminPlansQuery = {
+  plans: Plan[]
+}
+
+type AdminSubscriptionsQuery = {
+  subscriptions: Subscription[]
+  subscriptionsCount: {
+    total: number
+    count: number
+  }
+}
+
+type AdminSyncStripeProductsMutation = {
+  syncStripeProducts: boolean
+}
+
+type AdminSyncStripePricesMutation = {
+  syncStripePrices: boolean
+}
+
+const ADMIN_PLANS_QUERY: TypedDocumentNode<AdminPlansQuery> = gql`
   query AdminPlans {
     plans {
       id
@@ -20,7 +73,7 @@ const ADMIN_PLANS_QUERY = gql`
   }
 `
 
-const ADMIN_SUBSCRIPTIONS_QUERY = gql`
+const ADMIN_SUBSCRIPTIONS_QUERY: TypedDocumentNode<AdminSubscriptionsQuery> = gql`
   query AdminSubscriptions($input: ListSubscriptionInput) {
     subscriptions(input: $input) {
       id
@@ -44,13 +97,13 @@ const ADMIN_SUBSCRIPTIONS_QUERY = gql`
   }
 `
 
-const SYNC_PRODUCTS_MUTATION = gql`
+const SYNC_PRODUCTS_MUTATION: TypedDocumentNode<AdminSyncStripeProductsMutation> = gql`
   mutation AdminSyncStripeProducts {
     syncStripeProducts
   }
 `
 
-const SYNC_PRICES_MUTATION = gql`
+const SYNC_PRICES_MUTATION: TypedDocumentNode<AdminSyncStripePricesMutation> = gql`
   mutation AdminSyncStripePrices {
     syncStripePrices
   }
@@ -126,7 +179,9 @@ export default function AdminBillingOverview() {
               </div>
               <div className="ml-5 w-0 flex-1">
                 <dl>
-                  <dt className="text-sm font-medium text-gray-500 truncate">Active Subscriptions</dt>
+                  <dt className="text-sm font-medium text-gray-500 truncate">
+                    Active Subscriptions
+                  </dt>
                   <dd className="text-lg font-semibold text-gray-900">{activeSubscriptions}</dd>
                 </dl>
               </div>
@@ -160,7 +215,9 @@ export default function AdminBillingOverview() {
               </div>
               <div className="ml-5 w-0 flex-1">
                 <dl>
-                  <dt className="text-sm font-medium text-gray-500 truncate">Total Subscriptions</dt>
+                  <dt className="text-sm font-medium text-gray-500 truncate">
+                    Total Subscriptions
+                  </dt>
                   <dd className="text-lg font-semibold text-gray-900">{totalSubscriptions}</dd>
                 </dl>
               </div>
@@ -240,8 +297,8 @@ export default function AdminBillingOverview() {
                           sub.status === 'ACTIVE'
                             ? 'bg-green-100 text-green-800'
                             : sub.status === 'TRIALING'
-                            ? 'bg-blue-100 text-blue-800'
-                            : 'bg-red-100 text-red-800'
+                              ? 'bg-blue-100 text-blue-800'
+                              : 'bg-red-100 text-red-800'
                         }`}
                       >
                         {sub.status}

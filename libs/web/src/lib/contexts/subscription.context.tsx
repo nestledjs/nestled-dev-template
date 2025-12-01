@@ -1,5 +1,6 @@
 import React, { createContext, useContext, ReactNode } from 'react'
-import { useCurrentSubscriptionQuery, Subscription, Plan } from '@nestled-template/shared/sdk'
+import { useQuery } from '@apollo/client/react'
+import { CurrentSubscription, type CurrentSubscriptionQuery, Subscription, Plan } from '@nestled-template/shared/sdk'
 import { useGlobalCtx } from './global.context'
 
 export interface SubscriptionContextType {
@@ -35,7 +36,7 @@ export function SubscriptionProvider({ children }: SubscriptionProviderProps) {
   const { activeOrganization } = useGlobalCtx()
 
   // Fetch current subscription for active organization
-  const { data, loading, error } = useCurrentSubscriptionQuery({
+  const { data, loading, error } = useQuery<CurrentSubscriptionQuery>(CurrentSubscription, {
     skip: !activeOrganization?.id,
     fetchPolicy: 'cache-and-network',
   })
@@ -107,8 +108,8 @@ export function SubscriptionProvider({ children }: SubscriptionProviderProps) {
   }
 
   const value: SubscriptionContextType = {
-    subscription,
-    plan,
+    subscription: subscription as any,
+    plan: plan as any,
     isLoading: loading,
     error: error || null,
     hasActiveSubscription,

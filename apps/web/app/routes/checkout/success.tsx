@@ -12,7 +12,7 @@ export default function CheckoutSuccess() {
   useEffect(() => {
     // Track conversion event for analytics
     if (typeof window !== 'undefined' && (window as any).gtag) {
-      (window as any).gtag('event', 'purchase', {
+      ;(window as any).gtag('event', 'purchase', {
         transaction_id: sessionId,
         value: plan?.price || 0,
         currency: 'USD',
@@ -54,9 +54,7 @@ export default function CheckoutSuccess() {
               <div className="space-y-3 text-left">
                 <div className="flex justify-between">
                   <span className="text-gray-600 dark:text-gray-400">Plan:</span>
-                  <span className="font-semibold text-gray-900 dark:text-white">
-                    {plan.name}
-                  </span>
+                  <span className="font-semibold text-gray-900 dark:text-white">{plan.name}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600 dark:text-gray-400">Price:</span>
@@ -120,11 +118,7 @@ export default function CheckoutSuccess() {
           </div>
 
           {/* Session ID (for reference) */}
-          {sessionId && (
-            <p className="mt-8 text-xs text-gray-400">
-              Session ID: {sessionId}
-            </p>
-          )}
+          {sessionId && <p className="mt-8 text-xs text-gray-400">Session ID: {sessionId}</p>}
         </div>
       </div>
     </div>

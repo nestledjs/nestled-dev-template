@@ -9,9 +9,13 @@ import {
   UsersIcon,
 } from '@heroicons/react/24/outline'
 import { useGlobalCtx } from '@nestled-template/web'
-import { useMyOrganizationsWithMembersQuery } from '@nestled-template/shared/sdk'
+import {
+  MyOrganizationsWithMembers,
+  type MyOrganizationsWithMembersQuery,
+} from '@nestled-template/shared/sdk'
 import { Avatar } from '@nestled-template/web-ui'
 import { cn } from '@nestled-template/shared/utils'
+import { useQuery } from '@apollo/client/react'
 
 interface NavItem {
   name: string
@@ -27,10 +31,10 @@ export default function SettingsLayout() {
   const { user } = useGlobalCtx()
 
   // Fetch user's organizations with member data
-  const { data: orgsData } = useMyOrganizationsWithMembersQuery()
+  const { data: orgsData } = useQuery<MyOrganizationsWithMembersQuery>(MyOrganizationsWithMembers)
   const organizations = orgsData?.myOrganizations || []
   const activeOrganization =
-    organizations.find(org => org.id === user?.activeOrganizationId) || organizations[0] || null
+    organizations.find(org => org.id === (user as any)?.activeOrganizationId) || organizations[0] || null
   const activeOrganizationMember =
     activeOrganization?.members?.find((member: any) => member.userId === user?.id) || null
 

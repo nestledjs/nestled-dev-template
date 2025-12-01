@@ -11,25 +11,30 @@ import { Form, FormFieldClass } from '@nestledjs/forms'
 import { formTheme } from '@nestled-template/shared/styles'
 import { apolloLoader } from '@nestled-template/shared/apollo'
 import {
-  GetUserSessionsDocument,
-  GetUserSessionsQuery,
-  MeDocument,
-  MeQuery,
-  MySecurityEventsDocument,
-  MySecurityEventsQuery,
-  useChangePasswordMutation,
-  useDisable2FaMutation,
-  useEnable2FaMutation,
-  useInvalidateAllSessionsMutation,
-  useInvalidateSessionMutation,
-  useSetup2FaMutation,
+  GetUserSessions,
+  type GetUserSessionsQuery,
+  Me,
+  type MeQuery,
+  MySecurityEvents,
+  type MySecurityEventsQuery,
+  ChangePassword,
+  InvalidateSession,
+  InvalidateAllSessions,
+  Setup2Fa,
+  Enable2Fa,
+  Disable2Fa,
+  type ChangePasswordMutation,
+  type InvalidateSessionMutation,
+  type InvalidateAllSessionsMutation,
+  type Setup2FaMutation,
+  type Enable2FaMutation,
+  type Disable2FaMutation,
 } from '@nestled-template/shared/sdk'
-import type { QueryRef } from '@apollo/client'
-import { useReadQuery } from '@apollo/client/react'
+import { useReadQuery, type QueryRef, useMutation } from '@apollo/client/react'
 
 export const loader = apolloLoader()(({ preloadQuery }) => {
-  const meQueryRef = preloadQuery<MeQuery>(MeDocument)
-  const securityEventsQueryRef = preloadQuery<MySecurityEventsQuery>(MySecurityEventsDocument, {
+  const meQueryRef = preloadQuery<MeQuery>(Me)
+  const securityEventsQueryRef = preloadQuery<MySecurityEventsQuery>(MySecurityEvents, {
     variables: {
       input: {
         take: 3,
@@ -38,7 +43,7 @@ export const loader = apolloLoader()(({ preloadQuery }) => {
       },
     },
   })
-  const userSessionsQueryRef = preloadQuery<GetUserSessionsQuery>(GetUserSessionsDocument)
+  const userSessionsQueryRef = preloadQuery<GetUserSessionsQuery>(GetUserSessions)
   return { meQueryRef, securityEventsQueryRef, userSessionsQueryRef }
 })
 
@@ -48,9 +53,10 @@ export default function SecuritySettings() {
     securityEventsQueryRef: QueryRef<MySecurityEventsQuery>
     userSessionsQueryRef: QueryRef<GetUserSessionsQuery>
   }
-  const { data, refetch: refetchMe } = useReadQuery(loaderData.meQueryRef)
+  const { data } = useReadQuery(loaderData.meQueryRef)
   const { data: securityEventsData } = useReadQuery(loaderData.securityEventsQueryRef)
   const { data: userSessionsData } = useReadQuery(loaderData.userSessionsQueryRef)
+
   const user = data?.me
   const securityEvents = securityEventsData?.mySecurityEvents || []
   const userSessions = userSessionsData?.getUserSessions || []
@@ -68,12 +74,12 @@ export default function SecuritySettings() {
   const [disablePassword, setDisablePassword] = useState('')
   const [backupCodes, setBackupCodes] = useState<string[]>([])
 
-  const [changePassword] = useChangePasswordMutation()
-  const [invalidateSession] = useInvalidateSessionMutation()
-  const [invalidateAllSessions] = useInvalidateAllSessionsMutation()
-  const [setup2FA] = useSetup2FaMutation()
-  const [enable2FA] = useEnable2FaMutation()
-  const [disable2FA] = useDisable2FaMutation()
+  const [changePassword] = useMutation<ChangePasswordMutation>(ChangePassword)
+  const [invalidateSession] = useMutation<InvalidateSessionMutation>(InvalidateSession)
+  const [invalidateAllSessions] = useMutation<InvalidateAllSessionsMutation>(InvalidateAllSessions)
+  const [setup2FA] = useMutation<Setup2FaMutation>(Setup2Fa)
+  const [enable2FA] = useMutation<Enable2FaMutation>(Enable2Fa)
+  const [disable2FA] = useMutation<Disable2FaMutation>(Disable2Fa)
 
   const showSuccess = (message: string) => {
     setFormSuccess(message)
@@ -132,7 +138,7 @@ export default function SecuritySettings() {
     try {
       await invalidateSession({
         variables: { sessionId },
-        refetchQueries: [{ query: GetUserSessionsDocument }],
+        refetchQueries: [{ query: GetUserSessions }],
       })
     } catch (error) {
       alert((error as Error)?.message ?? 'Failed to invalidate session')
@@ -150,7 +156,7 @@ export default function SecuritySettings() {
 
     try {
       const { data } = await invalidateAllSessions({
-        refetchQueries: [{ query: GetUserSessionsDocument }],
+        refetchQueries: [{ query: GetUserSessions }],
       })
       const count = data?.invalidateAllSessions ?? 0
       alert(`Successfully logged out of ${count} session${count === 1 ? '' : 's'}`)
@@ -184,7 +190,7 @@ export default function SecuritySettings() {
         variables: {
           input: { code: verificationCode },
         },
-        refetchQueries: [{ query: MeDocument }],
+        refetchQueries: [{ query: Me }],
       })
 
       if (data?.enable2FA?.success) {
@@ -193,11 +199,6 @@ export default function SecuritySettings() {
         setShowBackupCodes(true)
         setVerificationCode('')
         showSuccess('2FA enabled successfully!')
-
-        // Force refetch with a small delay to ensure the mutation has completed
-        setTimeout(async () => {
-          await refetchMe()
-        }, 500)
       }
     } catch (error) {
       showError((error as Error)?.message ?? 'Failed to enable 2FA. Please check your code.')
@@ -215,17 +216,12 @@ export default function SecuritySettings() {
         variables: {
           input: { password: disablePassword },
         },
-        refetchQueries: [{ query: MeDocument }],
+        refetchQueries: [{ query: Me }],
       })
 
       setShow2FADisable(false)
       setDisablePassword('')
       showSuccess('2FA disabled successfully')
-
-      // Force refetch with a small delay to ensure the mutation has completed
-      setTimeout(async () => {
-        await refetchMe()
-      }, 500)
     } catch (error) {
       showError((error as Error)?.message ?? 'Failed to disable 2FA. Please check your password.')
     }
@@ -256,13 +252,11 @@ export default function SecuritySettings() {
     FormFieldClass.password('newPassword', {
       label: 'New Password',
       required: true,
-      minLength: 8,
-      helperText: 'Must be at least 8 characters',
+      helpText: 'Must be at least 8 characters',
     }),
     FormFieldClass.password('confirmPassword', {
       label: 'Confirm New Password',
       required: true,
-      minLength: 8,
     }),
     FormFieldClass.button('submit', {
       text: 'Change Password',

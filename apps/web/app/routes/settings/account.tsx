@@ -11,18 +11,20 @@ import {
 } from '@heroicons/react/24/outline'
 import { apolloLoader } from '@nestled-template/shared/apollo'
 import {
-  MeDocument,
-  MeQuery,
-  useDeleteUserAccountMutation,
-  useExportUserDataLazyQuery,
-  useResendVerificationEmailMutation,
+  Me,
+  type MeQuery,
+  DeleteUserAccount,
+  ExportUserData,
+  ResendVerificationEmail,
+  type DeleteUserAccountMutation,
+  type ExportUserDataQuery,
+  type ResendVerificationEmailMutation,
 } from '@nestled-template/shared/sdk'
-import type { QueryRef } from '@apollo/client'
-import { useReadQuery } from '@apollo/client/react'
-import TransferOwnershipModal from '../../../../../libs/web/src/lib/modals/transfer-ownership-modal'
+import { useReadQuery, QueryRef, useMutation, useLazyQuery } from '@apollo/client/react'
+import { TransferOwnershipModal } from '@nestled-template/web'
 
 export const loader = apolloLoader()(({ preloadQuery }) => {
-  const meQueryRef = preloadQuery<MeQuery>(MeDocument)
+  const meQueryRef = preloadQuery<MeQuery>(Me)
   return { meQueryRef }
 })
 
@@ -40,9 +42,10 @@ export default function AccountSettings() {
   const [isResendingEmail, setIsResendingEmail] = useState(false)
   const [emailResendSuccess, setEmailResendSuccess] = useState(false)
 
-  const [deleteAccountMutation] = useDeleteUserAccountMutation()
-  const [exportUserData] = useExportUserDataLazyQuery()
-  const [resendVerificationEmail] = useResendVerificationEmailMutation()
+  const [deleteAccountMutation] = useMutation<DeleteUserAccountMutation>(DeleteUserAccount)
+  const [exportUserData] = useLazyQuery<ExportUserDataQuery>(ExportUserData)
+  const [resendVerificationEmail] =
+    useMutation<ResendVerificationEmailMutation>(ResendVerificationEmail)
 
   const handleExportData = async () => {
     if (isExporting) return
@@ -115,7 +118,7 @@ export default function AccountSettings() {
   }
 
   const handleResendVerificationEmail = async () => {
-    const primaryEmail = user.emails?.find(e => e.primary)?.email
+    const primaryEmail = user?.emails?.find(e => e.primary)?.email
     if (!primaryEmail) {
       alert('No primary email found')
       return

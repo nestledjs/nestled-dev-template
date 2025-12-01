@@ -5,8 +5,13 @@ import { formTheme } from '@nestled-template/shared/styles'
 
 export default function DataLayoutRoute() {
   return (
-    <AdminDataProvider sdk={Sdk} databaseModels={DATABASE_MODELS} basePath="/admin/data" formTheme={formTheme}>
-        <AdminDataLayout />
+    <AdminDataProvider
+      sdk={Sdk}
+      databaseModels={DATABASE_MODELS}
+      basePath="/admin/data"
+      formTheme={formTheme}
+    >
+      <AdminDataLayout />
     </AdminDataProvider>
   )
 }

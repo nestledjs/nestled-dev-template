@@ -11,43 +11,43 @@ const cacheOptions = {
       fields: {
         userTransactions: {
           keyArgs: false,
-          merge(existing = [], incoming, { args }) {
+          merge(existing = [], incoming: any, { args }: any) {
             return args?.input?.skip ? [...existing, ...incoming] : [...incoming]
           },
         },
         userMyReferrals: {
           keyArgs: false,
-          merge(existing = [], incoming, { args }) {
+          merge(existing = [], incoming: any, { args }: any) {
             return args?.input?.skip ? [...existing, ...incoming] : [...incoming]
           },
         },
         userReferralsTo: {
           keyArgs: false,
-          merge(existing = [], incoming, { args }) {
+          merge(existing = [], incoming: any, { args }: any) {
             return args?.input?.skip ? [...existing, ...incoming] : [...incoming]
           },
         },
         userUsers: {
           keyArgs: ['input', ['search']],
-          merge(existing = [], incoming, { args }) {
+          merge(existing = [], incoming: any, { args }: any) {
             return args?.input?.skip ? [...existing, ...incoming] : [...incoming]
           },
         },
         userNotifications: {
           keyArgs: ['input', ['search', 'read']],
-          merge(existing = [], incoming, { args }) {
+          merge(existing = [], incoming: any, { args }: any) {
             return args?.input?.skip ? [...existing, ...incoming] : [...incoming]
           },
         },
         userChapterMembers: {
           keyArgs: ['input', ['chapterId']],
-          merge(existing = [], incoming, { args }) {
+          merge(existing = [], incoming: any, { args }: any) {
             return args?.input?.skip ? [...existing, ...incoming] : [...incoming]
           },
         },
         activeUsers: {
           keyArgs: ['input', ['search', 'filters', 'orderBy', 'orderDirection']],
-          merge(existing = [], incoming, { args }) {
+          merge(existing = [], incoming: any, { args }: any) {
             const merged = args?.input?.skip ? [...existing, ...incoming] : [...incoming]
             const seen = new Set<string>()
             return merged.filter((item: any) => {
@@ -61,13 +61,13 @@ const cacheOptions = {
         },
         chapters: {
           keyArgs: ['input', ['search', 'filters']],
-          merge(existing = [], incoming, { args }) {
+          merge(existing = [], incoming: any, { args }: any) {
             return args?.input?.skip ? [...existing, ...incoming] : [...incoming]
           },
         },
         activeChapters: {
           keyArgs: ['input', ['search', 'filters']],
-          merge(existing = [], incoming, { args }) {
+          merge(existing = [], incoming: any, { args }: any) {
             const merged = args?.input?.skip ? [...existing, ...incoming] : [...incoming]
             const seen = new Set<string>()
             return merged.filter((item: any) => {
@@ -81,13 +81,13 @@ const cacheOptions = {
         },
         userMeetingPresences: {
           // keyArgs: ['input', ['chapterId']],
-          merge(existing = [], incoming, { args }) {
+          merge(existing = [], incoming: any, { args }: any) {
             return args?.input?.skip ? [...existing, ...incoming] : [...incoming]
           },
         },
         leaderMeetings: {
           // keyArgs: ['input', ['chapterId']],
-          merge(existing = [], incoming, { args }) {
+          merge(existing = [], incoming: any, { args }: any) {
             return args?.input?.skip ? [...existing, ...incoming] : [...incoming]
           },
         },
@@ -104,11 +104,11 @@ const cacheOptions = {
  * Use this function instead of the singleton to ensure fresh cache for each client
  */
 export function createCache() {
-  return new InMemoryCache(cacheOptions)
+  return new InMemoryCache(cacheOptions as any)
 }
 
 /**
  * @deprecated Use createCache() instead to avoid cache sharing across SSR requests
  * This is kept for backwards compatibility but should not be used on the server
  */
-export const cache = new InMemoryCache(cacheOptions)
+export const cache = new InMemoryCache(cacheOptions as any)
