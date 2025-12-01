@@ -1,9 +1,12 @@
 import { useState } from 'react'
 import { useMutation, useQuery } from '@apollo/client/react'
 import {
-  AdminUserManagementDetailsDocument,
-  AdminUserManagementDocument,
-  EmulateUserDocument,
+  AdminUserManagementDetails,
+  AdminUserManagement,
+  EmulateUser,
+  type AdminUserManagementQuery,
+  type AdminUserManagementDetailsQuery,
+  type EmulateUserMutation,
 } from '@nestled-template/shared/sdk'
 import {
   CheckCircleIcon,
@@ -38,7 +41,7 @@ export default function AdminUsersPage() {
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null)
 
   // Query users
-  const { data, loading, error, refetch } = useQuery(AdminUserManagementDocument, {
+  const { data, loading, error, refetch } = useQuery<AdminUserManagementQuery>(AdminUserManagement, {
     variables: {
       filters: {
         search: search || undefined,
@@ -51,19 +54,16 @@ export default function AdminUsersPage() {
   })
 
   // Query user details
-  const { data: detailsData, loading: loadingDetails } = useQuery(
-    AdminUserManagementDetailsDocument,
-    {
-      variables: { userId: selectedUserId! },
-      skip: !selectedUserId,
-      fetchPolicy: 'network-only',
-    },
-  )
+  const { data: detailsData, loading: loadingDetails } = useQuery<AdminUserManagementDetailsQuery>(AdminUserManagementDetails, {
+    variables: { userId: selectedUserId! },
+    skip: !selectedUserId,
+    fetchPolicy: 'network-only',
+  })
 
   const userDetails = detailsData?.adminUserDetails
 
   // Emulate user mutation
-  const [emulateUser, { loading: emulating }] = useMutation(EmulateUserDocument, {
+  const [emulateUser, { loading: emulating }] = useMutation<EmulateUserMutation>(EmulateUser, {
     onCompleted: () => {
       // Reload the page to switch to the emulated user's session
       window.location.href = '/members/dashboard'
@@ -330,10 +330,10 @@ export default function AdminUsersPage() {
                         <div className="flex flex-wrap gap-1">
                           {user.organizations?.slice(0, 2).map(org => (
                             <span
-                              key={org.id}
+                              key={org.organization?.id}
                               className="inline-flex items-center rounded-full bg-zinc-100 dark:bg-white/10 px-2 py-0.5 text-xs text-zinc-700 dark:text-zinc-300"
                             >
-                              {org.organization.name}
+                              {org.organization?.name}
                             </span>
                           ))}
                           {(user.organizations?.length || 0) > 2 && (
@@ -619,19 +619,19 @@ export default function AdminUsersPage() {
                       <div className="mt-2 space-y-2">
                         {userDetails.organizations.map(org => (
                           <div
-                            key={org.id}
+                            key={org.organization?.id}
                             className="flex items-center justify-between rounded-lg border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-white/5 px-4 py-3"
                           >
                             <div>
                               <p className="text-sm font-medium text-zinc-900 dark:text-white">
-                                {org.organization.name}
+                                {org.organization?.name}
                               </p>
                               <p className="text-xs text-zinc-500 dark:text-zinc-400">
-                                Joined {formatDate(org.organization.createdAt)}
+                                Joined {formatDate(org.organization?.createdAt)}
                               </p>
                             </div>
                             <span className="inline-flex items-center rounded-full bg-zinc-100 dark:bg-white/10 px-2 py-0.5 text-xs font-medium text-zinc-700 dark:text-zinc-300">
-                              {org.role.name}
+                              {org.role?.name}
                             </span>
                           </div>
                         ))}

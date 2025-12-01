@@ -1,15 +1,27 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router'
-import { CheckCircleIcon, XCircleIcon, ArrowPathIcon, EnvelopeIcon, BuildingOfficeIcon, UserIcon } from '@heroicons/react/24/outline'
 import {
-  useGetInvitationDetailsQuery,
-  useAcceptOrganizationInvitationMutation,
-  useLoginMutation,
-  useRegisterWithInvitationMutation,
+  CheckCircleIcon,
+  XCircleIcon,
+  ArrowPathIcon,
+  EnvelopeIcon,
+  BuildingOfficeIcon,
+  UserIcon,
+} from '@heroicons/react/24/outline'
+import {
+  GetInvitationDetails,
+  AcceptOrganizationInvitation,
+  Login,
+  RegisterWithInvitation,
+  type GetInvitationDetailsQuery,
+  type AcceptOrganizationInvitationMutation,
+  type LoginMutation,
+  type RegisterWithInvitationMutation,
 } from '@nestled-template/shared/sdk'
 import { useGlobalCtx } from '@nestled-template/web'
 import { Form, FormFieldClass } from '@nestledjs/forms'
 import { formTheme } from '@nestled-template/shared/styles'
+import { useQuery, useMutation } from '@apollo/client/react'
 
 type Tab = 'login' | 'signup'
 
@@ -24,14 +36,21 @@ export default function AcceptInvitation() {
   const token = searchParams.get('token')
 
   // Fetch invitation details
-  const { data: inviteData, loading: inviteLoading, error: inviteError } = useGetInvitationDetailsQuery({
+  const {
+    data: inviteData,
+    loading: inviteLoading,
+    error: inviteError,
+  } = useQuery<GetInvitationDetailsQuery>(GetInvitationDetails, {
     variables: { token: token || '' },
     skip: !token,
   })
 
-  const [acceptInvitation] = useAcceptOrganizationInvitationMutation()
-  const [login] = useLoginMutation()
-  const [registerWithInvitation] = useRegisterWithInvitationMutation()
+  const [acceptInvitation] = useMutation<AcceptOrganizationInvitationMutation>(
+    AcceptOrganizationInvitation,
+  )
+  const [login] = useMutation<LoginMutation>(Login)
+  const [registerWithInvitation] =
+    useMutation<RegisterWithInvitationMutation>(RegisterWithInvitation)
 
   const invitationDetails = inviteData?.getInvitationDetails
 
@@ -96,7 +115,12 @@ export default function AcceptInvitation() {
     }
   }
 
-  async function handleSignup(input: { firstName: string; lastName: string; email: string; password: string }) {
+  async function handleSignup(input: {
+    firstName: string
+    lastName: string
+    email: string
+    password: string
+  }) {
     if (!token) return
 
     setFormError(null)
@@ -194,7 +218,6 @@ export default function AcceptInvitation() {
     FormFieldClass.password('password', {
       label: 'Password',
       required: true,
-      minLength: 8,
     }),
     FormFieldClass.button('submit', {
       text: isProcessing ? 'Creating Account...' : 'Sign Up & Accept Invitation',
@@ -297,12 +320,7 @@ export default function AcceptInvitation() {
               <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-4">
                 Sign in with your existing account to accept this invitation
               </p>
-              <Form
-                id="login-form"
-                theme={formTheme}
-                fields={loginFields}
-                submit={handleLogin}
-              />
+              <Form id="login-form" theme={formTheme} fields={loginFields} submit={handleLogin} />
             </div>
           )}
         </div>
@@ -344,9 +362,7 @@ function InvitationAcceptingState({ organizationName }: { organizationName: stri
             <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-emerald-100 dark:bg-emerald-500/10 mb-4">
               <CheckCircleIcon className="h-8 w-8 text-emerald-600 dark:text-emerald-400" />
             </div>
-            <h1 className="text-2xl font-bold text-zinc-900 dark:text-white mb-2">
-              Welcome!
-            </h1>
+            <h1 className="text-2xl font-bold text-zinc-900 dark:text-white mb-2">Welcome!</h1>
             <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-2">
               You've successfully joined <strong>{organizationName}</strong>
             </p>

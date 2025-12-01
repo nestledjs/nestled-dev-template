@@ -1,15 +1,17 @@
 import React, { useState } from 'react'
 import { BellAlertIcon, BellIcon, EnvelopeIcon } from '@heroicons/react/24/outline'
 import {
-  MeDocument,
+  Me,
   MeQuery,
-  useCreateUserPreferenceMutation,
-  UserPreferencesDocument,
+  UserPreferences,
   UserPreferencesQuery,
-  useUpdateUserPreferenceMutation,
+  CreateUserPreference,
+  UpdateUserPreference,
+  type CreateUserPreferenceMutation,
+  type UpdateUserPreferenceMutation,
 } from '@nestled-template/shared/sdk'
 import { gql } from '@apollo/client'
-import { useQuery } from '@apollo/client/react'
+import { useQuery, useMutation } from '@apollo/client/react'
 
 interface NotificationSetting {
   key: string
@@ -89,15 +91,15 @@ const DEFAULT_NOTIFICATIONS: NotificationSetting[] = [
 export const loader = () => ({})
 
 export default function NotificationsSettings() {
-  const { data } = useQuery<MeQuery>(MeDocument)
-  const { data: preferencesData } = useQuery<UserPreferencesQuery>(UserPreferencesDocument)
+  const { data } = useQuery<MeQuery>(Me)
+  const { data: preferencesData } = useQuery<UserPreferencesQuery>(UserPreferences)
   const preferences = preferencesData?.userPreferences || []
 
   const [formSuccess, setFormSuccess] = useState<string | null>(null)
   const [formError, setFormError] = useState<string | null>(null)
 
-  const [createPreference] = useCreateUserPreferenceMutation()
-  const [updatePreference] = useUpdateUserPreferenceMutation()
+  const [createPreference] = useMutation<CreateUserPreferenceMutation>(CreateUserPreference)
+  const [updatePreference] = useMutation<UpdateUserPreferenceMutation>(UpdateUserPreference)
 
   const showSuccess = (message: string) => {
     setFormSuccess(message)

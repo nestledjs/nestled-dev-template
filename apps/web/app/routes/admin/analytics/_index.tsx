@@ -1,5 +1,5 @@
 import { useQuery } from '@apollo/client/react'
-import { AdminAnalyticsDocument } from '@nestled-template/shared/sdk'
+import { AdminAnalytics, type AdminAnalyticsQuery } from '@nestled-template/shared/sdk'
 import {
   ChartBarIcon,
   ClockIcon,
@@ -12,7 +12,7 @@ import {
 import { cn } from '@nestled-template/shared/utils'
 
 export default function AdminAnalyticsPage() {
-  const { data, loading, error, refetch } = useQuery(AdminAnalyticsDocument, {
+  const { data, loading, error, refetch } = useQuery<AdminAnalyticsQuery>(AdminAnalytics, {
     fetchPolicy: 'cache-and-network',
   })
 
@@ -90,9 +90,7 @@ export default function AdminAnalyticsPage() {
 
       {/* User Activity Section */}
       <div>
-        <h3 className="text-lg font-semibold text-zinc-900 dark:text-white mb-4">
-          User Activity
-        </h3>
+        <h3 className="text-lg font-semibold text-zinc-900 dark:text-white mb-4">User Activity</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {/* DAU */}
           <div className="rounded-xl border border-zinc-200 dark:border-white/10 bg-white dark:bg-white/5 p-6 backdrop-blur">
@@ -247,9 +245,7 @@ export default function AdminAnalyticsPage() {
           {/* Error Rate */}
           <div className="rounded-xl border border-zinc-200 dark:border-white/10 bg-white dark:bg-white/5 p-6 backdrop-blur">
             <div className="flex items-center justify-between mb-2">
-              <div className="text-sm font-medium text-zinc-600 dark:text-zinc-400">
-                Error Rate
-              </div>
+              <div className="text-sm font-medium text-zinc-600 dark:text-zinc-400">Error Rate</div>
               <ExclamationTriangleIcon className="h-5 w-5 text-red-600 dark:text-red-400" />
             </div>
             <div className="text-3xl font-bold text-zinc-900 dark:text-white">
@@ -317,7 +313,7 @@ export default function AdminAnalyticsPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-zinc-200 dark:divide-white/10 bg-white dark:bg-white/5">
-                  {analytics.topEndpoints.map((endpoint, index) => (
+                  {analytics.topEndpoints.map((endpoint, index: any) => (
                     <tr key={index} className="hover:bg-zinc-50 dark:hover:bg-white/5 transition">
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm font-medium text-zinc-900 dark:text-white font-mono">
@@ -394,7 +390,7 @@ export default function AdminAnalyticsPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-zinc-200 dark:divide-white/10 bg-white dark:bg-white/5">
-                  {analytics.featureUsage.map((feature, index) => (
+                  {analytics.featureUsage.map((feature, index: any) => (
                     <tr key={index} className="hover:bg-zinc-50 dark:hover:bg-white/5 transition">
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm font-medium text-zinc-900 dark:text-white">

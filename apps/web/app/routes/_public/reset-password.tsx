@@ -2,20 +2,31 @@ import React, { useState, useEffect } from 'react'
 import { Link, useSearchParams, useNavigate } from 'react-router'
 import { Form, FormFieldClass } from '@nestledjs/forms'
 import { AuthLayout } from '@nestled-template/web'
-import { ResetPasswordInput, useResetPasswordMutation } from '@nestled-template/shared/sdk'
+import {
+  ResetPasswordInput,
+  ResetPassword,
+  type ResetPasswordMutation,
+} from '@nestled-template/shared/sdk'
 import { formTheme } from '@nestled-template/shared/styles'
+import { useMutation } from '@apollo/client/react'
 
-export default function ResetPassword() {
+export default function ResetPasswordPage() {
   const [params] = useSearchParams()
   const navigate = useNavigate()
-  const [formMessage, setFormMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
-  const [resetPasswordMutation, { loading }] = useResetPasswordMutation()
+  const [formMessage, setFormMessage] = useState<{
+    type: 'success' | 'error'
+    text: string
+  } | null>(null)
+  const [resetPasswordMutation, { loading }] = useMutation<ResetPasswordMutation>(ResetPassword)
   const token = params.get('token') || ''
 
   // Validate token exists
   useEffect(() => {
     if (!token) {
-      setFormMessage({ type: 'error', text: 'Invalid or missing reset token. Please request a new password reset.' })
+      setFormMessage({
+        type: 'error',
+        text: 'Invalid or missing reset token. Please request a new password reset.',
+      })
     }
   }, [token])
 
@@ -29,11 +40,17 @@ export default function ResetPassword() {
     try {
       const { data } = await resetPasswordMutation({ variables: { input: { ...input, token } } })
       if (data?.resetPassword?.id) {
-        setFormMessage({ type: 'success', text: 'Your password has been reset. Redirecting to login...' })
+        setFormMessage({
+          type: 'success',
+          text: 'Your password has been reset. Redirecting to login...',
+        })
         // Redirect to login after 2 seconds
         setTimeout(() => navigate('/login'), 2000)
       } else {
-        setFormMessage({ type: 'error', text: 'Unable to reset password. The token may have expired.' })
+        setFormMessage({
+          type: 'error',
+          text: 'Unable to reset password. The token may have expired.',
+        })
       }
     } catch (error) {
       setFormMessage({ type: 'error', text: (error as Error).message || 'Something went wrong' })
@@ -44,14 +61,13 @@ export default function ResetPassword() {
     FormFieldClass.password('password', {
       label: 'New Password',
       required: true,
-      minLength: 8,
-      helperText: 'Must be at least 8 characters'
+      helpText: 'Must be at least 8 characters',
     }),
     FormFieldClass.button('submit', {
       text: loading ? 'Resetting...' : 'Reset Password',
       type: 'submit',
       loading,
-      disabled: !token || loading
+      disabled: !token || loading,
     }),
   ]
 
@@ -64,14 +80,19 @@ export default function ResetPassword() {
           </Link>
         </p>
         {formMessage && (
-          <div className={`text-center rounded-lg p-3 text-sm border ${formMessage.type === 'success' ? 'text-emerald-300 bg-emerald-500/10 border-emerald-500/20' : 'text-rose-300 bg-rose-500/10 border-rose-500/20'}`}>
+          <div
+            className={`text-center rounded-lg p-3 text-sm border ${formMessage.type === 'success' ? 'text-emerald-300 bg-emerald-500/10 border-emerald-500/20' : 'text-rose-300 bg-rose-500/10 border-rose-500/20'}`}
+          >
             {formMessage.text}
           </div>
         )}
-        <Form theme={formTheme} id="reset-password-form" fields={fields} submit={handleReset as any} />
+        <Form
+          theme={formTheme}
+          id="reset-password-form"
+          fields={fields}
+          submit={handleReset as any}
+        />
       </div>
     </AuthLayout>
   )
 }
-
-

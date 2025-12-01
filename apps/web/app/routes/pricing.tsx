@@ -1,17 +1,21 @@
 import React from 'react'
 import { Link } from 'react-router'
 import { CheckIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import { useMutation, useQuery } from '@apollo/client/react'
 import {
-  useActivePlansQuery,
-  useCreateCheckoutSessionMutation,
+  ActivePlans,
+  CreateCheckoutSession,
+  type ActivePlansQuery,
+  type CreateCheckoutSessionMutation,
 } from '@nestled-template/shared/sdk'
 import { useSubscription, useGlobalCtx } from '@nestled-template/web'
 
 export default function PricingPage() {
   const { user } = useGlobalCtx()
   const { subscription, plan: currentPlan } = useSubscription()
-  const { data, loading } = useActivePlansQuery()
-  const [createCheckoutSession, { loading: checkoutLoading }] = useCreateCheckoutSessionMutation()
+  const { data, loading } = useQuery<ActivePlansQuery>(ActivePlans)
+  const [createCheckoutSession, { loading: checkoutLoading }] =
+    useMutation<CreateCheckoutSessionMutation>(CreateCheckoutSession)
 
   const plans = data?.plans || []
 
@@ -64,12 +68,8 @@ export default function PricingPage() {
         {!loading && plans.length === 0 && (
           <div className="max-w-2xl mx-auto text-center py-20">
             <div className="rounded-xl border border-white/10 bg-white/5 p-8 shadow-2xl backdrop-blur">
-              <h3 className="text-xl font-semibold text-white mb-2">
-                No Plans Available
-              </h3>
-              <p className="text-zinc-300">
-                Plans are being configured. Please check back soon.
-              </p>
+              <h3 className="text-xl font-semibold text-white mb-2">No Plans Available</h3>
+              <p className="text-zinc-300">Plans are being configured. Please check back soon.</p>
             </div>
           </div>
         )}
@@ -82,11 +82,11 @@ export default function PricingPage() {
               const features = Array.isArray(plan.features)
                 ? plan.features
                 : typeof plan.features === 'object'
-                ? Object.entries(plan.features).map(([key, value]) => ({
-                    name: key.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase()),
-                    included: value === true,
-                  }))
-                : []
+                  ? Object.entries(plan.features).map(([key, value]) => ({
+                      name: key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
+                      included: value === true,
+                    }))
+                  : []
 
               return (
                 <div
@@ -111,9 +111,7 @@ export default function PricingPage() {
                       {plan.name}
                     </h3>
                     {plan.description && (
-                      <p className="text-sm text-zinc-400">
-                        {plan.description}
-                      </p>
+                      <p className="text-sm text-zinc-400">{plan.description}</p>
                     )}
                   </div>
 
@@ -123,9 +121,7 @@ export default function PricingPage() {
                       <span className="text-5xl font-extrabold tracking-tight text-white">
                         ${parseFloat(plan.price || '0').toFixed(0)}
                       </span>
-                      <span className="ml-2 text-zinc-400">
-                        /{plan.interval}
-                      </span>
+                      <span className="ml-2 text-zinc-400">/{plan.interval}</span>
                     </div>
                     {plan.trialPeriodDays && plan.trialPeriodDays > 0 && (
                       <p className="mt-2 text-sm text-emerald-300 font-medium">
@@ -148,7 +144,9 @@ export default function PricingPage() {
                             ) : (
                               <XMarkIcon className="h-5 w-5 text-zinc-600 flex-shrink-0 mr-3" />
                             )}
-                            <span className={`text-sm ${isIncluded ? 'text-zinc-300' : 'text-zinc-500'}`}>
+                            <span
+                              className={`text-sm ${isIncluded ? 'text-zinc-300' : 'text-zinc-500'}`}
+                            >
                               {featureName}
                             </span>
                           </li>
@@ -169,7 +167,13 @@ export default function PricingPage() {
                         : 'bg-emerald-500 text-zinc-950 shadow-lg shadow-emerald-500/20 hover:bg-emerald-400'
                     }`}
                   >
-                    {checkoutLoading ? 'Loading...' : isCurrent ? 'Current Plan' : user ? 'Subscribe Now' : 'Get Started'}
+                    {checkoutLoading
+                      ? 'Loading...'
+                      : isCurrent
+                        ? 'Current Plan'
+                        : user
+                          ? 'Subscribe Now'
+                          : 'Get Started'}
                   </button>
                 </div>
               )
@@ -185,11 +189,10 @@ export default function PricingPage() {
             </h3>
             <dl className="space-y-6">
               <div>
-                <dt className="text-lg font-semibold text-white mb-2">
-                  Can I change plans later?
-                </dt>
+                <dt className="text-lg font-semibold text-white mb-2">Can I change plans later?</dt>
                 <dd className="text-zinc-300">
-                  Yes! You can upgrade or downgrade your plan at any time from your billing settings.
+                  Yes! You can upgrade or downgrade your plan at any time from your billing
+                  settings.
                 </dd>
               </div>
               <div>
@@ -197,15 +200,15 @@ export default function PricingPage() {
                   What payment methods do you accept?
                 </dt>
                 <dd className="text-zinc-300">
-                  We accept all major credit cards and debit cards through our secure payment processor, Stripe.
+                  We accept all major credit cards and debit cards through our secure payment
+                  processor, Stripe.
                 </dd>
               </div>
               <div>
-                <dt className="text-lg font-semibold text-white mb-2">
-                  Can I cancel anytime?
-                </dt>
+                <dt className="text-lg font-semibold text-white mb-2">Can I cancel anytime?</dt>
                 <dd className="text-zinc-300">
-                  Yes, you can cancel your subscription at any time. You'll retain access until the end of your billing period.
+                  Yes, you can cancel your subscription at any time. You'll retain access until the
+                  end of your billing period.
                 </dd>
               </div>
             </dl>
@@ -215,9 +218,7 @@ export default function PricingPage() {
         {/* Bottom CTA */}
         {!user && (
           <div className="mt-16 text-center">
-            <p className="text-zinc-300 mb-4">
-              Already have an account?
-            </p>
+            <p className="text-zinc-300 mb-4">Already have an account?</p>
             <Link
               to="/login"
               className="rounded-lg border border-white/15 bg-white/5 px-5 py-2.5 font-semibold text-white transition hover:bg-white/10 inline-flex items-center"

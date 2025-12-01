@@ -1,7 +1,13 @@
 import React, { Fragment } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import { XMarkIcon, CheckIcon } from '@heroicons/react/24/outline'
-import { useActivePlansQuery, useCreateCheckoutSessionMutation } from '@nestled-template/shared/sdk'
+import { useQuery, useMutation } from '@apollo/client/react'
+import {
+  ActivePlans,
+  CreateCheckoutSession,
+  type ActivePlansQuery,
+  type CreateCheckoutSessionMutation
+} from '@nestled-template/shared/sdk'
 import { useSubscription } from '../hooks/use-subscription'
 
 interface UpgradeModalProps {
@@ -30,8 +36,8 @@ interface UpgradeModalProps {
  */
 export function UpgradeModal({ isOpen, onClose, feature, reason }: UpgradeModalProps) {
   const { plan: currentPlan } = useSubscription()
-  const { data, loading } = useActivePlansQuery()
-  const [createCheckout, { loading: checkoutLoading }] = useCreateCheckoutSessionMutation()
+  const { data, loading } = useQuery<ActivePlansQuery>(ActivePlans)
+  const [createCheckout, { loading: checkoutLoading }] = useMutation<CreateCheckoutSessionMutation>(CreateCheckoutSession)
 
   const plans = data?.plans || []
 

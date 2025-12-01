@@ -1,9 +1,6 @@
 import { useState } from 'react'
 import { useQuery } from '@apollo/client/react'
-import {
-  AdminPlatformAuditLogsDocument,
-  AdminPlatformAuditLogsQuery,
-} from '@nestled-template/shared/sdk'
+import { AdminPlatformAuditLogs, AdminPlatformAuditLogsQuery } from '@nestled-template/shared/sdk'
 import {
   DocumentMagnifyingGlassIcon,
   EyeIcon,
@@ -78,24 +75,21 @@ export default function AdminAuditLogsPage() {
   const [page, setPage] = useState(0)
   const pageSize = 50
 
-  const { data, loading, error } = useQuery<AdminPlatformAuditLogsQuery>(
-    AdminPlatformAuditLogsDocument,
-    {
-      variables: {
-        filters: {
-          userId: filters.userId || undefined,
-          organizationId: filters.organizationId || undefined,
-          action: filters.action || undefined,
-          entityType: filters.entityType || undefined,
-          startDate: filters.startDate,
-          endDate: filters.endDate,
-          skip: page * pageSize,
-          take: pageSize,
-        },
+  const { data, loading, error } = useQuery<AdminPlatformAuditLogsQuery>(AdminPlatformAuditLogs, {
+    variables: {
+      filters: {
+        userId: filters.userId || undefined,
+        organizationId: filters.organizationId || undefined,
+        action: filters.action || undefined,
+        entityType: filters.entityType || undefined,
+        startDate: filters.startDate,
+        endDate: filters.endDate,
+        skip: page * pageSize,
+        take: pageSize,
       },
-      fetchPolicy: 'network-only',
     },
-  )
+    fetchPolicy: 'network-only',
+  })
 
   const logs = data?.adminAuditLogs?.logs || []
   const total = data?.adminAuditLogs?.total || 0

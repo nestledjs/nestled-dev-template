@@ -62,11 +62,11 @@ export function getAdminDocuments(sdk: any, model: DatabaseModel) {
   const normalizedPluralName = normalizeModelNameForDocument(getPluralName(model.name))
 
   // Expected document names in the SDK (with __ prefix for admin operations)
-  const singleQueryDocumentName = `__Admin${normalizedModelName}Document` // Single item query
-  const listQueryDocumentName = `__Admin${normalizedPluralName}Document` // List query
-  const updateDocumentName = `__AdminUpdate${normalizedModelName}Document`
-  const deleteDocumentName = `__AdminDelete${normalizedModelName}Document`
-  const createDocumentName = `__AdminCreate${normalizedModelName}Document`
+  const singleQueryDocumentName = `__Admin${normalizedModelName}` // Single item query
+  const listQueryDocumentName = `__Admin${normalizedPluralName}` // List query
+  const updateDocumentName = `__AdminUpdate${normalizedModelName}`
+  const deleteDocumentName = `__AdminDelete${normalizedModelName}`
+  const createDocumentName = `__AdminCreate${normalizedModelName}`
 
   const documents = {
     query: (sdk as Record<string, any>)[singleQueryDocumentName], // For single item
@@ -353,8 +353,8 @@ export function buildFormFields(
           // Try to get the Admin GraphQL document for the relation type (with __ prefix)
           // Use proper pluralization from getPluralName helper
           const properPluralName = getPluralName(field.type)
-          const adminDocumentName = `__Admin${properPluralName}Document` // e.g., __AdminCoursesDocument
-          const regularDocumentName = `${properPluralName}Document` // e.g., CoursesDocument (fallback)
+          const adminDocumentName = `__Admin${properPluralName}` // e.g., __AdminCourses
+          const regularDocumentName = `${properPluralName}` // e.g., Courses (fallback)
           const relationDocument =
             (sdk as any)[adminDocumentName] || (sdk as any)[regularDocumentName]
 

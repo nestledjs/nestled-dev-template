@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import { useQuery } from '@apollo/client/react'
 import {
-  AdminPlatformSecurityEventsDocument,
+  AdminPlatformSecurityEvents,
   SecurityEventType,
+  type AdminPlatformSecurityEventsQuery,
 } from '@nestled-template/shared/sdk'
 import {
   ExclamationTriangleIcon,
@@ -116,7 +117,7 @@ export default function AdminSecurityEventsPage() {
   const [page, setPage] = useState(0)
   const pageSize = 50
 
-  const { data, loading, error } = useQuery(AdminPlatformSecurityEventsDocument, {
+  const { data, loading, error } = useQuery<AdminPlatformSecurityEventsQuery>(AdminPlatformSecurityEvents, {
     variables: {
       filters: {
         eventType: filters.eventType,

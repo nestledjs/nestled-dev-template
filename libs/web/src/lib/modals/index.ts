@@ -1,1 +1,1 @@
-export * from './transfer-ownership-modal'
+export { default as TransferOwnershipModal } from './transfer-ownership-modal'

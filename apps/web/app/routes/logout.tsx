@@ -48,7 +48,7 @@ export default function LogoutRoute() {
       navigate('/login', { replace: true })
     }
 
-    doLogout().catch((e) => {
+    doLogout().catch(e => {
       console.error('[logout] Unexpected error during logout:', e)
       navigate('/login', { replace: true })
     })
@@ -56,5 +56,3 @@ export default function LogoutRoute() {
 
   return <WebUiLoading />
 }
-
-

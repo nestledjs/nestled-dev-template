@@ -1,10 +1,24 @@
 import React, { useState } from 'react'
-import { Link, LoaderFunctionArgs, redirect, useLoaderData, useNavigate, useSearchParams } from 'react-router'
+import {
+  Link,
+  LoaderFunctionArgs,
+  redirect,
+  useLoaderData,
+  useNavigate,
+  useSearchParams,
+} from 'react-router'
 import { Form, FormFieldClass } from '@nestledjs/forms'
 import { AuthLayout } from '@nestled-template/web'
 import { getCookie, getJsonCookie } from '@nestled-template/shared/utils'
-import { LoginInput, useLoginMutation, useComplete2FaLoginMutation } from '@nestled-template/shared/sdk'
+import {
+  LoginInput,
+  Login,
+  Complete2FaLogin,
+  type LoginMutation,
+  type Complete2FaLoginMutation,
+} from '@nestled-template/shared/sdk'
 import { formTheme } from '@nestled-template/shared/styles'
+import { useMutation } from '@apollo/client/react'
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const token = getCookie(request.headers, '__session')
@@ -26,7 +40,7 @@ export const ForgotPasswordWrapper = (children: React.ReactNode) => (
   </div>
 )
 
-export default function Login() {
+export default function LoginPage() {
   const isRemembered = useLoaderData()
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
@@ -37,8 +51,8 @@ export default function Login() {
 
   const redirectUrl = searchParams.get('redirect') || '/members/dashboard'
 
-  const [loginMutation] = useLoginMutation()
-  const [complete2FALoginMutation] = useComplete2FaLoginMutation()
+  const [loginMutation] = useMutation<LoginMutation>(Login)
+  const [complete2FALoginMutation] = useMutation<Complete2FaLoginMutation>(Complete2FaLogin)
 
   async function processLogin(input: LoginInput) {
     console.log('Login Clicked')
@@ -77,7 +91,7 @@ export default function Login() {
     setFormError(null)
     try {
       const { data } = await complete2FALoginMutation({
-        variables: { tempToken, code: twoFACode }
+        variables: { tempToken, code: twoFACode },
       })
 
       if (data?.complete2FALogin?.user?.id) {
@@ -108,7 +122,10 @@ export default function Login() {
   // If 2FA is required, show 2FA verification form
   if (requires2FA) {
     return (
-      <AuthLayout title="Two-Factor Authentication" subtitle="Enter the code from your authenticator app">
+      <AuthLayout
+        title="Two-Factor Authentication"
+        subtitle="Enter the code from your authenticator app"
+      >
         <div className="space-y-6">
           {formError && (
             <div className="text-center text-rose-300 bg-rose-500/10 border border-rose-500/20 rounded-lg p-3 text-sm">
@@ -124,7 +141,7 @@ export default function Login() {
                 type="text"
                 id="twoFACode"
                 value={twoFACode}
-                onChange={(e) => setTwoFACode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                onChange={e => setTwoFACode(e.target.value.replace(/\D/g, '').slice(0, 6))}
                 placeholder="000000"
                 maxLength={6}
                 autoFocus

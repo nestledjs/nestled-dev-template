@@ -6,18 +6,20 @@ import { Form, FormFieldClass } from '@nestledjs/forms'
 import { formTheme } from '@nestled-template/shared/styles'
 import { apolloLoader } from '@nestled-template/shared/apollo'
 import {
-  MyOrganizationsDocument,
-  MyOrganizationsQuery,
-  useUploadOrganizationLogoMutation,
-  useUserUpdateOrganizationMutation,
-  useDeleteFileMutation,
+  MyOrganizations,
+  type MyOrganizationsQuery,
+  UserUpdateOrganization,
+  UploadOrganizationLogo,
+  DeleteFile,
+  type UserUpdateOrganizationMutation,
+  type UploadOrganizationLogoMutation,
+  type DeleteFileMutation,
 } from '@nestled-template/shared/sdk'
-import type { QueryRef } from '@apollo/client'
-import { useApolloClient, useReadQuery } from '@apollo/client/react'
+import { useApolloClient, useReadQuery, type QueryRef, useMutation } from '@apollo/client/react'
 import { AvatarUpload } from '@nestled-template/web-ui'
 
 export const loader = apolloLoader()(({ preloadQuery }) => {
-  const myOrganizationsQueryRef = preloadQuery<MyOrganizationsQuery>(MyOrganizationsDocument, {
+  const myOrganizationsQueryRef = preloadQuery<MyOrganizationsQuery>(MyOrganizations, {
     fetchPolicy: 'network-only', // Always fetch fresh data, bypass cache
   })
   return { myOrganizationsQueryRef }
@@ -30,9 +32,10 @@ export default function OrganizationSettings() {
   const activeOrganization = organizations[0] || null
   const [formError, setFormError] = useState<string | null>(null)
   const [formSuccess, setFormSuccess] = useState<string | null>(null)
-  const [updateOrganization] = useUserUpdateOrganizationMutation()
-  const [uploadOrganizationLogo] = useUploadOrganizationLogoMutation()
-  const [deleteFile] = useDeleteFileMutation()
+  const [updateOrganization] = useMutation<UserUpdateOrganizationMutation>(UserUpdateOrganization)
+  const [uploadOrganizationLogo] =
+    useMutation<UploadOrganizationLogoMutation>(UploadOrganizationLogo)
+  const [deleteFile] = useMutation<DeleteFileMutation>(DeleteFile)
   const revalidator = useRevalidator()
   const client = useApolloClient()
 
@@ -48,7 +51,7 @@ export default function OrganizationSettings() {
             name: input.name,
           },
         },
-        refetchQueries: [{ query: MyOrganizationsDocument }],
+        refetchQueries: [{ query: MyOrganizations }],
         awaitRefetchQueries: true, // Wait for refetch to complete
       })
 
@@ -80,7 +83,7 @@ export default function OrganizationSettings() {
 
       if (result.data?.uploadOrganizationLogo) {
         // Refresh organization data to show new logo
-        await client.refetchQueries({ include: [MyOrganizationsDocument] })
+        await client.refetchQueries({ include: [MyOrganizations] })
         setFormSuccess('Logo uploaded successfully!')
         setTimeout(() => setFormSuccess(null), 3000)
       }
@@ -102,7 +105,7 @@ export default function OrganizationSettings() {
       })
 
       // Refresh organization data to remove the logo from UI
-      await client.refetchQueries({ include: [MyOrganizationsDocument] })
+      await client.refetchQueries({ include: [MyOrganizations] })
       setFormSuccess('Logo removed successfully!')
       setTimeout(() => setFormSuccess(null), 3000)
     } catch (error: any) {

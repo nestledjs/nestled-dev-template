@@ -8,34 +8,42 @@ import {
 } from '@nestled-template/web'
 import { WebUiFooter, WebUiHeader } from '@nestled-template/web-ui'
 import { apolloLoader } from '@nestled-template/shared/apollo'
-import { MyOrganizationsWithMembersDocument, MyOrganizationsWithMembersQuery } from '@nestled-template/shared/sdk'
-import { useReadQuery } from '@apollo/client/react'
+import {
+  MyOrganizationsWithMembers,
+  type MyOrganizationsWithMembersQuery,
+} from '@nestled-template/shared/sdk'
+import { useReadQuery, type QueryRef } from '@apollo/client/react'
 
 export const loader = apolloLoader()(({ preloadQuery }) => {
-  const myOrganizationsQueryRef = preloadQuery<MyOrganizationsWithMembersQuery>(MyOrganizationsWithMembersDocument, {
-    fetchPolicy: 'network-only', // Always fetch fresh data, bypass cache
-  })
+  const myOrganizationsQueryRef = preloadQuery<MyOrganizationsWithMembersQuery>(
+    MyOrganizationsWithMembers,
+    {
+      fetchPolicy: 'network-only', // Always fetch fresh data, bypass cache
+    },
+  )
   return { myOrganizationsQueryRef }
 })
 
 export default function AuthenticatedLayout() {
   const { user } = useGlobalCtx()
   const location = useLocation()
-  const loaderData = useLoaderData()
+  const loaderData = useLoaderData() as {
+    myOrganizationsQueryRef: QueryRef<MyOrganizationsWithMembersQuery>
+  }
 
   // Read organizations from preloaded query
-  const { data: orgsData } = useReadQuery<MyOrganizationsWithMembersQuery>(loaderData.myOrganizationsQueryRef)
+  const { data: orgsData } = useReadQuery(loaderData.myOrganizationsQueryRef)
 
   // Redirect to login if not authenticated
   if (!user) {
     return <Navigate to="/login" state={{ from: location }} replace />
   }
 
-  const organizations = orgsData?.myOrganizations || []
+  const organizations = (orgsData?.myOrganizations || []) as any
   const activeOrganization =
-    organizations.find(org => org.id === user.activeOrganizationId) || organizations[0] || null
+    (organizations.find((org: any) => org?.id === (user as any).activeOrganizationId) || organizations[0] || null) as any
   const activeOrganizationMember =
-    activeOrganization?.members?.find((member: any) => member.userId === user?.id) || null
+    (activeOrganization?.members?.find((member: any) => member.userId === user?.id) || null) as any
 
   // Build navigation based on user permissions
   const navigation = [
