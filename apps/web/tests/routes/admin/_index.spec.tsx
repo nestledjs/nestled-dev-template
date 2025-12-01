@@ -7,7 +7,7 @@ import AdminDashboard from '../../../app/routes/admin/_index'
 // Mock Apollo Client
 const mockUseQuery = vi.fn()
 vi.mock('@apollo/client/react', () => ({
-  useQuery: (...args: any[]) => mockUseQuery(...args),
+  useQuery: (...args: unknown[]) => mockUseQuery(...args),
 }))
 
 // Mock SDK

@@ -76,8 +76,8 @@ export default function AcceptInvitation() {
       setTimeout(() => {
         navigate('/members', { replace: true })
       }, 1500)
-    } catch (error: any) {
-      setFormError(error?.message || 'Failed to accept invitation. Please try again.')
+    } catch (error) {
+      setFormError((error as Error)?.message || 'Failed to accept invitation. Please try again.')
       setIsProcessing(false)
     }
   }
@@ -109,8 +109,8 @@ export default function AcceptInvitation() {
         setFormError('Invalid email or password')
         setIsProcessing(false)
       }
-    } catch (error: any) {
-      setFormError(error?.message || 'Failed to login. Please try again.')
+    } catch (error) {
+      setFormError((error as Error)?.message || 'Failed to login. Please try again.')
       setIsProcessing(false)
     }
   }
@@ -148,8 +148,8 @@ export default function AcceptInvitation() {
         setFormError('Failed to create account')
         setIsProcessing(false)
       }
-    } catch (error: any) {
-      setFormError(error?.message || 'Failed to create account. Please try again.')
+    } catch (error) {
+      setFormError((error as Error)?.message || 'Failed to create account. Please try again.')
       setIsProcessing(false)
     }
   }

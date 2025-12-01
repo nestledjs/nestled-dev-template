@@ -6,6 +6,8 @@ import { ApolloClient } from '@apollo/client'
 import Cookies from 'js-cookie'
 import { createTestRouter } from "../helpers/createTestRouter"
 
+import { useApolloClient } from '@apollo/client/react'
+
 // Mock dependencies
 vi.mock('@apollo/client/react', () => ({
   useApolloClient: vi.fn(),
@@ -31,8 +33,6 @@ vi.mock('react-router', async () => {
   }
 })
 
-import { useApolloClient } from '@apollo/client/react'
-
 describe('Logout Route', () => {
   let mockApolloClient: {
     mutate: ReturnType<typeof vi.fn>
@@ -50,7 +50,9 @@ describe('Logout Route', () => {
     vi.mocked(useApolloClient).mockReturnValue(mockApolloClient as any)
 
     // Mock console methods to avoid noise in test output
-    vi.spyOn(console, 'warn').mockImplementation(() => {})
+    vi.spyOn(console, 'warn').mockImplementation(() => {
+      // No-op for test
+    })
   })
 
   const renderLogout = () => {
@@ -70,7 +72,9 @@ describe('Logout Route', () => {
 
   describe('Loading State', () => {
     it('should show loading spinner immediately', () => {
-      mockApolloClient.mutate.mockImplementation(() => new Promise(() => {})) // Never resolves
+      mockApolloClient.mutate.mockImplementation(() => new Promise(() => {
+        // Never resolves
+      }))
 
       renderLogout()
 

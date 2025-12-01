@@ -174,9 +174,9 @@ export default App
 export function ErrorBoundary({ error }: Readonly<{ error: Error }>) {
   // Detect Vite cache/build mismatch errors (Invalid hook call, useContext errors)
   const isViteCacheError =
-    error?.message?.includes('Invalid hook call') ||
-    error?.message?.includes('useContext') ||
-    error?.message?.includes('Cannot read properties of null')
+    (error as Error)?.message?.includes('Invalid hook call') ||
+    (error as Error)?.message?.includes('useContext') ||
+    (error as Error)?.message?.includes('Cannot read properties of null')
 
   // Default to dark theme for error boundary since loader data isn't available
   return (

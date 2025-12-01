@@ -73,7 +73,7 @@ export default function ResendVerification() {
           theme={formTheme}
           id="resend-verification-form"
           fields={fields}
-          submit={handleResend as any}
+          submit={handleResend}
         />
       </div>
     </AuthLayout>

@@ -30,6 +30,8 @@ export default function AdminOrganizationsPage() {
     fetchPolicy: 'network-only',
   })
 
+  type Organization = NonNullable<AdminPlatformOrganizationsQuery['adminOrganizations']['organizations'][number]>
+
   const organizations = data?.adminOrganizations?.organizations || []
   const total = data?.adminOrganizations?.total || 0
   const totalPages = Math.ceil(total / pageSize)
@@ -139,11 +141,11 @@ export default function AdminOrganizationsPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-zinc-200 dark:divide-white/10 bg-white dark:bg-white/5">
-                {organizations.map((org: any) => {
+                {organizations.map((org) => {
                   const subscription = getSubscriptionStatus(org)
                   const memberCount = org.members?.length || 0
                   const ownerCount =
-                    org.members?.filter((m: any) => m.role?.name === 'Owner').length || 0
+                    org.members?.filter((m) => m.role?.name === 'Owner').length || 0
 
                   return (
                     <tr key={org.id} className="hover:bg-zinc-50 dark:hover:bg-white/5 transition">

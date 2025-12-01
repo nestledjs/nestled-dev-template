@@ -11,7 +11,7 @@ type Plan = {
   price: string
   interval: string
   features?: string[]
-  limits?: Record<string, any>
+  limits?: Record<string, unknown>
   active: boolean
   stripeProductId?: string
   stripePriceId?: string
@@ -80,7 +80,7 @@ export default function AdminBillingPlans() {
             <p className="text-gray-500">No plans found. Sync from Stripe to import plans.</p>
           </div>
         ) : (
-          plans.map((plan: any) => (
+          plans.map((plan) => (
             <div
               key={plan.id}
               className="bg-white shadow rounded-lg divide-y divide-gray-200 border-2 border-gray-200 hover:border-blue-400 transition-colors"

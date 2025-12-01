@@ -67,7 +67,7 @@ export default function OrganizationSettings() {
 
   // Get organization's logo (first image with type: 'logo' in metadata)
   const organizationLogo = activeOrganization?.images?.find(
-    (img: any) => img.metadata?.type === 'logo' || img.folder === 'logos',
+    (img) => (img.metadata as { type?: string })?.type === 'logo' || img.folder === 'logos',
   )
 
   const handleLogoUpload = async (file: File) => {
@@ -87,9 +87,9 @@ export default function OrganizationSettings() {
         setFormSuccess('Logo uploaded successfully!')
         setTimeout(() => setFormSuccess(null), 3000)
       }
-    } catch (error: any) {
+    } catch (error) {
       console.error('Logo upload failed:', error)
-      setFormError(error.message || 'Failed to upload logo')
+      setFormError((error as Error).message || 'Failed to upload logo')
       setTimeout(() => setFormError(null), 5000)
     }
   }
@@ -108,9 +108,9 @@ export default function OrganizationSettings() {
       await client.refetchQueries({ include: [MyOrganizations] })
       setFormSuccess('Logo removed successfully!')
       setTimeout(() => setFormSuccess(null), 3000)
-    } catch (error: any) {
+    } catch (error) {
       console.error('Logo removal failed:', error)
-      setFormError(error.message || 'Failed to remove logo')
+      setFormError((error as Error).message || 'Failed to remove logo')
       setTimeout(() => setFormError(null), 5000)
     }
   }
