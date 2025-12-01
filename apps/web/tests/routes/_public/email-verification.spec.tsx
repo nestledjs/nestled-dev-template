@@ -37,7 +37,7 @@ vi.mock('@nestled-template/shared/styles', () => ({
 // Mock the Form component for ResendVerification
 vi.mock('@nestledjs/forms', () => ({
   Form: ({ id, fields, submit }: any) => {
-    const handleSubmit = (e: any) => {
+    const handleSubmit = (e) => {
       e.preventDefault()
       const formData = new FormData(e.target)
       const values: Record<string, any> = {}

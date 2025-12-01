@@ -371,8 +371,12 @@ describe('Pricing Page', () => {
 
     it('should show error alert on checkout failure', async () => {
       const user = userEvent.setup()
-      const alertSpy = vi.spyOn(window, 'alert').mockImplementation(() => {})
-      const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+      const alertSpy = vi.spyOn(window, 'alert').mockImplementation(() => {
+        // No-op for test
+      })
+      const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {
+        // No-op for test
+      })
 
       vi.mocked(useGlobalCtx).mockReturnValue({
         user: { id: '1', email: 'user@example.com' },

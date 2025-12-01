@@ -110,7 +110,7 @@ export function App() {
 
 function AppWithUser({ meQueryRef }: { meQueryRef: QueryRef<MeQuery> }) {
   const { data } = useReadQuery(meQueryRef)
-  const user = data?.me as any
+  const user = data?.me ?? null
   return (
     <GlobalContextProvider key={user?.id ?? 'nouser'} user={user}>
       <Outlet />

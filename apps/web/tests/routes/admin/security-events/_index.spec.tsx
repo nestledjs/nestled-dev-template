@@ -8,7 +8,7 @@ import AdminSecurityEventsPage from '../../../../app/routes/admin/security-event
 // Mock Apollo Client
 const mockUseQuery = vi.fn()
 vi.mock('@apollo/client/react', () => ({
-  useQuery: (...args: any[]) => mockUseQuery(...args),
+  useQuery: (...args: unknown[]) => mockUseQuery(...args),
 }))
 
 // Mock SDK

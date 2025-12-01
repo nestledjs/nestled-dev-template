@@ -10,13 +10,13 @@ const mockUseQuery = vi.fn()
 const mockUseMutation = vi.fn()
 
 vi.mock('@apollo/client/react', () => ({
-  useQuery: (...args: any[]) => mockUseQuery(...args),
-  useMutation: (...args: any[]) => mockUseMutation(...args),
+  useQuery: (...args: unknown[]) => mockUseQuery(...args),
+  useMutation: (...args: unknown[]) => mockUseMutation(...args),
 }))
 
 // Mock gql - handle template literals properly
 vi.mock('@apollo/client', () => ({
-  gql: vi.fn((strings: TemplateStringsArray | string, ...values: any[]) => {
+  gql: vi.fn((strings: TemplateStringsArray | string, ...values: unknown[]) => {
     // Handle both template literals and regular strings
     const queryString = typeof strings === 'string' ? strings : strings[0]
     return {

@@ -32,7 +32,7 @@ import { useApolloClient, useReadQuery, type QueryRef, useLazyQuery, useMutation
 import { Form, FormFieldClass } from '@nestledjs/forms'
 import { formTheme } from '@nestled-template/shared/styles'
 import { AvatarUpload } from '@nestled-template/web-ui'
-import TransferOwnershipModal from '../../../../../libs/web/src/lib/modals/transfer-ownership-modal'
+import { TransferOwnershipModal } from '@nestled-template/web'
 
 export const loader = apolloLoader()(({ preloadQuery }) => {
   const meQueryRef = preloadQuery<MeQuery>(Me)
@@ -74,7 +74,7 @@ export default function ProfileSettings() {
 
   // Get user's avatar (first image with type: 'avatar' in metadata)
   const userAvatar = user.images?.find(
-    (img: any) => img.metadata?.type === 'avatar' || img.folder === 'avatars',
+    (img) => (img.metadata as { type?: string })?.type === 'avatar' || img.folder === 'avatars',
   )
 
   const handleAvatarUpload = async (file: File) => {
@@ -89,9 +89,9 @@ export default function ProfileSettings() {
         setMessage({ type: 'success', text: 'Avatar uploaded successfully!' })
         setTimeout(() => setMessage(null), 3000)
       }
-    } catch (error: any) {
+    } catch (error) {
       console.error('Avatar upload failed:', error)
-      setMessage({ type: 'error', text: error.message || 'Failed to upload avatar' })
+      setMessage({ type: 'error', text: (error as Error).message || 'Failed to upload avatar' })
       setTimeout(() => setMessage(null), 5000)
     }
   }
@@ -112,9 +112,9 @@ export default function ProfileSettings() {
       await client.refetchQueries({ include: [Me] })
       setMessage({ type: 'success', text: 'Avatar removed successfully!' })
       setTimeout(() => setMessage(null), 3000)
-    } catch (error: any) {
+    } catch (error) {
       console.error('Avatar removal failed:', error)
-      setMessage({ type: 'error', text: error.message || 'Failed to remove avatar' })
+      setMessage({ type: 'error', text: (error as Error).message || 'Failed to remove avatar' })
       setTimeout(() => setMessage(null), 5000)
     }
   }
@@ -214,7 +214,16 @@ export default function ProfileSettings() {
     }
   }
 
-  async function handleSubmit(values: any) {
+  async function handleSubmit(values: {
+    firstName?: string
+    lastName?: string
+    displayName?: string
+    email: string
+    bio?: string
+    password?: string
+    newPassword?: string
+    confirmPassword?: string
+  }) {
     setLoading(true)
     setMessage(null)
 
@@ -240,7 +249,7 @@ export default function ProfileSettings() {
       }
 
       // Update user fields if changed (excluding password)
-      const updates: any = {}
+      const updates: Record<string, string | undefined> = {}
       if (values.firstName !== user?.firstName) updates.firstName = values.firstName
       if (values.lastName !== user?.lastName) updates.lastName = values.lastName
       if (values.displayName && values.displayName !== user?.displayName) {
@@ -278,28 +287,29 @@ export default function ProfileSettings() {
       } else {
         setMessage({ type: 'success', text: 'Profile updated successfully!' })
       }
-    } catch (error: any) {
+    } catch (error) {
       console.error('Profile update error:', error)
-      if (error.message?.includes('Template email send failed')) {
+      const err = error as Error
+      if (err.message?.includes('Template email send failed')) {
         setMessage({
           type: 'error',
           text: 'Email service is not configured. Profile updates saved but verification email could not be sent.',
         })
-      } else if (error.message?.includes('Template') && error.message?.includes('not found')) {
+      } else if (err.message?.includes('Template') && err.message?.includes('not found')) {
         setMessage({
           type: 'error',
           text: 'Email templates are not properly configured. Please contact support.',
         })
       } else if (
-        error.message?.includes('Unique constraint') ||
-        error.message?.includes('displayName')
+        err.message?.includes('Unique constraint') ||
+        err.message?.includes('displayName')
       ) {
         setMessage({
           type: 'error',
           text: 'This username is already taken. Please choose another.',
         })
       } else {
-        setMessage({ type: 'error', text: error.message || 'Failed to update profile' })
+        setMessage({ type: 'error', text: err.message || 'Failed to update profile' })
       }
     } finally {
       setLoading(false)

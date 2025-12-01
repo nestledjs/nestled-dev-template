@@ -2,7 +2,7 @@ import React from 'react'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import TransferOwnershipModal from '../../../../libs/web/src/lib/modals/TransferOwnershipModal'
+import { TransferOwnershipModal } from '@nestled-template/web'
 import {
   useMeQuery,
   useMyOrganizationsWithMembersQuery,
@@ -275,9 +275,9 @@ describe('TransferOwnershipModal Component', () => {
       const user = userEvent.setup()
       const { container } = renderModal(true)
 
-      const closeButton = container
-        .querySelector('button .h-5.w-5.text-zinc-500')
-        ?.closest('button')!
+      const closeIcon = container.querySelector('button .h-5.w-5.text-zinc-500')
+      expect(closeIcon).toBeTruthy()
+      const closeButton = closeIcon!.closest('button')!
       await user.click(closeButton)
 
       expect(mockOnClose).toHaveBeenCalled()

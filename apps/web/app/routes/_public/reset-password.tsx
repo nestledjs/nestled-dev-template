@@ -90,7 +90,7 @@ export default function ResetPasswordPage() {
           theme={formTheme}
           id="reset-password-form"
           fields={fields}
-          submit={handleReset as any}
+          submit={handleReset}
         />
       </div>
     </AuthLayout>

@@ -4,6 +4,14 @@ import { userEvent } from '@testing-library/user-event'
 import { createTestRouter } from '../../helpers/createTestRouter'
 import AccountSettings from '../../../app/routes/settings/account'
 
+import { useLoaderData } from 'react-router'
+import { useReadQuery } from '@apollo/client/react'
+import {
+  useDeleteUserAccountMutation,
+  useExportUserDataLazyQuery,
+  useResendVerificationEmailMutation,
+} from '@nestled-template/shared/sdk'
+
 // Mock React Router
 vi.mock('react-router', async () => {
   const actual = await vi.importActual('react-router')
@@ -36,14 +44,6 @@ vi.mock('../../../app/components/TransferOwnershipModal', () => ({
 vi.mock('@apollo/client/react', () => ({
   useReadQuery: vi.fn(),
 }))
-
-import { useLoaderData } from 'react-router'
-import { useReadQuery } from '@apollo/client/react'
-import {
-  useDeleteUserAccountMutation,
-  useExportUserDataLazyQuery,
-  useResendVerificationEmailMutation,
-} from '@nestled-template/shared/sdk'
 
 describe('AccountSettings', () => {
   const mockDeleteAccount = vi.fn()

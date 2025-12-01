@@ -36,7 +36,7 @@ export default function SettingsLayout() {
   const activeOrganization =
     organizations.find(org => org.id === (user as any)?.activeOrganizationId) || organizations[0] || null
   const activeOrganizationMember =
-    activeOrganization?.members?.find((member: any) => member.userId === user?.id) || null
+    activeOrganization?.members?.find((member) => member.userId === user?.id) || null
 
   const personalSettings: NavItem[] = [
     {
@@ -114,7 +114,7 @@ export default function SettingsLayout() {
     if (activeOrganizationMember?.role?.permissions) {
       const [subject, action] = permission.split(':')
       return activeOrganizationMember.role.permissions.some(
-        (p: any) => p.subject === subject && p.action === action,
+        (p) => p.subject === subject && p.action === action,
       )
     }
 
@@ -124,12 +124,12 @@ export default function SettingsLayout() {
 
   // Get user's avatar (first image with type: 'avatar' in metadata)
   const userAvatar = user?.images?.find(
-    (img: any) => img.metadata?.type === 'avatar' || img.folder === 'avatars',
+    (img) => (img.metadata as { type?: string })?.type === 'avatar' || img.folder === 'avatars',
   )
 
   // Get organization's logo
   const organizationLogo = activeOrganization?.images?.find(
-    (img: any) => img.metadata?.type === 'logo' || img.folder === 'logos',
+    (img) => (img.metadata as { type?: string })?.type === 'logo' || img.folder === 'logos',
   )
 
   return (
