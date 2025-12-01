@@ -6,7 +6,6 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import LoginPage, { loader } from '../../../app/routes/_public/login'
 import { useMutation } from '@apollo/client/react'
 import { getCookie, getJsonCookie } from '@nestled-template/shared/utils'
-import { Login, Complete2FaLogin, type LoginMutation, type Complete2FaLoginMutation } from '@nestled-template/shared/sdk'
 
 // Mock only the essential external dependencies
 vi.mock('@nestled-template/shared/utils', () => ({
@@ -20,11 +19,9 @@ vi.mock('@apollo/client/react', () => ({
 
 describe('Login Component', () => {
   let mockLoginMutation: ReturnType<typeof vi.fn>
-  let mockComplete2FAMutation: ReturnType<typeof vi.fn>
 
   beforeEach(() => {
     mockLoginMutation = vi.fn()
-    mockComplete2FAMutation = vi.fn()
 
     vi.mocked(useMutation).mockReturnValue([mockLoginMutation, { loading: false }] as any)
     vi.mocked(getCookie).mockReturnValue(null)

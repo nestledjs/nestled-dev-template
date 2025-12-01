@@ -91,7 +91,6 @@ const DEFAULT_NOTIFICATIONS: NotificationSetting[] = [
 export const loader = () => ({})
 
 export default function NotificationsSettings() {
-  const { data } = useQuery<MeQuery>(Me)
   const { data: preferencesData } = useQuery<UserPreferencesQuery>(UserPreferences)
   const preferences = preferencesData?.userPreferences || []
 

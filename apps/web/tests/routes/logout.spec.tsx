@@ -72,9 +72,11 @@ describe('Logout Route', () => {
 
   describe('Loading State', () => {
     it('should show loading spinner immediately', () => {
-      mockApolloClient.mutate.mockImplementation(() => new Promise(() => {
-        // Never resolves
-      }))
+      // Create a never-resolving promise to test loading state
+      const neverResolvingPromise = new Promise(() => {
+        // Intentionally never resolves
+      })
+      mockApolloClient.mutate.mockImplementation(() => neverResolvingPromise)
 
       renderLogout()
 

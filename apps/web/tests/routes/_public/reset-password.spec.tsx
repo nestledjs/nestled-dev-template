@@ -5,8 +5,6 @@ import { createTestRouter } from "../../helpers/createTestRouter"
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import ResetPassword from '../../../app/routes/_public/reset-password'
 import { useMutation } from '@apollo/client/react'
-import { ResetPassword, type ResetPasswordMutation } from '@nestled-template/shared/sdk'
-import { useMutation } from '@apollo/client/react'
 
 vi.mock('@apollo/client/react', () => ({
   useMutation: vi.fn(),
