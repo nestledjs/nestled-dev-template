@@ -108,7 +108,7 @@ export function App() {
   return <AppWithUser meQueryRef={meQueryRef} />
 }
 
-function AppWithUser({ meQueryRef }: { meQueryRef: QueryRef<MeQuery> }) {
+function AppWithUser({ meQueryRef }: Readonly<{ meQueryRef: QueryRef<MeQuery> }>) {
   const { data } = useReadQuery(meQueryRef)
   const user = data?.me ?? null
   return (

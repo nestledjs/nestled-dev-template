@@ -243,7 +243,7 @@ export default function ProfileSettings() {
   // Helper function to collect user updates
   function collectUserUpdates(
     values: { firstName?: string; lastName?: string; displayName?: string },
-    user: { firstName?: string; lastName?: string; displayName?: string } | null,
+    user: any,
   ): Record<string, string | undefined> {
     const updates: Record<string, string | undefined> = {}
     if (values.firstName !== user?.firstName) updates.firstName = values.firstName

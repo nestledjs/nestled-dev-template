@@ -1,8 +1,6 @@
 import React, { useState } from 'react'
 import { BellAlertIcon, BellIcon, EnvelopeIcon } from '@heroicons/react/24/outline'
 import {
-  Me,
-  MeQuery,
   UserPreferences,
   UserPreferencesQuery,
   CreateUserPreference,
