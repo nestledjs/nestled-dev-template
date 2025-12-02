@@ -19,23 +19,15 @@ interface TransformResult {
   documents: Set<string>
 }
 
-function transformFile(content: string): TransformResult {
-  const result: TransformResult = {
-    content,
-    changed: false,
-    hooks: new Set(),
-    documents: new Set(),
-  }
+interface TransformContext {
+  documentsNeeded: Set<string>
+  typesNeeded: Set<string>
+  needsUseQuery: boolean
+  needsUseMutation: boolean
+}
 
-  // Track what needs to be imported
-  const documentsNeeded = new Set<string>()
-  const typesNeeded = new Set<string>()
-  let needsUseQuery = false
-  let needsUseMutation = false
-
-  // Step 1: Find and transform hook usage patterns
-  // Pattern: const [...] = useXyzQuery(...)
-  result.content = result.content.replace(
+function transformHookUsage(content: string, result: TransformResult, context: TransformContext): string {
+  return content.replace(
     /const\s+(\{[^}]+\}|\[[^\]]+\])\s*=\s*use(\w+)(Query|Mutation)\s*\(([^)]*)\)/g,
     (match, destructure, baseName, type, params) => {
       result.changed = true
@@ -44,143 +36,167 @@ function transformFile(content: string): TransformResult {
       const documentName = baseName
       const typeName = `${baseName}${type}`
 
-      documentsNeeded.add(documentName)
-      typesNeeded.add(typeName)
+      context.documentsNeeded.add(documentName)
+      context.typesNeeded.add(typeName)
 
-      // Only include params if they exist and are not empty
       const paramsStr = params.trim() ? `, ${params.trim()}` : ''
 
       if (type === 'Query') {
-        needsUseQuery = true
+        context.needsUseQuery = true
         return `const ${destructure} = useQuery<${typeName}>(${documentName}${paramsStr})`
       } else {
-        needsUseMutation = true
+        context.needsUseMutation = true
         return `const ${destructure} = useMutation<${typeName}>(${documentName}${paramsStr})`
       }
     }
   )
+}
 
-  // Step 2: Transform standalone Document references (XyzDocument → Xyz)
-  result.content = result.content.replace(
+function transformDocumentReferences(content: string, result: TransformResult, context: TransformContext): string {
+  return content.replace(
     /\b(\w+)Document\b/g,
     (match, baseName) => {
-      // Don't transform if it's in a comment or string
-      // This is a simple heuristic - may need refinement
       result.changed = true
       result.documents.add(match)
-      documentsNeeded.add(baseName)
+      context.documentsNeeded.add(baseName)
       return baseName
     }
   )
+}
 
-  // Step 3: Update imports from SDK (handle multi-line imports)
+function updateSdkImports(content: string, result: TransformResult, context: TransformContext): string {
   const sdkImportRegex = /import\s+\{([^}]+)\}\s+from\s+['"]@nestled-template\/shared\/sdk['"]/gs
-  const sdkImports = result.content.match(sdkImportRegex)
+  const sdkImports = content.match(sdkImportRegex)
 
-  if (sdkImports && sdkImports.length > 0) {
-    result.content = result.content.replace(sdkImportRegex, (match, imports) => {
-      const importList = imports
-        .split(',')
-        .map((imp: string) => imp.trim())
-        .filter((imp: string) => {
-          // Skip empty imports
-          if (!imp) return false
-
-          // Remove old hook imports
-          if (imp.match(/^use\w+(Query|Mutation|LazyQuery|SuspenseQuery)$/)) {
-            return false
-          }
-          // Remove Document suffix from imports
-          if (imp.endsWith('Document')) {
-            const baseName = imp.replace(/Document$/, '')
-            documentsNeeded.add(baseName)
-            return false
-          }
-          return true
-        })
-
-      // Add new document and type imports
-      documentsNeeded.forEach(doc => {
-        if (!importList.includes(doc)) {
-          importList.push(doc)
-        }
-      })
-      typesNeeded.forEach(type => {
-        if (!importList.includes(type) && !importList.includes(`type ${type}`)) {
-          importList.push(`type ${type}`)
-        }
-      })
-
-      // Remove duplicates and empty entries
-      const uniqueImports = Array.from(new Set(importList)).filter(Boolean)
-
-      result.changed = true
-      return `import { ${uniqueImports.join(', ')} } from '@nestled-template/shared/sdk'`
-    })
+  if (!sdkImports || sdkImports.length === 0) {
+    return content
   }
 
-  // Step 4: Add or update Apollo Client imports
-  const hasApolloImport = result.content.includes("from '@apollo/client")
-  const apolloImports: string[] = []
-
-  if (needsUseQuery) apolloImports.push('useQuery')
-  if (needsUseMutation) apolloImports.push('useMutation')
-
-  if (apolloImports.length > 0) {
-    if (hasApolloImport) {
-      // Update existing import
-      result.content = result.content.replace(
-        /import\s+\{([^}]+)\}\s+from\s+['"]@apollo\/client\/react['"]/gs,
-        (match, imports) => {
-          const importList = imports
-            .split(',')
-            .map((imp: string) => imp.trim())
-            .filter(Boolean)
-
-          apolloImports.forEach(imp => {
-            if (!importList.includes(imp)) {
-              importList.push(imp)
-            }
-          })
-
-          return `import { ${importList.join(', ')} } from '@apollo/client/react'`
+  return content.replace(sdkImportRegex, (match, imports) => {
+    const importList = imports
+      .split(',')
+      .map((imp: string) => imp.trim())
+      .filter((imp: string) => {
+        if (!imp) return false
+        if (imp.match(/^use\w+(Query|Mutation|LazyQuery|SuspenseQuery)$/)) {
+          return false
         }
-      )
-    } else {
-      // Add new import after the last import statement
-      // Match all imports including multi-line ones, then insert after the last one
-      const lines = result.content.split('\n')
-      let lastImportIndex = -1
-      let inImport = false
-
-      for (let i = 0; i < lines.length; i++) {
-        const line = lines[i].trim()
-        if (line.startsWith('import ')) {
-          inImport = true
-          lastImportIndex = i
-        } else if (inImport) {
-          // Check if this line closes the import (contains 'from')
-          if (line.includes(' from ')) {
-            lastImportIndex = i
-            inImport = false
-          } else if (line.includes('}')) {
-            // Multi-line import closing
-            lastImportIndex = i
-            inImport = false
-          }
-        } else if (!line.startsWith('//') && line.length > 0 && !inImport) {
-          // Non-import, non-comment line - stop looking
-          break
+        if (imp.endsWith('Document')) {
+          const baseName = imp.replace(/Document$/, '')
+          context.documentsNeeded.add(baseName)
+          return false
         }
-      }
+        return true
+      })
 
-      if (lastImportIndex >= 0) {
-        const apolloImportLine = `import { ${apolloImports.join(', ')} } from '@apollo/client/react'`
-        lines.splice(lastImportIndex + 1, 0, apolloImportLine)
-        result.content = lines.join('\n')
+    context.documentsNeeded.forEach(doc => {
+      if (!importList.includes(doc)) {
+        importList.push(doc)
       }
+    })
+    context.typesNeeded.forEach(type => {
+      if (!importList.includes(type) && !importList.includes(`type ${type}`)) {
+        importList.push(`type ${type}`)
+      }
+    })
+
+    const uniqueImports = Array.from(new Set(importList)).filter(Boolean)
+
+    result.changed = true
+    return `import { ${uniqueImports.join(', ')} } from '@nestled-template/shared/sdk'`
+  })
+}
+
+function findLastImportIndex(lines: string[]): number {
+  let lastImportIndex = -1
+  let inImport = false
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i].trim()
+    if (line.startsWith('import ')) {
+      inImport = true
+      lastImportIndex = i
+    } else if (inImport) {
+      if (line.includes(' from ') || line.includes('}')) {
+        lastImportIndex = i
+        inImport = false
+      }
+    } else if (!line.startsWith('//') && line.length > 0 && !inImport) {
+      break
     }
   }
+
+  return lastImportIndex
+}
+
+function updateApolloImports(content: string, apolloImports: string[]): string {
+  if (apolloImports.length === 0) {
+    return content
+  }
+
+  const hasApolloImport = content.includes("from '@apollo/client")
+
+  if (hasApolloImport) {
+    return content.replace(
+      /import\s+\{([^}]+)\}\s+from\s+['"]@apollo\/client\/react['"]/gs,
+      (match, imports) => {
+        const importList = imports
+          .split(',')
+          .map((imp: string) => imp.trim())
+          .filter(Boolean)
+
+        apolloImports.forEach(imp => {
+          if (!importList.includes(imp)) {
+            importList.push(imp)
+          }
+        })
+
+        return `import { ${importList.join(', ')} } from '@apollo/client/react'`
+      }
+    )
+  } else {
+    const lines = content.split('\n')
+    const lastImportIndex = findLastImportIndex(lines)
+
+    if (lastImportIndex >= 0) {
+      const apolloImportLine = `import { ${apolloImports.join(', ')} } from '@apollo/client/react'`
+      lines.splice(lastImportIndex + 1, 0, apolloImportLine)
+      return lines.join('\n')
+    }
+  }
+
+  return content
+}
+
+function transformFile(content: string): TransformResult {
+  const result: TransformResult = {
+    content,
+    changed: false,
+    hooks: new Set(),
+    documents: new Set(),
+  }
+
+  const context: TransformContext = {
+    documentsNeeded: new Set<string>(),
+    typesNeeded: new Set<string>(),
+    needsUseQuery: false,
+    needsUseMutation: false,
+  }
+
+  // Step 1: Transform hook usage patterns
+  result.content = transformHookUsage(result.content, result, context)
+
+  // Step 2: Transform document references
+  result.content = transformDocumentReferences(result.content, result, context)
+
+  // Step 3: Update SDK imports
+  result.content = updateSdkImports(result.content, result, context)
+
+  // Step 4: Update Apollo Client imports
+  const apolloImports: string[] = []
+  if (context.needsUseQuery) apolloImports.push('useQuery')
+  if (context.needsUseMutation) apolloImports.push('useMutation')
+  result.content = updateApolloImports(result.content, apolloImports)
 
   return result
 }
@@ -247,4 +263,10 @@ async function main() {
   }
 }
 
-main().catch(console.error)
+// Use top-level await instead of promise chain
+try {
+  await main()
+} catch (error) {
+  console.error(error)
+  process.exit(1)
+}

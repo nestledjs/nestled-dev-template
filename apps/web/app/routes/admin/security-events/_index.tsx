@@ -143,6 +143,75 @@ const EVENT_TYPE_CONFIG: Record<
   },
 }
 
+// Extract SecurityEventItem component to reduce cognitive complexity
+type SecurityEvent = NonNullable<AdminPlatformSecurityEventsQuery['adminSecurityEvents']['events'][number]>
+
+interface SecurityEventItemProps {
+  event: SecurityEvent
+  formatDate: (date: string) => string
+}
+
+function SecurityEventItem({ event, formatDate }: SecurityEventItemProps) {
+  const config = EVENT_TYPE_CONFIG[event.eventType as SecurityEventType]
+  const colorClasses = getColorClasses(config.color)
+  const Icon = config.icon
+  const userEmail = event.user?.emails?.[0]?.email || 'Unknown user'
+
+  return (
+    <div className="flex gap-4 p-4 rounded-lg border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-white/5 hover:bg-zinc-100 dark:hover:bg-white/10 transition">
+      {/* Icon */}
+      <div className={cn('flex-shrink-0 h-10 w-10 rounded-lg flex items-center justify-center', colorClasses.iconBg)}>
+        <Icon className={cn('h-5 w-5', colorClasses.iconText)} />
+      </div>
+
+      {/* Content */}
+      <div className="flex-1 min-w-0">
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <span className={cn('inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium', colorClasses.badgeBg)}>
+                {config.label}
+              </span>
+            </div>
+            <p className="text-sm text-zinc-900 dark:text-white font-medium">
+              {config.description}
+            </p>
+            <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-zinc-600 dark:text-zinc-400">
+              <span>
+                User: {event.user?.firstName} {event.user?.lastName} ({userEmail})
+              </span>
+              {event.ipAddress && <span>IP: {event.ipAddress}</span>}
+              {event.userAgent && (
+                <span className="max-w-xs truncate">Device: {event.userAgent}</span>
+              )}
+            </div>
+          </div>
+          <div className="flex-shrink-0 text-right">
+            <div className="text-xs text-zinc-500 dark:text-zinc-400">
+              {formatDate(event.createdAt)}
+            </div>
+            <div className="text-xs text-zinc-400 dark:text-zinc-500 mt-0.5">
+              {event.id.slice(0, 8)}
+            </div>
+          </div>
+        </div>
+
+        {/* Metadata */}
+        {event.metadata && Object.keys(event.metadata).length > 0 && (
+          <details className="mt-3">
+            <summary className="cursor-pointer text-xs text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-300">
+              View metadata
+            </summary>
+            <pre className="mt-2 p-2 bg-zinc-100 dark:bg-zinc-900 rounded text-xs text-zinc-700 dark:text-zinc-300 overflow-x-auto">
+              {JSON.stringify(event.metadata, null, 2)}
+            </pre>
+          </details>
+        )}
+      </div>
+    </div>
+  )
+}
+
 export default function AdminSecurityEventsPage() {
   const [filters, setFilters] = useState({
     eventType: undefined as SecurityEventType | undefined,
@@ -168,8 +237,6 @@ export default function AdminSecurityEventsPage() {
     },
     fetchPolicy: 'network-only',
   })
-
-  type SecurityEvent = NonNullable<AdminPlatformSecurityEventsQuery['adminSecurityEvents']['events'][number]>
 
   const events = data?.adminSecurityEvents?.events || []
   const total = data?.adminSecurityEvents?.total || 0
@@ -377,69 +444,9 @@ export default function AdminSecurityEventsPage() {
           </div>
         ) : (
           <div className="p-6 space-y-4">
-            {events.map((event) => {
-              const config = EVENT_TYPE_CONFIG[event.eventType as SecurityEventType]
-              const colorClasses = getColorClasses(config.color)
-              const Icon = config.icon
-              const userEmail = event.user?.emails?.[0]?.email || 'Unknown user'
-
-              return (
-                <div
-                  key={event.id}
-                  className="flex gap-4 p-4 rounded-lg border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-white/5 hover:bg-zinc-100 dark:hover:bg-white/10 transition"
-                >
-                  {/* Icon */}
-                  <div className={cn('flex-shrink-0 h-10 w-10 rounded-lg flex items-center justify-center', colorClasses.iconBg)}>
-                    <Icon className={cn('h-5 w-5', colorClasses.iconText)} />
-                  </div>
-
-                  {/* Content */}
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-start justify-between gap-4">
-                      <div>
-                        <div className="flex items-center gap-2 mb-1">
-                          <span className={cn('inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium', colorClasses.badgeBg)}>
-                            {config.label}
-                          </span>
-                        </div>
-                        <p className="text-sm text-zinc-900 dark:text-white font-medium">
-                          {config.description}
-                        </p>
-                        <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-zinc-600 dark:text-zinc-400">
-                          <span>
-                            User: {event.user?.firstName} {event.user?.lastName} ({userEmail})
-                          </span>
-                          {event.ipAddress && <span>IP: {event.ipAddress}</span>}
-                          {event.userAgent && (
-                            <span className="max-w-xs truncate">Device: {event.userAgent}</span>
-                          )}
-                        </div>
-                      </div>
-                      <div className="flex-shrink-0 text-right">
-                        <div className="text-xs text-zinc-500 dark:text-zinc-400">
-                          {formatDate(event.createdAt)}
-                        </div>
-                        <div className="text-xs text-zinc-400 dark:text-zinc-500 mt-0.5">
-                          {event.id.slice(0, 8)}
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Metadata */}
-                    {event.metadata && Object.keys(event.metadata).length > 0 && (
-                      <details className="mt-3">
-                        <summary className="cursor-pointer text-xs text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-300">
-                          View metadata
-                        </summary>
-                        <pre className="mt-2 p-2 bg-zinc-100 dark:bg-zinc-900 rounded text-xs text-zinc-700 dark:text-zinc-300 overflow-x-auto">
-                          {JSON.stringify(event.metadata, null, 2)}
-                        </pre>
-                      </details>
-                    )}
-                  </div>
-                </div>
-              )
-            })}
+            {events.map((event) => (
+              <SecurityEventItem key={event.id} event={event} formatDate={formatDate} />
+            ))}
           </div>
         )}
       </div>

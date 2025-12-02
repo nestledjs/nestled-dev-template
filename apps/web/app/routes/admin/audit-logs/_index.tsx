@@ -95,6 +95,78 @@ const getActionConfig = (action: string) => {
   }
 }
 
+// Extract AuditLogItem component to reduce cognitive complexity
+type AuditLog = NonNullable<AdminPlatformAuditLogsQuery['adminAuditLogs']['logs'][number]>
+
+interface AuditLogItemProps {
+  log: AuditLog
+  formatDate: (date: string) => string
+}
+
+function AuditLogItem({ log, formatDate }: AuditLogItemProps) {
+  const config = getActionConfig(log.action)
+  const colorClasses = getColorClasses(config.color)
+  const Icon = config.icon
+  const userEmail = log.user?.emails?.[0]?.email || 'System'
+  const userName = log.user ? `${log.user.firstName} ${log.user.lastName}` : 'System'
+
+  return (
+    <div className="flex gap-4 p-4 rounded-lg border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-white/5 hover:bg-zinc-100 dark:hover:bg-white/10 transition">
+      {/* Icon */}
+      <div className={cn('flex-shrink-0 h-10 w-10 rounded-lg flex items-center justify-center', colorClasses.iconBg)}>
+        <Icon className={cn('h-5 w-5', colorClasses.iconText)} />
+      </div>
+
+      {/* Content */}
+      <div className="flex-1 min-w-0">
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <span className={cn('inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium', colorClasses.badgeBg)}>
+                {config.label}
+              </span>
+              <span className="text-xs text-zinc-500 dark:text-zinc-400">
+                {log.entityType}
+              </span>
+            </div>
+            <p className="text-sm text-zinc-900 dark:text-white font-medium mb-2">
+              Entity ID: {log.entityId}
+            </p>
+            <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-zinc-600 dark:text-zinc-400">
+              <span>
+                User: {userName} ({userEmail})
+              </span>
+              {log.organization && <span>Organization: {log.organization.name}</span>}
+            </div>
+          </div>
+          <div className="flex-shrink-0 text-right">
+            <div className="text-xs text-zinc-500 dark:text-zinc-400">
+              {formatDate(log.createdAt)}
+            </div>
+            <div className="text-xs text-zinc-400 dark:text-zinc-500 mt-0.5">
+              {log.id.slice(0, 8)}
+            </div>
+          </div>
+        </div>
+
+        {/* Changes */}
+        {log.changes && Object.keys(log.changes).length > 0 && (
+          <details className="mt-3">
+            <summary className="cursor-pointer text-xs text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-300">
+              View changes
+            </summary>
+            <div className="mt-2 p-3 bg-zinc-100 dark:bg-zinc-900 rounded-lg">
+              <pre className="text-xs text-zinc-700 dark:text-zinc-300 overflow-x-auto">
+                {JSON.stringify(log.changes, null, 2)}
+              </pre>
+            </div>
+          </details>
+        )}
+      </div>
+    </div>
+  )
+}
+
 export default function AdminAuditLogsPage() {
   const [filters, setFilters] = useState({
     userId: '',
@@ -122,8 +194,6 @@ export default function AdminAuditLogsPage() {
     },
     fetchPolicy: 'network-only',
   })
-
-  type AuditLog = NonNullable<AdminPlatformAuditLogsQuery['adminAuditLogs']['logs'][number]>
 
   const logs = data?.adminAuditLogs?.logs || []
   const total = data?.adminAuditLogs?.total || 0
@@ -351,72 +421,9 @@ export default function AdminAuditLogsPage() {
           </div>
         ) : (
           <div className="p-6 space-y-4">
-            {logs.map((log) => {
-              const config = getActionConfig(log.action)
-              const colorClasses = getColorClasses(config.color)
-              const Icon = config.icon
-              const userEmail = log.user?.emails?.[0]?.email || 'System'
-              const userName = log.user ? `${log.user.firstName} ${log.user.lastName}` : 'System'
-
-              return (
-                <div
-                  key={log.id}
-                  className="flex gap-4 p-4 rounded-lg border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-white/5 hover:bg-zinc-100 dark:hover:bg-white/10 transition"
-                >
-                  {/* Icon */}
-                  <div className={cn('flex-shrink-0 h-10 w-10 rounded-lg flex items-center justify-center', colorClasses.iconBg)}>
-                    <Icon className={cn('h-5 w-5', colorClasses.iconText)} />
-                  </div>
-
-                  {/* Content */}
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-start justify-between gap-4">
-                      <div>
-                        <div className="flex items-center gap-2 mb-1">
-                          <span className={cn('inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium', colorClasses.badgeBg)}>
-                            {config.label}
-                          </span>
-                          <span className="text-xs text-zinc-500 dark:text-zinc-400">
-                            {log.entityType}
-                          </span>
-                        </div>
-                        <p className="text-sm text-zinc-900 dark:text-white font-medium mb-2">
-                          Entity ID: {log.entityId}
-                        </p>
-                        <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-zinc-600 dark:text-zinc-400">
-                          <span>
-                            User: {userName} ({userEmail})
-                          </span>
-                          {log.organization && <span>Organization: {log.organization.name}</span>}
-                        </div>
-                      </div>
-                      <div className="flex-shrink-0 text-right">
-                        <div className="text-xs text-zinc-500 dark:text-zinc-400">
-                          {formatDate(log.createdAt)}
-                        </div>
-                        <div className="text-xs text-zinc-400 dark:text-zinc-500 mt-0.5">
-                          {log.id.slice(0, 8)}
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Changes */}
-                    {log.changes && Object.keys(log.changes).length > 0 && (
-                      <details className="mt-3">
-                        <summary className="cursor-pointer text-xs text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-300">
-                          View changes
-                        </summary>
-                        <div className="mt-2 p-3 bg-zinc-100 dark:bg-zinc-900 rounded-lg">
-                          <pre className="text-xs text-zinc-700 dark:text-zinc-300 overflow-x-auto">
-                            {JSON.stringify(log.changes, null, 2)}
-                          </pre>
-                        </div>
-                      </details>
-                    )}
-                  </div>
-                </div>
-              )
-            })}
+            {logs.map((log) => (
+              <AuditLogItem key={log.id} log={log} formatDate={formatDate} />
+            ))}
           </div>
         )}
       </div>
