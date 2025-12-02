@@ -53,7 +53,7 @@ function transformHookUsage(content: string, result: TransformResult, context: T
 }
 
 function transformDocumentReferences(content: string, result: TransformResult, context: TransformContext): string {
-  return content.replace(
+  return content.replaceAll(
     /\b(\w+)Document\b/g,
     (match, baseName) => {
       result.changed = true
@@ -72,7 +72,7 @@ function updateSdkImports(content: string, result: TransformResult, context: Tra
     return content
   }
 
-  return content.replace(sdkImportRegex, (match, imports) => {
+  return content.replaceAll(sdkImportRegex, (match, imports) => {
     const importList = imports
       .split(',')
       .map((imp: string) => imp.trim())
@@ -137,7 +137,7 @@ function updateApolloImports(content: string, apolloImports: string[]): string {
   const hasApolloImport = content.includes("from '@apollo/client")
 
   if (hasApolloImport) {
-    return content.replace(
+    return content.replaceAll(
       /import\s+\{([^}]+)\}\s+from\s+['"]@apollo\/client\/react['"]/gs,
       (match, imports) => {
         const importList = imports
