@@ -27,7 +27,7 @@ interface TransformContext {
 }
 
 function transformHookUsage(content: string, result: TransformResult, context: TransformContext): string {
-  return content.replace(
+  return content.replaceAll(
     /const\s+(\{[^}]+\}|\[[^\]]+\])\s*=\s*use(\w+)(Query|Mutation)\s*\(([^)]*)\)/g,
     (match, destructure, baseName, type, params) => {
       result.changed = true
