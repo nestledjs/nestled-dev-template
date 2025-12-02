@@ -1,17 +1,17 @@
-[2025-12-02T18:32:39.804Z] [INFO] 🚀 Starting SonarQube fix loop for PR #9
-[2025-12-02T18:32:39.805Z] [INFO]    Max iterations: 10
-[2025-12-02T18:32:39.806Z] [INFO]    Auto-commit: false
-[2025-12-02T18:32:39.806Z] [INFO] 🔍 Checking prerequisites...
-[2025-12-02T18:32:39.886Z] [WARN] ⚠️  SonarQube environment variables not set
-[2025-12-02T18:32:39.886Z] [WARN]   Set SONARQUBE_URL, SONARQUBE_TOKEN, and SONARQUBE_PROJECT_KEY
-[2025-12-02T18:32:39.886Z] [INFO] ✅ Prerequisites check passed
-[2025-12-02T18:32:39.886Z] [INFO] 
+[2025-12-02T18:40:57.941Z] [INFO] 🚀 Starting SonarQube fix loop for PR #9
+[2025-12-02T18:40:57.943Z] [INFO]    Max iterations: 10
+[2025-12-02T18:40:57.943Z] [INFO]    Auto-commit: false
+[2025-12-02T18:40:57.943Z] [INFO] 🔍 Checking prerequisites...
+[2025-12-02T18:40:58.032Z] [WARN] ⚠️  SonarQube environment variables not set
+[2025-12-02T18:40:58.032Z] [WARN]   Set SONARQUBE_URL, SONARQUBE_TOKEN, and SONARQUBE_PROJECT_KEY
+[2025-12-02T18:40:58.032Z] [INFO] ✅ Prerequisites check passed
+[2025-12-02T18:40:58.032Z] [INFO] 
 🔄 === Iteration 1/10 ===
-[2025-12-02T18:32:39.887Z] [INFO] 🔍 Checking if SonarCloud analysis exists...
-[2025-12-02T18:32:43.160Z] [INFO] ✅ SonarCloud analysis found
-[2025-12-02T18:32:43.160Z] [INFO] 🔍 Running SonarQube analysis...
-[2025-12-02T18:32:44.891Z] [INFO] 📊 Found 392 issues
-[2025-12-02T18:32:44.893Z] [INFO] 📝 Fix prompt generated and saved to .claude-fix-prompt-9.md
-[2025-12-02T18:32:44.912Z] [INFO] ⏸️ Waiting for file changes or user input...
-[2025-12-02T18:35:16.566Z] [WARN] ⏱️ Timeout waiting for fixes
-[2025-12-02T18:35:16.566Z] [INFO] 📦 Committing and pushing changes...
+[2025-12-02T18:40:58.032Z] [INFO] 🔍 Checking if SonarCloud analysis exists...
+[2025-12-02T18:41:01.428Z] [INFO] ✅ SonarCloud analysis found
+[2025-12-02T18:41:01.428Z] [INFO] 🔍 Running SonarQube analysis...
+[2025-12-02T18:41:04.361Z] [INFO] 📊 Found 392 issues
+[2025-12-02T18:41:04.362Z] [INFO] 📝 Fix prompt generated and saved to .claude-fix-prompt-9.md
+[2025-12-02T18:41:04.398Z] [INFO] ⏸️ Waiting for file changes or user input...
+[2025-12-02T18:51:04.396Z] [WARN] ⏱️ Timeout waiting for fixes
+[2025-12-02T18:51:04.396Z] [INFO] 📦 Committing and pushing changes...
