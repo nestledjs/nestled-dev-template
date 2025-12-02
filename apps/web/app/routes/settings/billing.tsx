@@ -58,7 +58,7 @@ export default function BillingSettings() {
     try {
       const { data } = await createPortalSession()
       if (data?.createPortalSession) {
-        window.location.href = data.createPortalSession
+        globalThis.location.href = data.createPortalSession
       }
     } catch (error) {
       console.error('Failed to create portal session:', error)
@@ -70,7 +70,7 @@ export default function BillingSettings() {
 
   const handleCancelSubscription = async () => {
     if (
-      !window.confirm(
+      !globalThis.confirm(
         'Are you sure you want to cancel your subscription? You will retain access until the end of your billing period.',
       )
     ) {

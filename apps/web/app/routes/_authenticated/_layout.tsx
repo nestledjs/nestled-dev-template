@@ -41,9 +41,9 @@ export default function AuthenticatedLayout() {
 
   const organizations = (orgsData?.myOrganizations || []) as any
   const activeOrganization =
-    (organizations.find((org: any) => org?.id === (user as any).activeOrganizationId) || organizations[0] || null) as any
+    organizations.find((org: any) => org?.id === (user as any).activeOrganizationId) || organizations[0] || null
   const activeOrganizationMember =
-    (activeOrganization?.members?.find((member: any) => member.userId === user?.id) || null) as any
+    activeOrganization?.members?.find((member: any) => member.userId === user?.id) || null
 
   // Build navigation based on user permissions
   const navigation = [
