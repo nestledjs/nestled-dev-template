@@ -1,8 +1,8 @@
 // Helper to convert PascalCase or camelCase to kebab-case
 export function kebabCase(name: string): string {
   return name
-    .replace(/([a-z])([A-Z])/g, '$1-$2')
-    .replace(/([A-Z])([A-Z][a-z])/g, '$1-$2')
+    .replaceAll(/([a-z])([A-Z])/g, '$1-$2')
+    .replaceAll(/([A-Z])([A-Z][a-z])/g, '$1-$2')
     .toLowerCase()
 }
 
