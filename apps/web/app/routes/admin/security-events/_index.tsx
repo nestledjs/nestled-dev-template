@@ -147,12 +147,12 @@ const EVENT_TYPE_CONFIG: Record<
 type SecurityEvent = NonNullable<AdminPlatformSecurityEventsQuery['adminSecurityEvents']['events'][number]>
 
 interface SecurityEventItemProps {
-  event: SecurityEvent
-  formatDate: (date: string) => string
+  readonly event: SecurityEvent
+  readonly formatDate: (date: string) => string
 }
 
 function SecurityEventItem({ event, formatDate }: SecurityEventItemProps) {
-  const config = EVENT_TYPE_CONFIG[event.eventType as SecurityEventType]
+  const config = EVENT_TYPE_CONFIG[event.eventType]
   const colorClasses = getColorClasses(config.color)
   const Icon = config.icon
   const userEmail = event.user?.emails?.[0]?.email || 'Unknown user'

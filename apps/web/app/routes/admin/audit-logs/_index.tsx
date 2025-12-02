@@ -99,8 +99,8 @@ const getActionConfig = (action: string) => {
 type AuditLog = NonNullable<AdminPlatformAuditLogsQuery['adminAuditLogs']['logs'][number]>
 
 interface AuditLogItemProps {
-  log: AuditLog
-  formatDate: (date: string) => string
+  readonly log: AuditLog
+  readonly formatDate: (date: string) => string
 }
 
 function AuditLogItem({ log, formatDate }: AuditLogItemProps) {
