@@ -174,7 +174,7 @@ function createAuthLink(token: string | null): ApolloLink {
 function createLogLink(): ApolloLink {
   return new ApolloLink((operation, forward) => {
     console.log(`[Apollo] ${operation.operationName}`, operation.variables)
-    return (forward(operation) as any).map((result: any) => {
+    return forward(operation).map((result: any) => {
       console.log(`[Apollo][Result] ${operation.operationName}`, result)
       return result
     })
