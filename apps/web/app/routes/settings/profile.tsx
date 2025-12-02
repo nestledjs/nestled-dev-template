@@ -39,6 +39,46 @@ export const loader = apolloLoader()(({ preloadQuery }) => {
   return { meQueryRef }
 })
 
+// Helper function to validate username
+function validateUsername(username: string): { valid: boolean; error?: string } {
+  const cleanedUsername = username.toLowerCase().replace(/[^a-z0-9.]/g, '')
+  if (cleanedUsername !== username) {
+    return { valid: false, error: 'Username can only contain lowercase letters, numbers, and periods' }
+  }
+  if (cleanedUsername.length < 3) {
+    return { valid: false, error: 'Username must be at least 3 characters' }
+  }
+  return { valid: true }
+}
+
+// Helper function to get error message based on error type
+function getErrorMessage(error: Error): string {
+  if (error.message?.includes('Template email send failed')) {
+    return 'Email service is not configured. Profile updates saved but verification email could not be sent.'
+  }
+  if (error.message?.includes('Template') && error.message?.includes('not found')) {
+    return 'Email templates are not properly configured. Please contact support.'
+  }
+  if (error.message?.includes('Unique constraint') || error.message?.includes('displayName')) {
+    return 'This username is already taken. Please choose another.'
+  }
+  return error.message || 'Failed to update profile'
+}
+
+// Helper function to collect user updates
+function collectUserUpdates(
+  values: { firstName?: string; lastName?: string; displayName?: string },
+  user: any,
+): Record<string, string | undefined> {
+  const updates: Record<string, string | undefined> = {}
+  if (values.firstName !== user?.firstName) updates.firstName = values.firstName
+  if (values.lastName !== user?.lastName) updates.lastName = values.lastName
+  if (values.displayName && values.displayName !== user?.displayName) {
+    updates.displayName = values.displayName.toLowerCase().replace(/[^a-z0-9.]/g, '')
+  }
+  return updates
+}
+
 export default function ProfileSettings() {
   const loaderData = useLoaderData() as { meQueryRef: QueryRef<MeQuery> }
   const { data } = useReadQuery(loaderData.meQueryRef)
@@ -212,46 +252,6 @@ export default function ProfileSettings() {
       displayName: user?.displayName || '',
       email: primaryEmail?.email || '',
     }
-  }
-
-  // Helper function to validate username
-  function validateUsername(username: string): { valid: boolean; error?: string } {
-    const cleanedUsername = username.toLowerCase().replace(/[^a-z0-9.]/g, '')
-    if (cleanedUsername !== username) {
-      return { valid: false, error: 'Username can only contain lowercase letters, numbers, and periods' }
-    }
-    if (cleanedUsername.length < 3) {
-      return { valid: false, error: 'Username must be at least 3 characters' }
-    }
-    return { valid: true }
-  }
-
-  // Helper function to get error message based on error type
-  function getErrorMessage(error: Error): string {
-    if (error.message?.includes('Template email send failed')) {
-      return 'Email service is not configured. Profile updates saved but verification email could not be sent.'
-    }
-    if (error.message?.includes('Template') && error.message?.includes('not found')) {
-      return 'Email templates are not properly configured. Please contact support.'
-    }
-    if (error.message?.includes('Unique constraint') || error.message?.includes('displayName')) {
-      return 'This username is already taken. Please choose another.'
-    }
-    return error.message || 'Failed to update profile'
-  }
-
-  // Helper function to collect user updates
-  function collectUserUpdates(
-    values: { firstName?: string; lastName?: string; displayName?: string },
-    user: any,
-  ): Record<string, string | undefined> {
-    const updates: Record<string, string | undefined> = {}
-    if (values.firstName !== user?.firstName) updates.firstName = values.firstName
-    if (values.lastName !== user?.lastName) updates.lastName = values.lastName
-    if (values.displayName && values.displayName !== user?.displayName) {
-      updates.displayName = values.displayName.toLowerCase().replace(/[^a-z0-9.]/g, '')
-    }
-    return updates
   }
 
   async function handleSubmit(values: {
