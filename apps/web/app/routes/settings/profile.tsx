@@ -79,6 +79,17 @@ function collectUserUpdates(
   return updates
 }
 
+function downloadJsonFile(data: unknown, filename: string) {
+  const dataStr = JSON.stringify(data, null, 2)
+  const dataBlob = new Blob([dataStr], { type: 'application/json' })
+  const url = URL.createObjectURL(dataBlob)
+  const link = document.createElement('a')
+  link.href = url
+  link.download = filename
+  link.click()
+  URL.revokeObjectURL(url)
+}
+
 export default function ProfileSettings() {
   const loaderData = useLoaderData() as { meQueryRef: QueryRef<MeQuery> }
   const { data } = useReadQuery(loaderData.meQueryRef)
@@ -104,7 +115,6 @@ export default function ProfileSettings() {
   const [emailResendSuccess, setEmailResendSuccess] = useState(false)
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
-  const [verificationMessage, setVerificationMessage] = useState<string | null>(null)
 
   if (!user) {
     return <div>Loading...</div>
@@ -208,24 +218,16 @@ export default function ProfileSettings() {
           </p>
           <button
             type="button"
-            onClick={async () => {
-              try {
-                await resendVerificationEmail({
-                  variables: { email: primaryEmail.email },
-                })
-                setVerificationMessage('Verification email sent! Please check your inbox.')
-                setTimeout(() => setVerificationMessage(null), 5000)
-              } catch {
-                setVerificationMessage('Failed to send verification email. Please try again.')
-                setTimeout(() => setVerificationMessage(null), 5000)
-              }
-            }}
-            className="text-sm text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 underline mt-1"
+            onClick={handleResendVerificationEmail}
+            disabled={isResendingEmail}
+            className="text-sm text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 underline mt-1 disabled:opacity-50"
           >
-            Click here to resend verification email
+            {isResendingEmail ? 'Sending...' : 'Click here to resend verification email'}
           </button>
-          {verificationMessage && (
-            <p className="text-sm mt-1 text-zinc-600 dark:text-zinc-400">{verificationMessage}</p>
+          {emailResendSuccess && (
+            <p className="text-sm mt-1 text-emerald-600 dark:text-emerald-400">
+              Verification email sent! Please check your inbox.
+            </p>
           )}
         </div>
       ),
@@ -332,27 +334,19 @@ export default function ProfileSettings() {
       }
 
       const exportData = result.data?.exportUserData
-
       if (!exportData) {
         throw new Error('No export data returned')
       }
 
       // Download as JSON file
-      const dataStr = JSON.stringify(exportData.userData, null, 2)
-      const dataBlob = new Blob([dataStr], { type: 'application/json' })
-      const url = URL.createObjectURL(dataBlob)
-      const link = document.createElement('a')
-      link.href = url
-      link.download = `user-data-export-${new Date().toISOString().split('T')[0]}.json`
-      link.click()
+      const filename = `user-data-export-${new Date().toISOString().split('T')[0]}.json`
+      downloadJsonFile(exportData.userData, filename)
 
       // Show success feedback
       setExportSuccess(true)
-      // Hide success message after 5 seconds
       setTimeout(() => setExportSuccess(false), 5000)
     } catch (error) {
       setExportError((error as Error).message)
-      // Hide error message after 8 seconds
       setTimeout(() => setExportError(null), 8000)
     } finally {
       setIsExporting(false)

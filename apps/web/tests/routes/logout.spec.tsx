@@ -33,6 +33,22 @@ vi.mock('react-router', async () => {
   }
 })
 
+// Extract renderLogout helper to reduce nesting depth
+function createLogoutRender() {
+  const ReactRouterStub = createTestRouter([
+    {
+      path: '/logout',
+      Component: LogoutRoute,
+    },
+    {
+      path: '/login',
+      element: <div data-testid="login-page">Login Page</div>,
+    },
+  ])
+
+  return render(<ReactRouterStub initialEntries={['/logout']} />)
+}
+
 describe('Logout Route', () => {
   let mockApolloClient: {
     mutate: ReturnType<typeof vi.fn>
@@ -55,20 +71,7 @@ describe('Logout Route', () => {
     })
   })
 
-  const renderLogout = () => {
-    const ReactRouterStub = createTestRouter([
-      {
-        path: '/logout',
-        Component: LogoutRoute,
-      },
-      {
-        path: '/login',
-        element: <div data-testid="login-page">Login Page</div>,
-      },
-    ])
-
-    return render(<ReactRouterStub initialEntries={['/logout']} />)
-  }
+  const renderLogout = createLogoutRender
 
   describe('Loading State', () => {
     it('should show loading spinner immediately', () => {
