@@ -322,7 +322,7 @@ describe('BillingSettings Component', () => {
   describe('Cancel Subscription Flow', () => {
     it('should show confirmation dialog', async () => {
       const user = userEvent.setup()
-      const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(false)
+      const confirmSpy = vi.spyOn(globalThis, 'confirm').mockReturnValue(false)
 
       vi.mocked(useSubscription).mockReturnValue({
         subscription: { id: 'sub-123' },
@@ -349,8 +349,8 @@ describe('BillingSettings Component', () => {
 
     it('should handle cancel when confirmed', async () => {
       const user = userEvent.setup()
-      const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(true)
-      const alertSpy = vi.spyOn(window, 'alert').mockImplementation(() => {
+      const confirmSpy = vi.spyOn(globalThis, 'confirm').mockReturnValue(true)
+      const alertSpy = vi.spyOn(globalThis, 'alert').mockImplementation(() => {
         // No-op for test
       })
 
@@ -390,7 +390,7 @@ describe('BillingSettings Component', () => {
 
     it('should not cancel when not confirmed', async () => {
       const user = userEvent.setup()
-      const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(false)
+      const confirmSpy = vi.spyOn(globalThis, 'confirm').mockReturnValue(false)
 
       vi.mocked(useSubscription).mockReturnValue({
         subscription: { id: 'sub-123' },
@@ -415,8 +415,8 @@ describe('BillingSettings Component', () => {
 
     it('should handle cancel error', async () => {
       const user = userEvent.setup()
-      const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(true)
-      const alertSpy = vi.spyOn(window, 'alert').mockImplementation(() => {
+      const confirmSpy = vi.spyOn(globalThis, 'confirm').mockReturnValue(true)
+      const alertSpy = vi.spyOn(globalThis, 'alert').mockImplementation(() => {
         // No-op for test
       })
 
@@ -670,7 +670,7 @@ describe('BillingSettings Component', () => {
 
     it('should handle portal session error', async () => {
       const user = userEvent.setup()
-      const alertSpy = vi.spyOn(window, 'alert').mockImplementation(() => {
+      const alertSpy = vi.spyOn(globalThis, 'alert').mockImplementation(() => {
         // No-op for test
       })
 
