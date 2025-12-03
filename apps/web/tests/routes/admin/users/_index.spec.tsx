@@ -15,11 +15,16 @@ vi.mock('@apollo/client/react', () => ({
 }))
 
 // Mock SDK
-vi.mock('@nestled-template/shared/sdk', () => ({
+vi.mock('@nestled-template/shared/sdk', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@nestled-template/shared/sdk')>()
+  return {
+    ...actual,
+    
   AdminUserManagementDocument: { kind: 'Document', definitions: [] },
   EmulateUserDocument: { kind: 'Document', definitions: [] },
   AdminUserManagementDetailsDocument: { kind: 'Document', definitions: [] },
-}))
+  }
+})
 
 // Mock navigation
 const mockNavigate = vi.fn()

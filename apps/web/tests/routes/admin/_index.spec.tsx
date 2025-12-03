@@ -11,9 +11,13 @@ vi.mock('@apollo/client/react', () => ({
 }))
 
 // Mock SDK
-vi.mock('@nestled-template/shared/sdk', () => ({
-  AdminDashboardStatsDocument: { kind: 'Document', definitions: [] },
-}))
+vi.mock('@nestled-template/shared/sdk', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@nestled-template/shared/sdk')>()
+  return {
+    ...actual,
+    AdminDashboardStatsDocument: { kind: 'Document', definitions: [] },
+  }
+})
 
 describe('Admin Dashboard', () => {
   beforeEach(() => {
