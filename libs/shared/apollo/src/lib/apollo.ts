@@ -51,7 +51,7 @@ if (globalThis !== undefined && globalThis.crypto === undefined) {
   }
 }
 
-import { ApolloLink, Operation } from '@apollo/client'
+import { ApolloLink, Observable, Operation } from '@apollo/client'
 import { ApolloClient } from '@apollo/client-integration-react-router'
 import { setContext } from '@apollo/client/link/context'
 import { onError } from '@apollo/client/link/error'
@@ -227,9 +227,17 @@ function createAuthLink(token: string | null): ApolloLink {
 function createLogLink(): ApolloLink {
   return new ApolloLink((operation, forward) => {
     console.log(`[Apollo] ${operation.operationName}`, operation.variables)
-    return forward(operation).map((result: any) => {
-      console.log(`[Apollo][Result] ${operation.operationName}`, result)
-      return result
+    const observable = forward(operation)
+    return new Observable((observer) => {
+      const subscription = observable.subscribe({
+        next: (result) => {
+          console.log(`[Apollo][Result] ${operation.operationName}`, result)
+          observer.next(result)
+        },
+        error: (error) => observer.error(error),
+        complete: () => observer.complete(),
+      })
+      return () => subscription.unsubscribe()
     })
   })
 }
