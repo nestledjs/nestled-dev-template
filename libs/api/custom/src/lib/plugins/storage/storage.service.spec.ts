@@ -250,18 +250,18 @@ describe('StorageService', () => {
 
       mockPrisma.storedFile.create.mockResolvedValue({
         id: 'stored-avatar',
-        folder: 'avatars',
+        folder: 'user_avatars/user-123',
         metadata: { type: 'avatar' },
       } as any)
 
       const result = await service.uploadUserAvatar(mockFileUpload as any, 'user-123')
 
-      expect(result.folder).toBe('avatars')
+      expect(result.folder).toBe('user_avatars/user-123')
       expect(result.metadata).toEqual({ type: 'avatar' })
       expect(mockStorageProvider.upload).toHaveBeenCalledWith(
         expect.any(Buffer),
         expect.objectContaining({
-          folder: 'avatars',
+          folder: 'user_avatars/user-123',
           metadata: { type: 'avatar' },
         })
       )

@@ -87,7 +87,7 @@ describe.skip('RoleService', () => {
         organizationId: 'org-123',
       } as any)
 
-      const result = await service.createCustomRole(userId, input)
+      const result = await (service as any).createCustomRole(userId, input)
 
       expect(result.name).toBe('Custom Role')
       expect(data.role.create).toHaveBeenCalledWith({
@@ -119,7 +119,7 @@ describe.skip('RoleService', () => {
         },
       } as any)
 
-      await expect(service.createCustomRole(userId, input)).rejects.toThrow(ForbiddenException)
+      await expect((service as any).createCustomRole(userId, input)).rejects.toThrow(ForbiddenException)
     })
 
     it('should throw BadRequestException if role name already exists in organization', async () => {
@@ -141,7 +141,7 @@ describe.skip('RoleService', () => {
         name: 'Admin',
       } as any)
 
-      await expect(service.createCustomRole(userId, input)).rejects.toThrow(BadRequestException)
+      await expect((service as any).createCustomRole(userId, input)).rejects.toThrow(BadRequestException)
     })
 
     it('should throw BadRequestException if invalid permission IDs provided', async () => {
@@ -165,7 +165,7 @@ describe.skip('RoleService', () => {
         { id: 'perm-2' },
       ] as any)
 
-      await expect(service.createCustomRole(userId, input)).rejects.toThrow(BadRequestException)
+      await expect((service as any).createCustomRole(userId, input)).rejects.toThrow(BadRequestException)
     })
   })
 
@@ -200,7 +200,7 @@ describe.skip('RoleService', () => {
         name: 'Custom Role',
       } as any)
 
-      const result = await service.updateRolePermissions(userId, input)
+      const result = await (service as any).updateRolePermissions(userId, input)
 
       expect(result).toBe(true)
       expect(data.role.update).toHaveBeenCalledWith({
@@ -231,7 +231,7 @@ describe.skip('RoleService', () => {
         organizationId: 'org-123',
       } as any)
 
-      await expect(service.updateRolePermissions(userId, input)).rejects.toThrow(
+      await expect((service as any).updateRolePermissions(userId, input)).rejects.toThrow(
         BadRequestException
       )
     })
@@ -249,7 +249,7 @@ describe.skip('RoleService', () => {
 
       data.role.findUnique.mockResolvedValue(null)
 
-      await expect(service.updateRolePermissions(userId, input)).rejects.toThrow(
+      await expect((service as any).updateRolePermissions(userId, input)).rejects.toThrow(
         NotFoundException
       )
     })
@@ -276,7 +276,7 @@ describe.skip('RoleService', () => {
 
       data.role.delete.mockResolvedValue({} as any)
 
-      const result = await service.deleteCustomRole(userId, roleId)
+      const result = await (service as any).deleteCustomRole(userId, roleId)
 
       expect(result).toBe(true)
       expect(data.role.delete).toHaveBeenCalledWith({
@@ -299,7 +299,7 @@ describe.skip('RoleService', () => {
         organizationId: 'org-123',
       } as any)
 
-      await expect(service.deleteCustomRole(userId, roleId)).rejects.toThrow(BadRequestException)
+      await expect((service as any).deleteCustomRole(userId, roleId)).rejects.toThrow(BadRequestException)
     })
 
     it('should throw BadRequestException when role has assigned members', async () => {
@@ -319,7 +319,7 @@ describe.skip('RoleService', () => {
       // Role has 3 members
       data.organizationMember.count.mockResolvedValue(3)
 
-      await expect(service.deleteCustomRole(userId, roleId)).rejects.toThrow(BadRequestException)
+      await expect((service as any).deleteCustomRole(userId, roleId)).rejects.toThrow(BadRequestException)
     })
 
     it('should throw ForbiddenException when user lacks role:delete permission', async () => {
@@ -330,7 +330,7 @@ describe.skip('RoleService', () => {
         role: { permissions: [{ subject: 'role', action: 'read' }] },
       } as any)
 
-      await expect(service.deleteCustomRole(userId, roleId)).rejects.toThrow(ForbiddenException)
+      await expect((service as any).deleteCustomRole(userId, roleId)).rejects.toThrow(ForbiddenException)
     })
   })
 
@@ -368,7 +368,7 @@ describe.skip('RoleService', () => {
         },
       ] as any)
 
-      const result = await service.getOrganizationRoles(userId, organizationId)
+      const result = await (service as any).getOrganizationRoles(userId, organizationId)
 
       expect(result).toHaveLength(3)
       expect(result[0].name).toBe('Owner')
@@ -382,7 +382,7 @@ describe.skip('RoleService', () => {
 
       data.organizationMember.findFirst.mockResolvedValue(null)
 
-      await expect(service.getOrganizationRoles(userId, organizationId)).rejects.toThrow(
+      await expect((service as any).getOrganizationRoles(userId, organizationId)).rejects.toThrow(
         ForbiddenException
       )
     })
@@ -409,7 +409,7 @@ describe.skip('RoleService', () => {
         ],
       } as any)
 
-      const result = await service.getRoleWithPermissions(userId, roleId)
+      const result = await (service as any).getRoleWithPermissions(userId, roleId)
 
       expect(result.id).toBe('role-123')
       expect(result.name).toBe('Custom Role')
@@ -427,7 +427,7 @@ describe.skip('RoleService', () => {
 
       data.role.findUnique.mockResolvedValue(null)
 
-      await expect(service.getRoleWithPermissions(userId, roleId)).rejects.toThrow(
+      await expect((service as any).getRoleWithPermissions(userId, roleId)).rejects.toThrow(
         NotFoundException
       )
     })
@@ -440,7 +440,7 @@ describe.skip('RoleService', () => {
         role: { permissions: [{ subject: 'member', action: 'read' }] },
       } as any)
 
-      await expect(service.getRoleWithPermissions(userId, roleId)).rejects.toThrow(
+      await expect((service as any).getRoleWithPermissions(userId, roleId)).rejects.toThrow(
         ForbiddenException
       )
     })
@@ -474,7 +474,7 @@ describe.skip('RoleService', () => {
 
       data.role.update.mockResolvedValue({} as any)
 
-      const result = await service.assignPermissionsToRole(userId, input)
+      const result = await (service as any).assignPermissionsToRole(userId, input)
 
       expect(result).toBe(true)
       expect(data.role.update).toHaveBeenCalledWith({
@@ -505,7 +505,7 @@ describe.skip('RoleService', () => {
         permissions: [{ id: 'perm-1' }, { id: 'perm-2' }],
       } as any)
 
-      await expect(service.assignPermissionsToRole(userId, input)).rejects.toThrow(
+      await expect((service as any).assignPermissionsToRole(userId, input)).rejects.toThrow(
         BadRequestException
       )
     })
@@ -533,7 +533,7 @@ describe.skip('RoleService', () => {
 
       data.role.update.mockResolvedValue({} as any)
 
-      const result = await service.removePermissionsFromRole(userId, input)
+      const result = await (service as any).removePermissionsFromRole(userId, input)
 
       expect(result).toBe(true)
       expect(data.role.update).toHaveBeenCalledWith({
@@ -564,7 +564,7 @@ describe.skip('RoleService', () => {
         permissions: [{ id: 'perm-1' }],
       } as any)
 
-      await expect(service.removePermissionsFromRole(userId, input)).rejects.toThrow(
+      await expect((service as any).removePermissionsFromRole(userId, input)).rejects.toThrow(
         BadRequestException
       )
     })
@@ -587,7 +587,7 @@ describe.skip('RoleService', () => {
         permissions: [{ id: 'perm-1' }, { id: 'perm-2' }],
       } as any)
 
-      await expect(service.removePermissionsFromRole(userId, input)).rejects.toThrow(
+      await expect((service as any).removePermissionsFromRole(userId, input)).rejects.toThrow(
         BadRequestException
       )
     })
@@ -600,7 +600,7 @@ describe.skip('RoleService', () => {
 
       data.organizationMember.findFirst.mockResolvedValue(null)
 
-      await expect(service.getOrganizationRoles(userId, organizationId)).rejects.toThrow(
+      await expect((service as any).getOrganizationRoles(userId, organizationId)).rejects.toThrow(
         ForbiddenException
       )
     })
@@ -618,7 +618,7 @@ describe.skip('RoleService', () => {
         role: { permissions: [{ subject: 'member', action: 'read' }] },
       } as any)
 
-      await expect(service.createCustomRole(userId, input)).rejects.toThrow(ForbiddenException)
+      await expect((service as any).createCustomRole(userId, input)).rejects.toThrow(ForbiddenException)
     })
 
     it('should respect role:update permission', async () => {
@@ -633,7 +633,7 @@ describe.skip('RoleService', () => {
         role: { permissions: [{ subject: 'role', action: 'read' }] },
       } as any)
 
-      await expect(service.updateRolePermissions(userId, input)).rejects.toThrow(
+      await expect((service as any).updateRolePermissions(userId, input)).rejects.toThrow(
         ForbiddenException
       )
     })
@@ -647,7 +647,7 @@ describe.skip('RoleService', () => {
         role: { permissions: [{ subject: 'role', action: 'read' }] },
       } as any)
 
-      await expect(service.deleteCustomRole(userId, roleId)).rejects.toThrow(ForbiddenException)
+      await expect((service as any).deleteCustomRole(userId, roleId)).rejects.toThrow(ForbiddenException)
     })
 
     it('should protect default roles from modification', async () => {
@@ -663,7 +663,7 @@ describe.skip('RoleService', () => {
         name: 'Owner',
       } as any)
 
-      await expect(service.deleteCustomRole(userId, 'role-owner')).rejects.toThrow(
+      await expect((service as any).deleteCustomRole(userId, 'role-owner')).rejects.toThrow(
         BadRequestException
       )
 
@@ -673,7 +673,7 @@ describe.skip('RoleService', () => {
         name: 'Admin',
       } as any)
 
-      await expect(service.deleteCustomRole(userId, 'role-admin')).rejects.toThrow(
+      await expect((service as any).deleteCustomRole(userId, 'role-admin')).rejects.toThrow(
         BadRequestException
       )
 
@@ -683,7 +683,7 @@ describe.skip('RoleService', () => {
         name: 'Member',
       } as any)
 
-      await expect(service.deleteCustomRole(userId, 'role-member')).rejects.toThrow(
+      await expect((service as any).deleteCustomRole(userId, 'role-member')).rejects.toThrow(
         BadRequestException
       )
     })
