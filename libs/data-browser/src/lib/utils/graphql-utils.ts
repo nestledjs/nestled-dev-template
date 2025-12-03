@@ -401,19 +401,12 @@ export function buildFormFields(
 
             // Helper to get display label for an item
             const getDisplayLabel = (item: any) => {
-              // Try each configured display field in order
-              for (const displayField of displayFields) {
-                if (item[displayField]) {
-                  return item[displayField]
-                }
-              }
-
-              // If multiple display fields and they all exist, join them
+              // Try to join all available display fields
               const allValues = displayFields
                 .map(field => item[field])
                 .filter(val => val != null && val !== '')
 
-              if (allValues.length > 1) {
+              if (allValues.length > 0) {
                 return allValues.join(' ')
               }
 
