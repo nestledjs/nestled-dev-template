@@ -774,26 +774,28 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
               const [relationName, enumFieldName] = fieldName.split('.')
               if (value === undefined || value === null || value === '') {
                 // Remove the enum filter
-                if (newFilters[relationName]) {
-                  delete (newFilters[relationName] as any)[enumFieldName]
+                const relationFilter = newFilters[relationName]
+                if (relationFilter && typeof relationFilter === 'object') {
+                  delete relationFilter[enumFieldName]
                   // If the relation filter is now empty, remove it entirely
-                  if (Object.keys(newFilters[relationName] as any).length === 0) {
+                  if (Object.keys(relationFilter).length === 0) {
                     delete newFilters[relationName]
                   }
                 }
               } else {
                 // Add or update the enum filter
                 if (!newFilters[relationName]) {
-                  newFilters[relationName] = {} as any
+                  newFilters[relationName] = {}
                 }
-                (newFilters[relationName] as any)[enumFieldName] = value
+                const relationFilter = newFilters[relationName]
+                if (relationFilter && typeof relationFilter === 'object') {
+                  relationFilter[enumFieldName] = value
+                }
               }
+            } else if (value === undefined || value === null || value === '') {
+              delete newFilters[fieldName]
             } else {
-              if (value === undefined || value === null || value === '') {
-                delete newFilters[fieldName]
-              } else {
-                newFilters[fieldName] = value
-              }
+              newFilters[fieldName] = value
             }
 
             setFilters(newFilters)
