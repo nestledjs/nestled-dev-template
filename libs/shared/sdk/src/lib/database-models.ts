@@ -3,6 +3,7 @@
 
 export interface DatabaseField {
   name: string
+  kind?: string
   type: string
   isOptional?: boolean
   isId?: boolean
@@ -49,6 +50,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
     fields: [
       {
         name: 'id',
+        kind: 'scalar',
         type: 'String',
         isOptional: false,
         isId: true,
@@ -65,6 +67,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'createdAt',
+        kind: 'scalar',
         type: 'DateTime',
         isOptional: false,
         isId: false,
@@ -81,6 +84,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'updatedAt',
+        kind: 'scalar',
         type: 'DateTime',
         isOptional: false,
         isId: false,
@@ -93,6 +97,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'address1',
+        kind: 'scalar',
         type: 'String',
         isOptional: true,
         isId: false,
@@ -105,6 +110,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'address2',
+        kind: 'scalar',
         type: 'String',
         isOptional: true,
         isId: false,
@@ -117,6 +123,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'city',
+        kind: 'scalar',
         type: 'String',
         isOptional: true,
         isId: false,
@@ -129,6 +136,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'region',
+        kind: 'scalar',
         type: 'String',
         isOptional: true,
         isId: false,
@@ -141,6 +149,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'postalCode',
+        kind: 'scalar',
         type: 'String',
         isOptional: true,
         isId: false,
@@ -153,6 +162,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'addressType',
+        kind: 'enum',
         type: 'AddressType',
         isOptional: false,
         isId: false,
@@ -166,6 +176,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'isPrimary',
+        kind: 'scalar',
         type: 'Boolean',
         isOptional: false,
         isId: false,
@@ -179,6 +190,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'countryId',
+        kind: 'scalar',
         type: 'String',
         isOptional: true,
         isId: false,
@@ -191,6 +203,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'country',
+        kind: 'object',
         type: 'Country',
         isOptional: true,
         isId: false,
@@ -206,6 +219,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'userId',
+        kind: 'scalar',
         type: 'String',
         isOptional: true,
         isId: false,
@@ -218,6 +232,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'user',
+        kind: 'object',
         type: 'User',
         isOptional: true,
         isId: false,
@@ -233,6 +248,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'organizationId',
+        kind: 'scalar',
         type: 'String',
         isOptional: true,
         isId: false,
@@ -245,6 +261,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'organization',
+        kind: 'object',
         type: 'Organization',
         isOptional: true,
         isId: false,
@@ -272,6 +289,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
     fields: [
       {
         name: 'id',
+        kind: 'scalar',
         type: 'String',
         isOptional: false,
         isId: true,
@@ -288,6 +306,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'createdAt',
+        kind: 'scalar',
         type: 'DateTime',
         isOptional: false,
         isId: false,
@@ -304,6 +323,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'updatedAt',
+        kind: 'scalar',
         type: 'DateTime',
         isOptional: false,
         isId: false,
@@ -316,6 +336,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'userId',
+        kind: 'scalar',
         type: 'String',
         isOptional: false,
         isId: false,
@@ -328,6 +349,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'user',
+        kind: 'object',
         type: 'User',
         isOptional: false,
         isId: false,
@@ -343,6 +365,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'tokenHash',
+        kind: 'scalar',
         type: 'String',
         isOptional: false,
         isId: false,
@@ -355,6 +378,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'name',
+        kind: 'scalar',
         type: 'String',
         isOptional: false,
         isId: false,
@@ -367,6 +391,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'expiresAt',
+        kind: 'scalar',
         type: 'DateTime',
         isOptional: true,
         isId: false,
@@ -379,6 +404,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'lastUsedAt',
+        kind: 'scalar',
         type: 'DateTime',
         isOptional: true,
         isId: false,
@@ -391,6 +417,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'revoked',
+        kind: 'scalar',
         type: 'Boolean',
         isOptional: false,
         isId: false,
@@ -416,6 +443,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
     fields: [
       {
         name: 'id',
+        kind: 'scalar',
         type: 'String',
         isOptional: false,
         isId: true,
@@ -432,6 +460,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'createdAt',
+        kind: 'scalar',
         type: 'DateTime',
         isOptional: false,
         isId: false,
@@ -448,6 +477,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'updatedAt',
+        kind: 'scalar',
         type: 'DateTime',
         isOptional: false,
         isId: false,
@@ -460,6 +490,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'entityId',
+        kind: 'scalar',
         type: 'String',
         isOptional: false,
         isId: false,
@@ -472,6 +503,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'entityType',
+        kind: 'scalar',
         type: 'String',
         isOptional: false,
         isId: false,
@@ -484,6 +516,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'action',
+        kind: 'scalar',
         type: 'String',
         isOptional: false,
         isId: false,
@@ -496,6 +529,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'userId',
+        kind: 'scalar',
         type: 'String',
         isOptional: false,
         isId: false,
@@ -508,6 +542,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'user',
+        kind: 'object',
         type: 'User',
         isOptional: false,
         isId: false,
@@ -523,6 +558,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'organizationId',
+        kind: 'scalar',
         type: 'String',
         isOptional: true,
         isId: false,
@@ -535,6 +571,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'organization',
+        kind: 'object',
         type: 'Organization',
         isOptional: true,
         isId: false,
@@ -550,6 +587,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'changes',
+        kind: 'scalar',
         type: 'Json',
         isOptional: true,
         isId: false,
@@ -574,6 +612,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
     fields: [
       {
         name: 'id',
+        kind: 'scalar',
         type: 'String',
         isOptional: false,
         isId: true,
@@ -590,6 +629,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'createdAt',
+        kind: 'scalar',
         type: 'DateTime',
         isOptional: false,
         isId: false,
@@ -606,6 +646,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'updatedAt',
+        kind: 'scalar',
         type: 'DateTime',
         isOptional: false,
         isId: false,
@@ -618,6 +659,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'name',
+        kind: 'scalar',
         type: 'String',
         isOptional: false,
         isId: false,
@@ -630,6 +672,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'alpha2',
+        kind: 'scalar',
         type: 'String',
         isOptional: false,
         isId: false,
@@ -642,6 +685,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'alpha3',
+        kind: 'scalar',
         type: 'String',
         isOptional: false,
         isId: false,
@@ -654,6 +698,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'countryCode',
+        kind: 'scalar',
         type: 'String',
         isOptional: false,
         isId: false,
@@ -666,6 +711,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'iso3166_2',
+        kind: 'scalar',
         type: 'String',
         isOptional: false,
         isId: false,
@@ -678,6 +724,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'region',
+        kind: 'scalar',
         type: 'String',
         isOptional: false,
         isId: false,
@@ -690,6 +737,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'subRegion',
+        kind: 'scalar',
         type: 'String',
         isOptional: false,
         isId: false,
@@ -702,6 +750,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'intermediateRegion',
+        kind: 'scalar',
         type: 'String',
         isOptional: false,
         isId: false,
@@ -714,6 +763,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'regionCode',
+        kind: 'scalar',
         type: 'String',
         isOptional: false,
         isId: false,
@@ -726,6 +776,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'subRegionCode',
+        kind: 'scalar',
         type: 'String',
         isOptional: false,
         isId: false,
@@ -738,6 +789,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'intermediateRegionCode',
+        kind: 'scalar',
         type: 'String',
         isOptional: false,
         isId: false,
@@ -750,6 +802,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'addresses',
+        kind: 'object',
         type: 'Address',
         isOptional: false,
         isId: false,
@@ -777,6 +830,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
     fields: [
       {
         name: 'id',
+        kind: 'scalar',
         type: 'String',
         isOptional: false,
         isId: true,
@@ -793,6 +847,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'createdAt',
+        kind: 'scalar',
         type: 'DateTime',
         isOptional: false,
         isId: false,
@@ -809,6 +864,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'updatedAt',
+        kind: 'scalar',
         type: 'DateTime',
         isOptional: false,
         isId: false,
@@ -821,6 +877,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'email',
+        kind: 'scalar',
         type: 'String',
         isOptional: false,
         isId: false,
@@ -833,6 +890,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'public',
+        kind: 'scalar',
         type: 'Boolean',
         isOptional: false,
         isId: false,
@@ -846,6 +904,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'primary',
+        kind: 'scalar',
         type: 'Boolean',
         isOptional: false,
         isId: false,
@@ -859,6 +918,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'verified',
+        kind: 'scalar',
         type: 'Boolean',
         isOptional: false,
         isId: false,
@@ -872,6 +932,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'verifyToken',
+        kind: 'scalar',
         type: 'String',
         isOptional: true,
         isId: false,
@@ -884,6 +945,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'verifyExpires',
+        kind: 'scalar',
         type: 'DateTime',
         isOptional: true,
         isId: false,
@@ -896,6 +958,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'userId',
+        kind: 'scalar',
         type: 'String',
         isOptional: true,
         isId: false,
@@ -908,6 +971,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'emailType',
+        kind: 'enum',
         type: 'EmailType',
         isOptional: false,
         isId: false,
@@ -921,6 +985,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'organizationId',
+        kind: 'scalar',
         type: 'String',
         isOptional: true,
         isId: false,
@@ -933,6 +998,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'user',
+        kind: 'object',
         type: 'User',
         isOptional: true,
         isId: false,
@@ -948,6 +1014,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'organization',
+        kind: 'object',
         type: 'Organization',
         isOptional: true,
         isId: false,
@@ -975,6 +1042,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
     fields: [
       {
         name: 'id',
+        kind: 'scalar',
         type: 'String',
         isOptional: false,
         isId: true,
@@ -991,6 +1059,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'createdAt',
+        kind: 'scalar',
         type: 'DateTime',
         isOptional: false,
         isId: false,
@@ -1007,6 +1076,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'updatedAt',
+        kind: 'scalar',
         type: 'DateTime',
         isOptional: false,
         isId: false,
@@ -1019,6 +1089,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'expiresAt',
+        kind: 'scalar',
         type: 'DateTime',
         isOptional: false,
         isId: false,
@@ -1031,6 +1102,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'email',
+        kind: 'scalar',
         type: 'String',
         isOptional: false,
         isId: false,
@@ -1043,6 +1115,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'token',
+        kind: 'scalar',
         type: 'String',
         isOptional: false,
         isId: false,
@@ -1055,6 +1128,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'inviterId',
+        kind: 'scalar',
         type: 'String',
         isOptional: false,
         isId: false,
@@ -1067,6 +1141,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'inviter',
+        kind: 'object',
         type: 'User',
         isOptional: false,
         isId: false,
@@ -1082,6 +1157,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'organizationId',
+        kind: 'scalar',
         type: 'String',
         isOptional: false,
         isId: false,
@@ -1094,6 +1170,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'organization',
+        kind: 'object',
         type: 'Organization',
         isOptional: false,
         isId: false,
@@ -1109,6 +1186,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'status',
+        kind: 'enum',
         type: 'InviteStatus',
         isOptional: false,
         isId: false,
@@ -1122,6 +1200,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'roleId',
+        kind: 'scalar',
         type: 'String',
         isOptional: true,
         isId: false,
@@ -1134,6 +1213,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'role',
+        kind: 'object',
         type: 'Role',
         isOptional: true,
         isId: false,
@@ -1161,6 +1241,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
     fields: [
       {
         name: 'id',
+        kind: 'scalar',
         type: 'String',
         isOptional: false,
         isId: true,
@@ -1177,6 +1258,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'createdAt',
+        kind: 'scalar',
         type: 'DateTime',
         isOptional: false,
         isId: false,
@@ -1193,6 +1275,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'updatedAt',
+        kind: 'scalar',
         type: 'DateTime',
         isOptional: false,
         isId: false,
@@ -1205,6 +1288,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'name',
+        kind: 'scalar',
         type: 'String',
         isOptional: false,
         isId: false,
@@ -1217,6 +1301,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'url',
+        kind: 'scalar',
         type: 'String',
         isOptional: false,
         isId: false,
@@ -1229,6 +1314,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'userId',
+        kind: 'scalar',
         type: 'String',
         isOptional: true,
         isId: false,
@@ -1241,6 +1327,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'organizationId',
+        kind: 'scalar',
         type: 'String',
         isOptional: true,
         isId: false,
@@ -1253,6 +1340,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'user',
+        kind: 'object',
         type: 'User',
         isOptional: true,
         isId: false,
@@ -1268,6 +1356,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'organization',
+        kind: 'object',
         type: 'Organization',
         isOptional: true,
         isId: false,
@@ -1295,6 +1384,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
     fields: [
       {
         name: 'id',
+        kind: 'scalar',
         type: 'String',
         isOptional: false,
         isId: true,
@@ -1311,6 +1401,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'createdAt',
+        kind: 'scalar',
         type: 'DateTime',
         isOptional: false,
         isId: false,
@@ -1327,6 +1418,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'updatedAt',
+        kind: 'scalar',
         type: 'DateTime',
         isOptional: false,
         isId: false,
@@ -1339,6 +1431,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'userId',
+        kind: 'scalar',
         type: 'String',
         isOptional: true,
         isId: false,
@@ -1351,6 +1444,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'user',
+        kind: 'object',
         type: 'User',
         isOptional: true,
         isId: false,
@@ -1366,6 +1460,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'email',
+        kind: 'scalar',
         type: 'String',
         isOptional: false,
         isId: false,
@@ -1378,6 +1473,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'success',
+        kind: 'scalar',
         type: 'Boolean',
         isOptional: false,
         isId: false,
@@ -1391,6 +1487,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'ipAddress',
+        kind: 'scalar',
         type: 'String',
         isOptional: true,
         isId: false,
@@ -1403,6 +1500,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'userAgent',
+        kind: 'scalar',
         type: 'String',
         isOptional: true,
         isId: false,
@@ -1415,6 +1513,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'location',
+        kind: 'scalar',
         type: 'String',
         isOptional: true,
         isId: false,
@@ -1427,6 +1526,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'reason',
+        kind: 'enum',
         type: 'FailureReason',
         isOptional: true,
         isId: false,
@@ -1451,6 +1551,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
     fields: [
       {
         name: 'id',
+        kind: 'scalar',
         type: 'String',
         isOptional: false,
         isId: true,
@@ -1467,6 +1568,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'createdAt',
+        kind: 'scalar',
         type: 'DateTime',
         isOptional: false,
         isId: false,
@@ -1483,6 +1585,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'updatedAt',
+        kind: 'scalar',
         type: 'DateTime',
         isOptional: false,
         isId: false,
@@ -1495,6 +1598,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'provider',
+        kind: 'scalar',
         type: 'String',
         isOptional: false,
         isId: false,
@@ -1507,6 +1611,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'providerUserId',
+        kind: 'scalar',
         type: 'String',
         isOptional: false,
         isId: false,
@@ -1519,6 +1624,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'userId',
+        kind: 'scalar',
         type: 'String',
         isOptional: false,
         isId: false,
@@ -1531,6 +1637,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'user',
+        kind: 'object',
         type: 'User',
         isOptional: false,
         isId: false,
@@ -1558,6 +1665,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
     fields: [
       {
         name: 'id',
+        kind: 'scalar',
         type: 'String',
         isOptional: false,
         isId: true,
@@ -1574,6 +1682,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'createdAt',
+        kind: 'scalar',
         type: 'DateTime',
         isOptional: false,
         isId: false,
@@ -1590,6 +1699,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'updatedAt',
+        kind: 'scalar',
         type: 'DateTime',
         isOptional: false,
         isId: false,
@@ -1602,6 +1712,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'name',
+        kind: 'scalar',
         type: 'String',
         isOptional: false,
         isId: false,
@@ -1614,6 +1725,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'emails',
+        kind: 'object',
         type: 'Email',
         isOptional: false,
         isId: false,
@@ -1629,6 +1741,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'links',
+        kind: 'object',
         type: 'Link',
         isOptional: false,
         isId: false,
@@ -1644,6 +1757,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'phoneNumbers',
+        kind: 'object',
         type: 'PhoneNumber',
         isOptional: false,
         isId: false,
@@ -1659,6 +1773,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'images',
+        kind: 'object',
         type: 'StoredFile',
         isOptional: false,
         isId: false,
@@ -1674,6 +1789,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'members',
+        kind: 'object',
         type: 'OrganizationMember',
         isOptional: false,
         isId: false,
@@ -1689,6 +1805,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'addresses',
+        kind: 'object',
         type: 'Address',
         isOptional: false,
         isId: false,
@@ -1704,6 +1821,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'invites',
+        kind: 'object',
         type: 'Invite',
         isOptional: false,
         isId: false,
@@ -1719,6 +1837,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'AuditLog',
+        kind: 'object',
         type: 'AuditLog',
         isOptional: false,
         isId: false,
@@ -1734,6 +1853,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'Team',
+        kind: 'object',
         type: 'Team',
         isOptional: false,
         isId: false,
@@ -1749,6 +1869,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'subscription',
+        kind: 'object',
         type: 'Subscription',
         isOptional: true,
         isId: false,
@@ -1764,6 +1885,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'roles',
+        kind: 'object',
         type: 'Role',
         isOptional: false,
         isId: false,
@@ -1791,6 +1913,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
     fields: [
       {
         name: 'id',
+        kind: 'scalar',
         type: 'String',
         isOptional: false,
         isId: true,
@@ -1807,6 +1930,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'createdAt',
+        kind: 'scalar',
         type: 'DateTime',
         isOptional: false,
         isId: false,
@@ -1823,6 +1947,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'updatedAt',
+        kind: 'scalar',
         type: 'DateTime',
         isOptional: false,
         isId: false,
@@ -1835,6 +1960,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'roleId',
+        kind: 'scalar',
         type: 'String',
         isOptional: false,
         isId: false,
@@ -1847,6 +1973,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'role',
+        kind: 'object',
         type: 'Role',
         isOptional: false,
         isId: false,
@@ -1862,6 +1989,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'userId',
+        kind: 'scalar',
         type: 'String',
         isOptional: false,
         isId: false,
@@ -1874,6 +2002,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'user',
+        kind: 'object',
         type: 'User',
         isOptional: false,
         isId: false,
@@ -1889,6 +2018,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'organizationId',
+        kind: 'scalar',
         type: 'String',
         isOptional: false,
         isId: false,
@@ -1901,6 +2031,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'organization',
+        kind: 'object',
         type: 'Organization',
         isOptional: false,
         isId: false,
@@ -1928,6 +2059,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
     fields: [
       {
         name: 'id',
+        kind: 'scalar',
         type: 'String',
         isOptional: false,
         isId: true,
@@ -1944,6 +2076,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'action',
+        kind: 'scalar',
         type: 'String',
         isOptional: false,
         isId: false,
@@ -1956,6 +2089,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'subject',
+        kind: 'scalar',
         type: 'String',
         isOptional: false,
         isId: false,
@@ -1968,6 +2102,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'description',
+        kind: 'scalar',
         type: 'String',
         isOptional: true,
         isId: false,
@@ -1980,6 +2115,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'roles',
+        kind: 'object',
         type: 'Role',
         isOptional: false,
         isId: false,
@@ -2007,6 +2143,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
     fields: [
       {
         name: 'id',
+        kind: 'scalar',
         type: 'String',
         isOptional: false,
         isId: true,
@@ -2023,6 +2160,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'createdAt',
+        kind: 'scalar',
         type: 'DateTime',
         isOptional: false,
         isId: false,
@@ -2039,6 +2177,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'updatedAt',
+        kind: 'scalar',
         type: 'DateTime',
         isOptional: false,
         isId: false,
@@ -2051,6 +2190,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'phone',
+        kind: 'scalar',
         type: 'String',
         isOptional: false,
         isId: false,
@@ -2063,6 +2203,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'phoneType',
+        kind: 'enum',
         type: 'PhoneType',
         isOptional: false,
         isId: false,
@@ -2076,6 +2217,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'userId',
+        kind: 'scalar',
         type: 'String',
         isOptional: true,
         isId: false,
@@ -2088,6 +2230,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'primary',
+        kind: 'scalar',
         type: 'Boolean',
         isOptional: false,
         isId: false,
@@ -2101,6 +2244,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'organizationId',
+        kind: 'scalar',
         type: 'String',
         isOptional: true,
         isId: false,
@@ -2113,6 +2257,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'user',
+        kind: 'object',
         type: 'User',
         isOptional: true,
         isId: false,
@@ -2128,6 +2273,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'organization',
+        kind: 'object',
         type: 'Organization',
         isOptional: true,
         isId: false,
@@ -2155,6 +2301,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
     fields: [
       {
         name: 'id',
+        kind: 'scalar',
         type: 'String',
         isOptional: false,
         isId: true,
@@ -2171,6 +2318,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'createdAt',
+        kind: 'scalar',
         type: 'DateTime',
         isOptional: false,
         isId: false,
@@ -2187,6 +2335,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'updatedAt',
+        kind: 'scalar',
         type: 'DateTime',
         isOptional: false,
         isId: false,
@@ -2199,6 +2348,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'name',
+        kind: 'scalar',
         type: 'String',
         isOptional: false,
         isId: false,
@@ -2211,6 +2361,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'description',
+        kind: 'scalar',
         type: 'String',
         isOptional: true,
         isId: false,
@@ -2223,6 +2374,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'price',
+        kind: 'scalar',
         type: 'Decimal',
         isOptional: false,
         isId: false,
@@ -2235,6 +2387,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'interval',
+        kind: 'scalar',
         type: 'String',
         isOptional: false,
         isId: false,
@@ -2247,6 +2400,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'features',
+        kind: 'scalar',
         type: 'Json',
         isOptional: true,
         isId: false,
@@ -2259,6 +2413,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'limits',
+        kind: 'scalar',
         type: 'Json',
         isOptional: true,
         isId: false,
@@ -2271,6 +2426,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'active',
+        kind: 'scalar',
         type: 'Boolean',
         isOptional: false,
         isId: false,
@@ -2284,6 +2440,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'stripeProductId',
+        kind: 'scalar',
         type: 'String',
         isOptional: true,
         isId: false,
@@ -2296,6 +2453,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'stripePriceId',
+        kind: 'scalar',
         type: 'String',
         isOptional: true,
         isId: false,
@@ -2308,6 +2466,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'trialPeriodDays',
+        kind: 'scalar',
         type: 'Int',
         isOptional: true,
         isId: false,
@@ -2320,6 +2479,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'subscriptions',
+        kind: 'object',
         type: 'Subscription',
         isOptional: false,
         isId: false,
@@ -2347,6 +2507,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
     fields: [
       {
         name: 'id',
+        kind: 'scalar',
         type: 'String',
         isOptional: false,
         isId: true,
@@ -2363,6 +2524,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'name',
+        kind: 'scalar',
         type: 'String',
         isOptional: false,
         isId: false,
@@ -2375,6 +2537,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'description',
+        kind: 'scalar',
         type: 'String',
         isOptional: true,
         isId: false,
@@ -2387,6 +2550,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'organizationId',
+        kind: 'scalar',
         type: 'String',
         isOptional: true,
         isId: false,
@@ -2399,6 +2563,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'organization',
+        kind: 'object',
         type: 'Organization',
         isOptional: true,
         isId: false,
@@ -2414,6 +2579,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'permissions',
+        kind: 'object',
         type: 'Permission',
         isOptional: false,
         isId: false,
@@ -2429,6 +2595,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'members',
+        kind: 'object',
         type: 'OrganizationMember',
         isOptional: false,
         isId: false,
@@ -2444,6 +2611,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'teamMembers',
+        kind: 'object',
         type: 'TeamMember',
         isOptional: false,
         isId: false,
@@ -2459,6 +2627,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'invites',
+        kind: 'object',
         type: 'Invite',
         isOptional: false,
         isId: false,
@@ -2486,6 +2655,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
     fields: [
       {
         name: 'id',
+        kind: 'scalar',
         type: 'String',
         isOptional: false,
         isId: true,
@@ -2502,6 +2672,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'createdAt',
+        kind: 'scalar',
         type: 'DateTime',
         isOptional: false,
         isId: false,
@@ -2518,6 +2689,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'updatedAt',
+        kind: 'scalar',
         type: 'DateTime',
         isOptional: false,
         isId: false,
@@ -2530,6 +2702,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'userId',
+        kind: 'scalar',
         type: 'String',
         isOptional: false,
         isId: false,
@@ -2542,6 +2715,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'user',
+        kind: 'object',
         type: 'User',
         isOptional: false,
         isId: false,
@@ -2557,6 +2731,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'eventType',
+        kind: 'enum',
         type: 'SecurityEventType',
         isOptional: false,
         isId: false,
@@ -2569,6 +2744,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'ipAddress',
+        kind: 'scalar',
         type: 'String',
         isOptional: true,
         isId: false,
@@ -2581,6 +2757,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'userAgent',
+        kind: 'scalar',
         type: 'String',
         isOptional: true,
         isId: false,
@@ -2593,6 +2770,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'metadata',
+        kind: 'scalar',
         type: 'Json',
         isOptional: true,
         isId: false,
@@ -2617,6 +2795,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
     fields: [
       {
         name: 'id',
+        kind: 'scalar',
         type: 'String',
         isOptional: false,
         isId: true,
@@ -2633,6 +2812,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'createdAt',
+        kind: 'scalar',
         type: 'DateTime',
         isOptional: false,
         isId: false,
@@ -2649,6 +2829,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'updatedAt',
+        kind: 'scalar',
         type: 'DateTime',
         isOptional: false,
         isId: false,
@@ -2661,6 +2842,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'organizationId',
+        kind: 'scalar',
         type: 'String',
         isOptional: false,
         isId: false,
@@ -2673,6 +2855,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'organization',
+        kind: 'object',
         type: 'Organization',
         isOptional: false,
         isId: false,
@@ -2688,6 +2871,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'planId',
+        kind: 'scalar',
         type: 'String',
         isOptional: false,
         isId: false,
@@ -2700,6 +2884,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'plan',
+        kind: 'object',
         type: 'Plan',
         isOptional: false,
         isId: false,
@@ -2715,6 +2900,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'stripeCustomerId',
+        kind: 'scalar',
         type: 'String',
         isOptional: true,
         isId: false,
@@ -2727,6 +2913,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'stripeSubscriptionId',
+        kind: 'scalar',
         type: 'String',
         isOptional: true,
         isId: false,
@@ -2739,6 +2926,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'stripePriceId',
+        kind: 'scalar',
         type: 'String',
         isOptional: true,
         isId: false,
@@ -2751,6 +2939,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'stripeCurrentPeriodEnd',
+        kind: 'scalar',
         type: 'DateTime',
         isOptional: true,
         isId: false,
@@ -2763,6 +2952,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'trialStart',
+        kind: 'scalar',
         type: 'DateTime',
         isOptional: true,
         isId: false,
@@ -2775,6 +2965,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'trialEnd',
+        kind: 'scalar',
         type: 'DateTime',
         isOptional: true,
         isId: false,
@@ -2787,6 +2978,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'cancelAt',
+        kind: 'scalar',
         type: 'DateTime',
         isOptional: true,
         isId: false,
@@ -2799,6 +2991,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'canceledAt',
+        kind: 'scalar',
         type: 'DateTime',
         isOptional: true,
         isId: false,
@@ -2811,6 +3004,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'cancelAtPeriodEnd',
+        kind: 'scalar',
         type: 'Boolean',
         isOptional: false,
         isId: false,
@@ -2824,6 +3018,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'status',
+        kind: 'enum',
         type: 'SubscriptionStatus',
         isOptional: false,
         isId: false,
@@ -2849,6 +3044,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
     fields: [
       {
         name: 'id',
+        kind: 'scalar',
         type: 'String',
         isOptional: false,
         isId: true,
@@ -2865,6 +3061,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'createdAt',
+        kind: 'scalar',
         type: 'DateTime',
         isOptional: false,
         isId: false,
@@ -2881,6 +3078,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'updatedAt',
+        kind: 'scalar',
         type: 'DateTime',
         isOptional: false,
         isId: false,
@@ -2893,6 +3091,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'name',
+        kind: 'scalar',
         type: 'String',
         isOptional: false,
         isId: false,
@@ -2905,6 +3104,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'description',
+        kind: 'scalar',
         type: 'String',
         isOptional: true,
         isId: false,
@@ -2917,6 +3117,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'organizationId',
+        kind: 'scalar',
         type: 'String',
         isOptional: false,
         isId: false,
@@ -2929,6 +3130,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'organization',
+        kind: 'object',
         type: 'Organization',
         isOptional: false,
         isId: false,
@@ -2944,6 +3146,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'members',
+        kind: 'object',
         type: 'TeamMember',
         isOptional: false,
         isId: false,
@@ -2963,6 +3166,13 @@ export const DATABASE_MODELS: DatabaseModel[] = [
     modelPropertyName: 'team',
     pluralModelName: 'Teams',
     pluralModelPropertyName: 'teams',
+    auth: {
+      readOne: 'user',
+      readMany: 'user',
+      create: 'user',
+      update: 'user',
+      delete: 'user',
+    },
     idFieldType: 'String',
   },
   {
@@ -2971,6 +3181,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
     fields: [
       {
         name: 'id',
+        kind: 'scalar',
         type: 'String',
         isOptional: false,
         isId: true,
@@ -2987,6 +3198,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'createdAt',
+        kind: 'scalar',
         type: 'DateTime',
         isOptional: false,
         isId: false,
@@ -3003,6 +3215,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'updatedAt',
+        kind: 'scalar',
         type: 'DateTime',
         isOptional: false,
         isId: false,
@@ -3015,6 +3228,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'teamId',
+        kind: 'scalar',
         type: 'String',
         isOptional: false,
         isId: false,
@@ -3027,6 +3241,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'team',
+        kind: 'object',
         type: 'Team',
         isOptional: false,
         isId: false,
@@ -3042,6 +3257,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'userId',
+        kind: 'scalar',
         type: 'String',
         isOptional: false,
         isId: false,
@@ -3054,6 +3270,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'user',
+        kind: 'object',
         type: 'User',
         isOptional: false,
         isId: false,
@@ -3069,6 +3286,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'roleId',
+        kind: 'scalar',
         type: 'String',
         isOptional: false,
         isId: false,
@@ -3081,6 +3299,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'role',
+        kind: 'object',
         type: 'Role',
         isOptional: false,
         isId: false,
@@ -3100,6 +3319,13 @@ export const DATABASE_MODELS: DatabaseModel[] = [
     modelPropertyName: 'teamMember',
     pluralModelName: 'TeamMembers',
     pluralModelPropertyName: 'teamMembers',
+    auth: {
+      readOne: 'user',
+      readMany: 'user',
+      create: 'user',
+      update: 'user',
+      delete: 'user',
+    },
     idFieldType: 'String',
   },
   {
@@ -3108,6 +3334,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
     fields: [
       {
         name: 'id',
+        kind: 'scalar',
         type: 'String',
         isOptional: false,
         isId: true,
@@ -3124,6 +3351,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'createdAt',
+        kind: 'scalar',
         type: 'DateTime',
         isOptional: false,
         isId: false,
@@ -3140,6 +3368,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'updatedAt',
+        kind: 'scalar',
         type: 'DateTime',
         isOptional: false,
         isId: false,
@@ -3152,6 +3381,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'provider',
+        kind: 'enum',
         type: 'StorageProvider',
         isOptional: false,
         isId: false,
@@ -3164,6 +3394,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'providerFileId',
+        kind: 'scalar',
         type: 'String',
         isOptional: false,
         isId: false,
@@ -3176,6 +3407,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'folder',
+        kind: 'scalar',
         type: 'String',
         isOptional: true,
         isId: false,
@@ -3188,6 +3420,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'filename',
+        kind: 'scalar',
         type: 'String',
         isOptional: false,
         isId: false,
@@ -3200,6 +3433,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'originalName',
+        kind: 'scalar',
         type: 'String',
         isOptional: false,
         isId: false,
@@ -3212,6 +3446,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'mimeType',
+        kind: 'scalar',
         type: 'String',
         isOptional: false,
         isId: false,
@@ -3224,6 +3459,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'size',
+        kind: 'scalar',
         type: 'Int',
         isOptional: false,
         isId: false,
@@ -3236,6 +3472,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'url',
+        kind: 'scalar',
         type: 'String',
         isOptional: false,
         isId: false,
@@ -3248,6 +3485,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'publicUrl',
+        kind: 'scalar',
         type: 'String',
         isOptional: true,
         isId: false,
@@ -3260,6 +3498,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'width',
+        kind: 'scalar',
         type: 'Int',
         isOptional: true,
         isId: false,
@@ -3272,6 +3511,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'height',
+        kind: 'scalar',
         type: 'Int',
         isOptional: true,
         isId: false,
@@ -3284,6 +3524,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'metadata',
+        kind: 'scalar',
         type: 'Json',
         isOptional: true,
         isId: false,
@@ -3296,6 +3537,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'userId',
+        kind: 'scalar',
         type: 'String',
         isOptional: true,
         isId: false,
@@ -3308,6 +3550,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'organizationId',
+        kind: 'scalar',
         type: 'String',
         isOptional: true,
         isId: false,
@@ -3320,6 +3563,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'user',
+        kind: 'object',
         type: 'User',
         isOptional: true,
         isId: false,
@@ -3335,6 +3579,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'organization',
+        kind: 'object',
         type: 'Organization',
         isOptional: true,
         isId: false,
@@ -3362,6 +3607,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
     fields: [
       {
         name: 'id',
+        kind: 'scalar',
         type: 'String',
         isOptional: false,
         isId: true,
@@ -3378,6 +3624,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'createdAt',
+        kind: 'scalar',
         type: 'DateTime',
         isOptional: false,
         isId: false,
@@ -3394,6 +3641,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'updatedAt',
+        kind: 'scalar',
         type: 'DateTime',
         isOptional: false,
         isId: false,
@@ -3406,6 +3654,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'firstName',
+        kind: 'scalar',
         type: 'String',
         isOptional: true,
         isId: false,
@@ -3418,6 +3667,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'lastName',
+        kind: 'scalar',
         type: 'String',
         isOptional: true,
         isId: false,
@@ -3430,6 +3680,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'isSuperAdmin',
+        kind: 'scalar',
         type: 'Boolean',
         isOptional: false,
         isId: false,
@@ -3443,6 +3694,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'bio',
+        kind: 'scalar',
         type: 'String',
         isOptional: true,
         isId: false,
@@ -3455,6 +3707,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'displayName',
+        kind: 'scalar',
         type: 'String',
         isOptional: true,
         isId: false,
@@ -3467,6 +3720,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'password',
+        kind: 'scalar',
         type: 'String',
         isOptional: true,
         isId: false,
@@ -3479,6 +3733,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'passwordResetToken',
+        kind: 'scalar',
         type: 'String',
         isOptional: true,
         isId: false,
@@ -3491,6 +3746,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'passwordResetExpires',
+        kind: 'scalar',
         type: 'DateTime',
         isOptional: true,
         isId: false,
@@ -3503,6 +3759,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'emailValidated',
+        kind: 'scalar',
         type: 'Boolean',
         isOptional: false,
         isId: false,
@@ -3516,6 +3773,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'validateEmailToken',
+        kind: 'scalar',
         type: 'String',
         isOptional: true,
         isId: false,
@@ -3528,6 +3786,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'validateEmailTokenExpires',
+        kind: 'scalar',
         type: 'DateTime',
         isOptional: true,
         isId: false,
@@ -3540,6 +3799,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'emails',
+        kind: 'object',
         type: 'Email',
         isOptional: false,
         isId: false,
@@ -3555,6 +3815,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'links',
+        kind: 'object',
         type: 'Link',
         isOptional: false,
         isId: false,
@@ -3570,6 +3831,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'phoneNumbers',
+        kind: 'object',
         type: 'PhoneNumber',
         isOptional: false,
         isId: false,
@@ -3585,6 +3847,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'images',
+        kind: 'object',
         type: 'StoredFile',
         isOptional: false,
         isId: false,
@@ -3600,6 +3863,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'organizations',
+        kind: 'object',
         type: 'OrganizationMember',
         isOptional: false,
         isId: false,
@@ -3615,6 +3879,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'activeOrganizationId',
+        kind: 'scalar',
         type: 'String',
         isOptional: true,
         isId: false,
@@ -3627,6 +3892,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'addresses',
+        kind: 'object',
         type: 'Address',
         isOptional: false,
         isId: false,
@@ -3642,6 +3908,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'invitesSent',
+        kind: 'object',
         type: 'Invite',
         isOptional: false,
         isId: false,
@@ -3657,6 +3924,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'twoFactorEnabled',
+        kind: 'scalar',
         type: 'Boolean',
         isOptional: false,
         isId: false,
@@ -3670,6 +3938,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'twoFactorSecret',
+        kind: 'scalar',
         type: 'String',
         isOptional: true,
         isId: false,
@@ -3682,6 +3951,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'twoFactorRecoveryCodes',
+        kind: 'scalar',
         type: 'String',
         isOptional: false,
         isId: false,
@@ -3694,6 +3964,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'twoFactorMethod',
+        kind: 'enum',
         type: 'TwoFactorMethod',
         isOptional: false,
         isId: false,
@@ -3707,6 +3978,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'activeSessions',
+        kind: 'object',
         type: 'UserSession',
         isOptional: false,
         isId: false,
@@ -3722,6 +3994,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'passwordHistory',
+        kind: 'object',
         type: 'PasswordHistory',
         isOptional: false,
         isId: false,
@@ -3737,6 +4010,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'loginAttempts',
+        kind: 'object',
         type: 'LoginAttempt',
         isOptional: false,
         isId: false,
@@ -3752,6 +4026,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'lastSuccessfulLogin',
+        kind: 'scalar',
         type: 'DateTime',
         isOptional: true,
         isId: false,
@@ -3764,6 +4039,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'lastFailedLogin',
+        kind: 'scalar',
         type: 'DateTime',
         isOptional: true,
         isId: false,
@@ -3776,6 +4052,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'failedLoginCount',
+        kind: 'scalar',
         type: 'Int',
         isOptional: false,
         isId: false,
@@ -3789,6 +4066,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'lockedUntil',
+        kind: 'scalar',
         type: 'DateTime',
         isOptional: true,
         isId: false,
@@ -3801,6 +4079,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'AuditLog',
+        kind: 'object',
         type: 'AuditLog',
         isOptional: false,
         isId: false,
@@ -3816,6 +4095,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'UserPreference',
+        kind: 'object',
         type: 'UserPreference',
         isOptional: false,
         isId: false,
@@ -3831,6 +4111,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'TeamMember',
+        kind: 'object',
         type: 'TeamMember',
         isOptional: false,
         isId: false,
@@ -3846,6 +4127,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'SecurityEvent',
+        kind: 'object',
         type: 'SecurityEvent',
         isOptional: false,
         isId: false,
@@ -3861,6 +4143,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'isActive',
+        kind: 'scalar',
         type: 'Boolean',
         isOptional: false,
         isId: false,
@@ -3874,6 +4157,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'deactivatedAt',
+        kind: 'scalar',
         type: 'DateTime',
         isOptional: true,
         isId: false,
@@ -3886,6 +4170,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'termsAcceptedAt',
+        kind: 'scalar',
         type: 'DateTime',
         isOptional: true,
         isId: false,
@@ -3898,6 +4183,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'privacyPolicyAcceptedAt',
+        kind: 'scalar',
         type: 'DateTime',
         isOptional: true,
         isId: false,
@@ -3910,6 +4196,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'apiTokens',
+        kind: 'object',
         type: 'ApiToken',
         isOptional: false,
         isId: false,
@@ -3925,6 +4212,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'oAuthAccounts',
+        kind: 'object',
         type: 'OAuthAccount',
         isOptional: false,
         isId: false,
@@ -3952,6 +4240,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
     fields: [
       {
         name: 'id',
+        kind: 'scalar',
         type: 'String',
         isOptional: false,
         isId: true,
@@ -3968,6 +4257,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'createdAt',
+        kind: 'scalar',
         type: 'DateTime',
         isOptional: false,
         isId: false,
@@ -3984,6 +4274,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'updatedAt',
+        kind: 'scalar',
         type: 'DateTime',
         isOptional: false,
         isId: false,
@@ -3996,6 +4287,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'userId',
+        kind: 'scalar',
         type: 'String',
         isOptional: false,
         isId: false,
@@ -4008,6 +4300,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'user',
+        kind: 'object',
         type: 'User',
         isOptional: false,
         isId: false,
@@ -4023,6 +4316,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'key',
+        kind: 'scalar',
         type: 'String',
         isOptional: false,
         isId: false,
@@ -4035,6 +4329,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'value',
+        kind: 'scalar',
         type: 'String',
         isOptional: false,
         isId: false,
@@ -4066,6 +4361,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
     fields: [
       {
         name: 'id',
+        kind: 'scalar',
         type: 'String',
         isOptional: false,
         isId: true,
@@ -4082,6 +4378,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'createdAt',
+        kind: 'scalar',
         type: 'DateTime',
         isOptional: false,
         isId: false,
@@ -4098,6 +4395,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'updatedAt',
+        kind: 'scalar',
         type: 'DateTime',
         isOptional: false,
         isId: false,
@@ -4110,6 +4408,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'lastActiveAt',
+        kind: 'scalar',
         type: 'DateTime',
         isOptional: false,
         isId: false,
@@ -4126,6 +4425,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'userId',
+        kind: 'scalar',
         type: 'String',
         isOptional: false,
         isId: false,
@@ -4138,6 +4438,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'user',
+        kind: 'object',
         type: 'User',
         isOptional: false,
         isId: false,
@@ -4153,6 +4454,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'deviceInfo',
+        kind: 'scalar',
         type: 'String',
         isOptional: true,
         isId: false,
@@ -4165,6 +4467,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'ipAddress',
+        kind: 'scalar',
         type: 'String',
         isOptional: true,
         isId: false,
@@ -4177,6 +4480,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'isValid',
+        kind: 'scalar',
         type: 'Boolean',
         isOptional: false,
         isId: false,
@@ -4190,6 +4494,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'twoFactorVerified',
+        kind: 'scalar',
         type: 'Boolean',
         isOptional: false,
         isId: false,
@@ -4215,6 +4520,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
     fields: [
       {
         name: 'id',
+        kind: 'scalar',
         type: 'String',
         isOptional: false,
         isId: true,
@@ -4231,6 +4537,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'createdAt',
+        kind: 'scalar',
         type: 'DateTime',
         isOptional: false,
         isId: false,
@@ -4247,6 +4554,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'userId',
+        kind: 'scalar',
         type: 'String',
         isOptional: false,
         isId: false,
@@ -4259,6 +4567,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'user',
+        kind: 'object',
         type: 'User',
         isOptional: false,
         isId: false,
@@ -4275,6 +4584,7 @@ export const DATABASE_MODELS: DatabaseModel[] = [
       },
       {
         name: 'passwordHash',
+        kind: 'scalar',
         type: 'String',
         isOptional: false,
         isId: false,

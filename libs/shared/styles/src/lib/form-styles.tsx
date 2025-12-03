@@ -26,6 +26,7 @@ export const formTheme = FormThemeSchema.parse({
     error: '!outline-red-600 !focus:outline-red-600',
     disabled: 'opacity-50 cursor-not-allowed bg-gray-100 dark:bg-gray-100',
     readOnly: 'min-h-[2.5rem] flex items-center px-3 text-gray-700 dark:text-gray-100 dark:bg-gray-800',
+    helpText: 'text-sm text-gray-600 dark:text-gray-400 mt-1',
   },
   checkbox: {
     wrapper: '',

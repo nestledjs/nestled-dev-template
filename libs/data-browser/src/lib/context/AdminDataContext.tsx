@@ -1,5 +1,17 @@
 import React, { createContext, useContext, useMemo, type ReactNode } from 'react'
 
+/**
+ * Configuration for how to display and search relation fields
+ */
+export interface DisplayFieldConfig {
+  [modelName: string]: {
+    /** Fields to display in dropdowns. If multiple, they'll be joined with spaces */
+    display?: string[]
+    /** Fields to search when typing in the dropdown */
+    search?: string[]
+  }
+}
+
 export interface AdminDataContextValue {
   /** The SDK namespace for dynamic GraphQL document lookups */
   sdk: any
@@ -9,6 +21,8 @@ export interface AdminDataContextValue {
   basePath?: string
   /** Form theme configuration for @nestledjs/forms */
   formTheme: any
+  /** Optional configuration for display and search fields per model */
+  displayFieldConfig?: DisplayFieldConfig
 }
 
 const AdminDataContext = createContext<AdminDataContextValue | null>(null)
@@ -23,6 +37,8 @@ export interface AdminDataProviderProps {
   basePath?: string
   /** Form theme configuration for @nestledjs/forms */
   formTheme: any
+  /** Optional configuration for display and search fields per model */
+  displayFieldConfig?: DisplayFieldConfig
 }
 
 /**
@@ -49,11 +65,12 @@ export function AdminDataProvider({
   sdk,
   databaseModels,
   basePath = '/admin/data',
-  formTheme
+  formTheme,
+  displayFieldConfig
 }: Readonly<AdminDataProviderProps>) {
   const value = useMemo(
-    () => ({ sdk, databaseModels, basePath, formTheme }),
-    [sdk, databaseModels, basePath, formTheme]
+    () => ({ sdk, databaseModels, basePath, formTheme, displayFieldConfig }),
+    [sdk, databaseModels, basePath, formTheme, displayFieldConfig]
   )
 
   return (

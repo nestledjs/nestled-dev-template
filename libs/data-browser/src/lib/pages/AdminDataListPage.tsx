@@ -201,7 +201,7 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
   const filterableFieldNames = useMemo(() => {
     if (!model) return []
 
-    return model.fields
+    const directFields = model.fields
       .filter((field: any) => {
         // Include simple scalar fields that are good for filtering
         if (field.relationName && !field.isList) return true // Single relations
@@ -217,7 +217,26 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
         )
       })
       .map((field: any) => field.name)
-  }, [model])
+
+    // Also include enum fields from single-relation models
+    const relatedEnumFields: string[] = []
+    model.fields.forEach((field: any) => {
+      if (field.relationName && !field.isList) {
+        // This is a single relation - check if the related model has enum fields
+        const relatedModel = databaseModels.find((m: any) => m.name === field.type)
+        if (relatedModel) {
+          relatedModel.fields.forEach((relatedField: any) => {
+            if (relatedField.kind === 'enum') {
+              // Add as "relationName.enumFieldName"
+              relatedEnumFields.push(`${field.name}.${relatedField.name}`)
+            }
+          })
+        }
+      }
+    })
+
+    return [...directFields, ...relatedEnumFields]
+  }, [model, databaseModels])
 
   // Get searchable field names for text search
   const searchableFieldNames = useMemo(() => {
@@ -721,23 +740,84 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {filterableFieldNames.map((fieldName: string) => {
-          const field = model.fields.find((f: any) => f.name === fieldName)
-          if (!field) return null
+          // Check if this is a related enum field (format: "relationName.enumFieldName")
+          const isRelatedEnumField = fieldName.includes('.')
 
-          const currentValue = filters[fieldName]
+          let field: any = null
+          let relatedModel: any = null
+          let relatedEnumField: any = null
+
+          if (isRelatedEnumField) {
+            const [relationName, enumFieldName] = fieldName.split('.')
+            field = model.fields.find((f: any) => f.name === relationName)
+            if (field) {
+              relatedModel = databaseModels.find((m: any) => m.name === field.type)
+              if (relatedModel) {
+                relatedEnumField = relatedModel.fields.find((f: any) => f.name === enumFieldName)
+              }
+            }
+            if (!field || !relatedModel || !relatedEnumField) return null
+          } else {
+            field = model.fields.find((f: any) => f.name === fieldName)
+            if (!field) return null
+          }
+
+          // For related enum fields, the filter value is nested
+          const currentValue = isRelatedEnumField
+            ? (filters[fieldName.split('.')[0]] as any)?.[fieldName.split('.')[1]]
+            : filters[fieldName]
+
           const handleChange = (value: any) => {
             const newFilters = { ...filters }
-            if (value === undefined || value === null || value === '') {
-              delete newFilters[fieldName]
+
+            if (isRelatedEnumField) {
+              const [relationName, enumFieldName] = fieldName.split('.')
+              if (value === undefined || value === null || value === '') {
+                // Remove the enum filter
+                if (newFilters[relationName]) {
+                  delete (newFilters[relationName] as any)[enumFieldName]
+                  // If the relation filter is now empty, remove it entirely
+                  if (Object.keys(newFilters[relationName] as any).length === 0) {
+                    delete newFilters[relationName]
+                  }
+                }
+              } else {
+                // Add or update the enum filter
+                if (!newFilters[relationName]) {
+                  newFilters[relationName] = {} as any
+                }
+                (newFilters[relationName] as any)[enumFieldName] = value
+              }
             } else {
-              newFilters[fieldName] = value
+              if (value === undefined || value === null || value === '') {
+                delete newFilters[fieldName]
+              } else {
+                newFilters[fieldName] = value
+              }
             }
+
             setFilters(newFilters)
             dispatch({ type: 'RESET_PAGINATION' })
           }
 
-          // Relation field filter
-          if (field.relationName && !field.isList) {
+          // Handle related enum fields first
+          if (isRelatedEnumField && relatedEnumField) {
+            const enumValues = getEnumValues(relatedEnumField.type)
+            if (enumValues) {
+              return (
+                <EnumFilter
+                  key={fieldName}
+                  fieldName={fieldName}
+                  currentValue={currentValue}
+                  onChange={handleChange}
+                  enumValues={enumValues}
+                />
+              )
+            }
+          }
+
+          // Relation field filter (only for non-enum relation filters)
+          if (field.relationName && !field.isList && !isRelatedEnumField) {
             return (
               <RelationFilterField
                 key={fieldName}
