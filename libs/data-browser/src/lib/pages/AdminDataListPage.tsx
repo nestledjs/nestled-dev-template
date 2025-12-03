@@ -5,7 +5,7 @@ import { getPluralName } from '../utils/get-plural-names'
 import { AdminLocalStorage } from '../utils/secure-storage'
 import { formatFieldName, kebabCase } from '../utils/string-utils'
 import { Link, useParams, useSearchParams } from 'react-router'
-import { DateRangeFilter, EnumFilter, NumberRangeFilter, RelationFilterField } from '../components/filters'
+import { FilterField } from '../components/FilterField'
 import { useAdminList } from '../hooks/useAdminList'
 import { getAdminDocuments } from '../utils/graphql-utils'
 import { useAdminDataContext } from '../context/AdminDataContext'
@@ -789,34 +789,7 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {filterableFieldNames.map((fieldName: string) => {
-          // Check if this is a related enum field (format: "relationName.enumFieldName")
           const isRelatedEnumField = fieldName.includes('.')
-
-          let field: any = null
-          let relatedModel: any = null
-          let relatedEnumField: any = null
-
-          if (isRelatedEnumField) {
-            const [relationName, enumFieldName] = fieldName.split('.')
-            field = model.fields.find((f: any) => f.name === relationName)
-            if (field) {
-              relatedModel = databaseModels.find((m: any) => m.name === field.type)
-              if (relatedModel) {
-                relatedEnumField = relatedModel.fields.find((f: any) => f.name === enumFieldName)
-              }
-            }
-            if (!field || !relatedModel || !relatedEnumField) return null
-          }
-
-          if (!isRelatedEnumField) {
-            field = model.fields.find((f: any) => f.name === fieldName)
-            if (!field) return null
-          }
-
-          // For related enum fields, the filter value is nested
-          const currentValue = isRelatedEnumField
-            ? (filters[fieldName.split('.')[0]] as any)?.[fieldName.split('.')[1]]
-            : filters[fieldName]
 
           const handleChange = (value: any) => {
             let newFilters: Record<string, any>
@@ -832,113 +805,16 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
             dispatch({ type: 'RESET_PAGINATION' })
           }
 
-          // Handle related enum fields first
-          if (isRelatedEnumField && relatedEnumField) {
-            const enumValues = getEnumValues(relatedEnumField.type)
-            if (enumValues) {
-              return (
-                <EnumFilter
-                  key={fieldName}
-                  fieldName={fieldName}
-                  currentValue={currentValue}
-                  onChange={handleChange}
-                  enumValues={enumValues}
-                />
-              )
-            }
-          }
-
-          // Relation field filter (only for non-enum relation filters)
-          if (field.relationName && !field.isList && !isRelatedEnumField) {
-            return (
-              <RelationFilterField
-                key={fieldName}
-                fieldName={fieldName}
-                relatedModelName={field.type}
-                currentValue={currentValue}
-                onChange={handleChange}
-              />
-            )
-          }
-
-          // Date/DateTime filter
-          if (field.type.toLowerCase() === 'datetime' || field.type.toLowerCase() === 'date') {
-            return (
-              <DateRangeFilter
-                key={fieldName}
-                fieldName={fieldName}
-                currentValue={currentValue}
-                onChange={handleChange}
-              />
-            )
-          }
-
-          // Number range filter
-          if (['int', 'bigint', 'float', 'decimal'].includes(field.type.toLowerCase())) {
-            return (
-              <NumberRangeFilter
-                key={fieldName}
-                fieldName={fieldName}
-                fieldType={field.type.toLowerCase()}
-                currentValue={currentValue}
-                onChange={handleChange}
-              />
-            )
-          }
-
-          // Enum field filter
-          if (field.kind === 'enum') {
-            const enumValues = getEnumValues(field.type)
-            if (enumValues) {
-              return (
-                <EnumFilter
-                  key={fieldName}
-                  fieldName={fieldName}
-                  currentValue={currentValue}
-                  onChange={handleChange}
-                  enumValues={enumValues}
-                />
-              )
-            }
-          }
-
-          // Boolean filter
-          if (field.type.toLowerCase() === 'boolean') {
-            return (
-              <div key={fieldName} className="space-y-1">
-                <label className="block text-sm font-medium text-gray-700">
-                  {formatFieldName(fieldName)}
-                </label>
-                <select
-                  value={currentValue === undefined || currentValue === null ? '' : currentValue.toString()}
-                  onChange={e => {
-                    const value = e.target.value
-                    handleChange(value === '' ? undefined : value === 'true')
-                  }}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-web focus:border-green-web text-sm"
-                >
-                  <option value="">All</option>
-                  <option value="true">Yes</option>
-                  <option value="false">No</option>
-                </select>
-              </div>
-            )
-          }
-
-          // String filter (contains)
           return (
-            <div key={fieldName} className="space-y-1">
-              <label className="block text-sm font-medium text-gray-700">
-                {formatFieldName(fieldName)}
-              </label>
-              <input
-                type="text"
-                value={typeof currentValue === 'string' ? currentValue : ''}
-                onChange={e => handleChange(e.target.value || undefined)}
-                placeholder={`Filter by ${formatFieldName(fieldName).toLowerCase()}...`}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-web focus:border-green-web text-sm"
-              />
-            </div>
+            <FilterField
+              key={fieldName}
+              fieldName={fieldName}
+              model={model}
+              databaseModels={databaseModels}
+              filters={filters}
+              onChange={handleChange}
+              getEnumValues={getEnumValues}
+            />
           )
         })}
       </div>
