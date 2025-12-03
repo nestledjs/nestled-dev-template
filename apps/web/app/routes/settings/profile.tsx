@@ -41,7 +41,7 @@ export const loader = apolloLoader()(({ preloadQuery }) => {
 
 // Helper function to validate username
 function validateUsername(username: string): { valid: boolean; error?: string } {
-  const cleanedUsername = username.toLowerCase().replaceAll(/[^a-z0-9.]/g, '')
+  const cleanedUsername = username.toLowerCase().replace(/[^a-z0-9.]/g, '')
   if (cleanedUsername !== username) {
     return { valid: false, error: 'Username can only contain lowercase letters, numbers, and periods' }
   }
