@@ -1,14 +1,14 @@
 // Helper to convert PascalCase or camelCase to kebab-case
 export function kebabCase(name: string): string {
   return name
-    .replaceAll(/([a-z])([A-Z])/g, '$1-$2')
-    .replaceAll(/([A-Z])([A-Z][a-z])/g, '$1-$2')
+    .replace(/([a-z])([A-Z])/g, '$1-$2')
+    .replace(/([A-Z])([A-Z][a-z])/g, '$1-$2')
     .toLowerCase()
 }
 
 // Helper to convert PascalCase or camelCase to spaced words
 export function spacedWords(name: string): string {
-  return name.replaceAll(/([a-z])([A-Z])/g, '$1 $2').replaceAll(/([A-Z])([A-Z][a-z])/g, '$1 $2')
+  return name.replace(/([a-z])([A-Z])/g, '$1 $2').replace(/([A-Z])([A-Z][a-z])/g, '$1 $2')
 }
 
 // Helper to format field name for display
@@ -18,14 +18,14 @@ export function formatFieldName(fieldName: string): string {
     return fieldName
       .split('.')
       .map(part => part
-        .replaceAll(/([a-z])([A-Z])/g, '$1 $2')
+        .replace(/([a-z])([A-Z])/g, '$1 $2')
         .replace(/^./, (str: string) => str.toUpperCase())
       )
       .join(' ')
   }
 
   return fieldName
-    .replaceAll(/([a-z])([A-Z])/g, '$1 $2')
+    .replace(/([a-z])([A-Z])/g, '$1 $2')
     .replace(/^./, (str: string) => str.toUpperCase())
 }
 
