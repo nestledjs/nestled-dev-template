@@ -12,7 +12,11 @@ vi.mock('@apollo/client/react', () => ({
 }))
 
 // Mock SDK
-vi.mock('@nestled-template/shared/sdk', () => ({
+vi.mock('@nestled-template/shared/sdk', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@nestled-template/shared/sdk')>()
+  return {
+    ...actual,
+    
   AdminPlatformSecurityEventsDocument: { kind: 'Document', definitions: [] },
   SecurityEventType: {
     PasswordChanged: 'PasswordChanged',
@@ -29,7 +33,8 @@ vi.mock('@nestled-template/shared/sdk', () => ({
     ApiTokenRevoked: 'ApiTokenRevoked',
     ApiTokenRotated: 'ApiTokenRotated',
   },
-}))
+  }
+})
 
 describe('Admin Security Events Page', () => {
   let user: ReturnType<typeof userEvent.setup>

@@ -12,11 +12,16 @@ import {
 } from '@nestled-template/shared/sdk'
 
 // Mock the SDK mutations
-vi.mock('@nestled-template/shared/sdk', () => ({
+vi.mock('@nestled-template/shared/sdk', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@nestled-template/shared/sdk')>()
+  return {
+    ...actual,
+    
   useVerifyEmailMutation: vi.fn(),
   useVerifyEmailChangeMutation: vi.fn(),
   useResendVerificationEmailMutation: vi.fn(),
-}))
+}
+})
 
 // Mock the AuthLayout component
 vi.mock('@nestled-template/web', () => ({

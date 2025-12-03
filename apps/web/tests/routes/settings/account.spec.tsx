@@ -22,12 +22,17 @@ vi.mock('react-router', async () => {
 })
 
 // Mock the SDK mutations and queries
-vi.mock('@nestled-template/shared/sdk', () => ({
+vi.mock('@nestled-template/shared/sdk', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@nestled-template/shared/sdk')>()
+  return {
+    ...actual,
+    
   MeDocument: {},
   useDeleteUserAccountMutation: vi.fn(),
   useExportUserDataLazyQuery: vi.fn(),
   useResendVerificationEmailMutation: vi.fn(),
-}))
+  }
+})
 
 // Mock TransferOwnershipModal component
 vi.mock('../../../app/components/TransferOwnershipModal', () => ({
