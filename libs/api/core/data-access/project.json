@@ -11,7 +11,7 @@
       "options": {
         "jestConfig": "libs/api/core/data-access/jest.config.ts"
       },
-      "dependsOn": ["^test"]
+      "dependsOn": ["api-prisma:generate"]
     }
   }
 }
