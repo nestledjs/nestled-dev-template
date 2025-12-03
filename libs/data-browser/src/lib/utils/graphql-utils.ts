@@ -166,18 +166,32 @@ function findForeignKeyFieldName(
 }
 
 /**
+ * Options for building form fields
+ */
+export interface BuildFormFieldsOptions {
+  currentItem?: any
+  isSubmitting?: boolean
+  basePath?: string
+  databaseModels?: DatabaseModel[]
+  displayFieldConfig?: DisplayFieldConfig
+}
+
+/**
  * Build form fields for a model and operation
  */
 export function buildFormFields(
   sdk: any,
   model: DatabaseModel,
   operation: 'create' | 'update',
-  currentItem?: any,
-  isSubmitting?: boolean,
-  basePath = '/admin/data',
-  databaseModels?: DatabaseModel[],
-  displayFieldConfig?: DisplayFieldConfig,
+  options: BuildFormFieldsOptions = {},
 ): FormField[] {
+  const {
+    currentItem,
+    isSubmitting = false,
+    basePath = '/admin/data',
+    databaseModels,
+    displayFieldConfig,
+  } = options
   // Filter out computed/readonly fields for forms
   const editableFields = model.fields.filter((field: any) => {
     // Skip ID field - IDs should be immutable
@@ -208,7 +222,7 @@ export function buildFormFields(
     if (idField) {
       formFields.push(
         FormFieldClass.text(idField.name, {
-          label: idField.name.replace(/([a-z])([A-Z])/g, '$1 $2').replace(/^./, (str: string) => str.toUpperCase()),
+          label: idField.name.replaceAll(/([a-z])([A-Z])/g, '$1 $2').replace(/^./, (str: string) => str.toUpperCase()),
           disabled: true,
           helpText: 'ID fields are immutable and cannot be changed',
         })
