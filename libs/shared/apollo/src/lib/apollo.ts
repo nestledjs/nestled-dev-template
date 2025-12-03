@@ -47,7 +47,6 @@ if (globalThis !== undefined && globalThis.crypto === undefined) {
           return array
         }
       } as Crypto
-      }
     }
   }
 }
