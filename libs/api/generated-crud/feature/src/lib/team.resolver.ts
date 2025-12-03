@@ -9,14 +9,14 @@ import {
   ListTeamInput,
   UpdateTeamInput,
 } from '@nestled-template/api/generated-crud/data-access'
-import { GqlAuthAdminGuard } from '@nestled-template/api/utils'
+import { GqlAuthAdminGuard, GqlAuthGuard } from '@nestled-template/api/utils'
 
 @Resolver(() => Team)
 export class GeneratedTeamResolver {
   constructor(private readonly generatedService: ApiCrudDataAccessService) {}
 
   @Query(() => [Team], { nullable: true })
-  @UseGuards(GqlAuthAdminGuard)
+  @UseGuards(GqlAuthGuard)
   teams(
     @Info() info: GraphQLResolveInfo,
     @Args({ name: 'input', type: () => ListTeamInput, nullable: true }) input?: ListTeamInput,
@@ -33,19 +33,19 @@ export class GeneratedTeamResolver {
   }
 
   @Query(() => Team, { nullable: true })
-  @UseGuards(GqlAuthAdminGuard)
+  @UseGuards(GqlAuthGuard)
   team(@Info() info: GraphQLResolveInfo, @Args('teamId') teamId: string) {
     return this.generatedService.team(info, teamId)
   }
 
   @Mutation(() => Team, { nullable: true })
-  @UseGuards(GqlAuthAdminGuard)
+  @UseGuards(GqlAuthGuard)
   createTeam(@Info() info: GraphQLResolveInfo, @Args('input') input: CreateTeamInput) {
     return this.generatedService.createTeam(info, input)
   }
 
   @Mutation(() => Team, { nullable: true })
-  @UseGuards(GqlAuthAdminGuard)
+  @UseGuards(GqlAuthGuard)
   updateTeam(
     @Info() info: GraphQLResolveInfo,
     @Args('teamId') teamId: string,
@@ -55,7 +55,7 @@ export class GeneratedTeamResolver {
   }
 
   @Mutation(() => Team, { nullable: true })
-  @UseGuards(GqlAuthAdminGuard)
+  @UseGuards(GqlAuthGuard)
   deleteTeam(@Args('teamId') teamId: string) {
     return this.generatedService.deleteTeam(teamId)
   }

@@ -97,6 +97,12 @@ describe('string-utils', () => {
     it('should handle empty strings', () => {
       expect(formatFieldName('')).toBe('')
     })
+
+    it('should format dotted field names (for related enum fields)', () => {
+      expect(formatFieldName('email.emailType')).toBe('Email Email Type')
+      expect(formatFieldName('address.addressType')).toBe('Address Address Type')
+      expect(formatFieldName('phoneNumber.phoneType')).toBe('Phone Number Phone Type')
+    })
   })
 
   describe('normalizeModelNameForDocument', () => {

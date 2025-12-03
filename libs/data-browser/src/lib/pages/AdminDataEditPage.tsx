@@ -72,7 +72,7 @@ const validateId = (id: string | undefined): string | null => {
 
 export function AdminDataEditPage() {
   const { dataType, id } = useParams()
-  const { databaseModels, basePath = '/admin/data', formTheme } = useAdminDataContext()
+  const { databaseModels, basePath = '/admin/data', formTheme, displayFieldConfig } = useAdminDataContext()
 
   // Helper function to find model by name
   const findModelByName = (name: string) => {
@@ -164,14 +164,14 @@ export function AdminDataEditPage() {
   }
 
   // At this point we know model exists and is valid
-  return <AdminDataEditPageContent model={model!} id={validatedId!} basePath={basePath} formTheme={formTheme} />
+  return <AdminDataEditPageContent model={model!} id={validatedId!} basePath={basePath} formTheme={formTheme} displayFieldConfig={displayFieldConfig} />
 }
 
 // =================================
 // CONTENT COMPONENT
 // =================================
 
-function AdminDataEditPageContent({ model, id, basePath, formTheme }: Readonly<{ model: any; id: string; basePath: string; formTheme: any }>) {
+function AdminDataEditPageContent({ model, id, basePath, formTheme, displayFieldConfig }: Readonly<{ model: any; id: string; basePath: string; formTheme: any; displayFieldConfig?: any }>) {
   const navigate = useNavigate()
   const { sdk, databaseModels } = useAdminDataContext()
 
@@ -402,14 +402,20 @@ function AdminDataEditPageContent({ model, id, basePath, formTheme }: Readonly<{
   }
 
   // Build form fields without values (we'll use defaultValues prop instead)
-  const formFields = buildFormFields(sdk, model, 'update', item, submissionState.status === 'loading', basePath, databaseModels)
+  const formFields = buildFormFields(sdk, model, 'update', item, submissionState.status === 'loading', basePath, databaseModels, displayFieldConfig)
 
   // Extract initial values for the Form component
   const initialValues: Record<string, any> = {}
   if (item) {
+    // Include ID field for display (it will be disabled in the form)
+    const idField = model.fields.find((f: any) => f.isId)
+    if (idField) {
+      initialValues[idField.name] = item[idField.name]
+    }
+
     // Get editable fields and map their current values
     const editableFields = model.fields.filter((field: any) => {
-      if (field.isId && false) return false // Keep ID for edit
+      if (field.isId) return false // IDs are immutable and already added above
       if (field.isReadOnly || field.isGenerated) return false
       if (field.isUpdatedAt || field.name === 'createdAt') return false
       if (field.relationName && field.isList) return false

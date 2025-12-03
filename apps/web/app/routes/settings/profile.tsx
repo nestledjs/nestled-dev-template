@@ -169,6 +169,31 @@ export default function ProfileSettings() {
     }
   }
 
+  const handleResendVerificationEmail = async () => {
+    const primaryEmail = user.emails?.find(e => e.primary)?.email
+    if (!primaryEmail) {
+      alert('No primary email found')
+      return
+    }
+
+    setIsResendingEmail(true)
+    setEmailResendSuccess(false)
+
+    try {
+      await resendVerificationEmail({
+        variables: { email: primaryEmail },
+      })
+
+      setEmailResendSuccess(true)
+      // Hide success message after 5 seconds
+      setTimeout(() => setEmailResendSuccess(false), 5000)
+    } catch (error) {
+      alert('Failed to resend verification email: ' + (error as Error).message)
+    } finally {
+      setIsResendingEmail(false)
+    }
+  }
+
   const AvatarSection = () => (
     <div className="flex items-center gap-6">
       <AvatarUpload
@@ -379,31 +404,6 @@ export default function ProfileSettings() {
   const handleTransferSuccess = () => {
     // Optionally refresh data or show success message
     // The modal will handle the success alert
-  }
-
-  const handleResendVerificationEmail = async () => {
-    const primaryEmail = user.emails?.find(e => e.primary)?.email
-    if (!primaryEmail) {
-      alert('No primary email found')
-      return
-    }
-
-    setIsResendingEmail(true)
-    setEmailResendSuccess(false)
-
-    try {
-      await resendVerificationEmail({
-        variables: { email: primaryEmail },
-      })
-
-      setEmailResendSuccess(true)
-      // Hide success message after 5 seconds
-      setTimeout(() => setEmailResendSuccess(false), 5000)
-    } catch (error) {
-      alert('Failed to resend verification email: ' + (error as Error).message)
-    } finally {
-      setIsResendingEmail(false)
-    }
   }
 
   return (

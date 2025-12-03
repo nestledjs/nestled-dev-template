@@ -52,7 +52,7 @@ function checkAccess(dataType: string): boolean {
 
 export function AdminDataCreatePage() {
   const { dataType } = useParams()
-  const { databaseModels, basePath = '/admin/data', formTheme } = useAdminDataContext()
+  const { databaseModels, basePath = '/admin/data', formTheme, displayFieldConfig } = useAdminDataContext()
 
   // Helper function to find model by name
   const findModelByName = (name: string) => {
@@ -164,14 +164,14 @@ export function AdminDataCreatePage() {
   }
 
   // At this point we know model exists and is valid
-  return <AdminDataCreatePageContent model={model!} basePath={basePath} formTheme={formTheme} />
+  return <AdminDataCreatePageContent model={model!} basePath={basePath} formTheme={formTheme} displayFieldConfig={displayFieldConfig} />
 }
 
 // =================================
 // CONTENT COMPONENT
 // =================================
 
-function AdminDataCreatePageContent({ model, basePath, formTheme }: Readonly<{ model: any; basePath: string; formTheme: any }>) {
+function AdminDataCreatePageContent({ model, basePath, formTheme, displayFieldConfig }: Readonly<{ model: any; basePath: string; formTheme: any; displayFieldConfig?: any }>) {
   const navigate = useNavigate()
   const { sdk, databaseModels } = useAdminDataContext()
 
@@ -243,7 +243,7 @@ function AdminDataCreatePageContent({ model, basePath, formTheme }: Readonly<{ m
   }
 
   // Build form fields
-  const formFields = buildFormFields(sdk, model, 'create', undefined, submissionState.status === 'loading', basePath, databaseModels)
+  const formFields = buildFormFields(sdk, model, 'create', undefined, submissionState.status === 'loading', basePath, databaseModels, displayFieldConfig)
 
   // Handle form submission
   const handleSubmit = async (formData: Record<string, unknown>) => {

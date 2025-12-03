@@ -263,6 +263,7 @@ model Subscription {
   status                 SubscriptionStatus @default(INCOMPLETE)
 }
 
+/// @crudAuth: { "readOne": "user", "readMany": "user", "create": "user", "update": "user", "delete": "user" }
 model Team {
   id             String       @id @default(uuid())
   createdAt      DateTime     @default(now())
@@ -274,6 +275,7 @@ model Team {
   members        TeamMember[]
 }
 
+/// @crudAuth: { "readOne": "user", "readMany": "user", "create": "user", "update": "user", "delete": "user" }
 model TeamMember {
   id        String   @id @default(uuid())
   createdAt DateTime @default(now())
