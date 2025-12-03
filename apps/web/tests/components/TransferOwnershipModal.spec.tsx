@@ -10,11 +10,16 @@ import {
 } from '@nestled-template/shared/sdk'
 
 // Mock external dependencies
-vi.mock('@nestled-template/shared/sdk', () => ({
+vi.mock('@nestled-template/shared/sdk', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@nestled-template/shared/sdk')>()
+  return {
+    ...actual,
+    
   useMyOrganizationsWithMembersQuery: vi.fn(),
   useMeQuery: vi.fn(),
   useTransferOrganizationOwnershipMutation: vi.fn(),
-}))
+}
+})
 
 describe('TransferOwnershipModal Component', () => {
   let mockTransferOwnership: ReturnType<typeof vi.fn>

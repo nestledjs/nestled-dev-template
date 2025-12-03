@@ -15,12 +15,17 @@ import {
 import { useGlobalCtx } from '@nestled-template/web'
 
 // Mock SDK hooks
-vi.mock('@nestled-template/shared/sdk', () => ({
+vi.mock('@nestled-template/shared/sdk', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@nestled-template/shared/sdk')>()
+  return {
+    ...actual,
+    
   useGetInvitationDetailsQuery: vi.fn(),
   useAcceptOrganizationInvitationMutation: vi.fn(),
   useLoginMutation: vi.fn(),
   useRegisterWithInvitationMutation: vi.fn(),
-}))
+}
+})
 
 // Mock GlobalContext hook
 vi.mock('@nestled-template/web', async () => {

@@ -12,10 +12,15 @@ import {
 import { useSubscription, useLimit, useGlobalCtx } from '@nestled-template/web'
 
 // Mock SDK hooks
-vi.mock('@nestled-template/shared/sdk', () => ({
+vi.mock('@nestled-template/shared/sdk', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@nestled-template/shared/sdk')>()
+  return {
+    ...actual,
+    
   useCreatePortalSessionMutation: vi.fn(),
   useCancelSubscriptionMutation: vi.fn(),
-}))
+}
+})
 
 // Mock web hooks and components
 vi.mock('@nestled-template/web', () => ({

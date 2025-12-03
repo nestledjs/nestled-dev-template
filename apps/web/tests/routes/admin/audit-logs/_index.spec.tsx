@@ -12,9 +12,14 @@ vi.mock('@apollo/client/react', () => ({
 }))
 
 // Mock SDK
-vi.mock('@nestled-template/shared/sdk', () => ({
+vi.mock('@nestled-template/shared/sdk', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@nestled-template/shared/sdk')>()
+  return {
+    ...actual,
+    
   AdminPlatformAuditLogsDocument: { kind: 'Document', definitions: [] },
-}))
+  }
+})
 
 describe('Admin Audit Logs Page', () => {
   let user: ReturnType<typeof userEvent.setup>

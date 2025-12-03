@@ -11,10 +11,15 @@ import { useSubscription, useGlobalCtx } from '@nestled-template/web'
 import { createTestRouter } from "../helpers/createTestRouter"
 
 // Mock dependencies
-vi.mock('@nestled-template/shared/sdk', () => ({
+vi.mock('@nestled-template/shared/sdk', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@nestled-template/shared/sdk')>()
+  return {
+    ...actual,
+    
   useActivePlansQuery: vi.fn(),
   useCreateCheckoutSessionMutation: vi.fn(),
-}))
+}
+})
 
 vi.mock('@nestled-template/web', () => ({
   useSubscription: vi.fn(),
