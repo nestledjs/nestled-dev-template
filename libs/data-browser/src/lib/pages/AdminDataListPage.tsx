@@ -42,6 +42,55 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
     }
   }, [sdk])
 
+  // Helper functions for filter management
+  const updateRelatedEnumFilter = useCallback((
+    filters: Record<string, any>,
+    relationName: string,
+    enumFieldName: string,
+    value: any
+  ): Record<string, any> => {
+    const newFilters = { ...filters }
+
+    if (value === undefined || value === null || value === '') {
+      // Remove the enum filter
+      const relationFilter = newFilters[relationName]
+      if (relationFilter && typeof relationFilter === 'object') {
+        delete relationFilter[enumFieldName]
+        // If the relation filter is now empty, remove it entirely
+        if (Object.keys(relationFilter).length === 0) {
+          delete newFilters[relationName]
+        }
+      }
+    } else {
+      // Add or update the enum filter
+      if (!newFilters[relationName]) {
+        newFilters[relationName] = {}
+      }
+      const relationFilter = newFilters[relationName]
+      if (relationFilter && typeof relationFilter === 'object') {
+        relationFilter[enumFieldName] = value
+      }
+    }
+
+    return newFilters
+  }, [])
+
+  const updateSimpleFilter = useCallback((
+    filters: Record<string, any>,
+    fieldName: string,
+    value: any
+  ): Record<string, any> => {
+    const newFilters = { ...filters }
+
+    if (value === undefined || value === null || value === '') {
+      delete newFilters[fieldName]
+    } else {
+      newFilters[fieldName] = value
+    }
+
+    return newFilters
+  }, [])
+
   // Consolidated state management with useReducer for better performance
   const { state, dispatch } = useAdminList()
 
@@ -757,7 +806,9 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
               }
             }
             if (!field || !relatedModel || !relatedEnumField) return null
-          } else {
+          }
+
+          if (!isRelatedEnumField) {
             field = model.fields.find((f: any) => f.name === fieldName)
             if (!field) return null
           }
@@ -768,34 +819,13 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
             : filters[fieldName]
 
           const handleChange = (value: any) => {
-            const newFilters = { ...filters }
+            let newFilters: Record<string, any>
 
             if (isRelatedEnumField) {
               const [relationName, enumFieldName] = fieldName.split('.')
-              if (value === undefined || value === null || value === '') {
-                // Remove the enum filter
-                const relationFilter = newFilters[relationName]
-                if (relationFilter && typeof relationFilter === 'object') {
-                  delete relationFilter[enumFieldName]
-                  // If the relation filter is now empty, remove it entirely
-                  if (Object.keys(relationFilter).length === 0) {
-                    delete newFilters[relationName]
-                  }
-                }
-              } else {
-                // Add or update the enum filter
-                if (!newFilters[relationName]) {
-                  newFilters[relationName] = {}
-                }
-                const relationFilter = newFilters[relationName]
-                if (relationFilter && typeof relationFilter === 'object') {
-                  relationFilter[enumFieldName] = value
-                }
-              }
-            } else if (value === undefined || value === null || value === '') {
-              delete newFilters[fieldName]
+              newFilters = updateRelatedEnumFilter(filters, relationName, enumFieldName, value)
             } else {
-              newFilters[fieldName] = value
+              newFilters = updateSimpleFilter(filters, fieldName, value)
             }
 
             setFilters(newFilters)
