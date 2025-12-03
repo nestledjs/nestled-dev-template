@@ -24,13 +24,18 @@ type OrganizationScopedModel = (typeof ORGANIZATION_SCOPED_MODELS)[number]
  * CRITICAL SECURITY COMPONENT - DO NOT MODIFY WITHOUT THOROUGH TESTING
  */
 export function createTenantIsolationExtension(organizationId?: string) {
-  return Prisma.defineExtension((client) => {
+  return Prisma.defineExtension((client: any) => {
     return client.$extends({
       name: 'TenantIsolation',
       query: {
         // Apply to all models
         $allModels: {
-          async $allOperations({ model, operation, args, query }) {
+          async $allOperations({ model, operation, args, query }: {
+            model: string
+            operation: string
+            args: any
+            query: (args: any) => Promise<any>
+          }) {
             // Skip if no organizationId provided
             if (!organizationId) return query(args)
 
