@@ -7,7 +7,8 @@ if (globalThis !== undefined && globalThis.crypto === undefined) {
     cryptoModule = require('node:crypto')
   } catch (e) {
     // Final fallback: fail explicitly rather than provide insecure crypto
-    console.error('[Apollo] CRITICAL: Failed to load Node.js crypto module:', e.message)
+    const error = e as Error
+    console.error('[Apollo] CRITICAL: Failed to load Node.js crypto module:', error.message)
     console.error('[Apollo] This environment lacks both globalThis.crypto and Node.js crypto module')
     throw new Error('Cryptographically secure random number generation is not available in this environment. Please use a newer Node.js version or ensure crypto APIs are available.')
   }
@@ -29,20 +30,23 @@ if (globalThis !== undefined && globalThis.crypto === undefined) {
           const hex = bytes.toString('hex')
           return [
             hex.slice(0, 8),
-            hex.slice(8, 12), 
+            hex.slice(8, 12),
             hex.slice(12, 16),
             hex.slice(16, 20),
             hex.slice(20, 32)
-          ].join('-')
+          ].join('-') as `${string}-${string}-${string}-${string}-${string}`
         },
-        getRandomValues: (array) => {
+        getRandomValues: <T extends ArrayBufferView>(array: T): T => {
           // Generate cryptographically secure random values using Node.js crypto
-          const bytes = cryptoModule.randomBytes(array.length)
-          for (let i = 0; i < array.length; i++) {
-            array[i] = bytes[i]
+          const byteLength = (array as any).byteLength || (array as any).length || 0
+          const bytes = cryptoModule.randomBytes(byteLength)
+          const uint8Array = new Uint8Array((array as any).buffer || array, (array as any).byteOffset || 0, byteLength)
+          for (let i = 0; i < uint8Array.length; i++) {
+            uint8Array[i] = bytes[i]
           }
           return array
         }
+      } as Crypto
       }
     }
   }
