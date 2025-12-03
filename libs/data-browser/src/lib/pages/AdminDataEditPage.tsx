@@ -402,7 +402,13 @@ function AdminDataEditPageContent({ model, id, basePath, formTheme, displayField
   }
 
   // Build form fields without values (we'll use defaultValues prop instead)
-  const formFields = buildFormFields(sdk, model, 'update', item, submissionState.status === 'loading', basePath, databaseModels, displayFieldConfig)
+  const formFields = buildFormFields(sdk, model, 'update', {
+    currentItem: item,
+    isSubmitting: submissionState.status === 'loading',
+    basePath,
+    databaseModels,
+    displayFieldConfig,
+  })
 
   // Extract initial values for the Form component
   const initialValues: Record<string, any> = {}
