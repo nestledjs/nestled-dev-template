@@ -263,7 +263,11 @@ model Subscription {
   status                 SubscriptionStatus @default(INCOMPLETE)
 }
 
-/// @crudAuth: { "readOne": "user", "readMany": "user", "create": "user", "update": "user", "delete": "user" }
+/// Team CRUD operations default to admin-only access for security.
+/// TODO: When RBAC is fully implemented, consider adding a custom @RequirePermission guard
+/// that checks permissions dynamically (e.g., @RequirePermission('team.create')).
+/// For user-specific operations (myTeams, joinTeam, etc.), create separate custom resolvers
+/// with appropriate authorization logic that validates team membership and permissions.
 model Team {
   id             String       @id @default(uuid())
   createdAt      DateTime     @default(now())
@@ -275,7 +279,11 @@ model Team {
   members        TeamMember[]
 }
 
-/// @crudAuth: { "readOne": "user", "readMany": "user", "create": "user", "update": "user", "delete": "user" }
+/// TeamMember CRUD operations default to admin-only access for security.
+/// TODO: When RBAC is fully implemented, add custom resolvers for user operations like:
+/// - addTeamMember (checks if user has team.addMember permission)
+/// - removeTeamMember (checks if user is team admin or the member being removed)
+/// - updateTeamMemberRole (checks if user has team.manageRoles permission)
 model TeamMember {
   id        String   @id @default(uuid())
   createdAt DateTime @default(now())
