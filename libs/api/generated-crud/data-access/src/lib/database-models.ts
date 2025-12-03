@@ -3,6 +3,7 @@
 
 export interface DatabaseField {
   name: string
+  kind?: string
   type: string
   isOptional?: boolean
   isId?: boolean
@@ -3302,12 +3303,12 @@ export const DATABASE_MODELS: DatabaseModel[] = [
     pluralModelName: 'Teams',
     pluralModelPropertyName: 'teams',
     auth: {
-      readOne: 'admin',
-      readMany: 'admin',
+      readOne: 'user',
+      readMany: 'user',
       count: 'admin',
-      create: 'admin',
-      update: 'admin',
-      delete: 'admin',
+      create: 'user',
+      update: 'user',
+      delete: 'user',
     },
     idFieldType: 'String',
   },
@@ -3456,12 +3457,12 @@ export const DATABASE_MODELS: DatabaseModel[] = [
     pluralModelName: 'TeamMembers',
     pluralModelPropertyName: 'teamMembers',
     auth: {
-      readOne: 'admin',
-      readMany: 'admin',
+      readOne: 'user',
+      readMany: 'user',
       count: 'admin',
-      create: 'admin',
-      update: 'admin',
-      delete: 'admin',
+      create: 'user',
+      update: 'user',
+      delete: 'user',
     },
     idFieldType: 'String',
   },

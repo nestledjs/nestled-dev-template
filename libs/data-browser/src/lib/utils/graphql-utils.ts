@@ -3,6 +3,7 @@ import { Link } from 'react-router'
 import { type FormField, FormFieldClass } from '@nestledjs/forms'
 
 import type { DatabaseModel } from '../types'
+import type { DisplayFieldConfig } from '../context/AdminDataContext'
 import { RelationFieldWrapper } from '../components/RelationFieldWrapper'
 import { getPluralName } from './get-plural-names'
 
@@ -16,6 +17,11 @@ function getEnumValues(sdk: any, enumType: string): string[] | null {
     const enumObject = (sdk as any)[enumType]
 
     if (!enumObject || typeof enumObject !== 'object') {
+      return null
+    }
+
+    // Check if this is a GraphQL DocumentNode (not an enum)
+    if (enumObject.kind === 'Document' || enumObject.definitions) {
       return null
     }
 
@@ -170,11 +176,12 @@ export function buildFormFields(
   isSubmitting?: boolean,
   basePath = '/admin/data',
   databaseModels?: DatabaseModel[],
+  displayFieldConfig?: DisplayFieldConfig,
 ): FormField[] {
   // Filter out computed/readonly fields for forms
   const editableFields = model.fields.filter((field: any) => {
-    // Skip ID field for create operations
-    if (operation === 'create' && field.isId) return false
+    // Skip ID field - IDs should be immutable
+    if (field.isId) return false
 
     // Skip computed fields
     if (field.isReadOnly || field.isGenerated) return false
@@ -194,6 +201,20 @@ export function buildFormFields(
 
   // Convert to form field format using FormFieldClass
   const formFields: FormField[] = []
+
+  // For update operations, add the ID as a read-only display field at the top
+  if (operation === 'update' && currentItem) {
+    const idField = model.fields.find((f: any) => f.isId)
+    if (idField) {
+      formFields.push(
+        FormFieldClass.text(idField.name, {
+          label: idField.name.replace(/([a-z])([A-Z])/g, '$1 $2').replace(/^./, (str: string) => str.toUpperCase()),
+          disabled: true,
+          helpText: 'ID fields are immutable and cannot be changed',
+        })
+      )
+    }
+  }
 
   // Process regular fields first
   regularFields.forEach((field: any) => {
@@ -359,18 +380,31 @@ export function buildFormFields(
             (sdk as any)[adminDocumentName] || (sdk as any)[regularDocumentName]
 
           if (relationDocument) {
-            // Use single field based on model type (like existing working examples)
-            let searchField = 'id' // Safe fallback
+            // Get display and search fields from config, or use sensible defaults
+            const config = displayFieldConfig?.[field.type]
+            const displayFields = config?.display || ['name', 'title'] // Try name, then title by default
+            const searchFields = config?.search || displayFields
 
-            if (field.type === 'Course') {
-              searchField = 'title' // Course has title
-            } else if (field.type === 'User') {
-              searchField = 'name' // User likely has name
-            } else if (field.type === 'Program') {
-              searchField = 'name' // Program has name
-            } else {
-              // Try title first, then name, then id
-              searchField = 'title' // Most common
+            // Helper to get display label for an item
+            const getDisplayLabel = (item: any) => {
+              // Try each configured display field in order
+              for (const displayField of displayFields) {
+                if (item[displayField]) {
+                  return item[displayField]
+                }
+              }
+
+              // If multiple display fields and they all exist, join them
+              const allValues = displayFields
+                .map(field => item[field])
+                .filter(val => val != null && val !== '')
+
+              if (allValues.length > 1) {
+                return allValues.join(' ')
+              }
+
+              // Final fallback to ID
+              return item.id
             }
 
             // Create initial option from current item if we're in edit mode
@@ -382,11 +416,7 @@ export function buildFormFields(
                 typeof currentRelationData === 'object' &&
                 currentRelationData.id
               ) {
-                const displayLabel =
-                  currentRelationData[searchField] ||
-                  currentRelationData.title ||
-                  currentRelationData.name ||
-                  currentRelationData.id
+                const displayLabel = getDisplayLabel(currentRelationData)
                 initialOptions = [
                   {
                     value: currentRelationData.id,
@@ -401,12 +431,12 @@ export function buildFormFields(
               required: options.required,
               dataType: properPluralName.charAt(0).toLowerCase() + properPluralName.slice(1), // e.g., Course → courses (camelCase)
               document: relationDocument,
-              searchFields: [searchField], // For searching
+              searchFields: searchFields, // For searching
               selectOptionsFunction: (items: unknown[]) => {
                 // Combine initial options with query results (avoiding duplicates)
                 const queryOptions = items.map((item: any) => ({
                   value: item.id,
-                  label: item[searchField] || item.title || item.name || item.id,
+                  label: getDisplayLabel(item),
                 }))
 
                 // Add initial option if it's not already in the query results
@@ -416,6 +446,9 @@ export function buildFormFields(
                     allOptions.push(option)
                   }
                 })
+
+                // Sort alphabetically by label
+                allOptions.sort((a, b) => a.label.localeCompare(b.label))
 
                 return allOptions
               },

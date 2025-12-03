@@ -1,9 +1,9 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react'
 import { useQuery, useMutation } from '@apollo/client/react'
 import {
-  MyOrganizations,
+  MyOrganizationsWithMembers,
   SwitchActiveOrganization,
-  type MyOrganizationsQuery,
+  type MyOrganizationsWithMembersQuery,
   type SwitchActiveOrganizationMutation,
   User,
   Organization,
@@ -50,8 +50,8 @@ export function AuthProvider({ children, initialUser = null }: AuthProviderProps
   const [isEmulating, setIsEmulating] = useState(false)
   const [originalUser, setOriginalUser] = useState<AuthUser | null>(null)
 
-  // Fetch user's organizations
-  const { data: orgsData, loading: orgsLoading, refetch: refetchOrgs } = useQuery<MyOrganizationsQuery>(MyOrganizations, {
+  // Fetch user's organizations with member details including roles and permissions
+  const { data: orgsData, loading: orgsLoading, refetch: refetchOrgs } = useQuery<MyOrganizationsWithMembersQuery>(MyOrganizationsWithMembers, {
     skip: !user?.id,
   })
 
