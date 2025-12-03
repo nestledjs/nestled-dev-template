@@ -756,9 +756,9 @@ describe('TenancyMiddleware (CRITICAL SECURITY)', () => {
       }
 
       mockRequest.user = mockUser as User
-      // Express automatically lowercases headers
+      // Express automatically lowercases headers, so we simulate that behavior
       mockRequest.headers = {
-        'X-Organization-ID': 'org-uppercase', // Will be lowercase by Express
+        'x-organization-id': 'org-uppercase', // Express normalizes to lowercase
       }
 
       const mockMembership = {
