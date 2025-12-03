@@ -141,7 +141,7 @@ export default function AdminBillingPlans() {
                       {Object.entries(plan.limits).map(([key, value]) => (
                         <div key={key} className="flex justify-between text-sm">
                           <dt className="text-gray-600 capitalize">
-                            {key.replaceAll(/([A-Z])/g, ' $1').toLowerCase()}
+                            {key.replace(/([A-Z])/g, ' $1').toLowerCase()}
                           </dt>
                           <dd className="font-medium text-gray-900">
                             {value === -1 || value === null ? 'Unlimited' : value?.toString()}

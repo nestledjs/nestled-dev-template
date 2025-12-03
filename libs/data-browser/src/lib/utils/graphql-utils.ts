@@ -222,7 +222,7 @@ export function buildFormFields(
     if (idField) {
       formFields.push(
         FormFieldClass.text(idField.name, {
-          label: idField.name.replaceAll(/([a-z])([A-Z])/g, '$1 $2').replace(/^./, (str: string) => str.toUpperCase()),
+          label: idField.name.replace(/([a-z])([A-Z])/g, '$1 $2').replace(/^./, (str: string) => str.toUpperCase()),
           disabled: true,
           helpText: 'ID fields are immutable and cannot be changed',
         })
