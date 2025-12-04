@@ -15,10 +15,16 @@ export default defineConfig({
     root: resolve(__dirname),
     environment: 'node',
     globalSetup: resolve(__dirname, './src/support/global-setup.ts'),
+    globalTeardown: resolve(__dirname, './src/support/global-teardown.ts'),
     setupFiles: [resolve(__dirname, './src/support/test-setup.ts')],
     include: [resolve(__dirname, './src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}')],
     testTimeout: 30000,
-    pool: 'forks',
+    hookTimeout: 30000,
+    teardownTimeout: 30000,
+    sequence: {
+      shuffle: false, // Don't shuffle tests - run alphabetically
+    },
+    pool: 'forks', // Use forks instead of threads for better isolation and cleanup
     poolOptions: {
       forks: {
         singleFork: true

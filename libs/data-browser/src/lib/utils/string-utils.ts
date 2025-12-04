@@ -17,11 +17,28 @@ export function formatFieldName(fieldName: string): string {
   if (fieldName.includes('.')) {
     return fieldName
       .split('.')
-      .map(part => part
-        .replace(/([a-z])([A-Z])/g, '$1 $2')
-        .replace(/^./, (str: string) => str.toUpperCase())
-      )
+      .map(part => {
+        // If all uppercase (like enum values), convert to title case
+        if (part === part.toUpperCase() && part.length > 1) {
+          return part.charAt(0).toUpperCase() + part.slice(1).toLowerCase()
+        }
+        return part
+          .replace(/([a-z])([A-Z])/g, '$1 $2')
+          .replace(/^./, (str: string) => str.toUpperCase())
+      })
       .join(' ')
+  }
+
+  // If all uppercase (like enum values), convert to title case
+  if (fieldName === fieldName.toUpperCase() && fieldName.length > 1) {
+    // Handle underscore-separated names (e.g., "PENDING_APPROVAL" -> "Pending Approval")
+    if (fieldName.includes('_')) {
+      return fieldName
+        .split('_')
+        .map(part => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase())
+        .join(' ')
+    }
+    return fieldName.charAt(0).toUpperCase() + fieldName.slice(1).toLowerCase()
   }
 
   return fieldName

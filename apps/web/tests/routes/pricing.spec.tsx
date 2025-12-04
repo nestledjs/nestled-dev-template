@@ -3,22 +3,25 @@ import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import PricingPage from '../../app/routes/pricing'
-import {
-  useActivePlansQuery,
-  useCreateCheckoutSessionMutation,
-} from '@nestled-template/shared/sdk'
 import { useSubscription, useGlobalCtx } from '@nestled-template/web'
 import { createTestRouter } from "../helpers/createTestRouter"
 
-// Mock dependencies
+// Mock Apollo Client
+const mockUseQuery = vi.fn()
+const mockUseMutation = vi.fn()
+vi.mock('@apollo/client/react', () => ({
+  useQuery: (...args: unknown[]) => mockUseQuery(...args),
+  useMutation: (...args: unknown[]) => mockUseMutation(...args),
+}))
+
+// Mock SDK (for DocumentNode exports)
 vi.mock('@nestled-template/shared/sdk', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@nestled-template/shared/sdk')>()
   return {
     ...actual,
-    
-  useActivePlansQuery: vi.fn(),
-  useCreateCheckoutSessionMutation: vi.fn(),
-}
+    ActivePlans: { kind: 'Document', definitions: [] },
+    CreateCheckoutSession: { kind: 'Document', definitions: [] },
+  }
 })
 
 vi.mock('@nestled-template/web', () => ({
@@ -67,20 +70,23 @@ describe('Pricing Page', () => {
   ]
 
   beforeEach(() => {
-    vi.clearAllMocks()
+    mockUseQuery.mockClear()
+    mockUseMutation.mockClear()
 
     mockCreateCheckoutSession = vi.fn()
 
-    vi.mocked(useActivePlansQuery).mockReturnValue({
+    // Mock useQuery for ActivePlans
+    mockUseQuery.mockReturnValue({
       data: { plans: mockPlans },
       loading: false,
       error: undefined,
-    } as any)
+    })
 
-    vi.mocked(useCreateCheckoutSessionMutation).mockReturnValue([
+    // Mock useMutation for CreateCheckoutSession
+    mockUseMutation.mockReturnValue([
       mockCreateCheckoutSession,
       { loading: false },
-    ] as any)
+    ])
 
     vi.mocked(useGlobalCtx).mockReturnValue({
       user: null,
@@ -124,11 +130,12 @@ describe('Pricing Page', () => {
 
   describe('Loading State', () => {
     it('should show loading message while fetching plans', () => {
-      vi.mocked(useActivePlansQuery).mockReturnValue({
+      mockUseQuery.mockClear()
+      mockUseQuery.mockReturnValue({
         data: undefined,
         loading: true,
         error: undefined,
-      } as any)
+      })
 
       renderPricingPage()
 
@@ -136,11 +143,12 @@ describe('Pricing Page', () => {
     })
 
     it('should not show plans grid while loading', () => {
-      vi.mocked(useActivePlansQuery).mockReturnValue({
+      mockUseQuery.mockClear()
+      mockUseQuery.mockReturnValue({
         data: undefined,
         loading: true,
         error: undefined,
-      } as any)
+      })
 
       renderPricingPage()
 
@@ -150,7 +158,8 @@ describe('Pricing Page', () => {
 
   describe('Empty State', () => {
     it('should show "No Plans Available" when no plans exist', () => {
-      vi.mocked(useActivePlansQuery).mockReturnValue({
+      mockUseQuery.mockClear()
+      mockUseQuery.mockReturnValue({
         data: { plans: [] },
         loading: false,
         error: undefined,
@@ -306,10 +315,11 @@ describe('Pricing Page', () => {
     })
 
     it('should show loading state when creating checkout', () => {
-      vi.mocked(useCreateCheckoutSessionMutation).mockReturnValue([
+      mockUseMutation.mockClear()
+      mockUseMutation.mockReturnValue([
         mockCreateCheckoutSession,
         { loading: true },
-      ] as any)
+      ])
 
       renderPricingPage()
 

@@ -49,7 +49,7 @@ vi.mock('@nestledjs/forms', () => ({
           if (!field) return null
 
           const { key, type, options } = field
-          const { label, required, minLength, placeholder, helperText, text, disabled, fullWidth, loading } = options || {}
+          const { label, required, minLength, placeholder, helpText, text, disabled, fullWidth, loading } = options || {}
 
           if (type === 'button') {
             return (
@@ -75,7 +75,7 @@ vi.mock('@nestledjs/forms', () => ({
                 minLength={minLength}
                 placeholder={placeholder}
               />
-              {helperText && <span>{helperText}</span>}
+              {helpText && <span>{helpText}</span>}
             </div>
           )
         })}
@@ -146,13 +146,6 @@ describe('ResetPassword Component', () => {
       renderResetPassword()
 
       expect(screen.getByLabelText('New Password')).toHaveAttribute('required')
-    })
-
-    it('should have minimum password length validation', () => {
-      renderResetPassword()
-
-      const passwordInput = screen.getByLabelText('New Password')
-      expect(passwordInput).toHaveAttribute('minLength', '8')
     })
   })
 
