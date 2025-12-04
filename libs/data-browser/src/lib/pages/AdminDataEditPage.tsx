@@ -55,6 +55,163 @@ const toKebabCase = (str: string): string => {
     .toLowerCase() // Convert to lowercase
 }
 
+// =================================
+// INITIAL VALUES EXTRACTION HELPERS
+// =================================
+
+/**
+ * Process relation field value to extract foreign key ID
+ */
+function processRelationFieldValue(field: any, item: any): string {
+  const relationFieldName = field.relationFromFields?.[0] || `${field.name}Id`
+  let value = item[relationFieldName]
+
+  // Try to get value from relation object if foreign key not found
+  if (value === undefined) {
+    const relationObject = item[field.name]
+    if (relationObject && typeof relationObject === 'object' && relationObject.id) {
+      value = relationObject.id
+    }
+  }
+
+  // Extract ID from object if still an object
+  if (value && typeof value === 'object') {
+    value = value.id || ''
+  }
+
+  return value || ''
+}
+
+/**
+ * Process date/datetime field value to proper format
+ */
+function processDateFieldValue(field: any, value: any): string {
+  if (value === null || value === undefined || value === '') {
+    return ''
+  }
+
+  try {
+    const dateValue = value instanceof Date ? value : new Date(value)
+    const fieldTypeLower = field.type.toLowerCase()
+
+    if (fieldTypeLower === 'date') {
+      return dateValue.toISOString().split('T')[0]
+    } else {
+      // DateTime: YYYY-MM-DDTHH:mm format
+      return dateValue.toISOString().substring(0, 16)
+    }
+  } catch (e) {
+    return ''
+  }
+}
+
+/**
+ * Sanitize field value to primitive types
+ */
+function sanitizeFieldValue(value: any, field: any): any {
+  const fieldTypeLower = field.type.toLowerCase()
+
+  // Handle null values
+  if (value === null) {
+    return fieldTypeLower === 'boolean' ? false : ''
+  }
+
+  // Handle boolean fields
+  if (fieldTypeLower === 'boolean') {
+    return Boolean(value)
+  }
+
+  // Extract ID from objects
+  if (value !== null && typeof value === 'object' && 'id' in value) {
+    return value.id || ''
+  }
+
+  // Convert remaining objects to empty string
+  if (typeof value === 'object') {
+    return ''
+  }
+
+  return value
+}
+
+/**
+ * Perform final safety checks on all initial values
+ */
+function performFinalSafetyChecks(initialValues: Record<string, any>, model: any): void {
+  for (const [key, value] of Object.entries(initialValues)) {
+    if (value === undefined) {
+      initialValues[key] = ''
+      continue
+    }
+
+    if (value === null || typeof value !== 'object') {
+      continue
+    }
+
+    // Extract ID from remaining objects
+    if ('id' in value && typeof value.id === 'string') {
+      initialValues[key] = value.id
+    } else if (value instanceof Date) {
+      const field = model.fields.find((f: any) => f.name === key)
+      initialValues[key] = field?.type.toLowerCase() === 'date'
+        ? value.toISOString().split('T')[0]
+        : value.toISOString()
+    } else {
+      initialValues[key] = ''
+    }
+  }
+}
+
+/**
+ * Extract initial values from item for form fields
+ */
+function extractInitialValues(model: any, item: any): Record<string, any> {
+  const initialValues: Record<string, any> = {}
+
+  if (!item) {
+    return initialValues
+  }
+
+  // Include ID field
+  const idField = model.fields.find((f: any) => f.isId)
+  if (idField) {
+    initialValues[idField.name] = item[idField.name]
+  }
+
+  // Get editable fields
+  const editableFields = model.fields.filter((field: any) => {
+    if (field.isId || field.isReadOnly || field.isGenerated) return false
+    if (field.isUpdatedAt || field.name === 'createdAt') return false
+    if (field.relationName && field.isList) return false
+    return true
+  })
+
+  // Process each field
+  editableFields.forEach((field: any) => {
+    let value = item[field.name]
+
+    if (field.relationName && !field.isList) {
+      const relationFieldName = field.relationFromFields?.[0] || `${field.name}Id`
+      initialValues[relationFieldName] = processRelationFieldValue(field, item)
+    } else {
+      const fieldTypeLower = field.type.toLowerCase()
+
+      if (fieldTypeLower === 'datetime' || fieldTypeLower === 'date') {
+        value = processDateFieldValue(field, value)
+      } else {
+        value = sanitizeFieldValue(value, field)
+      }
+
+      initialValues[field.name] = value
+    }
+  })
+
+  // Final safety checks
+  performFinalSafetyChecks(initialValues, model)
+
+  return initialValues
+}
+
 // Validation functions moved into component to access databaseModels from context
 
 const validateId = (id: string | undefined): string | null => {
@@ -165,7 +322,7 @@ export function AdminDataEditPage() {
   }
 
   // At this point we know model exists and is valid
-  return <AdminDataEditPageContent model={model!} id={validatedId!} basePath={basePath} formTheme={formTheme} displayFieldConfig={displayFieldConfig} />
+  return <AdminDataEditPageContent model={model} id={validatedId} basePath={basePath} formTheme={formTheme} displayFieldConfig={displayFieldConfig} />
 }
 
 // =================================
@@ -359,128 +516,7 @@ function AdminDataEditPageContent({ model, id, basePath, formTheme, displayField
   })
 
   // Extract initial values for the Form component
-  const initialValues: Record<string, any> = {}
-  if (item) {
-    // Include ID field for display (it will be disabled in the form)
-    const idField = model.fields.find((f: any) => f.isId)
-    if (idField) {
-      initialValues[idField.name] = item[idField.name]
-    }
-
-    // Get editable fields and map their current values
-    const editableFields = model.fields.filter((field: any) => {
-      if (field.isId) return false // IDs are immutable and already added above
-      if (field.isReadOnly || field.isGenerated) return false
-      if (field.isUpdatedAt || field.name === 'createdAt') return false
-      if (field.relationName && field.isList) return false
-      return true
-    })
-
-    editableFields.forEach((field: any) => {
-      let value = item[field.name]
-
-      // Handle relation fields - get the foreign key value
-      if (field.relationName && !field.isList) {
-        // CRITICAL FIX: Always use the foreign key field name, not the relation field name
-        // This ensures consistency with the form field names (avatarId instead of avatar)
-        const relationFieldName = field.relationFromFields?.[0] || `${field.name}Id`
-        value = item[relationFieldName]
-
-        // If we didn't find the foreign key value, try to get it from the relation object
-        if (value === undefined) {
-          const relationObject = item[field.name]
-          if (relationObject && typeof relationObject === 'object' && relationObject.id) {
-            value = relationObject.id
-          }
-        }
-
-        // Extract ID from object, or convert to empty string if it's still an object
-        if (value && typeof value === 'object') {
-          value = value.id || ''
-        }
-
-        initialValues[relationFieldName] = value || ''
-      } else {
-        // Convert Date objects and timestamps to proper format for date/datetime fields
-        if (field.type.toLowerCase() === 'datetime' || field.type.toLowerCase() === 'date') {
-          if (value !== null && value !== undefined && value !== '') {
-            try {
-              // Handle Date objects, ISO strings, and timestamps
-              const dateValue = value instanceof Date ? value : new Date(value)
-
-              if (field.type.toLowerCase() === 'date') {
-                // Date fields: YYYY-MM-DD format
-                value = dateValue.toISOString().split('T')[0]
-              } else {
-                // DateTime fields: YYYY-MM-DDTHH:mm format (for datetime-local input)
-                const isoString = dateValue.toISOString()
-                // Extract YYYY-MM-DDTHH:mm (remove seconds and timezone)
-                value = isoString.substring(0, 16)
-              }
-            } catch (e) {
-              value = ''
-            }
-          } else {
-            value = ''
-          }
-        }
-
-        // Convert null to empty string for form fields
-        if (value === null && field.type.toLowerCase() !== 'boolean') {
-          value = ''
-        }
-        // For boolean fields, ensure we have a proper boolean
-        if (field.type.toLowerCase() === 'boolean') {
-          value = Boolean(value)
-        }
-
-        // Safety check: convert any remaining non-primitive values to strings
-        if (value !== null && typeof value === 'object') {
-          // If it's an object with an id, use the id
-          if (typeof value === 'object' && 'id' in value) {
-            value = (value as any).id
-          } else {
-            value = ''
-          }
-        }
-
-        initialValues[field.name] = value
-      }
-    })
-
-    // Final safety check: convert undefined and remaining objects
-    for (const [key, value] of Object.entries(initialValues)) {
-      // Convert undefined to empty string (form library can't handle undefined)
-      if (value === undefined) {
-        initialValues[key] = ''
-        continue
-      }
-
-      // Skip null values - forms can handle null
-      if (value === null) {
-        continue
-      }
-
-      // Skip primitives - they're already in the correct format
-      if (typeof value !== 'object') {
-        continue
-      }
-
-      // Convert any remaining objects to primitives
-      if ('id' in value && typeof (value as any).id === 'string') {
-        initialValues[key] = (value as any).id
-      } else if (value instanceof Date) {
-        // This shouldn't happen if date conversion above worked, but handle it just in case
-        const field = model.fields.find((f: any) => f.name === key)
-        initialValues[key] = field?.type.toLowerCase() === 'date'
-          ? value.toISOString().split('T')[0]
-          : value.toISOString()
-      } else {
-        // Convert everything else to empty string for safety
-        initialValues[key] = ''
-      }
-    }
-  }
+  const initialValues = extractInitialValues(model, item)
 
   // Handle form submission
   const handleSubmit = async (formData: Record<string, unknown>) => {
