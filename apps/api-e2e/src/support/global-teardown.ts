@@ -22,17 +22,12 @@ module.exports = async function () {
         // Ignore stream cleanup errors
       }
 
-      // Skip gentle SIGTERM - go straight to SIGKILL for faster cleanup
+      // Kill the API server process
       try {
-        process.kill(-apiProcess.pid, 'SIGKILL')
-        console.log(`   Killed process group -${apiProcess.pid}`)
-      } catch {
-        try {
-          apiProcess.kill('SIGKILL')
-          console.log(`   Killed process ${apiProcess.pid}`)
-        } catch {
-          console.log('   Process may already be dead')
-        }
+        apiProcess.kill('SIGKILL')
+        console.log(`   Killed API server process ${apiProcess.pid}`)
+      } catch (err) {
+        console.log(`   Process ${apiProcess.pid} may already be dead`)
       }
 
       // Brief wait for kill to complete
