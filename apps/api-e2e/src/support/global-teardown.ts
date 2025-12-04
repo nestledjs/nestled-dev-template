@@ -39,11 +39,6 @@ module.exports = async function () {
 
   console.log('✅ E2E test teardown complete')
 
-  // Force exit after a brief delay if event loop is still active
-  // This handles the case where there are lingering handles
-  // DO NOT unref() - we WANT this to keep the process alive long enough to exit
-  setTimeout(() => {
-    console.log('⚡ Forcing process exit to clear remaining handles')
-    process.exit(0)
-  }, 500)
+  // Note: Vitest 3.x will handle process exit automatically
+  // We don't need to call process.exit() - it will cause errors
 }
