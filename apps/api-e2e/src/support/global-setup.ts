@@ -141,8 +141,8 @@ module.exports = async function () {
           HOST: host,
           NODE_ENV: 'test'
         },
-        stdio: ['ignore', 'pipe', 'pipe'], // Capture stdout/stderr to debug startup issues
-        detached: true // Detach so we can kill the process group
+        stdio: ['ignore', 'pipe', 'pipe'] // Capture stdout/stderr to debug startup issues
+        // NOTE: NOT using detached:true so that when test process exits, API server dies automatically
       })
 
       // Log output for debugging startup issues
@@ -196,9 +196,9 @@ module.exports = async function () {
       console.error('❌ Failed to start API server')
       if (apiProcess?.pid) {
         try {
-          process.kill(-apiProcess.pid, 'SIGKILL')
-        } catch {
           apiProcess.kill('SIGKILL')
+        } catch {
+          // Process already dead
         }
       }
       throw error
@@ -209,15 +209,15 @@ module.exports = async function () {
   globalThis.__TEARDOWN_MESSAGE__ = '\n✨ Tearing down E2E tests...\n'
 
   // Register cleanup on exit to kill API if globalTeardown doesn't run
+  // This is a fallback - the API should be automatically killed when test process exits
+  // since we're not using detached mode
   process.on('exit', () => {
     const apiProcess = (globalThis as any).__API_PROCESS__ as ChildProcess | null
     if (apiProcess?.pid && !apiProcess.killed) {
       try {
-        process.kill(-apiProcess.pid, 'SIGKILL')
+        apiProcess.kill('SIGKILL')
       } catch {
-        try {
-          apiProcess.kill('SIGKILL')
-        } catch {}
+        // Process already dead
       }
     }
   })

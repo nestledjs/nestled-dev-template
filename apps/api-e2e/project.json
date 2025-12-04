@@ -17,15 +17,14 @@
       "dependsOn": ["api:build"]
     },
     "test": {
-      "executor": "@nx/vite:test",
+      "executor": "nx:run-commands",
       "outputs": [
         "{workspaceRoot}/coverage/{e2eProjectRoot}",
         "{workspaceRoot}/test-results/{e2eProjectRoot}"
       ],
       "options": {
-        "config": "apps/api-e2e/vitest.config.ts",
-        "passWithNoTests": false,
-        "reporter": "verbose"
+        "command": "bash apps/api-e2e/run-tests.sh",
+        "cwd": "{workspaceRoot}"
       }
     }
   }
