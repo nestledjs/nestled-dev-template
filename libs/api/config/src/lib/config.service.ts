@@ -57,7 +57,14 @@ export class ConfigService {
   }
 
   get emailProvider(): string {
-    return this.config.get<string>('email.provider') || 'smtp'
+    const provider = this.config.get<string>('email.provider')
+    if (provider) {
+      return provider
+    }
+
+    // Auto-detect: if SMTP is configured, use it; otherwise use mock
+    const smtpHost = this.config.get<string>('smtp.host')
+    return smtpHost ? 'smtp' : 'mock'
   }
 
   get frontendUrl(): string {
