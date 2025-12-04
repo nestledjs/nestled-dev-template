@@ -1,5 +1,5 @@
 import { describe, it } from 'vitest'
-import type { ChildProcess } from 'child_process'
+import type { ChildProcess } from 'node:child_process'
 
 /**
  * This file runs LAST (alphabetically) to ensure cleanup happens

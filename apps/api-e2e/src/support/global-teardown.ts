@@ -1,4 +1,4 @@
-import type { ChildProcess } from 'child_process'
+import type { ChildProcess } from 'node:child_process'
 
 module.exports = async function () {
   // Put clean up logic here (e.g. stopping services, docker-compose, etc.).
@@ -9,7 +9,7 @@ module.exports = async function () {
   const weStartedApi = (globalThis as any).__WE_STARTED_API__
   const apiProcess = (globalThis as any).__API_PROCESS__ as ChildProcess | null
 
-  if (weStartedApi && apiProcess && apiProcess.pid) {
+  if (weStartedApi && apiProcess?.pid) {
     console.log('🛑 Stopping API server aggressively...')
     try {
       // Skip gentle SIGTERM - go straight to SIGKILL for faster cleanup

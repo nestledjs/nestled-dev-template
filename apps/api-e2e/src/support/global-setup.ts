@@ -1,7 +1,6 @@
 import { waitForPortOpen } from '@nx/node/utils'
-import { execSync, spawn, type ChildProcess } from 'child_process'
-import { resolve } from 'path'
-import { createConnection } from 'net'
+import { execSync, spawn, type ChildProcess } from 'node:child_process'
+import { createConnection } from 'node:net'
 
 /**
  * Check if database is accessible
@@ -193,7 +192,7 @@ module.exports = async function () {
       globalThis.__SKIP_E2E_TESTS__ = false
     } catch (error) {
       console.error('❌ Failed to start API server')
-      if (apiProcess && apiProcess.pid) {
+      if (apiProcess?.pid) {
         try {
           process.kill(-apiProcess.pid, 'SIGKILL')
         } catch {
@@ -210,7 +209,7 @@ module.exports = async function () {
   // Register cleanup on exit to kill API if globalTeardown doesn't run
   process.on('exit', () => {
     const apiProcess = (globalThis as any).__API_PROCESS__ as ChildProcess | null
-    if (apiProcess && apiProcess.pid && !apiProcess.killed) {
+    if (apiProcess?.pid && !apiProcess.killed) {
       try {
         process.kill(-apiProcess.pid, 'SIGKILL')
       } catch {
