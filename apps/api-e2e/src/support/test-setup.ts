@@ -24,6 +24,15 @@ const httpsAgent = new HttpsAgent({
 axios.defaults.httpAgent = httpAgent
 axios.defaults.httpsAgent = httpsAgent
 
+// Destroy agents when the vitest process exits to avoid dangling handles
+if (!(globalThis as any).__AXIOS_AGENT_CLEANUP_REGISTERED__) {
+  ;(globalThis as any).__AXIOS_AGENT_CLEANUP_REGISTERED__ = true
+  process.once('exit', () => {
+    httpAgent.destroy()
+    httpsAgent.destroy()
+  })
+}
+
 // Global test configuration
 process.env.NODE_ENV = 'test'
 
