@@ -2,7 +2,7 @@ import { gql } from '@apollo/client'
 import { useApolloClient } from '@apollo/client/react'
 import Cookies from 'js-cookie'
 import { useEffect } from 'react'
-import { useNavigate } from 'react-router'
+import { useNavigate, useSearchParams } from 'react-router'
 import { WebUiLoading } from '@nestled-template/web-ui'
 
 const LOGOUT_MUTATION = gql`
@@ -14,6 +14,8 @@ const LOGOUT_MUTATION = gql`
 export default function LogoutRoute() {
   const apollo = useApolloClient()
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  const returnUrl = searchParams.get('return_url')
 
   useEffect(() => {
     async function doLogout() {
@@ -44,15 +46,17 @@ export default function LogoutRoute() {
         console.warn('[logout] apollo.clearStore failed (continuing):', (e as Error)?.message)
       }
 
-      // Navigate to login - this will unmount all components and prevent further queries
-      navigate('/login', { replace: true })
+      // Navigate to login with optional return URL
+      const loginPath = returnUrl ? `/login?return_url=${encodeURIComponent(returnUrl)}` : '/login'
+      navigate(loginPath, { replace: true })
     }
 
     doLogout().catch(e => {
       console.error('[logout] Unexpected error during logout:', e)
-      navigate('/login', { replace: true })
+      const loginPath = returnUrl ? `/login?return_url=${encodeURIComponent(returnUrl)}` : '/login'
+      navigate(loginPath, { replace: true })
     })
-  }, [apollo, navigate])
+  }, [apollo, navigate, returnUrl])
 
   return <WebUiLoading />
 }
