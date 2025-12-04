@@ -22,6 +22,7 @@ export class EmailService {
 
     // Initialize provider based on config
     const providerType = this.config.emailProvider
+    this.logger.log(`Initializing email provider: ${providerType}`)
 
     switch (providerType) {
       case 'smtp':
