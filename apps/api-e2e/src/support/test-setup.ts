@@ -1,16 +1,45 @@
 import axios from 'axios'
+import { beforeEach } from 'vitest'
+import { Agent as HttpAgent } from 'http'
+import { Agent as HttpsAgent } from 'https'
 
 // Configure axios for tests to use.
 const host = process.env.HOST ?? 'localhost'
 const port = process.env.PORT ?? '3000'
 axios.defaults.baseURL = `http://${host}:${port}`
 
+// Create agents that don't keep connections alive
+// This prevents axios from holding the event loop open after tests complete
+const httpAgent = new HttpAgent({
+  keepAlive: false,
+  maxSockets: 10,
+  timeout: 10000
+})
+const httpsAgent = new HttpsAgent({
+  keepAlive: false,
+  maxSockets: 10,
+  timeout: 10000
+})
+
+axios.defaults.httpAgent = httpAgent
+axios.defaults.httpsAgent = httpsAgent
+
 // Global test configuration
 process.env.NODE_ENV = 'test'
 
-// NOTE: Tests run against the development database since the API server
-// is already running and connected to it. Data is cleaned up after tests.
-process.env.DATABASE_URL = 'postgresql://justinhandley@localhost:5432/nestled_template'
-
+// Use TEST_DATABASE_URL - do NOT override to dev database!
+// The API server will be started with this database URL by global-setup
+const testDatabaseUrl = process.env.TEST_DATABASE_URL || 'postgresql://justinhandley@localhost:5432/nestled_template_test'
 console.log(`Test setup: axios base URL set to ${axios.defaults.baseURL}`)
-console.log(`Test setup: Using database - nestled_template (dev database)`)
+console.log(`Test setup: Using TEST database - ${testDatabaseUrl}`)
+
+// Skip tests if API is not available (set by global-setup)
+const shouldSkipE2E = (globalThis as any).__SKIP_E2E_TESTS__
+if (shouldSkipE2E) {
+  console.log('⚠️  E2E tests will be skipped (API not available)')
+
+  // Skip all tests in this suite
+  beforeEach((ctx) => {
+    ctx.skip()
+  })
+}

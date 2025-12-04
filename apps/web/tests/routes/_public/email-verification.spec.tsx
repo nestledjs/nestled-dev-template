@@ -5,22 +5,22 @@ import { createTestRouter } from "../../helpers/createTestRouter"
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import VerifyEmail from '../../../app/routes/_public/verify-email'
 import ResendVerification from '../../../app/routes/_public/resend-verification'
-import {
-  useVerifyEmailMutation,
-  useVerifyEmailChangeMutation,
-  useResendVerificationEmailMutation,
-} from '@nestled-template/shared/sdk'
 
-// Mock the SDK mutations
+// Mock Apollo Client
+const mockUseMutation = vi.fn()
+vi.mock('@apollo/client/react', () => ({
+  useMutation: (...args: unknown[]) => mockUseMutation(...args),
+}))
+
+// Mock SDK (for DocumentNode exports)
 vi.mock('@nestled-template/shared/sdk', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@nestled-template/shared/sdk')>()
   return {
     ...actual,
-    
-  useVerifyEmailMutation: vi.fn(),
-  useVerifyEmailChangeMutation: vi.fn(),
-  useResendVerificationEmailMutation: vi.fn(),
-}
+    VerifyEmail: { kind: 'Document', definitions: [] },
+    VerifyEmailChange: { kind: 'Document', definitions: [] },
+    ResendVerificationEmail: { kind: 'Document', definitions: [] },
+  }
 })
 
 // Mock the AuthLayout component
@@ -103,8 +103,21 @@ describe('Email Verification Tests', () => {
       mockVerifyEmailMutation = vi.fn().mockResolvedValue({ data: null })
       mockVerifyEmailChangeMutation = vi.fn().mockRejectedValue(new Error('Email change verification failed'))
 
-      vi.mocked(useVerifyEmailMutation).mockReturnValue([mockVerifyEmailMutation] as any)
-      vi.mocked(useVerifyEmailChangeMutation).mockReturnValue([mockVerifyEmailChangeMutation] as any)
+      // Clear and set up mocks
+      mockUseMutation.mockReset()
+
+      // Mock useMutation - will be called twice (VerifyEmailChange, VerifyEmail)
+      let mutationCallCount = 0
+      mockUseMutation.mockImplementation(() => {
+        mutationCallCount++
+        if (mutationCallCount % 2 === 1) {
+          // Odd calls (1st): VerifyEmail
+          return [mockVerifyEmailMutation, { loading: false }]
+        } else {
+          // Even calls (2nd): VerifyEmailChange
+          return [mockVerifyEmailChangeMutation, { loading: false }]
+        }
+      })
     })
 
     const renderVerifyEmail = (token = 'valid-token-123') => {
@@ -300,7 +313,11 @@ describe('Email Verification Tests', () => {
     beforeEach(() => {
       mockResendMutation = vi.fn()
 
-      vi.mocked(useResendVerificationEmailMutation).mockReturnValue([mockResendMutation, { loading: false }] as any)
+      // Clear and set up mocks
+      mockUseMutation.mockReset()
+
+      // Mock useMutation for ResendVerificationEmail
+      mockUseMutation.mockImplementation(() => [mockResendMutation, { loading: false }])
     })
 
     const renderResendVerification = () => {
@@ -483,7 +500,8 @@ describe('Email Verification Tests', () => {
 
     describe('Loading State', () => {
       it('should show loading text on button during submission', () => {
-        vi.mocked(useResendVerificationEmailMutation).mockReturnValue([mockResendMutation, { loading: true }] as any)
+        mockUseMutation.mockReset()
+        mockUseMutation.mockImplementation(() => [mockResendMutation, { loading: true }])
 
         renderResendVerification()
 
@@ -494,7 +512,8 @@ describe('Email Verification Tests', () => {
       })
 
       it('should show normal button text when not loading', () => {
-        vi.mocked(useResendVerificationEmailMutation).mockReturnValue([mockResendMutation, { loading: false }] as any)
+        mockUseMutation.mockReset()
+        mockUseMutation.mockImplementation(() => [mockResendMutation, { loading: false }])
 
         renderResendVerification()
 

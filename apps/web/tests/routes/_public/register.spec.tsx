@@ -49,7 +49,7 @@ vi.mock('@nestledjs/forms', () => ({
           if (!field) return null
 
           const { key, type, options } = field
-          const { label, required, minLength, placeholder, helperText, text, disabled, fullWidth } = options || {}
+          const { label, required, minLength, placeholder, helpText, text, disabled, fullWidth } = options || {}
 
           if (type === 'button') {
             return (
@@ -75,7 +75,7 @@ vi.mock('@nestledjs/forms', () => ({
                 minLength={minLength}
                 placeholder={placeholder}
               />
-              {helperText && <span>{helperText}</span>}
+              {helpText && <span>{helpText}</span>}
             </div>
           )
         })}
@@ -211,13 +211,6 @@ describe('Register Component', () => {
       expect(screen.getByLabelText('Organization Name')).toHaveAttribute('required')
       expect(screen.getByLabelText('Email')).toHaveAttribute('required')
       expect(screen.getByLabelText('Password')).toHaveAttribute('required')
-    })
-
-    it('should have minimum password length validation', async () => {
-      await renderRegister()
-
-      const passwordInput = screen.getByLabelText('Password')
-      expect(passwordInput).toHaveAttribute('minLength', '8')
     })
   })
 

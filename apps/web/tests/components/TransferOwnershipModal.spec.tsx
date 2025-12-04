@@ -3,22 +3,24 @@ import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { TransferOwnershipModal } from '@nestled-template/web'
-import {
-  useMeQuery,
-  useMyOrganizationsWithMembersQuery,
-  useTransferOrganizationOwnershipMutation,
-} from '@nestled-template/shared/sdk'
 
-// Mock external dependencies
+// Mock Apollo Client
+const mockUseQuery = vi.fn()
+const mockUseMutation = vi.fn()
+vi.mock('@apollo/client/react', () => ({
+  useQuery: (...args: unknown[]) => mockUseQuery(...args),
+  useMutation: (...args: unknown[]) => mockUseMutation(...args),
+}))
+
+// Mock SDK (for DocumentNode exports)
 vi.mock('@nestled-template/shared/sdk', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@nestled-template/shared/sdk')>()
   return {
     ...actual,
-    
-  useMyOrganizationsWithMembersQuery: vi.fn(),
-  useMeQuery: vi.fn(),
-  useTransferOrganizationOwnershipMutation: vi.fn(),
-}
+    Me: { kind: 'Document', definitions: [] },
+    MyOrganizationsWithMembers: { kind: 'Document', definitions: [] },
+    TransferOrganizationOwnership: { kind: 'Document', definitions: [] },
+  }
 })
 
 describe('TransferOwnershipModal Component', () => {
@@ -64,28 +66,41 @@ describe('TransferOwnershipModal Component', () => {
   ]
 
   beforeEach(() => {
+    mockUseQuery.mockClear()
+    mockUseMutation.mockClear()
+
     mockTransferOwnership = vi.fn().mockResolvedValue({
       data: { transferOrganizationOwnership: { success: true } },
     })
     mockOnClose = vi.fn()
     mockOnSuccess = vi.fn()
 
-    vi.mocked(useMeQuery).mockReturnValue({
-      data: { me: mockCurrentUser },
-      loading: false,
-      error: null,
-    } as any)
+    // Default mock setup - can be overridden in individual tests
+    // Mock useQuery - will be called twice (Me, MyOrganizationsWithMembers)
+    let callCount = 0
+    mockUseQuery.mockImplementation(() => {
+      callCount++
+      if (callCount % 2 === 1) {
+        // Odd calls (1, 3, 5...): Me query
+        return {
+          data: { me: mockCurrentUser },
+          loading: false,
+          error: null,
+        }
+      }
+      // Even calls (2, 4, 6...): MyOrganizationsWithMembers query
+      return {
+        data: { myOrganizations: mockOrganizations },
+        loading: false,
+        error: null,
+      }
+    })
 
-    vi.mocked(useMyOrganizationsWithMembersQuery).mockReturnValue({
-      data: { myOrganizations: mockOrganizations },
-      loading: false,
-      error: null,
-    } as any)
-
-    vi.mocked(useTransferOrganizationOwnershipMutation).mockReturnValue([
+    // Mock useMutation
+    mockUseMutation.mockReturnValue([
       mockTransferOwnership,
       { loading: false, error: null },
-    ] as any)
+    ])
 
     vi.stubGlobal('alert', vi.fn())
   })
@@ -129,11 +144,27 @@ describe('TransferOwnershipModal Component', () => {
 
   describe('Data Loading', () => {
     it('should show loading state while data is loading', () => {
-      vi.mocked(useMyOrganizationsWithMembersQuery).mockReturnValue({
-        data: null,
-        loading: true,
-        error: null,
-      } as any)
+      // Clear and reset the mock for this specific test
+      mockUseQuery.mockClear()
+
+      let callCount = 0
+      mockUseQuery.mockImplementation(() => {
+        callCount++
+        if (callCount === 1) {
+          // First call: Me query
+          return {
+            data: { me: mockCurrentUser },
+            loading: false,
+            error: null,
+          }
+        }
+        // Second call: MyOrganizationsWithMembers query - loading
+        return {
+          data: null,
+          loading: true,
+          error: null,
+        }
+      })
 
       renderModal(true)
 
@@ -143,21 +174,37 @@ describe('TransferOwnershipModal Component', () => {
     it('should load user organizations on mount', () => {
       renderModal(true)
 
-      expect(useMyOrganizationsWithMembersQuery).toHaveBeenCalled()
+      expect(mockUseQuery).toHaveBeenCalled()
     })
 
     it('should load current user data on mount', () => {
       renderModal(true)
 
-      expect(useMeQuery).toHaveBeenCalled()
+      expect(mockUseQuery).toHaveBeenCalled()
     })
 
     it('should show message when user has no owned organizations', () => {
-      vi.mocked(useMyOrganizationsWithMembersQuery).mockReturnValue({
-        data: { myOrganizations: [] },
-        loading: false,
-        error: null,
-      } as any)
+      // Clear and reset the mock for this specific test
+      mockUseQuery.mockClear()
+
+      let callCount = 0
+      mockUseQuery.mockImplementation(() => {
+        callCount++
+        if (callCount === 1) {
+          // First call: Me query
+          return {
+            data: { me: mockCurrentUser },
+            loading: false,
+            error: null,
+          }
+        }
+        // Second call: MyOrganizationsWithMembers query - empty
+        return {
+          data: { myOrganizations: [] },
+          loading: false,
+          error: null,
+        }
+      })
 
       renderModal(true)
 

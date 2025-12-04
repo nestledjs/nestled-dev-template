@@ -53,6 +53,7 @@ describe('Logout Route', () => {
   let mockApolloClient: {
     mutate: ReturnType<typeof vi.fn>
     clearStore: ReturnType<typeof vi.fn>
+    stop: ReturnType<typeof vi.fn>
   }
 
   beforeEach(() => {
@@ -61,6 +62,7 @@ describe('Logout Route', () => {
     mockApolloClient = {
       mutate: vi.fn(),
       clearStore: vi.fn(),
+      stop: vi.fn(),
     }
 
     vi.mocked(useApolloClient).mockReturnValue(mockApolloClient as any)
@@ -308,26 +310,31 @@ describe('Logout Route', () => {
     it('should execute cleanup steps in correct order', async () => {
       const steps: string[] = []
 
+      vi.mocked(Cookies.remove).mockImplementation((name: string) => {
+        steps.push(`1-cookie-${name}`)
+      })
+
       mockApolloClient.mutate.mockImplementation(async () => {
-        steps.push('1-mutation')
+        steps.push('2-mutation')
         return { data: { logout: true } }
       })
 
-      mockApolloClient.clearStore.mockImplementation(async () => {
-        steps.push('2-clearStore')
-        return []
+      mockApolloClient.stop.mockImplementation(() => {
+        steps.push('3-stop')
       })
 
-      vi.mocked(Cookies.remove).mockImplementation((name: string) => {
-        steps.push(`3-cookie-${name}`)
+      mockApolloClient.clearStore.mockImplementation(async () => {
+        steps.push('4-clearStore')
+        return []
       })
 
       renderLogout()
 
       await waitFor(() => {
-        expect(steps[0]).toBe('1-mutation')
-        expect(steps[1]).toBe('2-clearStore')
-        expect(steps[2]).toContain('3-cookie')
+        expect(steps[0]).toContain('1-cookie')
+        expect(steps[3]).toBe('2-mutation')
+        expect(steps[4]).toBe('3-stop')
+        expect(steps[5]).toBe('4-clearStore')
       })
     })
   })

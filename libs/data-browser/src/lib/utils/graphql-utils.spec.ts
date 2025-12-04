@@ -11,11 +11,11 @@ describe('graphql-utils', () => {
       }
 
       const mockSdk = {
-        __AdminUserDocument: 'query-doc',
-        __AdminUsersDocument: 'list-query-doc',
-        __AdminCreateUserDocument: 'create-doc',
-        __AdminUpdateUserDocument: 'update-doc',
-        __AdminDeleteUserDocument: 'delete-doc',
+        __AdminUser: 'query-doc',
+        __AdminUsers: 'list-query-doc',
+        __AdminCreateUser: 'create-doc',
+        __AdminUpdateUser: 'update-doc',
+        __AdminDeleteUser: 'delete-doc',
       }
 
       const result = getAdminDocuments(mockSdk, mockModel)
@@ -36,11 +36,11 @@ describe('graphql-utils', () => {
       }
 
       const mockSdk = {
-        __AdminFaqDocument: 'query-doc',
-        __AdminFaqsDocument: 'list-query-doc',
-        __AdminCreateFaqDocument: 'create-doc',
-        __AdminUpdateFaqDocument: 'update-doc',
-        __AdminDeleteFaqDocument: 'delete-doc',
+        __AdminFaq: 'query-doc',
+        __AdminFaqs: 'list-query-doc',
+        __AdminCreateFaq: 'create-doc',
+        __AdminUpdateFaq: 'update-doc',
+        __AdminDeleteFaq: 'delete-doc',
       }
 
       const result = getAdminDocuments(mockSdk, mockModel)
@@ -68,7 +68,7 @@ describe('graphql-utils', () => {
       }
 
       const incompleteSdk = {
-        __AdminUserDocument: 'query-doc',
+        __AdminUser: 'query-doc',
         // Missing other required documents
       }
 
@@ -84,9 +84,9 @@ describe('graphql-utils', () => {
 
       const emptySdk = {}
 
-      expect(() => getAdminDocuments(emptySdk, mockModel)).toThrow(/AdminUserDocument/)
-      expect(() => getAdminDocuments(emptySdk, mockModel)).toThrow(/AdminUsersDocument/)
-      expect(() => getAdminDocuments(emptySdk, mockModel)).toThrow(/AdminCreateUserDocument/)
+      expect(() => getAdminDocuments(emptySdk, mockModel)).toThrow(/__AdminUser/)
+      expect(() => getAdminDocuments(emptySdk, mockModel)).toThrow(/__AdminUsers/)
+      expect(() => getAdminDocuments(emptySdk, mockModel)).toThrow(/__AdminCreateUser/)
     })
 
     it('should handle PascalCase model names correctly', () => {
@@ -96,11 +96,11 @@ describe('graphql-utils', () => {
       }
 
       const mockSdk = {
-        __AdminTeamMemberDocument: 'query-doc',
-        __AdminTeamMembersDocument: 'list-query-doc',
-        __AdminCreateTeamMemberDocument: 'create-doc',
-        __AdminUpdateTeamMemberDocument: 'update-doc',
-        __AdminDeleteTeamMemberDocument: 'delete-doc',
+        __AdminTeamMember: 'query-doc',
+        __AdminTeamMembers: 'list-query-doc',
+        __AdminCreateTeamMember: 'create-doc',
+        __AdminUpdateTeamMember: 'update-doc',
+        __AdminDeleteTeamMember: 'delete-doc',
       }
 
       const result = getAdminDocuments(mockSdk, mockModel)
@@ -257,7 +257,7 @@ describe('graphql-utils', () => {
           ],
         }
 
-        const result = buildFormFields({}, mockModel, 'update', { id: '123', name: 'John' })
+        const result = buildFormFields({}, mockModel, 'update', { currentItem: { id: '123', name: 'John' } })
 
         const fieldNames = result.map(f => f.key)
         expect(fieldNames).toContain('id')
@@ -394,7 +394,7 @@ describe('graphql-utils', () => {
 
       it('should create searchSelectApollo for relations with documents', () => {
         const mockSdk = {
-          __AdminUsersDocument: 'users-doc',
+          __AdminUsers: 'users-doc',
         }
 
         const mockModel: DatabaseModel = {
@@ -467,7 +467,7 @@ describe('graphql-utils', () => {
           email: 'john@example.com',
         }
 
-        const result = buildFormFields({}, mockModel, 'update', currentItem)
+        const result = buildFormFields({}, mockModel, 'update', { currentItem })
 
         expect(result[0].options?.value).toBe('John Doe')
         expect(result[1].options?.value).toBe('john@example.com')
@@ -483,7 +483,7 @@ describe('graphql-utils', () => {
           eventDate: new Date('2024-03-15T10:30:00Z'),
         }
 
-        const result = buildFormFields({}, mockModel, 'update', currentItem)
+        const result = buildFormFields({}, mockModel, 'update', { currentItem })
 
         expect(result[0].options?.value).toBe('2024-03-15')
       })
@@ -498,7 +498,7 @@ describe('graphql-utils', () => {
           startTime: new Date('2024-03-15T10:30:00Z'),
         }
 
-        const result = buildFormFields({}, mockModel, 'update', currentItem)
+        const result = buildFormFields({}, mockModel, 'update', { currentItem })
 
         expect(result[0].options?.value).toBe('2024-03-15T10:30')
       })
@@ -513,7 +513,7 @@ describe('graphql-utils', () => {
           eventDate: '2024-03-15T00:00:00Z',
         }
 
-        const result = buildFormFields({}, mockModel, 'update', currentItem)
+        const result = buildFormFields({}, mockModel, 'update', { currentItem })
 
         expect(result[0].options?.value).toBe('2024-03-15')
       })
@@ -536,7 +536,7 @@ describe('graphql-utils', () => {
           author: { id: 'user-123', name: 'John' },
         }
 
-        const result = buildFormFields({}, mockModel, 'update', currentItem)
+        const result = buildFormFields({}, mockModel, 'update', { currentItem })
 
         expect(result[0].options?.value).toBe('user-123')
       })
@@ -551,7 +551,7 @@ describe('graphql-utils', () => {
           middleName: null,
         }
 
-        const result = buildFormFields({}, mockModel, 'update', currentItem)
+        const result = buildFormFields({}, mockModel, 'update', { currentItem })
 
         expect(result[0].options?.value).toBe('')
       })
@@ -566,7 +566,7 @@ describe('graphql-utils', () => {
           isActive: true,
         }
 
-        const result = buildFormFields({}, mockModel, 'update', currentItem)
+        const result = buildFormFields({}, mockModel, 'update', { currentItem })
 
         expect(result[0].options?.value).toBe(true)
       })
@@ -605,7 +605,7 @@ describe('graphql-utils', () => {
           fields: [{ name: 'name', type: 'String', isOptional: false }],
         }
 
-        const result = buildFormFields({}, mockModel, 'create', undefined, true)
+        const result = buildFormFields({}, mockModel, 'create', { isSubmitting: true })
 
         const submitButton = result[result.length - 1]
         expect(submitButton.options?.text).toBe('Creating...')
@@ -640,7 +640,12 @@ describe('graphql-utils', () => {
 
         const currentItem = { id: '123', name: 'John' }
 
-        const result = buildFormFields({}, mockModel, 'update', currentItem, false, '/admin/data', databaseModels)
+        const result = buildFormFields({}, mockModel, 'update', {
+          currentItem,
+          isSubmitting: false,
+          basePath: '/admin/data',
+          databaseModels,
+        })
 
         const fieldNames = result.map(f => f.key)
         expect(fieldNames).toContain('posts')
