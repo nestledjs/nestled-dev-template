@@ -3,13 +3,13 @@ import { ExclamationCircleIcon } from '@heroicons/react/24/outline'
 import { Link } from 'react-router'
 
 interface AdminDataStateMessageProps {
-  type: 'error' | 'loading' | 'not-found' | 'schema-error'
-  title: string
-  message: string
-  basePath: string
-  onRetry?: () => void
-  backLinkText?: string
-  backLinkPath?: string
+  readonly type: 'error' | 'loading' | 'not-found' | 'schema-error'
+  readonly title: string
+  readonly message: string
+  readonly basePath: string
+  readonly onRetry?: () => void
+  readonly backLinkText?: string
+  readonly backLinkPath?: string
 }
 
 /**

@@ -3,12 +3,99 @@ import { DateRangeFilter, EnumFilter, NumberRangeFilter, RelationFilterField } f
 import { formatFieldName } from '../utils/string-utils'
 
 interface FilterFieldProps {
-  fieldName: string
-  model: any
-  databaseModels: any[]
-  filters: Record<string, any>
-  onChange: (value: any) => void
-  getEnumValues: (enumType: string) => string[] | null
+  readonly fieldName: string
+  readonly model: any
+  readonly databaseModels: any[]
+  readonly filters: Record<string, any>
+  readonly onChange: (value: any) => void
+  readonly getEnumValues: (enumType: string) => string[] | null
+}
+
+interface FieldInfo {
+  field: any
+  relatedModel: any | null
+  relatedEnumField: any | null
+  isRelatedEnum: boolean
+}
+
+/**
+ * Extract field information for both regular and related enum fields
+ */
+function getFieldInfo(fieldName: string, model: any, databaseModels: any[]): FieldInfo | null {
+  const isRelatedEnum = fieldName.includes('.')
+
+  if (isRelatedEnum) {
+    const [relationName, enumFieldName] = fieldName.split('.')
+    const field = model.fields.find((f: any) => f.name === relationName)
+    if (!field) return null
+
+    const relatedModel = databaseModels.find((m: any) => m.name === field.type)
+    if (!relatedModel) return null
+
+    const relatedEnumField = relatedModel.fields.find((f: any) => f.name === enumFieldName)
+    if (!relatedEnumField) return null
+
+    return { field, relatedModel, relatedEnumField, isRelatedEnum: true }
+  }
+
+  const field = model.fields.find((f: any) => f.name === fieldName)
+  if (!field) return null
+
+  return { field, relatedModel: null, relatedEnumField: null, isRelatedEnum: false }
+}
+
+/**
+ * Get the current filter value, handling nested values for related enum fields
+ */
+function getCurrentValue(fieldName: string, filters: Record<string, any>, isRelatedEnum: boolean): any {
+  return isRelatedEnum
+    ? filters[fieldName.split('.')[0]]?.[fieldName.split('.')[1]]
+    : filters[fieldName]
+}
+
+/**
+ * Render a boolean filter field
+ */
+function BooleanFilter({ fieldName, currentValue, onChange }: { fieldName: string; currentValue: any; onChange: (value: any) => void }) {
+  return (
+    <div key={fieldName} className="space-y-1">
+      <label className="block text-sm font-medium text-gray-700">
+        {formatFieldName(fieldName)}
+      </label>
+      <select
+        value={currentValue === undefined || currentValue === null ? '' : currentValue.toString()}
+        onChange={e => {
+          const value = e.target.value
+          onChange(value === '' ? undefined : value === 'true')
+        }}
+        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-web focus:border-green-web text-sm"
+      >
+        <option value="">All</option>
+        <option value="true">Yes</option>
+        <option value="false">No</option>
+      </select>
+    </div>
+  )
+}
+
+/**
+ * Render a string filter field
+ */
+function StringFilter({ fieldName, currentValue, onChange }: { fieldName: string; currentValue: any; onChange: (value: any) => void }) {
+  return (
+    <div key={fieldName} className="space-y-1">
+      <label className="block text-sm font-medium text-gray-700">
+        {formatFieldName(fieldName)}
+      </label>
+      <input
+        type="text"
+        value={typeof currentValue === 'string' ? currentValue : ''}
+        onChange={e => onChange(e.target.value || undefined)}
+        placeholder={`Filter by ${formatFieldName(fieldName).toLowerCase()}...`}
+        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-web focus:border-green-web text-sm"
+      />
+    </div>
+  )
 }
 
 /**
@@ -23,37 +110,14 @@ export function FilterField({
   onChange,
   getEnumValues,
 }: FilterFieldProps) {
-  // Check if this is a related enum field (format: "relationName.enumFieldName")
-  const isRelatedEnumField = fieldName.includes('.')
+  const fieldInfo = getFieldInfo(fieldName, model, databaseModels)
+  if (!fieldInfo) return null
 
-  let field: any = null
-  let relatedModel: any = null
-  let relatedEnumField: any = null
+  const { field, relatedEnumField, isRelatedEnum } = fieldInfo
+  const currentValue = getCurrentValue(fieldName, filters, isRelatedEnum)
 
-  if (isRelatedEnumField) {
-    const [relationName, enumFieldName] = fieldName.split('.')
-    field = model.fields.find((f: any) => f.name === relationName)
-    if (field) {
-      relatedModel = databaseModels.find((m: any) => m.name === field.type)
-      if (relatedModel) {
-        relatedEnumField = relatedModel.fields.find((f: any) => f.name === enumFieldName)
-      }
-    }
-    if (!field || !relatedModel || !relatedEnumField) return null
-  }
-
-  if (!isRelatedEnumField) {
-    field = model.fields.find((f: any) => f.name === fieldName)
-    if (!field) return null
-  }
-
-  // For related enum fields, the filter value is nested
-  const currentValue = isRelatedEnumField
-    ? (filters[fieldName.split('.')[0]] as any)?.[fieldName.split('.')[1]]
-    : filters[fieldName]
-
-  // Handle related enum fields first
-  if (isRelatedEnumField && relatedEnumField) {
+  // Handle related enum fields
+  if (isRelatedEnum && relatedEnumField) {
     const enumValues = getEnumValues(relatedEnumField.type)
     if (enumValues) {
       return (
@@ -68,8 +132,8 @@ export function FilterField({
     }
   }
 
-  // Relation field filter (only for non-enum relation filters)
-  if (field.relationName && !field.isList && !isRelatedEnumField) {
+  // Relation field filter
+  if (field.relationName && !field.isList && !isRelatedEnum) {
     return (
       <RelationFilterField
         key={fieldName}
@@ -81,8 +145,10 @@ export function FilterField({
     )
   }
 
+  const fieldTypeLower = field.type.toLowerCase()
+
   // Date/DateTime filter
-  if (field.type.toLowerCase() === 'datetime' || field.type.toLowerCase() === 'date') {
+  if (fieldTypeLower === 'datetime' || fieldTypeLower === 'date') {
     return (
       <DateRangeFilter
         key={fieldName}
@@ -94,12 +160,12 @@ export function FilterField({
   }
 
   // Number range filter
-  if (['int', 'bigint', 'float', 'decimal'].includes(field.type.toLowerCase())) {
+  if (['int', 'bigint', 'float', 'decimal'].includes(fieldTypeLower)) {
     return (
       <NumberRangeFilter
         key={fieldName}
         fieldName={fieldName}
-        fieldType={field.type.toLowerCase()}
+        fieldType={fieldTypeLower}
         currentValue={currentValue}
         onChange={onChange}
       />
@@ -123,41 +189,10 @@ export function FilterField({
   }
 
   // Boolean filter
-  if (field.type.toLowerCase() === 'boolean') {
-    return (
-      <div key={fieldName} className="space-y-1">
-        <label className="block text-sm font-medium text-gray-700">
-          {formatFieldName(fieldName)}
-        </label>
-        <select
-          value={currentValue === undefined || currentValue === null ? '' : currentValue.toString()}
-          onChange={e => {
-            const value = e.target.value
-            onChange(value === '' ? undefined : value === 'true')
-          }}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-web focus:border-green-web text-sm"
-        >
-          <option value="">All</option>
-          <option value="true">Yes</option>
-          <option value="false">No</option>
-        </select>
-      </div>
-    )
+  if (fieldTypeLower === 'boolean') {
+    return <BooleanFilter fieldName={fieldName} currentValue={currentValue} onChange={onChange} />
   }
 
-  // String filter (contains)
-  return (
-    <div key={fieldName} className="space-y-1">
-      <label className="block text-sm font-medium text-gray-700">
-        {formatFieldName(fieldName)}
-      </label>
-      <input
-        type="text"
-        value={typeof currentValue === 'string' ? currentValue : ''}
-        onChange={e => onChange(e.target.value || undefined)}
-        placeholder={`Filter by ${formatFieldName(fieldName).toLowerCase()}...`}
-        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-web focus:border-green-web text-sm"
-      />
-    </div>
-  )
+  // String filter (default)
+  return <StringFilter fieldName={fieldName} currentValue={currentValue} onChange={onChange} />
 }

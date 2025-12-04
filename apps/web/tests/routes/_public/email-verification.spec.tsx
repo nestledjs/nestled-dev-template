@@ -499,10 +499,13 @@ describe('Email Verification Tests', () => {
     })
 
     describe('Loading State', () => {
-      it('should show loading text on button during submission', () => {
+      const setupLoadingMock = (isLoading: boolean) => {
         mockUseMutation.mockReset()
-        mockUseMutation.mockImplementation(() => [mockResendMutation, { loading: true }])
+        mockUseMutation.mockImplementation(() => [mockResendMutation, { loading: isLoading }])
+      }
 
+      it('should show loading text on button during submission', () => {
+        setupLoadingMock(true)
         renderResendVerification()
 
         const submitButton = screen.getByRole('button', { name: /sending/i })
@@ -512,9 +515,7 @@ describe('Email Verification Tests', () => {
       })
 
       it('should show normal button text when not loading', () => {
-        mockUseMutation.mockReset()
-        mockUseMutation.mockImplementation(() => [mockResendMutation, { loading: false }])
-
+        setupLoadingMock(false)
         renderResendVerification()
 
         const submitButton = screen.getByRole('button', { name: /resend verification email/i })
