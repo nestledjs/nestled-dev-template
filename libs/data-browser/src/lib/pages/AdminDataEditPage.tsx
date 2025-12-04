@@ -326,6 +326,173 @@ export function AdminDataEditPage() {
 }
 
 // =================================
+// SUB-COMPONENTS
+// =================================
+
+interface DeleteConfirmModalProps {
+  readonly show: boolean
+  readonly modelName: string
+  readonly isDeleting: boolean
+  readonly onConfirm: () => void
+  readonly onCancel: () => void
+}
+
+function DeleteConfirmModal({ show, modelName, isDeleting, onConfirm, onCancel }: DeleteConfirmModalProps) {
+  if (!show) return null
+
+  return (
+    <div className="fixed inset-0 bg-gray-600 dark:bg-gray-900 bg-opacity-50 dark:bg-opacity-75 overflow-y-auto h-full w-full z-50 flex items-center justify-center">
+      <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl max-w-md w-full mx-4">
+        <div className="flex items-center">
+          <div className="flex-shrink-0">
+            <ExclamationCircleIcon className="h-6 w-6 text-red-600" />
+          </div>
+          <div className="ml-3">
+            <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
+              Delete {toReadableText(modelName)}
+            </h3>
+            <div className="mt-2">
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                Are you sure you want to delete this {toReadableText(modelName).toLowerCase()}? This action
+                cannot be undone.
+              </p>
+            </div>
+          </div>
+        </div>
+        <div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
+          <button
+            onClick={onConfirm}
+            disabled={isDeleting}
+            className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {isDeleting ? 'Deleting...' : 'Delete'}
+          </button>
+          <button
+            onClick={onCancel}
+            disabled={isDeleting}
+            className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-web sm:mt-0 sm:w-auto sm:text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+interface StatusMessageProps {
+  readonly submissionStatus: 'idle' | 'loading' | 'success' | 'error'
+  readonly deleteStatus: 'idle' | 'loading' | 'success' | 'error'
+  readonly submissionMessage?: string
+  readonly deleteMessage?: string
+  readonly modelName: string
+}
+
+function StatusMessage({ submissionStatus, deleteStatus, submissionMessage, deleteMessage, modelName }: StatusMessageProps) {
+  if (submissionStatus === 'idle' && deleteStatus === 'idle') return null
+
+  const isSuccess = submissionStatus === 'success' || deleteStatus === 'success'
+  const isError = submissionStatus === 'error' || deleteStatus === 'error'
+  const isLoading = submissionStatus === 'loading' || deleteStatus === 'loading'
+
+  const bgColor = isSuccess ? 'bg-green-50 border border-green-200' : isError ? 'bg-red-50 border border-red-200' : 'bg-blue-50 border border-blue-200'
+  const textColor = isSuccess ? 'text-green-800' : isError ? 'text-red-800' : 'text-blue-800'
+
+  const loadingMessage = submissionStatus === 'loading' ? `Updating ${toReadableText(modelName)}...` : `Deleting ${toReadableText(modelName)}...`
+  const message = isLoading ? loadingMessage : submissionMessage || deleteMessage
+
+  return (
+    <div className={`mb-6 rounded-md p-4 ${bgColor}`}>
+      <div className="flex">
+        <div className="flex-shrink-0">
+          {isSuccess ? (
+            <CheckCircleIcon className="h-5 w-5 text-green-400" />
+          ) : isError ? (
+            <ExclamationCircleIcon className="h-5 w-5 text-red-400" />
+          ) : (
+            <div className="h-5 w-5 border-2 border-blue-400 border-t-transparent rounded-full animate-spin" />
+          )}
+        </div>
+        <div className="ml-3">
+          <p className={`text-sm font-medium ${textColor}`}>{message}</p>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// =================================
+// HELPER FUNCTIONS
+// =================================
+
+async function executeUpdateMutation(
+  updateMutation: any,
+  formData: Record<string, unknown>,
+  model: any,
+  id: string,
+  idVariableName: string,
+): Promise<{ success: boolean; message: string }> {
+  try {
+    const cleanedInput = cleanFormInput(formData, model)
+    const result = await updateMutation({
+      variables: {
+        input: cleanedInput,
+        [idVariableName]: id,
+      },
+    })
+
+    if ((result as any).errors) {
+      return {
+        success: false,
+        message: (result as any).errors.map((err: any) => err.message).join(', '),
+      }
+    }
+
+    return {
+      success: true,
+      message: `${toReadableText(model.name)} updated successfully!`,
+    }
+  } catch (error) {
+    return {
+      success: false,
+      message: error instanceof Error ? error.message : 'An unexpected error occurred',
+    }
+  }
+}
+
+async function executeDeleteMutation(
+  deleteMutation: any,
+  id: string,
+  idVariableName: string,
+  model: any,
+): Promise<{ success: boolean; message: string }> {
+  try {
+    const result = await deleteMutation({
+      variables: {
+        [idVariableName]: id,
+      },
+    })
+
+    if ((result as any).errors) {
+      return {
+        success: false,
+        message: (result as any).errors.map((err: any) => err.message).join(', '),
+      }
+    }
+
+    return {
+      success: true,
+      message: `${toReadableText(model.name)} deleted successfully!`,
+    }
+  } catch (error) {
+    return {
+      success: false,
+      message: error instanceof Error ? error.message : 'An unexpected error occurred',
+    }
+  }
+}
+
+// =================================
 // CONTENT COMPONENT
 // =================================
 
@@ -520,83 +687,37 @@ function AdminDataEditPageContent({ model, id, basePath, formTheme, displayField
 
   // Handle form submission
   const handleSubmit = async (formData: Record<string, unknown>) => {
-    try {
-      setSubmissionState({ status: 'loading' })
+    setSubmissionState({ status: 'loading' })
 
-      // Clean the form input
-      const cleanedInput = cleanFormInput(formData, model)
+    const result = await executeUpdateMutation(updateMutation, formData, model, id, idVariableName)
 
-      // Execute mutation
-      const result = await updateMutation({
-        variables: {
-          input: cleanedInput,
-          [idVariableName]: id,
-        },
-      })
+    setSubmissionState({
+      status: result.success ? 'success' : 'error',
+      message: result.message,
+    })
 
-      if ((result as any).errors) {
-        setSubmissionState({
-          status: 'error',
-          message: (result as any).errors.map((err: any) => err.message).join(', '),
-        })
-        // Scroll to top to show error message
-        window.scrollTo({ top: 0, behavior: 'smooth' })
-        return
-      }
+    window.scrollTo({ top: 0, behavior: 'smooth' })
 
-      setSubmissionState({
-        status: 'success',
-        message: `${toReadableText(model.name)} updated successfully!`,
-      })
-
-      // Scroll to top to show success message
-      window.scrollTo({ top: 0, behavior: 'smooth' })
-
-      // Refetch the data to show updated values
+    if (result.success) {
       await refetch()
-    } catch (error) {
-      setSubmissionState({
-        status: 'error',
-        message: error instanceof Error ? error.message : 'An unexpected error occurred',
-      })
-      // Scroll to top to show error message
-      window.scrollTo({ top: 0, behavior: 'smooth' })
     }
   }
 
   // Handle delete
   const handleDelete = async () => {
-    try {
-      setDeleteState({ status: 'loading' })
+    setDeleteState({ status: 'loading' })
 
-      const result = await deleteMutation({
-        variables: {
-          [idVariableName]: id,
-        },
-      })
+    const result = await executeDeleteMutation(deleteMutation, id, idVariableName, model)
 
-      if ((result as any).errors) {
-        setDeleteState({
-          status: 'error',
-          message: (result as any).errors.map((err: any) => err.message).join(', '),
-        })
-        return
-      }
+    setDeleteState({
+      status: result.success ? 'success' : 'error',
+      message: result.message,
+    })
 
-      setDeleteState({
-        status: 'success',
-        message: `${toReadableText(model.name)} deleted successfully!`,
-      })
-
-      // Redirect after a brief delay
+    if (result.success) {
       setTimeout(() => {
         navigate(`${basePath}/${toKebabCase(model.pluralName)}`)
       }, 1500)
-    } catch (error) {
-      setDeleteState({
-        status: 'error',
-        message: error instanceof Error ? error.message : 'An unexpected error occurred',
-      })
     }
   }
 
@@ -664,86 +785,22 @@ function AdminDataEditPageContent({ model, id, basePath, formTheme, displayField
         </div>
 
         {/* Delete Confirmation Modal */}
-        {showDeleteConfirm && (
-          <div className="fixed inset-0 bg-gray-600 dark:bg-gray-900 bg-opacity-50 dark:bg-opacity-75 overflow-y-auto h-full w-full z-50 flex items-center justify-center">
-            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl max-w-md w-full mx-4">
-              <div className="flex items-center">
-                <div className="flex-shrink-0">
-                  <ExclamationCircleIcon className="h-6 w-6 text-red-600" />
-                </div>
-                <div className="ml-3">
-                  <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
-                    Delete {toReadableText(model.name)}
-                  </h3>
-                  <div className="mt-2">
-                    <p className="text-sm text-gray-500 dark:text-gray-400">
-                      Are you sure you want to delete this{' '}
-                      {toReadableText(model.name).toLowerCase()}? This action cannot be undone.
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
-                <button
-                  onClick={handleDelete}
-                  disabled={deleteState.status === 'loading'}
-                  className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {deleteState.status === 'loading' ? 'Deleting...' : 'Delete'}
-                </button>
-                <button
-                  onClick={() => setShowDeleteConfirm(false)}
-                  disabled={deleteState.status === 'loading'}
-                  className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-web sm:mt-0 sm:w-auto sm:text-sm disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
+        <DeleteConfirmModal
+          show={showDeleteConfirm}
+          modelName={model.name}
+          isDeleting={deleteState.status === 'loading'}
+          onConfirm={handleDelete}
+          onCancel={() => setShowDeleteConfirm(false)}
+        />
 
         {/* Submission Status */}
-        {(submissionState.status !== 'idle' || deleteState.status !== 'idle') && (
-          <div
-            className={`mb-6 rounded-md p-4 ${
-              submissionState.status === 'success' || deleteState.status === 'success'
-                ? 'bg-green-50 border border-green-200'
-                : submissionState.status === 'error' || deleteState.status === 'error'
-                  ? 'bg-red-50 border border-red-200'
-                  : 'bg-blue-50 border border-blue-200'
-            }`}
-          >
-            <div className="flex">
-              <div className="flex-shrink-0">
-                {submissionState.status === 'success' || deleteState.status === 'success' ? (
-                  <CheckCircleIcon className="h-5 w-5 text-green-400" />
-                ) : submissionState.status === 'error' || deleteState.status === 'error' ? (
-                  <ExclamationCircleIcon className="h-5 w-5 text-red-400" />
-                ) : (
-                  <div className="h-5 w-5 border-2 border-blue-400 border-t-transparent rounded-full animate-spin" />
-                )}
-              </div>
-              <div className="ml-3">
-                <p
-                  className={`text-sm font-medium ${
-                    submissionState.status === 'success' || deleteState.status === 'success'
-                      ? 'text-green-800'
-                      : submissionState.status === 'error' || deleteState.status === 'error'
-                        ? 'text-red-800'
-                        : 'text-blue-800'
-                  }`}
-                >
-                  {submissionState.status === 'loading'
-                    ? `Updating ${toReadableText(model.name)}...`
-                    : deleteState.status === 'loading'
-                      ? `Deleting ${toReadableText(model.name)}...`
-                      : submissionState.message || deleteState.message}
-                </p>
-              </div>
-            </div>
-          </div>
-        )}
+        <StatusMessage
+          submissionStatus={submissionState.status}
+          deleteStatus={deleteState.status}
+          submissionMessage={submissionState.message}
+          deleteMessage={deleteState.message}
+          modelName={model.name}
+        />
 
         {/* Form */}
         <div className="bg-white dark:bg-gray-800 shadow-sm rounded-lg">
