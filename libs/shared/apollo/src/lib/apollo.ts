@@ -147,6 +147,31 @@ function createErrorLink(): ApolloLink {
     if (graphQLErrors) {
       for (const { message, path, extensions } of graphQLErrors) {
         console.error(`[GraphQL error]: Message: ${message}, Path: ${path}`)
+
+        // Handle authentication errors - redirect to login
+        // Note: HttpOnly cookies can't be cleared from JavaScript, but logout route will handle that
+        if (
+          message.includes('Unauthorized') ||
+          message.includes('User from token not found') ||
+          message.includes('Invalid JWT') ||
+          message.includes('Session has been invalidated') ||
+          extensions?.code === 'UNAUTHENTICATED'
+        ) {
+          console.log('[Apollo] Authentication error detected, redirecting to logout then login')
+
+          // Redirect through logout to clear server-side session (client-side only)
+          if (typeof window !== 'undefined') {
+            // Save current URL for redirect after login
+            const currentPath = window.location.pathname
+            if (currentPath && currentPath !== '/login' && !currentPath.startsWith('/logout')) {
+              // Logout will clear the cookie, then redirect to login with return URL
+              window.location.href = `/logout?return_url=${encodeURIComponent(currentPath)}`
+            } else {
+              window.location.href = '/logout'
+            }
+          }
+        }
+
         if (
           extensions &&
           typeof process !== 'undefined' &&

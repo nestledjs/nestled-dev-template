@@ -3166,13 +3166,6 @@ export const DATABASE_MODELS: DatabaseModel[] = [
     modelPropertyName: 'team',
     pluralModelName: 'Teams',
     pluralModelPropertyName: 'teams',
-    auth: {
-      readOne: 'user',
-      readMany: 'user',
-      create: 'user',
-      update: 'user',
-      delete: 'user',
-    },
     idFieldType: 'String',
   },
   {
@@ -3319,13 +3312,6 @@ export const DATABASE_MODELS: DatabaseModel[] = [
     modelPropertyName: 'teamMember',
     pluralModelName: 'TeamMembers',
     pluralModelPropertyName: 'teamMembers',
-    auth: {
-      readOne: 'user',
-      readMany: 'user',
-      create: 'user',
-      update: 'user',
-      delete: 'user',
-    },
     idFieldType: 'String',
   },
   {
