@@ -70,3 +70,5 @@ jobs:
           NODE_ENV: test
           # JWT secret for test environment (not a real secret, just for CI)
           JWT_SECRET: test-jwt-secret-for-ci-only-not-production
+          # Use mock email provider to avoid SMTP errors in CI
+          EMAIL_PROVIDER: mock
