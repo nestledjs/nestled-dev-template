@@ -13,8 +13,8 @@ interface FilterFieldProps {
 
 interface FieldInfo {
   field: any
-  relatedModel: any | null
-  relatedEnumField: any | null
+  relatedModel: any
+  relatedEnumField: any
   isRelatedEnum: boolean
 }
 
@@ -45,18 +45,30 @@ function getFieldInfo(fieldName: string, model: any, databaseModels: any[]): Fie
 }
 
 /**
- * Get the current filter value, handling nested values for related enum fields
+ * Get the current filter value for regular fields
  */
-function getCurrentValue(fieldName: string, filters: Record<string, any>, isRelatedEnum: boolean): any {
-  return isRelatedEnum
-    ? filters[fieldName.split('.')[0]]?.[fieldName.split('.')[1]]
-    : filters[fieldName]
+function getRegularFieldValue(fieldName: string, filters: Record<string, any>): any {
+  return filters[fieldName]
+}
+
+/**
+ * Get the current filter value for related enum fields
+ */
+function getRelatedEnumFieldValue(fieldName: string, filters: Record<string, any>): any {
+  const [relationName, enumFieldName] = fieldName.split('.')
+  return filters[relationName]?.[enumFieldName]
+}
+
+interface BooleanFilterProps {
+  readonly fieldName: string
+  readonly currentValue: any
+  readonly onChange: (value: any) => void
 }
 
 /**
  * Render a boolean filter field
  */
-function BooleanFilter({ fieldName, currentValue, onChange }: { fieldName: string; currentValue: any; onChange: (value: any) => void }) {
+function BooleanFilter({ fieldName, currentValue, onChange }: BooleanFilterProps) {
   return (
     <div key={fieldName} className="space-y-1">
       <label className="block text-sm font-medium text-gray-700">
@@ -78,10 +90,16 @@ function BooleanFilter({ fieldName, currentValue, onChange }: { fieldName: strin
   )
 }
 
+interface StringFilterProps {
+  readonly fieldName: string
+  readonly currentValue: any
+  readonly onChange: (value: any) => void
+}
+
 /**
  * Render a string filter field
  */
-function StringFilter({ fieldName, currentValue, onChange }: { fieldName: string; currentValue: any; onChange: (value: any) => void }) {
+function StringFilter({ fieldName, currentValue, onChange }: StringFilterProps) {
   return (
     <div key={fieldName} className="space-y-1">
       <label className="block text-sm font-medium text-gray-700">
@@ -114,7 +132,9 @@ export function FilterField({
   if (!fieldInfo) return null
 
   const { field, relatedEnumField, isRelatedEnum } = fieldInfo
-  const currentValue = getCurrentValue(fieldName, filters, isRelatedEnum)
+  const currentValue = isRelatedEnum
+    ? getRelatedEnumFieldValue(fieldName, filters)
+    : getRegularFieldValue(fieldName, filters)
 
   // Handle related enum fields
   if (isRelatedEnum && relatedEnumField) {
