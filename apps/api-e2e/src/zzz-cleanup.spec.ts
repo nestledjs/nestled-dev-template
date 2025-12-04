@@ -89,16 +89,18 @@ describe('ZZZ Cleanup (runs last)', () => {
     }
 
     console.log('✅ Cleanup complete - all tests passed!')
-    console.log('⚡ Force killing process to prevent hanging...')
+    console.log('⚡ Waiting for worker pools to clean up IPC channels...')
 
-    // Force exit with SIGKILL since nothing else works
-    // SIGTERM gets ignored, process.exit() gets intercepted by Vitest
-    // This is the only way to prevent the process from hanging forever
+    // Give worker pools time to clean up their IPC channels gracefully
+    // This is especially important in CI environments where SIGKILL can cause
+    // "ERR_IPC_CHANNEL_CLOSED" errors if we kill too quickly
+    // If the process doesn't exit naturally after 2 seconds, force kill it
     setTimeout(() => {
+      console.log('⚡ Force killing process to prevent hanging...')
       spawn('kill', ['-9', process.pid.toString()], {
         detached: true,
         stdio: 'ignore'
       }).unref()
-    }, 50)
+    }, 2000)
   })
 })
