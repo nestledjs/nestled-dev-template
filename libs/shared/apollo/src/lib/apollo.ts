@@ -142,43 +142,58 @@ function resolveAuthToken(request?: Request, options?: ClientOptions): string | 
   return null
 }
 
+function isAuthenticationError(message: string, extensions?: any): boolean {
+  return (
+    message.includes('Unauthorized') ||
+    message.includes('User from token not found') ||
+    message.includes('Invalid JWT') ||
+    message.includes('Session has been invalidated') ||
+    extensions?.code === 'UNAUTHENTICATED'
+  )
+}
+
+function handleAuthenticationError(): void {
+  console.log('[Apollo] Authentication error detected, redirecting to logout then login')
+
+  // Redirect through logout to clear server-side session (client-side only)
+  if (typeof globalThis.window === 'undefined') {
+    return
+  }
+
+  const currentPath = globalThis.window.location.pathname
+  const shouldRedirectWithReturnUrl =
+    currentPath &&
+    currentPath !== '/login' &&
+    !currentPath.startsWith('/logout')
+
+  if (shouldRedirectWithReturnUrl) {
+    globalThis.window.location.href = `/logout?return_url=${encodeURIComponent(currentPath)}`
+  } else {
+    globalThis.window.location.href = '/logout'
+  }
+}
+
+function logDevelopmentExtensions(extensions: any): void {
+  if (
+    extensions &&
+    typeof process !== 'undefined' &&
+    process.env.NODE_ENV === 'development'
+  ) {
+    console.error(`[GraphQL error]: Extensions:`, extensions)
+  }
+}
+
 function createErrorLink(): ApolloLink {
   return onError(({ graphQLErrors, networkError, operation }: any) => {
     if (graphQLErrors) {
       for (const { message, path, extensions } of graphQLErrors) {
         console.error(`[GraphQL error]: Message: ${message}, Path: ${path}`)
 
-        // Handle authentication errors - redirect to login
-        // Note: HttpOnly cookies can't be cleared from JavaScript, but logout route will handle that
-        if (
-          message.includes('Unauthorized') ||
-          message.includes('User from token not found') ||
-          message.includes('Invalid JWT') ||
-          message.includes('Session has been invalidated') ||
-          extensions?.code === 'UNAUTHENTICATED'
-        ) {
-          console.log('[Apollo] Authentication error detected, redirecting to logout then login')
-
-          // Redirect through logout to clear server-side session (client-side only)
-          if (typeof window !== 'undefined') {
-            // Save current URL for redirect after login
-            const currentPath = window.location.pathname
-            if (currentPath && currentPath !== '/login' && !currentPath.startsWith('/logout')) {
-              // Logout will clear the cookie, then redirect to login with return URL
-              window.location.href = `/logout?return_url=${encodeURIComponent(currentPath)}`
-            } else {
-              window.location.href = '/logout'
-            }
-          }
+        if (isAuthenticationError(message, extensions)) {
+          handleAuthenticationError()
         }
 
-        if (
-          extensions &&
-          typeof process !== 'undefined' &&
-          process.env.NODE_ENV === 'development'
-        ) {
-          console.error(`[GraphQL error]: Extensions:`, extensions)
-        }
+        logDevelopmentExtensions(extensions)
       }
     }
 
