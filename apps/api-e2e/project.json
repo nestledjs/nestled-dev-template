@@ -14,7 +14,7 @@
         "config": "apps/api-e2e/vitest.config.ts",
         "passWithNoTests": true
       },
-      "dependsOn": ["api:build", "api:serve"]
+      "dependsOn": ["api:build"]
     },
     "test": {
       "executor": "@nx/vite:test",
