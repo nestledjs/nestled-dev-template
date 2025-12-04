@@ -1,7 +1,6 @@
 import { Logger } from '@nestjs/common'
 import { EmailProvider, EmailOptions, EmailTemplate, EmailResult } from '../email.interface'
 import { SimpleTemplateManager } from '../template-manager-simple'
-import { ConfigService } from '@nestled-template/api/config'
 
 /**
  * Mock Email Provider for testing
@@ -11,8 +10,8 @@ export class MockEmailProvider implements EmailProvider {
   private readonly logger = new Logger(MockEmailProvider.name)
   private readonly templateManager: SimpleTemplateManager
 
-  constructor(config: ConfigService) {
-    this.templateManager = new SimpleTemplateManager(config)
+  constructor() {
+    this.templateManager = new SimpleTemplateManager()
     this.logger.log('📧 Mock Email Provider initialized (emails will be logged, not sent)')
   }
 
@@ -22,10 +21,14 @@ export class MockEmailProvider implements EmailProvider {
     this.logger.log(`   Subject: ${options.subject}`)
     if (options.from) this.logger.log(`   From: ${options.from}`)
 
-    // Return mock success
+    const recipients = Array.isArray(options.to) ? options.to : [options.to]
+
+    // Return mock success with proper EmailResult structure
     return {
-      success: true,
-      messageId: `mock-${Date.now()}-${Math.random().toString(36).substring(7)}`,
+      messageId: `<mock-${Date.now()}-${Math.random().toString(36).substring(7)}@mock.local>`,
+      accepted: recipients,
+      rejected: [],
+      response: '250 Mock email accepted',
     }
   }
 
@@ -46,10 +49,14 @@ export class MockEmailProvider implements EmailProvider {
       this.logger.log(`   Template: ${template.templateId}`)
       this.logger.log(`   Subject: ${rendered.subject}`)
 
-      // Return mock success
+      const recipients = Array.isArray(to) ? to : [to]
+
+      // Return mock success with proper EmailResult structure
       return {
-        success: true,
-        messageId: `mock-${Date.now()}-${Math.random().toString(36).substring(7)}`,
+        messageId: `<mock-${Date.now()}-${Math.random().toString(36).substring(7)}@mock.local>`,
+        accepted: recipients,
+        rejected: [],
+        response: '250 Mock templated email accepted',
       }
     } catch (error) {
       this.logger.error('Failed to render template:', error)

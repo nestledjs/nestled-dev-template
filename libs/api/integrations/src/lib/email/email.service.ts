@@ -29,7 +29,7 @@ export class EmailService {
         break
       case 'mock':
       case 'test':
-        this.provider = new MockEmailProvider(config)
+        this.provider = new MockEmailProvider()
         break
       // case 'sendgrid':
       //   this.provider = new SendGridEmailProvider(config)
