@@ -499,9 +499,11 @@ describe('Email Verification Tests', () => {
     })
 
     describe('Loading State', () => {
-      const createMockResponse = (isLoading: boolean) => [mockResendMutation, { loading: isLoading }]
+      function createMockResponse(isLoading: boolean) {
+        return [mockResendMutation, { loading: isLoading }]
+      }
 
-      const setupLoadingMock = (isLoading: boolean) => {
+      function setupLoadingMock(isLoading: boolean) {
         mockUseMutation.mockReset()
         mockUseMutation.mockImplementation(() => createMockResponse(isLoading))
       }
