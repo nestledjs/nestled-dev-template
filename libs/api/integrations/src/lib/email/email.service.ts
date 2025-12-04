@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common'
 import { ConfigService } from '@nestled-template/api/config'
 import { EmailProvider, EmailOptions, EmailTemplate, EmailResult } from './email.interface'
 import { SmtpEmailProvider } from './providers/smtp.provider'
+import { MockEmailProvider } from './providers/mock.provider'
 // Future providers:
 // import { SendGridEmailProvider } from './providers/sendgrid.provider'
 // import { MailgunEmailProvider } from './providers/mailgun.provider'
@@ -21,10 +22,14 @@ export class EmailService {
 
     // Initialize provider based on config
     const providerType = this.config.emailProvider
-    
+
     switch (providerType) {
       case 'smtp':
         this.provider = new SmtpEmailProvider(config)
+        break
+      case 'mock':
+      case 'test':
+        this.provider = new MockEmailProvider(config)
         break
       // case 'sendgrid':
       //   this.provider = new SendGridEmailProvider(config)

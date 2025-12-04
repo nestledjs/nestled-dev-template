@@ -34,6 +34,9 @@ export const configuration = () => ({
     adminEmails: process.env['APP_ADMIN_EMAILS'],
     name: process.env['APP_NAME'],
   },
+  email: {
+    provider: process.env['EMAIL_PROVIDER'] ?? 'smtp',
+  },
   smtp: {
     host: process.env['SMTP_HOST'],
     port: process.env['SMTP_PORT'],
