@@ -89,7 +89,7 @@ export default function PricingPage() {
                 ? plan.features
                 : typeof plan.features === 'object'
                   ? Object.entries(plan.features).map(([key, value]) => ({
-                      name: key.replaceAll(/_/g, ' ').replaceAll(/\b\w/g, (_) => _.toUpperCase()),
+                      name: key.replaceAll(/_/g, ' ').replaceAll(/\b\w/g, (char) => char.toUpperCase()),
                       included: value === true,
                     }))
                   : []
