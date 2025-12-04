@@ -12,6 +12,16 @@ module.exports = async function () {
   if (weStartedApi && apiProcess?.pid) {
     console.log('🛑 Stopping API server aggressively...')
     try {
+      // Clean up stdio streams first to prevent hanging
+      try {
+        apiProcess.stdout?.removeAllListeners()
+        apiProcess.stderr?.removeAllListeners()
+        apiProcess.stdout?.destroy()
+        apiProcess.stderr?.destroy()
+      } catch {
+        // Ignore stream cleanup errors
+      }
+
       // Skip gentle SIGTERM - go straight to SIGKILL for faster cleanup
       try {
         process.kill(-apiProcess.pid, 'SIGKILL')
@@ -41,4 +51,17 @@ module.exports = async function () {
 
   // Note: Vitest 3.x will handle process exit automatically
   // We don't need to call process.exit() - it will cause errors
+
+  // Log active handles for debugging (only in CI or if DEBUG env var is set)
+  if (process.env.CI || process.env.DEBUG_HANDLES) {
+    console.log('\n🔍 Active handles:')
+    const handles = (process as any)._getActiveHandles?.() || []
+    const requests = (process as any)._getActiveRequests?.() || []
+    console.log(`   Handles: ${handles.length}, Requests: ${requests.length}`)
+    if (handles.length > 0) {
+      handles.forEach((h: any, i: number) => {
+        console.log(`   Handle ${i}: ${h.constructor?.name || 'unknown'}`)
+      })
+    }
+  }
 }
