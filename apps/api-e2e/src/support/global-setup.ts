@@ -167,8 +167,10 @@ module.exports = async function () {
         }
       })
 
-      // Unref the process so it doesn't keep the parent alive
+      // Unref the process and its stdio streams so they don't keep the parent alive
       apiProcess.unref()
+      apiProcess.stdout?.unref()
+      apiProcess.stderr?.unref()
 
       // Store process reference for teardown
       globalThis.__API_PROCESS__ = apiProcess
