@@ -15,6 +15,22 @@ permissions:
 jobs:
   main:
     runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: prisma
+          POSTGRES_PASSWORD: prisma
+          POSTGRES_DB: nestled_template_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
     steps:
       - uses: actions/checkout@v4
         with:
@@ -48,3 +64,7 @@ jobs:
       # - run: pnpm exec nx-cloud record -- echo Hello World
       # Nx Affected runs only tasks affected by the changes in this PR/commit. Learn more: https://nx.dev/ci/features/affected
       - run: pnpm exec nx affected -t lint test build
+        env:
+          # E2E tests will run against the PostgreSQL service
+          TEST_DATABASE_URL: postgresql://prisma:prisma@localhost:5432/nestled_template_test
+          NODE_ENV: test

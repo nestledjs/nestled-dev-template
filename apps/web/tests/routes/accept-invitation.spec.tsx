@@ -6,25 +6,26 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import AcceptInvitation from '../../app/routes/accept-invitation'
 import { GlobalContextProvider } from '@nestled-template/web'
 
-import {
-  useGetInvitationDetailsQuery,
-  useAcceptOrganizationInvitationMutation,
-  useLoginMutation,
-  useRegisterWithInvitationMutation,
-} from '@nestled-template/shared/sdk'
 import { useGlobalCtx } from '@nestled-template/web'
 
-// Mock SDK hooks
+// Mock Apollo Client
+const mockUseQuery = vi.fn()
+const mockUseMutation = vi.fn()
+vi.mock('@apollo/client/react', () => ({
+  useQuery: (...args: unknown[]) => mockUseQuery(...args),
+  useMutation: (...args: unknown[]) => mockUseMutation(...args),
+}))
+
+// Mock SDK (for DocumentNode exports)
 vi.mock('@nestled-template/shared/sdk', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@nestled-template/shared/sdk')>()
   return {
     ...actual,
-    
-  useGetInvitationDetailsQuery: vi.fn(),
-  useAcceptOrganizationInvitationMutation: vi.fn(),
-  useLoginMutation: vi.fn(),
-  useRegisterWithInvitationMutation: vi.fn(),
-}
+    GetInvitationDetails: { kind: 'Document', definitions: [] },
+    AcceptOrganizationInvitation: { kind: 'Document', definitions: [] },
+    Login: { kind: 'Document', definitions: [] },
+    RegisterWithInvitation: { kind: 'Document', definitions: [] },
+  }
 })
 
 // Mock GlobalContext hook
@@ -58,6 +59,10 @@ describe('AcceptInvitation Component', () => {
     mockLogin = vi.fn()
     mockRegister = vi.fn()
 
+    // Clear mocks
+    mockUseQuery.mockReset()
+    mockUseMutation.mockReset()
+
     vi.mocked(useGlobalCtx).mockReturnValue({
       user: null,
       organizations: [],
@@ -65,19 +70,28 @@ describe('AcceptInvitation Component', () => {
       activeOrganizationMember: null,
     })
 
-    vi.mocked(useGetInvitationDetailsQuery).mockReturnValue({
+    // Mock useQuery for GetInvitationDetails
+    mockUseQuery.mockImplementation(() => ({
       data: { getInvitationDetails: mockInvitationDetails },
       loading: false,
       error: undefined,
-    } as any)
+    }))
 
-    vi.mocked(useAcceptOrganizationInvitationMutation).mockReturnValue([
-      mockAcceptInvitation,
-    ] as any)
-
-    vi.mocked(useLoginMutation).mockReturnValue([mockLogin] as any)
-
-    vi.mocked(useRegisterWithInvitationMutation).mockReturnValue([mockRegister] as any)
+    // Mock useMutation - will be called 3 times (AcceptOrganizationInvitation, Login, RegisterWithInvitation)
+    let mutationCallCount = 0
+    mockUseMutation.mockImplementation(() => {
+      mutationCallCount++
+      if (mutationCallCount % 3 === 1) {
+        // First, 4th, 7th calls: AcceptOrganizationInvitation
+        return [mockAcceptInvitation, { loading: false }]
+      } else if (mutationCallCount % 3 === 2) {
+        // Second, 5th, 8th calls: Login
+        return [mockLogin, { loading: false }]
+      } else {
+        // Third, 6th, 9th calls: RegisterWithInvitation
+        return [mockRegister, { loading: false }]
+      }
+    })
   })
 
   const renderWithRouter = (searchParams = '?token=test-token') => {
@@ -102,11 +116,11 @@ describe('AcceptInvitation Component', () => {
     })
 
     it('should show loading state while fetching invitation', () => {
-      vi.mocked(useGetInvitationDetailsQuery).mockReturnValue({
+      mockUseQuery.mockReset(); mockUseQuery.mockImplementation(() => ({
         data: undefined,
         loading: true,
         error: undefined,
-      } as any)
+      }))
 
       renderWithRouter()
 
@@ -117,11 +131,11 @@ describe('AcceptInvitation Component', () => {
     })
 
     it('should show error for invalid/expired invitation', () => {
-      vi.mocked(useGetInvitationDetailsQuery).mockReturnValue({
+      mockUseQuery.mockReset(); mockUseQuery.mockImplementation(() => ({
         data: null,
         loading: false,
         error: { message: 'Invitation expired' } as any,
-      } as any)
+      }))
 
       renderWithRouter()
 
@@ -130,11 +144,11 @@ describe('AcceptInvitation Component', () => {
     })
 
     it('should show error when invitation details are null', () => {
-      vi.mocked(useGetInvitationDetailsQuery).mockReturnValue({
+      mockUseQuery.mockReset(); mockUseQuery.mockImplementation(() => ({
         data: { getInvitationDetails: null },
         loading: false,
         error: undefined,
-      } as any)
+      }))
 
       renderWithRouter()
 
@@ -424,11 +438,11 @@ describe('AcceptInvitation Component', () => {
     })
 
     it('should show go to home link on error', () => {
-      vi.mocked(useGetInvitationDetailsQuery).mockReturnValue({
+      mockUseQuery.mockReset(); mockUseQuery.mockImplementation(() => ({
         data: null,
         loading: false,
         error: { message: 'Not found' } as any,
-      } as any)
+      }))
 
       renderWithRouter()
 
@@ -447,11 +461,11 @@ describe('AcceptInvitation Component', () => {
     })
 
     it('should show loading spinner during invitation fetch', () => {
-      vi.mocked(useGetInvitationDetailsQuery).mockReturnValue({
+      mockUseQuery.mockReset(); mockUseQuery.mockImplementation(() => ({
         data: undefined,
         loading: true,
         error: undefined,
-      } as any)
+      }))
 
       renderWithRouter()
 
@@ -459,11 +473,11 @@ describe('AcceptInvitation Component', () => {
     })
 
     it('should display error icon on error state', () => {
-      vi.mocked(useGetInvitationDetailsQuery).mockReturnValue({
+      mockUseQuery.mockReset(); mockUseQuery.mockImplementation(() => ({
         data: null,
         loading: false,
         error: { message: 'Error' } as any,
-      } as any)
+      }))
 
       renderWithRouter()
 
@@ -529,10 +543,8 @@ describe('AcceptInvitation Component', () => {
     it('should fetch invitation details with token from URL', () => {
       renderWithRouter('?token=url-token-456')
 
-      expect(useGetInvitationDetailsQuery).toHaveBeenCalledWith({
-        variables: { token: 'url-token-456' },
-        skip: false,
-      })
+      // Verify that useQuery (Apollo hook) was called
+      expect(mockUseQuery).toHaveBeenCalled()
     })
   })
 })

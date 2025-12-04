@@ -10,7 +10,8 @@
       "outputs": ["{workspaceRoot}/coverage/libs/data-browser"],
       "options": {
         "passWithNoTests": false,
-        "reportsDirectory": "../../coverage/libs/data-browser"
+        "reportsDirectory": "../../coverage/libs/data-browser",
+        "configFile": "libs/data-browser/vitest.config.ts"
       }
     },
     "build": {

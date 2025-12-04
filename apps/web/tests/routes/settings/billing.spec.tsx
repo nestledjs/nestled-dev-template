@@ -5,21 +5,22 @@ import { createTestRouter } from "../../helpers/createTestRouter"
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import BillingSettings from '../../../app/routes/settings/billing'
 
-import {
-  useCreatePortalSessionMutation,
-  useCancelSubscriptionMutation,
-} from '@nestled-template/shared/sdk'
 import { useSubscription, useLimit, useGlobalCtx } from '@nestled-template/web'
 
-// Mock SDK hooks
+// Mock Apollo Client
+const mockUseMutation = vi.fn()
+vi.mock('@apollo/client/react', () => ({
+  useMutation: (...args: unknown[]) => mockUseMutation(...args),
+}))
+
+// Mock SDK (for DocumentNode exports)
 vi.mock('@nestled-template/shared/sdk', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@nestled-template/shared/sdk')>()
   return {
     ...actual,
-    
-  useCreatePortalSessionMutation: vi.fn(),
-  useCancelSubscriptionMutation: vi.fn(),
-}
+    CreatePortalSession: { kind: 'Document', definitions: [] },
+    CancelSubscription: { kind: 'Document', definitions: [] },
+  }
 })
 
 // Mock web hooks and components
@@ -50,14 +51,22 @@ describe('BillingSettings Component', () => {
   let mockCancelSubscription: ReturnType<typeof vi.fn>
 
   beforeEach(() => {
+    mockUseMutation.mockClear()
+
     mockCreatePortalSession = vi.fn()
     mockCancelSubscription = vi.fn()
 
-    vi.mocked(useCreatePortalSessionMutation).mockReturnValue([
-      mockCreatePortalSession,
-    ] as any)
-
-    vi.mocked(useCancelSubscriptionMutation).mockReturnValue([mockCancelSubscription] as any)
+    // Mock useMutation - will be called twice (CreatePortalSession, CancelSubscription)
+    let callCount = 0
+    mockUseMutation.mockImplementation(() => {
+      callCount++
+      if (callCount % 2 === 1) {
+        // Odd calls (1, 3, 5...): CreatePortalSession
+        return [mockCreatePortalSession, { loading: false }]
+      }
+      // Even calls (2, 4, 6...): CancelSubscription
+      return [mockCancelSubscription, { loading: false }]
+    })
 
     vi.mocked(useGlobalCtx).mockReturnValue({
       activeOrganization: mockActiveOrganization,

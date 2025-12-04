@@ -1,16 +1,22 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import { userEvent } from '@testing-library/user-event'
 import { createTestRouter } from '../../helpers/createTestRouter'
 import AccountSettings from '../../../app/routes/settings/account'
 
 import { useLoaderData } from 'react-router'
-import { useReadQuery } from '@apollo/client/react'
-import {
-  useDeleteUserAccountMutation,
-  useExportUserDataLazyQuery,
-  useResendVerificationEmailMutation,
-} from '@nestled-template/shared/sdk'
+
+// Mock Apollo Client
+const mockUseReadQuery = vi.fn()
+const mockUseMutation = vi.fn()
+const mockUseLazyQuery = vi.fn()
+const mockUseQuery = vi.fn()
+vi.mock('@apollo/client/react', () => ({
+  useReadQuery: (...args: unknown[]) => mockUseReadQuery(...args),
+  useMutation: (...args: unknown[]) => mockUseMutation(...args),
+  useLazyQuery: (...args: unknown[]) => mockUseLazyQuery(...args),
+  useQuery: (...args: unknown[]) => mockUseQuery(...args),
+}))
 
 // Mock React Router
 vi.mock('react-router', async () => {
@@ -21,34 +27,34 @@ vi.mock('react-router', async () => {
   }
 })
 
-// Mock the SDK mutations and queries
+// Mock SDK (for DocumentNode exports)
 vi.mock('@nestled-template/shared/sdk', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@nestled-template/shared/sdk')>()
   return {
     ...actual,
-    
-  MeDocument: {},
-  useDeleteUserAccountMutation: vi.fn(),
-  useExportUserDataLazyQuery: vi.fn(),
-  useResendVerificationEmailMutation: vi.fn(),
+    Me: { kind: 'Document', definitions: [] },
+    DeleteUserAccount: { kind: 'Document', definitions: [] },
+    ExportUserData: { kind: 'Document', definitions: [] },
+    ResendVerificationEmail: { kind: 'Document', definitions: [] },
+    MyOrganizationsWithMembers: { kind: 'Document', definitions: [] },
+    TransferOrganizationOwnership: { kind: 'Document', definitions: [] },
   }
 })
 
-// Mock TransferOwnershipModal component
-vi.mock('../../../app/components/TransferOwnershipModal', () => ({
-  default: ({ isOpen, onClose }: any) =>
-    isOpen ? (
-      <div data-testid="transfer-modal">
-        <h3>Transfer Ownership Modal</h3>
-        <button onClick={onClose}>Close Modal</button>
-      </div>
-    ) : null,
-}))
-
-// Mock Apollo
-vi.mock('@apollo/client/react', () => ({
-  useReadQuery: vi.fn(),
-}))
+// Mock @nestled-template/web (for TransferOwnershipModal)
+vi.mock('@nestled-template/web', async () => {
+  const actual = await vi.importActual('@nestled-template/web')
+  return {
+    ...actual,
+    TransferOwnershipModal: ({ isOpen, onClose }: any) =>
+      isOpen ? (
+        <div data-testid="transfer-modal">
+          <h3>Transfer Ownership Modal</h3>
+          <button onClick={onClose}>Close Modal</button>
+        </div>
+      ) : null,
+  }
+})
 
 describe('AccountSettings', () => {
   const mockDeleteAccount = vi.fn()
@@ -67,24 +73,56 @@ describe('AccountSettings', () => {
   }
 
   beforeEach(() => {
-    vi.clearAllMocks()
-
     // Mock useLoaderData to return the QueryRef
     vi.mocked(useLoaderData).mockReturnValue({
       meQueryRef: {} as any,
     })
 
-    // Mock Apollo client hook
-    vi.mocked(useReadQuery).mockReturnValue({
-      data: { me: mockUser },
-    } as any)
+    // Clear and set up mocks
+    mockUseReadQuery.mockReset()
+    mockUseMutation.mockReset()
+    mockUseLazyQuery.mockReset()
+    mockUseQuery.mockReset()
 
-    vi.mocked(useDeleteUserAccountMutation).mockReturnValue([mockDeleteAccount, {} as any])
-    vi.mocked(useExportUserDataLazyQuery).mockReturnValue([mockExportUserData, {} as any])
-    vi.mocked(useResendVerificationEmailMutation).mockReturnValue([
-      mockResendVerificationEmail,
-      {} as any,
-    ])
+    // Mock useReadQuery for Me query (used by AccountSettings)
+    mockUseReadQuery.mockImplementation(() => ({
+      data: { me: mockUser },
+    }))
+
+    // Mock useQuery for TransferOwnershipModal (Me + MyOrganizationsWithMembers)
+    let queryCallCount = 0
+    mockUseQuery.mockImplementation(() => {
+      queryCallCount++
+      if (queryCallCount % 2 === 1) {
+        // Odd calls: Me query
+        return {
+          data: { me: mockUser },
+          loading: false,
+          error: null,
+        }
+      }
+      // Even calls: MyOrganizationsWithMembers query
+      return {
+        data: { myOrganizations: [] },
+        loading: false,
+        error: null,
+      }
+    })
+
+    // Mock useMutation - will be called twice (DeleteUserAccount, ResendVerificationEmail)
+    let mutationCallCount = 0
+    mockUseMutation.mockImplementation(() => {
+      mutationCallCount++
+      if (mutationCallCount % 2 === 1) {
+        // Odd calls: DeleteUserAccount
+        return [mockDeleteAccount, { loading: false }]
+      }
+      // Even calls: ResendVerificationEmail
+      return [mockResendVerificationEmail, { loading: false }]
+    })
+
+    // Mock useLazyQuery for ExportUserData
+    mockUseLazyQuery.mockReturnValue([mockExportUserData, { loading: false }])
 
     global.alert = vi.fn()
     Object.assign(window, {
@@ -134,14 +172,15 @@ describe('AccountSettings', () => {
 
   describe('Email Verification', () => {
     it('should show verify button for unverified email', () => {
-      vi.mocked(useReadQuery).mockReturnValue({
+      mockUseReadQuery.mockReset()
+      mockUseReadQuery.mockImplementation(() => ({
         data: {
           me: {
             ...mockUser,
             emailValidated: false,
           },
         },
-      } as any)
+      }))
 
       renderWithRouter()
 
@@ -192,7 +231,9 @@ describe('AccountSettings', () => {
       const button = screen.getByRole('button', { name: /transfer ownership/i })
       await user.click(button)
 
-      expect(screen.getByTestId('transfer-modal')).toBeInTheDocument()
+      await waitFor(() => {
+        expect(screen.getByTestId('transfer-modal')).toBeInTheDocument()
+      })
     })
   })
 
