@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { beforeEach } from 'vitest'
-import { Agent as HttpAgent } from 'http'
-import { Agent as HttpsAgent } from 'https'
+import { Agent as HttpAgent } from 'node:http'
+import { Agent as HttpsAgent } from 'node:https'
 
 // Configure axios for tests to use.
 const host = process.env.HOST ?? 'localhost'
