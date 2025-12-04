@@ -499,9 +499,11 @@ describe('Email Verification Tests', () => {
     })
 
     describe('Loading State', () => {
+      const createMockResponse = (isLoading: boolean) => [mockResendMutation, { loading: isLoading }]
+
       const setupLoadingMock = (isLoading: boolean) => {
         mockUseMutation.mockReset()
-        mockUseMutation.mockImplementation(() => [mockResendMutation, { loading: isLoading }])
+        mockUseMutation.mockImplementation(() => createMockResponse(isLoading))
       }
 
       it('should show loading text on button during submission', () => {
