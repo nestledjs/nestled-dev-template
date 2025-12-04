@@ -380,12 +380,43 @@ function DeleteConfirmModal({ show, modelName, isDeleting, onConfirm, onCancel }
   )
 }
 
+type StatusType = 'idle' | 'loading' | 'success' | 'error'
+
 interface StatusMessageProps {
-  readonly submissionStatus: 'idle' | 'loading' | 'success' | 'error'
-  readonly deleteStatus: 'idle' | 'loading' | 'success' | 'error'
+  readonly submissionStatus: StatusType
+  readonly deleteStatus: StatusType
   readonly submissionMessage?: string
   readonly deleteMessage?: string
   readonly modelName: string
+}
+
+function getStatusColors(isSuccess: boolean, isError: boolean): { bgColor: string; textColor: string } {
+  if (isSuccess) {
+    return {
+      bgColor: 'bg-green-50 border border-green-200',
+      textColor: 'text-green-800',
+    }
+  }
+  if (isError) {
+    return {
+      bgColor: 'bg-red-50 border border-red-200',
+      textColor: 'text-red-800',
+    }
+  }
+  return {
+    bgColor: 'bg-blue-50 border border-blue-200',
+    textColor: 'text-blue-800',
+  }
+}
+
+function getStatusIcon(isSuccess: boolean, isError: boolean): JSX.Element {
+  if (isSuccess) {
+    return <CheckCircleIcon className="h-5 w-5 text-green-400" />
+  }
+  if (isError) {
+    return <ExclamationCircleIcon className="h-5 w-5 text-red-400" />
+  }
+  return <div className="h-5 w-5 border-2 border-blue-400 border-t-transparent rounded-full animate-spin" />
 }
 
 function StatusMessage({ submissionStatus, deleteStatus, submissionMessage, deleteMessage, modelName }: StatusMessageProps) {
@@ -395,8 +426,7 @@ function StatusMessage({ submissionStatus, deleteStatus, submissionMessage, dele
   const isError = submissionStatus === 'error' || deleteStatus === 'error'
   const isLoading = submissionStatus === 'loading' || deleteStatus === 'loading'
 
-  const bgColor = isSuccess ? 'bg-green-50 border border-green-200' : isError ? 'bg-red-50 border border-red-200' : 'bg-blue-50 border border-blue-200'
-  const textColor = isSuccess ? 'text-green-800' : isError ? 'text-red-800' : 'text-blue-800'
+  const { bgColor, textColor } = getStatusColors(isSuccess, isError)
 
   const loadingMessage = submissionStatus === 'loading' ? `Updating ${toReadableText(modelName)}...` : `Deleting ${toReadableText(modelName)}...`
   const message = isLoading ? loadingMessage : submissionMessage || deleteMessage
@@ -405,13 +435,7 @@ function StatusMessage({ submissionStatus, deleteStatus, submissionMessage, dele
     <div className={`mb-6 rounded-md p-4 ${bgColor}`}>
       <div className="flex">
         <div className="flex-shrink-0">
-          {isSuccess ? (
-            <CheckCircleIcon className="h-5 w-5 text-green-400" />
-          ) : isError ? (
-            <ExclamationCircleIcon className="h-5 w-5 text-red-400" />
-          ) : (
-            <div className="h-5 w-5 border-2 border-blue-400 border-t-transparent rounded-full animate-spin" />
-          )}
+          {getStatusIcon(isSuccess, isError)}
         </div>
         <div className="ml-3">
           <p className={`text-sm font-medium ${textColor}`}>{message}</p>
@@ -441,10 +465,10 @@ async function executeUpdateMutation(
       },
     })
 
-    if ((result as any).errors) {
+    if (result.errors) {
       return {
         success: false,
-        message: (result as any).errors.map((err: any) => err.message).join(', '),
+        message: result.errors.map((err: any) => err.message).join(', '),
       }
     }
 
@@ -473,10 +497,10 @@ async function executeDeleteMutation(
       },
     })
 
-    if ((result as any).errors) {
+    if (result.errors) {
       return {
         success: false,
-        message: (result as any).errors.map((err: any) => err.message).join(', '),
+        message: result.errors.map((err: any) => err.message).join(', '),
       }
     }
 
