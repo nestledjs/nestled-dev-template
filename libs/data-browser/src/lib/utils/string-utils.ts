@@ -46,15 +46,10 @@ export function formatFieldName(fieldName: string): string {
     .replace(/^./, (str: string) => str.toUpperCase())
 }
 
-// Smart normalization function for GraphQL document names
+// Normalization function for GraphQL document names
+// Returns the model name as-is since the SDK generator uses exact Prisma model names
+// for GraphQL operation names (e.g., model "CourseFAQ" -> "__AdminCourseFAQ")
 export function normalizeModelNameForDocument(modelName: string): string {
-  // If it's all uppercase (likely an acronym), convert to proper case
-  if (modelName === modelName.toUpperCase() && modelName.length > 1) {
-    // For acronyms, only capitalize the first letter for document names
-    return modelName.charAt(0).toUpperCase() + modelName.slice(1).toLowerCase()
-  }
-  
-  // For normal PascalCase names, return as-is
   return modelName
 }
 
