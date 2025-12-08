@@ -327,6 +327,13 @@ export function buildFormFields(
         // Handle enum fields (check if field type exists in the SDK)
         const enumValues = getEnumValues(sdk, field.type)
         if (enumValues) {
+          console.log(`[DataBrowser] Building enum field "${field.name}":`, {
+            enumType: field.type,
+            availableValues: enumValues,
+            currentValue: initialValue,
+            operation,
+          })
+
           const selectOptions = enumValues.map((value: string) => ({
             value,
             label: value
@@ -335,10 +342,13 @@ export function buildFormFields(
               .replace(/^./, (str: string) => str.toUpperCase()),
           }))
 
-          formField = FormFieldClass.select(field.name, {
-            ...options,
-            options: selectOptions,
-          })
+          // For update operations, don't set individual field value - rely on form-level defaultValues
+          // This prevents conflicts where the field value doesn't update when defaultValues changes
+          const enumOptions = operation === 'update'
+            ? { label: options.label, required: options.required, options: selectOptions }
+            : { ...options, options: selectOptions }
+
+          formField = FormFieldClass.select(field.name, enumOptions)
           break
         }
 
@@ -671,6 +681,7 @@ export function cleanFormInput(
   input: Record<string, unknown>,
   model?: DatabaseModel,
 ): Record<string, unknown> {
+  console.log(`[DataBrowser] Cleaning form input for ${model?.name}:`, input)
   const cleaned: Record<string, unknown> = {}
 
   // Get boolean field names for special handling
@@ -738,5 +749,6 @@ export function cleanFormInput(
     cleaned[key] = value
   }
 
+  console.log(`[DataBrowser] Cleaned form input for ${model?.name}:`, cleaned)
   return cleaned
 }
