@@ -6,6 +6,7 @@ import type { DatabaseModel } from '../types'
 import type { DisplayFieldConfig } from '../context/AdminDataContext'
 import { RelationFieldWrapper } from '../components/RelationFieldWrapper'
 import { getPluralName } from './get-plural-names'
+import { normalizeModelNameForDocument } from './string-utils'
 
 /**
  * Dynamically get enum values from the SDK
@@ -38,21 +39,6 @@ function getEnumValues(sdk: any, enumType: string): string[] | null {
   } catch (error) {
     return null
   }
-}
-
-/**
- * Smart normalization for GraphQL document names
- * Automatically handles acronyms without manual mapping
- */
-function normalizeModelNameForDocument(modelName: string): string {
-  // If it's all uppercase (likely an acronym), convert to proper case
-  if (modelName === modelName.toUpperCase() && modelName.length > 1) {
-    // For acronyms, only capitalize the first letter for document names
-    return modelName.charAt(0).toUpperCase() + modelName.slice(1).toLowerCase()
-  }
-
-  // For normal PascalCase names, return as-is
-  return modelName
 }
 
 /**
