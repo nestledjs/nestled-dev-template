@@ -51,6 +51,26 @@ function PaginationButton({ show, onClick, label, className = '' }: PaginationBu
   )
 }
 
+// Order direction icon component
+interface OrderDirectionIconProps {
+  readonly field: string
+  readonly sort?: { orderBy: string; orderDirection: string }
+}
+
+function OrderDirectionIcon({ field, sort }: OrderDirectionIconProps) {
+  if (field === sort?.orderBy) {
+    switch (sort?.orderDirection) {
+      case 'desc':
+        return <ChevronUpIcon className={'w-5 h-5 font-bold'} />
+      case 'asc':
+        return <ChevronDownIcon className={'w-5 h-5 font-bold'} />
+      default:
+        return <ChevronUpDownIcon className={'w-6 h-6'} />
+    }
+  }
+  return <ChevronUpDownIcon className={'w-6 h-6'} />
+}
+
 // Sortable header cell component - defined outside DataTable to avoid re-creation on each render
 interface SortableHeaderCellProps {
   readonly field: string
@@ -65,20 +85,6 @@ function SortableHeaderCell({ field, index, sort, onSort, formatFieldName }: Sor
   const thClassName = isFirstColumn
     ? 'py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-100 sm:pl-6'
     : 'hidden px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100 lg:table-cell'
-
-  function OrderDirectionIcon() {
-    if (field === sort?.orderBy) {
-      switch (sort?.orderDirection) {
-        case 'desc':
-          return <ChevronUpIcon className={'w-5 h-5 font-bold'} />
-        case 'asc':
-          return <ChevronDownIcon className={'w-5 h-5 font-bold'} />
-        default:
-          return <ChevronUpDownIcon className={'w-6 h-6'} />
-      }
-    }
-    return <ChevronUpDownIcon className={'w-6 h-6'} />
-  }
 
   return (
     <th scope="col" className={thClassName}>
@@ -96,7 +102,7 @@ function SortableHeaderCell({ field, index, sort, onSort, formatFieldName }: Sor
         }
       >
         <span>{formatFieldName(field)}</span>
-        <OrderDirectionIcon />
+        <OrderDirectionIcon field={field} sort={sort} />
       </button>
     </th>
   )
