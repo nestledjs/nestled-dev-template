@@ -549,8 +549,8 @@ function AdminDataEditPageContent({ model, id, basePath, formTheme, displayField
   const QUERY = useMemo(() => {
     if (!documents?.query) return null
     try {
-      // Check if it's already a parsed GraphQL document
-      if (documents.query?.definitions && documents.query?.loc) {
+      // Check if it's already a parsed GraphQL document (TypedDocumentNode)
+      if (documents.query?.kind === 'Document' && documents.query?.definitions) {
         return documents.query
       }
       return gql(documents.query)
@@ -562,8 +562,8 @@ function AdminDataEditPageContent({ model, id, basePath, formTheme, displayField
   const UPDATE_MUTATION = useMemo(() => {
     if (!documents?.update) return null
     try {
-      // Check if it's already a parsed GraphQL document
-      if (documents.update?.definitions && documents.update?.loc) {
+      // Check if it's already a parsed GraphQL document (TypedDocumentNode)
+      if (documents.update?.kind === 'Document' && documents.update?.definitions) {
         return documents.update
       }
       return gql(documents.update)
@@ -575,8 +575,8 @@ function AdminDataEditPageContent({ model, id, basePath, formTheme, displayField
   const DELETE_MUTATION = useMemo(() => {
     if (!documents?.delete) return null
     try {
-      // Check if it's already a parsed GraphQL document
-      if (documents.delete?.definitions && documents.delete?.loc) {
+      // Check if it's already a parsed GraphQL document (TypedDocumentNode)
+      if (documents.delete?.kind === 'Document' && documents.delete?.definitions) {
         return documents.delete
       }
       return gql(documents.delete)
