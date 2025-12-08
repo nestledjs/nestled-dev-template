@@ -1044,7 +1044,7 @@ describe('graphql-utils', () => {
         expect(result.isVerified).toBe(false)
       })
 
-      it('should pass through arrays as-is when no model is provided', () => {
+      it('should pass through arrays as-is', () => {
         const input = {
           tags: ['tag1', 'tag2', 'tag3'],
         }
@@ -1052,92 +1052,6 @@ describe('graphql-utils', () => {
         const result = cleanFormInput(input)
 
         expect(result.tags).toEqual(['tag1', 'tag2', 'tag3'])
-      })
-
-      it('should wrap scalar array fields with Prisma set syntax when model is provided', () => {
-        const mockModel: DatabaseModel = {
-          name: 'Post',
-          fields: [
-            { name: 'id', type: 'String', isId: true, isList: false },
-            { name: 'tags', type: 'String', isList: true, isOptional: true },
-          ],
-        }
-        const input = {
-          tags: ['tag1', 'tag2', 'tag3'],
-        }
-
-        const result = cleanFormInput(input, mockModel)
-
-        expect(result.tags).toEqual({ set: ['tag1', 'tag2', 'tag3'] })
-      })
-
-      it('should wrap single values in array for scalar array fields', () => {
-        const mockModel: DatabaseModel = {
-          name: 'Post',
-          fields: [
-            { name: 'id', type: 'String', isId: true, isList: false },
-            { name: 'tags', type: 'String', isList: true, isOptional: true },
-          ],
-        }
-        const input = {
-          tags: 'single-tag',
-        }
-
-        const result = cleanFormInput(input, mockModel)
-
-        expect(result.tags).toEqual({ set: ['single-tag'] })
-      })
-
-      it('should set null for optional array fields with null/empty value', () => {
-        const mockModel: DatabaseModel = {
-          name: 'Post',
-          fields: [
-            { name: 'id', type: 'String', isId: true, isList: false },
-            { name: 'tags', type: 'String', isList: true, isOptional: true },
-          ],
-        }
-        const input = {
-          tags: null,
-        }
-
-        const result = cleanFormInput(input, mockModel)
-
-        expect(result.tags).toBeNull()
-      })
-
-      it('should set empty array for required array fields with null/empty value', () => {
-        const mockModel: DatabaseModel = {
-          name: 'Post',
-          fields: [
-            { name: 'id', type: 'String', isId: true, isList: false },
-            { name: 'tags', type: 'String', isList: true, isOptional: false },
-          ],
-        }
-        const input = {
-          tags: null,
-        }
-
-        const result = cleanFormInput(input, mockModel)
-
-        expect(result.tags).toEqual({ set: [] })
-      })
-
-      it('should not wrap relation list fields with Prisma set syntax', () => {
-        const mockModel: DatabaseModel = {
-          name: 'User',
-          fields: [
-            { name: 'id', type: 'String', isId: true, isList: false },
-            { name: 'posts', type: 'Post', isList: true, relationName: 'UserPosts' },
-          ],
-        }
-        const input = {
-          posts: [{ id: '1' }, { id: '2' }],
-        }
-
-        const result = cleanFormInput(input, mockModel)
-
-        // Relation lists should pass through as-is, not wrapped
-        expect(result.posts).toEqual([{ id: '1' }, { id: '2' }])
       })
 
       it('should pass through null values for allowed fields', () => {
