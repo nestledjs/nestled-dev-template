@@ -716,15 +716,20 @@ export function cleanFormInput(
     }
 
     // Special handling for array fields - use Prisma's { set: [...] } syntax
+    // Only applies when model metadata is provided
     const arrayFieldInfo = arrayFields.get(key)
     if (arrayFieldInfo) {
+      // Handle null/empty values for optional arrays - allow clearing the field
+      if (value === null || value === '') {
+        // For optional arrays, use null to clear; for required, use empty array
+        cleaned[key] = arrayFieldInfo.isRequired ? { set: [] } : null
+        continue
+      }
+
       // Ensure value is an array
       let arrayValue: unknown[]
       if (Array.isArray(value)) {
         arrayValue = value
-      } else if (value === null || value === '') {
-        // For null/empty values, default to empty array
-        arrayValue = []
       } else {
         // Single value, wrap in array
         arrayValue = [value]
