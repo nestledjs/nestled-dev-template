@@ -1054,6 +1054,61 @@ describe('graphql-utils', () => {
         expect(result.tags).toEqual(['tag1', 'tag2', 'tag3'])
       })
 
+      it('should convert undefined/null to empty array for required array fields', () => {
+        const mockModel: DatabaseModel = {
+          name: 'Schedule',
+          fields: [
+            { name: 'id', type: 'String', isId: true, isList: false },
+            { name: 'daysOfWeek', type: 'DayOfWeek', isList: true, isOptional: false },
+          ],
+        }
+        const input = {
+          id: '123',
+          daysOfWeek: null,
+        }
+
+        const result = cleanFormInput(input, mockModel)
+
+        expect(result.daysOfWeek).toEqual([])
+      })
+
+      it('should convert empty string to empty array for required array fields', () => {
+        const mockModel: DatabaseModel = {
+          name: 'Schedule',
+          fields: [
+            { name: 'id', type: 'String', isId: true, isList: false },
+            { name: 'daysOfWeek', type: 'DayOfWeek', isList: true, isOptional: false },
+          ],
+        }
+        const input = {
+          id: '123',
+          daysOfWeek: '',
+        }
+
+        const result = cleanFormInput(input, mockModel)
+
+        expect(result.daysOfWeek).toEqual([])
+      })
+
+      it('should not convert null to empty array for optional array fields', () => {
+        const mockModel: DatabaseModel = {
+          name: 'Post',
+          fields: [
+            { name: 'id', type: 'String', isId: true, isList: false },
+            { name: 'tags', type: 'String', isList: true, isOptional: true },
+          ],
+        }
+        const input = {
+          id: '123',
+          tags: null,
+        }
+
+        const result = cleanFormInput(input, mockModel)
+
+        // Optional array with null should pass through as null (to clear field)
+        expect(result.tags).toBeNull()
+      })
+
       it('should pass through null values for allowed fields', () => {
         const input = {
           name: 'John',
