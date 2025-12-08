@@ -694,10 +694,23 @@ export function cleanFormInput(
       ?.map(field => field.name) || [],
   )
 
+  // Get required array field names (isList: true and not optional, excluding relations)
+  const requiredArrayFields = new Set(
+    model?.fields
+      ?.filter(field => field.isList && !field.isOptional && !field.relationName)
+      ?.map(field => field.name) || [],
+  )
+
   for (const [key, value] of Object.entries(input)) {
     // Special handling for boolean fields: convert undefined to false
     if (booleanFields.has(key) && value === undefined) {
       cleaned[key] = false
+      continue
+    }
+
+    // Special handling for required array fields: convert undefined/null/empty to []
+    if (requiredArrayFields.has(key) && (value === undefined || value === null || value === '')) {
+      cleaned[key] = []
       continue
     }
 
