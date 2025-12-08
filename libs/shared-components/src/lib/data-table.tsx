@@ -80,6 +80,13 @@ interface SortableHeaderCellProps {
   readonly formatFieldName: (fieldName: string) => string
 }
 
+function getAriaSortValue(field: string, sort?: { orderBy: string; orderDirection: string }): 'ascending' | 'descending' | 'none' {
+  if (sort?.orderBy !== field) {
+    return 'none'
+  }
+  return sort.orderDirection === 'asc' ? 'ascending' : 'descending'
+}
+
 function SortableHeaderCell({ field, index, sort, onSort, formatFieldName }: SortableHeaderCellProps) {
   const isFirstColumn = index === 0
   const thClassName = isFirstColumn
@@ -93,13 +100,7 @@ function SortableHeaderCell({ field, index, sort, onSort, formatFieldName }: Sor
         onClick={() => onSort(field)}
         className="flex justify-between items-center w-full text-left hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500 rounded px-2 py-1 -mx-2 -my-1"
         aria-label={`Sort by ${formatFieldName(field)}`}
-        aria-sort={
-          sort?.orderBy === field
-            ? sort.orderDirection === 'asc'
-              ? 'ascending'
-              : 'descending'
-            : 'none'
-        }
+        aria-sort={getAriaSortValue(field, sort)}
       >
         <span>{formatFieldName(field)}</span>
         <OrderDirectionIcon field={field} sort={sort} />
