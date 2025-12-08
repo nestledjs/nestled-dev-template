@@ -4,24 +4,19 @@ documents:
   - 'libs/shared/sdk/src/graphql/**/*.graphql'
   - 'libs/shared/sdk/src/__admin/**/*.graphql'
 generates:
-  # TypedDocumentNode exports for reusable documents
+  # Generate types and TypedDocumentNode for Apollo Client 4
   libs/shared/sdk/src/generated/graphql.ts:
     plugins:
       - typescript
       - typescript-operations
-      - typescript-document-nodes
+      - typed-document-node
     config:
-      useTypeImports: true
-      preResolveTypes: true
       scalars:
         BigInt: bigint
-  # Client preset for inline queries
-  libs/shared/sdk/src/generated/client/:
-    preset: client
-    config:
-      useTypeImports: true
-      scalars:
-        BigInt: bigint
+      # Keep original operation names (no 'Document' suffix)
+      documentVariableSuffix: ''
+      # Use documentNode mode for proper TypedDocumentNode exports
+      documentMode: documentNode
 
 hooks:
   afterAllFileWrite:
