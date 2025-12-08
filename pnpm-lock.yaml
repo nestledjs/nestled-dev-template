@@ -858,8 +858,8 @@ importers:
         specifier: ^0.5.0
         version: 0.5.3(@mdxeditor/editor@3.39.1(@codemirror/language@6.11.2)(@lezer/highlight@1.2.1)(@types/react-dom@19.1.0(@types/react@19.1.0))(@types/react@19.1.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(yjs@13.6.27))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@nestledjs/shared-components':
-        specifier: ^0.1.25
-        version: 0.1.25(@heroicons/react@2.2.0(react@19.1.0))(react-router@7.9.5(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react@19.1.0)
+        specifier: ^1.0.0
+        version: 1.0.0(@heroicons/react@2.2.0(react@19.1.0))(react-router@7.9.5(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react@19.1.0)
       react:
         specifier: ^19.0.0
         version: 19.1.0
@@ -3993,8 +3993,8 @@ packages:
     peerDependencies:
       '@nestledjs/utils': 0.2.9
 
-  '@nestledjs/shared-components@0.1.25':
-    resolution: {integrity: sha512-yw/D8u2ofK+MzPNL++wAs6RzIea4Nv9uXMnwJQjvLmR6x4opbM/Ziud1z3oIOTImtlj0bUGuyJF0eHZ3+vn+/A==}
+  '@nestledjs/shared-components@1.0.0':
+    resolution: {integrity: sha512-wp3zjz7Gj4FfrU/wBJF5j6jRfsTudO38TzZj47Ik+7v0pGQ7whnvDcA+Q8ZB+y+Ohv0FUTSd1wrgBxr9JF7YVQ==}
     peerDependencies:
       '@heroicons/react': ^2.0.0
       react: ^18.0.0 || ^19.0.0
@@ -20443,7 +20443,7 @@ snapshots:
       - supports-color
       - verdaccio
 
-  '@nestledjs/shared-components@0.1.25(@heroicons/react@2.2.0(react@19.1.0))(react-router@7.9.5(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react@19.1.0)':
+  '@nestledjs/shared-components@1.0.0(@heroicons/react@2.2.0(react@19.1.0))(react-router@7.9.5(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react@19.1.0)':
     dependencies:
       '@heroicons/react': 2.2.0(react@19.1.0)
       dayjs: 1.11.13
