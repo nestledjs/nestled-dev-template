@@ -1,6 +1,6 @@
 {
   "name": "@nestledjs/data-browser",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "Universal admin data browser for Nestled framework projects with full CRUD operations",
   "main": "./index.js",
   "module": "./index.js",
@@ -38,7 +38,7 @@
     "@apollo/client": "^4.0.0",
     "@heroicons/react": "^2.0.0",
     "@nestledjs/forms": "^0.6.3",
-    "@nestledjs/shared-components": "^1.0.9",
+    "@nestledjs/shared-components": "^1.0.10",
     "react": "^19.0.0",
     "react-router": "^7.0.0"
   },
