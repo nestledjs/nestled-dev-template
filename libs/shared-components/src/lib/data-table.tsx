@@ -32,12 +32,14 @@ function toCount(p: Paging | null) {
 }
 
 // Reusable pagination button component
-function PaginationButton({ show, onClick, label, className = '' }: {
-  show: boolean
-  onClick: () => void
-  label: string
-  className?: string
-}) {
+interface PaginationButtonProps {
+  readonly show: boolean
+  readonly onClick: () => void
+  readonly label: string
+  readonly className?: string
+}
+
+function PaginationButton({ show, onClick, label, className = '' }: PaginationButtonProps) {
   if (!show) return null
   return (
     <div
@@ -46,6 +48,57 @@ function PaginationButton({ show, onClick, label, className = '' }: {
     >
       {label}
     </div>
+  )
+}
+
+// Sortable header cell component - defined outside DataTable to avoid re-creation on each render
+interface SortableHeaderCellProps {
+  readonly field: string
+  readonly index: number
+  readonly sort?: { orderBy: string; orderDirection: string }
+  readonly onSort: (field: string) => void
+  readonly formatFieldName: (fieldName: string) => string
+}
+
+function SortableHeaderCell({ field, index, sort, onSort, formatFieldName }: SortableHeaderCellProps) {
+  const isFirstColumn = index === 0
+  const thClassName = isFirstColumn
+    ? 'py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-100 sm:pl-6'
+    : 'hidden px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100 lg:table-cell'
+
+  function OrderDirectionIcon() {
+    if (field === sort?.orderBy) {
+      switch (sort?.orderDirection) {
+        case 'desc':
+          return <ChevronUpIcon className={'w-5 h-5 font-bold'} />
+        case 'asc':
+          return <ChevronDownIcon className={'w-5 h-5 font-bold'} />
+        default:
+          return <ChevronUpDownIcon className={'w-6 h-6'} />
+      }
+    }
+    return <ChevronUpDownIcon className={'w-6 h-6'} />
+  }
+
+  return (
+    <th scope="col" className={thClassName}>
+      <button
+        type="button"
+        onClick={() => onSort(field)}
+        className="flex justify-between items-center w-full text-left hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500 rounded px-2 py-1 -mx-2 -my-1"
+        aria-label={`Sort by ${formatFieldName(field)}`}
+        aria-sort={
+          sort?.orderBy === field
+            ? sort.orderDirection === 'asc'
+              ? 'ascending'
+              : 'descending'
+            : 'none'
+        }
+      >
+        <span>{formatFieldName(field)}</span>
+        <OrderDirectionIcon />
+      </button>
+    </th>
   )
 }
 
@@ -146,48 +199,6 @@ export function DataTable(props: DataTableProps) {
     })
   }
 
-  function OrderDirectionIcon({ fieldName }: { fieldName: string }) {
-    if (fieldName === props?.sort?.orderBy) {
-      switch (props?.sort?.orderDirection) {
-        case 'desc':
-          return <ChevronUpIcon className={'w-5 h-5 font-bold'} />
-        case 'asc':
-          return <ChevronDownIcon className={'w-5 h-5 font-bold'} />
-        default:
-          return <ChevronUpDownIcon className={'w-6 h-6'} />
-      }
-    }
-    return <ChevronUpDownIcon className={'w-6 h-6'} />
-  }
-
-  function SortableHeaderCell({ field, index }: { field: string; index: number }) {
-    const isFirstColumn = index === 0
-    const thClassName = isFirstColumn
-      ? 'py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-100 sm:pl-6'
-      : 'hidden px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100 lg:table-cell'
-
-    return (
-      <th key={index} scope="col" className={thClassName}>
-        <button
-          type="button"
-          onClick={() => handleSort(field)}
-          className="flex justify-between items-center w-full text-left hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500 rounded px-2 py-1 -mx-2 -my-1"
-          aria-label={`Sort by ${formatFieldName(field)}`}
-          aria-sort={
-            props.sort?.orderBy === field
-              ? props.sort.orderDirection === 'asc'
-                ? 'ascending'
-                : 'descending'
-              : 'none'
-          }
-        >
-          <span>{formatFieldName(field)}</span>
-          <OrderDirectionIcon fieldName={field} />
-        </button>
-      </th>
-    )
-  }
-
   return (
     <>
       {props?.additionalFilters && props.additionalFilters}
@@ -203,7 +214,14 @@ export function DataTable(props: DataTableProps) {
                   <span className="sr-only">Edit</span>
                 </th>
                 {props?.fields?.map((field, index) => (
-                  <SortableHeaderCell key={index} field={field} index={index} />
+                  <SortableHeaderCell
+                    key={field}
+                    field={field}
+                    index={index}
+                    sort={props.sort}
+                    onSort={handleSort}
+                    formatFieldName={formatFieldName}
+                  />
                 ))}
                 {/* Removed trailing Edit column */}
               </tr>
@@ -225,7 +243,7 @@ export function DataTable(props: DataTableProps) {
                         case 0:
                           return (
                             <td
-                              key={index}
+                              key={field}
                               className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 dark:text-gray-100 sm:pl-6"
                             >
                               {/* Special handling for ID field: show copy + eye icons instead of raw ID */}
@@ -272,7 +290,7 @@ export function DataTable(props: DataTableProps) {
                         default:
                           return (
                             <td
-                              key={index}
+                              key={field}
                               className="hidden whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400 lg:table-cell"
                             >
                               {renderValue(fieldValue)}
