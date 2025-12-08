@@ -361,7 +361,7 @@ export function buildFormFields(
           // CRITICAL FIX: Always use the foreign key field name, not the relation field name
           // This ensures the form submits with "avatarId" instead of "avatar"
           const relationFieldName = field.relationFromFields?.[0] || `${field.name}Id`
-          
+
           // For relation fields, get the foreign key value or extract ID from relation object
           let relationValue =
             currentItem && operation === 'update' ? currentItem[relationFieldName] : undefined
@@ -680,6 +680,7 @@ function processNestedObject(
 /**
  * Clean form input data for GraphQL mutations
  * Removes Apollo metadata and system fields
+ * Handles Prisma array field update syntax
  */
 export function cleanFormInput(
   input: Record<string, unknown>,
@@ -694,6 +695,14 @@ export function cleanFormInput(
       ?.map(field => field.name) || [],
   )
 
+  // Get array field metadata (isList: true)
+  // Map: fieldName -> { isRequired: boolean }
+  const arrayFields = new Map<string, { isRequired: boolean }>(
+    model?.fields
+      ?.filter(field => field.isList && !field.relationName) // Only scalar arrays, not relation lists
+      ?.map(field => [field.name, { isRequired: !field.isOptional }]) || [],
+  )
+
   for (const [key, value] of Object.entries(input)) {
     // Special handling for boolean fields: convert undefined to false
     if (booleanFields.has(key) && value === undefined) {
@@ -703,6 +712,26 @@ export function cleanFormInput(
 
     // Skip system fields and undefined values
     if (shouldSkipValue(key, value)) {
+      continue
+    }
+
+    // Special handling for array fields - use Prisma's { set: [...] } syntax
+    const arrayFieldInfo = arrayFields.get(key)
+    if (arrayFieldInfo) {
+      // Ensure value is an array
+      let arrayValue: unknown[]
+      if (Array.isArray(value)) {
+        arrayValue = value
+      } else if (value === null || value === '') {
+        // For required arrays, default to empty array; for optional, allow null
+        arrayValue = arrayFieldInfo.isRequired ? [] : []
+      } else {
+        // Single value, wrap in array
+        arrayValue = [value]
+      }
+
+      // Wrap in Prisma's update syntax
+      cleaned[key] = { set: arrayValue }
       continue
     }
 
@@ -735,7 +764,7 @@ export function cleanFormInput(
       continue
     }
 
-    // Pass through other values as-is
+    // Pass through other values as-is (including arrays that aren't in arrayFields)
     cleaned[key] = value
   }
 
