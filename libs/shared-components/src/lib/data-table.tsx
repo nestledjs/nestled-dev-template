@@ -31,6 +31,24 @@ function toCount(p: Paging | null) {
   return (p?.take ?? 0) + (p?.skip ?? 0)
 }
 
+// Reusable pagination button component
+function PaginationButton({ show, onClick, label, className = '' }: {
+  show: boolean
+  onClick: () => void
+  label: string
+  className?: string
+}) {
+  if (!show) return null
+  return (
+    <div
+      onClick={onClick}
+      className={`relative inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer ${className}`}
+    >
+      {label}
+    </div>
+  )
+}
+
 export interface DataTableProps {
   data?: any
   path: string
@@ -142,6 +160,34 @@ export function DataTable(props: DataTableProps) {
     return <ChevronUpDownIcon className={'w-6 h-6'} />
   }
 
+  function SortableHeaderCell({ field, index }: { field: string; index: number }) {
+    const isFirstColumn = index === 0
+    const thClassName = isFirstColumn
+      ? 'py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-100 sm:pl-6'
+      : 'hidden px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100 lg:table-cell'
+
+    return (
+      <th key={index} scope="col" className={thClassName}>
+        <button
+          type="button"
+          onClick={() => handleSort(field)}
+          className="flex justify-between items-center w-full text-left hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500 rounded px-2 py-1 -mx-2 -my-1"
+          aria-label={`Sort by ${formatFieldName(field)}`}
+          aria-sort={
+            props.sort?.orderBy === field
+              ? props.sort.orderDirection === 'asc'
+                ? 'ascending'
+                : 'descending'
+              : 'none'
+          }
+        >
+          <span>{formatFieldName(field)}</span>
+          <OrderDirectionIcon fieldName={field} />
+        </button>
+      </th>
+    )
+  }
+
   return (
     <>
       {props?.additionalFilters && props.additionalFilters}
@@ -156,85 +202,9 @@ export function DataTable(props: DataTableProps) {
                 <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-100 sm:pl-6">
                   <span className="sr-only">Edit</span>
                 </th>
-                {props?.fields?.map((field, index) => {
-                  switch (index) {
-                    case 0:
-                      return (
-                        <th
-                          key={index}
-                          scope="col"
-                          className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-100 sm:pl-6"
-                        >
-                          <button
-                            type="button"
-                            onClick={() => handleSort(field)}
-                            className="flex justify-between items-center w-full text-left hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500 rounded px-2 py-1 -mx-2 -my-1"
-                            aria-label={`Sort by ${formatFieldName(props.fields[index])}`}
-                            aria-sort={
-                              props.sort?.orderBy === field
-                                ? props.sort.orderDirection === 'asc'
-                                  ? 'ascending'
-                                  : 'descending'
-                                : 'none'
-                            }
-                          >
-                            <span>{formatFieldName(props.fields[index])}</span>
-                            <OrderDirectionIcon fieldName={props.fields[index]} />
-                          </button>
-                        </th>
-                      )
-                    case props.fields.length - 1:
-                      return (
-                        <th
-                          key={index}
-                          scope="col"
-                          className="hidden px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100 lg:table-cell"
-                        >
-                          <button
-                            type="button"
-                            onClick={() => handleSort(field)}
-                            className="flex justify-between items-center w-full text-left hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500 rounded px-2 py-1 -mx-2 -my-1"
-                            aria-label={`Sort by ${formatFieldName(props.fields[index])}`}
-                            aria-sort={
-                              props.sort?.orderBy === field
-                                ? props.sort.orderDirection === 'asc'
-                                  ? 'ascending'
-                                  : 'descending'
-                                : 'none'
-                            }
-                          >
-                            <span>{formatFieldName(props.fields[index])}</span>
-                            <OrderDirectionIcon fieldName={props.fields[index]} />
-                          </button>
-                        </th>
-                      )
-                    default:
-                      return (
-                        <th
-                          key={index}
-                          scope="col"
-                          className="hidden px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100 lg:table-cell"
-                        >
-                          <button
-                            type="button"
-                            onClick={() => handleSort(field)}
-                            className="flex justify-between items-center w-full text-left hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500 rounded px-2 py-1 -mx-2 -my-1"
-                            aria-label={`Sort by ${formatFieldName(props.fields[index])}`}
-                            aria-sort={
-                              props.sort?.orderBy === field
-                                ? props.sort.orderDirection === 'asc'
-                                  ? 'ascending'
-                                  : 'descending'
-                                : 'none'
-                            }
-                          >
-                            <span>{formatFieldName(props.fields[index])}</span>
-                            <OrderDirectionIcon fieldName={props.fields[index]} />
-                          </button>
-                        </th>
-                      )
-                  }
-                })}
+                {props?.fields?.map((field, index) => (
+                  <SortableHeaderCell key={index} field={field} index={index} />
+                ))}
                 {/* Removed trailing Edit column */}
               </tr>
             </thead>
@@ -336,26 +306,17 @@ export function DataTable(props: DataTableProps) {
               </p>
             </div>
             <div className="flex-1 flex justify-between sm:justify-end">
-              {(props?.pagination?.skip ?? 0) > 0 ? (
-                <div
-                  onClick={() => {
-                    props.setSkip?.((props?.pagination?.skip ?? 0) - (props?.pagination?.take ?? 0))
-                  }}
-                  className="relative inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
-                >
-                  Previous
-                </div>
-              ) : null}
-              {(props?.pagination?.skip ?? 0) + (props?.pagination?.take ?? 0) < (props?.pagination?.filteredTotal ?? 0) ? (
-                <div
-                  onClick={() => {
-                    props.setSkip?.((props?.pagination?.skip ?? 0) + (props?.pagination?.take ?? 0))
-                  }}
-                  className="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
-                >
-                  Next
-                </div>
-              ) : null}
+              <PaginationButton
+                show={(props?.pagination?.skip ?? 0) > 0}
+                onClick={() => props.setSkip?.((props?.pagination?.skip ?? 0) - (props?.pagination?.take ?? 0))}
+                label="Previous"
+              />
+              <PaginationButton
+                show={(props?.pagination?.skip ?? 0) + (props?.pagination?.take ?? 0) < (props?.pagination?.filteredTotal ?? 0)}
+                onClick={() => props.setSkip?.((props?.pagination?.skip ?? 0) + (props?.pagination?.take ?? 0))}
+                label="Next"
+                className="ml-3"
+              />
             </div>
           </nav>
         ) : null}
