@@ -409,7 +409,7 @@ function getStatusColors(isSuccess: boolean, isError: boolean): { bgColor: strin
   }
 }
 
-function getStatusIcon(isSuccess: boolean, isError: boolean): JSX.Element {
+function getStatusIcon(isSuccess: boolean, isError: boolean): React.ReactElement {
   if (isSuccess) {
     return <CheckCircleIcon className="h-5 w-5 text-green-400" />
   }
