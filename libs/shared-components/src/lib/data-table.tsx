@@ -147,13 +147,13 @@ export function DataTable(props: DataTableProps) {
       {props?.additionalFilters && props.additionalFilters}
 
       <>
-        <div className="-mx-4 mt-8 overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:-mx-6 md:mx-0 md:rounded-lg">
+        <div className="-mx-4 mt-8 overflow-hidden shadow ring-1 ring-black ring-opacity-5 dark:ring-gray-700 sm:-mx-6 md:mx-0 md:rounded-lg">
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-300">
-              <thead className="bg-gray-50">
+            <table className="min-w-full divide-y divide-gray-300 dark:divide-gray-700">
+              <thead className="bg-gray-50 dark:bg-gray-800">
               <tr>
                 {/* Edit column moved to far left */}
-                <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">
+                <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-100 sm:pl-6">
                   <span className="sr-only">Edit</span>
                 </th>
                 {props?.fields?.map((field, index) => {
@@ -163,12 +163,12 @@ export function DataTable(props: DataTableProps) {
                         <th
                           key={index}
                           scope="col"
-                          className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6"
+                          className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-100 sm:pl-6"
                         >
                           <button
                             type="button"
                             onClick={() => handleSort(field)}
-                            className="flex justify-between items-center w-full text-left hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500 rounded px-2 py-1 -mx-2 -my-1"
+                            className="flex justify-between items-center w-full text-left hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500 rounded px-2 py-1 -mx-2 -my-1"
                             aria-label={`Sort by ${formatFieldName(props.fields[index])}`}
                             aria-sort={
                               props.sort?.orderBy === field
@@ -188,12 +188,12 @@ export function DataTable(props: DataTableProps) {
                         <th
                           key={index}
                           scope="col"
-                          className="hidden px-3 py-3.5 text-left text-sm font-semibold text-gray-900 lg:table-cell"
+                          className="hidden px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100 lg:table-cell"
                         >
                           <button
                             type="button"
                             onClick={() => handleSort(field)}
-                            className="flex justify-between items-center w-full text-left hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500 rounded px-2 py-1 -mx-2 -my-1"
+                            className="flex justify-between items-center w-full text-left hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500 rounded px-2 py-1 -mx-2 -my-1"
                             aria-label={`Sort by ${formatFieldName(props.fields[index])}`}
                             aria-sort={
                               props.sort?.orderBy === field
@@ -213,12 +213,12 @@ export function DataTable(props: DataTableProps) {
                         <th
                           key={index}
                           scope="col"
-                          className="hidden px-3 py-3.5 text-left text-sm font-semibold text-gray-900 lg:table-cell"
+                          className="hidden px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100 lg:table-cell"
                         >
                           <button
                             type="button"
                             onClick={() => handleSort(field)}
-                            className="flex justify-between items-center w-full text-left hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500 rounded px-2 py-1 -mx-2 -my-1"
+                            className="flex justify-between items-center w-full text-left hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500 rounded px-2 py-1 -mx-2 -my-1"
                             aria-label={`Sort by ${formatFieldName(props.fields[index])}`}
                             aria-sort={
                               props.sort?.orderBy === field
@@ -238,13 +238,13 @@ export function DataTable(props: DataTableProps) {
                 {/* Removed trailing Edit column */}
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200 bg-white">
+            <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-900">
               {props?.data?.map((item: typeof props.data[0]) => {
                 return (
                   <tr key={item.id}>
                     {/* Edit cell moved to far left */}
                     <td className="whitespace-nowrap py-4 pl-4 pr-3 text-left text-sm font-medium sm:pl-6">
-                      <Link to={`${props.path}/${item.id}`} className="text-blue-600 hover:text-blue-900" title="Edit">
+                      <Link to={`${props.path}/${item.id}`} className="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300" title="Edit">
                         <PencilIcon className="w-5 h-5" />
                         <span className="sr-only">Edit {String(item.id)}</span>
                       </Link>
@@ -256,7 +256,7 @@ export function DataTable(props: DataTableProps) {
                           return (
                             <td
                               key={index}
-                              className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6"
+                              className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 dark:text-gray-100 sm:pl-6"
                             >
                               {/* Special handling for ID field: show copy + eye icons instead of raw ID */}
                               {field.toLowerCase() === 'id' ? (
@@ -264,7 +264,7 @@ export function DataTable(props: DataTableProps) {
                                   <div className="relative">
                                     <button
                                       type="button"
-                                      className="text-gray-600 hover:text-gray-900"
+                                      className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100"
                                       onClick={() => copyToClipboard(String(item.id))}
                                       title="Copy ID"
                                       aria-label="Copy ID"
@@ -272,14 +272,14 @@ export function DataTable(props: DataTableProps) {
                                       <DocumentDuplicateIcon className="w-5 h-5" />
                                     </button>
                                     {copiedId === String(item.id) && (
-                                      <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-xs px-2 py-1 rounded whitespace-nowrap">
+                                      <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 text-xs px-2 py-1 rounded whitespace-nowrap">
                                         Copied!
                                       </div>
                                     )}
                                   </div>
                                   <button
                                     type="button"
-                                    className="text-gray-600 hover:text-gray-900"
+                                    className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100"
                                     onClick={() => toggleIdVisibility(String(item.id))}
                                     title={visibleIds.has(String(item.id)) ? 'Hide ID' : 'Show ID'}
                                     aria-label={visibleIds.has(String(item.id)) ? 'Hide ID' : 'Show ID'}
@@ -291,7 +291,7 @@ export function DataTable(props: DataTableProps) {
                                     )}
                                   </button>
                                   {visibleIds.has(String(item.id)) && (
-                                    <span className="text-xs text-gray-500 font-mono">{String(item.id)}</span>
+                                    <span className="text-xs text-gray-500 dark:text-gray-400 font-mono">{String(item.id)}</span>
                                   )}
                                 </div>
                               ) : (
@@ -303,7 +303,7 @@ export function DataTable(props: DataTableProps) {
                           return (
                             <td
                               key={index}
-                              className="hidden whitespace-nowrap px-3 py-4 text-sm text-gray-500 lg:table-cell"
+                              className="hidden whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400 lg:table-cell"
                             >
                               {renderValue(fieldValue)}
                             </td>
@@ -326,7 +326,7 @@ export function DataTable(props: DataTableProps) {
             aria-label="Pagination"
           >
             <div className="hidden sm:block">
-              <p className="text-sm text-gray-700">
+              <p className="text-sm text-gray-700 dark:text-gray-300">
                 Showing{' '}
                 <span className="font-medium">
                   {props?.pagination?.filteredTotal === 0 ? 0 : (props?.pagination?.skip ?? 0) + 1}
@@ -341,7 +341,7 @@ export function DataTable(props: DataTableProps) {
                   onClick={() => {
                     props.setSkip?.((props?.pagination?.skip ?? 0) - (props?.pagination?.take ?? 0))
                   }}
-                  className="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+                  className="relative inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
                 >
                   Previous
                 </div>
@@ -351,7 +351,7 @@ export function DataTable(props: DataTableProps) {
                   onClick={() => {
                     props.setSkip?.((props?.pagination?.skip ?? 0) + (props?.pagination?.take ?? 0))
                   }}
-                  className="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+                  className="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
                 >
                   Next
                 </div>
