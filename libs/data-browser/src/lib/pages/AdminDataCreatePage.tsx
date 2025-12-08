@@ -193,8 +193,8 @@ function AdminDataCreatePageContent({ model, basePath, formTheme, displayFieldCo
   const CREATE_MUTATION = useMemo(() => {
     if (!documents?.create) return null
     try {
-      // Check if it's already a parsed GraphQL document
-      if (documents.create?.definitions && documents.create?.loc) {
+      // Check if it's already a parsed GraphQL document (TypedDocumentNode)
+      if (documents.create?.kind === 'Document' && documents.create?.definitions) {
         return documents.create
       }
 
