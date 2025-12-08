@@ -605,7 +605,7 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
     <div className="relative" data-dropdown="column-selector">
       <button
         onClick={() => setShowColumnSelector(!showColumnSelector)}
-        className="inline-flex items-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-web"
+        className="inline-flex items-center px-3 py-2 border border-gray-300 dark:border-gray-600 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-web"
       >
         Columns
         <svg
@@ -623,9 +623,9 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
       </button>
 
       {showColumnSelector && (
-        <div className="absolute right-0 mt-2 w-80 bg-white rounded-md shadow-lg z-50 border border-gray-200">
+        <div className="absolute right-0 mt-2 w-80 bg-white dark:bg-gray-800 rounded-md shadow-lg z-50 border border-gray-200 dark:border-gray-700">
           <div className="p-4">
-            <h3 className="text-sm font-medium text-gray-900 mb-3">Visible Columns</h3>
+            <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-3">Visible Columns</h3>
             <div className="space-y-2 max-h-64 overflow-y-auto">
               {fieldNames.map((field: string) => (
                 <label key={field} className="flex items-start gap-2 cursor-pointer">
@@ -639,13 +639,13 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
                       setVisibleColumns(newColumns)
                       AdminLocalStorage.setColumnVisibility(model.name, newColumns)
                     }}
-                    className="h-4 w-4 mt-0.5 flex-shrink-0 text-green-web focus:ring-green-web border-gray-300 rounded"
+                    className="h-4 w-4 mt-0.5 flex-shrink-0 text-green-web focus:ring-green-web border-gray-300 dark:border-gray-600 rounded"
                   />
-                  <span className="text-sm text-gray-700 leading-5">{formatFieldName(field)}</span>
+                  <span className="text-sm text-gray-700 dark:text-gray-300 leading-5">{formatFieldName(field)}</span>
                 </label>
               ))}
             </div>
-            <div className="mt-3 pt-3 border-t border-gray-200 flex justify-between">
+            <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700 flex justify-between">
               <button
                 onClick={() => {
                   setVisibleColumns(fieldNames)
@@ -661,7 +661,7 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
                   setVisibleColumns(defaults)
                   AdminLocalStorage.setColumnVisibility(model.name, defaults)
                 }}
-                className="text-xs text-gray-600 hover:text-gray-800"
+                className="text-xs text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
               >
                 Reset to Defaults
               </button>
@@ -677,7 +677,7 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
     <div className="relative" data-dropdown="search-field-selector">
       <button
         onClick={() => setShowSearchFieldSelector(!showSearchFieldSelector)}
-        className="h-full px-3 border-l border-gray-300 text-gray-400 hover:text-gray-600 focus:outline-none focus:text-gray-600"
+        className="h-full px-3 border-l border-gray-300 dark:border-gray-600 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 focus:outline-none focus:text-gray-600 dark:focus:text-gray-300"
         aria-label="Configure search fields"
       >
         <svg
@@ -695,9 +695,9 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
       </button>
 
       {showSearchFieldSelector && (
-        <div className="absolute right-0 mt-2 w-72 bg-white rounded-md shadow-lg z-50 border border-gray-200">
+        <div className="absolute right-0 mt-2 w-72 bg-white dark:bg-gray-800 rounded-md shadow-lg z-50 border border-gray-200 dark:border-gray-700">
           <div className="p-4">
-            <h3 className="text-sm font-medium text-gray-900 mb-3">Search Fields</h3>
+            <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-3">Search Fields</h3>
             {searchableFieldNames.length > 0 ? (
               <>
                 <div className="space-y-2 max-h-48 overflow-y-auto">
@@ -713,15 +713,15 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
                           setSearchFields(newFields)
                           AdminLocalStorage.setSearchFields(model.name, newFields)
                         }}
-                        className="h-4 w-4 mt-0.5 flex-shrink-0 text-green-web focus:ring-green-web border-gray-300 rounded"
+                        className="h-4 w-4 mt-0.5 flex-shrink-0 text-green-web focus:ring-green-web border-gray-300 dark:border-gray-600 rounded"
                       />
-                      <span className="text-sm text-gray-700 leading-5">
+                      <span className="text-sm text-gray-700 dark:text-gray-300 leading-5">
                         {formatFieldName(field)}
                       </span>
                     </label>
                   ))}
                 </div>
-                <div className="mt-3 pt-3 border-t border-gray-200 flex justify-between">
+                <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700 flex justify-between">
                   <button
                     onClick={() => {
                       setSearchFields(searchableFieldNames)
@@ -737,14 +737,14 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
                       setSearchFields(defaults)
                       AdminLocalStorage.setSearchFields(model.name, defaults)
                     }}
-                    className="text-xs text-gray-600 hover:text-gray-800"
+                    className="text-xs text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
                   >
                     Reset to Defaults
                   </button>
                 </div>
               </>
             ) : (
-              <div className="text-sm text-gray-500">No searchable text fields available</div>
+              <div className="text-sm text-gray-500 dark:text-gray-400">No searchable text fields available</div>
             )}
           </div>
         </div>
@@ -754,22 +754,22 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
 
   // Filter panel for advanced filtering
   const filterPanel = showFilters && (
-    <div className="mb-4 bg-gray-50 border border-gray-200 rounded-lg p-4">
+    <div className="mb-4 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
       <div className="flex items-center justify-between mb-3">
-        <h3 className="text-sm font-medium text-gray-900">Filters</h3>
+        <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100">Filters</h3>
         <div className="flex items-center space-x-2">
           <button
             onClick={() => {
               setFilters({})
               dispatch({ type: 'RESET_PAGINATION' })
             }}
-            className="text-xs text-gray-600 hover:text-gray-800"
+            className="text-xs text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
           >
             Clear All
           </button>
           <button
             onClick={() => setShowFilters(false)}
-            className="text-gray-400 hover:text-gray-600"
+            className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
           >
             <svg
               className="h-5 w-5"
@@ -869,7 +869,7 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
           <input
             id="search"
             name="search"
-            className="block w-full pl-10 pr-12 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-green-web focus:border-green-web sm:text-sm"
+            className="block w-full pl-10 pr-12 py-2 border border-gray-300 dark:border-gray-600 rounded-md leading-5 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:placeholder-gray-400 dark:focus:placeholder-gray-500 focus:ring-1 focus:ring-green-web focus:border-green-web sm:text-sm"
             placeholder={`Search ${searchFields.length > 0 ? searchFields.map((field: string) => field.replace(/([a-z])([A-Z])/g, '$1 $2').replace(/^./, (str: string) => str.toUpperCase())).join(', ') : getPluralName(model.name).toLowerCase()}...`}
             type="search"
             value={state.search || ''}
@@ -887,8 +887,8 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
           onClick={() => setShowFilters(!showFilters)}
           className={`inline-flex items-center px-3 py-2 border text-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-web ${
             showFilters || Object.keys(filters).length > 0
-              ? 'border-green-web text-green-web bg-green-50 hover:bg-green-100'
-              : 'border-gray-300 text-gray-700 bg-white hover:bg-gray-50'
+              ? 'border-green-web text-green-web bg-green-50 dark:bg-green-900/30 hover:bg-green-100 dark:hover:bg-green-900/50'
+              : 'border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700'
           }`}
         >
           <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
