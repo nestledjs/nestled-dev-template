@@ -106,18 +106,27 @@ describe('string-utils', () => {
   })
 
   describe('normalizeModelNameForDocument', () => {
-    it('should return model names unchanged (SDK uses exact Prisma model names)', () => {
-      // PascalCase names
+    it('should convert 3+ consecutive uppercase letters to title case (matching GraphQL codegen)', () => {
+      // Names with 3+ letter acronyms - codegen converts to title case
+      expect(normalizeModelNameForDocument('CourseFAQ')).toBe('CourseFaq')
+      expect(normalizeModelNameForDocument('API')).toBe('Api')
+      expect(normalizeModelNameForDocument('HTMLParser')).toBe('HtmlParser')
+      expect(normalizeModelNameForDocument('APIToken')).toBe('ApiToken')
+    })
+
+    it('should preserve 2-letter uppercase runs (like OAuth)', () => {
+      // 2-letter runs stay as-is
+      expect(normalizeModelNameForDocument('OAuthAccount')).toBe('OAuthAccount')
+      expect(normalizeModelNameForDocument('ID')).toBe('ID')
+    })
+
+    it('should leave regular PascalCase names unchanged', () => {
       expect(normalizeModelNameForDocument('User')).toBe('User')
       expect(normalizeModelNameForDocument('Organization')).toBe('Organization')
       expect(normalizeModelNameForDocument('TeamMember')).toBe('TeamMember')
+    })
 
-      // Names with acronyms - should stay unchanged to match SDK-generated GraphQL operations
-      expect(normalizeModelNameForDocument('CourseFAQ')).toBe('CourseFAQ')
-      expect(normalizeModelNameForDocument('API')).toBe('API')
-      expect(normalizeModelNameForDocument('HTMLParser')).toBe('HTMLParser')
-
-      // camelCase names
+    it('should handle camelCase names', () => {
       expect(normalizeModelNameForDocument('userPreference')).toBe('userPreference')
       expect(normalizeModelNameForDocument('teamMember')).toBe('teamMember')
     })
