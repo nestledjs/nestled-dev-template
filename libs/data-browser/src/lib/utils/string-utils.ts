@@ -47,10 +47,26 @@ export function formatFieldName(fieldName: string): string {
 }
 
 // Normalization function for GraphQL document names
-// Returns the model name as-is since the SDK generator uses exact Prisma model names
-// for GraphQL operation names (e.g., model "CourseFAQ" -> "__AdminCourseFAQ")
+// GraphQL codegen converts runs of 3+ consecutive uppercase letters to title case
+// e.g., "CourseFAQ" -> "CourseFaq", "APIToken" -> "ApiToken"
+// But 2-letter runs like "OAuth" stay as-is: "OAuthAccount" -> "OAuthAccount"
 export function normalizeModelNameForDocument(modelName: string): string {
+  // Convert consecutive uppercase letters (3+) to title case
+  // Handle two cases:
+  // 1. Acronym followed by lowercase: "APIToken" -> match "API", keep "T" -> "ApiToken"
+  // 2. Acronym at end of string: "CourseFAQ" -> "CourseFaq"
   return modelName
+    // First handle acronyms followed by another capital+lowercase (e.g., APIToken -> ApiToken)
+    .replace(/([A-Z]{2,})([A-Z][a-z])/g, (_, acronym, rest) => {
+      if (acronym.length >= 2) {
+        return acronym.charAt(0).toUpperCase() + acronym.slice(1).toLowerCase() + rest
+      }
+      return acronym + rest
+    })
+    // Then handle acronyms at end of string (e.g., CourseFAQ -> CourseFaq)
+    .replace(/[A-Z]{3,}$/g, match =>
+      match.charAt(0).toUpperCase() + match.slice(1).toLowerCase()
+    )
 }
 
 // Utility function for generating display names
