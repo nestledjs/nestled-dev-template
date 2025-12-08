@@ -858,11 +858,11 @@ importers:
         specifier: ^2.0.0
         version: 2.2.0(react@19.1.0)
       '@nestledjs/forms':
-        specifier: ^0.5.0
-        version: 0.5.3(@mdxeditor/editor@3.39.1(@codemirror/language@6.11.2)(@lezer/highlight@1.2.1)(@types/react-dom@19.1.0(@types/react@19.1.0))(@types/react@19.1.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(yjs@13.6.27))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+        specifier: ^0.6.3
+        version: 0.6.3(@mdxeditor/editor@3.39.1(@codemirror/language@6.11.2)(@lezer/highlight@1.2.1)(@types/react-dom@19.1.0(@types/react@19.1.0))(@types/react@19.1.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(yjs@13.6.27))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@nestledjs/shared-components':
-        specifier: ^1.0.2
-        version: 1.0.2(@heroicons/react@2.2.0(react@19.1.0))(react-router@7.9.5(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react@19.1.0)
+        specifier: ^1.0.8
+        version: 1.0.8(@heroicons/react@2.2.0(react@19.1.0))(react-router@7.9.5(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react@19.1.0)
       react:
         specifier: ^19.0.0
         version: 19.1.0
@@ -3968,16 +3968,6 @@ packages:
     peerDependencies:
       '@nestledjs/utils': 0.2.9
 
-  '@nestledjs/forms@0.5.3':
-    resolution: {integrity: sha512-hlEsvy5REd6GdNVjAdN9kxxcAtzs8TbfySFoBBeHCZtQp4nZbcFpldCtVDSF3tfGoJ0AYRwN8ddybQ6iM8ncDQ==}
-    peerDependencies:
-      '@mdxeditor/editor': ^3.39.1
-      react: '>=18.0.0'
-      react-dom: '>=18.0.0'
-    peerDependenciesMeta:
-      '@mdxeditor/editor':
-        optional: true
-
   '@nestledjs/forms@0.6.3':
     resolution: {integrity: sha512-RyHdv4SSoC4nFEhqn5MhUQeRA9xFUbXD8vpg3rRm7KplZ6kqOExYk7qscrHZoFe10y/OZYBU0CXIKRUnkjXI7w==}
     peerDependencies:
@@ -3996,8 +3986,8 @@ packages:
     peerDependencies:
       '@nestledjs/utils': 0.2.9
 
-  '@nestledjs/shared-components@1.0.2':
-    resolution: {integrity: sha512-V/IQaV6ErnT+of8iacWMAJWn7ZYNTf7Z0LE+gTKmF+M9o9isVVviJJhJIdvgRwflfVmj1yanpiNt86bT7SLNFQ==}
+  '@nestledjs/shared-components@1.0.8':
+    resolution: {integrity: sha512-ZStab1m8LFMF2kf2GaEFYxkW+tZbEeyYn3HS1+eDXh5Jgn9mCygtqRs3DWIl5kE4/pz+/XtnXNk3a3RlX8ELLw==}
     peerDependencies:
       '@heroicons/react': ^2.0.0
       react: ^18.0.0 || ^19.0.0
@@ -20363,18 +20353,6 @@ snapshots:
     transitivePeerDependencies:
       - nx
 
-  '@nestledjs/forms@0.5.3(@mdxeditor/editor@3.39.1(@codemirror/language@6.11.2)(@lezer/highlight@1.2.1)(@types/react-dom@19.1.0(@types/react@19.1.0))(@types/react@19.1.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(yjs@13.6.27))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
-    dependencies:
-      '@hookform/resolvers': 3.10.0(react-hook-form@7.60.0(react@19.1.0))
-      date-fns: 4.1.0
-      react: 19.1.0
-      react-dom: 19.1.0(react@19.1.0)
-      react-hook-form: 7.60.0(react@19.1.0)
-      react-phone-number-input: 3.4.12(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
-      zod: 3.25.56
-    optionalDependencies:
-      '@mdxeditor/editor': 3.39.1(@codemirror/language@6.11.2)(@lezer/highlight@1.2.1)(@types/react-dom@19.1.0(@types/react@19.1.0))(@types/react@19.1.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(yjs@13.6.27)
-
   '@nestledjs/forms@0.6.3(@mdxeditor/editor@3.39.1(@codemirror/language@6.11.2)(@lezer/highlight@1.2.1)(@types/react-dom@19.1.0(@types/react@19.1.0))(@types/react@19.1.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(yjs@13.6.27))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
     dependencies:
       '@hookform/resolvers': 3.10.0(react-hook-form@7.60.0(react@19.1.0))
@@ -20446,7 +20424,7 @@ snapshots:
       - supports-color
       - verdaccio
 
-  '@nestledjs/shared-components@1.0.2(@heroicons/react@2.2.0(react@19.1.0))(react-router@7.9.5(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react@19.1.0)':
+  '@nestledjs/shared-components@1.0.8(@heroicons/react@2.2.0(react@19.1.0))(react-router@7.9.5(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react@19.1.0)':
     dependencies:
       '@heroicons/react': 2.2.0(react@19.1.0)
       dayjs: 1.11.13

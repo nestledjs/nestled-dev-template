@@ -172,6 +172,8 @@ function extractInitialValues(model: any, item: any): Record<string, any> {
     return initialValues
   }
 
+  console.log(`[DataBrowser] Extracting initial values for ${model.name}:`, item)
+
   // Include ID field
   const idField = model.fields.find((f: any) => f.isId)
   if (idField) {
@@ -203,11 +205,22 @@ function extractInitialValues(model: any, item: any): Record<string, any> {
       }
 
       initialValues[field.name] = value
+
+      // Log enum fields specifically
+      if (value !== null && typeof value === 'string' && fieldTypeLower !== 'string' && fieldTypeLower !== 'datetime' && fieldTypeLower !== 'date') {
+        console.log(`[DataBrowser] Enum field detected - "${field.name}":`, {
+          type: field.type,
+          extractedValue: value,
+          rawValue: item[field.name],
+        })
+      }
     }
   })
 
   // Final safety checks
   performFinalSafetyChecks(initialValues, model)
+
+  console.log(`[DataBrowser] Final initial values for ${model.name}:`, initialValues)
 
   return initialValues
 }
@@ -711,6 +724,7 @@ function AdminDataEditPageContent({ model, id, basePath, formTheme, displayField
 
   // Handle form submission
   const handleSubmit = async (formData: Record<string, unknown>) => {
+    console.log(`[DataBrowser] Form submission for ${model.name}:`, formData)
     setSubmissionState({ status: 'loading' })
 
     const result = await executeUpdateMutation(updateMutation, formData, model, id, idVariableName)
@@ -723,7 +737,9 @@ function AdminDataEditPageContent({ model, id, basePath, formTheme, displayField
     window.scrollTo({ top: 0, behavior: 'smooth' })
 
     if (result.success) {
-      await refetch()
+      console.log(`[DataBrowser] Update successful, refetching data for ${model.name}...`)
+      const refetchResult = await refetch()
+      console.log(`[DataBrowser] Refetch complete for ${model.name}:`, refetchResult.data)
     }
   }
 
