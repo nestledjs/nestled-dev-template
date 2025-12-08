@@ -106,30 +106,20 @@ describe('string-utils', () => {
   })
 
   describe('normalizeModelNameForDocument', () => {
-    it('should convert all-uppercase acronyms to proper case', () => {
-      expect(normalizeModelNameForDocument('API')).toBe('Api')
-      expect(normalizeModelNameForDocument('XML')).toBe('Xml')
-      expect(normalizeModelNameForDocument('HTML')).toBe('Html')
-    })
-
-    it('should leave PascalCase names unchanged', () => {
+    it('should return model names unchanged (SDK uses exact Prisma model names)', () => {
+      // PascalCase names
       expect(normalizeModelNameForDocument('User')).toBe('User')
       expect(normalizeModelNameForDocument('Organization')).toBe('Organization')
       expect(normalizeModelNameForDocument('TeamMember')).toBe('TeamMember')
-    })
 
-    it('should leave camelCase names unchanged', () => {
+      // Names with acronyms - should stay unchanged to match SDK-generated GraphQL operations
+      expect(normalizeModelNameForDocument('CourseFAQ')).toBe('CourseFAQ')
+      expect(normalizeModelNameForDocument('API')).toBe('API')
+      expect(normalizeModelNameForDocument('HTMLParser')).toBe('HTMLParser')
+
+      // camelCase names
       expect(normalizeModelNameForDocument('userPreference')).toBe('userPreference')
       expect(normalizeModelNameForDocument('teamMember')).toBe('teamMember')
-    })
-
-    it('should handle single uppercase letter as acronym', () => {
-      expect(normalizeModelNameForDocument('A')).toBe('A')
-    })
-
-    it('should handle mixed case as non-acronym', () => {
-      expect(normalizeModelNameForDocument('aPi')).toBe('aPi')
-      expect(normalizeModelNameForDocument('UsER')).toBe('UsER')
     })
 
     it('should handle empty strings', () => {
