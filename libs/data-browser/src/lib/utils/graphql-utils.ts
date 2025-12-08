@@ -723,8 +723,8 @@ export function cleanFormInput(
       if (Array.isArray(value)) {
         arrayValue = value
       } else if (value === null || value === '') {
-        // For required arrays, default to empty array; for optional, allow null
-        arrayValue = arrayFieldInfo.isRequired ? [] : []
+        // For null/empty values, default to empty array
+        arrayValue = []
       } else {
         // Single value, wrap in array
         arrayValue = [value]

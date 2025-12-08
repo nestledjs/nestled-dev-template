@@ -1,0 +1,18 @@
+[2025-12-08T15:17:26.319Z] [INFO] 🚀 Starting SonarQube fix loop for PR #14
+[2025-12-08T15:17:26.321Z] [INFO]    Max iterations: 10
+[2025-12-08T15:17:26.321Z] [INFO]    Auto-commit: false
+[2025-12-08T15:17:26.321Z] [INFO] 🔍 Checking prerequisites...
+[2025-12-08T15:17:26.634Z] [WARN] ⚠️  SonarQube environment variables not set
+[2025-12-08T15:17:26.634Z] [WARN]   Set SONARQUBE_URL, SONARQUBE_TOKEN, and SONARQUBE_PROJECT_KEY
+[2025-12-08T15:17:26.634Z] [INFO] ✅ Prerequisites check passed
+[2025-12-08T15:17:26.634Z] [INFO] 
+🔄 === Iteration 1/10 ===
+[2025-12-08T15:17:26.634Z] [INFO] 🔍 Checking if SonarCloud analysis exists...
+[2025-12-08T15:17:27.670Z] [ERROR] Error checking SonarCloud: Command failed: node /Users/justinhandley/.npm/_npx/aa078f08bc71fcdf/node_modules/sonarqube-claude-tools/bin/sonar-check.js 14 --json
+
+[2025-12-08T15:17:27.684Z] [INFO] 🔍 Running SonarQube analysis...
+[2025-12-08T15:17:28.719Z] [INFO] 📊 Found 1 issues
+[2025-12-08T15:17:28.720Z] [INFO] 📝 Fix prompt generated and saved to .claude-fix-prompt-14.md
+[2025-12-08T15:17:28.720Z] [INFO] ⏸️ Waiting for file changes or user input...
+[2025-12-08T15:22:38.132Z] [INFO] 📝 Detected change in libs/data-browser/src/lib/utils/graphql-utils.ts
+[2025-12-08T15:22:38.132Z] [INFO] 📦 Committing and pushing changes...
