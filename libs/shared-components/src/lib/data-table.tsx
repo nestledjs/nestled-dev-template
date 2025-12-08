@@ -87,11 +87,11 @@ function getAriaSortValue(field: string, sort?: { orderBy: string; orderDirectio
   return sort.orderDirection === 'asc' ? 'ascending' : 'descending'
 }
 
+const FIRST_COLUMN_CLASS = 'py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-100 sm:pl-6'
+const OTHER_COLUMN_CLASS = 'hidden px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100 lg:table-cell'
+
 function SortableHeaderCell({ field, index, sort, onSort, formatFieldName }: SortableHeaderCellProps) {
-  const isFirstColumn = index === 0
-  const thClassName = isFirstColumn
-    ? 'py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-100 sm:pl-6'
-    : 'hidden px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100 lg:table-cell'
+  const thClassName = index === 0 ? FIRST_COLUMN_CLASS : OTHER_COLUMN_CLASS
 
   return (
     <th scope="col" className={thClassName}>
