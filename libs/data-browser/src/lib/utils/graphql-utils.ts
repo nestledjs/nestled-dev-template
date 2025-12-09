@@ -332,8 +332,43 @@ export function buildFormFields(
             availableValues: enumValues,
             currentValue: initialValue,
             operation,
+            isList: field.isList,
           })
 
+          // For array enums (isList: true), use checkboxGroup for multi-select
+          if (field.isList) {
+            // Convert array values to comma-separated string for checkboxGroup
+            let defaultValue = ''
+            if (Array.isArray(initialValue) && initialValue.length > 0) {
+              defaultValue = initialValue.join(',')
+            }
+
+            console.log(`[DataBrowser] Array enum field "${field.name}" converted:`, {
+              arrayValue: initialValue,
+              stringValue: defaultValue,
+            })
+
+            const checkboxOptions = enumValues.map((value: string) => ({
+              key: value,
+              value: value,
+              label: value
+                .replace(/_/g, ' ')
+                .toLowerCase()
+                .replace(/^./, (str: string) => str.toUpperCase()),
+            }))
+
+            formField = FormFieldClass.checkboxGroup(field.name, {
+              label: options.label,
+              required: options.required,
+              checkboxOptions: checkboxOptions,
+              checkboxDirection: 'column',
+              // Don't set value in field options for update operations
+              ...(operation !== 'update' && defaultValue && { defaultValue }),
+            })
+            break
+          }
+
+          // For single enum values, use select dropdown
           const selectOptions = enumValues.map((value: string) => ({
             value,
             label: value
@@ -698,11 +733,40 @@ export function cleanFormInput(
       ?.map(field => field.name) || [],
   )
 
+  // Get enum array field names (isList: true and kind: 'enum')
+  const enumArrayFields = new Set(
+    model?.fields
+      ?.filter(field => field.isList && field.kind === 'enum')
+      ?.map(field => field.name) || [],
+  )
+
   for (const [key, value] of Object.entries(input)) {
     // Special handling for boolean fields: convert undefined to false
     if (booleanFields.has(key) && value === undefined) {
       cleaned[key] = false
       continue
+    }
+
+    // Special handling for enum array fields: convert comma-separated string to array
+    if (enumArrayFields.has(key)) {
+      if (typeof value === 'string') {
+        // Split by comma and filter out empty strings
+        const arrayValue = value.split(',').filter(v => v.trim() !== '')
+        console.log(`[DataBrowser] Converting enum array "${key}":`, {
+          stringValue: value,
+          arrayValue: arrayValue,
+        })
+        cleaned[key] = arrayValue
+        continue
+      } else if (Array.isArray(value)) {
+        // Already an array, just use it
+        cleaned[key] = value
+        continue
+      } else if (value === undefined || value === null || value === '') {
+        // Empty value - use empty array if required, null otherwise
+        cleaned[key] = requiredArrayFields.has(key) ? [] : []
+        continue
+      }
     }
 
     // Special handling for required array fields: convert undefined/null/empty to []
