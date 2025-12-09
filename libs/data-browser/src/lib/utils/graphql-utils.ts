@@ -327,14 +327,6 @@ export function buildFormFields(
         // Handle enum fields (check if field type exists in the SDK)
         const enumValues = getEnumValues(sdk, field.type)
         if (enumValues) {
-          console.log(`[DataBrowser] Building enum field "${field.name}":`, {
-            enumType: field.type,
-            availableValues: enumValues,
-            currentValue: initialValue,
-            operation,
-            isList: field.isList,
-          })
-
           // For array enums (isList: true), use checkboxGroup for multi-select
           if (field.isList) {
             // Convert array values to comma-separated string for checkboxGroup
@@ -342,11 +334,6 @@ export function buildFormFields(
             if (Array.isArray(initialValue) && initialValue.length > 0) {
               defaultValue = initialValue.join(',')
             }
-
-            console.log(`[DataBrowser] Array enum field "${field.name}" converted:`, {
-              arrayValue: initialValue,
-              stringValue: defaultValue,
-            })
 
             const checkboxOptions = enumValues.map((value: string) => ({
               key: value,
@@ -716,7 +703,6 @@ export function cleanFormInput(
   input: Record<string, unknown>,
   model?: DatabaseModel,
 ): Record<string, unknown> {
-  console.log(`[DataBrowser] Cleaning form input for ${model?.name}:`, input)
   const cleaned: Record<string, unknown> = {}
 
   // Get boolean field names for special handling
@@ -752,10 +738,6 @@ export function cleanFormInput(
       if (typeof value === 'string') {
         // Split by comma and filter out empty strings
         const arrayValue = value.split(',').filter(v => v.trim() !== '')
-        console.log(`[DataBrowser] Converting enum array "${key}":`, {
-          stringValue: value,
-          arrayValue: arrayValue,
-        })
         cleaned[key] = arrayValue
         continue
       } else if (Array.isArray(value)) {
@@ -813,6 +795,5 @@ export function cleanFormInput(
     cleaned[key] = value
   }
 
-  console.log(`[DataBrowser] Cleaned form input for ${model?.name}:`, cleaned)
   return cleaned
 }
