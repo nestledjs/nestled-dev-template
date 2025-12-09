@@ -352,7 +352,7 @@ export function buildFormFields(
               key: value,
               value: value,
               label: value
-                .replace(/_/g, ' ')
+                .replaceAll('_', ' ')
                 .toLowerCase()
                 .replace(/^./, (str: string) => str.toUpperCase()),
             }))
