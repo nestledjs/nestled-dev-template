@@ -763,8 +763,8 @@ export function cleanFormInput(
         cleaned[key] = value
         continue
       } else if (value === undefined || value === null || value === '') {
-        // Empty value - use empty array if required, null otherwise
-        cleaned[key] = requiredArrayFields.has(key) ? [] : []
+        // Empty value - use empty array for enum arrays (required or not)
+        cleaned[key] = []
         continue
       }
     }
