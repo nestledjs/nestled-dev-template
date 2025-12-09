@@ -198,12 +198,14 @@ function extractInitialValues(model: any, item: any): Record<string, any> {
     } else {
       const fieldTypeLower = field.type.toLowerCase()
 
-      // Handle enum arrays BEFORE sanitization (arrays are objects and would be converted to '')
-      if (field.kind === 'enum' && field.isList) {
-        // Ensure value is an array
-        if (!Array.isArray(value)) {
-          value = []
-        }
+      if (fieldTypeLower === 'datetime' || fieldTypeLower === 'date') {
+        value = processDateFieldValue(field, value)
+      } else {
+        value = sanitizeFieldValue(value, field)
+      }
+
+      // For enum arrays, convert to comma-separated string for checkboxGroup
+      if (field.kind === 'enum' && field.isList && Array.isArray(value)) {
         const arrayValue = value
         value = value.join(',')
         console.log(`[DataBrowser] Enum array field detected - "${field.name}":`, {
@@ -211,10 +213,6 @@ function extractInitialValues(model: any, item: any): Record<string, any> {
           arrayValue: arrayValue,
           convertedValue: value,
         })
-      } else if (fieldTypeLower === 'datetime' || fieldTypeLower === 'date') {
-        value = processDateFieldValue(field, value)
-      } else {
-        value = sanitizeFieldValue(value, field)
       }
 
       initialValues[field.name] = value
