@@ -204,12 +204,25 @@ function extractInitialValues(model: any, item: any): Record<string, any> {
         value = sanitizeFieldValue(value, field)
       }
 
+      // For enum arrays, convert to comma-separated string for checkboxGroup
+      if (field.kind === 'enum' && field.isList && Array.isArray(value)) {
+        const arrayValue = value
+        value = value.join(',')
+        console.log(`[DataBrowser] Enum array field detected - "${field.name}":`, {
+          type: field.type,
+          arrayValue: arrayValue,
+          convertedValue: value,
+        })
+      }
+
       initialValues[field.name] = value
 
       // Log enum fields specifically
       if (value !== null && typeof value === 'string' && fieldTypeLower !== 'string' && fieldTypeLower !== 'datetime' && fieldTypeLower !== 'date') {
         console.log(`[DataBrowser] Enum field detected - "${field.name}":`, {
           type: field.type,
+          kind: field.kind,
+          isList: field.isList,
           extractedValue: value,
           rawValue: item[field.name],
         })
