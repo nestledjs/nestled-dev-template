@@ -52,7 +52,9 @@ export class AuthCacheService {
             this.logger.warn(`Redis cache error: ${err.message}`)
           })
           this.logger.log('Auth cache service initialized with Redis')
-        } catch (error) {
+        } catch {
+          // Redis initialization can fail in environments without Redis configured.
+          // This is expected - fall back to caching disabled.
           this.logger.warn('Failed to initialize Redis for auth cache, caching disabled')
           this.redis = null
         }
