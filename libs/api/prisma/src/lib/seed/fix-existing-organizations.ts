@@ -65,8 +65,8 @@ async function fixExistingOrganizations() {
     console.log(`  - Current members: ${org.members.length}`)
 
     // Step 3: Create default roles if they don't exist
-    const existingRoleNames = org.roles.map(r => r.name)
-    const missingRoles = defaultRoles.filter(r => !existingRoleNames.includes(r.name))
+    const existingRoleNames = new Set(org.roles.map(r => r.name))
+    const missingRoles = defaultRoles.filter(r => !existingRoleNames.has(r.name))
 
     if (missingRoles.length > 0) {
       console.log(`  Creating ${missingRoles.length} missing role(s)...`)
