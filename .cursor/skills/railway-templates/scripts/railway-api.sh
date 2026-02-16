@@ -5,26 +5,26 @@
 set -e
 
 if ! command -v jq &>/dev/null; then
-  echo '{"error": "jq not installed. Install with: brew install jq"}'
+  echo '{"error": "jq not installed. Install with: brew install jq"}' >&2
   exit 1
 fi
 
 CONFIG_FILE="$HOME/.railway/config.json"
 
 if [[ ! -f "$CONFIG_FILE" ]]; then
-  echo '{"error": "Railway config not found. Run: railway login"}'
+  echo '{"error": "Railway config not found. Run: railway login"}' >&2
   exit 1
 fi
 
 TOKEN=$(jq -r '.user.token' "$CONFIG_FILE")
 
 if [[ -z "$TOKEN" || "$TOKEN" == "null" ]]; then
-  echo '{"error": "No Railway token found. Run: railway login"}'
+  echo '{"error": "No Railway token found. Run: railway login"}' >&2
   exit 1
 fi
 
 if [[ -z "$1" ]]; then
-  echo '{"error": "No query provided"}'
+  echo '{"error": "No query provided"}' >&2
   exit 1
 fi
 
