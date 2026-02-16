@@ -1,3 +1,4 @@
+import { ApiCoreDataAccessModule } from '@nestled-template/api/core/data-access'
 import {
   AddressModule,
   AdminModule,
@@ -45,6 +46,7 @@ import { StripeWebhookController } from './webhooks/stripe-webhook.controller'
 export const coreModules = [
   // Auto-generated modules with special functions,
   ApiCoreFeatureModule,
+  ApiCoreDataAccessModule,
 ]
 // Auto-generated modules for each data type/model,
 export const defaultModules = [

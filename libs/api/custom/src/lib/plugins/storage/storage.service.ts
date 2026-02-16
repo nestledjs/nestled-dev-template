@@ -1,5 +1,6 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common'
-import { PrismaClient, StoredFile, StorageProvider } from '@nestled-template/api/prisma'
+import { StoredFile, StorageProvider } from '@nestled-template/api/prisma'
+import { ApiCoreDataAccessService } from '@nestled-template/api/core/data-access'
 import { StorageFactory } from './storage.factory'
 import { FileUpload } from 'graphql-upload-minimal'
 
@@ -18,7 +19,7 @@ export class StorageService {
   private readonly logger = new Logger(StorageService.name)
 
   constructor(
-    private readonly prisma: PrismaClient,
+    private readonly prisma: ApiCoreDataAccessService,
     private readonly storageFactory: StorageFactory,
   ) {}
 

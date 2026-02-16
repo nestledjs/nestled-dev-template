@@ -1,15 +1,14 @@
-import { Field, ObjectType } from '@nestjs/graphql'
-import { GraphQLDateTime } from 'graphql-scalars'
+import { Field, ObjectType, GraphQLISODateTime } from '@nestjs/graphql'
 
 @ObjectType()
 export class UserSessionOutput {
   @Field()
   id!: string
 
-  @Field(() => GraphQLDateTime)
+  @Field(() => GraphQLISODateTime)
   createdAt!: Date
 
-  @Field(() => GraphQLDateTime)
+  @Field(() => GraphQLISODateTime)
   lastActiveAt!: Date
 
   @Field({ nullable: true })

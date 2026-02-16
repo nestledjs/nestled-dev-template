@@ -25,33 +25,41 @@ module.exports = {
     rules: [
       {
         test: /\.ts$/,
-        use: 'ts-loader',
-        exclude: [
-          /node_modules/,
-          path.resolve(__dirname, '../../libs/api/prisma/src/lib/prisma-generated')
-        ],
+        use: {
+          loader: 'ts-loader',
+          options: {
+            transpileOnly: true, // Faster builds, skip type checking (handled by IDE/CI)
+            compilerOptions: {
+              module: 'ESNext',
+              moduleResolution: 'bundler',
+            },
+          },
+        },
+        exclude: /node_modules/,
       },
-
     ],
   },
   externals: [
+    // Custom externals function to handle Prisma npm packages
+    function ({ request }, callback) {
+      // Externalize actual Prisma npm packages (required for native binaries)
+      // But NOT @nestled-template/api/prisma which is a local workspace module
+      if (request && (
+        request.includes('@prisma/client') ||
+        request.includes('.prisma/client') ||
+        request.includes('@prisma/adapter-pg') ||
+        request.includes('@prisma/internals') ||
+        request.includes('@prisma/extension-optimize')
+      )) {
+        return callback(null, `commonjs ${request}`)
+      }
+      callback()
+    },
     nodeExternals({
       allowlist: [
-        /^@nestled-template\/api/, // allow your own libs
+        // Allow all @nestled-template/api libs to be bundled
+        /^@nestled-template\/api/,
       ],
-      // Manually exclude Prisma internals if needed
-      function ({ request }, callback) {
-        if (request && request.includes('@prisma/client')) {
-          return callback(null, 'commonjs @prisma/client')
-        }
-        if (request && request.includes('.prisma/client')) {
-          return callback(null, 'commonjs .prisma/client')
-        }
-        if (request && request === '@nestled-template/api/prisma') {
-          return callback(null, 'commonjs @nestled-template/api/prisma')
-        }
-        callback()
-      }
     })
   ]
 };

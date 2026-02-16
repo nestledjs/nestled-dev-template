@@ -17,7 +17,7 @@ export type Scalars = {
   Boolean: { input: boolean; output: boolean }
   Int: { input: number; output: number }
   Float: { input: number; output: number }
-  /** A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar. */
+  /** A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format. */
   DateTime: { input: any; output: any }
   /** An arbitrary-precision Decimal type */
   Decimal: { input: any; output: any }
@@ -25,8 +25,6 @@ export type Scalars = {
   JSON: { input: any; output: any }
   /** The `JSONObject` scalar type represents JSON objects as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf). */
   JSONObject: { input: any; output: any }
-  /** `Date` type as integer. Type represents date and time as number of milliseconds from start of UNIX epoch. */
-  Timestamp: { input: any; output: any }
   /** The `Upload` scalar type represents a file upload. */
   Upload: { input: any; output: any }
 }
@@ -49,14 +47,14 @@ export type Address = {
   city?: Maybe<Scalars['String']['output']>
   country?: Maybe<Country>
   countryId?: Maybe<Scalars['String']['output']>
-  createdAt: Scalars['Timestamp']['output']
+  createdAt: Scalars['DateTime']['output']
   id: Scalars['String']['output']
   isPrimary: Scalars['Boolean']['output']
   organization?: Maybe<Organization>
   organizationId?: Maybe<Scalars['String']['output']>
   postalCode?: Maybe<Scalars['String']['output']>
   region?: Maybe<Scalars['String']['output']>
-  updatedAt: Scalars['Timestamp']['output']
+  updatedAt: Scalars['DateTime']['output']
   user?: Maybe<User>
   userId?: Maybe<Scalars['String']['output']>
 }
@@ -103,11 +101,11 @@ export type AdminAnalyticsFeature = {
 
 export type AdminAuditLogFiltersInput = {
   action?: InputMaybe<Scalars['String']['input']>
-  endDate?: InputMaybe<Scalars['Timestamp']['input']>
+  endDate?: InputMaybe<Scalars['DateTime']['input']>
   entityType?: InputMaybe<Scalars['String']['input']>
   organizationId?: InputMaybe<Scalars['String']['input']>
   skip?: InputMaybe<Scalars['Int']['input']>
-  startDate?: InputMaybe<Scalars['Timestamp']['input']>
+  startDate?: InputMaybe<Scalars['DateTime']['input']>
   take?: InputMaybe<Scalars['Int']['input']>
   userId?: InputMaybe<Scalars['String']['input']>
 }
@@ -144,11 +142,11 @@ export type AdminOrganizationsResponse = {
 }
 
 export type AdminSecurityEventFiltersInput = {
-  endDate?: InputMaybe<Scalars['Timestamp']['input']>
+  endDate?: InputMaybe<Scalars['DateTime']['input']>
   eventType?: InputMaybe<SecurityEventType>
   ipAddress?: InputMaybe<Scalars['String']['input']>
   skip?: InputMaybe<Scalars['Int']['input']>
-  startDate?: InputMaybe<Scalars['Timestamp']['input']>
+  startDate?: InputMaybe<Scalars['DateTime']['input']>
   take?: InputMaybe<Scalars['Int']['input']>
   userId?: InputMaybe<Scalars['String']['input']>
 }
@@ -165,11 +163,11 @@ export type AdminUserFiltersInput = {
   accountLocked?: InputMaybe<Scalars['Boolean']['input']>
   emailVerified?: InputMaybe<Scalars['Boolean']['input']>
   isSuperAdmin?: InputMaybe<Scalars['Boolean']['input']>
-  lastLoginAfter?: InputMaybe<Scalars['Timestamp']['input']>
-  lastLoginBefore?: InputMaybe<Scalars['Timestamp']['input']>
+  lastLoginAfter?: InputMaybe<Scalars['DateTime']['input']>
+  lastLoginBefore?: InputMaybe<Scalars['DateTime']['input']>
   organizationId?: InputMaybe<Scalars['String']['input']>
-  registeredAfter?: InputMaybe<Scalars['Timestamp']['input']>
-  registeredBefore?: InputMaybe<Scalars['Timestamp']['input']>
+  registeredAfter?: InputMaybe<Scalars['DateTime']['input']>
+  registeredBefore?: InputMaybe<Scalars['DateTime']['input']>
   search?: InputMaybe<Scalars['String']['input']>
   skip?: InputMaybe<Scalars['Float']['input']>
   sortBy?: InputMaybe<Scalars['String']['input']>
@@ -188,14 +186,14 @@ export type AdminUsersResponse = {
 
 export type ApiToken = {
   __typename?: 'ApiToken'
-  createdAt: Scalars['Timestamp']['output']
-  expiresAt?: Maybe<Scalars['Timestamp']['output']>
+  createdAt: Scalars['DateTime']['output']
+  expiresAt?: Maybe<Scalars['DateTime']['output']>
   id: Scalars['String']['output']
-  lastUsedAt?: Maybe<Scalars['Timestamp']['output']>
+  lastUsedAt?: Maybe<Scalars['DateTime']['output']>
   name: Scalars['String']['output']
   revoked: Scalars['Boolean']['output']
   tokenHash: Scalars['String']['output']
-  updatedAt: Scalars['Timestamp']['output']
+  updatedAt: Scalars['DateTime']['output']
   user?: Maybe<User>
   userId: Scalars['String']['output']
 }
@@ -204,13 +202,13 @@ export type AuditLog = {
   __typename?: 'AuditLog'
   action: Scalars['String']['output']
   changes?: Maybe<Scalars['JSONObject']['output']>
-  createdAt: Scalars['Timestamp']['output']
+  createdAt: Scalars['DateTime']['output']
   entityId: Scalars['String']['output']
   entityType: Scalars['String']['output']
   id: Scalars['String']['output']
   organization?: Maybe<Organization>
   organizationId?: Maybe<Scalars['String']['output']>
-  updatedAt: Scalars['Timestamp']['output']
+  updatedAt: Scalars['DateTime']['output']
   user?: Maybe<User>
   userId: Scalars['String']['output']
 }
@@ -243,7 +241,7 @@ export type Country = {
   alpha2: Scalars['String']['output']
   alpha3: Scalars['String']['output']
   countryCode: Scalars['String']['output']
-  createdAt: Scalars['Timestamp']['output']
+  createdAt: Scalars['DateTime']['output']
   id: Scalars['String']['output']
   intermediateRegion: Scalars['String']['output']
   intermediateRegionCode: Scalars['String']['output']
@@ -253,7 +251,7 @@ export type Country = {
   regionCode: Scalars['String']['output']
   subRegion: Scalars['String']['output']
   subRegionCode: Scalars['String']['output']
-  updatedAt: Scalars['Timestamp']['output']
+  updatedAt: Scalars['DateTime']['output']
 }
 
 export type CreateAddressInput = {
@@ -262,37 +260,37 @@ export type CreateAddressInput = {
   addressType?: InputMaybe<AddressType>
   city?: InputMaybe<Scalars['String']['input']>
   countryId?: InputMaybe<Scalars['String']['input']>
-  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
+  createdAt?: InputMaybe<Scalars['DateTime']['input']>
   id?: InputMaybe<Scalars['String']['input']>
   isPrimary?: InputMaybe<Scalars['Boolean']['input']>
   organizationId?: InputMaybe<Scalars['String']['input']>
   postalCode?: InputMaybe<Scalars['String']['input']>
   region?: InputMaybe<Scalars['String']['input']>
-  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
+  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
   userId?: InputMaybe<Scalars['String']['input']>
 }
 
 export type CreateApiTokenInput = {
-  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
-  expiresAt?: InputMaybe<Scalars['Timestamp']['input']>
+  createdAt?: InputMaybe<Scalars['DateTime']['input']>
+  expiresAt?: InputMaybe<Scalars['DateTime']['input']>
   id?: InputMaybe<Scalars['String']['input']>
-  lastUsedAt?: InputMaybe<Scalars['Timestamp']['input']>
+  lastUsedAt?: InputMaybe<Scalars['DateTime']['input']>
   name: Scalars['String']['input']
   revoked?: InputMaybe<Scalars['Boolean']['input']>
   tokenHash: Scalars['String']['input']
-  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
+  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
   userId: Scalars['String']['input']
 }
 
 export type CreateAuditLogInput = {
   action: Scalars['String']['input']
   changes?: InputMaybe<Scalars['JSON']['input']>
-  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
+  createdAt?: InputMaybe<Scalars['DateTime']['input']>
   entityId: Scalars['String']['input']
   entityType: Scalars['String']['input']
   id?: InputMaybe<Scalars['String']['input']>
   organizationId?: InputMaybe<Scalars['String']['input']>
-  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
+  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
   userId: Scalars['String']['input']
 }
 
@@ -301,7 +299,7 @@ export type CreateCountryInput = {
   alpha2: Scalars['String']['input']
   alpha3: Scalars['String']['input']
   countryCode: Scalars['String']['input']
-  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
+  createdAt?: InputMaybe<Scalars['DateTime']['input']>
   id?: InputMaybe<Scalars['String']['input']>
   intermediateRegion: Scalars['String']['input']
   intermediateRegionCode: Scalars['String']['input']
@@ -311,21 +309,21 @@ export type CreateCountryInput = {
   regionCode: Scalars['String']['input']
   subRegion: Scalars['String']['input']
   subRegionCode: Scalars['String']['input']
-  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
+  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
 }
 
 export type CreateEmailInput = {
-  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
+  createdAt?: InputMaybe<Scalars['DateTime']['input']>
   email: Scalars['String']['input']
   emailType?: InputMaybe<EmailType>
   id?: InputMaybe<Scalars['String']['input']>
   organizationId?: InputMaybe<Scalars['String']['input']>
   primary?: InputMaybe<Scalars['Boolean']['input']>
   public?: InputMaybe<Scalars['Boolean']['input']>
-  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
+  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
   userId?: InputMaybe<Scalars['String']['input']>
   verified?: InputMaybe<Scalars['Boolean']['input']>
-  verifyExpires?: InputMaybe<Scalars['Timestamp']['input']>
+  verifyExpires?: InputMaybe<Scalars['DateTime']['input']>
   verifyToken?: InputMaybe<Scalars['String']['input']>
 }
 
@@ -336,47 +334,47 @@ export type CreateInvitationInput = {
 }
 
 export type CreateInviteInput = {
-  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
+  createdAt?: InputMaybe<Scalars['DateTime']['input']>
   email: Scalars['String']['input']
-  expiresAt: Scalars['Timestamp']['input']
+  expiresAt: Scalars['DateTime']['input']
   id?: InputMaybe<Scalars['String']['input']>
   inviterId: Scalars['String']['input']
   organizationId: Scalars['String']['input']
   roleId?: InputMaybe<Scalars['String']['input']>
   status?: InputMaybe<InviteStatus>
   token: Scalars['String']['input']
-  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
+  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
 }
 
 export type CreateLinkInput = {
-  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
+  createdAt?: InputMaybe<Scalars['DateTime']['input']>
   id?: InputMaybe<Scalars['String']['input']>
   name: Scalars['String']['input']
   organizationId?: InputMaybe<Scalars['String']['input']>
-  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
+  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
   url: Scalars['String']['input']
   userId?: InputMaybe<Scalars['String']['input']>
 }
 
 export type CreateLoginAttemptInput = {
-  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
+  createdAt?: InputMaybe<Scalars['DateTime']['input']>
   email: Scalars['String']['input']
   id?: InputMaybe<Scalars['String']['input']>
   ipAddress?: InputMaybe<Scalars['String']['input']>
   location?: InputMaybe<Scalars['String']['input']>
   reason?: InputMaybe<FailureReason>
   success?: InputMaybe<Scalars['Boolean']['input']>
-  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
+  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
   userAgent?: InputMaybe<Scalars['String']['input']>
   userId?: InputMaybe<Scalars['String']['input']>
 }
 
 export type CreateOAuthAccountInput = {
-  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
+  createdAt?: InputMaybe<Scalars['DateTime']['input']>
   id?: InputMaybe<Scalars['String']['input']>
   provider: Scalars['String']['input']
   providerUserId: Scalars['String']['input']
-  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
+  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
   userId: Scalars['String']['input']
 }
 
@@ -384,7 +382,7 @@ export type CreateOrganizationInput = {
   AuditLogIds?: InputMaybe<Array<Scalars['String']['input']>>
   TeamIds?: InputMaybe<Array<Scalars['String']['input']>>
   addressesIds?: InputMaybe<Array<Scalars['String']['input']>>
-  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
+  createdAt?: InputMaybe<Scalars['DateTime']['input']>
   emailsIds?: InputMaybe<Array<Scalars['String']['input']>>
   id?: InputMaybe<Scalars['String']['input']>
   imagesIds?: InputMaybe<Array<Scalars['String']['input']>>
@@ -395,20 +393,20 @@ export type CreateOrganizationInput = {
   phoneNumbersIds?: InputMaybe<Array<Scalars['String']['input']>>
   rolesIds?: InputMaybe<Array<Scalars['String']['input']>>
   subscriptionId?: InputMaybe<Scalars['String']['input']>
-  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
+  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
 }
 
 export type CreateOrganizationMemberInput = {
-  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
+  createdAt?: InputMaybe<Scalars['DateTime']['input']>
   id?: InputMaybe<Scalars['String']['input']>
   organizationId: Scalars['String']['input']
   roleId: Scalars['String']['input']
-  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
+  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
   userId: Scalars['String']['input']
 }
 
 export type CreatePasswordHistoryInput = {
-  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
+  createdAt?: InputMaybe<Scalars['DateTime']['input']>
   id?: InputMaybe<Scalars['String']['input']>
   passwordHash: Scalars['String']['input']
   userId: Scalars['String']['input']
@@ -423,19 +421,19 @@ export type CreatePermissionInput = {
 }
 
 export type CreatePhoneNumberInput = {
-  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
+  createdAt?: InputMaybe<Scalars['DateTime']['input']>
   id?: InputMaybe<Scalars['String']['input']>
   organizationId?: InputMaybe<Scalars['String']['input']>
   phone: Scalars['String']['input']
   phoneType?: InputMaybe<PhoneType>
   primary?: InputMaybe<Scalars['Boolean']['input']>
-  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
+  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
   userId?: InputMaybe<Scalars['String']['input']>
 }
 
 export type CreatePlanInput = {
   active?: InputMaybe<Scalars['Boolean']['input']>
-  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
+  createdAt?: InputMaybe<Scalars['DateTime']['input']>
   description?: InputMaybe<Scalars['String']['input']>
   features?: InputMaybe<Scalars['JSON']['input']>
   id?: InputMaybe<Scalars['String']['input']>
@@ -447,7 +445,7 @@ export type CreatePlanInput = {
   stripeProductId?: InputMaybe<Scalars['String']['input']>
   subscriptionsIds?: InputMaybe<Array<Scalars['String']['input']>>
   trialPeriodDays?: InputMaybe<Scalars['Int']['input']>
-  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
+  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
 }
 
 export type CreateRoleInput = {
@@ -462,18 +460,18 @@ export type CreateRoleInput = {
 }
 
 export type CreateSecurityEventInput = {
-  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
+  createdAt?: InputMaybe<Scalars['DateTime']['input']>
   eventType: SecurityEventType
   id?: InputMaybe<Scalars['String']['input']>
   ipAddress?: InputMaybe<Scalars['String']['input']>
   metadata?: InputMaybe<Scalars['JSON']['input']>
-  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
+  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
   userAgent?: InputMaybe<Scalars['String']['input']>
   userId: Scalars['String']['input']
 }
 
 export type CreateStoredFileInput = {
-  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
+  createdAt?: InputMaybe<Scalars['DateTime']['input']>
   filename: Scalars['String']['input']
   folder?: InputMaybe<Scalars['String']['input']>
   height?: InputMaybe<Scalars['Int']['input']>
@@ -486,46 +484,46 @@ export type CreateStoredFileInput = {
   providerFileId: Scalars['String']['input']
   publicUrl?: InputMaybe<Scalars['String']['input']>
   size: Scalars['Int']['input']
-  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
+  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
   url: Scalars['String']['input']
   userId?: InputMaybe<Scalars['String']['input']>
   width?: InputMaybe<Scalars['Int']['input']>
 }
 
 export type CreateSubscriptionInput = {
-  cancelAt?: InputMaybe<Scalars['Timestamp']['input']>
+  cancelAt?: InputMaybe<Scalars['DateTime']['input']>
   cancelAtPeriodEnd?: InputMaybe<Scalars['Boolean']['input']>
-  canceledAt?: InputMaybe<Scalars['Timestamp']['input']>
-  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
+  canceledAt?: InputMaybe<Scalars['DateTime']['input']>
+  createdAt?: InputMaybe<Scalars['DateTime']['input']>
   id?: InputMaybe<Scalars['String']['input']>
   organizationId: Scalars['String']['input']
   planId: Scalars['String']['input']
   status?: InputMaybe<SubscriptionStatus>
-  stripeCurrentPeriodEnd?: InputMaybe<Scalars['Timestamp']['input']>
+  stripeCurrentPeriodEnd?: InputMaybe<Scalars['DateTime']['input']>
   stripeCustomerId?: InputMaybe<Scalars['String']['input']>
   stripePriceId?: InputMaybe<Scalars['String']['input']>
   stripeSubscriptionId?: InputMaybe<Scalars['String']['input']>
-  trialEnd?: InputMaybe<Scalars['Timestamp']['input']>
-  trialStart?: InputMaybe<Scalars['Timestamp']['input']>
-  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
+  trialEnd?: InputMaybe<Scalars['DateTime']['input']>
+  trialStart?: InputMaybe<Scalars['DateTime']['input']>
+  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
 }
 
 export type CreateTeamInput = {
-  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
+  createdAt?: InputMaybe<Scalars['DateTime']['input']>
   description?: InputMaybe<Scalars['String']['input']>
   id?: InputMaybe<Scalars['String']['input']>
   membersIds?: InputMaybe<Array<Scalars['String']['input']>>
   name: Scalars['String']['input']
   organizationId: Scalars['String']['input']
-  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
+  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
 }
 
 export type CreateTeamMemberInput = {
-  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
+  createdAt?: InputMaybe<Scalars['DateTime']['input']>
   id?: InputMaybe<Scalars['String']['input']>
   roleId: Scalars['String']['input']
   teamId: Scalars['String']['input']
-  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
+  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
   userId: Scalars['String']['input']
 }
 
@@ -539,8 +537,8 @@ export type CreateUserInput = {
   addressesIds?: InputMaybe<Array<Scalars['String']['input']>>
   apiTokensIds?: InputMaybe<Array<Scalars['String']['input']>>
   bio?: InputMaybe<Scalars['String']['input']>
-  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
-  deactivatedAt?: InputMaybe<Scalars['Timestamp']['input']>
+  createdAt?: InputMaybe<Scalars['DateTime']['input']>
+  deactivatedAt?: InputMaybe<Scalars['DateTime']['input']>
   displayName?: InputMaybe<Scalars['String']['input']>
   emailValidated?: InputMaybe<Scalars['Boolean']['input']>
   emailsIds?: InputMaybe<Array<Scalars['String']['input']>>
@@ -551,48 +549,48 @@ export type CreateUserInput = {
   invitesSentIds?: InputMaybe<Array<Scalars['String']['input']>>
   isActive?: InputMaybe<Scalars['Boolean']['input']>
   isSuperAdmin?: InputMaybe<Scalars['Boolean']['input']>
-  lastFailedLogin?: InputMaybe<Scalars['Timestamp']['input']>
+  lastFailedLogin?: InputMaybe<Scalars['DateTime']['input']>
   lastName?: InputMaybe<Scalars['String']['input']>
-  lastSuccessfulLogin?: InputMaybe<Scalars['Timestamp']['input']>
+  lastSuccessfulLogin?: InputMaybe<Scalars['DateTime']['input']>
   linksIds?: InputMaybe<Array<Scalars['String']['input']>>
-  lockedUntil?: InputMaybe<Scalars['Timestamp']['input']>
+  lockedUntil?: InputMaybe<Scalars['DateTime']['input']>
   loginAttemptsIds?: InputMaybe<Array<Scalars['String']['input']>>
   oAuthAccountsIds?: InputMaybe<Array<Scalars['String']['input']>>
   organizationsIds?: InputMaybe<Array<Scalars['String']['input']>>
   password?: InputMaybe<Scalars['String']['input']>
   passwordHistoryIds?: InputMaybe<Array<Scalars['String']['input']>>
-  passwordResetExpires?: InputMaybe<Scalars['Timestamp']['input']>
+  passwordResetExpires?: InputMaybe<Scalars['DateTime']['input']>
   passwordResetToken?: InputMaybe<Scalars['String']['input']>
   phoneNumbersIds?: InputMaybe<Array<Scalars['String']['input']>>
-  privacyPolicyAcceptedAt?: InputMaybe<Scalars['Timestamp']['input']>
-  termsAcceptedAt?: InputMaybe<Scalars['Timestamp']['input']>
+  privacyPolicyAcceptedAt?: InputMaybe<Scalars['DateTime']['input']>
+  termsAcceptedAt?: InputMaybe<Scalars['DateTime']['input']>
   twoFactorEnabled?: InputMaybe<Scalars['Boolean']['input']>
   twoFactorMethod?: InputMaybe<TwoFactorMethod>
   twoFactorRecoveryCodes: Array<Scalars['String']['input']>
   twoFactorSecret?: InputMaybe<Scalars['String']['input']>
-  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
+  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
   validateEmailToken?: InputMaybe<Scalars['String']['input']>
-  validateEmailTokenExpires?: InputMaybe<Scalars['Timestamp']['input']>
+  validateEmailTokenExpires?: InputMaybe<Scalars['DateTime']['input']>
 }
 
 export type CreateUserPreferenceInput = {
-  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
+  createdAt?: InputMaybe<Scalars['DateTime']['input']>
   id?: InputMaybe<Scalars['String']['input']>
   key: Scalars['String']['input']
-  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
+  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
   userId: Scalars['String']['input']
   value: Scalars['String']['input']
 }
 
 export type CreateUserSessionInput = {
-  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
+  createdAt?: InputMaybe<Scalars['DateTime']['input']>
   deviceInfo?: InputMaybe<Scalars['String']['input']>
   id?: InputMaybe<Scalars['String']['input']>
   ipAddress?: InputMaybe<Scalars['String']['input']>
   isValid?: InputMaybe<Scalars['Boolean']['input']>
-  lastActiveAt?: InputMaybe<Scalars['Timestamp']['input']>
+  lastActiveAt?: InputMaybe<Scalars['DateTime']['input']>
   twoFactorVerified?: InputMaybe<Scalars['Boolean']['input']>
-  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
+  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
   userId: Scalars['String']['input']
 }
 
@@ -602,7 +600,7 @@ export type Disable2FaInput = {
 
 export type Email = {
   __typename?: 'Email'
-  createdAt: Scalars['Timestamp']['output']
+  createdAt: Scalars['DateTime']['output']
   email: Scalars['String']['output']
   emailType: EmailType
   id: Scalars['String']['output']
@@ -610,11 +608,11 @@ export type Email = {
   organizationId?: Maybe<Scalars['String']['output']>
   primary: Scalars['Boolean']['output']
   public: Scalars['Boolean']['output']
-  updatedAt: Scalars['Timestamp']['output']
+  updatedAt: Scalars['DateTime']['output']
   user?: Maybe<User>
   userId?: Maybe<Scalars['String']['output']>
   verified: Scalars['Boolean']['output']
-  verifyExpires?: Maybe<Scalars['Timestamp']['output']>
+  verifyExpires?: Maybe<Scalars['DateTime']['output']>
   verifyToken?: Maybe<Scalars['String']['output']>
 }
 
@@ -636,7 +634,7 @@ export type Enable2FaOutput = {
 
 export type ExportUserDataOutput = {
   __typename?: 'ExportUserDataOutput'
-  exportedAt: Scalars['Timestamp']['output']
+  exportedAt: Scalars['DateTime']['output']
   userData: Scalars['JSONObject']['output']
   userId: Scalars['String']['output']
 }
@@ -656,7 +654,7 @@ export type ForgotPasswordInput = {
 }
 
 export type GenerateApiTokenInput = {
-  expiresAt?: InputMaybe<Scalars['Timestamp']['input']>
+  expiresAt?: InputMaybe<Scalars['DateTime']['input']>
   name: Scalars['String']['input']
 }
 
@@ -669,7 +667,7 @@ export type GenerateApiTokenOutput = {
 export type InvitationDetails = {
   __typename?: 'InvitationDetails'
   email: Scalars['String']['output']
-  expiresAt: Scalars['Timestamp']['output']
+  expiresAt: Scalars['DateTime']['output']
   id: Scalars['String']['output']
   inviterName: Scalars['String']['output']
   organizationName: Scalars['String']['output']
@@ -678,9 +676,9 @@ export type InvitationDetails = {
 
 export type Invite = {
   __typename?: 'Invite'
-  createdAt: Scalars['Timestamp']['output']
+  createdAt: Scalars['DateTime']['output']
   email: Scalars['String']['output']
-  expiresAt: Scalars['Timestamp']['output']
+  expiresAt: Scalars['DateTime']['output']
   id: Scalars['String']['output']
   inviter?: Maybe<User>
   inviterId: Scalars['String']['output']
@@ -690,7 +688,7 @@ export type Invite = {
   roleId?: Maybe<Scalars['String']['output']>
   status: InviteStatus
   token: Scalars['String']['output']
-  updatedAt: Scalars['Timestamp']['output']
+  updatedAt: Scalars['DateTime']['output']
 }
 
 export enum InviteStatus {
@@ -702,12 +700,12 @@ export enum InviteStatus {
 
 export type Link = {
   __typename?: 'Link'
-  createdAt: Scalars['Timestamp']['output']
+  createdAt: Scalars['DateTime']['output']
   id: Scalars['String']['output']
   name: Scalars['String']['output']
   organization?: Maybe<Organization>
   organizationId?: Maybe<Scalars['String']['output']>
-  updatedAt: Scalars['Timestamp']['output']
+  updatedAt: Scalars['DateTime']['output']
   url: Scalars['String']['output']
   user?: Maybe<User>
   userId?: Maybe<Scalars['String']['output']>
@@ -725,7 +723,7 @@ export type ListAddressInput = {
   addressType?: InputMaybe<AddressType>
   city?: InputMaybe<Scalars['String']['input']>
   countryId?: InputMaybe<Scalars['String']['input']>
-  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
+  createdAt?: InputMaybe<Scalars['DateTime']['input']>
   filters?: InputMaybe<Scalars['JSONObject']['input']>
   id?: InputMaybe<Scalars['String']['input']>
   isPrimary?: InputMaybe<Scalars['Boolean']['input']>
@@ -738,16 +736,16 @@ export type ListAddressInput = {
   searchFields?: InputMaybe<Array<Scalars['String']['input']>>
   skip?: InputMaybe<Scalars['Float']['input']>
   take?: InputMaybe<Scalars['Float']['input']>
-  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
+  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
   userId?: InputMaybe<Scalars['String']['input']>
 }
 
 export type ListApiTokenInput = {
-  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
-  expiresAt?: InputMaybe<Scalars['Timestamp']['input']>
+  createdAt?: InputMaybe<Scalars['DateTime']['input']>
+  expiresAt?: InputMaybe<Scalars['DateTime']['input']>
   filters?: InputMaybe<Scalars['JSONObject']['input']>
   id?: InputMaybe<Scalars['String']['input']>
-  lastUsedAt?: InputMaybe<Scalars['Timestamp']['input']>
+  lastUsedAt?: InputMaybe<Scalars['DateTime']['input']>
   name?: InputMaybe<Scalars['String']['input']>
   orderBy?: InputMaybe<Scalars['String']['input']>
   orderDirection?: InputMaybe<Scalars['String']['input']>
@@ -757,14 +755,14 @@ export type ListApiTokenInput = {
   skip?: InputMaybe<Scalars['Float']['input']>
   take?: InputMaybe<Scalars['Float']['input']>
   tokenHash?: InputMaybe<Scalars['String']['input']>
-  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
+  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
   userId?: InputMaybe<Scalars['String']['input']>
 }
 
 export type ListAuditLogInput = {
   action?: InputMaybe<Scalars['String']['input']>
   changes?: InputMaybe<Scalars['JSON']['input']>
-  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
+  createdAt?: InputMaybe<Scalars['DateTime']['input']>
   entityId?: InputMaybe<Scalars['String']['input']>
   entityType?: InputMaybe<Scalars['String']['input']>
   filters?: InputMaybe<Scalars['JSONObject']['input']>
@@ -776,7 +774,7 @@ export type ListAuditLogInput = {
   searchFields?: InputMaybe<Array<Scalars['String']['input']>>
   skip?: InputMaybe<Scalars['Float']['input']>
   take?: InputMaybe<Scalars['Float']['input']>
-  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
+  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
   userId?: InputMaybe<Scalars['String']['input']>
 }
 
@@ -785,7 +783,7 @@ export type ListCountryInput = {
   alpha2?: InputMaybe<Scalars['String']['input']>
   alpha3?: InputMaybe<Scalars['String']['input']>
   countryCode?: InputMaybe<Scalars['String']['input']>
-  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
+  createdAt?: InputMaybe<Scalars['DateTime']['input']>
   filters?: InputMaybe<Scalars['JSONObject']['input']>
   id?: InputMaybe<Scalars['String']['input']>
   intermediateRegion?: InputMaybe<Scalars['String']['input']>
@@ -802,11 +800,11 @@ export type ListCountryInput = {
   subRegion?: InputMaybe<Scalars['String']['input']>
   subRegionCode?: InputMaybe<Scalars['String']['input']>
   take?: InputMaybe<Scalars['Float']['input']>
-  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
+  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
 }
 
 export type ListEmailInput = {
-  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
+  createdAt?: InputMaybe<Scalars['DateTime']['input']>
   email?: InputMaybe<Scalars['String']['input']>
   emailType?: InputMaybe<EmailType>
   filters?: InputMaybe<Scalars['JSONObject']['input']>
@@ -820,17 +818,17 @@ export type ListEmailInput = {
   searchFields?: InputMaybe<Array<Scalars['String']['input']>>
   skip?: InputMaybe<Scalars['Float']['input']>
   take?: InputMaybe<Scalars['Float']['input']>
-  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
+  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
   userId?: InputMaybe<Scalars['String']['input']>
   verified?: InputMaybe<Scalars['Boolean']['input']>
-  verifyExpires?: InputMaybe<Scalars['Timestamp']['input']>
+  verifyExpires?: InputMaybe<Scalars['DateTime']['input']>
   verifyToken?: InputMaybe<Scalars['String']['input']>
 }
 
 export type ListInviteInput = {
-  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
+  createdAt?: InputMaybe<Scalars['DateTime']['input']>
   email?: InputMaybe<Scalars['String']['input']>
-  expiresAt?: InputMaybe<Scalars['Timestamp']['input']>
+  expiresAt?: InputMaybe<Scalars['DateTime']['input']>
   filters?: InputMaybe<Scalars['JSONObject']['input']>
   id?: InputMaybe<Scalars['String']['input']>
   inviterId?: InputMaybe<Scalars['String']['input']>
@@ -844,11 +842,11 @@ export type ListInviteInput = {
   status?: InputMaybe<InviteStatus>
   take?: InputMaybe<Scalars['Float']['input']>
   token?: InputMaybe<Scalars['String']['input']>
-  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
+  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
 }
 
 export type ListLinkInput = {
-  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
+  createdAt?: InputMaybe<Scalars['DateTime']['input']>
   filters?: InputMaybe<Scalars['JSONObject']['input']>
   id?: InputMaybe<Scalars['String']['input']>
   name?: InputMaybe<Scalars['String']['input']>
@@ -859,13 +857,13 @@ export type ListLinkInput = {
   searchFields?: InputMaybe<Array<Scalars['String']['input']>>
   skip?: InputMaybe<Scalars['Float']['input']>
   take?: InputMaybe<Scalars['Float']['input']>
-  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
+  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
   url?: InputMaybe<Scalars['String']['input']>
   userId?: InputMaybe<Scalars['String']['input']>
 }
 
 export type ListLoginAttemptInput = {
-  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
+  createdAt?: InputMaybe<Scalars['DateTime']['input']>
   email?: InputMaybe<Scalars['String']['input']>
   filters?: InputMaybe<Scalars['JSONObject']['input']>
   id?: InputMaybe<Scalars['String']['input']>
@@ -879,13 +877,13 @@ export type ListLoginAttemptInput = {
   skip?: InputMaybe<Scalars['Float']['input']>
   success?: InputMaybe<Scalars['Boolean']['input']>
   take?: InputMaybe<Scalars['Float']['input']>
-  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
+  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
   userAgent?: InputMaybe<Scalars['String']['input']>
   userId?: InputMaybe<Scalars['String']['input']>
 }
 
 export type ListOAuthAccountInput = {
-  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
+  createdAt?: InputMaybe<Scalars['DateTime']['input']>
   filters?: InputMaybe<Scalars['JSONObject']['input']>
   id?: InputMaybe<Scalars['String']['input']>
   orderBy?: InputMaybe<Scalars['String']['input']>
@@ -896,7 +894,7 @@ export type ListOAuthAccountInput = {
   searchFields?: InputMaybe<Array<Scalars['String']['input']>>
   skip?: InputMaybe<Scalars['Float']['input']>
   take?: InputMaybe<Scalars['Float']['input']>
-  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
+  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
   userId?: InputMaybe<Scalars['String']['input']>
 }
 
@@ -904,7 +902,7 @@ export type ListOrganizationInput = {
   AuditLogIds?: InputMaybe<Array<Scalars['String']['input']>>
   TeamIds?: InputMaybe<Array<Scalars['String']['input']>>
   addressesIds?: InputMaybe<Array<Scalars['String']['input']>>
-  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
+  createdAt?: InputMaybe<Scalars['DateTime']['input']>
   emailsIds?: InputMaybe<Array<Scalars['String']['input']>>
   filters?: InputMaybe<Scalars['JSONObject']['input']>
   id?: InputMaybe<Scalars['String']['input']>
@@ -922,11 +920,11 @@ export type ListOrganizationInput = {
   skip?: InputMaybe<Scalars['Float']['input']>
   subscriptionId?: InputMaybe<Scalars['String']['input']>
   take?: InputMaybe<Scalars['Float']['input']>
-  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
+  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
 }
 
 export type ListOrganizationMemberInput = {
-  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
+  createdAt?: InputMaybe<Scalars['DateTime']['input']>
   filters?: InputMaybe<Scalars['JSONObject']['input']>
   id?: InputMaybe<Scalars['String']['input']>
   orderBy?: InputMaybe<Scalars['String']['input']>
@@ -937,12 +935,12 @@ export type ListOrganizationMemberInput = {
   searchFields?: InputMaybe<Array<Scalars['String']['input']>>
   skip?: InputMaybe<Scalars['Float']['input']>
   take?: InputMaybe<Scalars['Float']['input']>
-  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
+  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
   userId?: InputMaybe<Scalars['String']['input']>
 }
 
 export type ListPasswordHistoryInput = {
-  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
+  createdAt?: InputMaybe<Scalars['DateTime']['input']>
   filters?: InputMaybe<Scalars['JSONObject']['input']>
   id?: InputMaybe<Scalars['String']['input']>
   orderBy?: InputMaybe<Scalars['String']['input']>
@@ -971,7 +969,7 @@ export type ListPermissionInput = {
 }
 
 export type ListPhoneNumberInput = {
-  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
+  createdAt?: InputMaybe<Scalars['DateTime']['input']>
   filters?: InputMaybe<Scalars['JSONObject']['input']>
   id?: InputMaybe<Scalars['String']['input']>
   orderBy?: InputMaybe<Scalars['String']['input']>
@@ -984,13 +982,13 @@ export type ListPhoneNumberInput = {
   searchFields?: InputMaybe<Array<Scalars['String']['input']>>
   skip?: InputMaybe<Scalars['Float']['input']>
   take?: InputMaybe<Scalars['Float']['input']>
-  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
+  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
   userId?: InputMaybe<Scalars['String']['input']>
 }
 
 export type ListPlanInput = {
   active?: InputMaybe<Scalars['Boolean']['input']>
-  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
+  createdAt?: InputMaybe<Scalars['DateTime']['input']>
   description?: InputMaybe<Scalars['String']['input']>
   features?: InputMaybe<Scalars['JSON']['input']>
   filters?: InputMaybe<Scalars['JSONObject']['input']>
@@ -1009,7 +1007,7 @@ export type ListPlanInput = {
   subscriptionsIds?: InputMaybe<Array<Scalars['String']['input']>>
   take?: InputMaybe<Scalars['Float']['input']>
   trialPeriodDays?: InputMaybe<Scalars['Int']['input']>
-  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
+  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
 }
 
 export type ListRoleInput = {
@@ -1031,7 +1029,7 @@ export type ListRoleInput = {
 }
 
 export type ListSecurityEventInput = {
-  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
+  createdAt?: InputMaybe<Scalars['DateTime']['input']>
   eventType?: InputMaybe<SecurityEventType>
   filters?: InputMaybe<Scalars['JSONObject']['input']>
   id?: InputMaybe<Scalars['String']['input']>
@@ -1043,13 +1041,13 @@ export type ListSecurityEventInput = {
   searchFields?: InputMaybe<Array<Scalars['String']['input']>>
   skip?: InputMaybe<Scalars['Float']['input']>
   take?: InputMaybe<Scalars['Float']['input']>
-  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
+  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
   userAgent?: InputMaybe<Scalars['String']['input']>
   userId?: InputMaybe<Scalars['String']['input']>
 }
 
 export type ListStoredFileInput = {
-  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
+  createdAt?: InputMaybe<Scalars['DateTime']['input']>
   filename?: InputMaybe<Scalars['String']['input']>
   filters?: InputMaybe<Scalars['JSONObject']['input']>
   folder?: InputMaybe<Scalars['String']['input']>
@@ -1069,17 +1067,17 @@ export type ListStoredFileInput = {
   size?: InputMaybe<Scalars['Int']['input']>
   skip?: InputMaybe<Scalars['Float']['input']>
   take?: InputMaybe<Scalars['Float']['input']>
-  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
+  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
   url?: InputMaybe<Scalars['String']['input']>
   userId?: InputMaybe<Scalars['String']['input']>
   width?: InputMaybe<Scalars['Int']['input']>
 }
 
 export type ListSubscriptionInput = {
-  cancelAt?: InputMaybe<Scalars['Timestamp']['input']>
+  cancelAt?: InputMaybe<Scalars['DateTime']['input']>
   cancelAtPeriodEnd?: InputMaybe<Scalars['Boolean']['input']>
-  canceledAt?: InputMaybe<Scalars['Timestamp']['input']>
-  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
+  canceledAt?: InputMaybe<Scalars['DateTime']['input']>
+  createdAt?: InputMaybe<Scalars['DateTime']['input']>
   filters?: InputMaybe<Scalars['JSONObject']['input']>
   id?: InputMaybe<Scalars['String']['input']>
   orderBy?: InputMaybe<Scalars['String']['input']>
@@ -1090,18 +1088,18 @@ export type ListSubscriptionInput = {
   searchFields?: InputMaybe<Array<Scalars['String']['input']>>
   skip?: InputMaybe<Scalars['Float']['input']>
   status?: InputMaybe<SubscriptionStatus>
-  stripeCurrentPeriodEnd?: InputMaybe<Scalars['Timestamp']['input']>
+  stripeCurrentPeriodEnd?: InputMaybe<Scalars['DateTime']['input']>
   stripeCustomerId?: InputMaybe<Scalars['String']['input']>
   stripePriceId?: InputMaybe<Scalars['String']['input']>
   stripeSubscriptionId?: InputMaybe<Scalars['String']['input']>
   take?: InputMaybe<Scalars['Float']['input']>
-  trialEnd?: InputMaybe<Scalars['Timestamp']['input']>
-  trialStart?: InputMaybe<Scalars['Timestamp']['input']>
-  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
+  trialEnd?: InputMaybe<Scalars['DateTime']['input']>
+  trialStart?: InputMaybe<Scalars['DateTime']['input']>
+  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
 }
 
 export type ListTeamInput = {
-  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
+  createdAt?: InputMaybe<Scalars['DateTime']['input']>
   description?: InputMaybe<Scalars['String']['input']>
   filters?: InputMaybe<Scalars['JSONObject']['input']>
   id?: InputMaybe<Scalars['String']['input']>
@@ -1114,11 +1112,11 @@ export type ListTeamInput = {
   searchFields?: InputMaybe<Array<Scalars['String']['input']>>
   skip?: InputMaybe<Scalars['Float']['input']>
   take?: InputMaybe<Scalars['Float']['input']>
-  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
+  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
 }
 
 export type ListTeamMemberInput = {
-  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
+  createdAt?: InputMaybe<Scalars['DateTime']['input']>
   filters?: InputMaybe<Scalars['JSONObject']['input']>
   id?: InputMaybe<Scalars['String']['input']>
   orderBy?: InputMaybe<Scalars['String']['input']>
@@ -1129,7 +1127,7 @@ export type ListTeamMemberInput = {
   skip?: InputMaybe<Scalars['Float']['input']>
   take?: InputMaybe<Scalars['Float']['input']>
   teamId?: InputMaybe<Scalars['String']['input']>
-  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
+  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
   userId?: InputMaybe<Scalars['String']['input']>
 }
 
@@ -1143,8 +1141,8 @@ export type ListUserInput = {
   addressesIds?: InputMaybe<Array<Scalars['String']['input']>>
   apiTokensIds?: InputMaybe<Array<Scalars['String']['input']>>
   bio?: InputMaybe<Scalars['String']['input']>
-  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
-  deactivatedAt?: InputMaybe<Scalars['Timestamp']['input']>
+  createdAt?: InputMaybe<Scalars['DateTime']['input']>
+  deactivatedAt?: InputMaybe<Scalars['DateTime']['input']>
   displayName?: InputMaybe<Scalars['String']['input']>
   emailValidated?: InputMaybe<Scalars['Boolean']['input']>
   emailsIds?: InputMaybe<Array<Scalars['String']['input']>>
@@ -1156,11 +1154,11 @@ export type ListUserInput = {
   invitesSentIds?: InputMaybe<Array<Scalars['String']['input']>>
   isActive?: InputMaybe<Scalars['Boolean']['input']>
   isSuperAdmin?: InputMaybe<Scalars['Boolean']['input']>
-  lastFailedLogin?: InputMaybe<Scalars['Timestamp']['input']>
+  lastFailedLogin?: InputMaybe<Scalars['DateTime']['input']>
   lastName?: InputMaybe<Scalars['String']['input']>
-  lastSuccessfulLogin?: InputMaybe<Scalars['Timestamp']['input']>
+  lastSuccessfulLogin?: InputMaybe<Scalars['DateTime']['input']>
   linksIds?: InputMaybe<Array<Scalars['String']['input']>>
-  lockedUntil?: InputMaybe<Scalars['Timestamp']['input']>
+  lockedUntil?: InputMaybe<Scalars['DateTime']['input']>
   loginAttemptsIds?: InputMaybe<Array<Scalars['String']['input']>>
   oAuthAccountsIds?: InputMaybe<Array<Scalars['String']['input']>>
   orderBy?: InputMaybe<Scalars['String']['input']>
@@ -1168,26 +1166,26 @@ export type ListUserInput = {
   organizationsIds?: InputMaybe<Array<Scalars['String']['input']>>
   password?: InputMaybe<Scalars['String']['input']>
   passwordHistoryIds?: InputMaybe<Array<Scalars['String']['input']>>
-  passwordResetExpires?: InputMaybe<Scalars['Timestamp']['input']>
+  passwordResetExpires?: InputMaybe<Scalars['DateTime']['input']>
   passwordResetToken?: InputMaybe<Scalars['String']['input']>
   phoneNumbersIds?: InputMaybe<Array<Scalars['String']['input']>>
-  privacyPolicyAcceptedAt?: InputMaybe<Scalars['Timestamp']['input']>
+  privacyPolicyAcceptedAt?: InputMaybe<Scalars['DateTime']['input']>
   search?: InputMaybe<Scalars['String']['input']>
   searchFields?: InputMaybe<Array<Scalars['String']['input']>>
   skip?: InputMaybe<Scalars['Float']['input']>
   take?: InputMaybe<Scalars['Float']['input']>
-  termsAcceptedAt?: InputMaybe<Scalars['Timestamp']['input']>
+  termsAcceptedAt?: InputMaybe<Scalars['DateTime']['input']>
   twoFactorEnabled?: InputMaybe<Scalars['Boolean']['input']>
   twoFactorMethod?: InputMaybe<TwoFactorMethod>
   twoFactorRecoveryCodes?: InputMaybe<Array<Scalars['String']['input']>>
   twoFactorSecret?: InputMaybe<Scalars['String']['input']>
-  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
+  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
   validateEmailToken?: InputMaybe<Scalars['String']['input']>
-  validateEmailTokenExpires?: InputMaybe<Scalars['Timestamp']['input']>
+  validateEmailTokenExpires?: InputMaybe<Scalars['DateTime']['input']>
 }
 
 export type ListUserPreferenceInput = {
-  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
+  createdAt?: InputMaybe<Scalars['DateTime']['input']>
   filters?: InputMaybe<Scalars['JSONObject']['input']>
   id?: InputMaybe<Scalars['String']['input']>
   key?: InputMaybe<Scalars['String']['input']>
@@ -1197,19 +1195,19 @@ export type ListUserPreferenceInput = {
   searchFields?: InputMaybe<Array<Scalars['String']['input']>>
   skip?: InputMaybe<Scalars['Float']['input']>
   take?: InputMaybe<Scalars['Float']['input']>
-  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
+  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
   userId?: InputMaybe<Scalars['String']['input']>
   value?: InputMaybe<Scalars['String']['input']>
 }
 
 export type ListUserSessionInput = {
-  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
+  createdAt?: InputMaybe<Scalars['DateTime']['input']>
   deviceInfo?: InputMaybe<Scalars['String']['input']>
   filters?: InputMaybe<Scalars['JSONObject']['input']>
   id?: InputMaybe<Scalars['String']['input']>
   ipAddress?: InputMaybe<Scalars['String']['input']>
   isValid?: InputMaybe<Scalars['Boolean']['input']>
-  lastActiveAt?: InputMaybe<Scalars['Timestamp']['input']>
+  lastActiveAt?: InputMaybe<Scalars['DateTime']['input']>
   orderBy?: InputMaybe<Scalars['String']['input']>
   orderDirection?: InputMaybe<Scalars['String']['input']>
   search?: InputMaybe<Scalars['String']['input']>
@@ -1217,20 +1215,20 @@ export type ListUserSessionInput = {
   skip?: InputMaybe<Scalars['Float']['input']>
   take?: InputMaybe<Scalars['Float']['input']>
   twoFactorVerified?: InputMaybe<Scalars['Boolean']['input']>
-  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
+  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
   userId?: InputMaybe<Scalars['String']['input']>
 }
 
 export type LoginAttempt = {
   __typename?: 'LoginAttempt'
-  createdAt: Scalars['Timestamp']['output']
+  createdAt: Scalars['DateTime']['output']
   email: Scalars['String']['output']
   id: Scalars['String']['output']
   ipAddress?: Maybe<Scalars['String']['output']>
   location?: Maybe<Scalars['String']['output']>
   reason?: Maybe<FailureReason>
   success: Scalars['Boolean']['output']
-  updatedAt: Scalars['Timestamp']['output']
+  updatedAt: Scalars['DateTime']['output']
   user?: Maybe<User>
   userAgent?: Maybe<Scalars['String']['output']>
   userId?: Maybe<Scalars['String']['output']>
@@ -1892,11 +1890,11 @@ export type MutationVerifyEmailChangeArgs = {
 
 export type OAuthAccount = {
   __typename?: 'OAuthAccount'
-  createdAt: Scalars['Timestamp']['output']
+  createdAt: Scalars['DateTime']['output']
   id: Scalars['String']['output']
   provider: Scalars['String']['output']
   providerUserId: Scalars['String']['output']
-  updatedAt: Scalars['Timestamp']['output']
+  updatedAt: Scalars['DateTime']['output']
   user?: Maybe<User>
   userId: Scalars['String']['output']
 }
@@ -1919,7 +1917,7 @@ export type Organization = {
   AuditLog?: Maybe<Array<AuditLog>>
   Team?: Maybe<Array<Team>>
   addresses?: Maybe<Array<Address>>
-  createdAt: Scalars['Timestamp']['output']
+  createdAt: Scalars['DateTime']['output']
   emails?: Maybe<Array<Email>>
   id: Scalars['String']['output']
   images?: Maybe<Array<StoredFile>>
@@ -1930,25 +1928,25 @@ export type Organization = {
   phoneNumbers?: Maybe<Array<PhoneNumber>>
   roles?: Maybe<Array<Role>>
   subscription?: Maybe<Subscription>
-  updatedAt: Scalars['Timestamp']['output']
+  updatedAt: Scalars['DateTime']['output']
 }
 
 export type OrganizationMember = {
   __typename?: 'OrganizationMember'
-  createdAt: Scalars['Timestamp']['output']
+  createdAt: Scalars['DateTime']['output']
   id: Scalars['String']['output']
   organization?: Maybe<Organization>
   organizationId: Scalars['String']['output']
   role?: Maybe<Role>
   roleId: Scalars['String']['output']
-  updatedAt: Scalars['Timestamp']['output']
+  updatedAt: Scalars['DateTime']['output']
   user?: Maybe<User>
   userId: Scalars['String']['output']
 }
 
 export type PasswordHistory = {
   __typename?: 'PasswordHistory'
-  createdAt: Scalars['Timestamp']['output']
+  createdAt: Scalars['DateTime']['output']
   id: Scalars['String']['output']
   passwordHash: Scalars['String']['output']
   user?: Maybe<User>
@@ -1966,14 +1964,14 @@ export type Permission = {
 
 export type PhoneNumber = {
   __typename?: 'PhoneNumber'
-  createdAt: Scalars['Timestamp']['output']
+  createdAt: Scalars['DateTime']['output']
   id: Scalars['String']['output']
   organization?: Maybe<Organization>
   organizationId?: Maybe<Scalars['String']['output']>
   phone: Scalars['String']['output']
   phoneType: PhoneType
   primary: Scalars['Boolean']['output']
-  updatedAt: Scalars['Timestamp']['output']
+  updatedAt: Scalars['DateTime']['output']
   user?: Maybe<User>
   userId?: Maybe<Scalars['String']['output']>
 }
@@ -1988,7 +1986,7 @@ export enum PhoneType {
 export type Plan = {
   __typename?: 'Plan'
   active: Scalars['Boolean']['output']
-  createdAt: Scalars['Timestamp']['output']
+  createdAt: Scalars['DateTime']['output']
   description?: Maybe<Scalars['String']['output']>
   features?: Maybe<Scalars['JSONObject']['output']>
   id: Scalars['String']['output']
@@ -2000,7 +1998,7 @@ export type Plan = {
   stripeProductId?: Maybe<Scalars['String']['output']>
   subscriptions?: Maybe<Array<Subscription>>
   trialPeriodDays?: Maybe<Scalars['Int']['output']>
-  updatedAt: Scalars['Timestamp']['output']
+  updatedAt: Scalars['DateTime']['output']
 }
 
 export type Query = {
@@ -2536,12 +2534,12 @@ export type SecureUpdateUserPreferenceInput = {
 
 export type SecurityEvent = {
   __typename?: 'SecurityEvent'
-  createdAt: Scalars['Timestamp']['output']
+  createdAt: Scalars['DateTime']['output']
   eventType: SecurityEventType
   id: Scalars['String']['output']
   ipAddress?: Maybe<Scalars['String']['output']>
   metadata?: Maybe<Scalars['JSONObject']['output']>
-  updatedAt: Scalars['Timestamp']['output']
+  updatedAt: Scalars['DateTime']['output']
   user?: Maybe<User>
   userAgent?: Maybe<Scalars['String']['output']>
   userId: Scalars['String']['output']
@@ -2565,7 +2563,7 @@ export enum SecurityEventType {
 
 export type SecuritySummary = {
   __typename?: 'SecuritySummary'
-  lastPasswordChange?: Maybe<Scalars['Timestamp']['output']>
+  lastPasswordChange?: Maybe<Scalars['DateTime']['output']>
   recentEventsCount: Scalars['Int']['output']
   suspiciousAttemptsLast30Days: Scalars['Int']['output']
 }
@@ -2588,7 +2586,7 @@ export enum StorageProvider {
 
 export type StoredFile = {
   __typename?: 'StoredFile'
-  createdAt: Scalars['Timestamp']['output']
+  createdAt: Scalars['DateTime']['output']
   filename: Scalars['String']['output']
   folder?: Maybe<Scalars['String']['output']>
   height?: Maybe<Scalars['Int']['output']>
@@ -2602,7 +2600,7 @@ export type StoredFile = {
   providerFileId: Scalars['String']['output']
   publicUrl?: Maybe<Scalars['String']['output']>
   size: Scalars['Int']['output']
-  updatedAt: Scalars['Timestamp']['output']
+  updatedAt: Scalars['DateTime']['output']
   url: Scalars['String']['output']
   user?: Maybe<User>
   userId?: Maybe<Scalars['String']['output']>
@@ -2611,23 +2609,23 @@ export type StoredFile = {
 
 export type Subscription = {
   __typename?: 'Subscription'
-  cancelAt?: Maybe<Scalars['Timestamp']['output']>
+  cancelAt?: Maybe<Scalars['DateTime']['output']>
   cancelAtPeriodEnd: Scalars['Boolean']['output']
-  canceledAt?: Maybe<Scalars['Timestamp']['output']>
-  createdAt: Scalars['Timestamp']['output']
+  canceledAt?: Maybe<Scalars['DateTime']['output']>
+  createdAt: Scalars['DateTime']['output']
   id: Scalars['String']['output']
   organization?: Maybe<Organization>
   organizationId: Scalars['String']['output']
   plan?: Maybe<Plan>
   planId: Scalars['String']['output']
   status: SubscriptionStatus
-  stripeCurrentPeriodEnd?: Maybe<Scalars['Timestamp']['output']>
+  stripeCurrentPeriodEnd?: Maybe<Scalars['DateTime']['output']>
   stripeCustomerId?: Maybe<Scalars['String']['output']>
   stripePriceId?: Maybe<Scalars['String']['output']>
   stripeSubscriptionId?: Maybe<Scalars['String']['output']>
-  trialEnd?: Maybe<Scalars['Timestamp']['output']>
-  trialStart?: Maybe<Scalars['Timestamp']['output']>
-  updatedAt: Scalars['Timestamp']['output']
+  trialEnd?: Maybe<Scalars['DateTime']['output']>
+  trialStart?: Maybe<Scalars['DateTime']['output']>
+  updatedAt: Scalars['DateTime']['output']
 }
 
 export enum SubscriptionStatus {
@@ -2645,25 +2643,25 @@ export type SwitchOrganizationInput = {
 
 export type Team = {
   __typename?: 'Team'
-  createdAt: Scalars['Timestamp']['output']
+  createdAt: Scalars['DateTime']['output']
   description?: Maybe<Scalars['String']['output']>
   id: Scalars['String']['output']
   members?: Maybe<Array<TeamMember>>
   name: Scalars['String']['output']
   organization?: Maybe<Organization>
   organizationId: Scalars['String']['output']
-  updatedAt: Scalars['Timestamp']['output']
+  updatedAt: Scalars['DateTime']['output']
 }
 
 export type TeamMember = {
   __typename?: 'TeamMember'
-  createdAt: Scalars['Timestamp']['output']
+  createdAt: Scalars['DateTime']['output']
   id: Scalars['String']['output']
   role?: Maybe<Role>
   roleId: Scalars['String']['output']
   team?: Maybe<Team>
   teamId: Scalars['String']['output']
-  updatedAt: Scalars['Timestamp']['output']
+  updatedAt: Scalars['DateTime']['output']
   user?: Maybe<User>
   userId: Scalars['String']['output']
 }
@@ -2690,37 +2688,37 @@ export type UpdateAddressInput = {
   addressType?: InputMaybe<AddressType>
   city?: InputMaybe<Scalars['String']['input']>
   countryId?: InputMaybe<Scalars['String']['input']>
-  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
+  createdAt?: InputMaybe<Scalars['DateTime']['input']>
   id?: InputMaybe<Scalars['String']['input']>
   isPrimary?: InputMaybe<Scalars['Boolean']['input']>
   organizationId?: InputMaybe<Scalars['String']['input']>
   postalCode?: InputMaybe<Scalars['String']['input']>
   region?: InputMaybe<Scalars['String']['input']>
-  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
+  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
   userId?: InputMaybe<Scalars['String']['input']>
 }
 
 export type UpdateApiTokenInput = {
-  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
-  expiresAt?: InputMaybe<Scalars['Timestamp']['input']>
+  createdAt?: InputMaybe<Scalars['DateTime']['input']>
+  expiresAt?: InputMaybe<Scalars['DateTime']['input']>
   id?: InputMaybe<Scalars['String']['input']>
-  lastUsedAt?: InputMaybe<Scalars['Timestamp']['input']>
+  lastUsedAt?: InputMaybe<Scalars['DateTime']['input']>
   name?: InputMaybe<Scalars['String']['input']>
   revoked?: InputMaybe<Scalars['Boolean']['input']>
   tokenHash?: InputMaybe<Scalars['String']['input']>
-  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
+  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
   userId?: InputMaybe<Scalars['String']['input']>
 }
 
 export type UpdateAuditLogInput = {
   action?: InputMaybe<Scalars['String']['input']>
   changes?: InputMaybe<Scalars['JSON']['input']>
-  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
+  createdAt?: InputMaybe<Scalars['DateTime']['input']>
   entityId?: InputMaybe<Scalars['String']['input']>
   entityType?: InputMaybe<Scalars['String']['input']>
   id?: InputMaybe<Scalars['String']['input']>
   organizationId?: InputMaybe<Scalars['String']['input']>
-  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
+  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
   userId?: InputMaybe<Scalars['String']['input']>
 }
 
@@ -2729,7 +2727,7 @@ export type UpdateCountryInput = {
   alpha2?: InputMaybe<Scalars['String']['input']>
   alpha3?: InputMaybe<Scalars['String']['input']>
   countryCode?: InputMaybe<Scalars['String']['input']>
-  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
+  createdAt?: InputMaybe<Scalars['DateTime']['input']>
   id?: InputMaybe<Scalars['String']['input']>
   intermediateRegion?: InputMaybe<Scalars['String']['input']>
   intermediateRegionCode?: InputMaybe<Scalars['String']['input']>
@@ -2739,56 +2737,56 @@ export type UpdateCountryInput = {
   regionCode?: InputMaybe<Scalars['String']['input']>
   subRegion?: InputMaybe<Scalars['String']['input']>
   subRegionCode?: InputMaybe<Scalars['String']['input']>
-  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
+  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
 }
 
 export type UpdateEmailInput = {
-  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
+  createdAt?: InputMaybe<Scalars['DateTime']['input']>
   email?: InputMaybe<Scalars['String']['input']>
   emailType?: InputMaybe<EmailType>
   id?: InputMaybe<Scalars['String']['input']>
   organizationId?: InputMaybe<Scalars['String']['input']>
   primary?: InputMaybe<Scalars['Boolean']['input']>
   public?: InputMaybe<Scalars['Boolean']['input']>
-  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
+  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
   userId?: InputMaybe<Scalars['String']['input']>
   verified?: InputMaybe<Scalars['Boolean']['input']>
-  verifyExpires?: InputMaybe<Scalars['Timestamp']['input']>
+  verifyExpires?: InputMaybe<Scalars['DateTime']['input']>
   verifyToken?: InputMaybe<Scalars['String']['input']>
 }
 
 export type UpdateInviteInput = {
-  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
+  createdAt?: InputMaybe<Scalars['DateTime']['input']>
   email?: InputMaybe<Scalars['String']['input']>
-  expiresAt?: InputMaybe<Scalars['Timestamp']['input']>
+  expiresAt?: InputMaybe<Scalars['DateTime']['input']>
   id?: InputMaybe<Scalars['String']['input']>
   inviterId?: InputMaybe<Scalars['String']['input']>
   organizationId?: InputMaybe<Scalars['String']['input']>
   roleId?: InputMaybe<Scalars['String']['input']>
   status?: InputMaybe<InviteStatus>
   token?: InputMaybe<Scalars['String']['input']>
-  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
+  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
 }
 
 export type UpdateLinkInput = {
-  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
+  createdAt?: InputMaybe<Scalars['DateTime']['input']>
   id?: InputMaybe<Scalars['String']['input']>
   name?: InputMaybe<Scalars['String']['input']>
   organizationId?: InputMaybe<Scalars['String']['input']>
-  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
+  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
   url?: InputMaybe<Scalars['String']['input']>
   userId?: InputMaybe<Scalars['String']['input']>
 }
 
 export type UpdateLoginAttemptInput = {
-  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
+  createdAt?: InputMaybe<Scalars['DateTime']['input']>
   email?: InputMaybe<Scalars['String']['input']>
   id?: InputMaybe<Scalars['String']['input']>
   ipAddress?: InputMaybe<Scalars['String']['input']>
   location?: InputMaybe<Scalars['String']['input']>
   reason?: InputMaybe<FailureReason>
   success?: InputMaybe<Scalars['Boolean']['input']>
-  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
+  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
   userAgent?: InputMaybe<Scalars['String']['input']>
   userId?: InputMaybe<Scalars['String']['input']>
 }
@@ -2800,11 +2798,11 @@ export type UpdateMemberRoleInput = {
 }
 
 export type UpdateOAuthAccountInput = {
-  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
+  createdAt?: InputMaybe<Scalars['DateTime']['input']>
   id?: InputMaybe<Scalars['String']['input']>
   provider?: InputMaybe<Scalars['String']['input']>
   providerUserId?: InputMaybe<Scalars['String']['input']>
-  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
+  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
   userId?: InputMaybe<Scalars['String']['input']>
 }
 
@@ -2812,7 +2810,7 @@ export type UpdateOrganizationInput = {
   AuditLogIds?: InputMaybe<Array<Scalars['String']['input']>>
   TeamIds?: InputMaybe<Array<Scalars['String']['input']>>
   addressesIds?: InputMaybe<Array<Scalars['String']['input']>>
-  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
+  createdAt?: InputMaybe<Scalars['DateTime']['input']>
   emailsIds?: InputMaybe<Array<Scalars['String']['input']>>
   id?: InputMaybe<Scalars['String']['input']>
   imagesIds?: InputMaybe<Array<Scalars['String']['input']>>
@@ -2823,20 +2821,20 @@ export type UpdateOrganizationInput = {
   phoneNumbersIds?: InputMaybe<Array<Scalars['String']['input']>>
   rolesIds?: InputMaybe<Array<Scalars['String']['input']>>
   subscriptionId?: InputMaybe<Scalars['String']['input']>
-  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
+  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
 }
 
 export type UpdateOrganizationMemberInput = {
-  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
+  createdAt?: InputMaybe<Scalars['DateTime']['input']>
   id?: InputMaybe<Scalars['String']['input']>
   organizationId?: InputMaybe<Scalars['String']['input']>
   roleId?: InputMaybe<Scalars['String']['input']>
-  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
+  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
   userId?: InputMaybe<Scalars['String']['input']>
 }
 
 export type UpdatePasswordHistoryInput = {
-  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
+  createdAt?: InputMaybe<Scalars['DateTime']['input']>
   id?: InputMaybe<Scalars['String']['input']>
   passwordHash?: InputMaybe<Scalars['String']['input']>
   userId?: InputMaybe<Scalars['String']['input']>
@@ -2851,19 +2849,19 @@ export type UpdatePermissionInput = {
 }
 
 export type UpdatePhoneNumberInput = {
-  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
+  createdAt?: InputMaybe<Scalars['DateTime']['input']>
   id?: InputMaybe<Scalars['String']['input']>
   organizationId?: InputMaybe<Scalars['String']['input']>
   phone?: InputMaybe<Scalars['String']['input']>
   phoneType?: InputMaybe<PhoneType>
   primary?: InputMaybe<Scalars['Boolean']['input']>
-  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
+  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
   userId?: InputMaybe<Scalars['String']['input']>
 }
 
 export type UpdatePlanInput = {
   active?: InputMaybe<Scalars['Boolean']['input']>
-  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
+  createdAt?: InputMaybe<Scalars['DateTime']['input']>
   description?: InputMaybe<Scalars['String']['input']>
   features?: InputMaybe<Scalars['JSON']['input']>
   id?: InputMaybe<Scalars['String']['input']>
@@ -2875,7 +2873,7 @@ export type UpdatePlanInput = {
   stripeProductId?: InputMaybe<Scalars['String']['input']>
   subscriptionsIds?: InputMaybe<Array<Scalars['String']['input']>>
   trialPeriodDays?: InputMaybe<Scalars['Int']['input']>
-  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
+  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
 }
 
 export type UpdateRoleInput = {
@@ -2890,18 +2888,18 @@ export type UpdateRoleInput = {
 }
 
 export type UpdateSecurityEventInput = {
-  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
+  createdAt?: InputMaybe<Scalars['DateTime']['input']>
   eventType?: InputMaybe<SecurityEventType>
   id?: InputMaybe<Scalars['String']['input']>
   ipAddress?: InputMaybe<Scalars['String']['input']>
   metadata?: InputMaybe<Scalars['JSON']['input']>
-  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
+  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
   userAgent?: InputMaybe<Scalars['String']['input']>
   userId?: InputMaybe<Scalars['String']['input']>
 }
 
 export type UpdateStoredFileInput = {
-  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
+  createdAt?: InputMaybe<Scalars['DateTime']['input']>
   filename?: InputMaybe<Scalars['String']['input']>
   folder?: InputMaybe<Scalars['String']['input']>
   height?: InputMaybe<Scalars['Int']['input']>
@@ -2914,46 +2912,46 @@ export type UpdateStoredFileInput = {
   providerFileId?: InputMaybe<Scalars['String']['input']>
   publicUrl?: InputMaybe<Scalars['String']['input']>
   size?: InputMaybe<Scalars['Int']['input']>
-  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
+  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
   url?: InputMaybe<Scalars['String']['input']>
   userId?: InputMaybe<Scalars['String']['input']>
   width?: InputMaybe<Scalars['Int']['input']>
 }
 
 export type UpdateSubscriptionInput = {
-  cancelAt?: InputMaybe<Scalars['Timestamp']['input']>
+  cancelAt?: InputMaybe<Scalars['DateTime']['input']>
   cancelAtPeriodEnd?: InputMaybe<Scalars['Boolean']['input']>
-  canceledAt?: InputMaybe<Scalars['Timestamp']['input']>
-  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
+  canceledAt?: InputMaybe<Scalars['DateTime']['input']>
+  createdAt?: InputMaybe<Scalars['DateTime']['input']>
   id?: InputMaybe<Scalars['String']['input']>
   organizationId?: InputMaybe<Scalars['String']['input']>
   planId?: InputMaybe<Scalars['String']['input']>
   status?: InputMaybe<SubscriptionStatus>
-  stripeCurrentPeriodEnd?: InputMaybe<Scalars['Timestamp']['input']>
+  stripeCurrentPeriodEnd?: InputMaybe<Scalars['DateTime']['input']>
   stripeCustomerId?: InputMaybe<Scalars['String']['input']>
   stripePriceId?: InputMaybe<Scalars['String']['input']>
   stripeSubscriptionId?: InputMaybe<Scalars['String']['input']>
-  trialEnd?: InputMaybe<Scalars['Timestamp']['input']>
-  trialStart?: InputMaybe<Scalars['Timestamp']['input']>
-  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
+  trialEnd?: InputMaybe<Scalars['DateTime']['input']>
+  trialStart?: InputMaybe<Scalars['DateTime']['input']>
+  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
 }
 
 export type UpdateTeamInput = {
-  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
+  createdAt?: InputMaybe<Scalars['DateTime']['input']>
   description?: InputMaybe<Scalars['String']['input']>
   id?: InputMaybe<Scalars['String']['input']>
   membersIds?: InputMaybe<Array<Scalars['String']['input']>>
   name?: InputMaybe<Scalars['String']['input']>
   organizationId?: InputMaybe<Scalars['String']['input']>
-  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
+  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
 }
 
 export type UpdateTeamMemberInput = {
-  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
+  createdAt?: InputMaybe<Scalars['DateTime']['input']>
   id?: InputMaybe<Scalars['String']['input']>
   roleId?: InputMaybe<Scalars['String']['input']>
   teamId?: InputMaybe<Scalars['String']['input']>
-  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
+  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
   userId?: InputMaybe<Scalars['String']['input']>
 }
 
@@ -2967,8 +2965,8 @@ export type UpdateUserInput = {
   addressesIds?: InputMaybe<Array<Scalars['String']['input']>>
   apiTokensIds?: InputMaybe<Array<Scalars['String']['input']>>
   bio?: InputMaybe<Scalars['String']['input']>
-  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
-  deactivatedAt?: InputMaybe<Scalars['Timestamp']['input']>
+  createdAt?: InputMaybe<Scalars['DateTime']['input']>
+  deactivatedAt?: InputMaybe<Scalars['DateTime']['input']>
   displayName?: InputMaybe<Scalars['String']['input']>
   emailValidated?: InputMaybe<Scalars['Boolean']['input']>
   emailsIds?: InputMaybe<Array<Scalars['String']['input']>>
@@ -2979,54 +2977,54 @@ export type UpdateUserInput = {
   invitesSentIds?: InputMaybe<Array<Scalars['String']['input']>>
   isActive?: InputMaybe<Scalars['Boolean']['input']>
   isSuperAdmin?: InputMaybe<Scalars['Boolean']['input']>
-  lastFailedLogin?: InputMaybe<Scalars['Timestamp']['input']>
+  lastFailedLogin?: InputMaybe<Scalars['DateTime']['input']>
   lastName?: InputMaybe<Scalars['String']['input']>
-  lastSuccessfulLogin?: InputMaybe<Scalars['Timestamp']['input']>
+  lastSuccessfulLogin?: InputMaybe<Scalars['DateTime']['input']>
   linksIds?: InputMaybe<Array<Scalars['String']['input']>>
-  lockedUntil?: InputMaybe<Scalars['Timestamp']['input']>
+  lockedUntil?: InputMaybe<Scalars['DateTime']['input']>
   loginAttemptsIds?: InputMaybe<Array<Scalars['String']['input']>>
   oAuthAccountsIds?: InputMaybe<Array<Scalars['String']['input']>>
   organizationsIds?: InputMaybe<Array<Scalars['String']['input']>>
   password?: InputMaybe<Scalars['String']['input']>
   passwordHistoryIds?: InputMaybe<Array<Scalars['String']['input']>>
-  passwordResetExpires?: InputMaybe<Scalars['Timestamp']['input']>
+  passwordResetExpires?: InputMaybe<Scalars['DateTime']['input']>
   passwordResetToken?: InputMaybe<Scalars['String']['input']>
   phoneNumbersIds?: InputMaybe<Array<Scalars['String']['input']>>
-  privacyPolicyAcceptedAt?: InputMaybe<Scalars['Timestamp']['input']>
-  termsAcceptedAt?: InputMaybe<Scalars['Timestamp']['input']>
+  privacyPolicyAcceptedAt?: InputMaybe<Scalars['DateTime']['input']>
+  termsAcceptedAt?: InputMaybe<Scalars['DateTime']['input']>
   twoFactorEnabled?: InputMaybe<Scalars['Boolean']['input']>
   twoFactorMethod?: InputMaybe<TwoFactorMethod>
   twoFactorRecoveryCodes?: InputMaybe<Array<Scalars['String']['input']>>
   twoFactorSecret?: InputMaybe<Scalars['String']['input']>
-  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
+  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
   validateEmailToken?: InputMaybe<Scalars['String']['input']>
-  validateEmailTokenExpires?: InputMaybe<Scalars['Timestamp']['input']>
+  validateEmailTokenExpires?: InputMaybe<Scalars['DateTime']['input']>
 }
 
 export type UpdateUserPreferenceInput = {
-  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
+  createdAt?: InputMaybe<Scalars['DateTime']['input']>
   id?: InputMaybe<Scalars['String']['input']>
   key?: InputMaybe<Scalars['String']['input']>
-  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
+  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
   userId?: InputMaybe<Scalars['String']['input']>
   value?: InputMaybe<Scalars['String']['input']>
 }
 
 export type UpdateUserSessionInput = {
-  createdAt?: InputMaybe<Scalars['Timestamp']['input']>
+  createdAt?: InputMaybe<Scalars['DateTime']['input']>
   deviceInfo?: InputMaybe<Scalars['String']['input']>
   id?: InputMaybe<Scalars['String']['input']>
   ipAddress?: InputMaybe<Scalars['String']['input']>
   isValid?: InputMaybe<Scalars['Boolean']['input']>
-  lastActiveAt?: InputMaybe<Scalars['Timestamp']['input']>
+  lastActiveAt?: InputMaybe<Scalars['DateTime']['input']>
   twoFactorVerified?: InputMaybe<Scalars['Boolean']['input']>
-  updatedAt?: InputMaybe<Scalars['Timestamp']['input']>
+  updatedAt?: InputMaybe<Scalars['DateTime']['input']>
   userId?: InputMaybe<Scalars['String']['input']>
 }
 
 export type UploadedFile = {
   __typename?: 'UploadedFile'
-  createdAt: Scalars['Timestamp']['output']
+  createdAt: Scalars['DateTime']['output']
   filename: Scalars['String']['output']
   folder?: Maybe<Scalars['String']['output']>
   height?: Maybe<Scalars['Int']['output']>
@@ -3039,7 +3037,7 @@ export type UploadedFile = {
   providerFileId: Scalars['String']['output']
   publicUrl?: Maybe<Scalars['String']['output']>
   size: Scalars['Int']['output']
-  updatedAt: Scalars['Timestamp']['output']
+  updatedAt: Scalars['DateTime']['output']
   url: Scalars['String']['output']
   userId?: Maybe<Scalars['String']['output']>
   width?: Maybe<Scalars['Int']['output']>
@@ -3056,8 +3054,8 @@ export type User = {
   addresses?: Maybe<Array<Address>>
   apiTokens?: Maybe<Array<ApiToken>>
   bio?: Maybe<Scalars['String']['output']>
-  createdAt: Scalars['Timestamp']['output']
-  deactivatedAt?: Maybe<Scalars['Timestamp']['output']>
+  createdAt: Scalars['DateTime']['output']
+  deactivatedAt?: Maybe<Scalars['DateTime']['output']>
   displayName?: Maybe<Scalars['String']['output']>
   emailValidated: Scalars['Boolean']['output']
   emails?: Maybe<Array<Email>>
@@ -3069,37 +3067,37 @@ export type User = {
   isActive: Scalars['Boolean']['output']
   isEmulating?: Maybe<Scalars['Boolean']['output']>
   isSuperAdmin: Scalars['Boolean']['output']
-  lastFailedLogin?: Maybe<Scalars['Timestamp']['output']>
+  lastFailedLogin?: Maybe<Scalars['DateTime']['output']>
   lastName?: Maybe<Scalars['String']['output']>
-  lastSuccessfulLogin?: Maybe<Scalars['Timestamp']['output']>
+  lastSuccessfulLogin?: Maybe<Scalars['DateTime']['output']>
   links?: Maybe<Array<Link>>
-  lockedUntil?: Maybe<Scalars['Timestamp']['output']>
+  lockedUntil?: Maybe<Scalars['DateTime']['output']>
   loginAttempts?: Maybe<Array<LoginAttempt>>
   oAuthAccounts?: Maybe<Array<OAuthAccount>>
   organizations?: Maybe<Array<OrganizationMember>>
   originalAdminId?: Maybe<Scalars['String']['output']>
   password?: Maybe<Scalars['String']['output']>
   passwordHistory?: Maybe<Array<PasswordHistory>>
-  passwordResetExpires?: Maybe<Scalars['Timestamp']['output']>
+  passwordResetExpires?: Maybe<Scalars['DateTime']['output']>
   passwordResetToken?: Maybe<Scalars['String']['output']>
   phoneNumbers?: Maybe<Array<PhoneNumber>>
-  privacyPolicyAcceptedAt?: Maybe<Scalars['Timestamp']['output']>
-  termsAcceptedAt?: Maybe<Scalars['Timestamp']['output']>
+  privacyPolicyAcceptedAt?: Maybe<Scalars['DateTime']['output']>
+  termsAcceptedAt?: Maybe<Scalars['DateTime']['output']>
   twoFactorEnabled: Scalars['Boolean']['output']
   twoFactorMethod: TwoFactorMethod
   twoFactorRecoveryCodes: Array<Scalars['String']['output']>
   twoFactorSecret?: Maybe<Scalars['String']['output']>
-  updatedAt: Scalars['Timestamp']['output']
+  updatedAt: Scalars['DateTime']['output']
   validateEmailToken?: Maybe<Scalars['String']['output']>
-  validateEmailTokenExpires?: Maybe<Scalars['Timestamp']['output']>
+  validateEmailTokenExpires?: Maybe<Scalars['DateTime']['output']>
 }
 
 export type UserPreference = {
   __typename?: 'UserPreference'
-  createdAt: Scalars['Timestamp']['output']
+  createdAt: Scalars['DateTime']['output']
   id: Scalars['String']['output']
   key: Scalars['String']['output']
-  updatedAt: Scalars['Timestamp']['output']
+  updatedAt: Scalars['DateTime']['output']
   user?: Maybe<User>
   userId: Scalars['String']['output']
   value: Scalars['String']['output']
@@ -3107,14 +3105,14 @@ export type UserPreference = {
 
 export type UserSession = {
   __typename?: 'UserSession'
-  createdAt: Scalars['Timestamp']['output']
+  createdAt: Scalars['DateTime']['output']
   deviceInfo?: Maybe<Scalars['String']['output']>
   id: Scalars['String']['output']
   ipAddress?: Maybe<Scalars['String']['output']>
   isValid: Scalars['Boolean']['output']
-  lastActiveAt: Scalars['Timestamp']['output']
+  lastActiveAt: Scalars['DateTime']['output']
   twoFactorVerified: Scalars['Boolean']['output']
-  updatedAt: Scalars['Timestamp']['output']
+  updatedAt: Scalars['DateTime']['output']
   user?: Maybe<User>
   userId: Scalars['String']['output']
 }

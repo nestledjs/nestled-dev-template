@@ -2,7 +2,6 @@
 
 import { registerEnumType } from '@nestjs/graphql';
 import { AddressType, EmailType, FailureReason, ImageType, InviteStatus, PhoneType, SecurityEventType, StorageProvider, SubscriptionStatus, TwoFactorMethod } from '@nestled-template/api/prisma';
-
 export { AddressType, EmailType, FailureReason, ImageType, InviteStatus, PhoneType, SecurityEventType, StorageProvider, SubscriptionStatus, TwoFactorMethod };
 
 registerEnumType(AddressType, { name: 'AddressType' });

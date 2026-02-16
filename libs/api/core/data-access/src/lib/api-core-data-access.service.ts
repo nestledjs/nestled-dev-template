@@ -1,7 +1,18 @@
 import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common'
 import { Prisma, PrismaClient } from '@nestled-template/api/prisma'
 import { CorePagingInput } from './dto/core-paging.input'
-import { withOptimize } from '@prisma/extension-optimize'
+import { PrismaPg } from '@prisma/adapter-pg'
+
+function createAdapter() {
+  const baseUrl = process.env['DATABASE_URL'] || ''
+  const separator = baseUrl.includes('?') ? '&' : '?'
+  const usePgBouncer = process.env['PGBOUNCER_ENABLED'] === 'true'
+  const connectionParams = usePgBouncer
+    ? 'pgbouncer=true&connection_limit=5&pool_timeout=10'
+    : 'connection_limit=30'
+  const connectionString = `${baseUrl}${separator}${connectionParams}`
+  return new PrismaPg({ connectionString })
+}
 
 @Injectable()
 export class ApiCoreDataAccessService
@@ -9,16 +20,17 @@ export class ApiCoreDataAccessService
   implements OnModuleInit, OnModuleDestroy
 {
   constructor() {
+    const adapter = createAdapter()
+
     const config: Prisma.PrismaClientOptions = {
-      datasources: {
-        db: { url: `${process.env['DATABASE_URL']}?connection_limit=30` },
-      },
+      adapter,
       log:
         process.env['LOG_PRISMA_QUERIES'] === 'true' ||
         process.env['COUNT_PRISMA_QUERIES'] === 'true'
           ? [{ emit: 'event', level: 'query' }]
           : [{ emit: 'event', level: 'warn' }],
     }
+
     super(config)
     this.queryCount = 0
 
@@ -29,6 +41,7 @@ export class ApiCoreDataAccessService
         console.warn('Not Running Prisma Optimize - No API Key Set')
       }
 
+      const { withOptimize } = require('@prisma/extension-optimize')
       const extendedClient = new PrismaClient(config).$extends(withOptimize({ apiKey }))
       Object.assign(this, extendedClient)
     }

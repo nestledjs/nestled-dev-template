@@ -9,6 +9,7 @@ import { ApiCoreFeatureController } from './api-core-feature.controller'
 import { ApiCoreFeatureResolver } from './api-core-feature.resolver'
 import { ApiCoreFeatureService } from './api-core-feature.service'
 import { ComplexityPlugin } from './plugins/complexity.plugin'
+import { NoCachePlugin } from './plugins/no-cache.plugin'
 
 interface ConnectionParameters {
   headers?: Record<string, string>
@@ -77,19 +78,26 @@ const redisPubSubProvider = {
         connectionParams: ConnectionParameters
       }) => {
         if (connectionParams) {
-          req = { headers: connectionParams.headers }
+          // Preserve existing req properties (user, organizationContext, etc.) while adding connection headers
+          req = { ...req, headers: connectionParams.headers }
         }
         return { req, res }
       },
       sortSchema: true,
       buildSchemaOptions: {
-        dateScalarMode: 'timestamp',
+        dateScalarMode: 'isoDate',
         numberScalarMode: 'float',
       },
     }),
   ],
   controllers: [ApiCoreFeatureController],
-  providers: [ApiCoreFeatureResolver, ApiCoreFeatureService, ComplexityPlugin, redisPubSubProvider],
-  exports: [ApiCoreFeatureService, ComplexityPlugin, 'REDIS_PUB_SUB'],
+  providers: [
+    ApiCoreFeatureResolver,
+    ApiCoreFeatureService,
+    ComplexityPlugin,
+    NoCachePlugin,
+    redisPubSubProvider,
+  ],
+  exports: [ApiCoreFeatureService, ComplexityPlugin, NoCachePlugin, 'REDIS_PUB_SUB'],
 })
 export class ApiCoreFeatureModule {}
