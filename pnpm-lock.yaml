@@ -87,8 +87,8 @@ importers:
         specifier: ^0.6.4
         version: 0.6.4(@mdxeditor/editor@3.39.1(@codemirror/language@6.11.2)(@lezer/highlight@1.2.1)(@types/react-dom@19.1.0(@types/react@19.1.0))(@types/react@19.1.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(yjs@13.6.27))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@nestledjs/generators':
-        specifier: ^0.2.22
-        version: 0.2.22(4bbc28583e669b18782731bcaf87f596)
+        specifier: ^0.2.23
+        version: 0.2.23(4bbc28583e669b18782731bcaf87f596)
       '@nx/devkit':
         specifier: 21.2.3
         version: 21.2.3(nx@21.2.3(@swc-node/register@1.10.8(@swc/core@1.12.6(@swc/helpers@0.5.17))(@swc/types@0.1.23)(typescript@5.8.3))(@swc/core@1.12.6(@swc/helpers@0.5.17)))
@@ -167,6 +167,9 @@ importers:
       cookie-parser:
         specifier: ^1.4.7
         version: 1.4.7
+      dataloader:
+        specifier: ^2.2.3
+        version: 2.2.3
       dayjs:
         specifier: ^1.11.13
         version: 1.11.13
@@ -861,8 +864,6 @@ importers:
       '@types/ws':
         specifier: ^8.18.1
         version: 8.18.1
-
-  libs/api/prisma/src/lib/prisma-generated: {}
 
   libs/data-browser:
     dependencies:
@@ -4172,8 +4173,8 @@ packages:
       '@nestjs/platform-express':
         optional: true
 
-  '@nestledjs/api@2.7.0':
-    resolution: {integrity: sha512-c2ckaMeB/uB33cUENQOoAlJ+OTBrdKjHpcdIk/FQdnyh7g7RNFJRYaiWUloxZLoc6ti5krQAO7Rvw7RBsik/fw==}
+  '@nestledjs/api@2.8.0':
+    resolution: {integrity: sha512-i6QtnV48sjgRmtexdk3bY/+9rjbQNpKSXRkM3BrLWpl/dLDLwkjz/tMSrZZNw2r89TfqI/T5EPehkf+LimTldQ==}
     peerDependencies:
       '@nestledjs/utils': 1.0.0
 
@@ -4202,8 +4203,8 @@ packages:
       '@mdxeditor/editor':
         optional: true
 
-  '@nestledjs/generators@0.2.22':
-    resolution: {integrity: sha512-5F26iaMAK9WBDM4wBeOxJno13rwQn/I3l5Qfzv0hH8PLAdTvfDozKToRSbPrcG+drsCV3w4vpJmp/PMD3z/0dg==}
+  '@nestledjs/generators@0.2.23':
+    resolution: {integrity: sha512-aak7vM1CGP+311VQkA3+KSeJsPsj1JMi6H+V/syxrfSC1R0V8vejRDdKipRJlHGOfgPE76iDRag9xMWnQiQpsA==}
 
   '@nestledjs/plugins@0.1.15':
     resolution: {integrity: sha512-PO8ohnDDW8ROIPPSz3vDK7wm5pArT3KOTQC+jeJVTn9pArQj3JKdMnY2JW9p3P6Tzxpd3EMIXuSrcQQ4o92WhA==}
@@ -20898,7 +20899,7 @@ snapshots:
     optionalDependencies:
       '@nestjs/platform-express': 11.1.3(@nestjs/common@11.1.3(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.3)
 
-  '@nestledjs/api@2.7.0(8834a8f762845cea000a69f574ff2643)':
+  '@nestledjs/api@2.8.0(8834a8f762845cea000a69f574ff2643)':
     dependencies:
       '@nestledjs/utils': 1.0.0(@babel/traverse@7.28.5)(@swc-node/register@1.10.8(@swc/core@1.12.6(@swc/helpers@0.5.17))(@swc/types@0.1.23)(typescript@5.8.3))(@swc/core@1.12.6(@swc/helpers@0.5.17))(@types/node@24.0.4)(@zkochan/js-yaml@0.0.7)(babel-plugin-macros@3.1.0)(chokidar@4.0.3)(esbuild-register@3.6.0(esbuild@0.25.5))(eslint@9.29.0(jiti@2.4.2))(magicast@0.3.5)(nx@21.2.3(@swc-node/register@1.10.8(@swc/core@1.12.6(@swc/helpers@0.5.17))(@swc/types@0.1.23)(typescript@5.8.3))(@swc/core@1.12.6(@swc/helpers@0.5.17)))(ts-node@10.9.2(@swc/core@1.12.6(@swc/helpers@0.5.17))(@types/node@24.0.4)(typescript@5.8.3))(typescript@5.8.3)(verdaccio@6.2.1(encoding@0.1.13)(typanion@3.14.0))
       '@nx/devkit': 22.0.2(nx@21.2.3(@swc-node/register@1.10.8(@swc/core@1.12.6(@swc/helpers@0.5.17))(@swc/types@0.1.23)(typescript@5.8.3))(@swc/core@1.12.6(@swc/helpers@0.5.17)))
@@ -20952,9 +20953,9 @@ snapshots:
     optionalDependencies:
       '@mdxeditor/editor': 3.39.1(@codemirror/language@6.11.2)(@lezer/highlight@1.2.1)(@types/react-dom@19.1.0(@types/react@19.1.0))(@types/react@19.1.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(yjs@13.6.27)
 
-  '@nestledjs/generators@0.2.22(4bbc28583e669b18782731bcaf87f596)':
+  '@nestledjs/generators@0.2.23(4bbc28583e669b18782731bcaf87f596)':
     dependencies:
-      '@nestledjs/api': 2.7.0(8834a8f762845cea000a69f574ff2643)
+      '@nestledjs/api': 2.8.0(8834a8f762845cea000a69f574ff2643)
       '@nestledjs/config': 0.1.15(@nestledjs/utils@1.0.0(@babel/traverse@7.28.5)(@swc-node/register@1.10.8(@swc/core@1.12.6(@swc/helpers@0.5.17))(@swc/types@0.1.23)(typescript@5.8.3))(@swc/core@1.12.6(@swc/helpers@0.5.17))(@types/node@24.0.4)(@zkochan/js-yaml@0.0.7)(babel-plugin-macros@3.1.0)(chokidar@4.0.3)(esbuild-register@3.6.0(esbuild@0.25.5))(eslint@9.29.0(jiti@2.4.2))(magicast@0.3.5)(nx@21.2.3(@swc-node/register@1.10.8(@swc/core@1.12.6(@swc/helpers@0.5.17))(@swc/types@0.1.23)(typescript@5.8.3))(@swc/core@1.12.6(@swc/helpers@0.5.17)))(ts-node@10.9.2(@swc/core@1.12.6(@swc/helpers@0.5.17))(@types/node@24.0.4)(typescript@5.8.3))(typescript@5.8.3)(verdaccio@6.2.1(encoding@0.1.13)(typanion@3.14.0)))(nx@21.2.3(@swc-node/register@1.10.8(@swc/core@1.12.6(@swc/helpers@0.5.17))(@swc/types@0.1.23)(typescript@5.8.3))(@swc/core@1.12.6(@swc/helpers@0.5.17)))
       '@nestledjs/plugins': 0.1.15(dff1592b117e345fe66fe03486dd24f5)
       '@nestledjs/shared': 1.0.0(8834a8f762845cea000a69f574ff2643)

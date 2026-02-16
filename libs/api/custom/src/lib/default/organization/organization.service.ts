@@ -1,4 +1,4 @@
-import { BadRequestException, ForbiddenException, Injectable, Logger, NotFoundException } from '@nestjs/common'
+import { BadRequestException, ForbiddenException, Injectable, Logger, NotFoundException, Optional } from '@nestjs/common'
 import { ApiCoreDataAccessService } from '@nestled-template/api/core/data-access'
 import { Organization, User } from '@nestled-template/api/core/models'
 import { defaultRoles } from '@nestled-template/api/prisma'
@@ -20,6 +20,7 @@ import {
 import { EmailService } from '@nestled-template/api/integrations'
 import { ConfigService } from '@nestjs/config'
 import { randomBytes } from 'crypto'
+import { AuthCacheService } from '@nestled-template/api/utils'
 
 @Injectable()
 export class OrganizationService {
@@ -27,6 +28,7 @@ export class OrganizationService {
     private readonly data: ApiCoreDataAccessService,
     private readonly emailService: EmailService,
     private readonly config: ConfigService,
+    @Optional() private readonly authCache?: AuthCacheService,
   ) {}
 
   /**
@@ -291,6 +293,12 @@ export class OrganizationService {
       where: { id: member.id }
     })
 
+    // Invalidate cached membership for the removed user
+    if (this.authCache?.isEnabled()) {
+      await this.authCache.invalidateMembership(input.userId, input.organizationId)
+      await this.authCache.invalidateUserActiveOrganization(input.userId)
+    }
+
     Logger.log(`User ${userId} removed member ${input.userId} from organization ${input.organizationId}`)
 
     return true
@@ -329,6 +337,11 @@ export class OrganizationService {
       where: { id: member.id },
       data: { roleId: input.roleId }
     })
+
+    // Invalidate cached membership for the affected user
+    if (this.authCache?.isEnabled()) {
+      await this.authCache.invalidateMembership(input.userId, input.organizationId)
+    }
 
     Logger.log(`User ${userId} updated role for member ${input.userId} in organization ${input.organizationId}`)
 
@@ -663,6 +676,11 @@ export class OrganizationService {
       data: { activeOrganizationId: input.organizationId }
     })
 
+    // Update cache with new active organization
+    if (this.authCache?.isEnabled()) {
+      await this.authCache.setUserActiveOrganization(userId, input.organizationId)
+    }
+
     Logger.log(`User ${userId} switched to organization ${input.organizationId}`)
 
     return user
@@ -852,6 +870,14 @@ export class OrganizationService {
         data: { roleId: targetMember.roleId } // Give current owner the new owner's previous role
       })
     ])
+
+    // Invalidate cached memberships for both users
+    if (this.authCache?.isEnabled()) {
+      await Promise.all([
+        this.authCache.invalidateMembership(userId, input.organizationId),
+        this.authCache.invalidateMembership(input.newOwnerUserId, input.organizationId),
+      ])
+    }
 
     Logger.log(`Organization ownership transferred from ${userId} to ${input.newOwnerUserId} for organization ${input.organizationId}`)
 

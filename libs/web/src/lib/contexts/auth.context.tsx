@@ -76,6 +76,10 @@ export function AuthProvider({ children, initialUser = null }: AuthProviderProps
     setUser(null)
     setIsEmulating(false)
     setOriginalUser(null)
+    // Clear organization context from localStorage
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('activeOrganizationId')
+    }
     // The actual logout mutation should be called from the logout page
     // This just clears the local state
   }
@@ -118,6 +122,18 @@ export function AuthProvider({ children, initialUser = null }: AuthProviderProps
     }
   }, [user])
 
+  // Sync activeOrganizationId to localStorage for Apollo client X-Organization-ID header
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+
+    const orgId = (user as any)?.activeOrganizationId || activeOrganization?.id
+    if (orgId) {
+      localStorage.setItem('activeOrganizationId', orgId)
+    } else {
+      localStorage.removeItem('activeOrganizationId')
+    }
+  }, [user, activeOrganization])
+
   const value: AuthContextType = {
     user,
     isAuthenticated,
@@ -145,12 +161,23 @@ export function useAuth() {
   return context
 }
 
+// Helper to check if permissions array contains super admin (all:manage)
+function hasSuperAdminPermission(permissions: any[] | undefined): boolean {
+  if (!permissions || !Array.isArray(permissions)) return false
+  return permissions.some((p: any) => p.subject === 'all' && p.action === 'manage')
+}
+
 // Hook to check if user has a specific permission
 export function useHasPermission(permission: string): boolean {
   const { activeOrganizationMember } = useAuth()
 
   if (!activeOrganizationMember?.role?.permissions) {
     return false
+  }
+
+  // Super admin has all permissions
+  if (hasSuperAdminPermission(activeOrganizationMember.role.permissions)) {
+    return true
   }
 
   // Parse permission string (e.g., "organization:update")
@@ -169,6 +196,11 @@ export function useHasAnyPermission(permissions: string[]): boolean {
     return false
   }
 
+  // Super admin has all permissions
+  if (hasSuperAdminPermission(activeOrganizationMember.role.permissions)) {
+    return true
+  }
+
   return permissions.some(permission => {
     const [subject, action] = permission.split(':')
     return activeOrganizationMember.role?.permissions?.some(
@@ -183,6 +215,11 @@ export function useHasAllPermissions(permissions: string[]): boolean {
 
   if (!activeOrganizationMember?.role?.permissions) {
     return false
+  }
+
+  // Super admin has all permissions
+  if (hasSuperAdminPermission(activeOrganizationMember.role.permissions)) {
+    return true
   }
 
   return permissions.every(permission => {
