@@ -163,12 +163,11 @@ async function fixExistingOrganizations() {
   console.log('\n=== Fix Complete ===')
 }
 
-fixExistingOrganizations()
-  .then(async () => {
-    await prisma.$disconnect()
-  })
-  .catch(async e => {
-    console.error('Error fixing organizations:', e)
-    await prisma.$disconnect()
-    process.exit(1)
-  })
+try {
+  await fixExistingOrganizations()
+  await prisma.$disconnect()
+} catch (e) {
+  console.error('Error fixing organizations:', e)
+  await prisma.$disconnect()
+  process.exit(1)
+}
