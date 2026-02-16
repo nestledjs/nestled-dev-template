@@ -1,7 +1,7 @@
 import { Resolver, Mutation, Query, Args, Int } from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
 import { GqlAuthGuard, CtxUser } from '@nestled-template/api/utils'
-import { User, StoredFile } from '@nestled-template/api/prisma'
+import { User, StoredFile } from '@nestled-template/api/core/models'
 import { StorageService } from './storage.service'
 import { UploadedFile } from './models/upload.model'
 import { GraphQLUpload, FileUpload } from 'graphql-upload-minimal'

@@ -7,9 +7,12 @@
  * Example: pnpm tsx scripts/delete-user.ts john@example.com
  */
 
-import { PrismaClient } from '@prisma/client'
+import 'dotenv/config'
+import { PrismaClient } from '@nestled-template/api/prisma'
+import { PrismaPg } from '@prisma/adapter-pg'
 
-const prisma = new PrismaClient()
+const adapter = new PrismaPg({ connectionString: process.env['DATABASE_URL']! })
+const prisma = new PrismaClient({ adapter })
 
 async function deleteUser(email: string) {
   console.log(`\n🔍 Looking for user: ${email}`)

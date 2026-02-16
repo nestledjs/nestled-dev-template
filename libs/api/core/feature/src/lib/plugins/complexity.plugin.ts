@@ -42,7 +42,9 @@ export class ComplexityPlugin implements ApolloServerPlugin {
         if (complexity > maxComplexity) {
           let message = `Query "${request.operationName}" is too complex: ${complexity}. Maximum allowed complexity: ${maxComplexity}.`
           if (queryComplexityVerboseErrors) {
-            message = `${message}\n\nVariables:\n${JSON.stringify(request.variables)}\n\nFull Query:\n${request.query}`
+            message = `${message}\n\nVariables:\n${JSON.stringify(
+              request.variables,
+            )}\n\nFull Query:\n${request.query}`
           }
           Logger.error(message)
           throw new GraphQLError(message)

@@ -1,6 +1,6 @@
-import { existsSync, lstatSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'fs' // Added readdirSync, lstatSync
-import { join } from 'path'
-import { execSync } from 'child_process'
+import { existsSync, lstatSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs'
+import { join } from 'node:path'
+import { execSync } from 'node:child_process'
 import { getDMMF } from '@prisma/internals'
 
 function extractQuotedStrings(input: string): string[] {
@@ -200,8 +200,12 @@ function generateModels(models: readonly any[], enums: readonly any[]): string {
   const usesBigInt = models.some(model =>
     model.fields.some((field: { type: string }) => field.type === 'BigInt'),
   )
-  let output = `import { Field, ObjectType${
-    usesFloat ? ', Float' : ''
+  // Check if any model field uses DateTime
+  const usesDateTime = models.some(model =>
+    model.fields.some((field: { type: string }) => field.type === 'DateTime'),
+  )
+  let output = `import { Field, ObjectType${usesFloat ? ', Float' : ''}${
+    usesDateTime ? ', GraphQLISODateTime' : ''
   }, Int } from '@nestjs/graphql';\n`
   output += `import { GraphQLJSONObject } from 'graphql-type-json';\n`
 
@@ -209,16 +213,23 @@ function generateModels(models: readonly any[], enums: readonly any[]): string {
   const usesDecimal = models.some(model =>
     model.fields.some((field: { type: string }) => field.type === 'Decimal'),
   )
+  // Check if any model field uses Json
+  const usesJson = models.some(model =>
+    model.fields.some((field: { type: string }) => field.type === 'Json'),
+  )
   if (usesDecimal) {
-    output += `import { Decimal } from '@prisma/client/runtime/library';\n`
+    output += `import Decimal from 'decimal.js';\n`
     output += `import { GraphQLDecimal } from 'prisma-graphql-type-decimal';\n`
   }
   if (usesBigInt) {
     output += `import { GraphQLBigInt } from 'graphql-scalars';\n`
   }
-  // Ensure Prisma and enums are imported correctly
+  // Import JsonValue type directly from Prisma v7 runtime (where it now lives)
+  if (usesJson) {
+    output += `import type { JsonValue } from '@prisma/client/runtime/client';\n`
+  }
+  // Ensure enums are imported correctly
   const enumNames = enums.map(e => e.name)
-  output += `import { Prisma } from '${prismaImportPath}';\n`
   if (enumNames.length > 0) {
     output += `import { ${enumNames.join(', ')} } from './enums';\n`
   }
@@ -235,16 +246,6 @@ function generateModels(models: readonly any[], enums: readonly any[]): string {
       const isFieldRequired = isRelation ? false : field.isRequired
       // const isRequired = field.isRequired // Natively supported by DMMF
 
-      // ALWAYS LOG: Print every field processed for debugging
-      console.log('*** FIELD DEBUG ***', {
-        model: model.name,
-        field: field.name,
-        kind: field.kind,
-        type: field.type,
-        isList: field.isList,
-        isRequired: field.isRequired,
-      })
-
       let tsType = originalType
 
       if (field.kind === 'scalar') {
@@ -259,7 +260,7 @@ function generateModels(models: readonly any[], enums: readonly any[]): string {
         } else if (originalType === 'DateTime') {
           tsType = 'Date'
         } else if (originalType === 'Json') {
-          tsType = 'Prisma.JsonValue'
+          tsType = 'JsonValue'
         } else if (originalType === 'BigInt') {
           tsType = 'bigint' // Prisma uses bigint for BigInt
         } else if (originalType === 'Bytes') {
@@ -289,7 +290,7 @@ function generateModels(models: readonly any[], enums: readonly any[]): string {
         else if (originalType === 'Json') listItemGraphQLType = 'GraphQLJSONObject'
         else if (isEnum || isRelation)
           listItemGraphQLType = originalType // Assumes enum/type is registered with GraphQL
-        else if (originalType === 'DateTime') listItemGraphQLType = 'Date'
+        else if (originalType === 'DateTime') listItemGraphQLType = 'GraphQLISODateTime'
         else if (originalType === 'Boolean') listItemGraphQLType = 'Boolean'
         else if (originalType.toLowerCase() === 'string' || originalType === 'ID') {
           listItemGraphQLType = 'String'
@@ -305,7 +306,7 @@ function generateModels(models: readonly any[], enums: readonly any[]): string {
         else if (originalType === 'BigInt') decoratorType = '() => GraphQLBigInt'
         else if (originalType === 'Json') decoratorType = '() => GraphQLJSONObject'
         else if (isEnum || isRelation) decoratorType = `() => ${originalType}`
-        else if (originalType === 'DateTime') decoratorType = '() => Date'
+        else if (originalType === 'DateTime') decoratorType = '() => GraphQLISODateTime'
         else if (originalType === 'Boolean') decoratorType = '() => Boolean'
         else if (originalType.toLowerCase() === 'string' || originalType === 'ID')
           decoratorType = '() => String'
@@ -327,15 +328,6 @@ function generateModels(models: readonly any[], enums: readonly any[]): string {
       if (isRelation) {
         // For relations, always use Partial<Type> (for both single and list)
         finalTsType = `Partial<${tsType}>`
-        // DEBUG: Log relation fields
-        console.log('DEBUG: Relation field detected:', {
-          model: model.name,
-          field: field.name,
-          kind: field.kind,
-          type: field.type,
-          isList: field.isList,
-          isRequired: field.isRequired,
-        })
       }
 
       // Add null union type only for non-required fields
@@ -353,7 +345,8 @@ function generateEnums(enums: readonly any[]): string {
 
   if (enums.length > 0) {
     const enumNames = enums.map(e => e.name).join(', ')
-    output += `import { ${enumNames} } from '${prismaImportPath}';\n\n`
+    // Import first to make enums available in scope, then export separately
+    output += `import { ${enumNames} } from '${prismaImportPath}';\n`
     output += `export { ${enumNames} };\n\n`
 
     enums.forEach(enumType => {

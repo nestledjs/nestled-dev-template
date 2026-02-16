@@ -1,8 +1,8 @@
-import { Field, ObjectType, Int } from '@nestjs/graphql';
+import { Field, ObjectType, GraphQLISODateTime, Int } from '@nestjs/graphql';
 import { GraphQLJSONObject } from 'graphql-type-json';
-import { Decimal } from '@prisma/client/runtime/library';
+import Decimal from 'decimal.js';
 import { GraphQLDecimal } from 'prisma-graphql-type-decimal';
-import { Prisma } from '@nestled-template/api/prisma';
+import type { JsonValue } from '@prisma/client/runtime/client';
 import { AddressType, EmailType, FailureReason, ImageType, InviteStatus, PhoneType, SecurityEventType, StorageProvider, SubscriptionStatus, TwoFactorMethod } from './enums';
 
 @ObjectType({ description: undefined })
@@ -10,10 +10,10 @@ export class Address {
   @Field(() => String)
   id!: string;
 
-  @Field(() => Date)
+  @Field(() => GraphQLISODateTime)
   createdAt!: Date;
 
-  @Field(() => Date)
+  @Field(() => GraphQLISODateTime)
   updatedAt!: Date;
 
   @Field(() => String, { nullable: true })
@@ -62,10 +62,10 @@ export class ApiToken {
   @Field(() => String)
   id!: string;
 
-  @Field(() => Date)
+  @Field(() => GraphQLISODateTime)
   createdAt!: Date;
 
-  @Field(() => Date)
+  @Field(() => GraphQLISODateTime)
   updatedAt!: Date;
 
   @Field(() => String)
@@ -80,10 +80,10 @@ export class ApiToken {
   @Field(() => String)
   name!: string;
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   expiresAt?: Date | null;
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   lastUsedAt?: Date | null;
 
   @Field(() => Boolean)
@@ -96,10 +96,10 @@ export class AuditLog {
   @Field(() => String)
   id!: string;
 
-  @Field(() => Date)
+  @Field(() => GraphQLISODateTime)
   createdAt!: Date;
 
-  @Field(() => Date)
+  @Field(() => GraphQLISODateTime)
   updatedAt!: Date;
 
   @Field(() => String)
@@ -124,7 +124,7 @@ export class AuditLog {
   organization?: Partial<Organization> | null;
 
   @Field(() => GraphQLJSONObject, { nullable: true })
-  changes?: Prisma.JsonValue | null;
+  changes?: JsonValue | null;
 
 }
 
@@ -133,10 +133,10 @@ export class Country {
   @Field(() => String)
   id!: string;
 
-  @Field(() => Date)
+  @Field(() => GraphQLISODateTime)
   createdAt!: Date;
 
-  @Field(() => Date)
+  @Field(() => GraphQLISODateTime)
   updatedAt!: Date;
 
   @Field(() => String)
@@ -182,10 +182,10 @@ export class Email {
   @Field(() => String)
   id!: string;
 
-  @Field(() => Date)
+  @Field(() => GraphQLISODateTime)
   createdAt!: Date;
 
-  @Field(() => Date)
+  @Field(() => GraphQLISODateTime)
   updatedAt!: Date;
 
   @Field(() => String)
@@ -203,7 +203,7 @@ export class Email {
   @Field(() => String, { nullable: true })
   verifyToken?: string | null;
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   verifyExpires?: Date | null;
 
   @Field(() => String, { nullable: true })
@@ -228,13 +228,13 @@ export class Invite {
   @Field(() => String)
   id!: string;
 
-  @Field(() => Date)
+  @Field(() => GraphQLISODateTime)
   createdAt!: Date;
 
-  @Field(() => Date)
+  @Field(() => GraphQLISODateTime)
   updatedAt!: Date;
 
-  @Field(() => Date)
+  @Field(() => GraphQLISODateTime)
   expiresAt!: Date;
 
   @Field(() => String)
@@ -271,10 +271,10 @@ export class Link {
   @Field(() => String)
   id!: string;
 
-  @Field(() => Date)
+  @Field(() => GraphQLISODateTime)
   createdAt!: Date;
 
-  @Field(() => Date)
+  @Field(() => GraphQLISODateTime)
   updatedAt!: Date;
 
   @Field(() => String)
@@ -302,10 +302,10 @@ export class LoginAttempt {
   @Field(() => String)
   id!: string;
 
-  @Field(() => Date)
+  @Field(() => GraphQLISODateTime)
   createdAt!: Date;
 
-  @Field(() => Date)
+  @Field(() => GraphQLISODateTime)
   updatedAt!: Date;
 
   @Field(() => String, { nullable: true })
@@ -339,10 +339,10 @@ export class OAuthAccount {
   @Field(() => String)
   id!: string;
 
-  @Field(() => Date)
+  @Field(() => GraphQLISODateTime)
   createdAt!: Date;
 
-  @Field(() => Date)
+  @Field(() => GraphQLISODateTime)
   updatedAt!: Date;
 
   @Field(() => String)
@@ -364,10 +364,10 @@ export class Organization {
   @Field(() => String)
   id!: string;
 
-  @Field(() => Date)
+  @Field(() => GraphQLISODateTime)
   createdAt!: Date;
 
-  @Field(() => Date)
+  @Field(() => GraphQLISODateTime)
   updatedAt!: Date;
 
   @Field(() => String)
@@ -413,10 +413,10 @@ export class OrganizationMember {
   @Field(() => String)
   id!: string;
 
-  @Field(() => Date)
+  @Field(() => GraphQLISODateTime)
   createdAt!: Date;
 
-  @Field(() => Date)
+  @Field(() => GraphQLISODateTime)
   updatedAt!: Date;
 
   @Field(() => String)
@@ -463,10 +463,10 @@ export class PhoneNumber {
   @Field(() => String)
   id!: string;
 
-  @Field(() => Date)
+  @Field(() => GraphQLISODateTime)
   createdAt!: Date;
 
-  @Field(() => Date)
+  @Field(() => GraphQLISODateTime)
   updatedAt!: Date;
 
   @Field(() => String)
@@ -497,10 +497,10 @@ export class Plan {
   @Field(() => String)
   id!: string;
 
-  @Field(() => Date)
+  @Field(() => GraphQLISODateTime)
   createdAt!: Date;
 
-  @Field(() => Date)
+  @Field(() => GraphQLISODateTime)
   updatedAt!: Date;
 
   @Field(() => String)
@@ -516,10 +516,10 @@ export class Plan {
   interval!: string;
 
   @Field(() => GraphQLJSONObject, { nullable: true })
-  features?: Prisma.JsonValue | null;
+  features?: JsonValue | null;
 
   @Field(() => GraphQLJSONObject, { nullable: true })
-  limits?: Prisma.JsonValue | null;
+  limits?: JsonValue | null;
 
   @Field(() => Boolean)
   active!: boolean;
@@ -574,10 +574,10 @@ export class SecurityEvent {
   @Field(() => String)
   id!: string;
 
-  @Field(() => Date)
+  @Field(() => GraphQLISODateTime)
   createdAt!: Date;
 
-  @Field(() => Date)
+  @Field(() => GraphQLISODateTime)
   updatedAt!: Date;
 
   @Field(() => String)
@@ -596,7 +596,7 @@ export class SecurityEvent {
   userAgent?: string | null;
 
   @Field(() => GraphQLJSONObject, { nullable: true })
-  metadata?: Prisma.JsonValue | null;
+  metadata?: JsonValue | null;
 
 }
 
@@ -605,10 +605,10 @@ export class Subscription {
   @Field(() => String)
   id!: string;
 
-  @Field(() => Date)
+  @Field(() => GraphQLISODateTime)
   createdAt!: Date;
 
-  @Field(() => Date)
+  @Field(() => GraphQLISODateTime)
   updatedAt!: Date;
 
   @Field(() => String)
@@ -632,19 +632,19 @@ export class Subscription {
   @Field(() => String, { nullable: true })
   stripePriceId?: string | null;
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   stripeCurrentPeriodEnd?: Date | null;
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   trialStart?: Date | null;
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   trialEnd?: Date | null;
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   cancelAt?: Date | null;
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   canceledAt?: Date | null;
 
   @Field(() => Boolean)
@@ -660,10 +660,10 @@ export class Team {
   @Field(() => String)
   id!: string;
 
-  @Field(() => Date)
+  @Field(() => GraphQLISODateTime)
   createdAt!: Date;
 
-  @Field(() => Date)
+  @Field(() => GraphQLISODateTime)
   updatedAt!: Date;
 
   @Field(() => String)
@@ -688,10 +688,10 @@ export class TeamMember {
   @Field(() => String)
   id!: string;
 
-  @Field(() => Date)
+  @Field(() => GraphQLISODateTime)
   createdAt!: Date;
 
-  @Field(() => Date)
+  @Field(() => GraphQLISODateTime)
   updatedAt!: Date;
 
   @Field(() => String)
@@ -719,10 +719,10 @@ export class StoredFile {
   @Field(() => String)
   id!: string;
 
-  @Field(() => Date)
+  @Field(() => GraphQLISODateTime)
   createdAt!: Date;
 
-  @Field(() => Date)
+  @Field(() => GraphQLISODateTime)
   updatedAt!: Date;
 
   @Field(() => StorageProvider)
@@ -759,7 +759,7 @@ export class StoredFile {
   height?: number | null;
 
   @Field(() => GraphQLJSONObject, { nullable: true })
-  metadata?: Prisma.JsonValue | null;
+  metadata?: JsonValue | null;
 
   @Field(() => String, { nullable: true })
   userId?: string | null;
@@ -780,10 +780,10 @@ export class User {
   @Field(() => String)
   id!: string;
 
-  @Field(() => Date)
+  @Field(() => GraphQLISODateTime)
   createdAt!: Date;
 
-  @Field(() => Date)
+  @Field(() => GraphQLISODateTime)
   updatedAt!: Date;
 
   @Field(() => String, { nullable: true })
@@ -807,7 +807,7 @@ export class User {
   @Field(() => String, { nullable: true })
   passwordResetToken?: string | null;
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   passwordResetExpires?: Date | null;
 
   @Field(() => Boolean)
@@ -816,7 +816,7 @@ export class User {
   @Field(() => String, { nullable: true })
   validateEmailToken?: string | null;
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   validateEmailTokenExpires?: Date | null;
 
   @Field(() => [Email], { nullable: true })
@@ -864,16 +864,16 @@ export class User {
   @Field(() => [LoginAttempt], { nullable: true })
   loginAttempts?: Partial<LoginAttempt>[] | null;
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   lastSuccessfulLogin?: Date | null;
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   lastFailedLogin?: Date | null;
 
   @Field(() => Int)
   failedLoginCount!: number;
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   lockedUntil?: Date | null;
 
   @Field(() => [AuditLog], { nullable: true })
@@ -891,13 +891,13 @@ export class User {
   @Field(() => Boolean)
   isActive!: boolean;
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   deactivatedAt?: Date | null;
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   termsAcceptedAt?: Date | null;
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   privacyPolicyAcceptedAt?: Date | null;
 
   @Field(() => [ApiToken], { nullable: true })
@@ -913,10 +913,10 @@ export class UserPreference {
   @Field(() => String)
   id!: string;
 
-  @Field(() => Date)
+  @Field(() => GraphQLISODateTime)
   createdAt!: Date;
 
-  @Field(() => Date)
+  @Field(() => GraphQLISODateTime)
   updatedAt!: Date;
 
   @Field(() => String)
@@ -938,13 +938,13 @@ export class UserSession {
   @Field(() => String)
   id!: string;
 
-  @Field(() => Date)
+  @Field(() => GraphQLISODateTime)
   createdAt!: Date;
 
-  @Field(() => Date)
+  @Field(() => GraphQLISODateTime)
   updatedAt!: Date;
 
-  @Field(() => Date)
+  @Field(() => GraphQLISODateTime)
   lastActiveAt!: Date;
 
   @Field(() => String)
@@ -972,7 +972,7 @@ export class PasswordHistory {
   @Field(() => String)
   id!: string;
 
-  @Field(() => Date)
+  @Field(() => GraphQLISODateTime)
   createdAt!: Date;
 
   @Field(() => String)

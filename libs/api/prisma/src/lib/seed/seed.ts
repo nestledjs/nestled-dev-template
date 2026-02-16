@@ -1,10 +1,13 @@
-import { PrismaClient } from '../prisma-generated'
+import 'dotenv/config'
+import { PrismaClient } from '../prisma-generated/client'
+import { PrismaPg } from '@prisma/adapter-pg'
 import { countries } from './seed-data/iso-3166-countries'
 import { seedUsers } from './seed-data/seed-users'
 import { defaultPermissions, defaultRoles } from './seed-data/seed-roles-permissions'
 import { hashSync } from 'bcryptjs'
 
-const prisma = new PrismaClient()
+const adapter = new PrismaPg({ connectionString: process.env['DATABASE_URL']! })
+const prisma = new PrismaClient({ adapter })
 async function main() {
   // Seed countries
   console.log('Seeding countries...')
