@@ -12,6 +12,13 @@ interface RequirePermissionProps {
 function checkPermission(permissions: any[], permissionString: string): boolean {
   if (!permissions || !Array.isArray(permissions)) return false
 
+  // Check for super admin permission (all:manage grants access to everything)
+  const hasAllManage = permissions.some(
+    (p: any) => p.subject === 'all' && p.action === 'manage'
+  )
+  if (hasAllManage) return true
+
+  // Check specific permission
   const [subject, action] = permissionString.split(':')
   return permissions.some(
     (p: any) => p.subject === subject && p.action === action
