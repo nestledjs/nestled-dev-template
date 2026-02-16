@@ -92,7 +92,7 @@ describe('Admin Users Management Page', () => {
           emails: [{ email: 'jane@example.com', primary: true, verified: false }],
           isSuperAdmin: true,
           twoFactorEnabled: false,
-          lockedUntil: '2025-12-31T23:59:59Z',
+          lockedUntil: '2099-12-31T23:59:59Z',
           lastSuccessfulLogin: null,
           organizations: [],
         },

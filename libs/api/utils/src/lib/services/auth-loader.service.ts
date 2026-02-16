@@ -39,7 +39,7 @@ interface MembershipResult {
 @Injectable({ scope: Scope.REQUEST })
 export class AuthLoaderService {
   private readonly logger = new Logger(AuthLoaderService.name)
-  private readonly membershipLoader: DataLoader<MembershipKey, OrganizationContext | null>
+  private readonly membershipLoader: DataLoader<MembershipKey, OrganizationContext | null, string>
 
   constructor(
     private readonly authCache: AuthCacheService,
@@ -49,7 +49,7 @@ export class AuthLoaderService {
       keys: readonly MembershipKey[]
     ) => Promise<MembershipResult[]>
   ) {
-    this.membershipLoader = new DataLoader<MembershipKey, OrganizationContext | null>(
+    this.membershipLoader = new DataLoader<MembershipKey, OrganizationContext | null, string>(
       keys => this.batchLoadMemberships(keys),
       {
         // Use a custom cache key since the key is an object
