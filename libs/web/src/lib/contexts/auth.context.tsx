@@ -77,7 +77,7 @@ export function AuthProvider({ children, initialUser = null }: AuthProviderProps
     setIsEmulating(false)
     setOriginalUser(null)
     // Clear organization context from localStorage
-    if (typeof window !== 'undefined') {
+    if (typeof globalThis.window !== 'undefined') {
       localStorage.removeItem('activeOrganizationId')
     }
     // The actual logout mutation should be called from the logout page
@@ -124,7 +124,7 @@ export function AuthProvider({ children, initialUser = null }: AuthProviderProps
 
   // Sync activeOrganizationId to localStorage for Apollo client X-Organization-ID header
   useEffect(() => {
-    if (typeof window === 'undefined') return
+    if (typeof globalThis.window === 'undefined') return
 
     const orgId = (user as any)?.activeOrganizationId || activeOrganization?.id
     if (orgId) {
