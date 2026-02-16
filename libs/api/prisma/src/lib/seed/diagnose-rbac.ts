@@ -68,7 +68,7 @@ async function diagnoseRBAC() {
 
   // Check if Owner role has permissions
   const ownerRole = org.roles.find(r => r.name === 'Owner')
-  if (ownerRole && ownerRole.permissions.length === 0) {
+  if (ownerRole?.permissions.length === 0) {
     console.log('\n⚠ WARNING: Owner role has NO PERMISSIONS!')
     console.log('This is likely the root cause of the permission issues.')
   }
@@ -76,12 +76,11 @@ async function diagnoseRBAC() {
   console.log('\n=== Done ===')
 }
 
-diagnoseRBAC()
-  .then(async () => {
-    await prisma.$disconnect()
-  })
-  .catch(async e => {
-    console.error('Error:', e)
-    await prisma.$disconnect()
-    process.exit(1)
-  })
+try {
+  await diagnoseRBAC()
+  await prisma.$disconnect()
+} catch (e) {
+  console.error('Error:', e)
+  await prisma.$disconnect()
+  process.exit(1)
+}
