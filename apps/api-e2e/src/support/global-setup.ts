@@ -94,7 +94,7 @@ module.exports = async function () {
   // Ensure database schema is up to date
   console.log('🔄 Syncing database schema...')
   try {
-    execSync('pnpm prisma db push --skip-generate', {
+    execSync('pnpm prisma db push', {
       cwd: projectRoot,
       env: { ...process.env, DATABASE_URL: testDatabaseUrl },
       stdio: 'inherit'

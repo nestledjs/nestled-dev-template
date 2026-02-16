@@ -364,7 +364,7 @@ describe('ApiTokensService', () => {
         userId: 'user-123',
         tokenHash,
         revoked: false,
-        expiresAt: new Date('2025-12-31'), // Future date
+        expiresAt: new Date('2099-12-31'), // Future date
       }
 
       mockData.apiToken.findFirst.mockResolvedValue(mockApiToken as any)

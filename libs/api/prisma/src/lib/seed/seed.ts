@@ -69,7 +69,15 @@ async function main() {
       })
       console.log(`✓ User ${user.displayName} seeded`)
     } catch (e) {
-      if ((e as any).code === 'P2002' && (e as any).meta?.target?.includes('displayName')) {
+      // Handle Prisma v7 unique constraint violations (P2002)
+      // The error format changed in v7 with driver adapters
+      const isPrismaError = (e as any).code === 'P2002'
+      const isDisplayNameViolation =
+        (e as any).meta?.target?.includes?.('displayName') ||
+        String((e as any).message).includes('displayName') ||
+        String((e as any).meta?.driverAdapterError).includes('UniqueConstraintViolation')
+
+      if (isPrismaError && isDisplayNameViolation) {
         console.log(`  User with displayName \"${user.displayName}\" already exists. Skipping.`)
       } else {
         throw e
