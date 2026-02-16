@@ -258,10 +258,31 @@ function dispatchServiceUnavailableEvent(networkError: Error, operation: Operati
   }, 30000) // 30 seconds
 }
 
+function getActiveOrganizationId(): string | null {
+  // Only available in browser environment
+  if (typeof window === 'undefined' || typeof localStorage === 'undefined') {
+    return null
+  }
+  return localStorage.getItem('activeOrganizationId')
+}
+
 function createAuthLink(token: string | null): ApolloLink {
-  return setContext((_, { headers }) => ({
-    headers: token ? { ...headers, authorization: `Bearer ${token}` } : headers,
-  }))
+  return setContext((_, { headers }) => {
+    const newHeaders: Record<string, string> = { ...headers }
+
+    // Add authorization header if token exists
+    if (token) {
+      newHeaders.authorization = `Bearer ${token}`
+    }
+
+    // Add organization context header for multi-tenant isolation
+    const activeOrgId = getActiveOrganizationId()
+    if (activeOrgId) {
+      newHeaders['x-organization-id'] = activeOrgId
+    }
+
+    return { headers: newHeaders }
+  })
 }
 
 function createLogLink(): ApolloLink {

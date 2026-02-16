@@ -2,9 +2,12 @@ import React, { useState } from 'react'
 import { useLoaderData } from 'react-router'
 import {
   ArrowPathIcon,
+  ChevronDownIcon,
+  ChevronRightIcon,
   EnvelopeIcon,
   PencilIcon,
   PlusIcon,
+  ShieldCheckIcon,
   UserMinusIcon,
   UsersIcon,
 } from '@heroicons/react/24/outline'
@@ -33,6 +36,135 @@ import {
   type OrganizationInvitationsQuery,
 } from '@nestled-template/shared/sdk'
 import { useReadQuery, type QueryRef, useQuery, useMutation } from '@apollo/client/react'
+
+// Permission descriptions for display
+const permissionDescriptions: Record<string, string> = {
+  'organization:read': 'View organization details',
+  'organization:update': 'Update organization settings',
+  'organization:delete': 'Delete organization',
+  'member:read': 'View organization members',
+  'member:invite': 'Invite new members',
+  'member:update': 'Update member roles',
+  'member:remove': 'Remove members',
+  'role:read': 'View roles',
+  'role:create': 'Create custom roles',
+  'role:update': 'Update role permissions',
+  'role:delete': 'Delete custom roles',
+  'billing:read': 'View billing information',
+  'billing:manage': 'Manage subscriptions and payments',
+  'team:read': 'View teams',
+  'team:create': 'Create teams',
+  'team:update': 'Update teams',
+  'team:delete': 'Delete teams',
+  'audit:read': 'View audit logs',
+}
+
+// Group permissions by subject for display
+function groupPermissionsBySubject(permissions: Array<{ subject: string; action: string }>) {
+  const grouped: Record<string, string[]> = {}
+  for (const perm of permissions) {
+    if (!grouped[perm.subject]) {
+      grouped[perm.subject] = []
+    }
+    grouped[perm.subject].push(perm.action)
+  }
+  return grouped
+}
+
+// Role badge colors
+const roleBadgeColors: Record<string, string> = {
+  Owner: 'bg-violet-100 dark:bg-violet-500/10 text-violet-700 dark:text-violet-400 border-violet-200 dark:border-violet-500/20',
+  Admin: 'bg-sky-100 dark:bg-sky-500/10 text-sky-700 dark:text-sky-400 border-sky-200 dark:border-sky-500/20',
+  Member: 'bg-emerald-100 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/20',
+}
+
+// Subject display names
+const subjectDisplayNames: Record<string, string> = {
+  organization: 'Organization',
+  member: 'Members',
+  role: 'Roles',
+  billing: 'Billing',
+  team: 'Teams',
+  audit: 'Audit Logs',
+}
+
+interface RolePermissionsCardProps {
+  role: {
+    id: string
+    name: string
+    description?: string | null
+    permissions?: Array<{ id: string; subject: string; action: string }> | null
+  }
+}
+
+function RolePermissionsCard({ role }: Readonly<RolePermissionsCardProps>) {
+  const [isExpanded, setIsExpanded] = useState(false)
+  const permissions = role.permissions || []
+  const groupedPermissions = groupPermissionsBySubject(permissions)
+  const badgeColor = roleBadgeColors[role.name] || 'bg-zinc-100 dark:bg-zinc-500/10 text-zinc-700 dark:text-zinc-400 border-zinc-200 dark:border-zinc-500/20'
+
+  return (
+    <div className="border border-zinc-200 dark:border-white/10 rounded-lg overflow-hidden">
+      <button
+        type="button"
+        onClick={() => setIsExpanded(!isExpanded)}
+        className="w-full flex items-center justify-between p-4 hover:bg-zinc-50 dark:hover:bg-white/5 transition-colors text-left"
+      >
+        <div className="flex items-center gap-3">
+          <div className={`px-3 py-1 rounded-full text-xs font-medium border ${badgeColor}`}>
+            {role.name}
+          </div>
+          <span className="text-sm text-zinc-600 dark:text-zinc-400">
+            {role.description || `${permissions.length} permissions`}
+          </span>
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-zinc-500 dark:text-zinc-500">
+            {permissions.length} permissions
+          </span>
+          {isExpanded ? (
+            <ChevronDownIcon className="h-4 w-4 text-zinc-400" />
+          ) : (
+            <ChevronRightIcon className="h-4 w-4 text-zinc-400" />
+          )}
+        </div>
+      </button>
+
+      {isExpanded && (
+        <div className="border-t border-zinc-200 dark:border-white/10 p-4 bg-zinc-50 dark:bg-white/[0.02]">
+          {Object.keys(groupedPermissions).length === 0 ? (
+            <p className="text-sm text-zinc-500 dark:text-zinc-400 italic">
+              No permissions assigned to this role.
+            </p>
+          ) : (
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {Object.entries(groupedPermissions).map(([subject, actions]) => (
+                <div key={subject} className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <ShieldCheckIcon className="h-4 w-4 text-zinc-400" />
+                    <h4 className="text-sm font-medium text-zinc-900 dark:text-white">
+                      {subjectDisplayNames[subject] || subject}
+                    </h4>
+                  </div>
+                  <ul className="space-y-1 pl-6">
+                    {actions.map((action) => {
+                      const permKey = `${subject}:${action}`
+                      return (
+                        <li key={action} className="text-xs text-zinc-600 dark:text-zinc-400">
+                          {permissionDescriptions[permKey] || `${action}`}
+                        </li>
+                      )
+                    })}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  )
+}
 
 export const loader = apolloLoader()(({ preloadQuery }) => {
   const myOrganizationsQueryRef = preloadQuery<MyOrganizationsWithMembersQuery>(
@@ -579,39 +711,24 @@ export default function MembersSettings() {
           )}
         </div>
 
-        {/* Member Roles Info */}
+        {/* Role Permissions Detail */}
         <div className="rounded-xl border border-zinc-200 dark:border-white/10 bg-white dark:bg-white/5 p-6 backdrop-blur">
           <h3 className="text-lg font-semibold text-zinc-900 dark:text-white mb-4">
             Role Permissions
           </h3>
+          <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-6">
+            Each role grants specific permissions within the organization. Click to expand and see detailed permissions.
+          </p>
 
-          <div className="space-y-3 text-sm">
-            <div className="flex items-start gap-3">
-              <div className="px-2 py-1 bg-violet-100 dark:bg-violet-500/10 text-violet-700 dark:text-violet-400 rounded font-medium text-xs">
-                Owner
-              </div>
-              <p className="flex-1 text-zinc-600 dark:text-zinc-400">
-                Full access to all features, including billing, member management, and organization
-                settings.
+          <div className="space-y-4">
+            {roles.map((role) => (
+              <RolePermissionsCard key={role.id} role={role} />
+            ))}
+            {roles.length === 0 && (
+              <p className="text-sm text-zinc-500 dark:text-zinc-400 italic">
+                Loading roles...
               </p>
-            </div>
-            <div className="flex items-start gap-3">
-              <div className="px-2 py-1 bg-sky-100 dark:bg-sky-500/10 text-sky-700 dark:text-sky-400 rounded font-medium text-xs">
-                Admin
-              </div>
-              <p className="flex-1 text-zinc-600 dark:text-zinc-400">
-                Can manage members, view analytics, and configure organization settings (except
-                billing).
-              </p>
-            </div>
-            <div className="flex items-start gap-3">
-              <div className="px-2 py-1 bg-emerald-100 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 rounded font-medium text-xs">
-                Member
-              </div>
-              <p className="flex-1 text-zinc-600 dark:text-zinc-400">
-                Standard access to organization features with limited administrative capabilities.
-              </p>
-            </div>
+            )}
           </div>
         </div>
       </div>
