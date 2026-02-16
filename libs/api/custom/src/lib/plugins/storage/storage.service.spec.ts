@@ -1,7 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing'
 import { NotFoundException } from '@nestjs/common'
 import { StorageService } from './storage.service'
-import { PrismaClient, StorageProvider } from '@nestled-template/api/prisma'
+import { StorageProvider } from '@nestled-template/api/prisma'
+import { ApiCoreDataAccessService } from '@nestled-template/api/core/data-access'
 import { StorageFactory } from './storage.factory'
 import { Readable } from 'stream'
 
@@ -35,7 +36,7 @@ describe('StorageService', () => {
       providers: [
         StorageService,
         {
-          provide: PrismaClient,
+          provide: ApiCoreDataAccessService,
           useValue: mockPrisma,
         },
         {

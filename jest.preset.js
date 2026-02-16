@@ -1,3 +1,15 @@
+const path = require('path')
 const nxPreset = require('@nx/jest/preset').default
 
-module.exports = { ...nxPreset }
+// Workspace root for absolute paths
+const workspaceRoot = __dirname
+
+module.exports = {
+  ...nxPreset,
+  // Mock ESM modules that Jest can't handle
+  moduleNameMapper: {
+    ...nxPreset.moduleNameMapper,
+    // Mock prisma-graphql-type-decimal since it's ESM-only and causes issues with Jest
+    '^prisma-graphql-type-decimal$': path.join(workspaceRoot, 'jest-mocks/prisma-graphql-type-decimal.js'),
+  },
+}
