@@ -92,7 +92,7 @@
     "@nestjs/passport": "^11.0.5",
     "@nestjs/platform-express": "^11.1.3",
     "@nestledjs/forms": "^0.6.4",
-    "@nestledjs/generators": "^0.2.23",
+    "@nestledjs/generators": "^0.2.24",
     "@nx/devkit": "21.2.3",
     "@octokit/oauth-app": "^8.0.2",
     "@prisma/adapter-pg": "^7.4.0",
