@@ -260,7 +260,7 @@ function dispatchServiceUnavailableEvent(networkError: Error, operation: Operati
 
 function getActiveOrganizationId(): string | null {
   // Only available in browser environment
-  if (typeof globalThis.window === 'undefined' || typeof localStorage === 'undefined') {
+  if (globalThis.window === undefined || typeof localStorage === 'undefined') {
     return null
   }
   return localStorage.getItem('activeOrganizationId')
