@@ -1,4 +1,4 @@
-import { Field, InputType, Int, Float } from '@nestjs/graphql'
+import { Field, InputType, Int, Float, GraphQLISODateTime } from '@nestjs/graphql'
 import {
   AddressType,
   EmailType,
@@ -19,10 +19,10 @@ export class CreateAddressInput {
   @Field({ nullable: true })
   id?: string
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   createdAt?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   updatedAt?: Date
 
   @Field({ nullable: true })
@@ -61,10 +61,10 @@ export class UpdateAddressInput {
   @Field({ nullable: true })
   id?: string
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   createdAt?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   updatedAt?: Date
 
   @Field({ nullable: true })
@@ -103,10 +103,10 @@ export class ListAddressInput extends CorePagingInput {
   @Field({ nullable: true })
   id?: string
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   createdAt?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   updatedAt?: Date
 
   @Field({ nullable: true })
@@ -145,10 +145,10 @@ export class CreateApiTokenInput {
   @Field({ nullable: true })
   id?: string
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   createdAt?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   updatedAt?: Date
 
   @Field({ nullable: false })
@@ -160,10 +160,10 @@ export class CreateApiTokenInput {
   @Field({ nullable: false })
   name!: string
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   expiresAt?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   lastUsedAt?: Date
 
   @Field({ nullable: true })
@@ -175,10 +175,10 @@ export class UpdateApiTokenInput {
   @Field({ nullable: true })
   id?: string
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   createdAt?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   updatedAt?: Date
 
   @Field({ nullable: true })
@@ -190,10 +190,10 @@ export class UpdateApiTokenInput {
   @Field({ nullable: true })
   name?: string
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   expiresAt?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   lastUsedAt?: Date
 
   @Field({ nullable: true })
@@ -205,10 +205,10 @@ export class ListApiTokenInput extends CorePagingInput {
   @Field({ nullable: true })
   id?: string
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   createdAt?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   updatedAt?: Date
 
   @Field({ nullable: true })
@@ -220,10 +220,10 @@ export class ListApiTokenInput extends CorePagingInput {
   @Field({ nullable: true })
   name?: string
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   expiresAt?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   lastUsedAt?: Date
 
   @Field({ nullable: true })
@@ -235,10 +235,10 @@ export class CreateAuditLogInput {
   @Field({ nullable: true })
   id?: string
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   createdAt?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   updatedAt?: Date
 
   @Field({ nullable: false })
@@ -265,10 +265,10 @@ export class UpdateAuditLogInput {
   @Field({ nullable: true })
   id?: string
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   createdAt?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   updatedAt?: Date
 
   @Field({ nullable: true })
@@ -295,10 +295,10 @@ export class ListAuditLogInput extends CorePagingInput {
   @Field({ nullable: true })
   id?: string
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   createdAt?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   updatedAt?: Date
 
   @Field({ nullable: true })
@@ -325,10 +325,10 @@ export class CreateCountryInput {
   @Field({ nullable: true })
   id?: string
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   createdAt?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   updatedAt?: Date
 
   @Field({ nullable: false })
@@ -373,10 +373,10 @@ export class UpdateCountryInput {
   @Field({ nullable: true })
   id?: string
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   createdAt?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   updatedAt?: Date
 
   @Field({ nullable: true })
@@ -421,10 +421,10 @@ export class ListCountryInput extends CorePagingInput {
   @Field({ nullable: true })
   id?: string
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   createdAt?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   updatedAt?: Date
 
   @Field({ nullable: true })
@@ -469,10 +469,10 @@ export class CreateEmailInput {
   @Field({ nullable: true })
   id?: string
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   createdAt?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   updatedAt?: Date
 
   @Field({ nullable: false })
@@ -490,7 +490,7 @@ export class CreateEmailInput {
   @Field({ nullable: true })
   verifyToken?: string
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   verifyExpires?: Date
 
   @Field({ nullable: true })
@@ -508,10 +508,10 @@ export class UpdateEmailInput {
   @Field({ nullable: true })
   id?: string
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   createdAt?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   updatedAt?: Date
 
   @Field({ nullable: true })
@@ -529,7 +529,7 @@ export class UpdateEmailInput {
   @Field({ nullable: true })
   verifyToken?: string
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   verifyExpires?: Date
 
   @Field({ nullable: true })
@@ -547,10 +547,10 @@ export class ListEmailInput extends CorePagingInput {
   @Field({ nullable: true })
   id?: string
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   createdAt?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   updatedAt?: Date
 
   @Field({ nullable: true })
@@ -568,7 +568,7 @@ export class ListEmailInput extends CorePagingInput {
   @Field({ nullable: true })
   verifyToken?: string
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   verifyExpires?: Date
 
   @Field({ nullable: true })
@@ -586,13 +586,13 @@ export class CreateInviteInput {
   @Field({ nullable: true })
   id?: string
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   createdAt?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   updatedAt?: Date
 
-  @Field(() => Date, { nullable: false })
+  @Field(() => GraphQLISODateTime, { nullable: false })
   expiresAt!: Date
 
   @Field({ nullable: false })
@@ -619,13 +619,13 @@ export class UpdateInviteInput {
   @Field({ nullable: true })
   id?: string
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   createdAt?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   updatedAt?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   expiresAt?: Date
 
   @Field({ nullable: true })
@@ -652,13 +652,13 @@ export class ListInviteInput extends CorePagingInput {
   @Field({ nullable: true })
   id?: string
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   createdAt?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   updatedAt?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   expiresAt?: Date
 
   @Field({ nullable: true })
@@ -685,10 +685,10 @@ export class CreateLinkInput {
   @Field({ nullable: true })
   id?: string
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   createdAt?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   updatedAt?: Date
 
   @Field({ nullable: false })
@@ -709,10 +709,10 @@ export class UpdateLinkInput {
   @Field({ nullable: true })
   id?: string
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   createdAt?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   updatedAt?: Date
 
   @Field({ nullable: true })
@@ -733,10 +733,10 @@ export class ListLinkInput extends CorePagingInput {
   @Field({ nullable: true })
   id?: string
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   createdAt?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   updatedAt?: Date
 
   @Field({ nullable: true })
@@ -757,10 +757,10 @@ export class CreateLoginAttemptInput {
   @Field({ nullable: true })
   id?: string
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   createdAt?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   updatedAt?: Date
 
   @Field({ nullable: true })
@@ -790,10 +790,10 @@ export class UpdateLoginAttemptInput {
   @Field({ nullable: true })
   id?: string
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   createdAt?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   updatedAt?: Date
 
   @Field({ nullable: true })
@@ -823,10 +823,10 @@ export class ListLoginAttemptInput extends CorePagingInput {
   @Field({ nullable: true })
   id?: string
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   createdAt?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   updatedAt?: Date
 
   @Field({ nullable: true })
@@ -856,10 +856,10 @@ export class CreateOAuthAccountInput {
   @Field({ nullable: true })
   id?: string
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   createdAt?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   updatedAt?: Date
 
   @Field({ nullable: false })
@@ -877,10 +877,10 @@ export class UpdateOAuthAccountInput {
   @Field({ nullable: true })
   id?: string
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   createdAt?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   updatedAt?: Date
 
   @Field({ nullable: true })
@@ -898,10 +898,10 @@ export class ListOAuthAccountInput extends CorePagingInput {
   @Field({ nullable: true })
   id?: string
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   createdAt?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   updatedAt?: Date
 
   @Field({ nullable: true })
@@ -919,10 +919,10 @@ export class CreateOrganizationInput {
   @Field({ nullable: true })
   id?: string
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   createdAt?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   updatedAt?: Date
 
   @Field({ nullable: false })
@@ -967,10 +967,10 @@ export class UpdateOrganizationInput {
   @Field({ nullable: true })
   id?: string
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   createdAt?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   updatedAt?: Date
 
   @Field({ nullable: true })
@@ -1015,10 +1015,10 @@ export class ListOrganizationInput extends CorePagingInput {
   @Field({ nullable: true })
   id?: string
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   createdAt?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   updatedAt?: Date
 
   @Field({ nullable: true })
@@ -1063,10 +1063,10 @@ export class CreateOrganizationMemberInput {
   @Field({ nullable: true })
   id?: string
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   createdAt?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   updatedAt?: Date
 
   @Field({ nullable: false })
@@ -1084,10 +1084,10 @@ export class UpdateOrganizationMemberInput {
   @Field({ nullable: true })
   id?: string
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   createdAt?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   updatedAt?: Date
 
   @Field({ nullable: true })
@@ -1105,10 +1105,10 @@ export class ListOrganizationMemberInput extends CorePagingInput {
   @Field({ nullable: true })
   id?: string
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   createdAt?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   updatedAt?: Date
 
   @Field({ nullable: true })
@@ -1180,10 +1180,10 @@ export class CreatePhoneNumberInput {
   @Field({ nullable: true })
   id?: string
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   createdAt?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   updatedAt?: Date
 
   @Field({ nullable: false })
@@ -1207,10 +1207,10 @@ export class UpdatePhoneNumberInput {
   @Field({ nullable: true })
   id?: string
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   createdAt?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   updatedAt?: Date
 
   @Field({ nullable: true })
@@ -1234,10 +1234,10 @@ export class ListPhoneNumberInput extends CorePagingInput {
   @Field({ nullable: true })
   id?: string
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   createdAt?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   updatedAt?: Date
 
   @Field({ nullable: true })
@@ -1261,10 +1261,10 @@ export class CreatePlanInput {
   @Field({ nullable: true })
   id?: string
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   createdAt?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   updatedAt?: Date
 
   @Field({ nullable: false })
@@ -1306,10 +1306,10 @@ export class UpdatePlanInput {
   @Field({ nullable: true })
   id?: string
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   createdAt?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   updatedAt?: Date
 
   @Field({ nullable: true })
@@ -1351,10 +1351,10 @@ export class ListPlanInput extends CorePagingInput {
   @Field({ nullable: true })
   id?: string
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   createdAt?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   updatedAt?: Date
 
   @Field({ nullable: true })
@@ -1477,10 +1477,10 @@ export class CreateSecurityEventInput {
   @Field({ nullable: true })
   id?: string
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   createdAt?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   updatedAt?: Date
 
   @Field({ nullable: false })
@@ -1504,10 +1504,10 @@ export class UpdateSecurityEventInput {
   @Field({ nullable: true })
   id?: string
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   createdAt?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   updatedAt?: Date
 
   @Field({ nullable: true })
@@ -1531,10 +1531,10 @@ export class ListSecurityEventInput extends CorePagingInput {
   @Field({ nullable: true })
   id?: string
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   createdAt?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   updatedAt?: Date
 
   @Field({ nullable: true })
@@ -1558,10 +1558,10 @@ export class CreateSubscriptionInput {
   @Field({ nullable: true })
   id?: string
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   createdAt?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   updatedAt?: Date
 
   @Field({ nullable: false })
@@ -1579,19 +1579,19 @@ export class CreateSubscriptionInput {
   @Field({ nullable: true })
   stripePriceId?: string
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   stripeCurrentPeriodEnd?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   trialStart?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   trialEnd?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   cancelAt?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   canceledAt?: Date
 
   @Field({ nullable: true })
@@ -1606,10 +1606,10 @@ export class UpdateSubscriptionInput {
   @Field({ nullable: true })
   id?: string
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   createdAt?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   updatedAt?: Date
 
   @Field({ nullable: true })
@@ -1627,19 +1627,19 @@ export class UpdateSubscriptionInput {
   @Field({ nullable: true })
   stripePriceId?: string
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   stripeCurrentPeriodEnd?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   trialStart?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   trialEnd?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   cancelAt?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   canceledAt?: Date
 
   @Field({ nullable: true })
@@ -1654,10 +1654,10 @@ export class ListSubscriptionInput extends CorePagingInput {
   @Field({ nullable: true })
   id?: string
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   createdAt?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   updatedAt?: Date
 
   @Field({ nullable: true })
@@ -1675,19 +1675,19 @@ export class ListSubscriptionInput extends CorePagingInput {
   @Field({ nullable: true })
   stripePriceId?: string
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   stripeCurrentPeriodEnd?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   trialStart?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   trialEnd?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   cancelAt?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   canceledAt?: Date
 
   @Field({ nullable: true })
@@ -1702,10 +1702,10 @@ export class CreateTeamInput {
   @Field({ nullable: true })
   id?: string
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   createdAt?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   updatedAt?: Date
 
   @Field({ nullable: false })
@@ -1726,10 +1726,10 @@ export class UpdateTeamInput {
   @Field({ nullable: true })
   id?: string
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   createdAt?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   updatedAt?: Date
 
   @Field({ nullable: true })
@@ -1750,10 +1750,10 @@ export class ListTeamInput extends CorePagingInput {
   @Field({ nullable: true })
   id?: string
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   createdAt?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   updatedAt?: Date
 
   @Field({ nullable: true })
@@ -1774,10 +1774,10 @@ export class CreateTeamMemberInput {
   @Field({ nullable: true })
   id?: string
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   createdAt?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   updatedAt?: Date
 
   @Field({ nullable: false })
@@ -1795,10 +1795,10 @@ export class UpdateTeamMemberInput {
   @Field({ nullable: true })
   id?: string
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   createdAt?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   updatedAt?: Date
 
   @Field({ nullable: true })
@@ -1816,10 +1816,10 @@ export class ListTeamMemberInput extends CorePagingInput {
   @Field({ nullable: true })
   id?: string
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   createdAt?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   updatedAt?: Date
 
   @Field({ nullable: true })
@@ -1837,10 +1837,10 @@ export class CreateStoredFileInput {
   @Field({ nullable: true })
   id?: string
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   createdAt?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   updatedAt?: Date
 
   @Field(() => StorageProvider, { nullable: false })
@@ -1891,10 +1891,10 @@ export class UpdateStoredFileInput {
   @Field({ nullable: true })
   id?: string
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   createdAt?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   updatedAt?: Date
 
   @Field(() => StorageProvider, { nullable: true })
@@ -1945,10 +1945,10 @@ export class ListStoredFileInput extends CorePagingInput {
   @Field({ nullable: true })
   id?: string
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   createdAt?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   updatedAt?: Date
 
   @Field(() => StorageProvider, { nullable: true })
@@ -1999,10 +1999,10 @@ export class CreateUserInput {
   @Field({ nullable: true })
   id?: string
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   createdAt?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   updatedAt?: Date
 
   @Field({ nullable: true })
@@ -2026,7 +2026,7 @@ export class CreateUserInput {
   @Field({ nullable: true })
   passwordResetToken?: string
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   passwordResetExpires?: Date
 
   @Field({ nullable: true })
@@ -2035,7 +2035,7 @@ export class CreateUserInput {
   @Field({ nullable: true })
   validateEmailToken?: string
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   validateEmailTokenExpires?: Date
 
   @Field({ nullable: true })
@@ -2053,28 +2053,28 @@ export class CreateUserInput {
   @Field(() => TwoFactorMethod, { nullable: true })
   twoFactorMethod?: TwoFactorMethod
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   lastSuccessfulLogin?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   lastFailedLogin?: Date
 
   @Field(() => Int, { nullable: true })
   failedLoginCount?: number
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   lockedUntil?: Date
 
   @Field({ nullable: true })
   isActive?: boolean
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   deactivatedAt?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   termsAcceptedAt?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   privacyPolicyAcceptedAt?: Date
 
   @Field(() => [String], { nullable: true })
@@ -2131,10 +2131,10 @@ export class UpdateUserInput {
   @Field({ nullable: true })
   id?: string
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   createdAt?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   updatedAt?: Date
 
   @Field({ nullable: true })
@@ -2158,7 +2158,7 @@ export class UpdateUserInput {
   @Field({ nullable: true })
   passwordResetToken?: string
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   passwordResetExpires?: Date
 
   @Field({ nullable: true })
@@ -2167,7 +2167,7 @@ export class UpdateUserInput {
   @Field({ nullable: true })
   validateEmailToken?: string
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   validateEmailTokenExpires?: Date
 
   @Field({ nullable: true })
@@ -2185,28 +2185,28 @@ export class UpdateUserInput {
   @Field(() => TwoFactorMethod, { nullable: true })
   twoFactorMethod?: TwoFactorMethod
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   lastSuccessfulLogin?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   lastFailedLogin?: Date
 
   @Field(() => Int, { nullable: true })
   failedLoginCount?: number
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   lockedUntil?: Date
 
   @Field({ nullable: true })
   isActive?: boolean
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   deactivatedAt?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   termsAcceptedAt?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   privacyPolicyAcceptedAt?: Date
 
   @Field(() => [String], { nullable: true })
@@ -2263,10 +2263,10 @@ export class ListUserInput extends CorePagingInput {
   @Field({ nullable: true })
   id?: string
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   createdAt?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   updatedAt?: Date
 
   @Field({ nullable: true })
@@ -2290,7 +2290,7 @@ export class ListUserInput extends CorePagingInput {
   @Field({ nullable: true })
   passwordResetToken?: string
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   passwordResetExpires?: Date
 
   @Field({ nullable: true })
@@ -2299,7 +2299,7 @@ export class ListUserInput extends CorePagingInput {
   @Field({ nullable: true })
   validateEmailToken?: string
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   validateEmailTokenExpires?: Date
 
   @Field({ nullable: true })
@@ -2317,28 +2317,28 @@ export class ListUserInput extends CorePagingInput {
   @Field(() => TwoFactorMethod, { nullable: true })
   twoFactorMethod?: TwoFactorMethod
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   lastSuccessfulLogin?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   lastFailedLogin?: Date
 
   @Field(() => Int, { nullable: true })
   failedLoginCount?: number
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   lockedUntil?: Date
 
   @Field({ nullable: true })
   isActive?: boolean
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   deactivatedAt?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   termsAcceptedAt?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   privacyPolicyAcceptedAt?: Date
 
   @Field(() => [String], { nullable: true })
@@ -2395,10 +2395,10 @@ export class CreateUserPreferenceInput {
   @Field({ nullable: true })
   id?: string
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   createdAt?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   updatedAt?: Date
 
   @Field({ nullable: false })
@@ -2416,10 +2416,10 @@ export class UpdateUserPreferenceInput {
   @Field({ nullable: true })
   id?: string
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   createdAt?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   updatedAt?: Date
 
   @Field({ nullable: true })
@@ -2437,10 +2437,10 @@ export class ListUserPreferenceInput extends CorePagingInput {
   @Field({ nullable: true })
   id?: string
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   createdAt?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   updatedAt?: Date
 
   @Field({ nullable: true })
@@ -2458,13 +2458,13 @@ export class CreateUserSessionInput {
   @Field({ nullable: true })
   id?: string
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   createdAt?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   updatedAt?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   lastActiveAt?: Date
 
   @Field({ nullable: false })
@@ -2488,13 +2488,13 @@ export class UpdateUserSessionInput {
   @Field({ nullable: true })
   id?: string
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   createdAt?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   updatedAt?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   lastActiveAt?: Date
 
   @Field({ nullable: true })
@@ -2518,13 +2518,13 @@ export class ListUserSessionInput extends CorePagingInput {
   @Field({ nullable: true })
   id?: string
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   createdAt?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   updatedAt?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   lastActiveAt?: Date
 
   @Field({ nullable: true })
@@ -2548,7 +2548,7 @@ export class CreatePasswordHistoryInput {
   @Field({ nullable: true })
   id?: string
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   createdAt?: Date
 
   @Field({ nullable: false })
@@ -2563,7 +2563,7 @@ export class UpdatePasswordHistoryInput {
   @Field({ nullable: true })
   id?: string
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   createdAt?: Date
 
   @Field({ nullable: true })
@@ -2578,7 +2578,7 @@ export class ListPasswordHistoryInput extends CorePagingInput {
   @Field({ nullable: true })
   id?: string
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   createdAt?: Date
 
   @Field({ nullable: true })
