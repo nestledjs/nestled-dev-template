@@ -1,4 +1,4 @@
-const path = require('path')
+const path = require('node:path')
 const nxPreset = require('@nx/jest/preset').default
 
 // Workspace root for absolute paths
