@@ -5,9 +5,7 @@ const { GraphQLScalarType, Kind } = require('graphql')
 const GraphQLDecimal = new GraphQLScalarType({
   name: 'Decimal',
   description: 'Mock Decimal scalar type for testing',
-  serialize(value) {
-    return String(value)
-  },
+  serialize: String,
   parseValue(value) {
     return value
   },
