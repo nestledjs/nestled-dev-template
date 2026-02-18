@@ -1,7 +1,7 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { within, expect } from 'storybook/test';
 import { WebUiDataTable } from './web-ui-data-table';
-import type { StoryContext } from '@storybook/react';
+import type { StoryContext } from '@storybook/react-vite';
 import React, { useState } from 'react';
 
 const mockData = [

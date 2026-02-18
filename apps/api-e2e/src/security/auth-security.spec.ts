@@ -1,6 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { TestHelpers } from '../support/test-helpers'
-
 /**
  * CRITICAL SECURITY TESTS: Authentication Security
  *
@@ -18,11 +17,9 @@ import { TestHelpers } from '../support/test-helpers'
 describe('CRITICAL: Authentication Security', () => {
   describe('Account Locking', () => {
     let testEmail: string
-
     beforeEach(() => {
       testEmail = TestHelpers.generateTestEmail('lock-test')
     })
-
     it('should lock account after 5 failed login attempts', async () => {
       // Register a user
       await TestHelpers.registerUser({
@@ -32,7 +29,6 @@ describe('CRITICAL: Authentication Security', () => {
         lastName: 'Test',
         organizationName: 'Lock Test Org',
       })
-
       // Attempt 5 failed logins
       for (let i = 0; i < 5; i++) {
         try {
@@ -41,7 +37,6 @@ describe('CRITICAL: Authentication Security', () => {
           // Expected to fail
         }
       }
-
       // 6th attempt should fail due to account lock
       try {
         await TestHelpers.loginUser(testEmail, 'CorrectPassword123!')
@@ -51,11 +46,9 @@ describe('CRITICAL: Authentication Security', () => {
         expect(error.message).toMatch(/locked|blocked|too many attempts/i)
       }
     })
-
     it('should reset failed attempts counter after successful login', async () => {
       const email = TestHelpers.generateTestEmail('reset-counter')
       const password = 'TestPassword123!'
-
       // Register user
       await TestHelpers.registerUser({
         email,
@@ -64,7 +57,6 @@ describe('CRITICAL: Authentication Security', () => {
         lastName: 'Reset',
         organizationName: 'Counter Test Org',
       })
-
       // Try 3 failed attempts
       for (let i = 0; i < 3; i++) {
         try {
@@ -73,10 +65,8 @@ describe('CRITICAL: Authentication Security', () => {
           // Expected to fail
         }
       }
-
       // Successful login
       await TestHelpers.loginUser(email, password)
-
       // Should be able to attempt 5 more wrong passwords before locking
       for (let i = 0; i < 5; i++) {
         try {
@@ -85,7 +75,6 @@ describe('CRITICAL: Authentication Security', () => {
           // Expected to fail, but not due to lock
         }
       }
-
       // Next attempt should trigger lock
       try {
         await TestHelpers.loginUser(email, password)
@@ -94,12 +83,10 @@ describe('CRITICAL: Authentication Security', () => {
         expect(error.message).toMatch(/locked|blocked|too many attempts/i)
       }
     })
-
     it('should automatically unlock account after 15 minutes', async () => {
       // Note: This test would require time manipulation or a long wait
       // For now, we'll test that the lockUntil field is set correctly
       const email = TestHelpers.generateTestEmail('auto-unlock')
-
       await TestHelpers.registerUser({
         email,
         password: 'TestPassword123!',
@@ -107,7 +94,6 @@ describe('CRITICAL: Authentication Security', () => {
         lastName: 'Unlock',
         organizationName: 'Unlock Test Org',
       })
-
       // Trigger account lock
       for (let i = 0; i < 5; i++) {
         try {
@@ -116,7 +102,6 @@ describe('CRITICAL: Authentication Security', () => {
           // Expected
         }
       }
-
       // Account should be locked
       try {
         await TestHelpers.loginUser(email, 'TestPassword123!')
@@ -124,17 +109,14 @@ describe('CRITICAL: Authentication Security', () => {
       } catch (error: any) {
         expect(error.message).toMatch(/locked|blocked|too many attempts/i)
       }
-
       // In a real scenario, we'd wait 15 minutes or use a database helper
       // to manually unlock the account
     })
   })
-
   describe('Session Management', () => {
     it('should create valid JWT token on login', async () => {
       const email = TestHelpers.generateTestEmail('jwt-test')
       const password = 'TestPassword123!'
-
       await TestHelpers.registerUser({
         email,
         password,
@@ -142,18 +124,14 @@ describe('CRITICAL: Authentication Security', () => {
         lastName: 'Test',
         organizationName: 'JWT Test Org',
       })
-
       const user = await TestHelpers.loginUser(email, password)
-
       // Token should exist and be a valid JWT format (header.payload.signature)
       expect(user.tokens?.accessToken).toBeDefined()
       expect(typeof user.tokens?.accessToken).toBe('string')
       expect(user.tokens?.accessToken.split('.').length).toBe(3)
     })
-
     it('should reject requests with invalid JWT tokens', async () => {
       const invalidToken = 'invalid.jwt.token'
-
       const meQuery = `
         query Me {
           me {
@@ -165,29 +143,21 @@ describe('CRITICAL: Authentication Security', () => {
           }
         }
       `
-
-      const response = await TestHelpers.authenticatedGraphql(
-        meQuery,
-        {
-          id: 'fake-id',
-          email: 'fake@example.com',
-          firstName: 'Fake',
-          lastName: 'User',
-          tokens: { accessToken: invalidToken },
-        }
-      )
-
+      const response = await TestHelpers.authenticatedGraphql(meQuery, {
+        id: 'fake-id',
+        email: 'fake@example.com',
+        firstName: 'Fake',
+        lastName: 'User',
+        tokens: { accessToken: invalidToken },
+      })
       expect(response.data.errors).toBeDefined()
       expect(response.data.errors[0].message).toMatch(/unauthorized|invalid|token/i)
     })
-
     it('should reject requests with expired tokens', async () => {
       // Create a token that's already expired (would need backend helper)
       // For now, test that old tokens eventually expire
-
       const email = TestHelpers.generateTestEmail('expired-token')
       const password = 'TestPassword123!'
-
       const user = await TestHelpers.registerUser({
         email,
         password,
@@ -195,7 +165,6 @@ describe('CRITICAL: Authentication Security', () => {
         lastName: 'Token',
         organizationName: 'Expired Token Org',
       })
-
       // In a real test, we'd wait for token expiration or manipulate time
       // For now, verify that a valid token works
       const meQuery = `
@@ -209,17 +178,14 @@ describe('CRITICAL: Authentication Security', () => {
           }
         }
       `
-
       const response = await TestHelpers.authenticatedGraphql(meQuery, user)
       expect(response.data.errors).toBeUndefined()
       expect(response.data.data.me.id).toBe(user.id)
     })
-
     it('should invalidate all sessions on password change', async () => {
       const email = TestHelpers.generateTestEmail('password-change')
       const oldPassword = 'OldPassword123!'
       const newPassword = 'NewPassword123!'
-
       const user = await TestHelpers.registerUser({
         email,
         password: oldPassword,
@@ -227,27 +193,19 @@ describe('CRITICAL: Authentication Security', () => {
         lastName: 'Change',
         organizationName: 'Password Change Org',
       })
-
       const oldToken = user.tokens?.accessToken
-
       // Change password
       const changePasswordMutation = `
         mutation ChangePassword($input: ChangePasswordInput!) {
           changePassword(input: $input)
         }
       `
-
-      await TestHelpers.authenticatedGraphql(
-        changePasswordMutation,
-        user,
-        {
-          input: {
-            currentPassword: oldPassword,
-            newPassword: newPassword,
-          },
-        }
-      )
-
+      await TestHelpers.authenticatedGraphql(changePasswordMutation, user, {
+        input: {
+          currentPassword: oldPassword,
+          newPassword: newPassword,
+        },
+      })
       // Old token should no longer work
       const meQuery = `
         query Me {
@@ -256,25 +214,20 @@ describe('CRITICAL: Authentication Security', () => {
           }
         }
       `
-
       const response = await TestHelpers.authenticatedGraphql(meQuery, {
         ...user,
         tokens: { accessToken: oldToken! },
       })
-
       expect(response.data.errors).toBeDefined()
       expect(response.data.errors[0].message).toMatch(/unauthorized|invalid|session/i)
-
       // New login should work
       const newUser = await TestHelpers.loginUser(email, newPassword)
       expect(newUser.tokens?.accessToken).toBeDefined()
       expect(newUser.tokens?.accessToken).not.toBe(oldToken)
     })
-
     it('should allow manual session invalidation', async () => {
       const email = TestHelpers.generateTestEmail('logout-test')
       const password = 'TestPassword123!'
-
       const user = await TestHelpers.registerUser({
         email,
         password,
@@ -282,16 +235,13 @@ describe('CRITICAL: Authentication Security', () => {
         lastName: 'Test',
         organizationName: 'Logout Test Org',
       })
-
       // Logout
       const logoutMutation = `
         mutation Logout {
           logout
         }
       `
-
       await TestHelpers.authenticatedGraphql(logoutMutation, user)
-
       // Token should no longer work
       const meQuery = `
         query Me {
@@ -300,22 +250,13 @@ describe('CRITICAL: Authentication Security', () => {
           }
         }
       `
-
       const response = await TestHelpers.authenticatedGraphql(meQuery, user)
       expect(response.data.errors).toBeDefined()
     })
   })
-
   describe('Password Security', () => {
     it('should reject weak passwords', async () => {
-      const weakPasswords = [
-        '123',
-        'password',
-        'abc123',
-        '12345678',
-        'qwerty',
-      ]
-
+      const weakPasswords = ['123', 'password', 'abc123', '12345678', 'qwerty']
       for (const weakPassword of weakPasswords) {
         try {
           await TestHelpers.registerUser({
@@ -331,7 +272,6 @@ describe('CRITICAL: Authentication Security', () => {
         }
       }
     })
-
     it('should require minimum password length', async () => {
       try {
         await TestHelpers.registerUser({
@@ -346,7 +286,6 @@ describe('CRITICAL: Authentication Security', () => {
         expect(error.message).toMatch(/password|length|characters/i)
       }
     })
-
     it('should hash passwords before storage', async () => {
       const password = 'TestPassword123!'
       const user = await TestHelpers.registerUser({
@@ -356,20 +295,16 @@ describe('CRITICAL: Authentication Security', () => {
         lastName: 'Test',
         organizationName: 'Hash Test Org',
       })
-
       // Verify we can login with the password (hash verification works)
       const loginUser = await TestHelpers.loginUser(user.email, password)
       expect(loginUser.id).toBe(user.id)
-
       // In a real test, we'd query the database directly and verify
       // the stored password is hashed (not plaintext)
     })
-
     it('should not allow same password to be reused', async () => {
       const email = TestHelpers.generateTestEmail('password-reuse')
       const password = 'TestPassword123!'
       const newPassword = 'NewPassword123!'
-
       const user = await TestHelpers.registerUser({
         email,
         password,
@@ -377,7 +312,6 @@ describe('CRITICAL: Authentication Security', () => {
         lastName: 'Test',
         organizationName: 'Reuse Test Org',
       })
-
       // Change password
       await TestHelpers.authenticatedGraphql(
         `mutation ChangePassword($input: ChangePasswordInput!) {
@@ -389,12 +323,10 @@ describe('CRITICAL: Authentication Security', () => {
             currentPassword: password,
             newPassword: newPassword,
           },
-        }
+        },
       )
-
       // Try to change back to old password
       const newUser = await TestHelpers.loginUser(email, newPassword)
-
       const response = await TestHelpers.authenticatedGraphql(
         `mutation ChangePassword($input: ChangePasswordInput!) {
           changePassword(input: $input)
@@ -405,31 +337,26 @@ describe('CRITICAL: Authentication Security', () => {
             currentPassword: newPassword,
             newPassword: password, // Trying to reuse old password
           },
-        }
+        },
       )
-
       // Should fail
       expect(response.data.errors).toBeDefined()
       expect(response.data.errors[0].message).toMatch(/reuse|previous|history|recently/i)
     })
   })
-
   describe('Brute Force Protection', () => {
     it('should rate limit login attempts', async () => {
       const email = TestHelpers.generateTestEmail('rate-limit')
-
       // Attempt many rapid logins
       const attempts = []
       for (let i = 0; i < 10; i++) {
         attempts.push(
           TestHelpers.loginUser(email, 'WrongPassword!').catch(() => {
             // Expected to fail
-          })
+          }),
         )
       }
-
       await Promise.all(attempts)
-
       // Further attempts should be rate limited
       try {
         await TestHelpers.loginUser(email, 'WrongPassword!')
@@ -441,37 +368,30 @@ describe('CRITICAL: Authentication Security', () => {
         }
       }
     })
-
     it('should prevent automated attacks', async () => {
       const email = TestHelpers.generateTestEmail('automated-attack')
-
       // Simulate rapid-fire automated requests
       const startTime = Date.now()
       const rapidAttempts = []
-
       for (let i = 0; i < 20; i++) {
         rapidAttempts.push(
           TestHelpers.loginUser(email, `Password${i}!`).catch(() => {
             // Expected to fail
-          })
+          }),
         )
       }
-
       await Promise.all(rapidAttempts)
       const endTime = Date.now()
       const duration = endTime - startTime
-
       // Should have some rate limiting in place
       // (requests shouldn't complete instantaneously)
       expect(duration).toBeGreaterThan(100) // At least some delay
     })
   })
-
   describe('Session Hijacking Prevention', () => {
     it('should reject tokens used from different IP address', async () => {
       // Note: This test would require IP tracking in the backend
       // For now, we document the expected behavior
-
       const email = TestHelpers.generateTestEmail('ip-test')
       const user = await TestHelpers.registerUser({
         email,
@@ -480,10 +400,8 @@ describe('CRITICAL: Authentication Security', () => {
         lastName: 'Test',
         organizationName: 'IP Test Org',
       })
-
       // In a real implementation, the server would track IP per session
       // and reject requests from different IPs
-
       // For now, just verify token works from same context
       const meQuery = `
         query Me {
@@ -492,16 +410,13 @@ describe('CRITICAL: Authentication Security', () => {
           }
         }
       `
-
       const response = await TestHelpers.authenticatedGraphql(meQuery, user)
       expect(response.data.errors).toBeUndefined()
       expect(response.data.data.me.id).toBe(user.id)
     })
-
     it('should track device fingerprinting', async () => {
       // Document expected behavior: Sessions should track device info
       // like User-Agent, screen resolution, timezone, etc.
-
       const email = TestHelpers.generateTestEmail('device-test')
       const user = await TestHelpers.registerUser({
         email,
@@ -510,7 +425,6 @@ describe('CRITICAL: Authentication Security', () => {
         lastName: 'Test',
         organizationName: 'Device Test Org',
       })
-
       // Get user sessions
       const sessionsQuery = `
         query GetUserSessions {
@@ -522,9 +436,7 @@ describe('CRITICAL: Authentication Security', () => {
           }
         }
       `
-
       const response = await TestHelpers.authenticatedGraphql(sessionsQuery, user)
-
       if (response.data.errors) {
         // Query might not be implemented yet
         console.log('Session tracking not fully implemented')

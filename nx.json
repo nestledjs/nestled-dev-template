@@ -17,7 +17,7 @@
     ],
     "sharedGlobals": ["{workspaceRoot}/.github/workflows/ci.yml"]
   },
-  "nxCloudId": "",
+  "nxCloudId": "6994d19db4ab191cacf91c15",
   "plugins": [
     {
       "plugin": "@nx/webpack/plugin",
@@ -50,7 +50,6 @@
       "plugin": "@nx/vite/plugin",
       "options": {
         "buildTargetName": "build",
-        "testTargetName": "vite:test",
         "serveTargetName": "serve",
         "devTargetName": "dev",
         "previewTargetName": "preview",
@@ -77,6 +76,12 @@
         "buildDepsTargetName": "build-deps",
         "watchDepsTargetName": "watch-deps"
       }
+    },
+    {
+      "plugin": "@nx/vitest",
+      "options": {
+        "testTargetName": "vite:test"
+      }
     }
   ],
   "targetDefaults": {
@@ -102,10 +107,6 @@
         }
       }
     },
-    "@nx/vite:test": {
-      "cache": true,
-      "inputs": ["default", "^production"]
-    },
     "build": {
       "cache": true,
       "dependsOn": ["^build"]
@@ -119,6 +120,10 @@
       "cache": true,
       "dependsOn": ["^build"],
       "inputs": ["production", "^production"]
+    },
+    "@nx/vitest:test": {
+      "cache": true,
+      "inputs": ["default", "^production"]
     }
   },
   "generators": {
@@ -143,10 +148,6 @@
     "projects": ["shared-components", "data-browser"],
     "projectsRelationship": "independent",
     "version": {
-      "generatorOptions": {
-        "currentVersionResolver": "git-tag",
-        "specifierSource": "prompt"
-      },
       "git": {
         "commit": true,
         "commitMessage": "chore(release): publish {version}",
@@ -155,7 +156,10 @@
       },
       "versionActionsOptions": {
         "skipLockFileUpdate": true
-      }
+      },
+      "specifierSource": "prompt",
+      "currentVersionResolver": "git-tag",
+      "preserveLocalDependencyProtocols": false
     },
     "changelog": {
       "workspaceChangelog": false,
