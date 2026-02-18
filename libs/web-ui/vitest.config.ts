@@ -40,7 +40,7 @@ export default mergeConfig(
             setupFiles: ['./.storybook/vitest.setup.ts'],
             browser: {
               enabled: true,
-              provider: 'playwright',
+              provider: { name: 'playwright' },
               headless: true,
               instances: [{ browser: 'chromium' }],
             },

@@ -1,11 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing'
 import { ContactMailerService, ContactFormData } from './contact-mailer.service'
 import { EmailService } from '@nestled-template/api/integrations'
-
 describe('ContactMailerService', () => {
   let service: ContactMailerService
   let mockEmailService: jest.Mocked<EmailService>
-
   beforeEach(async () => {
     mockEmailService = {
       send: jest.fn().mockResolvedValue({
@@ -15,7 +13,6 @@ describe('ContactMailerService', () => {
         response: '250 OK',
       }),
     } as any
-
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ContactMailerService,
@@ -25,10 +22,8 @@ describe('ContactMailerService', () => {
         },
       ],
     }).compile()
-
     service = module.get<ContactMailerService>(ContactMailerService)
   })
-
   describe('sendContactFormNotification', () => {
     it('should send notification to all admin emails', async () => {
       const formData: ContactFormData = {
@@ -38,36 +33,32 @@ describe('ContactMailerService', () => {
         phone: '555-1234',
         questions: 'I am interested in joining BizToBiz',
       }
-
       await service.sendContactFormNotification(formData)
-
       // Should send to all 4 admin emails
       expect(mockEmailService.send).toHaveBeenCalledTimes(4)
-
       // Verify each admin email received the notification
       expect(mockEmailService.send).toHaveBeenCalledWith(
         expect.objectContaining({
           to: 'jennifer@nestled-templatenow.com',
           subject: 'New Contact Form Submission - John Doe',
-        })
+        }),
       )
       expect(mockEmailService.send).toHaveBeenCalledWith(
         expect.objectContaining({
           to: 'tami@nestled-templatenow.com',
-        })
+        }),
       )
       expect(mockEmailService.send).toHaveBeenCalledWith(
         expect.objectContaining({
           to: 'justin@pirateandfox.com',
-        })
+        }),
       )
       expect(mockEmailService.send).toHaveBeenCalledWith(
         expect.objectContaining({
           to: 'memberservices@nestled-templatenow.com',
-        })
+        }),
       )
     })
-
     it('should include contact details in email content', async () => {
       const formData: ContactFormData = {
         firstName: 'Jane',
@@ -76,20 +67,16 @@ describe('ContactMailerService', () => {
         phone: '555-5678',
         questions: 'Can you tell me more about the networking events?',
       }
-
       await service.sendContactFormNotification(formData)
-
       const firstCall = mockEmailService.send.mock.calls[0][0]
       expect(firstCall.html).toContain('Jane Smith')
       expect(firstCall.html).toContain('jane@example.com')
       expect(firstCall.html).toContain('555-5678')
       expect(firstCall.html).toContain('Can you tell me more about the networking events?')
-
       expect(firstCall.text).toContain('Jane Smith')
       expect(firstCall.text).toContain('jane@example.com')
       expect(firstCall.text).toContain('555-5678')
     })
-
     it('should include chapter information when provided', async () => {
       const formData: ContactFormData = {
         firstName: 'Bob',
@@ -100,16 +87,13 @@ describe('ContactMailerService', () => {
         chapterName: 'Downtown Chapter',
         chapterLocation: 'Los Angeles',
       }
-
       await service.sendContactFormNotification(formData)
-
       const firstCall = mockEmailService.send.mock.calls[0][0]
       expect(firstCall.html).toContain('Downtown Chapter')
       expect(firstCall.html).toContain('Los Angeles')
       expect(firstCall.text).toContain('Downtown Chapter')
       expect(firstCall.text).toContain('Los Angeles')
     })
-
     it('should not include chapter fields when not provided', async () => {
       const formData: ContactFormData = {
         firstName: 'Alice',
@@ -118,14 +102,11 @@ describe('ContactMailerService', () => {
         phone: '555-0000',
         questions: 'General inquiry',
       }
-
       await service.sendContactFormNotification(formData)
-
       const firstCall = mockEmailService.send.mock.calls[0][0]
       expect(firstCall.html).not.toContain('<p><strong>Chapter:</strong>')
       expect(firstCall.html).not.toContain('<p><strong>Location:</strong>')
     })
-
     it('should throw error if email sending fails', async () => {
       const formData: ContactFormData = {
         firstName: 'Error',
@@ -134,14 +115,11 @@ describe('ContactMailerService', () => {
         phone: '555-0001',
         questions: 'Test error handling',
       }
-
       mockEmailService.send.mockRejectedValue(new Error('SMTP connection failed'))
-
       await expect(service.sendContactFormNotification(formData)).rejects.toThrow(
-        'SMTP connection failed'
+        'SMTP connection failed',
       )
     })
-
     it('should send emails in parallel for better performance', async () => {
       const formData: ContactFormData = {
         firstName: 'Performance',
@@ -150,7 +128,6 @@ describe('ContactMailerService', () => {
         phone: '555-0002',
         questions: 'Testing parallel sending',
       }
-
       // Track when each email is sent
       const sendTimes: number[] = []
       mockEmailService.send.mockImplementation(async () => {
@@ -164,17 +141,14 @@ describe('ContactMailerService', () => {
           response: '250 OK',
         }
       })
-
       const startTime = Date.now()
       await service.sendContactFormNotification(formData)
       const totalTime = Date.now() - startTime
-
       // If sent in parallel, total time should be ~100ms, not 400ms (4 emails × 100ms)
       expect(totalTime).toBeLessThan(300)
       expect(mockEmailService.send).toHaveBeenCalledTimes(4)
     })
   })
-
   describe('sendGuestConfirmationEmail', () => {
     it('should send confirmation email to guest', async () => {
       const formData: ContactFormData = {
@@ -184,18 +158,15 @@ describe('ContactMailerService', () => {
         phone: '555-7777',
         questions: 'Interested in membership',
       }
-
       await service.sendGuestConfirmationEmail(formData)
-
       expect(mockEmailService.send).toHaveBeenCalledTimes(1)
       expect(mockEmailService.send).toHaveBeenCalledWith(
         expect.objectContaining({
           to: 'sarah@example.com',
           subject: 'Thank you for your interest in BizToBiz!',
-        })
+        }),
       )
     })
-
     it('should include first name in greeting', async () => {
       const formData: ContactFormData = {
         firstName: 'Michael',
@@ -204,14 +175,11 @@ describe('ContactMailerService', () => {
         phone: '555-8888',
         questions: 'Tell me more',
       }
-
       await service.sendGuestConfirmationEmail(formData)
-
       const call = mockEmailService.send.mock.calls[0][0]
       expect(call.html).toContain('Dear Michael')
       expect(call.text).toContain('Dear Michael')
     })
-
     it('should include chapter information when provided', async () => {
       const formData: ContactFormData = {
         firstName: 'Emily',
@@ -222,16 +190,13 @@ describe('ContactMailerService', () => {
         chapterName: 'Westside Chapter',
         chapterLocation: 'Santa Monica',
       }
-
       await service.sendGuestConfirmationEmail(formData)
-
       const call = mockEmailService.send.mock.calls[0][0]
       expect(call.html).toContain('Westside Chapter')
       expect(call.html).toContain('Santa Monica')
       expect(call.text).toContain('Westside Chapter')
       expect(call.text).toContain('Santa Monica')
     })
-
     it('should not mention chapter when not provided', async () => {
       const formData: ContactFormData = {
         firstName: 'David',
@@ -240,14 +205,11 @@ describe('ContactMailerService', () => {
         phone: '555-4444',
         questions: 'General question',
       }
-
       await service.sendGuestConfirmationEmail(formData)
-
       const call = mockEmailService.send.mock.calls[0][0]
       expect(call.html).not.toContain('chapter')
       expect(call.text).not.toContain('chapter')
     })
-
     it('should include automated response disclaimer', async () => {
       const formData: ContactFormData = {
         firstName: 'Test',
@@ -256,15 +218,12 @@ describe('ContactMailerService', () => {
         phone: '555-0000',
         questions: 'Test',
       }
-
       await service.sendGuestConfirmationEmail(formData)
-
       const call = mockEmailService.send.mock.calls[0][0]
       expect(call.html).toContain('automated response')
       expect(call.html).toContain('do not reply')
       expect(call.text).toContain('automated response')
     })
-
     it('should throw error if email sending fails', async () => {
       const formData: ContactFormData = {
         firstName: 'Error',
@@ -273,14 +232,11 @@ describe('ContactMailerService', () => {
         phone: '555-0003',
         questions: 'Test error',
       }
-
       mockEmailService.send.mockRejectedValue(new Error('Invalid email address'))
-
       await expect(service.sendGuestConfirmationEmail(formData)).rejects.toThrow(
-        'Invalid email address'
+        'Invalid email address',
       )
     })
-
     it('should include both HTML and plain text versions', async () => {
       const formData: ContactFormData = {
         firstName: 'Format',
@@ -289,9 +245,7 @@ describe('ContactMailerService', () => {
         phone: '555-0004',
         questions: 'Testing formats',
       }
-
       await service.sendGuestConfirmationEmail(formData)
-
       const call = mockEmailService.send.mock.calls[0][0]
       expect(call.html).toBeDefined()
       expect(call.text).toBeDefined()
@@ -299,7 +253,6 @@ describe('ContactMailerService', () => {
       expect(call.text).not.toContain('<h2>')
     })
   })
-
   describe('Error Handling', () => {
     it('should handle non-Error objects in catch blocks', async () => {
       const formData: ContactFormData = {
@@ -309,13 +262,12 @@ describe('ContactMailerService', () => {
         phone: '555-0005',
         questions: 'Test string error',
       }
-
       // Simulate a string being thrown instead of Error object
       mockEmailService.send.mockRejectedValue('String error message')
-
-      await expect(service.sendContactFormNotification(formData)).rejects.toBe('String error message')
+      await expect(service.sendContactFormNotification(formData)).rejects.toBe(
+        'String error message',
+      )
     })
-
     it('should handle undefined errors gracefully', async () => {
       const formData: ContactFormData = {
         firstName: 'Undefined',
@@ -324,9 +276,7 @@ describe('ContactMailerService', () => {
         phone: '555-0006',
         questions: 'Test undefined error',
       }
-
       mockEmailService.send.mockRejectedValue(undefined)
-
       await expect(service.sendContactFormNotification(formData)).rejects.toBeUndefined()
     })
   })

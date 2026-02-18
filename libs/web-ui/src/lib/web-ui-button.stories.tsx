@@ -1,4 +1,4 @@
-import type { Meta, StoryContext, StoryObj } from '@storybook/react'
+import type { Meta, StoryContext, StoryObj } from '@storybook/react-vite'
 import { WebUiButton } from './web-ui-button'
 import { expect, within } from 'storybook/test'
 import { FaArrowRight } from 'react-icons/fa'

@@ -1,7 +1,7 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { within, expect, userEvent } from 'storybook/test';
 import { WebUiEditableText } from './web-ui-editable-text';
-import type { StoryContext } from '@storybook/react';
+import type { StoryContext } from '@storybook/react-vite';
 
 const meta = {
   component: WebUiEditableText,

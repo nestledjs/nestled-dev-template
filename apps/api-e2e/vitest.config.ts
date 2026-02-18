@@ -25,12 +25,8 @@ export default defineConfig({
       shuffle: false, // Don't shuffle tests - run alphabetically
     },
     pool: 'forks', // Use forks instead of threads for better isolation and cleanup
-    poolOptions: {
-      forks: {
-        singleFork: true,
-        isolate: false // Allow process.exit() to work
-      }
-    },
+    maxWorkers: 1, // Run in single fork for sequential test execution
+    isolate: false, // Allow process.exit() to work
     // Don't fail on process.exit() - we use it intentionally for cleanup
     dangerouslyIgnoreUnhandledErrors: true,
     // Filter out the process.exit error specifically

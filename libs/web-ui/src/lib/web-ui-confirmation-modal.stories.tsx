@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react'
+import type { Meta, StoryObj } from '@storybook/react-vite'
 import { WebUiConfirmationModal } from './web-ui-confirmation-modal'
 import React, { useState } from 'react'
 

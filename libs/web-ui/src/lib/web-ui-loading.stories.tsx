@@ -1,7 +1,7 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { within, expect } from 'storybook/test';
 import { WebUiLoading } from './web-ui-loading';
-import type { StoryContext } from '@storybook/react';
+import type { StoryContext } from '@storybook/react-vite';
 
 const meta = {
   component: WebUiLoading,

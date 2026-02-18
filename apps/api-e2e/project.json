@@ -1,11 +1,11 @@
 {
   "name": "api-e2e",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "implicitDependencies": ["api"],
   "projectType": "application",
+  "implicitDependencies": ["api"],
   "targets": {
     "e2e": {
-      "executor": "@nx/vite:test",
+      "executor": "@nx/vitest:test",
       "outputs": [
         "{workspaceRoot}/coverage/{e2eProjectRoot}",
         "{workspaceRoot}/test-results/{e2eProjectRoot}"

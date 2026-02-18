@@ -1,7 +1,7 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { within, expect } from 'storybook/test';
 import { WebUiSimpleListItem } from './web-ui-simple-list-item';
-import type { StoryContext } from '@storybook/react';
+import type { StoryContext } from '@storybook/react-vite';
 import { UserCircleIcon } from '@heroicons/react/24/outline';
 
 const meta = {

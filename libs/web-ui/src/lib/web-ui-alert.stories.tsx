@@ -1,4 +1,4 @@
-import type { Meta, StoryContext, StoryObj } from '@storybook/react'
+import type { Meta, StoryContext, StoryObj } from '@storybook/react-vite'
 import { WebUiAlert } from './web-ui-alert'
 import { expect, within } from 'storybook/test'
 
