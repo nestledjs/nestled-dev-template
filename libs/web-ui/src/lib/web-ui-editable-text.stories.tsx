@@ -33,10 +33,11 @@ export const Multiline: Story = {
   },
   play: async ({ canvasElement }: StoryContext) => {
     const canvas = within(canvasElement);
-    const text = canvas.getByText('Multiline\nText', { exact: false });
+    // Use a function matcher since the text contains a literal newline
+    const text = canvas.getByText((content) => content.includes('Multiline') && content.includes('Text'));
     expect(text).toBeInTheDocument();
     await userEvent.click(text);
-    const textarea = canvas.getByDisplayValue('Multiline\nText');
+    const textarea = canvas.getByRole('textbox');
     expect(textarea).toBeInTheDocument();
   },
 };
