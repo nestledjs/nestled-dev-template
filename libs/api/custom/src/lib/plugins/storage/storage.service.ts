@@ -85,12 +85,20 @@ export class StorageService {
    * Deletes existing avatars before uploading to prevent accumulation
    */
   async uploadUserAvatar(fileUpload: FileUpload, userId: string): Promise<StoredFile> {
-    // Delete existing user avatars to prevent accumulation
+    // Upload new avatar first to prevent data loss if upload fails
+    const newAvatar = await this.uploadFile(fileUpload, userId, {
+      folder: `user_avatars/${userId}`,
+      metadata: { type: 'avatar' },
+      isPublic: true,
+    })
+
+    // Delete existing user avatars only after successful upload
     const existingAvatars =
       (await this.prisma.storedFile.findMany({
         where: {
           userId,
           metadata: { path: ['type'], equals: 'avatar' },
+          id: { not: newAvatar.id }, // Exclude the newly uploaded avatar
         },
       })) || []
 
@@ -105,11 +113,7 @@ export class StorageService {
       await this.prisma.storedFile.delete({ where: { id: avatar.id } })
     }
 
-    return this.uploadFile(fileUpload, userId, {
-      folder: `user_avatars/${userId}`,
-      metadata: { type: 'avatar' },
-      isPublic: true,
-    })
+    return newAvatar
   }
 
   /**
