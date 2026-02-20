@@ -18,6 +18,7 @@ describe('StorageService', () => {
     }
     mockStorageFactory = {
       getStorageProvider: jest.fn().mockReturnValue(mockStorageProvider),
+      getProviderByName: jest.fn().mockReturnValue(mockStorageProvider),
     }
     mockPrisma = {
       storedFile: {
@@ -224,6 +225,8 @@ describe('StorageService', () => {
         folder: 'user_avatars/user-123',
         metadata: { type: 'avatar' },
       } as any)
+      // Mock findMany to return empty array (no existing avatars to delete)
+      mockPrisma.storedFile.findMany.mockResolvedValue([])
       const result = await service.uploadUserAvatar(mockFileUpload as any, 'user-123')
       expect(result.folder).toBe('user_avatars/user-123')
       expect(result.metadata).toEqual({ type: 'avatar' })
@@ -264,6 +267,8 @@ describe('StorageService', () => {
         organizationId: 'org-123',
         metadata: { type: 'logo' },
       } as any)
+      // Mock findMany to return empty array (no existing logos to delete)
+      mockPrisma.storedFile.findMany.mockResolvedValue([])
       const result = await service.uploadOrganizationLogo(
         mockFileUpload as any,
         'user-123',
@@ -281,14 +286,17 @@ describe('StorageService', () => {
         providerFileId: 'file-123',
         userId: 'user-123',
         filename: 'test.jpg',
+        provider: StorageProvider.LOCAL,
       }
       mockPrisma.storedFile.findUnique.mockResolvedValue(mockStoredFile as any)
+      mockStorageFactory.getProviderByName = jest.fn().mockReturnValue(mockStorageProvider)
       mockStorageProvider.delete.mockResolvedValue(undefined)
       mockPrisma.storedFile.delete.mockResolvedValue(mockStoredFile as any)
       await service.deleteFile('stored-123', 'user-123')
       expect(mockPrisma.storedFile.findUnique).toHaveBeenCalledWith({
         where: { id: 'stored-123' },
       })
+      expect(mockStorageFactory.getProviderByName).toHaveBeenCalledWith('local')
       expect(mockStorageProvider.delete).toHaveBeenCalledWith('file-123')
       expect(mockPrisma.storedFile.delete).toHaveBeenCalledWith({
         where: { id: 'stored-123' },
@@ -377,22 +385,28 @@ describe('StorageService', () => {
         id: 'stored-123',
         providerFileId: 'file-123',
         filename: 'private.pdf',
+        provider: StorageProvider.LOCAL,
       }
       mockPrisma.storedFile.findUnique.mockResolvedValue(mockStoredFile as any)
+      mockStorageFactory.getProviderByName = jest.fn().mockReturnValue(mockStorageProvider)
       mockStorageProvider.getSignedUrl.mockResolvedValue(
         'https://storage.example.com/file-123?signature=abc123&expires=3600',
       )
       const result = await service.getSignedUrl('stored-123')
       expect(result).toBe('https://storage.example.com/file-123?signature=abc123&expires=3600')
+      expect(mockStorageFactory.getProviderByName).toHaveBeenCalledWith('local')
       expect(mockStorageProvider.getSignedUrl).toHaveBeenCalledWith('file-123', 3600)
     })
     it('should return signed URL with custom expiration', async () => {
       mockPrisma.storedFile.findUnique.mockResolvedValue({
         id: 'stored-123',
         providerFileId: 'file-123',
+        provider: StorageProvider.LOCAL,
       } as any)
+      mockStorageFactory.getProviderByName = jest.fn().mockReturnValue(mockStorageProvider)
       mockStorageProvider.getSignedUrl.mockResolvedValue('https://signed-url.com')
       await service.getSignedUrl('stored-123', 7200)
+      expect(mockStorageFactory.getProviderByName).toHaveBeenCalledWith('local')
       expect(mockStorageProvider.getSignedUrl).toHaveBeenCalledWith('file-123', 7200)
     })
     it('should throw NotFoundException when file does not exist', async () => {
