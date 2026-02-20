@@ -82,6 +82,10 @@ vi.mock('@nestledjs/forms', () => ({
       </form>
     )
   },
+}))
+
+// Mock FormFieldClass from @nestledjs/forms-core
+vi.mock('@nestledjs/forms-core', () => ({
   FormFieldClass: {
     text: (key: string, options: any) => ({ key, type: 'text', options }),
     email: (key: string, options: any) => ({ key, type: 'email', options }),
