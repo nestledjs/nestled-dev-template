@@ -32,9 +32,9 @@ export const Centered: Story = {
   play: async ({ canvasElement }: StoryContext) => {
     const canvas = within(canvasElement);
     // Check that the content is present
-    await expect(canvas.getByText('Centered content')).toBeInTheDocument();
-    // Optionally, check for centering class
-    const contentDiv = canvas.getByText('Centered content').parentElement;
-    await expect(contentDiv?.className).toMatch(/items-center/);
+    const textElement = canvas.getByText('Centered content');
+    await expect(textElement).toBeInTheDocument();
+    // The text is inside the inner container div which has the centering class
+    await expect(textElement.className).toMatch(/items-center/);
   },
 }; 

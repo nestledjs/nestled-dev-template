@@ -73,7 +73,7 @@ export function WebUiSocialLinks(props: SocialLinksProps) {
   return (
     <div className={'flex space-x-6 mt-8 mx-auto w-fit'}>
       {facebookLink ? (
-        <a href={facebookLink} target="_blank" rel={'noreferrer'}>
+        <a href={facebookLink} target="_blank" rel={'noreferrer'} aria-label="Facebook">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="h-5 w-5"
@@ -85,7 +85,7 @@ export function WebUiSocialLinks(props: SocialLinksProps) {
         </a>
       ) : null}
       {twitterLink ? (
-        <a href={twitterLink} target="_blank" rel={'noreferrer'}>
+        <a href={twitterLink} target="_blank" rel={'noreferrer'} aria-label="Twitter">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="h-5 w-5"
@@ -97,7 +97,7 @@ export function WebUiSocialLinks(props: SocialLinksProps) {
         </a>
       ) : null}
       {youtubeLink ? (
-        <a href={youtubeLink} target="_blank" rel={'noreferrer'}>
+        <a href={youtubeLink} target="_blank" rel={'noreferrer'} aria-label="YouTube">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="h-5 w-5"
@@ -109,7 +109,7 @@ export function WebUiSocialLinks(props: SocialLinksProps) {
         </a>
       ) : null}
       {linkedinLink ? (
-        <a href={linkedinLink} target="_blank" rel={'noreferrer'}>
+        <a href={linkedinLink} target="_blank" rel={'noreferrer'} aria-label="LinkedIn">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="h-5 w-5"
@@ -121,7 +121,7 @@ export function WebUiSocialLinks(props: SocialLinksProps) {
         </a>
       ) : null}
       {instagramLink ? (
-        <a href={instagramLink} target="_blank" rel={'noreferrer'}>
+        <a href={instagramLink} target="_blank" rel={'noreferrer'} aria-label="Instagram">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="h-5 w-5"
