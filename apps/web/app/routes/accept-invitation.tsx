@@ -19,7 +19,8 @@ import {
   type RegisterWithInvitationMutation,
 } from '@nestled-template/shared/sdk'
 import { useGlobalCtx } from '@nestled-template/web'
-import { Form, FormFieldClass } from '@nestledjs/forms'
+import { Form } from '@nestledjs/forms'
+import { FormFieldClass } from '@nestledjs/forms-core'
 import { formTheme } from '@nestled-template/shared/styles'
 import { useQuery, useMutation } from '@apollo/client/react'
 

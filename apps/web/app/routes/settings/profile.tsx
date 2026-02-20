@@ -29,7 +29,8 @@ import {
   type DeleteFileMutation,
 } from '@nestled-template/shared/sdk'
 import { useApolloClient, useReadQuery, type QueryRef, useLazyQuery, useMutation } from '@apollo/client/react'
-import { Form, FormFieldClass } from '@nestledjs/forms'
+import { Form } from '@nestledjs/forms'
+import { FormFieldClass } from '@nestledjs/forms-core'
 import { formTheme } from '@nestled-template/shared/styles'
 import { AvatarUpload } from '@nestled-template/web-ui'
 import { TransferOwnershipModal } from '@nestled-template/web'

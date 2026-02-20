@@ -7,7 +7,8 @@ import {
   ShieldCheckIcon,
   XMarkIcon,
 } from '@heroicons/react/24/outline'
-import { Form, FormFieldClass } from '@nestledjs/forms'
+import { Form } from '@nestledjs/forms'
+import { FormFieldClass } from '@nestledjs/forms-core'
 import { formTheme } from '@nestled-template/shared/styles'
 import { apolloLoader } from '@nestled-template/shared/apollo'
 import {

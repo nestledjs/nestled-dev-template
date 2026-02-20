@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router'
-import { Form, FormFieldClass } from '@nestledjs/forms'
+import { Form } from '@nestledjs/forms'
+import { FormFieldClass } from '@nestledjs/forms-core'
 import { AuthLayout } from '@nestled-template/web'
 import {
   ForgotPasswordInput,
