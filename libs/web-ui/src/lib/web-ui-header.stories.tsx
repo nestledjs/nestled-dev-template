@@ -31,7 +31,7 @@ export const Default: Story = {
     await expect(canvas.getByText('Home')).toBeInTheDocument();
     await expect(canvas.getByText('About')).toBeInTheDocument();
     await expect(canvas.getByText('Contact')).toBeInTheDocument();
-    await expect(canvas.getByText('Sign In')).toBeInTheDocument();
+    await expect(canvas.getByText('Login')).toBeInTheDocument();
   },
 };
 
@@ -41,6 +41,6 @@ export const Authenticated: Story = {
   },
   play: async ({ canvasElement }: StoryContext) => {
     const canvas = within(canvasElement);
-    await expect(canvas.getByText('Go to Dashboard')).toBeInTheDocument();
+    await expect(canvas.getByText('Dashboard')).toBeInTheDocument();
   },
 };

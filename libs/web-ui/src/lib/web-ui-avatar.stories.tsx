@@ -15,6 +15,9 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
+  args: {
+    placeholder: 'initials',
+  },
   play: async ({ canvasElement }: StoryContext) => {
     const canvas = within(canvasElement)
     await expect(canvas.getByText('JD')).toBeInTheDocument()
