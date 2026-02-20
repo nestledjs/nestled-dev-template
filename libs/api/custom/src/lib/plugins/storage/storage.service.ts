@@ -122,12 +122,21 @@ export class StorageService {
     userId: string,
     organizationId: string,
   ): Promise<StoredFile> {
-    // Delete existing organization logos to prevent accumulation
+    // Upload new logo first to prevent data loss if upload fails
+    const newLogo = await this.uploadFile(fileUpload, userId, {
+      folder: `org_avatars/${organizationId}`,
+      organizationId,
+      metadata: { type: 'logo' },
+      isPublic: true,
+    })
+
+    // Delete existing organization logos only after successful upload
     const existingLogos =
       (await this.prisma.storedFile.findMany({
         where: {
           organizationId,
-          metadata: { path: ['type'], equals: 'avatar' },
+          metadata: { path: ['type'], equals: 'logo' },
+          id: { not: newLogo.id }, // Exclude the newly uploaded logo
         },
       })) || []
 
@@ -142,12 +151,7 @@ export class StorageService {
       await this.prisma.storedFile.delete({ where: { id: logo.id } })
     }
 
-    return this.uploadFile(fileUpload, userId, {
-      folder: `org_avatars/${organizationId}`,
-      organizationId,
-      metadata: { type: 'avatar' },
-      isPublic: true,
-    })
+    return newLogo
   }
 
   /**
