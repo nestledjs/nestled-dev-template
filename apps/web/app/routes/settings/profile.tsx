@@ -90,6 +90,22 @@ function downloadJsonFile(data: unknown, filename: string) {
   URL.revokeObjectURL(url)
 }
 
+type UserImage = {
+  id: string
+  type?: string
+  folder?: string | null
+  createdAt: string
+  publicUrl?: string | null
+  url?: string | null
+  metadata?: { type?: string } | null
+}
+
+const getImageCreatedTime = (img: UserImage): number => {
+  if (!img?.createdAt) return 0
+  const time = new Date(img.createdAt).getTime()
+  return Number.isNaN(time) ? 0 : time
+}
+
 export default function ProfileSettings() {
   const loaderData = useLoaderData() as { meQueryRef: QueryRef<MeQuery> }
   const { data } = useReadQuery(loaderData.meQueryRef)
@@ -115,6 +131,7 @@ export default function ProfileSettings() {
   const [emailResendSuccess, setEmailResendSuccess] = useState(false)
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
+  const [avatarMessage, setAvatarMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
 
   if (!user) {
     return <div>Loading...</div>
@@ -122,10 +139,11 @@ export default function ProfileSettings() {
 
   const primaryEmail = user.emails?.find(e => e.primary)
 
-  // Get user's avatar (first image with type: 'avatar' in metadata)
-  const userAvatar = user.images?.find(
-    (img) => (img.metadata as { type?: string })?.type === 'avatar' || img.folder === 'avatars',
-  )
+  // Get user's avatar: filter by type, sort by date desc, pick most recent
+  const userAvatars = (user.images as UserImage[] | undefined)
+    ?.filter((img) => (img.metadata as { type?: string })?.type === 'avatar' || img.folder === 'avatars')
+    ?.sort((a, b) => getImageCreatedTime(b) - getImageCreatedTime(a))
+  const userAvatar = userAvatars && userAvatars.length > 0 ? userAvatars[0] : undefined
 
   const handleAvatarUpload = async (file: File) => {
     try {
@@ -136,37 +154,51 @@ export default function ProfileSettings() {
       if (result.data?.uploadUserAvatar) {
         // Refresh user data to show new avatar
         await client.refetchQueries({ include: [Me] })
-        setMessage({ type: 'success', text: 'Avatar uploaded successfully!' })
-        setTimeout(() => setMessage(null), 3000)
+        setAvatarMessage({ type: 'success', text: 'Avatar uploaded successfully!' })
+        setTimeout(() => setAvatarMessage(null), 3000)
       }
     } catch (error) {
       console.error('Avatar upload failed:', error)
-      setMessage({ type: 'error', text: (error as Error).message || 'Failed to upload avatar' })
-      setTimeout(() => setMessage(null), 5000)
+      setAvatarMessage({ type: 'error', text: (error as Error).message || 'Failed to upload avatar' })
+      setTimeout(() => setAvatarMessage(null), 5000)
     }
   }
 
   const handleAvatarRemove = async () => {
-    if (!userAvatar?.id) {
-      setMessage({ type: 'error', text: 'No avatar to remove' })
-      setTimeout(() => setMessage(null), 3000)
+    // Get ALL avatar images for this user to delete accumulated ones
+    const avatarImages = (user.images as UserImage[])?.filter(
+      (img) => (img.metadata as { type?: string })?.type === 'avatar' || img.folder === 'avatars',
+    ) || []
+
+    if (avatarImages.length === 0) {
+      setAvatarMessage({ type: 'error', text: 'No avatar to remove' })
+      setTimeout(() => setAvatarMessage(null), 3000)
       return
     }
 
-    try {
-      await deleteFile({
-        variables: { uploadId: userAvatar.id },
-      })
+    let successCount = 0
+    let errorCount = 0
 
-      // Refresh user data to remove avatar from UI
-      await client.refetchQueries({ include: [Me] })
-      setMessage({ type: 'success', text: 'Avatar removed successfully!' })
-      setTimeout(() => setMessage(null), 3000)
-    } catch (error) {
-      console.error('Avatar removal failed:', error)
-      setMessage({ type: 'error', text: (error as Error).message || 'Failed to remove avatar' })
-      setTimeout(() => setMessage(null), 5000)
+    // Try to delete all of them
+    for (const image of avatarImages) {
+      try {
+        await deleteFile({ variables: { uploadId: image.id } })
+        successCount++
+      } catch (error) {
+        console.error('Avatar removal failed:', error)
+        errorCount++
+      }
     }
+
+    // Refresh user data to update UI
+    await client.refetchQueries({ include: [Me] })
+
+    if (errorCount > 0) {
+      setAvatarMessage({ type: 'error', text: `Removed ${successCount} images, ${errorCount} failed` })
+    } else {
+      setAvatarMessage({ type: 'success', text: 'Avatar removed' })
+    }
+    setTimeout(() => setAvatarMessage(null), 3000)
   }
 
   const handleResendVerificationEmail = async () => {
@@ -195,25 +227,38 @@ export default function ProfileSettings() {
   }
 
   const AvatarSection = () => (
-    <div className="flex items-center gap-6">
-      <AvatarUpload
-        currentImageUrl={userAvatar?.publicUrl || userAvatar?.url}
-        fallbackText={
-          `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.displayName || 'User'
-        }
-        onUpload={handleAvatarUpload}
-        onRemove={userAvatar ? handleAvatarRemove : undefined}
-        size="xl"
-      />
-      <div>
-        <h3 className="text-lg font-semibold text-zinc-900 dark:text-white">Profile Picture</h3>
-        <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-2">
-          Upload a photo to personalize your account
-        </p>
-        <p className="text-xs text-zinc-500 dark:text-zinc-400">
-          Recommended: Square image, at least 200x200px. Max file size: 5MB.
-        </p>
+    <div className="space-y-3">
+      <div className="flex items-center gap-6">
+        <AvatarUpload
+          currentImageUrl={userAvatar?.publicUrl ?? userAvatar?.url ?? undefined}
+          fallbackText={
+            `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.displayName || 'User'
+          }
+          onUpload={handleAvatarUpload}
+          onRemove={userAvatar ? handleAvatarRemove : undefined}
+          size="xl"
+        />
+        <div>
+          <h3 className="text-lg font-semibold text-zinc-900 dark:text-white">Profile Picture</h3>
+          <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-2">
+            Upload a photo to personalize your account
+          </p>
+          <p className="text-xs text-zinc-500 dark:text-zinc-400">
+            Recommended: Square image, at least 200x200px. Max file size: 5MB.
+          </p>
+        </div>
       </div>
+      {avatarMessage && (
+        <div
+          className={`rounded-lg p-3 text-sm ${
+            avatarMessage.type === 'success'
+              ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/20'
+              : 'bg-rose-50 dark:bg-rose-500/10 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-500/20'
+          }`}
+        >
+          {avatarMessage.text}
+        </div>
+      )}
     </div>
   )
 
