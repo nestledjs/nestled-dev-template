@@ -1,6 +1,8 @@
 import { defineConfig, mergeConfig } from 'vitest/config'
 //@ts-ignore
 import { storybookTest } from '@storybook/addon-vitest/vitest-plugin'
+//@ts-ignore
+import { playwright } from '@vitest/browser-playwright'
 import viteConfig from './vite.config'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -40,7 +42,7 @@ export default mergeConfig(
             setupFiles: ['./.storybook/vitest.setup.ts'],
             browser: {
               enabled: true,
-              provider: { name: 'playwright' },
+              provider: playwright(),
               headless: true,
               instances: [{ browser: 'chromium' }],
             },

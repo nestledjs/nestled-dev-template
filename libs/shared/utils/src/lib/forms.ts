@@ -1,5 +1,5 @@
 import { Maybe } from 'graphql/jsutils/Maybe'
-import { FormField } from '@nestledjs/forms'
+import { FormField } from '@nestledjs/forms-core'
 
 function isValidDate(d: any) {
   return d instanceof Date && !isNaN(d as any)
