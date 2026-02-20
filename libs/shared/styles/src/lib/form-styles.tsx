@@ -1,4 +1,4 @@
-import { FormThemeSchema } from '@nestledjs/forms'
+import { FormThemeSchema } from '@nestledjs/forms-core'
 
 export const formTheme = FormThemeSchema.parse({
   global: {
