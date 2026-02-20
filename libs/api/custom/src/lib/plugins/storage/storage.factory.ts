@@ -35,6 +35,28 @@ export class StorageFactory {
   ) {}
 
   /**
+   * Get a storage provider by name, regardless of the configured default.
+   * Used when deleting files that may have been stored with a different provider.
+   */
+  getProviderByName(name: string): IStorageService {
+    switch (name.toLowerCase()) {
+      case 'local':
+        return this.localStorage
+      case 's3':
+        return this.s3Storage
+      case 'cloudinary':
+        return this.cloudinaryStorage
+      case 'imagekit':
+        return this.imagekitStorage
+      case 'gcs':
+        return this.gcsStorage
+      default:
+        this.logger.warn(`Unknown provider name: ${name}. Falling back to default provider.`)
+        return this.getStorageProvider()
+    }
+  }
+
+  /**
    * Get the configured storage provider
    * Caches the provider instance after first creation
    */

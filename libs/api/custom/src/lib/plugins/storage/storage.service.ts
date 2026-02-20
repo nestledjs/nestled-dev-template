@@ -82,8 +82,29 @@ export class StorageService {
   /**
    * Upload user avatar
    * Folder structure: user_avatars/{userId}/filename.ext
+   * Deletes existing avatars before uploading to prevent accumulation
    */
   async uploadUserAvatar(fileUpload: FileUpload, userId: string): Promise<StoredFile> {
+    // Delete existing user avatars to prevent accumulation
+    const existingAvatars =
+      (await this.prisma.storedFile.findMany({
+        where: {
+          userId,
+          metadata: { path: ['type'], equals: 'avatar' },
+        },
+      })) || []
+
+    for (const avatar of existingAvatars) {
+      try {
+        const providerName = avatar.provider.toLowerCase()
+        const storageProvider = this.storageFactory.getProviderByName(providerName)
+        await storageProvider.delete(avatar.providerFileId)
+      } catch (error) {
+        this.logger.warn(`Failed to delete old avatar from provider: ${error}`)
+      }
+      await this.prisma.storedFile.delete({ where: { id: avatar.id } })
+    }
+
     return this.uploadFile(fileUpload, userId, {
       folder: `user_avatars/${userId}`,
       metadata: { type: 'avatar' },
@@ -92,14 +113,35 @@ export class StorageService {
   }
 
   /**
-   * Upload organization avatar
+   * Upload organization logo
    * Folder structure: org_avatars/{organizationId}/filename.ext
+   * Deletes existing logos before uploading to prevent accumulation
    */
   async uploadOrganizationLogo(
     fileUpload: FileUpload,
     userId: string,
     organizationId: string,
   ): Promise<StoredFile> {
+    // Delete existing organization logos to prevent accumulation
+    const existingLogos =
+      (await this.prisma.storedFile.findMany({
+        where: {
+          organizationId,
+          metadata: { path: ['type'], equals: 'avatar' },
+        },
+      })) || []
+
+    for (const logo of existingLogos) {
+      try {
+        const providerName = logo.provider.toLowerCase()
+        const storageProvider = this.storageFactory.getProviderByName(providerName)
+        await storageProvider.delete(logo.providerFileId)
+      } catch (error) {
+        this.logger.warn(`Failed to delete old logo from provider: ${error}`)
+      }
+      await this.prisma.storedFile.delete({ where: { id: logo.id } })
+    }
+
     return this.uploadFile(fileUpload, userId, {
       folder: `org_avatars/${organizationId}`,
       organizationId,
@@ -110,6 +152,7 @@ export class StorageService {
 
   /**
    * Delete a file from storage and database
+   * Uses the correct provider per file and is resilient to provider errors
    */
   async deleteFile(uploadId: string, userId: string): Promise<void> {
     const upload = await this.prisma.storedFile.findUnique({
@@ -125,12 +168,21 @@ export class StorageService {
       throw new NotFoundException(`Upload not found: ${uploadId}`)
     }
 
-    const storageProvider = this.storageFactory.getStorageProvider()
+    // Use the correct provider for this specific file, not the default
+    const providerName = upload.provider.toLowerCase()
+    const storageProvider = this.storageFactory.getProviderByName(providerName)
 
-    // Delete from storage provider
-    await storageProvider.delete(upload.providerFileId)
+    // Try to delete from provider, but don't fail if it errors
+    try {
+      await storageProvider.delete(upload.providerFileId)
+    } catch (error) {
+      this.logger.warn(
+        `Failed to delete file ${uploadId} from storage provider ${upload.provider}: ${error}. ` +
+          `Proceeding with database deletion.`,
+      )
+    }
 
-    // Delete from database
+    // Always delete from database
     await this.prisma.storedFile.delete({
       where: { id: uploadId },
     })
@@ -178,7 +230,8 @@ export class StorageService {
       throw new NotFoundException(`Upload not found: ${uploadId}`)
     }
 
-    const storageProvider = this.storageFactory.getStorageProvider()
+    const providerName = upload.provider.toLowerCase()
+    const storageProvider = this.storageFactory.getProviderByName(providerName)
     return storageProvider.getSignedUrl(upload.providerFileId, expiresIn)
   }
 
