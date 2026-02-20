@@ -6,6 +6,7 @@ import { Form, FormFieldClass } from '@nestledjs/forms'
 import { formTheme } from '@nestled-template/shared/styles'
 import { apolloLoader } from '@nestled-template/shared/apollo'
 import {
+  Me,
   MyOrganizations,
   type MyOrganizationsQuery,
   UserUpdateOrganization,
@@ -25,6 +26,22 @@ export const loader = apolloLoader()(({ preloadQuery }) => {
   return { myOrganizationsQueryRef }
 })
 
+type OrgImage = {
+  id: string
+  type?: string
+  folder?: string | null
+  createdAt: string
+  publicUrl?: string | null
+  url?: string | null
+  metadata?: { type?: string } | null
+}
+
+const getImageCreatedTime = (img: OrgImage): number => {
+  if (!img?.createdAt) return 0
+  const time = new Date(img.createdAt).getTime()
+  return Number.isNaN(time) ? 0 : time
+}
+
 export default function OrganizationSettings() {
   const loaderData = useLoaderData() as { myOrganizationsQueryRef: QueryRef<MyOrganizationsQuery> }
   const { data } = useReadQuery(loaderData.myOrganizationsQueryRef)
@@ -32,6 +49,7 @@ export default function OrganizationSettings() {
   const activeOrganization = organizations[0] || null
   const [formError, setFormError] = useState<string | null>(null)
   const [formSuccess, setFormSuccess] = useState<string | null>(null)
+  const [logoMessage, setLogoMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
   const [updateOrganization] = useMutation<UserUpdateOrganizationMutation>(UserUpdateOrganization)
   const [uploadOrganizationLogo] =
     useMutation<UploadOrganizationLogoMutation>(UploadOrganizationLogo)
@@ -65,10 +83,11 @@ export default function OrganizationSettings() {
     }
   }
 
-  // Get organization's logo (first image with type: 'logo' in metadata)
-  const organizationLogo = activeOrganization?.images?.find(
-    (img) => (img.metadata as { type?: string })?.type === 'logo' || img.folder === 'logos',
-  )
+  // Get organization's logo: filter by type, sort by date desc, pick most recent
+  const orgLogos = (activeOrganization?.images as OrgImage[] | undefined)
+    ?.filter((img) => (img.metadata as { type?: string })?.type === 'logo' || img.folder === 'logos')
+    ?.sort((a, b) => getImageCreatedTime(b) - getImageCreatedTime(a))
+  const organizationLogo = orgLogos && orgLogos.length > 0 ? orgLogos[0] : undefined
 
   const handleLogoUpload = async (file: File) => {
     if (!activeOrganization) return
@@ -82,37 +101,53 @@ export default function OrganizationSettings() {
       })
 
       if (result.data?.uploadOrganizationLogo) {
-        // Refresh organization data to show new logo
-        await client.refetchQueries({ include: [MyOrganizations] })
-        setFormSuccess('Logo uploaded successfully!')
-        setTimeout(() => setFormSuccess(null), 3000)
+        // Refresh both queries so sidebar and org page update
+        await client.refetchQueries({ include: [Me, MyOrganizations] })
+        setLogoMessage({ type: 'success', text: 'Logo uploaded successfully!' })
+        setTimeout(() => setLogoMessage(null), 3000)
       }
     } catch (error) {
       console.error('Logo upload failed:', error)
-      setFormError((error as Error).message || 'Failed to upload logo')
-      setTimeout(() => setFormError(null), 5000)
+      setLogoMessage({ type: 'error', text: (error as Error).message || 'Failed to upload logo' })
+      setTimeout(() => setLogoMessage(null), 5000)
     }
   }
 
   const handleLogoRemove = async () => {
-    if (!organizationLogo) return
+    // Get ALL logo images for this organization to delete accumulated ones
+    const logoImages = (activeOrganization?.images as OrgImage[])?.filter(
+      (img) => (img.metadata as { type?: string })?.type === 'logo' || img.folder === 'logos',
+    ) || []
 
-    try {
-      await deleteFile({
-        variables: {
-          uploadId: organizationLogo.id,
-        },
-      })
-
-      // Refresh organization data to remove the logo from UI
-      await client.refetchQueries({ include: [MyOrganizations] })
-      setFormSuccess('Logo removed successfully!')
-      setTimeout(() => setFormSuccess(null), 3000)
-    } catch (error) {
-      console.error('Logo removal failed:', error)
-      setFormError((error as Error).message || 'Failed to remove logo')
-      setTimeout(() => setFormError(null), 5000)
+    if (logoImages.length === 0) {
+      setLogoMessage({ type: 'error', text: 'No logo to remove' })
+      setTimeout(() => setLogoMessage(null), 3000)
+      return
     }
+
+    let successCount = 0
+    let errorCount = 0
+
+    // Try to delete all of them
+    for (const image of logoImages) {
+      try {
+        await deleteFile({ variables: { uploadId: image.id } })
+        successCount++
+      } catch (error) {
+        console.error('Logo removal failed:', error)
+        errorCount++
+      }
+    }
+
+    // Refresh both queries so sidebar and org page update
+    await client.refetchQueries({ include: [Me, MyOrganizations] })
+
+    if (errorCount > 0) {
+      setLogoMessage({ type: 'error', text: `Removed ${successCount} images, ${errorCount} failed` })
+    } else {
+      setLogoMessage({ type: 'success', text: 'Logo removed' })
+    }
+    setTimeout(() => setLogoMessage(null), 3000)
   }
 
   const organizationFields = [
@@ -154,25 +189,38 @@ export default function OrganizationSettings() {
           Organization Branding
         </h3>
 
-        <div className="flex items-center gap-6">
-          <AvatarUpload
-            currentImageUrl={organizationLogo?.publicUrl || organizationLogo?.url}
-            fallbackText={activeOrganization?.name || 'Org'}
-            onUpload={handleLogoUpload}
-            onRemove={organizationLogo ? handleLogoRemove : undefined}
-            size="xl"
-          />
-          <div>
-            <h4 className="text-lg font-semibold text-zinc-900 dark:text-white">
-              Organization Logo
-            </h4>
-            <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-2">
-              Upload a logo to represent your organization
-            </p>
-            <p className="text-xs text-zinc-500 dark:text-zinc-400">
-              Recommended: Square image, at least 200x200px. Max file size: 5MB.
-            </p>
+        <div className="space-y-3">
+          <div className="flex items-center gap-6">
+            <AvatarUpload
+              currentImageUrl={organizationLogo?.publicUrl ?? organizationLogo?.url ?? undefined}
+              fallbackText={activeOrganization?.name || 'Org'}
+              onUpload={handleLogoUpload}
+              onRemove={organizationLogo ? handleLogoRemove : undefined}
+              size="xl"
+            />
+            <div>
+              <h4 className="text-lg font-semibold text-zinc-900 dark:text-white">
+                Organization Logo
+              </h4>
+              <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-2">
+                Upload a logo to represent your organization
+              </p>
+              <p className="text-xs text-zinc-500 dark:text-zinc-400">
+                Recommended: Square image, at least 200x200px. Max file size: 5MB.
+              </p>
+            </div>
           </div>
+          {logoMessage && (
+            <div
+              className={`rounded-lg p-3 text-sm ${
+                logoMessage.type === 'success'
+                  ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/20'
+                  : 'bg-rose-50 dark:bg-rose-500/10 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-500/20'
+              }`}
+            >
+              {logoMessage.text}
+            </div>
+          )}
         </div>
       </div>
 

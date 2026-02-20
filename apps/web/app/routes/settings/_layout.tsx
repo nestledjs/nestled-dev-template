@@ -87,6 +87,22 @@ export default function SettingsLayout() {
     return location.pathname === href || location.pathname.startsWith(`${href}/`)
   }
 
+  type SettingsImage = {
+    id: string
+    type?: string
+    folder?: string | null
+    createdAt: string
+    publicUrl?: string | null
+    url?: string | null
+    metadata?: { type?: string } | null
+  }
+
+  const getImageCreatedTime = (img: SettingsImage): number => {
+    if (!img?.createdAt) return 0
+    const time = new Date(img.createdAt).getTime()
+    return Number.isNaN(time) ? 0 : time
+  }
+
   // Simple permission check - make it very permissive for now
   const hasPermission = (permission?: string) => {
     if (!permission) return true
@@ -122,15 +138,17 @@ export default function SettingsLayout() {
     return true
   }
 
-  // Get user's avatar (first image with type: 'avatar' in metadata)
-  const userAvatar = user?.images?.find(
-    (img) => (img.metadata as { type?: string })?.type === 'avatar' || img.folder === 'avatars',
-  )
+  // Get user's avatar: filter by type, sort by date desc, pick most recent
+  const userAvatars = (user?.images as SettingsImage[] | undefined)
+    ?.filter((img) => (img.metadata as { type?: string })?.type === 'avatar' || img.folder === 'avatars')
+    ?.sort((a, b) => getImageCreatedTime(b) - getImageCreatedTime(a))
+  const userAvatar = userAvatars && userAvatars.length > 0 ? userAvatars[0] : undefined
 
-  // Get organization's logo
-  const organizationLogo = activeOrganization?.images?.find(
-    (img) => (img.metadata as { type?: string })?.type === 'logo' || img.folder === 'logos',
-  )
+  // Get organization's logo: filter by type, sort by date desc, pick most recent
+  const orgLogos = (activeOrganization?.images as SettingsImage[] | undefined)
+    ?.filter((img) => (img.metadata as { type?: string })?.type === 'logo' || img.folder === 'logos')
+    ?.sort((a, b) => getImageCreatedTime(b) - getImageCreatedTime(a))
+  const organizationLogo = orgLogos && orgLogos.length > 0 ? orgLogos[0] : undefined
 
   return (
     <div className="flex-1 bg-gradient-to-b from-zinc-50 to-zinc-100 dark:from-zinc-900 dark:to-zinc-950">
@@ -152,7 +170,7 @@ export default function SettingsLayout() {
               <div className="mb-6">
                 <div className="flex items-center gap-3 mb-4 p-2 rounded-lg bg-zinc-50 dark:bg-white/5">
                   <Avatar
-                    imageUrl={userAvatar?.publicUrl || userAvatar?.url}
+                    imageUrl={userAvatar?.publicUrl ?? userAvatar?.url ?? undefined}
                     fallbackText={
                       `${user?.firstName || ''} ${user?.lastName || ''}`.trim() ||
                       user?.displayName ||
@@ -219,7 +237,7 @@ export default function SettingsLayout() {
                   className="flex items-center gap-3 mb-4 p-2 rounded-lg bg-zinc-50 dark:bg-white/5 w-full hover:bg-zinc-100 dark:hover:bg-white/10 transition-colors"
                 >
                   <Avatar
-                    imageUrl={organizationLogo?.publicUrl || organizationLogo?.url}
+                    imageUrl={organizationLogo?.publicUrl ?? organizationLogo?.url ?? undefined}
                     fallbackText={activeOrganization?.name || 'Org'}
                     size="sm"
                   />
