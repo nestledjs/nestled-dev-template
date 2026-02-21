@@ -78,11 +78,11 @@ let hasShownServiceUnavailableMessage = false
  */
 function getSessionCookieName(): string {
   // Server-side (Node.js)
-  if (typeof process !== 'undefined' && process.env?.VITE_COOKIE_NAME) {
+  if (process?.env?.VITE_COOKIE_NAME) {
     return process.env.VITE_COOKIE_NAME
   }
   // Client-side (Vite)
-  if (typeof import.meta !== 'undefined' && import.meta.env?.VITE_COOKIE_NAME) {
+  if (import.meta?.env?.VITE_COOKIE_NAME) {
     return import.meta.env.VITE_COOKIE_NAME
   }
   // Default fallback
