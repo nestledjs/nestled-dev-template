@@ -54,3 +54,6 @@ vitest.config.*.timestamp*
 prisma-generated
 
 storybook-static
+
+# Uploads
+uploads
