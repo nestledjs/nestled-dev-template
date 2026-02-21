@@ -5,12 +5,13 @@ import { createTestRouter } from "../../helpers/createTestRouter"
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import LoginPage, { loader } from '../../../app/routes/_public/login'
 import { useMutation } from '@apollo/client/react'
-import { getCookie, getJsonCookie } from '@nestled-template/shared/utils'
+import { getCookie, getJsonCookie, getSessionCookieName } from '@nestled-template/shared/utils'
 
 // Mock only the essential external dependencies
 vi.mock('@nestled-template/shared/utils', () => ({
   getCookie: vi.fn(),
   getJsonCookie: vi.fn(),
+  getSessionCookieName: () => '__session',
 }))
 
 vi.mock('@apollo/client/react', () => ({
