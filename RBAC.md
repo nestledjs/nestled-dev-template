@@ -100,7 +100,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
 Tokens are extracted in this priority order:
 1. `Authorization: Bearer <token>` header
-2. Cookie named by `API_COOKIE_NAME` environment variable
+2. Cookie named by `VITE_COOKIE_NAME` environment variable (default: `__session`)
 
 This allows both API clients (header) and web browsers (cookie) to authenticate.
 

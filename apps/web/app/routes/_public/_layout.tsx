@@ -1,11 +1,11 @@
 import { LoaderFunctionArgs, Outlet, useLoaderData } from 'react-router'
 import React from 'react'
 import { WebUiFooter, WebUiHeader } from '@nestled-template/web-ui'
-import { getCookie } from '@nestled-template/shared/utils'
+import { getCookie, getSessionCookieName } from '@nestled-template/shared/utils'
 import { useGlobalCtx } from '@nestled-template/web'
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const token = getCookie(request.headers, '__session')
+  const token = getCookie(request.headers, getSessionCookieName())
   if (token) {
     return { isAuthenticated: true }
   }

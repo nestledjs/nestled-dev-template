@@ -6,7 +6,7 @@ export const configuration = () => ({
   apiUrl: process.env['API_URL'],
   api: {
     cookie: {
-      name: process.env['API_COOKIE_NAME'],
+      name: process.env['VITE_COOKIE_NAME'] ?? '__session',
       options: {
         domain: process.env['API_COOKIE_DOMAIN'],
         httpOnly: true,
