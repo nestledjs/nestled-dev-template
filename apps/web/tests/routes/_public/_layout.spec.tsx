@@ -2,7 +2,7 @@ import React from 'react'
 import { render, screen, waitFor } from '@testing-library/react'
 import { createTestRouter } from "../../helpers/createTestRouter"
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { getCookie, getSessionCookieName } from '@nestled-template/shared/utils'
+import { getCookie } from '@nestled-template/shared/utils'
 
 import PublicLayout, { loader } from '../../../app/routes/_public/_layout'
 
