@@ -2,7 +2,7 @@ import React from 'react'
 import { render, screen, waitFor } from '@testing-library/react'
 import { createTestRouter } from "../../helpers/createTestRouter"
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { getCookie } from '@nestled-template/shared/utils'
+import { getCookie, getSessionCookieName } from '@nestled-template/shared/utils'
 
 import PublicLayout, { loader } from '../../../app/routes/_public/_layout'
 
@@ -12,6 +12,7 @@ const mockUseGlobalCtx = vi.fn()
 
 vi.mock('@nestled-template/shared/utils', () => ({
   getCookie: (...args: unknown[]) => mockGetCookie(...args),
+  getSessionCookieName: () => '__session',
 }))
 
 vi.mock('@nestled-template/web-ui', () => ({

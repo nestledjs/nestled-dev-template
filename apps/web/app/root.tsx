@@ -2,7 +2,7 @@ import { ApolloHydrationHelper } from '@apollo/client-integration-react-router'
 import '@nestled-template/shared/styles'
 import { apolloLoader } from '@nestled-template/shared/apollo'
 import { Me, type MeQuery } from '@nestled-template/shared/sdk'
-import { getCookie, isJwtExpired, isNetworkError } from '@nestled-template/shared/utils'
+import { getCookie, getSessionCookieName, isJwtExpired, isNetworkError } from '@nestled-template/shared/utils'
 import { WebUiErrorBoundary } from '@nestled-template/web-ui'
 import { ReactNode } from 'react'
 import {
@@ -35,7 +35,8 @@ export const links: LinksFunction = () => [
 
 export const loader = apolloLoader()(({ preloadQuery, request }) => {
   const url = new URL(request.url)
-  const token = getCookie(request.headers, '__session')
+  const cookieName = getSessionCookieName()
+  const token = getCookie(request.headers, cookieName)
   const isAuthenticated = token && !isJwtExpired(token)
 
   // Get theme preference from cookie, default to 'dark' if not set
@@ -56,7 +57,7 @@ export const loader = apolloLoader()(({ preloadQuery, request }) => {
     return redirect(loginRedirect, {
       headers: {
         'Set-Cookie':
-          '__session=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; SameSite=Lax',
+          `${cookieName}=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; SameSite=Lax`,
       },
     })
   }
@@ -94,7 +95,7 @@ export const loader = apolloLoader()(({ preloadQuery, request }) => {
         return redirect(loginRedirect, {
           headers: {
             'Set-Cookie':
-              '__session=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; SameSite=Lax',
+              `${cookieName}=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; SameSite=Lax`,
           },
         })
       }

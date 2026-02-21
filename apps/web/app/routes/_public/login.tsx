@@ -10,7 +10,7 @@ import {
 import { Form } from '@nestledjs/forms'
 import { FormFieldClass } from '@nestledjs/forms-core'
 import { AuthLayout } from '@nestled-template/web'
-import { getCookie, getJsonCookie } from '@nestled-template/shared/utils'
+import { getCookie, getJsonCookie, getSessionCookieName } from '@nestled-template/shared/utils'
 import {
   LoginInput,
   Login,
@@ -22,7 +22,7 @@ import { formTheme } from '@nestled-template/shared/styles'
 import { useMutation } from '@apollo/client/react'
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const token = getCookie(request.headers, '__session')
+  const token = getCookie(request.headers, getSessionCookieName())
   if (token) {
     throw redirect('/members/dashboard')
   }

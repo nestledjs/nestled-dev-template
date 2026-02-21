@@ -42,13 +42,14 @@ const redisPubSubProvider = {
             ) {
               const rawHeaders = extra.request.rawHeaders as string[] | undefined
               let token = ''
+              const cookieName = process.env['VITE_COOKIE_NAME'] || '__session'
               if (rawHeaders) {
                 for (let i = 0; i < rawHeaders.length; i += 2) {
                   if (rawHeaders[i].toLowerCase() === 'cookie') {
                     const cookies = rawHeaders[i + 1].split(';')
                     for (const cookie of cookies) {
                       const [name, value] = cookie.trim().split('=')
-                      if (name === '__session') {
+                      if (name === cookieName) {
                         token = value
                         break
                       }
