@@ -72,6 +72,23 @@ export type ClientOptions = {
 // Global flag to track if we've already shown the "service-unavailable" message
 let hasShownServiceUnavailableMessage = false
 
+/**
+ * Get the session cookie name from environment variable.
+ * Works in both server (process.env) and client (import.meta.env) contexts.
+ */
+function getSessionCookieName(): string {
+  // Server-side (Node.js)
+  if (typeof process !== 'undefined' && process.env?.VITE_COOKIE_NAME) {
+    return process.env.VITE_COOKIE_NAME
+  }
+  // Client-side (Vite)
+  if (typeof import.meta !== 'undefined' && import.meta.env?.VITE_COOKIE_NAME) {
+    return import.meta.env.VITE_COOKIE_NAME
+  }
+  // Default fallback
+  return '__session'
+}
+
 // Helper to parse cookies from a cookie header string
 function getCookieFromHeader(cookieHeader: string | null | undefined, name: string): string | null {
   if (!cookieHeader) return null
@@ -125,7 +142,7 @@ function resolveAuthToken(request?: Request, options?: ClientOptions): string | 
 
     // 3. Check request cookies
     const cookieHeader = request.headers.get('cookie')
-    const cookieToken = getCookieFromHeader(cookieHeader, '__session')
+    const cookieToken = getCookieFromHeader(cookieHeader, getSessionCookieName())
     if (cookieToken) {
       return cookieToken
     }
@@ -133,7 +150,7 @@ function resolveAuthToken(request?: Request, options?: ClientOptions): string | 
 
   // 4. Check browser cookies (client-side only)
   if (typeof window !== 'undefined' && typeof document !== 'undefined') {
-    const browserToken = getCookieFromHeader(document.cookie, '__session')
+    const browserToken = getCookieFromHeader(document.cookie, getSessionCookieName())
     if (browserToken) {
       return browserToken
     }

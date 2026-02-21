@@ -122,7 +122,7 @@ async function bootstrap() {
   console.log('- Origins length:', origins.length)
 
   console.log('Cookie Debug Info:')
-  console.log('- API_COOKIE_NAME:', process.env['API_COOKIE_NAME'])
+  console.log('- VITE_COOKIE_NAME:', process.env['VITE_COOKIE_NAME'])
   console.log('- API_COOKIE_DOMAIN:', process.env['API_COOKIE_DOMAIN'])
   console.log('- NODE_ENV:', process.env['NODE_ENV'])
   console.log('- Cookie config:', configService.cookie)
