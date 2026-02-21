@@ -10,7 +10,7 @@ interface EmulationStatus {
  * Get the session cookie name from environment variable.
  */
 function getSessionCookieName(): string {
-  if (typeof import.meta !== 'undefined' && import.meta.env?.VITE_COOKIE_NAME) {
+  if (import.meta?.env?.VITE_COOKIE_NAME) {
     return import.meta.env.VITE_COOKIE_NAME
   }
   return '__session'
