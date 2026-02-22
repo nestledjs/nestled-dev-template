@@ -1,5 +1,7 @@
 ## Nestled Starter Template
 
+> **Note:** This repository serves as the development environment for the [`@nestledjs/data-browser`](libs/data-browser) and [`@nestledjs/shared-components`](libs/shared-components) plugins. It should not be used directly as a project template. If you're looking to start a new project, use the published plugins in your own Nestled project instead.
+
 A minimal, modern starter turning a legacy app into a clean, universal baseline. The purpose is to ship a production‑ready foundation where you can log in, manage a profile, invite teammates/organizations, enforce roles/permissions, and integrate billing — so you only build your custom features.
 
 - **Core goals**: Auth + sessions, profiles, orgs/teams, RBAC, billing/subscriptions, admin/audit, generated API + typed SDK.
