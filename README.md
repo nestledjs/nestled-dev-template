@@ -5,6 +5,8 @@ A minimal, modern starter turning a legacy app into a clean, universal baseline.
 - **Core goals**: Auth + sessions, profiles, orgs/teams, RBAC, billing/subscriptions, admin/audit, generated API + typed SDK.
 - **Design ethos**: intentionally neutral (blues/greys), boring defaults, conventional over clever.
 
+[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/deploy/YninPE?referralCode=TMBZWO&utm_medium=integration&utm_source=template&utm_campaign=generic)
+
 ---
 
 ## Stack
