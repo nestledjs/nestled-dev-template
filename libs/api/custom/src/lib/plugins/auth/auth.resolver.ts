@@ -114,28 +114,36 @@ export class AuthResolver {
   async logout(@Context() context: NestContextType) {
     Logger.log('LOGOUT ++++++++')
 
-    // Get session ID from JWT and invalidate it
-    // Check both cookie and Authorization header
-    let token = context.req.cookies?.[this.service.getCookieName()]
-
-    // If no cookie token, check Authorization header
-    if (!token) {
-      const authHeader = context.req.headers?.authorization
-      if (authHeader?.startsWith('Bearer ')) {
-        token = authHeader.substring(7)
-      }
-    }
-
-    if (token) {
-      const decoded = (this.service as any).jwtService.decode(token) as any
-      const sessionId = decoded?.sessionId
-      if (sessionId) {
-        await this.sessionService.invalidateSession(sessionId)
-        Logger.log(`Session ${sessionId} invalidated during logout`)
-      }
-    }
-
+    // ALWAYS clear the cookie first - this is the most important step
+    // Even if everything else fails, we want the user logged out
     this.service.clearCookie(context.res)
+
+    // Try to invalidate the session in the database (best effort)
+    try {
+      // Check both cookie and Authorization header
+      let token = context.req.cookies?.[this.service.getCookieName()]
+
+      // If no cookie token, check Authorization header
+      if (!token) {
+        const authHeader = context.req.headers?.authorization
+        if (authHeader?.startsWith('Bearer ')) {
+          token = authHeader.substring(7)
+        }
+      }
+
+      if (token) {
+        const decoded = (this.service as any).jwtService.decode(token) as unknown
+        const sessionId = (decoded as { sessionId?: string })?.sessionId
+        if (sessionId) {
+          await this.sessionService.invalidateSession(sessionId)
+          Logger.log(`Session ${sessionId} invalidated during logout`)
+        }
+      }
+    } catch (error) {
+      // Log but don't fail - the cookie is already cleared
+      Logger.warn(`Failed to invalidate session during logout: ${(error as Error)?.message}`)
+    }
+
     return true
   }
 

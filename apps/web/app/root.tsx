@@ -48,6 +48,9 @@ export const loader = apolloLoader()(({ preloadQuery, request }) => {
     url.pathname.startsWith('/admin') ||
     url.pathname.startsWith('/leaders')
 
+  // Skip Me query for auth-related routes to avoid loops with invalid tokens
+  const isAuthRoute = url.pathname === '/logout' || url.pathname === '/login'
+
   // If accessing a private route without authentication, redirect to login
   if (isPrivateRoute && !isAuthenticated) {
     let loginRedirect = '/login'
@@ -107,7 +110,8 @@ export const loader = apolloLoader()(({ preloadQuery, request }) => {
   }
 
   // For public routes, if authenticated preload Me so user is globally available
-  if (isAuthenticated) {
+  // But skip for auth routes to allow logout to work even with invalid tokens
+  if (isAuthenticated && !isAuthRoute) {
     try {
       const meQueryRef = preloadQuery<MeQuery>(Me)
       return { meQueryRef, theme }
@@ -117,7 +121,7 @@ export const loader = apolloLoader()(({ preloadQuery, request }) => {
       return { theme }
     }
   }
-  // Not authenticated and not private
+  // Not authenticated, or on auth route - don't preload Me
   return { theme }
 })
 

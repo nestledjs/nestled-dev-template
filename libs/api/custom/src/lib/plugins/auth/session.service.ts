@@ -78,13 +78,24 @@ export class SessionService {
 
   /**
    * Invalidate a specific session
+   * Gracefully handles non-existent sessions (e.g., already deleted)
    */
   async invalidateSession(sessionId: string): Promise<void> {
-    await this.data.userSession.update({
-      where: { id: sessionId },
-      data: { isValid: false },
-    })
-    Logger.log(`Session invalidated: ${sessionId}`)
+    try {
+      await this.data.userSession.update({
+        where: { id: sessionId },
+        data: { isValid: false },
+      })
+      Logger.log(`Session invalidated: ${sessionId}`)
+    } catch (error: unknown) {
+      // P2025 = Record not found - this is fine for logout, session was already gone
+      if ((error as { code?: string })?.code === 'P2025') {
+        Logger.log(`Session already invalid or deleted: ${sessionId}`)
+        return
+      }
+      // Re-throw other errors
+      throw error
+    }
   }
 
   /**

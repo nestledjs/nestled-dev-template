@@ -10,7 +10,7 @@ import {
 import { Form } from '@nestledjs/forms'
 import { FormFieldClass } from '@nestledjs/forms-core'
 import { AuthLayout } from '@nestled-template/web'
-import { getCookie, getJsonCookie, getSessionCookieName } from '@nestled-template/shared/utils'
+import { getCookie, getJsonCookie, getSessionCookieName, isJwtExpired } from '@nestled-template/shared/utils'
 import {
   LoginInput,
   Login,
@@ -23,7 +23,9 @@ import { useMutation } from '@apollo/client/react'
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const token = getCookie(request.headers, getSessionCookieName())
-  if (token) {
+  // Only redirect if token exists AND is not expired
+  // This prevents redirect loops when a user has an invalid/expired token
+  if (token && !isJwtExpired(token)) {
     throw redirect('/members/dashboard')
   }
   const isRemembered = getJsonCookie<{ email: string }>(request.headers, '_nestled_remember')
