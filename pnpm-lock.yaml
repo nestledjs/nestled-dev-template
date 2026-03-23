@@ -85,14 +85,14 @@ importers:
         specifier: ^11.1.14
         version: 11.1.14(@nestjs/common@11.1.3(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.3)
       '@nestledjs/forms':
-        specifier: ^0.7.1
-        version: 0.7.1(@apollo/client@4.0.9(graphql-ws@6.0.6(graphql@16.11.0)(ws@8.18.3))(graphql@16.11.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(rxjs@7.8.2)(subscriptions-transport-ws@0.11.0(graphql@16.11.0)))(@mdxeditor/editor@3.39.1(@codemirror/language@6.11.2)(@lezer/highlight@1.2.1)(@types/react-dom@19.1.0(@types/react@19.1.0))(@types/react@19.1.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(yjs@13.6.27))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+        specifier: ^0.7.6
+        version: 0.7.6(@apollo/client@4.0.9(graphql-ws@6.0.6(graphql@16.11.0)(ws@8.18.3))(graphql@16.11.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(rxjs@7.8.2)(subscriptions-transport-ws@0.11.0(graphql@16.11.0)))(@hookform/resolvers@3.10.0(react-hook-form@7.60.0(react@19.1.0)))(@mdxeditor/editor@3.39.1(@codemirror/language@6.11.2)(@lezer/highlight@1.2.1)(@types/react-dom@19.1.0(@types/react@19.1.0))(@types/react@19.1.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(yjs@13.6.27))(dayjs@1.11.13)(react-dom@19.1.0(react@19.1.0))(react-hook-form@7.60.0(react@19.1.0))(react@19.1.0)(zod@3.25.56)
       '@nestledjs/forms-core':
         specifier: ^0.1.1
         version: 0.1.1(@apollo/client@4.0.9(graphql-ws@6.0.6(graphql@16.11.0)(ws@8.18.3))(graphql@16.11.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(rxjs@7.8.2)(subscriptions-transport-ws@0.11.0(graphql@16.11.0)))(react@19.1.0)
       '@nestledjs/generators':
-        specifier: ^0.2.25
-        version: 0.2.25(8abf74ae4d17d18801210551d06d547c)
+        specifier: ^0.2.29
+        version: 0.2.29(8abf74ae4d17d18801210551d06d547c)
       '@nx/devkit':
         specifier: 22.5.1
         version: 22.5.1(nx@22.5.1(@swc-node/register@1.11.1(@swc/core@1.15.8(@swc/helpers@0.5.18))(@swc/types@0.1.25)(typescript@5.9.3))(@swc/core@1.15.8(@swc/helpers@0.5.18)))
@@ -713,6 +713,8 @@ importers:
       '@types/ws':
         specifier: ^8.18.1
         version: 8.18.1
+
+  libs/api/prisma/src/lib/prisma-generated: {}
 
   libs/data-browser:
     dependencies:
@@ -3657,13 +3659,13 @@ packages:
       '@nestjs/platform-express':
         optional: true
 
-  '@nestledjs/api@2.9.1':
-    resolution: {integrity: sha512-JvCuNHLkAe/KM6aGuAYjj5s5SQwxhmwqpq7BohYEnimw8QmPN9srXVZyi4DI+/KfucXiArT+9/BAaaE2jQrWCQ==}
+  '@nestledjs/api@2.9.4':
+    resolution: {integrity: sha512-sAFaZF5vAwKson9Lcu0EdNukBT5TXa1mUM7Q/px5DQEZj2M44W8JRahRr/cXFNFEoUsTZv7FPO2oVLfdxsW6tQ==}
     peerDependencies:
       '@nestledjs/utils': 1.0.1
 
-  '@nestledjs/config@0.2.1':
-    resolution: {integrity: sha512-dm9JZgWFe6VKf3ZoGqgpxBjTwMwpIDXguU2Mu66kM+wP2AqyUAFccXuulDUs0FT8KeMYmsNDiBBX3CvkvWP1OA==}
+  '@nestledjs/config@0.2.2':
+    resolution: {integrity: sha512-2TcpNEpHkz2WVJHGiHazUBkmQzy70AbyctEoL1sRHVj+bdEiJdpQwpazv/ZTqx5UHDE/K7+a6t0y7MYc5U73Gw==}
     peerDependencies:
       '@nestledjs/utils': 1.0.1
 
@@ -3676,6 +3678,21 @@ packages:
       '@apollo/client':
         optional: true
 
+  '@nestledjs/forms-core@0.1.3':
+    resolution: {integrity: sha512-tvI6lJvRDwXYqt37A0wXSz/xv02XSJ/Xd0Ni1mZBpg0ivjI5TzU3IhhB+AFUTW/0jAge5Nwd33zurmD63Rqxpw==}
+    peerDependencies:
+      '@apollo/client': ^3.0.0
+      '@hookform/resolvers': ^3.0.0
+      dayjs: ^1.11.0
+      react: '>=18.0.0'
+      react-hook-form: ^7.0.0
+      zod: ^3.0.0
+    peerDependenciesMeta:
+      '@apollo/client':
+        optional: true
+      dayjs:
+        optional: true
+
   '@nestledjs/forms@0.6.4':
     resolution: {integrity: sha512-KXkOHJlOVtGHH2Er7waC+zRvFWC/Z6VS2OhbVwkXYXuO5T1E3JzKmCI/MkAp+GJRucfYxAsvacdouwhsZkTxdQ==}
     peerDependencies:
@@ -3686,18 +3703,21 @@ packages:
       '@mdxeditor/editor':
         optional: true
 
-  '@nestledjs/forms@0.7.1':
-    resolution: {integrity: sha512-nWyEecPvpTwZOcm4p0P2JT+gg7qyOVOHBKx+fyYVr31AY+20p3F+NpKyzYbxSi1w8TI7ByG256RSXWrs9rkXIw==}
+  '@nestledjs/forms@0.7.6':
+    resolution: {integrity: sha512-aTdwXF2E2FqRfGP5uUygY8G2sVrn0WY8ArLO3rPUKSwMlVRKnfPxZkZEN+4obV63wlmcqorQLap0opXemneocg==}
     peerDependencies:
+      '@hookform/resolvers': ^3.0.0
       '@mdxeditor/editor': ^3.39.1
       react: '>=18.0.0'
       react-dom: '>=18.0.0'
+      react-hook-form: ^7.0.0
+      zod: ^3.0.0
     peerDependenciesMeta:
       '@mdxeditor/editor':
         optional: true
 
-  '@nestledjs/generators@0.2.25':
-    resolution: {integrity: sha512-v0JiQZ8rE71B5y0v85WYMID27uJvY2K7xiUeUrFR0DWwwNpR4b4A2ujRcCXHA7XDIu0sAv/IzDMeQLq7QtAYhA==}
+  '@nestledjs/generators@0.2.29':
+    resolution: {integrity: sha512-5rKQrRJREj2t4Z48vqKP7Hnt7hwNC+VazCFm9KPR+19dRfabkCySsQ6n/W/8j3xxH5RVvikRetK4ipmzTnT72A==}
 
   '@nestledjs/plugins@0.1.16':
     resolution: {integrity: sha512-uVMda8F/JbDavKSOl/FLM2PouB0Hs0Xy524icUi8E4HVcFCa/Hf1C/44N6XUzXJ1MEJbuFXmywUOT+0dIDctzw==}
@@ -18905,7 +18925,7 @@ snapshots:
     optionalDependencies:
       '@nestjs/platform-express': 11.1.14(@nestjs/common@11.1.3(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.3)
 
-  '@nestledjs/api@2.9.1(37029d34ec6736e2fcf0a8d4866d8001)':
+  '@nestledjs/api@2.9.4(37029d34ec6736e2fcf0a8d4866d8001)':
     dependencies:
       '@nestledjs/utils': 1.0.1(@babel/traverse@7.28.5)(@swc-node/register@1.11.1(@swc/core@1.15.8(@swc/helpers@0.5.18))(@swc/types@0.1.25)(typescript@5.9.3))(@swc/core@1.15.8(@swc/helpers@0.5.18))(@types/node@24.0.4)(@zkochan/js-yaml@0.0.7)(babel-plugin-macros@3.1.0)(chokidar@4.0.3)(esbuild-register@3.6.0(esbuild@0.27.3))(eslint@9.29.0(jiti@2.4.2))(magicast@0.3.5)(nx@22.5.1(@swc-node/register@1.11.1(@swc/core@1.15.8(@swc/helpers@0.5.18))(@swc/types@0.1.25)(typescript@5.9.3))(@swc/core@1.15.8(@swc/helpers@0.5.18)))(ts-node@10.9.2(@swc/core@1.15.8(@swc/helpers@0.5.18))(@types/node@24.0.4)(typescript@5.9.3))(typescript@5.9.3)(verdaccio@6.2.1(encoding@0.1.13)(typanion@3.14.0))
       '@nx/devkit': 22.0.2(nx@22.5.1(@swc-node/register@1.11.1(@swc/core@1.15.8(@swc/helpers@0.5.18))(@swc/types@0.1.25)(typescript@5.9.3))(@swc/core@1.15.8(@swc/helpers@0.5.18)))
@@ -18927,7 +18947,7 @@ snapshots:
       - typescript
       - verdaccio
 
-  '@nestledjs/config@0.2.1(@nestledjs/utils@1.0.1(@babel/traverse@7.28.5)(@swc-node/register@1.11.1(@swc/core@1.15.8(@swc/helpers@0.5.18))(@swc/types@0.1.25)(typescript@5.9.3))(@swc/core@1.15.8(@swc/helpers@0.5.18))(@types/node@24.0.4)(@zkochan/js-yaml@0.0.7)(babel-plugin-macros@3.1.0)(chokidar@4.0.3)(esbuild-register@3.6.0(esbuild@0.27.3))(eslint@9.29.0(jiti@2.4.2))(magicast@0.3.5)(nx@22.5.1(@swc-node/register@1.11.1(@swc/core@1.15.8(@swc/helpers@0.5.18))(@swc/types@0.1.25)(typescript@5.9.3))(@swc/core@1.15.8(@swc/helpers@0.5.18)))(ts-node@10.9.2(@swc/core@1.15.8(@swc/helpers@0.5.18))(@types/node@24.0.4)(typescript@5.9.3))(typescript@5.9.3)(verdaccio@6.2.1(encoding@0.1.13)(typanion@3.14.0)))(nx@22.5.1(@swc-node/register@1.11.1(@swc/core@1.15.8(@swc/helpers@0.5.18))(@swc/types@0.1.25)(typescript@5.9.3))(@swc/core@1.15.8(@swc/helpers@0.5.18)))':
+  '@nestledjs/config@0.2.2(@nestledjs/utils@1.0.1(@babel/traverse@7.28.5)(@swc-node/register@1.11.1(@swc/core@1.15.8(@swc/helpers@0.5.18))(@swc/types@0.1.25)(typescript@5.9.3))(@swc/core@1.15.8(@swc/helpers@0.5.18))(@types/node@24.0.4)(@zkochan/js-yaml@0.0.7)(babel-plugin-macros@3.1.0)(chokidar@4.0.3)(esbuild-register@3.6.0(esbuild@0.27.3))(eslint@9.29.0(jiti@2.4.2))(magicast@0.3.5)(nx@22.5.1(@swc-node/register@1.11.1(@swc/core@1.15.8(@swc/helpers@0.5.18))(@swc/types@0.1.25)(typescript@5.9.3))(@swc/core@1.15.8(@swc/helpers@0.5.18)))(ts-node@10.9.2(@swc/core@1.15.8(@swc/helpers@0.5.18))(@types/node@24.0.4)(typescript@5.9.3))(typescript@5.9.3)(verdaccio@6.2.1(encoding@0.1.13)(typanion@3.14.0)))(nx@22.5.1(@swc-node/register@1.11.1(@swc/core@1.15.8(@swc/helpers@0.5.18))(@swc/types@0.1.25)(typescript@5.9.3))(@swc/core@1.15.8(@swc/helpers@0.5.18)))':
     dependencies:
       '@nestledjs/utils': 1.0.1(@babel/traverse@7.28.5)(@swc-node/register@1.11.1(@swc/core@1.15.8(@swc/helpers@0.5.18))(@swc/types@0.1.25)(typescript@5.9.3))(@swc/core@1.15.8(@swc/helpers@0.5.18))(@types/node@24.0.4)(@zkochan/js-yaml@0.0.7)(babel-plugin-macros@3.1.0)(chokidar@4.0.3)(esbuild-register@3.6.0(esbuild@0.27.3))(eslint@9.29.0(jiti@2.4.2))(magicast@0.3.5)(nx@22.5.1(@swc-node/register@1.11.1(@swc/core@1.15.8(@swc/helpers@0.5.18))(@swc/types@0.1.25)(typescript@5.9.3))(@swc/core@1.15.8(@swc/helpers@0.5.18)))(ts-node@10.9.2(@swc/core@1.15.8(@swc/helpers@0.5.18))(@types/node@24.0.4)(typescript@5.9.3))(typescript@5.9.3)(verdaccio@6.2.1(encoding@0.1.13)(typanion@3.14.0))
       '@nx/devkit': 22.0.2(nx@22.5.1(@swc-node/register@1.11.1(@swc/core@1.15.8(@swc/helpers@0.5.18))(@swc/types@0.1.25)(typescript@5.9.3))(@swc/core@1.15.8(@swc/helpers@0.5.18)))
@@ -18945,6 +18965,16 @@ snapshots:
     optionalDependencies:
       '@apollo/client': 4.0.9(graphql-ws@6.0.6(graphql@16.11.0)(ws@8.18.3))(graphql@16.11.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(rxjs@7.8.2)(subscriptions-transport-ws@0.11.0(graphql@16.11.0))
 
+  '@nestledjs/forms-core@0.1.3(@apollo/client@4.0.9(graphql-ws@6.0.6(graphql@16.11.0)(ws@8.18.3))(graphql@16.11.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(rxjs@7.8.2)(subscriptions-transport-ws@0.11.0(graphql@16.11.0)))(@hookform/resolvers@3.10.0(react-hook-form@7.60.0(react@19.1.0)))(dayjs@1.11.13)(react-hook-form@7.60.0(react@19.1.0))(react@19.1.0)(zod@3.25.56)':
+    dependencies:
+      '@hookform/resolvers': 3.10.0(react-hook-form@7.60.0(react@19.1.0))
+      react: 19.1.0
+      react-hook-form: 7.60.0(react@19.1.0)
+      zod: 3.25.56
+    optionalDependencies:
+      '@apollo/client': 4.0.9(graphql-ws@6.0.6(graphql@16.11.0)(ws@8.18.3))(graphql@16.11.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(rxjs@7.8.2)(subscriptions-transport-ws@0.11.0(graphql@16.11.0))
+      dayjs: 1.11.13
+
   '@nestledjs/forms@0.6.4(@mdxeditor/editor@3.39.1(@codemirror/language@6.11.2)(@lezer/highlight@1.2.1)(@types/react-dom@19.1.0(@types/react@19.1.0))(@types/react@19.1.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(yjs@13.6.27))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
     dependencies:
       '@hookform/resolvers': 3.10.0(react-hook-form@7.60.0(react@19.1.0))
@@ -18957,10 +18987,10 @@ snapshots:
     optionalDependencies:
       '@mdxeditor/editor': 3.39.1(@codemirror/language@6.11.2)(@lezer/highlight@1.2.1)(@types/react-dom@19.1.0(@types/react@19.1.0))(@types/react@19.1.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(yjs@13.6.27)
 
-  '@nestledjs/forms@0.7.1(@apollo/client@4.0.9(graphql-ws@6.0.6(graphql@16.11.0)(ws@8.18.3))(graphql@16.11.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(rxjs@7.8.2)(subscriptions-transport-ws@0.11.0(graphql@16.11.0)))(@mdxeditor/editor@3.39.1(@codemirror/language@6.11.2)(@lezer/highlight@1.2.1)(@types/react-dom@19.1.0(@types/react@19.1.0))(@types/react@19.1.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(yjs@13.6.27))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
+  '@nestledjs/forms@0.7.6(@apollo/client@4.0.9(graphql-ws@6.0.6(graphql@16.11.0)(ws@8.18.3))(graphql@16.11.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(rxjs@7.8.2)(subscriptions-transport-ws@0.11.0(graphql@16.11.0)))(@hookform/resolvers@3.10.0(react-hook-form@7.60.0(react@19.1.0)))(@mdxeditor/editor@3.39.1(@codemirror/language@6.11.2)(@lezer/highlight@1.2.1)(@types/react-dom@19.1.0(@types/react@19.1.0))(@types/react@19.1.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(yjs@13.6.27))(dayjs@1.11.13)(react-dom@19.1.0(react@19.1.0))(react-hook-form@7.60.0(react@19.1.0))(react@19.1.0)(zod@3.25.56)':
     dependencies:
       '@hookform/resolvers': 3.10.0(react-hook-form@7.60.0(react@19.1.0))
-      '@nestledjs/forms-core': 0.1.1(@apollo/client@4.0.9(graphql-ws@6.0.6(graphql@16.11.0)(ws@8.18.3))(graphql@16.11.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(rxjs@7.8.2)(subscriptions-transport-ws@0.11.0(graphql@16.11.0)))(react@19.1.0)
+      '@nestledjs/forms-core': 0.1.3(@apollo/client@4.0.9(graphql-ws@6.0.6(graphql@16.11.0)(ws@8.18.3))(graphql@16.11.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(rxjs@7.8.2)(subscriptions-transport-ws@0.11.0(graphql@16.11.0)))(@hookform/resolvers@3.10.0(react-hook-form@7.60.0(react@19.1.0)))(dayjs@1.11.13)(react-hook-form@7.60.0(react@19.1.0))(react@19.1.0)(zod@3.25.56)
       date-fns: 4.1.0
       react: 19.1.0
       react-dom: 19.1.0(react@19.1.0)
@@ -18971,11 +19001,12 @@ snapshots:
       '@mdxeditor/editor': 3.39.1(@codemirror/language@6.11.2)(@lezer/highlight@1.2.1)(@types/react-dom@19.1.0(@types/react@19.1.0))(@types/react@19.1.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(yjs@13.6.27)
     transitivePeerDependencies:
       - '@apollo/client'
+      - dayjs
 
-  '@nestledjs/generators@0.2.25(8abf74ae4d17d18801210551d06d547c)':
+  '@nestledjs/generators@0.2.29(8abf74ae4d17d18801210551d06d547c)':
     dependencies:
-      '@nestledjs/api': 2.9.1(37029d34ec6736e2fcf0a8d4866d8001)
-      '@nestledjs/config': 0.2.1(@nestledjs/utils@1.0.1(@babel/traverse@7.28.5)(@swc-node/register@1.11.1(@swc/core@1.15.8(@swc/helpers@0.5.18))(@swc/types@0.1.25)(typescript@5.9.3))(@swc/core@1.15.8(@swc/helpers@0.5.18))(@types/node@24.0.4)(@zkochan/js-yaml@0.0.7)(babel-plugin-macros@3.1.0)(chokidar@4.0.3)(esbuild-register@3.6.0(esbuild@0.27.3))(eslint@9.29.0(jiti@2.4.2))(magicast@0.3.5)(nx@22.5.1(@swc-node/register@1.11.1(@swc/core@1.15.8(@swc/helpers@0.5.18))(@swc/types@0.1.25)(typescript@5.9.3))(@swc/core@1.15.8(@swc/helpers@0.5.18)))(ts-node@10.9.2(@swc/core@1.15.8(@swc/helpers@0.5.18))(@types/node@24.0.4)(typescript@5.9.3))(typescript@5.9.3)(verdaccio@6.2.1(encoding@0.1.13)(typanion@3.14.0)))(nx@22.5.1(@swc-node/register@1.11.1(@swc/core@1.15.8(@swc/helpers@0.5.18))(@swc/types@0.1.25)(typescript@5.9.3))(@swc/core@1.15.8(@swc/helpers@0.5.18)))
+      '@nestledjs/api': 2.9.4(37029d34ec6736e2fcf0a8d4866d8001)
+      '@nestledjs/config': 0.2.2(@nestledjs/utils@1.0.1(@babel/traverse@7.28.5)(@swc-node/register@1.11.1(@swc/core@1.15.8(@swc/helpers@0.5.18))(@swc/types@0.1.25)(typescript@5.9.3))(@swc/core@1.15.8(@swc/helpers@0.5.18))(@types/node@24.0.4)(@zkochan/js-yaml@0.0.7)(babel-plugin-macros@3.1.0)(chokidar@4.0.3)(esbuild-register@3.6.0(esbuild@0.27.3))(eslint@9.29.0(jiti@2.4.2))(magicast@0.3.5)(nx@22.5.1(@swc-node/register@1.11.1(@swc/core@1.15.8(@swc/helpers@0.5.18))(@swc/types@0.1.25)(typescript@5.9.3))(@swc/core@1.15.8(@swc/helpers@0.5.18)))(ts-node@10.9.2(@swc/core@1.15.8(@swc/helpers@0.5.18))(@types/node@24.0.4)(typescript@5.9.3))(typescript@5.9.3)(verdaccio@6.2.1(encoding@0.1.13)(typanion@3.14.0)))(nx@22.5.1(@swc-node/register@1.11.1(@swc/core@1.15.8(@swc/helpers@0.5.18))(@swc/types@0.1.25)(typescript@5.9.3))(@swc/core@1.15.8(@swc/helpers@0.5.18)))
       '@nestledjs/plugins': 0.1.16(2795a288874330c2a17fae4315b690c9)
       '@nestledjs/shared': 1.0.1(37029d34ec6736e2fcf0a8d4866d8001)
       '@nestledjs/utils': 1.0.1(@babel/traverse@7.28.5)(@swc-node/register@1.11.1(@swc/core@1.15.8(@swc/helpers@0.5.18))(@swc/types@0.1.25)(typescript@5.9.3))(@swc/core@1.15.8(@swc/helpers@0.5.18))(@types/node@24.0.4)(@zkochan/js-yaml@0.0.7)(babel-plugin-macros@3.1.0)(chokidar@4.0.3)(esbuild-register@3.6.0(esbuild@0.27.3))(eslint@9.29.0(jiti@2.4.2))(magicast@0.3.5)(nx@22.5.1(@swc-node/register@1.11.1(@swc/core@1.15.8(@swc/helpers@0.5.18))(@swc/types@0.1.25)(typescript@5.9.3))(@swc/core@1.15.8(@swc/helpers@0.5.18)))(ts-node@10.9.2(@swc/core@1.15.8(@swc/helpers@0.5.18))(@types/node@24.0.4)(typescript@5.9.3))(typescript@5.9.3)(verdaccio@6.2.1(encoding@0.1.13)(typanion@3.14.0))
