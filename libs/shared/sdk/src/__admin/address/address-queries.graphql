@@ -6,7 +6,7 @@ query __AdminAddress($addressId: String!) {
 
 query __AdminAddresses($input: ListAddressInput) {
   addresses(input: $input) {
-    ...__AdminAddressList
+    ...__AdminAddressSummary
   }
   counters: addressesCount(input: $input) {
     ...CorePagingDetails

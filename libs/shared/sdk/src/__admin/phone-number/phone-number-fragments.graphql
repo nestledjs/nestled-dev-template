@@ -1,4 +1,4 @@
-fragment __AdminPhoneNumberList on PhoneNumber {
+fragment __AdminPhoneNumberSummary on PhoneNumber {
   id
   createdAt
   updatedAt
@@ -16,5 +16,5 @@ fragment __AdminPhoneNumberList on PhoneNumber {
 }
 
 fragment __AdminPhoneNumberDetails on PhoneNumber {
-  ...__AdminPhoneNumberList
+  ...__AdminPhoneNumberSummary
 }

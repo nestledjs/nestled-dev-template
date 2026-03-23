@@ -6,7 +6,7 @@ query __AdminOAuthAccount($oAuthAccountId: String!) {
 
 query __AdminOAuthAccounts($input: ListOAuthAccountInput) {
   oAuthAccounts(input: $input) {
-    ...__AdminOAuthAccountList
+    ...__AdminOAuthAccountSummary
   }
   counters: oAuthAccountsCount(input: $input) {
     ...CorePagingDetails

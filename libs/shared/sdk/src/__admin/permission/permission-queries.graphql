@@ -6,7 +6,7 @@ query __AdminPermission($permissionId: String!) {
 
 query __AdminPermissions($input: ListPermissionInput) {
   permissions(input: $input) {
-    ...__AdminPermissionList
+    ...__AdminPermissionSummary
   }
   counters: permissionsCount(input: $input) {
     ...CorePagingDetails

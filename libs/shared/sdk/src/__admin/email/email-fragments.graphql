@@ -1,4 +1,4 @@
-fragment __AdminEmailList on Email {
+fragment __AdminEmailSummary on Email {
   id
   createdAt
   updatedAt
@@ -20,5 +20,5 @@ fragment __AdminEmailList on Email {
 }
 
 fragment __AdminEmailDetails on Email {
-  ...__AdminEmailList
+  ...__AdminEmailSummary
 }

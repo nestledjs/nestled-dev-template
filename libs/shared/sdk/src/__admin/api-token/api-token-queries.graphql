@@ -6,7 +6,7 @@ query __AdminApiToken($apiTokenId: String!) {
 
 query __AdminApiTokens($input: ListApiTokenInput) {
   apiTokens(input: $input) {
-    ...__AdminApiTokenList
+    ...__AdminApiTokenSummary
   }
   counters: apiTokensCount(input: $input) {
     ...CorePagingDetails

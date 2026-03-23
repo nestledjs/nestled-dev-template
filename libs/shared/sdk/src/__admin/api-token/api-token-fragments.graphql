@@ -1,4 +1,4 @@
-fragment __AdminApiTokenList on ApiToken {
+fragment __AdminApiTokenSummary on ApiToken {
   id
   createdAt
   updatedAt
@@ -14,5 +14,5 @@ fragment __AdminApiTokenList on ApiToken {
 }
 
 fragment __AdminApiTokenDetails on ApiToken {
-  ...__AdminApiTokenList
+  ...__AdminApiTokenSummary
 }

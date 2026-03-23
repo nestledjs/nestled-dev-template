@@ -1,4 +1,4 @@
-fragment __AdminTeamMemberList on TeamMember {
+fragment __AdminTeamMemberSummary on TeamMember {
   id
   createdAt
   updatedAt
@@ -17,5 +17,5 @@ fragment __AdminTeamMemberList on TeamMember {
 }
 
 fragment __AdminTeamMemberDetails on TeamMember {
-  ...__AdminTeamMemberList
+  ...__AdminTeamMemberSummary
 }

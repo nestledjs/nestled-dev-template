@@ -1,4 +1,4 @@
-fragment __AdminPlanList on Plan {
+fragment __AdminPlanSummary on Plan {
   id
   createdAt
   updatedAt
@@ -15,5 +15,5 @@ fragment __AdminPlanList on Plan {
 }
 
 fragment __AdminPlanDetails on Plan {
-  ...__AdminPlanList
+  ...__AdminPlanSummary
 }

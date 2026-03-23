@@ -6,7 +6,7 @@ query __AdminLink($linkId: String!) {
 
 query __AdminLinks($input: ListLinkInput) {
   links(input: $input) {
-    ...__AdminLinkList
+    ...__AdminLinkSummary
   }
   counters: linksCount(input: $input) {
     ...CorePagingDetails

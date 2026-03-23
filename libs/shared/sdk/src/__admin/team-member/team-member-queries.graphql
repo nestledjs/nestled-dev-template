@@ -6,7 +6,7 @@ query __AdminTeamMember($teamMemberId: String!) {
 
 query __AdminTeamMembers($input: ListTeamMemberInput) {
   teamMembers(input: $input) {
-    ...__AdminTeamMemberList
+    ...__AdminTeamMemberSummary
   }
   counters: teamMembersCount(input: $input) {
     ...CorePagingDetails

@@ -1,4 +1,4 @@
-fragment __AdminOAuthAccountList on OAuthAccount {
+fragment __AdminOAuthAccountSummary on OAuthAccount {
   id
   createdAt
   updatedAt
@@ -11,5 +11,5 @@ fragment __AdminOAuthAccountList on OAuthAccount {
 }
 
 fragment __AdminOAuthAccountDetails on OAuthAccount {
-  ...__AdminOAuthAccountList
+  ...__AdminOAuthAccountSummary
 }

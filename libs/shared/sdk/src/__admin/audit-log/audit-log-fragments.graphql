@@ -1,4 +1,4 @@
-fragment __AdminAuditLogList on AuditLog {
+fragment __AdminAuditLogSummary on AuditLog {
   id
   createdAt
   updatedAt
@@ -17,5 +17,5 @@ fragment __AdminAuditLogList on AuditLog {
 }
 
 fragment __AdminAuditLogDetails on AuditLog {
-  ...__AdminAuditLogList
+  ...__AdminAuditLogSummary
 }

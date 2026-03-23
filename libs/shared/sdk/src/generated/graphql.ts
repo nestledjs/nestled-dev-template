@@ -3148,7 +3148,7 @@ export type VerifyEmailInput = {
   token: Scalars['String']['input']
 }
 
-export type __AdminAddressListFragment = {
+export type __AdminAddressSummaryFragment = {
   __typename?: 'Address'
   id: string
   createdAt: any
@@ -3338,7 +3338,7 @@ export type __AdminAddressPaginationQuery = {
   } | null
 }
 
-export type __AdminApiTokenListFragment = {
+export type __AdminApiTokenSummaryFragment = {
   __typename?: 'ApiToken'
   id: string
   createdAt: any
@@ -3492,7 +3492,7 @@ export type __AdminApiTokenPaginationQuery = {
   } | null
 }
 
-export type __AdminAuditLogListFragment = {
+export type __AdminAuditLogSummaryFragment = {
   __typename?: 'AuditLog'
   id: string
   createdAt: any
@@ -3652,7 +3652,7 @@ export type __AdminAuditLogPaginationQuery = {
   } | null
 }
 
-export type __AdminCountryListFragment = {
+export type __AdminCountrySummaryFragment = {
   __typename?: 'Country'
   id: string
   createdAt: any
@@ -3830,7 +3830,7 @@ export type __AdminCountryPaginationQuery = {
   } | null
 }
 
-export type __AdminEmailListFragment = {
+export type __AdminEmailSummaryFragment = {
   __typename?: 'Email'
   id: string
   createdAt: any
@@ -4008,7 +4008,7 @@ export type __AdminEmailPaginationQuery = {
   } | null
 }
 
-export type __AdminInviteListFragment = {
+export type __AdminInviteSummaryFragment = {
   __typename?: 'Invite'
   id: string
   createdAt: any
@@ -4180,7 +4180,7 @@ export type __AdminInvitePaginationQuery = {
   } | null
 }
 
-export type __AdminLinkListFragment = {
+export type __AdminLinkSummaryFragment = {
   __typename?: 'Link'
   id: string
   createdAt: any
@@ -4328,7 +4328,7 @@ export type __AdminLinkPaginationQuery = {
   } | null
 }
 
-export type __AdminLoginAttemptListFragment = {
+export type __AdminLoginAttemptSummaryFragment = {
   __typename?: 'LoginAttempt'
   id: string
   createdAt: any
@@ -4488,7 +4488,7 @@ export type __AdminLoginAttemptPaginationQuery = {
   } | null
 }
 
-export type __AdminOAuthAccountListFragment = {
+export type __AdminOAuthAccountSummaryFragment = {
   __typename?: 'OAuthAccount'
   id: string
   createdAt: any
@@ -4624,7 +4624,7 @@ export type __AdminOAuthAccountPaginationQuery = {
   } | null
 }
 
-export type __AdminOrganizationMemberListFragment = {
+export type __AdminOrganizationMemberSummaryFragment = {
   __typename?: 'OrganizationMember'
   id: string
   createdAt: any
@@ -4772,7 +4772,7 @@ export type __AdminOrganizationMemberPaginationQuery = {
   } | null
 }
 
-export type __AdminOrganizationListFragment = {
+export type __AdminOrganizationSummaryFragment = {
   __typename?: 'Organization'
   id: string
   createdAt: any
@@ -4896,7 +4896,7 @@ export type __AdminOrganizationPaginationQuery = {
   } | null
 }
 
-export type __AdminPasswordHistoryListFragment = {
+export type __AdminPasswordHistorySummaryFragment = {
   __typename?: 'PasswordHistory'
   id: string
   createdAt: any
@@ -5020,7 +5020,7 @@ export type __AdminPasswordHistoryPaginationQuery = {
   } | null
 }
 
-export type __AdminPermissionListFragment = {
+export type __AdminPermissionSummaryFragment = {
   __typename?: 'Permission'
   id: string
   action: string
@@ -5138,7 +5138,7 @@ export type __AdminPermissionPaginationQuery = {
   } | null
 }
 
-export type __AdminPhoneNumberListFragment = {
+export type __AdminPhoneNumberSummaryFragment = {
   __typename?: 'PhoneNumber'
   id: string
   createdAt: any
@@ -5292,7 +5292,7 @@ export type __AdminPhoneNumberPaginationQuery = {
   } | null
 }
 
-export type __AdminPlanListFragment = {
+export type __AdminPlanSummaryFragment = {
   __typename?: 'Plan'
   id: string
   createdAt: any
@@ -5464,7 +5464,7 @@ export type __AdminPlanPaginationQuery = {
   } | null
 }
 
-export type __AdminRoleListFragment = {
+export type __AdminRoleSummaryFragment = {
   __typename?: 'Role'
   id: string
   name: string
@@ -5588,7 +5588,7 @@ export type __AdminRolePaginationQuery = {
   } | null
 }
 
-export type __AdminSecurityEventListFragment = {
+export type __AdminSecurityEventSummaryFragment = {
   __typename?: 'SecurityEvent'
   id: string
   createdAt: any
@@ -5736,7 +5736,7 @@ export type __AdminSecurityEventPaginationQuery = {
   } | null
 }
 
-export type __AdminStoredFileListFragment = {
+export type __AdminStoredFileSummaryFragment = {
   __typename?: 'StoredFile'
   id: string
   createdAt: any
@@ -5944,7 +5944,7 @@ export type __AdminStoredFilePaginationQuery = {
   } | null
 }
 
-export type __AdminSubscriptionListFragment = {
+export type __AdminSubscriptionSummaryFragment = {
   __typename?: 'Subscription'
   id: string
   createdAt: any
@@ -6140,7 +6140,7 @@ export type __AdminSubscriptionPaginationQuery = {
   } | null
 }
 
-export type __AdminTeamMemberListFragment = {
+export type __AdminTeamMemberSummaryFragment = {
   __typename?: 'TeamMember'
   id: string
   createdAt: any
@@ -6288,7 +6288,7 @@ export type __AdminTeamMemberPaginationQuery = {
   } | null
 }
 
-export type __AdminTeamListFragment = {
+export type __AdminTeamSummaryFragment = {
   __typename?: 'Team'
   id: string
   createdAt: any
@@ -6424,7 +6424,7 @@ export type __AdminTeamPaginationQuery = {
   } | null
 }
 
-export type __AdminUserPreferenceListFragment = {
+export type __AdminUserPreferenceSummaryFragment = {
   __typename?: 'UserPreference'
   id: string
   createdAt: any
@@ -6560,7 +6560,7 @@ export type __AdminUserPreferencePaginationQuery = {
   } | null
 }
 
-export type __AdminUserSessionListFragment = {
+export type __AdminUserSessionSummaryFragment = {
   __typename?: 'UserSession'
   id: string
   createdAt: any
@@ -6714,7 +6714,7 @@ export type __AdminUserSessionPaginationQuery = {
   } | null
 }
 
-export type __AdminUserListFragment = {
+export type __AdminUserSummaryFragment = {
   __typename?: 'User'
   id: string
   createdAt: any
@@ -12139,12 +12139,12 @@ export type UserPaginationQuery = {
   } | null
 }
 
-export const __AdminAddressListFragmentDoc = {
+export const __AdminAddressSummaryFragmentDoc = {
   kind: 'Document',
   definitions: [
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminAddressList' },
+      name: { kind: 'Name', value: '__AdminAddressSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Address' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -12190,7 +12190,7 @@ export const __AdminAddressListFragmentDoc = {
       },
     },
   ],
-} as unknown as DocumentNode<__AdminAddressListFragment, unknown>
+} as unknown as DocumentNode<__AdminAddressSummaryFragment, unknown>
 export const __AdminAddressDetailsFragmentDoc = {
   kind: 'Document',
   definitions: [
@@ -12201,13 +12201,13 @@ export const __AdminAddressDetailsFragmentDoc = {
       selectionSet: {
         kind: 'SelectionSet',
         selections: [
-          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminAddressList' } },
+          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminAddressSummary' } },
         ],
       },
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminAddressList' },
+      name: { kind: 'Name', value: '__AdminAddressSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Address' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -12254,12 +12254,12 @@ export const __AdminAddressDetailsFragmentDoc = {
     },
   ],
 } as unknown as DocumentNode<__AdminAddressDetailsFragment, unknown>
-export const __AdminApiTokenListFragmentDoc = {
+export const __AdminApiTokenSummaryFragmentDoc = {
   kind: 'Document',
   definitions: [
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminApiTokenList' },
+      name: { kind: 'Name', value: '__AdminApiTokenSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'ApiToken' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -12285,7 +12285,7 @@ export const __AdminApiTokenListFragmentDoc = {
       },
     },
   ],
-} as unknown as DocumentNode<__AdminApiTokenListFragment, unknown>
+} as unknown as DocumentNode<__AdminApiTokenSummaryFragment, unknown>
 export const __AdminApiTokenDetailsFragmentDoc = {
   kind: 'Document',
   definitions: [
@@ -12296,13 +12296,13 @@ export const __AdminApiTokenDetailsFragmentDoc = {
       selectionSet: {
         kind: 'SelectionSet',
         selections: [
-          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminApiTokenList' } },
+          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminApiTokenSummary' } },
         ],
       },
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminApiTokenList' },
+      name: { kind: 'Name', value: '__AdminApiTokenSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'ApiToken' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -12329,12 +12329,12 @@ export const __AdminApiTokenDetailsFragmentDoc = {
     },
   ],
 } as unknown as DocumentNode<__AdminApiTokenDetailsFragment, unknown>
-export const __AdminAuditLogListFragmentDoc = {
+export const __AdminAuditLogSummaryFragmentDoc = {
   kind: 'Document',
   definitions: [
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminAuditLogList' },
+      name: { kind: 'Name', value: '__AdminAuditLogSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'AuditLog' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -12368,7 +12368,7 @@ export const __AdminAuditLogListFragmentDoc = {
       },
     },
   ],
-} as unknown as DocumentNode<__AdminAuditLogListFragment, unknown>
+} as unknown as DocumentNode<__AdminAuditLogSummaryFragment, unknown>
 export const __AdminAuditLogDetailsFragmentDoc = {
   kind: 'Document',
   definitions: [
@@ -12379,13 +12379,13 @@ export const __AdminAuditLogDetailsFragmentDoc = {
       selectionSet: {
         kind: 'SelectionSet',
         selections: [
-          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminAuditLogList' } },
+          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminAuditLogSummary' } },
         ],
       },
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminAuditLogList' },
+      name: { kind: 'Name', value: '__AdminAuditLogSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'AuditLog' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -12420,12 +12420,12 @@ export const __AdminAuditLogDetailsFragmentDoc = {
     },
   ],
 } as unknown as DocumentNode<__AdminAuditLogDetailsFragment, unknown>
-export const __AdminCountryListFragmentDoc = {
+export const __AdminCountrySummaryFragmentDoc = {
   kind: 'Document',
   definitions: [
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminCountryList' },
+      name: { kind: 'Name', value: '__AdminCountrySummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Country' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -12448,7 +12448,7 @@ export const __AdminCountryListFragmentDoc = {
       },
     },
   ],
-} as unknown as DocumentNode<__AdminCountryListFragment, unknown>
+} as unknown as DocumentNode<__AdminCountrySummaryFragment, unknown>
 export const __AdminCountryDetailsFragmentDoc = {
   kind: 'Document',
   definitions: [
@@ -12459,13 +12459,13 @@ export const __AdminCountryDetailsFragmentDoc = {
       selectionSet: {
         kind: 'SelectionSet',
         selections: [
-          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminCountryList' } },
+          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminCountrySummary' } },
         ],
       },
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminCountryList' },
+      name: { kind: 'Name', value: '__AdminCountrySummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Country' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -12489,12 +12489,12 @@ export const __AdminCountryDetailsFragmentDoc = {
     },
   ],
 } as unknown as DocumentNode<__AdminCountryDetailsFragment, unknown>
-export const __AdminEmailListFragmentDoc = {
+export const __AdminEmailSummaryFragmentDoc = {
   kind: 'Document',
   definitions: [
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminEmailList' },
+      name: { kind: 'Name', value: '__AdminEmailSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Email' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -12531,7 +12531,7 @@ export const __AdminEmailListFragmentDoc = {
       },
     },
   ],
-} as unknown as DocumentNode<__AdminEmailListFragment, unknown>
+} as unknown as DocumentNode<__AdminEmailSummaryFragment, unknown>
 export const __AdminEmailDetailsFragmentDoc = {
   kind: 'Document',
   definitions: [
@@ -12541,12 +12541,14 @@ export const __AdminEmailDetailsFragmentDoc = {
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Email' } },
       selectionSet: {
         kind: 'SelectionSet',
-        selections: [{ kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminEmailList' } }],
+        selections: [
+          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminEmailSummary' } },
+        ],
       },
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminEmailList' },
+      name: { kind: 'Name', value: '__AdminEmailSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Email' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -12584,12 +12586,12 @@ export const __AdminEmailDetailsFragmentDoc = {
     },
   ],
 } as unknown as DocumentNode<__AdminEmailDetailsFragment, unknown>
-export const __AdminInviteListFragmentDoc = {
+export const __AdminInviteSummaryFragmentDoc = {
   kind: 'Document',
   definitions: [
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminInviteList' },
+      name: { kind: 'Name', value: '__AdminInviteSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Invite' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -12632,7 +12634,7 @@ export const __AdminInviteListFragmentDoc = {
       },
     },
   ],
-} as unknown as DocumentNode<__AdminInviteListFragment, unknown>
+} as unknown as DocumentNode<__AdminInviteSummaryFragment, unknown>
 export const __AdminInviteDetailsFragmentDoc = {
   kind: 'Document',
   definitions: [
@@ -12643,13 +12645,13 @@ export const __AdminInviteDetailsFragmentDoc = {
       selectionSet: {
         kind: 'SelectionSet',
         selections: [
-          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminInviteList' } },
+          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminInviteSummary' } },
         ],
       },
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminInviteList' },
+      name: { kind: 'Name', value: '__AdminInviteSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Invite' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -12693,12 +12695,12 @@ export const __AdminInviteDetailsFragmentDoc = {
     },
   ],
 } as unknown as DocumentNode<__AdminInviteDetailsFragment, unknown>
-export const __AdminLinkListFragmentDoc = {
+export const __AdminLinkSummaryFragmentDoc = {
   kind: 'Document',
   definitions: [
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminLinkList' },
+      name: { kind: 'Name', value: '__AdminLinkSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Link' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -12730,7 +12732,7 @@ export const __AdminLinkListFragmentDoc = {
       },
     },
   ],
-} as unknown as DocumentNode<__AdminLinkListFragment, unknown>
+} as unknown as DocumentNode<__AdminLinkSummaryFragment, unknown>
 export const __AdminLinkDetailsFragmentDoc = {
   kind: 'Document',
   definitions: [
@@ -12740,12 +12742,14 @@ export const __AdminLinkDetailsFragmentDoc = {
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Link' } },
       selectionSet: {
         kind: 'SelectionSet',
-        selections: [{ kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminLinkList' } }],
+        selections: [
+          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminLinkSummary' } },
+        ],
       },
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminLinkList' },
+      name: { kind: 'Name', value: '__AdminLinkSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Link' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -12778,12 +12782,12 @@ export const __AdminLinkDetailsFragmentDoc = {
     },
   ],
 } as unknown as DocumentNode<__AdminLinkDetailsFragment, unknown>
-export const __AdminLoginAttemptListFragmentDoc = {
+export const __AdminLoginAttemptSummaryFragmentDoc = {
   kind: 'Document',
   definitions: [
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminLoginAttemptList' },
+      name: { kind: 'Name', value: '__AdminLoginAttemptSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'LoginAttempt' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -12810,7 +12814,7 @@ export const __AdminLoginAttemptListFragmentDoc = {
       },
     },
   ],
-} as unknown as DocumentNode<__AdminLoginAttemptListFragment, unknown>
+} as unknown as DocumentNode<__AdminLoginAttemptSummaryFragment, unknown>
 export const __AdminLoginAttemptDetailsFragmentDoc = {
   kind: 'Document',
   definitions: [
@@ -12821,13 +12825,13 @@ export const __AdminLoginAttemptDetailsFragmentDoc = {
       selectionSet: {
         kind: 'SelectionSet',
         selections: [
-          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminLoginAttemptList' } },
+          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminLoginAttemptSummary' } },
         ],
       },
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminLoginAttemptList' },
+      name: { kind: 'Name', value: '__AdminLoginAttemptSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'LoginAttempt' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -12855,12 +12859,12 @@ export const __AdminLoginAttemptDetailsFragmentDoc = {
     },
   ],
 } as unknown as DocumentNode<__AdminLoginAttemptDetailsFragment, unknown>
-export const __AdminOAuthAccountListFragmentDoc = {
+export const __AdminOAuthAccountSummaryFragmentDoc = {
   kind: 'Document',
   definitions: [
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminOAuthAccountList' },
+      name: { kind: 'Name', value: '__AdminOAuthAccountSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'OAuthAccount' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -12883,7 +12887,7 @@ export const __AdminOAuthAccountListFragmentDoc = {
       },
     },
   ],
-} as unknown as DocumentNode<__AdminOAuthAccountListFragment, unknown>
+} as unknown as DocumentNode<__AdminOAuthAccountSummaryFragment, unknown>
 export const __AdminOAuthAccountDetailsFragmentDoc = {
   kind: 'Document',
   definitions: [
@@ -12894,13 +12898,13 @@ export const __AdminOAuthAccountDetailsFragmentDoc = {
       selectionSet: {
         kind: 'SelectionSet',
         selections: [
-          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminOAuthAccountList' } },
+          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminOAuthAccountSummary' } },
         ],
       },
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminOAuthAccountList' },
+      name: { kind: 'Name', value: '__AdminOAuthAccountSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'OAuthAccount' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -12924,12 +12928,12 @@ export const __AdminOAuthAccountDetailsFragmentDoc = {
     },
   ],
 } as unknown as DocumentNode<__AdminOAuthAccountDetailsFragment, unknown>
-export const __AdminOrganizationMemberListFragmentDoc = {
+export const __AdminOrganizationMemberSummaryFragmentDoc = {
   kind: 'Document',
   definitions: [
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminOrganizationMemberList' },
+      name: { kind: 'Name', value: '__AdminOrganizationMemberSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'OrganizationMember' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -12968,7 +12972,7 @@ export const __AdminOrganizationMemberListFragmentDoc = {
       },
     },
   ],
-} as unknown as DocumentNode<__AdminOrganizationMemberListFragment, unknown>
+} as unknown as DocumentNode<__AdminOrganizationMemberSummaryFragment, unknown>
 export const __AdminOrganizationMemberDetailsFragmentDoc = {
   kind: 'Document',
   definitions: [
@@ -12981,14 +12985,14 @@ export const __AdminOrganizationMemberDetailsFragmentDoc = {
         selections: [
           {
             kind: 'FragmentSpread',
-            name: { kind: 'Name', value: '__AdminOrganizationMemberList' },
+            name: { kind: 'Name', value: '__AdminOrganizationMemberSummary' },
           },
         ],
       },
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminOrganizationMemberList' },
+      name: { kind: 'Name', value: '__AdminOrganizationMemberSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'OrganizationMember' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -13028,12 +13032,12 @@ export const __AdminOrganizationMemberDetailsFragmentDoc = {
     },
   ],
 } as unknown as DocumentNode<__AdminOrganizationMemberDetailsFragment, unknown>
-export const __AdminOrganizationListFragmentDoc = {
+export const __AdminOrganizationSummaryFragmentDoc = {
   kind: 'Document',
   definitions: [
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminOrganizationList' },
+      name: { kind: 'Name', value: '__AdminOrganizationSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Organization' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -13054,7 +13058,7 @@ export const __AdminOrganizationListFragmentDoc = {
       },
     },
   ],
-} as unknown as DocumentNode<__AdminOrganizationListFragment, unknown>
+} as unknown as DocumentNode<__AdminOrganizationSummaryFragment, unknown>
 export const __AdminOrganizationDetailsFragmentDoc = {
   kind: 'Document',
   definitions: [
@@ -13065,13 +13069,13 @@ export const __AdminOrganizationDetailsFragmentDoc = {
       selectionSet: {
         kind: 'SelectionSet',
         selections: [
-          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminOrganizationList' } },
+          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminOrganizationSummary' } },
         ],
       },
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminOrganizationList' },
+      name: { kind: 'Name', value: '__AdminOrganizationSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Organization' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -13093,12 +13097,12 @@ export const __AdminOrganizationDetailsFragmentDoc = {
     },
   ],
 } as unknown as DocumentNode<__AdminOrganizationDetailsFragment, unknown>
-export const __AdminPasswordHistoryListFragmentDoc = {
+export const __AdminPasswordHistorySummaryFragmentDoc = {
   kind: 'Document',
   definitions: [
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminPasswordHistoryList' },
+      name: { kind: 'Name', value: '__AdminPasswordHistorySummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'PasswordHistory' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -13119,7 +13123,7 @@ export const __AdminPasswordHistoryListFragmentDoc = {
       },
     },
   ],
-} as unknown as DocumentNode<__AdminPasswordHistoryListFragment, unknown>
+} as unknown as DocumentNode<__AdminPasswordHistorySummaryFragment, unknown>
 export const __AdminPasswordHistoryDetailsFragmentDoc = {
   kind: 'Document',
   definitions: [
@@ -13130,13 +13134,16 @@ export const __AdminPasswordHistoryDetailsFragmentDoc = {
       selectionSet: {
         kind: 'SelectionSet',
         selections: [
-          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminPasswordHistoryList' } },
+          {
+            kind: 'FragmentSpread',
+            name: { kind: 'Name', value: '__AdminPasswordHistorySummary' },
+          },
         ],
       },
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminPasswordHistoryList' },
+      name: { kind: 'Name', value: '__AdminPasswordHistorySummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'PasswordHistory' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -13158,12 +13165,12 @@ export const __AdminPasswordHistoryDetailsFragmentDoc = {
     },
   ],
 } as unknown as DocumentNode<__AdminPasswordHistoryDetailsFragment, unknown>
-export const __AdminPermissionListFragmentDoc = {
+export const __AdminPermissionSummaryFragmentDoc = {
   kind: 'Document',
   definitions: [
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminPermissionList' },
+      name: { kind: 'Name', value: '__AdminPermissionSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Permission' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -13176,7 +13183,7 @@ export const __AdminPermissionListFragmentDoc = {
       },
     },
   ],
-} as unknown as DocumentNode<__AdminPermissionListFragment, unknown>
+} as unknown as DocumentNode<__AdminPermissionSummaryFragment, unknown>
 export const __AdminPermissionDetailsFragmentDoc = {
   kind: 'Document',
   definitions: [
@@ -13187,13 +13194,13 @@ export const __AdminPermissionDetailsFragmentDoc = {
       selectionSet: {
         kind: 'SelectionSet',
         selections: [
-          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminPermissionList' } },
+          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminPermissionSummary' } },
         ],
       },
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminPermissionList' },
+      name: { kind: 'Name', value: '__AdminPermissionSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Permission' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -13207,12 +13214,12 @@ export const __AdminPermissionDetailsFragmentDoc = {
     },
   ],
 } as unknown as DocumentNode<__AdminPermissionDetailsFragment, unknown>
-export const __AdminPhoneNumberListFragmentDoc = {
+export const __AdminPhoneNumberSummaryFragmentDoc = {
   kind: 'Document',
   definitions: [
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminPhoneNumberList' },
+      name: { kind: 'Name', value: '__AdminPhoneNumberSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'PhoneNumber' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -13245,7 +13252,7 @@ export const __AdminPhoneNumberListFragmentDoc = {
       },
     },
   ],
-} as unknown as DocumentNode<__AdminPhoneNumberListFragment, unknown>
+} as unknown as DocumentNode<__AdminPhoneNumberSummaryFragment, unknown>
 export const __AdminPhoneNumberDetailsFragmentDoc = {
   kind: 'Document',
   definitions: [
@@ -13256,13 +13263,13 @@ export const __AdminPhoneNumberDetailsFragmentDoc = {
       selectionSet: {
         kind: 'SelectionSet',
         selections: [
-          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminPhoneNumberList' } },
+          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminPhoneNumberSummary' } },
         ],
       },
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminPhoneNumberList' },
+      name: { kind: 'Name', value: '__AdminPhoneNumberSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'PhoneNumber' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -13296,12 +13303,12 @@ export const __AdminPhoneNumberDetailsFragmentDoc = {
     },
   ],
 } as unknown as DocumentNode<__AdminPhoneNumberDetailsFragment, unknown>
-export const __AdminPlanListFragmentDoc = {
+export const __AdminPlanSummaryFragmentDoc = {
   kind: 'Document',
   definitions: [
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminPlanList' },
+      name: { kind: 'Name', value: '__AdminPlanSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Plan' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -13323,7 +13330,7 @@ export const __AdminPlanListFragmentDoc = {
       },
     },
   ],
-} as unknown as DocumentNode<__AdminPlanListFragment, unknown>
+} as unknown as DocumentNode<__AdminPlanSummaryFragment, unknown>
 export const __AdminPlanDetailsFragmentDoc = {
   kind: 'Document',
   definitions: [
@@ -13333,12 +13340,14 @@ export const __AdminPlanDetailsFragmentDoc = {
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Plan' } },
       selectionSet: {
         kind: 'SelectionSet',
-        selections: [{ kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminPlanList' } }],
+        selections: [
+          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminPlanSummary' } },
+        ],
       },
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminPlanList' },
+      name: { kind: 'Name', value: '__AdminPlanSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Plan' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -13361,12 +13370,12 @@ export const __AdminPlanDetailsFragmentDoc = {
     },
   ],
 } as unknown as DocumentNode<__AdminPlanDetailsFragment, unknown>
-export const __AdminRoleListFragmentDoc = {
+export const __AdminRoleSummaryFragmentDoc = {
   kind: 'Document',
   definitions: [
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminRoleList' },
+      name: { kind: 'Name', value: '__AdminRoleSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Role' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -13387,7 +13396,7 @@ export const __AdminRoleListFragmentDoc = {
       },
     },
   ],
-} as unknown as DocumentNode<__AdminRoleListFragment, unknown>
+} as unknown as DocumentNode<__AdminRoleSummaryFragment, unknown>
 export const __AdminRoleDetailsFragmentDoc = {
   kind: 'Document',
   definitions: [
@@ -13397,12 +13406,14 @@ export const __AdminRoleDetailsFragmentDoc = {
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Role' } },
       selectionSet: {
         kind: 'SelectionSet',
-        selections: [{ kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminRoleList' } }],
+        selections: [
+          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminRoleSummary' } },
+        ],
       },
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminRoleList' },
+      name: { kind: 'Name', value: '__AdminRoleSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Role' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -13424,12 +13435,12 @@ export const __AdminRoleDetailsFragmentDoc = {
     },
   ],
 } as unknown as DocumentNode<__AdminRoleDetailsFragment, unknown>
-export const __AdminSecurityEventListFragmentDoc = {
+export const __AdminSecurityEventSummaryFragmentDoc = {
   kind: 'Document',
   definitions: [
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminSecurityEventList' },
+      name: { kind: 'Name', value: '__AdminSecurityEventSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'SecurityEvent' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -13454,7 +13465,7 @@ export const __AdminSecurityEventListFragmentDoc = {
       },
     },
   ],
-} as unknown as DocumentNode<__AdminSecurityEventListFragment, unknown>
+} as unknown as DocumentNode<__AdminSecurityEventSummaryFragment, unknown>
 export const __AdminSecurityEventDetailsFragmentDoc = {
   kind: 'Document',
   definitions: [
@@ -13465,13 +13476,13 @@ export const __AdminSecurityEventDetailsFragmentDoc = {
       selectionSet: {
         kind: 'SelectionSet',
         selections: [
-          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminSecurityEventList' } },
+          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminSecurityEventSummary' } },
         ],
       },
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminSecurityEventList' },
+      name: { kind: 'Name', value: '__AdminSecurityEventSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'SecurityEvent' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -13497,12 +13508,12 @@ export const __AdminSecurityEventDetailsFragmentDoc = {
     },
   ],
 } as unknown as DocumentNode<__AdminSecurityEventDetailsFragment, unknown>
-export const __AdminStoredFileListFragmentDoc = {
+export const __AdminStoredFileSummaryFragmentDoc = {
   kind: 'Document',
   definitions: [
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminStoredFileList' },
+      name: { kind: 'Name', value: '__AdminStoredFileSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'StoredFile' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -13544,7 +13555,7 @@ export const __AdminStoredFileListFragmentDoc = {
       },
     },
   ],
-} as unknown as DocumentNode<__AdminStoredFileListFragment, unknown>
+} as unknown as DocumentNode<__AdminStoredFileSummaryFragment, unknown>
 export const __AdminStoredFileDetailsFragmentDoc = {
   kind: 'Document',
   definitions: [
@@ -13555,13 +13566,13 @@ export const __AdminStoredFileDetailsFragmentDoc = {
       selectionSet: {
         kind: 'SelectionSet',
         selections: [
-          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminStoredFileList' } },
+          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminStoredFileSummary' } },
         ],
       },
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminStoredFileList' },
+      name: { kind: 'Name', value: '__AdminStoredFileSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'StoredFile' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -13604,12 +13615,12 @@ export const __AdminStoredFileDetailsFragmentDoc = {
     },
   ],
 } as unknown as DocumentNode<__AdminStoredFileDetailsFragment, unknown>
-export const __AdminSubscriptionListFragmentDoc = {
+export const __AdminSubscriptionSummaryFragmentDoc = {
   kind: 'Document',
   definitions: [
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminSubscriptionList' },
+      name: { kind: 'Name', value: '__AdminSubscriptionSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Subscription' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -13649,7 +13660,7 @@ export const __AdminSubscriptionListFragmentDoc = {
       },
     },
   ],
-} as unknown as DocumentNode<__AdminSubscriptionListFragment, unknown>
+} as unknown as DocumentNode<__AdminSubscriptionSummaryFragment, unknown>
 export const __AdminSubscriptionDetailsFragmentDoc = {
   kind: 'Document',
   definitions: [
@@ -13660,13 +13671,13 @@ export const __AdminSubscriptionDetailsFragmentDoc = {
       selectionSet: {
         kind: 'SelectionSet',
         selections: [
-          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminSubscriptionList' } },
+          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminSubscriptionSummary' } },
         ],
       },
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminSubscriptionList' },
+      name: { kind: 'Name', value: '__AdminSubscriptionSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Subscription' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -13707,12 +13718,12 @@ export const __AdminSubscriptionDetailsFragmentDoc = {
     },
   ],
 } as unknown as DocumentNode<__AdminSubscriptionDetailsFragment, unknown>
-export const __AdminTeamMemberListFragmentDoc = {
+export const __AdminTeamMemberSummaryFragmentDoc = {
   kind: 'Document',
   definitions: [
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminTeamMemberList' },
+      name: { kind: 'Name', value: '__AdminTeamMemberSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'TeamMember' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -13751,7 +13762,7 @@ export const __AdminTeamMemberListFragmentDoc = {
       },
     },
   ],
-} as unknown as DocumentNode<__AdminTeamMemberListFragment, unknown>
+} as unknown as DocumentNode<__AdminTeamMemberSummaryFragment, unknown>
 export const __AdminTeamMemberDetailsFragmentDoc = {
   kind: 'Document',
   definitions: [
@@ -13762,13 +13773,13 @@ export const __AdminTeamMemberDetailsFragmentDoc = {
       selectionSet: {
         kind: 'SelectionSet',
         selections: [
-          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminTeamMemberList' } },
+          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminTeamMemberSummary' } },
         ],
       },
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminTeamMemberList' },
+      name: { kind: 'Name', value: '__AdminTeamMemberSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'TeamMember' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -13808,12 +13819,12 @@ export const __AdminTeamMemberDetailsFragmentDoc = {
     },
   ],
 } as unknown as DocumentNode<__AdminTeamMemberDetailsFragment, unknown>
-export const __AdminTeamListFragmentDoc = {
+export const __AdminTeamSummaryFragmentDoc = {
   kind: 'Document',
   definitions: [
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminTeamList' },
+      name: { kind: 'Name', value: '__AdminTeamSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Team' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -13836,7 +13847,7 @@ export const __AdminTeamListFragmentDoc = {
       },
     },
   ],
-} as unknown as DocumentNode<__AdminTeamListFragment, unknown>
+} as unknown as DocumentNode<__AdminTeamSummaryFragment, unknown>
 export const __AdminTeamDetailsFragmentDoc = {
   kind: 'Document',
   definitions: [
@@ -13846,12 +13857,14 @@ export const __AdminTeamDetailsFragmentDoc = {
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Team' } },
       selectionSet: {
         kind: 'SelectionSet',
-        selections: [{ kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminTeamList' } }],
+        selections: [
+          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminTeamSummary' } },
+        ],
       },
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminTeamList' },
+      name: { kind: 'Name', value: '__AdminTeamSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Team' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -13875,12 +13888,12 @@ export const __AdminTeamDetailsFragmentDoc = {
     },
   ],
 } as unknown as DocumentNode<__AdminTeamDetailsFragment, unknown>
-export const __AdminUserPreferenceListFragmentDoc = {
+export const __AdminUserPreferenceSummaryFragmentDoc = {
   kind: 'Document',
   definitions: [
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminUserPreferenceList' },
+      name: { kind: 'Name', value: '__AdminUserPreferenceSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'UserPreference' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -13903,7 +13916,7 @@ export const __AdminUserPreferenceListFragmentDoc = {
       },
     },
   ],
-} as unknown as DocumentNode<__AdminUserPreferenceListFragment, unknown>
+} as unknown as DocumentNode<__AdminUserPreferenceSummaryFragment, unknown>
 export const __AdminUserPreferenceDetailsFragmentDoc = {
   kind: 'Document',
   definitions: [
@@ -13914,13 +13927,13 @@ export const __AdminUserPreferenceDetailsFragmentDoc = {
       selectionSet: {
         kind: 'SelectionSet',
         selections: [
-          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminUserPreferenceList' } },
+          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminUserPreferenceSummary' } },
         ],
       },
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminUserPreferenceList' },
+      name: { kind: 'Name', value: '__AdminUserPreferenceSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'UserPreference' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -13944,12 +13957,12 @@ export const __AdminUserPreferenceDetailsFragmentDoc = {
     },
   ],
 } as unknown as DocumentNode<__AdminUserPreferenceDetailsFragment, unknown>
-export const __AdminUserSessionListFragmentDoc = {
+export const __AdminUserSessionSummaryFragmentDoc = {
   kind: 'Document',
   definitions: [
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminUserSessionList' },
+      name: { kind: 'Name', value: '__AdminUserSessionSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'UserSession' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -13975,7 +13988,7 @@ export const __AdminUserSessionListFragmentDoc = {
       },
     },
   ],
-} as unknown as DocumentNode<__AdminUserSessionListFragment, unknown>
+} as unknown as DocumentNode<__AdminUserSessionSummaryFragment, unknown>
 export const __AdminUserSessionDetailsFragmentDoc = {
   kind: 'Document',
   definitions: [
@@ -13986,13 +13999,13 @@ export const __AdminUserSessionDetailsFragmentDoc = {
       selectionSet: {
         kind: 'SelectionSet',
         selections: [
-          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminUserSessionList' } },
+          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminUserSessionSummary' } },
         ],
       },
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminUserSessionList' },
+      name: { kind: 'Name', value: '__AdminUserSessionSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'UserSession' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -14019,12 +14032,12 @@ export const __AdminUserSessionDetailsFragmentDoc = {
     },
   ],
 } as unknown as DocumentNode<__AdminUserSessionDetailsFragment, unknown>
-export const __AdminUserListFragmentDoc = {
+export const __AdminUserSummaryFragmentDoc = {
   kind: 'Document',
   definitions: [
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminUserList' },
+      name: { kind: 'Name', value: '__AdminUserSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'User' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -14059,7 +14072,7 @@ export const __AdminUserListFragmentDoc = {
       },
     },
   ],
-} as unknown as DocumentNode<__AdminUserListFragment, unknown>
+} as unknown as DocumentNode<__AdminUserSummaryFragment, unknown>
 export const __AdminUserDetailsFragmentDoc = {
   kind: 'Document',
   definitions: [
@@ -14069,12 +14082,14 @@ export const __AdminUserDetailsFragmentDoc = {
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'User' } },
       selectionSet: {
         kind: 'SelectionSet',
-        selections: [{ kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminUserList' } }],
+        selections: [
+          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminUserSummary' } },
+        ],
       },
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminUserList' },
+      name: { kind: 'Name', value: '__AdminUserSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'User' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -15939,7 +15954,7 @@ export const __AdminCreateAddress = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminAddressList' },
+      name: { kind: 'Name', value: '__AdminAddressSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Address' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -15991,7 +16006,7 @@ export const __AdminCreateAddress = {
       selectionSet: {
         kind: 'SelectionSet',
         selections: [
-          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminAddressList' } },
+          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminAddressSummary' } },
         ],
       },
     },
@@ -16092,7 +16107,7 @@ export const __AdminUpdateAddress = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminAddressList' },
+      name: { kind: 'Name', value: '__AdminAddressSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Address' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -16144,7 +16159,7 @@ export const __AdminUpdateAddress = {
       selectionSet: {
         kind: 'SelectionSet',
         selections: [
-          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminAddressList' } },
+          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminAddressSummary' } },
         ],
       },
     },
@@ -16192,7 +16207,7 @@ export const __AdminAddress = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminAddressList' },
+      name: { kind: 'Name', value: '__AdminAddressSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Address' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -16244,7 +16259,7 @@ export const __AdminAddress = {
       selectionSet: {
         kind: 'SelectionSet',
         selections: [
-          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminAddressList' } },
+          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminAddressSummary' } },
         ],
       },
     },
@@ -16280,7 +16295,7 @@ export const __AdminAddresses = {
             selectionSet: {
               kind: 'SelectionSet',
               selections: [
-                { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminAddressList' } },
+                { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminAddressSummary' } },
               ],
             },
           },
@@ -16307,7 +16322,7 @@ export const __AdminAddresses = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminAddressList' },
+      name: { kind: 'Name', value: '__AdminAddressSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Address' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -16474,7 +16489,7 @@ export const __AdminCreateApiToken = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminApiTokenList' },
+      name: { kind: 'Name', value: '__AdminApiTokenSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'ApiToken' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -16506,7 +16521,7 @@ export const __AdminCreateApiToken = {
       selectionSet: {
         kind: 'SelectionSet',
         selections: [
-          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminApiTokenList' } },
+          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminApiTokenSummary' } },
         ],
       },
     },
@@ -16607,7 +16622,7 @@ export const __AdminUpdateApiToken = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminApiTokenList' },
+      name: { kind: 'Name', value: '__AdminApiTokenSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'ApiToken' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -16639,7 +16654,7 @@ export const __AdminUpdateApiToken = {
       selectionSet: {
         kind: 'SelectionSet',
         selections: [
-          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminApiTokenList' } },
+          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminApiTokenSummary' } },
         ],
       },
     },
@@ -16687,7 +16702,7 @@ export const __AdminApiToken = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminApiTokenList' },
+      name: { kind: 'Name', value: '__AdminApiTokenSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'ApiToken' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -16719,7 +16734,7 @@ export const __AdminApiToken = {
       selectionSet: {
         kind: 'SelectionSet',
         selections: [
-          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminApiTokenList' } },
+          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminApiTokenSummary' } },
         ],
       },
     },
@@ -16755,7 +16770,7 @@ export const __AdminApiTokens = {
             selectionSet: {
               kind: 'SelectionSet',
               selections: [
-                { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminApiTokenList' } },
+                { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminApiTokenSummary' } },
               ],
             },
           },
@@ -16782,7 +16797,7 @@ export const __AdminApiTokens = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminApiTokenList' },
+      name: { kind: 'Name', value: '__AdminApiTokenSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'ApiToken' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -16932,7 +16947,7 @@ export const __AdminCreateAuditLog = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminAuditLogList' },
+      name: { kind: 'Name', value: '__AdminAuditLogSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'AuditLog' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -16972,7 +16987,7 @@ export const __AdminCreateAuditLog = {
       selectionSet: {
         kind: 'SelectionSet',
         selections: [
-          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminAuditLogList' } },
+          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminAuditLogSummary' } },
         ],
       },
     },
@@ -17073,7 +17088,7 @@ export const __AdminUpdateAuditLog = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminAuditLogList' },
+      name: { kind: 'Name', value: '__AdminAuditLogSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'AuditLog' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -17113,7 +17128,7 @@ export const __AdminUpdateAuditLog = {
       selectionSet: {
         kind: 'SelectionSet',
         selections: [
-          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminAuditLogList' } },
+          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminAuditLogSummary' } },
         ],
       },
     },
@@ -17161,7 +17176,7 @@ export const __AdminAuditLog = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminAuditLogList' },
+      name: { kind: 'Name', value: '__AdminAuditLogSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'AuditLog' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -17201,7 +17216,7 @@ export const __AdminAuditLog = {
       selectionSet: {
         kind: 'SelectionSet',
         selections: [
-          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminAuditLogList' } },
+          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminAuditLogSummary' } },
         ],
       },
     },
@@ -17237,7 +17252,7 @@ export const __AdminAuditLogs = {
             selectionSet: {
               kind: 'SelectionSet',
               selections: [
-                { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminAuditLogList' } },
+                { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminAuditLogSummary' } },
               ],
             },
           },
@@ -17264,7 +17279,7 @@ export const __AdminAuditLogs = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminAuditLogList' },
+      name: { kind: 'Name', value: '__AdminAuditLogSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'AuditLog' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -17422,7 +17437,7 @@ export const __AdminCreateCountry = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminCountryList' },
+      name: { kind: 'Name', value: '__AdminCountrySummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Country' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -17451,7 +17466,7 @@ export const __AdminCreateCountry = {
       selectionSet: {
         kind: 'SelectionSet',
         selections: [
-          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminCountryList' } },
+          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminCountrySummary' } },
         ],
       },
     },
@@ -17552,7 +17567,7 @@ export const __AdminUpdateCountry = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminCountryList' },
+      name: { kind: 'Name', value: '__AdminCountrySummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Country' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -17581,7 +17596,7 @@ export const __AdminUpdateCountry = {
       selectionSet: {
         kind: 'SelectionSet',
         selections: [
-          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminCountryList' } },
+          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminCountrySummary' } },
         ],
       },
     },
@@ -17629,7 +17644,7 @@ export const __AdminCountry = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminCountryList' },
+      name: { kind: 'Name', value: '__AdminCountrySummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Country' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -17658,7 +17673,7 @@ export const __AdminCountry = {
       selectionSet: {
         kind: 'SelectionSet',
         selections: [
-          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminCountryList' } },
+          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminCountrySummary' } },
         ],
       },
     },
@@ -17694,7 +17709,7 @@ export const __AdminCountries = {
             selectionSet: {
               kind: 'SelectionSet',
               selections: [
-                { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminCountryList' } },
+                { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminCountrySummary' } },
               ],
             },
           },
@@ -17721,7 +17736,7 @@ export const __AdminCountries = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminCountryList' },
+      name: { kind: 'Name', value: '__AdminCountrySummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Country' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -17865,7 +17880,7 @@ export const __AdminCreateEmail = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminEmailList' },
+      name: { kind: 'Name', value: '__AdminEmailSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Email' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -17907,7 +17922,9 @@ export const __AdminCreateEmail = {
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Email' } },
       selectionSet: {
         kind: 'SelectionSet',
-        selections: [{ kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminEmailList' } }],
+        selections: [
+          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminEmailSummary' } },
+        ],
       },
     },
   ],
@@ -18007,7 +18024,7 @@ export const __AdminUpdateEmail = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminEmailList' },
+      name: { kind: 'Name', value: '__AdminEmailSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Email' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -18049,7 +18066,9 @@ export const __AdminUpdateEmail = {
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Email' } },
       selectionSet: {
         kind: 'SelectionSet',
-        selections: [{ kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminEmailList' } }],
+        selections: [
+          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminEmailSummary' } },
+        ],
       },
     },
   ],
@@ -18096,7 +18115,7 @@ export const __AdminEmail = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminEmailList' },
+      name: { kind: 'Name', value: '__AdminEmailSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Email' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -18138,7 +18157,9 @@ export const __AdminEmail = {
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Email' } },
       selectionSet: {
         kind: 'SelectionSet',
-        selections: [{ kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminEmailList' } }],
+        selections: [
+          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminEmailSummary' } },
+        ],
       },
     },
   ],
@@ -18173,7 +18194,7 @@ export const __AdminEmails = {
             selectionSet: {
               kind: 'SelectionSet',
               selections: [
-                { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminEmailList' } },
+                { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminEmailSummary' } },
               ],
             },
           },
@@ -18200,7 +18221,7 @@ export const __AdminEmails = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminEmailList' },
+      name: { kind: 'Name', value: '__AdminEmailSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Email' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -18358,7 +18379,7 @@ export const __AdminCreateInvite = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminInviteList' },
+      name: { kind: 'Name', value: '__AdminInviteSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Invite' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -18407,7 +18428,7 @@ export const __AdminCreateInvite = {
       selectionSet: {
         kind: 'SelectionSet',
         selections: [
-          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminInviteList' } },
+          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminInviteSummary' } },
         ],
       },
     },
@@ -18508,7 +18529,7 @@ export const __AdminUpdateInvite = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminInviteList' },
+      name: { kind: 'Name', value: '__AdminInviteSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Invite' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -18557,7 +18578,7 @@ export const __AdminUpdateInvite = {
       selectionSet: {
         kind: 'SelectionSet',
         selections: [
-          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminInviteList' } },
+          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminInviteSummary' } },
         ],
       },
     },
@@ -18605,7 +18626,7 @@ export const __AdminInvite = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminInviteList' },
+      name: { kind: 'Name', value: '__AdminInviteSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Invite' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -18654,7 +18675,7 @@ export const __AdminInvite = {
       selectionSet: {
         kind: 'SelectionSet',
         selections: [
-          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminInviteList' } },
+          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminInviteSummary' } },
         ],
       },
     },
@@ -18690,7 +18711,7 @@ export const __AdminInvites = {
             selectionSet: {
               kind: 'SelectionSet',
               selections: [
-                { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminInviteList' } },
+                { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminInviteSummary' } },
               ],
             },
           },
@@ -18717,7 +18738,7 @@ export const __AdminInvites = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminInviteList' },
+      name: { kind: 'Name', value: '__AdminInviteSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Invite' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -18881,7 +18902,7 @@ export const __AdminCreateLink = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminLinkList' },
+      name: { kind: 'Name', value: '__AdminLinkSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Link' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -18918,7 +18939,9 @@ export const __AdminCreateLink = {
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Link' } },
       selectionSet: {
         kind: 'SelectionSet',
-        selections: [{ kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminLinkList' } }],
+        selections: [
+          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminLinkSummary' } },
+        ],
       },
     },
   ],
@@ -19018,7 +19041,7 @@ export const __AdminUpdateLink = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminLinkList' },
+      name: { kind: 'Name', value: '__AdminLinkSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Link' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -19055,7 +19078,9 @@ export const __AdminUpdateLink = {
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Link' } },
       selectionSet: {
         kind: 'SelectionSet',
-        selections: [{ kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminLinkList' } }],
+        selections: [
+          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminLinkSummary' } },
+        ],
       },
     },
   ],
@@ -19102,7 +19127,7 @@ export const __AdminLink = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminLinkList' },
+      name: { kind: 'Name', value: '__AdminLinkSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Link' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -19139,7 +19164,9 @@ export const __AdminLink = {
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Link' } },
       selectionSet: {
         kind: 'SelectionSet',
-        selections: [{ kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminLinkList' } }],
+        selections: [
+          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminLinkSummary' } },
+        ],
       },
     },
   ],
@@ -19174,7 +19201,7 @@ export const __AdminLinks = {
             selectionSet: {
               kind: 'SelectionSet',
               selections: [
-                { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminLinkList' } },
+                { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminLinkSummary' } },
               ],
             },
           },
@@ -19201,7 +19228,7 @@ export const __AdminLinks = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminLinkList' },
+      name: { kind: 'Name', value: '__AdminLinkSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Link' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -19357,7 +19384,7 @@ export const __AdminCreateLoginAttempt = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminLoginAttemptList' },
+      name: { kind: 'Name', value: '__AdminLoginAttemptSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'LoginAttempt' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -19390,7 +19417,7 @@ export const __AdminCreateLoginAttempt = {
       selectionSet: {
         kind: 'SelectionSet',
         selections: [
-          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminLoginAttemptList' } },
+          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminLoginAttemptSummary' } },
         ],
       },
     },
@@ -19500,7 +19527,7 @@ export const __AdminUpdateLoginAttempt = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminLoginAttemptList' },
+      name: { kind: 'Name', value: '__AdminLoginAttemptSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'LoginAttempt' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -19533,7 +19560,7 @@ export const __AdminUpdateLoginAttempt = {
       selectionSet: {
         kind: 'SelectionSet',
         selections: [
-          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminLoginAttemptList' } },
+          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminLoginAttemptSummary' } },
         ],
       },
     },
@@ -19587,7 +19614,7 @@ export const __AdminLoginAttempt = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminLoginAttemptList' },
+      name: { kind: 'Name', value: '__AdminLoginAttemptSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'LoginAttempt' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -19620,7 +19647,7 @@ export const __AdminLoginAttempt = {
       selectionSet: {
         kind: 'SelectionSet',
         selections: [
-          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminLoginAttemptList' } },
+          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminLoginAttemptSummary' } },
         ],
       },
     },
@@ -19658,7 +19685,7 @@ export const __AdminLoginAttempts = {
               selections: [
                 {
                   kind: 'FragmentSpread',
-                  name: { kind: 'Name', value: '__AdminLoginAttemptList' },
+                  name: { kind: 'Name', value: '__AdminLoginAttemptSummary' },
                 },
               ],
             },
@@ -19686,7 +19713,7 @@ export const __AdminLoginAttempts = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminLoginAttemptList' },
+      name: { kind: 'Name', value: '__AdminLoginAttemptSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'LoginAttempt' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -19840,7 +19867,7 @@ export const __AdminCreateOAuthAccount = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminOAuthAccountList' },
+      name: { kind: 'Name', value: '__AdminOAuthAccountSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'OAuthAccount' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -19869,7 +19896,7 @@ export const __AdminCreateOAuthAccount = {
       selectionSet: {
         kind: 'SelectionSet',
         selections: [
-          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminOAuthAccountList' } },
+          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminOAuthAccountSummary' } },
         ],
       },
     },
@@ -19979,7 +20006,7 @@ export const __AdminUpdateOAuthAccount = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminOAuthAccountList' },
+      name: { kind: 'Name', value: '__AdminOAuthAccountSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'OAuthAccount' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -20008,7 +20035,7 @@ export const __AdminUpdateOAuthAccount = {
       selectionSet: {
         kind: 'SelectionSet',
         selections: [
-          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminOAuthAccountList' } },
+          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminOAuthAccountSummary' } },
         ],
       },
     },
@@ -20062,7 +20089,7 @@ export const __AdminOAuthAccount = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminOAuthAccountList' },
+      name: { kind: 'Name', value: '__AdminOAuthAccountSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'OAuthAccount' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -20091,7 +20118,7 @@ export const __AdminOAuthAccount = {
       selectionSet: {
         kind: 'SelectionSet',
         selections: [
-          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminOAuthAccountList' } },
+          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminOAuthAccountSummary' } },
         ],
       },
     },
@@ -20129,7 +20156,7 @@ export const __AdminOAuthAccounts = {
               selections: [
                 {
                   kind: 'FragmentSpread',
-                  name: { kind: 'Name', value: '__AdminOAuthAccountList' },
+                  name: { kind: 'Name', value: '__AdminOAuthAccountSummary' },
                 },
               ],
             },
@@ -20157,7 +20184,7 @@ export const __AdminOAuthAccounts = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminOAuthAccountList' },
+      name: { kind: 'Name', value: '__AdminOAuthAccountSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'OAuthAccount' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -20310,7 +20337,7 @@ export const __AdminCreateOrganizationMember = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminOrganizationMemberList' },
+      name: { kind: 'Name', value: '__AdminOrganizationMemberSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'OrganizationMember' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -20357,7 +20384,7 @@ export const __AdminCreateOrganizationMember = {
         selections: [
           {
             kind: 'FragmentSpread',
-            name: { kind: 'Name', value: '__AdminOrganizationMemberList' },
+            name: { kind: 'Name', value: '__AdminOrganizationMemberSummary' },
           },
         ],
       },
@@ -20471,7 +20498,7 @@ export const __AdminUpdateOrganizationMember = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminOrganizationMemberList' },
+      name: { kind: 'Name', value: '__AdminOrganizationMemberSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'OrganizationMember' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -20518,7 +20545,7 @@ export const __AdminUpdateOrganizationMember = {
         selections: [
           {
             kind: 'FragmentSpread',
-            name: { kind: 'Name', value: '__AdminOrganizationMemberList' },
+            name: { kind: 'Name', value: '__AdminOrganizationMemberSummary' },
           },
         ],
       },
@@ -20573,7 +20600,7 @@ export const __AdminOrganizationMember = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminOrganizationMemberList' },
+      name: { kind: 'Name', value: '__AdminOrganizationMemberSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'OrganizationMember' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -20620,7 +20647,7 @@ export const __AdminOrganizationMember = {
         selections: [
           {
             kind: 'FragmentSpread',
-            name: { kind: 'Name', value: '__AdminOrganizationMemberList' },
+            name: { kind: 'Name', value: '__AdminOrganizationMemberSummary' },
           },
         ],
       },
@@ -20662,7 +20689,7 @@ export const __AdminOrganizationMembers = {
               selections: [
                 {
                   kind: 'FragmentSpread',
-                  name: { kind: 'Name', value: '__AdminOrganizationMemberList' },
+                  name: { kind: 'Name', value: '__AdminOrganizationMemberSummary' },
                 },
               ],
             },
@@ -20690,7 +20717,7 @@ export const __AdminOrganizationMembers = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminOrganizationMemberList' },
+      name: { kind: 'Name', value: '__AdminOrganizationMemberSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'OrganizationMember' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -20859,7 +20886,7 @@ export const __AdminCreateOrganization = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminOrganizationList' },
+      name: { kind: 'Name', value: '__AdminOrganizationSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Organization' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -20886,7 +20913,7 @@ export const __AdminCreateOrganization = {
       selectionSet: {
         kind: 'SelectionSet',
         selections: [
-          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminOrganizationList' } },
+          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminOrganizationSummary' } },
         ],
       },
     },
@@ -20996,7 +21023,7 @@ export const __AdminUpdateOrganization = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminOrganizationList' },
+      name: { kind: 'Name', value: '__AdminOrganizationSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Organization' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -21023,7 +21050,7 @@ export const __AdminUpdateOrganization = {
       selectionSet: {
         kind: 'SelectionSet',
         selections: [
-          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminOrganizationList' } },
+          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminOrganizationSummary' } },
         ],
       },
     },
@@ -21077,7 +21104,7 @@ export const __AdminOrganization = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminOrganizationList' },
+      name: { kind: 'Name', value: '__AdminOrganizationSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Organization' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -21104,7 +21131,7 @@ export const __AdminOrganization = {
       selectionSet: {
         kind: 'SelectionSet',
         selections: [
-          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminOrganizationList' } },
+          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminOrganizationSummary' } },
         ],
       },
     },
@@ -21142,7 +21169,7 @@ export const __AdminOrganizations = {
               selections: [
                 {
                   kind: 'FragmentSpread',
-                  name: { kind: 'Name', value: '__AdminOrganizationList' },
+                  name: { kind: 'Name', value: '__AdminOrganizationSummary' },
                 },
               ],
             },
@@ -21170,7 +21197,7 @@ export const __AdminOrganizations = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminOrganizationList' },
+      name: { kind: 'Name', value: '__AdminOrganizationSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Organization' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -21321,7 +21348,7 @@ export const __AdminCreatePasswordHistory = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminPasswordHistoryList' },
+      name: { kind: 'Name', value: '__AdminPasswordHistorySummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'PasswordHistory' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -21348,7 +21375,10 @@ export const __AdminCreatePasswordHistory = {
       selectionSet: {
         kind: 'SelectionSet',
         selections: [
-          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminPasswordHistoryList' } },
+          {
+            kind: 'FragmentSpread',
+            name: { kind: 'Name', value: '__AdminPasswordHistorySummary' },
+          },
         ],
       },
     },
@@ -21461,7 +21491,7 @@ export const __AdminUpdatePasswordHistory = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminPasswordHistoryList' },
+      name: { kind: 'Name', value: '__AdminPasswordHistorySummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'PasswordHistory' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -21488,7 +21518,10 @@ export const __AdminUpdatePasswordHistory = {
       selectionSet: {
         kind: 'SelectionSet',
         selections: [
-          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminPasswordHistoryList' } },
+          {
+            kind: 'FragmentSpread',
+            name: { kind: 'Name', value: '__AdminPasswordHistorySummary' },
+          },
         ],
       },
     },
@@ -21542,7 +21575,7 @@ export const __AdminPasswordHistory = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminPasswordHistoryList' },
+      name: { kind: 'Name', value: '__AdminPasswordHistorySummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'PasswordHistory' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -21569,7 +21602,10 @@ export const __AdminPasswordHistory = {
       selectionSet: {
         kind: 'SelectionSet',
         selections: [
-          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminPasswordHistoryList' } },
+          {
+            kind: 'FragmentSpread',
+            name: { kind: 'Name', value: '__AdminPasswordHistorySummary' },
+          },
         ],
       },
     },
@@ -21607,7 +21643,7 @@ export const __AdminPasswordHistories = {
               selections: [
                 {
                   kind: 'FragmentSpread',
-                  name: { kind: 'Name', value: '__AdminPasswordHistoryList' },
+                  name: { kind: 'Name', value: '__AdminPasswordHistorySummary' },
                 },
               ],
             },
@@ -21635,7 +21671,7 @@ export const __AdminPasswordHistories = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminPasswordHistoryList' },
+      name: { kind: 'Name', value: '__AdminPasswordHistorySummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'PasswordHistory' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -21783,7 +21819,7 @@ export const __AdminCreatePermission = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminPermissionList' },
+      name: { kind: 'Name', value: '__AdminPermissionSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Permission' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -21802,7 +21838,7 @@ export const __AdminCreatePermission = {
       selectionSet: {
         kind: 'SelectionSet',
         selections: [
-          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminPermissionList' } },
+          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminPermissionSummary' } },
         ],
       },
     },
@@ -21912,7 +21948,7 @@ export const __AdminUpdatePermission = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminPermissionList' },
+      name: { kind: 'Name', value: '__AdminPermissionSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Permission' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -21931,7 +21967,7 @@ export const __AdminUpdatePermission = {
       selectionSet: {
         kind: 'SelectionSet',
         selections: [
-          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminPermissionList' } },
+          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminPermissionSummary' } },
         ],
       },
     },
@@ -21985,7 +22021,7 @@ export const __AdminPermission = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminPermissionList' },
+      name: { kind: 'Name', value: '__AdminPermissionSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Permission' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -22004,7 +22040,7 @@ export const __AdminPermission = {
       selectionSet: {
         kind: 'SelectionSet',
         selections: [
-          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminPermissionList' } },
+          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminPermissionSummary' } },
         ],
       },
     },
@@ -22040,7 +22076,10 @@ export const __AdminPermissions = {
             selectionSet: {
               kind: 'SelectionSet',
               selections: [
-                { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminPermissionList' } },
+                {
+                  kind: 'FragmentSpread',
+                  name: { kind: 'Name', value: '__AdminPermissionSummary' },
+                },
               ],
             },
           },
@@ -22067,7 +22106,7 @@ export const __AdminPermissions = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminPermissionList' },
+      name: { kind: 'Name', value: '__AdminPermissionSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Permission' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -22207,7 +22246,7 @@ export const __AdminCreatePhoneNumber = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminPhoneNumberList' },
+      name: { kind: 'Name', value: '__AdminPhoneNumberSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'PhoneNumber' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -22246,7 +22285,7 @@ export const __AdminCreatePhoneNumber = {
       selectionSet: {
         kind: 'SelectionSet',
         selections: [
-          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminPhoneNumberList' } },
+          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminPhoneNumberSummary' } },
         ],
       },
     },
@@ -22356,7 +22395,7 @@ export const __AdminUpdatePhoneNumber = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminPhoneNumberList' },
+      name: { kind: 'Name', value: '__AdminPhoneNumberSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'PhoneNumber' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -22395,7 +22434,7 @@ export const __AdminUpdatePhoneNumber = {
       selectionSet: {
         kind: 'SelectionSet',
         selections: [
-          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminPhoneNumberList' } },
+          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminPhoneNumberSummary' } },
         ],
       },
     },
@@ -22449,7 +22488,7 @@ export const __AdminPhoneNumber = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminPhoneNumberList' },
+      name: { kind: 'Name', value: '__AdminPhoneNumberSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'PhoneNumber' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -22488,7 +22527,7 @@ export const __AdminPhoneNumber = {
       selectionSet: {
         kind: 'SelectionSet',
         selections: [
-          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminPhoneNumberList' } },
+          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminPhoneNumberSummary' } },
         ],
       },
     },
@@ -22524,7 +22563,10 @@ export const __AdminPhoneNumbers = {
             selectionSet: {
               kind: 'SelectionSet',
               selections: [
-                { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminPhoneNumberList' } },
+                {
+                  kind: 'FragmentSpread',
+                  name: { kind: 'Name', value: '__AdminPhoneNumberSummary' },
+                },
               ],
             },
           },
@@ -22551,7 +22593,7 @@ export const __AdminPhoneNumbers = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminPhoneNumberList' },
+      name: { kind: 'Name', value: '__AdminPhoneNumberSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'PhoneNumber' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -22708,7 +22750,7 @@ export const __AdminCreatePlan = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminPlanList' },
+      name: { kind: 'Name', value: '__AdminPlanSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Plan' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -22735,7 +22777,9 @@ export const __AdminCreatePlan = {
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Plan' } },
       selectionSet: {
         kind: 'SelectionSet',
-        selections: [{ kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminPlanList' } }],
+        selections: [
+          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminPlanSummary' } },
+        ],
       },
     },
   ],
@@ -22835,7 +22879,7 @@ export const __AdminUpdatePlan = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminPlanList' },
+      name: { kind: 'Name', value: '__AdminPlanSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Plan' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -22862,7 +22906,9 @@ export const __AdminUpdatePlan = {
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Plan' } },
       selectionSet: {
         kind: 'SelectionSet',
-        selections: [{ kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminPlanList' } }],
+        selections: [
+          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminPlanSummary' } },
+        ],
       },
     },
   ],
@@ -22909,7 +22955,7 @@ export const __AdminPlan = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminPlanList' },
+      name: { kind: 'Name', value: '__AdminPlanSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Plan' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -22936,7 +22982,9 @@ export const __AdminPlan = {
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Plan' } },
       selectionSet: {
         kind: 'SelectionSet',
-        selections: [{ kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminPlanList' } }],
+        selections: [
+          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminPlanSummary' } },
+        ],
       },
     },
   ],
@@ -22971,7 +23019,7 @@ export const __AdminPlans = {
             selectionSet: {
               kind: 'SelectionSet',
               selections: [
-                { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminPlanList' } },
+                { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminPlanSummary' } },
               ],
             },
           },
@@ -22998,7 +23046,7 @@ export const __AdminPlans = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminPlanList' },
+      name: { kind: 'Name', value: '__AdminPlanSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Plan' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -23141,7 +23189,7 @@ export const __AdminCreateRole = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminRoleList' },
+      name: { kind: 'Name', value: '__AdminRoleSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Role' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -23167,7 +23215,9 @@ export const __AdminCreateRole = {
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Role' } },
       selectionSet: {
         kind: 'SelectionSet',
-        selections: [{ kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminRoleList' } }],
+        selections: [
+          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminRoleSummary' } },
+        ],
       },
     },
   ],
@@ -23267,7 +23317,7 @@ export const __AdminUpdateRole = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminRoleList' },
+      name: { kind: 'Name', value: '__AdminRoleSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Role' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -23293,7 +23343,9 @@ export const __AdminUpdateRole = {
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Role' } },
       selectionSet: {
         kind: 'SelectionSet',
-        selections: [{ kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminRoleList' } }],
+        selections: [
+          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminRoleSummary' } },
+        ],
       },
     },
   ],
@@ -23340,7 +23392,7 @@ export const __AdminRole = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminRoleList' },
+      name: { kind: 'Name', value: '__AdminRoleSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Role' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -23366,7 +23418,9 @@ export const __AdminRole = {
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Role' } },
       selectionSet: {
         kind: 'SelectionSet',
-        selections: [{ kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminRoleList' } }],
+        selections: [
+          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminRoleSummary' } },
+        ],
       },
     },
   ],
@@ -23401,7 +23455,7 @@ export const __AdminRoles = {
             selectionSet: {
               kind: 'SelectionSet',
               selections: [
-                { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminRoleList' } },
+                { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminRoleSummary' } },
               ],
             },
           },
@@ -23428,7 +23482,7 @@ export const __AdminRoles = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminRoleList' },
+      name: { kind: 'Name', value: '__AdminRoleSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Role' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -23573,7 +23627,7 @@ export const __AdminCreateSecurityEvent = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminSecurityEventList' },
+      name: { kind: 'Name', value: '__AdminSecurityEventSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'SecurityEvent' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -23604,7 +23658,7 @@ export const __AdminCreateSecurityEvent = {
       selectionSet: {
         kind: 'SelectionSet',
         selections: [
-          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminSecurityEventList' } },
+          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminSecurityEventSummary' } },
         ],
       },
     },
@@ -23714,7 +23768,7 @@ export const __AdminUpdateSecurityEvent = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminSecurityEventList' },
+      name: { kind: 'Name', value: '__AdminSecurityEventSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'SecurityEvent' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -23745,7 +23799,7 @@ export const __AdminUpdateSecurityEvent = {
       selectionSet: {
         kind: 'SelectionSet',
         selections: [
-          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminSecurityEventList' } },
+          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminSecurityEventSummary' } },
         ],
       },
     },
@@ -23799,7 +23853,7 @@ export const __AdminSecurityEvent = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminSecurityEventList' },
+      name: { kind: 'Name', value: '__AdminSecurityEventSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'SecurityEvent' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -23830,7 +23884,7 @@ export const __AdminSecurityEvent = {
       selectionSet: {
         kind: 'SelectionSet',
         selections: [
-          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminSecurityEventList' } },
+          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminSecurityEventSummary' } },
         ],
       },
     },
@@ -23868,7 +23922,7 @@ export const __AdminSecurityEvents = {
               selections: [
                 {
                   kind: 'FragmentSpread',
-                  name: { kind: 'Name', value: '__AdminSecurityEventList' },
+                  name: { kind: 'Name', value: '__AdminSecurityEventSummary' },
                 },
               ],
             },
@@ -23896,7 +23950,7 @@ export const __AdminSecurityEvents = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminSecurityEventList' },
+      name: { kind: 'Name', value: '__AdminSecurityEventSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'SecurityEvent' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -24048,7 +24102,7 @@ export const __AdminCreateStoredFile = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminStoredFileList' },
+      name: { kind: 'Name', value: '__AdminStoredFileSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'StoredFile' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -24096,7 +24150,7 @@ export const __AdminCreateStoredFile = {
       selectionSet: {
         kind: 'SelectionSet',
         selections: [
-          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminStoredFileList' } },
+          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminStoredFileSummary' } },
         ],
       },
     },
@@ -24206,7 +24260,7 @@ export const __AdminUpdateStoredFile = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminStoredFileList' },
+      name: { kind: 'Name', value: '__AdminStoredFileSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'StoredFile' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -24254,7 +24308,7 @@ export const __AdminUpdateStoredFile = {
       selectionSet: {
         kind: 'SelectionSet',
         selections: [
-          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminStoredFileList' } },
+          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminStoredFileSummary' } },
         ],
       },
     },
@@ -24308,7 +24362,7 @@ export const __AdminStoredFile = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminStoredFileList' },
+      name: { kind: 'Name', value: '__AdminStoredFileSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'StoredFile' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -24356,7 +24410,7 @@ export const __AdminStoredFile = {
       selectionSet: {
         kind: 'SelectionSet',
         selections: [
-          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminStoredFileList' } },
+          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminStoredFileSummary' } },
         ],
       },
     },
@@ -24392,7 +24446,10 @@ export const __AdminStoredFiles = {
             selectionSet: {
               kind: 'SelectionSet',
               selections: [
-                { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminStoredFileList' } },
+                {
+                  kind: 'FragmentSpread',
+                  name: { kind: 'Name', value: '__AdminStoredFileSummary' },
+                },
               ],
             },
           },
@@ -24419,7 +24476,7 @@ export const __AdminStoredFiles = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminStoredFileList' },
+      name: { kind: 'Name', value: '__AdminStoredFileSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'StoredFile' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -24588,7 +24645,7 @@ export const __AdminCreateSubscription = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminSubscriptionList' },
+      name: { kind: 'Name', value: '__AdminSubscriptionSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Subscription' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -24634,7 +24691,7 @@ export const __AdminCreateSubscription = {
       selectionSet: {
         kind: 'SelectionSet',
         selections: [
-          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminSubscriptionList' } },
+          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminSubscriptionSummary' } },
         ],
       },
     },
@@ -24744,7 +24801,7 @@ export const __AdminUpdateSubscription = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminSubscriptionList' },
+      name: { kind: 'Name', value: '__AdminSubscriptionSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Subscription' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -24790,7 +24847,7 @@ export const __AdminUpdateSubscription = {
       selectionSet: {
         kind: 'SelectionSet',
         selections: [
-          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminSubscriptionList' } },
+          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminSubscriptionSummary' } },
         ],
       },
     },
@@ -24844,7 +24901,7 @@ export const __AdminSubscription = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminSubscriptionList' },
+      name: { kind: 'Name', value: '__AdminSubscriptionSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Subscription' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -24890,7 +24947,7 @@ export const __AdminSubscription = {
       selectionSet: {
         kind: 'SelectionSet',
         selections: [
-          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminSubscriptionList' } },
+          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminSubscriptionSummary' } },
         ],
       },
     },
@@ -24928,7 +24985,7 @@ export const __AdminSubscriptions = {
               selections: [
                 {
                   kind: 'FragmentSpread',
-                  name: { kind: 'Name', value: '__AdminSubscriptionList' },
+                  name: { kind: 'Name', value: '__AdminSubscriptionSummary' },
                 },
               ],
             },
@@ -24956,7 +25013,7 @@ export const __AdminSubscriptions = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminSubscriptionList' },
+      name: { kind: 'Name', value: '__AdminSubscriptionSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Subscription' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -25123,7 +25180,7 @@ export const __AdminCreateTeamMember = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminTeamMemberList' },
+      name: { kind: 'Name', value: '__AdminTeamMemberSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'TeamMember' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -25168,7 +25225,7 @@ export const __AdminCreateTeamMember = {
       selectionSet: {
         kind: 'SelectionSet',
         selections: [
-          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminTeamMemberList' } },
+          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminTeamMemberSummary' } },
         ],
       },
     },
@@ -25278,7 +25335,7 @@ export const __AdminUpdateTeamMember = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminTeamMemberList' },
+      name: { kind: 'Name', value: '__AdminTeamMemberSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'TeamMember' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -25323,7 +25380,7 @@ export const __AdminUpdateTeamMember = {
       selectionSet: {
         kind: 'SelectionSet',
         selections: [
-          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminTeamMemberList' } },
+          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminTeamMemberSummary' } },
         ],
       },
     },
@@ -25377,7 +25434,7 @@ export const __AdminTeamMember = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminTeamMemberList' },
+      name: { kind: 'Name', value: '__AdminTeamMemberSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'TeamMember' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -25422,7 +25479,7 @@ export const __AdminTeamMember = {
       selectionSet: {
         kind: 'SelectionSet',
         selections: [
-          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminTeamMemberList' } },
+          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminTeamMemberSummary' } },
         ],
       },
     },
@@ -25458,7 +25515,10 @@ export const __AdminTeamMembers = {
             selectionSet: {
               kind: 'SelectionSet',
               selections: [
-                { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminTeamMemberList' } },
+                {
+                  kind: 'FragmentSpread',
+                  name: { kind: 'Name', value: '__AdminTeamMemberSummary' },
+                },
               ],
             },
           },
@@ -25485,7 +25545,7 @@ export const __AdminTeamMembers = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminTeamMemberList' },
+      name: { kind: 'Name', value: '__AdminTeamMemberSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'TeamMember' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -25648,7 +25708,7 @@ export const __AdminCreateTeam = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminTeamList' },
+      name: { kind: 'Name', value: '__AdminTeamSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Team' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -25676,7 +25736,9 @@ export const __AdminCreateTeam = {
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Team' } },
       selectionSet: {
         kind: 'SelectionSet',
-        selections: [{ kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminTeamList' } }],
+        selections: [
+          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminTeamSummary' } },
+        ],
       },
     },
   ],
@@ -25776,7 +25838,7 @@ export const __AdminUpdateTeam = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminTeamList' },
+      name: { kind: 'Name', value: '__AdminTeamSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Team' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -25804,7 +25866,9 @@ export const __AdminUpdateTeam = {
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Team' } },
       selectionSet: {
         kind: 'SelectionSet',
-        selections: [{ kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminTeamList' } }],
+        selections: [
+          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminTeamSummary' } },
+        ],
       },
     },
   ],
@@ -25851,7 +25915,7 @@ export const __AdminTeam = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminTeamList' },
+      name: { kind: 'Name', value: '__AdminTeamSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Team' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -25879,7 +25943,9 @@ export const __AdminTeam = {
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Team' } },
       selectionSet: {
         kind: 'SelectionSet',
-        selections: [{ kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminTeamList' } }],
+        selections: [
+          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminTeamSummary' } },
+        ],
       },
     },
   ],
@@ -25914,7 +25980,7 @@ export const __AdminTeams = {
             selectionSet: {
               kind: 'SelectionSet',
               selections: [
-                { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminTeamList' } },
+                { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminTeamSummary' } },
               ],
             },
           },
@@ -25941,7 +26007,7 @@ export const __AdminTeams = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminTeamList' },
+      name: { kind: 'Name', value: '__AdminTeamSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'Team' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -26088,7 +26154,7 @@ export const __AdminCreateUserPreference = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminUserPreferenceList' },
+      name: { kind: 'Name', value: '__AdminUserPreferenceSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'UserPreference' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -26117,7 +26183,7 @@ export const __AdminCreateUserPreference = {
       selectionSet: {
         kind: 'SelectionSet',
         selections: [
-          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminUserPreferenceList' } },
+          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminUserPreferenceSummary' } },
         ],
       },
     },
@@ -26227,7 +26293,7 @@ export const __AdminUpdateUserPreference = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminUserPreferenceList' },
+      name: { kind: 'Name', value: '__AdminUserPreferenceSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'UserPreference' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -26256,7 +26322,7 @@ export const __AdminUpdateUserPreference = {
       selectionSet: {
         kind: 'SelectionSet',
         selections: [
-          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminUserPreferenceList' } },
+          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminUserPreferenceSummary' } },
         ],
       },
     },
@@ -26310,7 +26376,7 @@ export const __AdminUserPreference = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminUserPreferenceList' },
+      name: { kind: 'Name', value: '__AdminUserPreferenceSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'UserPreference' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -26339,7 +26405,7 @@ export const __AdminUserPreference = {
       selectionSet: {
         kind: 'SelectionSet',
         selections: [
-          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminUserPreferenceList' } },
+          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminUserPreferenceSummary' } },
         ],
       },
     },
@@ -26377,7 +26443,7 @@ export const __AdminUserPreferences = {
               selections: [
                 {
                   kind: 'FragmentSpread',
-                  name: { kind: 'Name', value: '__AdminUserPreferenceList' },
+                  name: { kind: 'Name', value: '__AdminUserPreferenceSummary' },
                 },
               ],
             },
@@ -26405,7 +26471,7 @@ export const __AdminUserPreferences = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminUserPreferenceList' },
+      name: { kind: 'Name', value: '__AdminUserPreferenceSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'UserPreference' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -26555,7 +26621,7 @@ export const __AdminCreateUserSession = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminUserSessionList' },
+      name: { kind: 'Name', value: '__AdminUserSessionSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'UserSession' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -26587,7 +26653,7 @@ export const __AdminCreateUserSession = {
       selectionSet: {
         kind: 'SelectionSet',
         selections: [
-          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminUserSessionList' } },
+          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminUserSessionSummary' } },
         ],
       },
     },
@@ -26697,7 +26763,7 @@ export const __AdminUpdateUserSession = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminUserSessionList' },
+      name: { kind: 'Name', value: '__AdminUserSessionSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'UserSession' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -26729,7 +26795,7 @@ export const __AdminUpdateUserSession = {
       selectionSet: {
         kind: 'SelectionSet',
         selections: [
-          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminUserSessionList' } },
+          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminUserSessionSummary' } },
         ],
       },
     },
@@ -26783,7 +26849,7 @@ export const __AdminUserSession = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminUserSessionList' },
+      name: { kind: 'Name', value: '__AdminUserSessionSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'UserSession' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -26815,7 +26881,7 @@ export const __AdminUserSession = {
       selectionSet: {
         kind: 'SelectionSet',
         selections: [
-          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminUserSessionList' } },
+          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminUserSessionSummary' } },
         ],
       },
     },
@@ -26851,7 +26917,10 @@ export const __AdminUserSessions = {
             selectionSet: {
               kind: 'SelectionSet',
               selections: [
-                { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminUserSessionList' } },
+                {
+                  kind: 'FragmentSpread',
+                  name: { kind: 'Name', value: '__AdminUserSessionSummary' },
+                },
               ],
             },
           },
@@ -26878,7 +26947,7 @@ export const __AdminUserSessions = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminUserSessionList' },
+      name: { kind: 'Name', value: '__AdminUserSessionSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'UserSession' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -27028,7 +27097,7 @@ export const __AdminCreateUser = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminUserList' },
+      name: { kind: 'Name', value: '__AdminUserSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'User' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -27068,7 +27137,9 @@ export const __AdminCreateUser = {
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'User' } },
       selectionSet: {
         kind: 'SelectionSet',
-        selections: [{ kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminUserList' } }],
+        selections: [
+          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminUserSummary' } },
+        ],
       },
     },
   ],
@@ -27168,7 +27239,7 @@ export const __AdminUpdateUser = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminUserList' },
+      name: { kind: 'Name', value: '__AdminUserSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'User' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -27208,7 +27279,9 @@ export const __AdminUpdateUser = {
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'User' } },
       selectionSet: {
         kind: 'SelectionSet',
-        selections: [{ kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminUserList' } }],
+        selections: [
+          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminUserSummary' } },
+        ],
       },
     },
   ],
@@ -27255,7 +27328,7 @@ export const __AdminUser = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminUserList' },
+      name: { kind: 'Name', value: '__AdminUserSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'User' } },
       selectionSet: {
         kind: 'SelectionSet',
@@ -27295,7 +27368,9 @@ export const __AdminUser = {
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'User' } },
       selectionSet: {
         kind: 'SelectionSet',
-        selections: [{ kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminUserList' } }],
+        selections: [
+          { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminUserSummary' } },
+        ],
       },
     },
   ],
@@ -27330,7 +27405,7 @@ export const __AdminUsers = {
             selectionSet: {
               kind: 'SelectionSet',
               selections: [
-                { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminUserList' } },
+                { kind: 'FragmentSpread', name: { kind: 'Name', value: '__AdminUserSummary' } },
               ],
             },
           },
@@ -27357,7 +27432,7 @@ export const __AdminUsers = {
     },
     {
       kind: 'FragmentDefinition',
-      name: { kind: 'Name', value: '__AdminUserList' },
+      name: { kind: 'Name', value: '__AdminUserSummary' },
       typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'User' } },
       selectionSet: {
         kind: 'SelectionSet',

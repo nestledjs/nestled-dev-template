@@ -13,9 +13,9 @@ export class ApiCrudDataAccessService {
     const data: any = regularFields
 
     const relationMappings = {
-      country: { ids: countryId, isVirtual: false, isList: false },
-      user: { ids: userId, isVirtual: false, isList: false },
-      organization: { ids: organizationId, isVirtual: false, isList: false },
+      country: { ids: countryId, isVirtual: false, isList: false, isRequired: false },
+      user: { ids: userId, isVirtual: false, isList: false, isRequired: false },
+      organization: { ids: organizationId, isVirtual: false, isList: false, isRequired: false },
     }
 
     for (const [relationName, config] of Object.entries(relationMappings)) {
@@ -82,9 +82,9 @@ export class ApiCrudDataAccessService {
     const data: any = regularFields
 
     const relationMappings = {
-      country: { ids: countryId, isVirtual: false, isList: false },
-      user: { ids: userId, isVirtual: false, isList: false },
-      organization: { ids: organizationId, isVirtual: false, isList: false },
+      country: { ids: countryId, isVirtual: false, isList: false, isRequired: false },
+      user: { ids: userId, isVirtual: false, isList: false, isRequired: false },
+      organization: { ids: organizationId, isVirtual: false, isList: false, isRequired: false },
     }
 
     for (const [relationName, config] of Object.entries(relationMappings)) {
@@ -98,9 +98,12 @@ export class ApiCrudDataAccessService {
           const relationOperation = config.isVirtual ? 'set' : 'connect'
           data[relationName] = { [relationOperation]: ids }
         } else {
-          // Single relationship - always use connect
+          // Single relationship - connect when an id is provided; disconnect when null on update
           data[relationName] = { connect: { id: config.ids } }
         }
+      } else if (config.ids === null && !config.isList && !config.isRequired && !config.isVirtual) {
+        // Explicitly null - disconnect the optional single relationship (only when this model owns the FK)
+        data[relationName] = { disconnect: true }
       }
     }
 
@@ -122,7 +125,7 @@ export class ApiCrudDataAccessService {
     const data: any = regularFields
 
     const relationMappings = {
-      user: { ids: userId, isVirtual: false, isList: false },
+      user: { ids: userId, isVirtual: false, isList: false, isRequired: true },
     }
 
     for (const [relationName, config] of Object.entries(relationMappings)) {
@@ -189,7 +192,7 @@ export class ApiCrudDataAccessService {
     const data: any = regularFields
 
     const relationMappings = {
-      user: { ids: userId, isVirtual: false, isList: false },
+      user: { ids: userId, isVirtual: false, isList: false, isRequired: true },
     }
 
     for (const [relationName, config] of Object.entries(relationMappings)) {
@@ -203,9 +206,12 @@ export class ApiCrudDataAccessService {
           const relationOperation = config.isVirtual ? 'set' : 'connect'
           data[relationName] = { [relationOperation]: ids }
         } else {
-          // Single relationship - always use connect
+          // Single relationship - connect when an id is provided; disconnect when null on update
           data[relationName] = { connect: { id: config.ids } }
         }
+      } else if (config.ids === null && !config.isList && !config.isRequired && !config.isVirtual) {
+        // Explicitly null - disconnect the optional single relationship (only when this model owns the FK)
+        data[relationName] = { disconnect: true }
       }
     }
 
@@ -227,8 +233,8 @@ export class ApiCrudDataAccessService {
     const data: any = regularFields
 
     const relationMappings = {
-      user: { ids: userId, isVirtual: false, isList: false },
-      organization: { ids: organizationId, isVirtual: false, isList: false },
+      user: { ids: userId, isVirtual: false, isList: false, isRequired: true },
+      organization: { ids: organizationId, isVirtual: false, isList: false, isRequired: false },
     }
 
     for (const [relationName, config] of Object.entries(relationMappings)) {
@@ -295,8 +301,8 @@ export class ApiCrudDataAccessService {
     const data: any = regularFields
 
     const relationMappings = {
-      user: { ids: userId, isVirtual: false, isList: false },
-      organization: { ids: organizationId, isVirtual: false, isList: false },
+      user: { ids: userId, isVirtual: false, isList: false, isRequired: true },
+      organization: { ids: organizationId, isVirtual: false, isList: false, isRequired: false },
     }
 
     for (const [relationName, config] of Object.entries(relationMappings)) {
@@ -310,9 +316,12 @@ export class ApiCrudDataAccessService {
           const relationOperation = config.isVirtual ? 'set' : 'connect'
           data[relationName] = { [relationOperation]: ids }
         } else {
-          // Single relationship - always use connect
+          // Single relationship - connect when an id is provided; disconnect when null on update
           data[relationName] = { connect: { id: config.ids } }
         }
+      } else if (config.ids === null && !config.isList && !config.isRequired && !config.isVirtual) {
+        // Explicitly null - disconnect the optional single relationship (only when this model owns the FK)
+        data[relationName] = { disconnect: true }
       }
     }
 
@@ -334,7 +343,7 @@ export class ApiCrudDataAccessService {
     const data: any = regularFields
 
     const relationMappings = {
-      addresses: { ids: addressesIds, isVirtual: true, isList: true },
+      addresses: { ids: addressesIds, isVirtual: true, isList: true, isRequired: false },
     }
 
     for (const [relationName, config] of Object.entries(relationMappings)) {
@@ -401,7 +410,7 @@ export class ApiCrudDataAccessService {
     const data: any = regularFields
 
     const relationMappings = {
-      addresses: { ids: addressesIds, isVirtual: true, isList: true },
+      addresses: { ids: addressesIds, isVirtual: true, isList: true, isRequired: false },
     }
 
     for (const [relationName, config] of Object.entries(relationMappings)) {
@@ -415,9 +424,12 @@ export class ApiCrudDataAccessService {
           const relationOperation = config.isVirtual ? 'set' : 'connect'
           data[relationName] = { [relationOperation]: ids }
         } else {
-          // Single relationship - always use connect
+          // Single relationship - connect when an id is provided; disconnect when null on update
           data[relationName] = { connect: { id: config.ids } }
         }
+      } else if (config.ids === null && !config.isList && !config.isRequired && !config.isVirtual) {
+        // Explicitly null - disconnect the optional single relationship (only when this model owns the FK)
+        data[relationName] = { disconnect: true }
       }
     }
 
@@ -439,8 +451,8 @@ export class ApiCrudDataAccessService {
     const data: any = regularFields
 
     const relationMappings = {
-      user: { ids: userId, isVirtual: false, isList: false },
-      organization: { ids: organizationId, isVirtual: false, isList: false },
+      user: { ids: userId, isVirtual: false, isList: false, isRequired: false },
+      organization: { ids: organizationId, isVirtual: false, isList: false, isRequired: false },
     }
 
     for (const [relationName, config] of Object.entries(relationMappings)) {
@@ -507,8 +519,8 @@ export class ApiCrudDataAccessService {
     const data: any = regularFields
 
     const relationMappings = {
-      user: { ids: userId, isVirtual: false, isList: false },
-      organization: { ids: organizationId, isVirtual: false, isList: false },
+      user: { ids: userId, isVirtual: false, isList: false, isRequired: false },
+      organization: { ids: organizationId, isVirtual: false, isList: false, isRequired: false },
     }
 
     for (const [relationName, config] of Object.entries(relationMappings)) {
@@ -522,9 +534,12 @@ export class ApiCrudDataAccessService {
           const relationOperation = config.isVirtual ? 'set' : 'connect'
           data[relationName] = { [relationOperation]: ids }
         } else {
-          // Single relationship - always use connect
+          // Single relationship - connect when an id is provided; disconnect when null on update
           data[relationName] = { connect: { id: config.ids } }
         }
+      } else if (config.ids === null && !config.isList && !config.isRequired && !config.isVirtual) {
+        // Explicitly null - disconnect the optional single relationship (only when this model owns the FK)
+        data[relationName] = { disconnect: true }
       }
     }
 
@@ -546,9 +561,9 @@ export class ApiCrudDataAccessService {
     const data: any = regularFields
 
     const relationMappings = {
-      inviter: { ids: inviterId, isVirtual: false, isList: false },
-      organization: { ids: organizationId, isVirtual: false, isList: false },
-      role: { ids: roleId, isVirtual: false, isList: false },
+      inviter: { ids: inviterId, isVirtual: false, isList: false, isRequired: true },
+      organization: { ids: organizationId, isVirtual: false, isList: false, isRequired: true },
+      role: { ids: roleId, isVirtual: false, isList: false, isRequired: false },
     }
 
     for (const [relationName, config] of Object.entries(relationMappings)) {
@@ -615,9 +630,9 @@ export class ApiCrudDataAccessService {
     const data: any = regularFields
 
     const relationMappings = {
-      inviter: { ids: inviterId, isVirtual: false, isList: false },
-      organization: { ids: organizationId, isVirtual: false, isList: false },
-      role: { ids: roleId, isVirtual: false, isList: false },
+      inviter: { ids: inviterId, isVirtual: false, isList: false, isRequired: true },
+      organization: { ids: organizationId, isVirtual: false, isList: false, isRequired: true },
+      role: { ids: roleId, isVirtual: false, isList: false, isRequired: false },
     }
 
     for (const [relationName, config] of Object.entries(relationMappings)) {
@@ -631,9 +646,12 @@ export class ApiCrudDataAccessService {
           const relationOperation = config.isVirtual ? 'set' : 'connect'
           data[relationName] = { [relationOperation]: ids }
         } else {
-          // Single relationship - always use connect
+          // Single relationship - connect when an id is provided; disconnect when null on update
           data[relationName] = { connect: { id: config.ids } }
         }
+      } else if (config.ids === null && !config.isList && !config.isRequired && !config.isVirtual) {
+        // Explicitly null - disconnect the optional single relationship (only when this model owns the FK)
+        data[relationName] = { disconnect: true }
       }
     }
 
@@ -655,8 +673,8 @@ export class ApiCrudDataAccessService {
     const data: any = regularFields
 
     const relationMappings = {
-      user: { ids: userId, isVirtual: false, isList: false },
-      organization: { ids: organizationId, isVirtual: false, isList: false },
+      user: { ids: userId, isVirtual: false, isList: false, isRequired: false },
+      organization: { ids: organizationId, isVirtual: false, isList: false, isRequired: false },
     }
 
     for (const [relationName, config] of Object.entries(relationMappings)) {
@@ -723,8 +741,8 @@ export class ApiCrudDataAccessService {
     const data: any = regularFields
 
     const relationMappings = {
-      user: { ids: userId, isVirtual: false, isList: false },
-      organization: { ids: organizationId, isVirtual: false, isList: false },
+      user: { ids: userId, isVirtual: false, isList: false, isRequired: false },
+      organization: { ids: organizationId, isVirtual: false, isList: false, isRequired: false },
     }
 
     for (const [relationName, config] of Object.entries(relationMappings)) {
@@ -738,9 +756,12 @@ export class ApiCrudDataAccessService {
           const relationOperation = config.isVirtual ? 'set' : 'connect'
           data[relationName] = { [relationOperation]: ids }
         } else {
-          // Single relationship - always use connect
+          // Single relationship - connect when an id is provided; disconnect when null on update
           data[relationName] = { connect: { id: config.ids } }
         }
+      } else if (config.ids === null && !config.isList && !config.isRequired && !config.isVirtual) {
+        // Explicitly null - disconnect the optional single relationship (only when this model owns the FK)
+        data[relationName] = { disconnect: true }
       }
     }
 
@@ -762,7 +783,7 @@ export class ApiCrudDataAccessService {
     const data: any = regularFields
 
     const relationMappings = {
-      user: { ids: userId, isVirtual: false, isList: false },
+      user: { ids: userId, isVirtual: false, isList: false, isRequired: false },
     }
 
     for (const [relationName, config] of Object.entries(relationMappings)) {
@@ -833,7 +854,7 @@ export class ApiCrudDataAccessService {
     const data: any = regularFields
 
     const relationMappings = {
-      user: { ids: userId, isVirtual: false, isList: false },
+      user: { ids: userId, isVirtual: false, isList: false, isRequired: false },
     }
 
     for (const [relationName, config] of Object.entries(relationMappings)) {
@@ -847,9 +868,12 @@ export class ApiCrudDataAccessService {
           const relationOperation = config.isVirtual ? 'set' : 'connect'
           data[relationName] = { [relationOperation]: ids }
         } else {
-          // Single relationship - always use connect
+          // Single relationship - connect when an id is provided; disconnect when null on update
           data[relationName] = { connect: { id: config.ids } }
         }
+      } else if (config.ids === null && !config.isList && !config.isRequired && !config.isVirtual) {
+        // Explicitly null - disconnect the optional single relationship (only when this model owns the FK)
+        data[relationName] = { disconnect: true }
       }
     }
 
@@ -871,7 +895,7 @@ export class ApiCrudDataAccessService {
     const data: any = regularFields
 
     const relationMappings = {
-      user: { ids: userId, isVirtual: false, isList: false },
+      user: { ids: userId, isVirtual: false, isList: false, isRequired: true },
     }
 
     for (const [relationName, config] of Object.entries(relationMappings)) {
@@ -942,7 +966,7 @@ export class ApiCrudDataAccessService {
     const data: any = regularFields
 
     const relationMappings = {
-      user: { ids: userId, isVirtual: false, isList: false },
+      user: { ids: userId, isVirtual: false, isList: false, isRequired: true },
     }
 
     for (const [relationName, config] of Object.entries(relationMappings)) {
@@ -956,9 +980,12 @@ export class ApiCrudDataAccessService {
           const relationOperation = config.isVirtual ? 'set' : 'connect'
           data[relationName] = { [relationOperation]: ids }
         } else {
-          // Single relationship - always use connect
+          // Single relationship - connect when an id is provided; disconnect when null on update
           data[relationName] = { connect: { id: config.ids } }
         }
+      } else if (config.ids === null && !config.isList && !config.isRequired && !config.isVirtual) {
+        // Explicitly null - disconnect the optional single relationship (only when this model owns the FK)
+        data[relationName] = { disconnect: true }
       }
     }
 
@@ -993,17 +1020,17 @@ export class ApiCrudDataAccessService {
     const data: any = regularFields
 
     const relationMappings = {
-      emails: { ids: emailsIds, isVirtual: true, isList: true },
-      links: { ids: linksIds, isVirtual: true, isList: true },
-      phoneNumbers: { ids: phoneNumbersIds, isVirtual: true, isList: true },
-      images: { ids: imagesIds, isVirtual: true, isList: true },
-      members: { ids: membersIds, isVirtual: true, isList: true },
-      addresses: { ids: addressesIds, isVirtual: true, isList: true },
-      invites: { ids: invitesIds, isVirtual: true, isList: true },
-      AuditLog: { ids: AuditLogIds, isVirtual: true, isList: true },
-      Team: { ids: TeamIds, isVirtual: true, isList: true },
-      subscription: { ids: subscriptionId, isVirtual: true, isList: false },
-      roles: { ids: rolesIds, isVirtual: true, isList: true },
+      emails: { ids: emailsIds, isVirtual: true, isList: true, isRequired: false },
+      links: { ids: linksIds, isVirtual: true, isList: true, isRequired: false },
+      phoneNumbers: { ids: phoneNumbersIds, isVirtual: true, isList: true, isRequired: false },
+      images: { ids: imagesIds, isVirtual: true, isList: true, isRequired: false },
+      members: { ids: membersIds, isVirtual: true, isList: true, isRequired: false },
+      addresses: { ids: addressesIds, isVirtual: true, isList: true, isRequired: false },
+      invites: { ids: invitesIds, isVirtual: true, isList: true, isRequired: false },
+      AuditLog: { ids: AuditLogIds, isVirtual: true, isList: true, isRequired: false },
+      Team: { ids: TeamIds, isVirtual: true, isList: true, isRequired: false },
+      subscription: { ids: subscriptionId, isVirtual: true, isList: false, isRequired: false },
+      roles: { ids: rolesIds, isVirtual: true, isList: true, isRequired: false },
     }
 
     for (const [relationName, config] of Object.entries(relationMappings)) {
@@ -1087,17 +1114,17 @@ export class ApiCrudDataAccessService {
     const data: any = regularFields
 
     const relationMappings = {
-      emails: { ids: emailsIds, isVirtual: true, isList: true },
-      links: { ids: linksIds, isVirtual: true, isList: true },
-      phoneNumbers: { ids: phoneNumbersIds, isVirtual: true, isList: true },
-      images: { ids: imagesIds, isVirtual: true, isList: true },
-      members: { ids: membersIds, isVirtual: true, isList: true },
-      addresses: { ids: addressesIds, isVirtual: true, isList: true },
-      invites: { ids: invitesIds, isVirtual: true, isList: true },
-      AuditLog: { ids: AuditLogIds, isVirtual: true, isList: true },
-      Team: { ids: TeamIds, isVirtual: true, isList: true },
-      subscription: { ids: subscriptionId, isVirtual: true, isList: false },
-      roles: { ids: rolesIds, isVirtual: true, isList: true },
+      emails: { ids: emailsIds, isVirtual: true, isList: true, isRequired: false },
+      links: { ids: linksIds, isVirtual: true, isList: true, isRequired: false },
+      phoneNumbers: { ids: phoneNumbersIds, isVirtual: true, isList: true, isRequired: false },
+      images: { ids: imagesIds, isVirtual: true, isList: true, isRequired: false },
+      members: { ids: membersIds, isVirtual: true, isList: true, isRequired: false },
+      addresses: { ids: addressesIds, isVirtual: true, isList: true, isRequired: false },
+      invites: { ids: invitesIds, isVirtual: true, isList: true, isRequired: false },
+      AuditLog: { ids: AuditLogIds, isVirtual: true, isList: true, isRequired: false },
+      Team: { ids: TeamIds, isVirtual: true, isList: true, isRequired: false },
+      subscription: { ids: subscriptionId, isVirtual: true, isList: false, isRequired: false },
+      roles: { ids: rolesIds, isVirtual: true, isList: true, isRequired: false },
     }
 
     for (const [relationName, config] of Object.entries(relationMappings)) {
@@ -1111,9 +1138,12 @@ export class ApiCrudDataAccessService {
           const relationOperation = config.isVirtual ? 'set' : 'connect'
           data[relationName] = { [relationOperation]: ids }
         } else {
-          // Single relationship - always use connect
+          // Single relationship - connect when an id is provided; disconnect when null on update
           data[relationName] = { connect: { id: config.ids } }
         }
+      } else if (config.ids === null && !config.isList && !config.isRequired && !config.isVirtual) {
+        // Explicitly null - disconnect the optional single relationship (only when this model owns the FK)
+        data[relationName] = { disconnect: true }
       }
     }
 
@@ -1138,9 +1168,9 @@ export class ApiCrudDataAccessService {
     const data: any = regularFields
 
     const relationMappings = {
-      role: { ids: roleId, isVirtual: false, isList: false },
-      user: { ids: userId, isVirtual: false, isList: false },
-      organization: { ids: organizationId, isVirtual: false, isList: false },
+      role: { ids: roleId, isVirtual: false, isList: false, isRequired: true },
+      user: { ids: userId, isVirtual: false, isList: false, isRequired: true },
+      organization: { ids: organizationId, isVirtual: false, isList: false, isRequired: true },
     }
 
     for (const [relationName, config] of Object.entries(relationMappings)) {
@@ -1211,9 +1241,9 @@ export class ApiCrudDataAccessService {
     const data: any = regularFields
 
     const relationMappings = {
-      role: { ids: roleId, isVirtual: false, isList: false },
-      user: { ids: userId, isVirtual: false, isList: false },
-      organization: { ids: organizationId, isVirtual: false, isList: false },
+      role: { ids: roleId, isVirtual: false, isList: false, isRequired: true },
+      user: { ids: userId, isVirtual: false, isList: false, isRequired: true },
+      organization: { ids: organizationId, isVirtual: false, isList: false, isRequired: true },
     }
 
     for (const [relationName, config] of Object.entries(relationMappings)) {
@@ -1227,9 +1257,12 @@ export class ApiCrudDataAccessService {
           const relationOperation = config.isVirtual ? 'set' : 'connect'
           data[relationName] = { [relationOperation]: ids }
         } else {
-          // Single relationship - always use connect
+          // Single relationship - connect when an id is provided; disconnect when null on update
           data[relationName] = { connect: { id: config.ids } }
         }
+      } else if (config.ids === null && !config.isList && !config.isRequired && !config.isVirtual) {
+        // Explicitly null - disconnect the optional single relationship (only when this model owns the FK)
+        data[relationName] = { disconnect: true }
       }
     }
 
@@ -1251,7 +1284,7 @@ export class ApiCrudDataAccessService {
     const data: any = regularFields
 
     const relationMappings = {
-      roles: { ids: rolesIds, isVirtual: true, isList: true },
+      roles: { ids: rolesIds, isVirtual: true, isList: true, isRequired: false },
     }
 
     for (const [relationName, config] of Object.entries(relationMappings)) {
@@ -1318,7 +1351,7 @@ export class ApiCrudDataAccessService {
     const data: any = regularFields
 
     const relationMappings = {
-      roles: { ids: rolesIds, isVirtual: true, isList: true },
+      roles: { ids: rolesIds, isVirtual: true, isList: true, isRequired: false },
     }
 
     for (const [relationName, config] of Object.entries(relationMappings)) {
@@ -1332,9 +1365,12 @@ export class ApiCrudDataAccessService {
           const relationOperation = config.isVirtual ? 'set' : 'connect'
           data[relationName] = { [relationOperation]: ids }
         } else {
-          // Single relationship - always use connect
+          // Single relationship - connect when an id is provided; disconnect when null on update
           data[relationName] = { connect: { id: config.ids } }
         }
+      } else if (config.ids === null && !config.isList && !config.isRequired && !config.isVirtual) {
+        // Explicitly null - disconnect the optional single relationship (only when this model owns the FK)
+        data[relationName] = { disconnect: true }
       }
     }
 
@@ -1356,8 +1392,8 @@ export class ApiCrudDataAccessService {
     const data: any = regularFields
 
     const relationMappings = {
-      user: { ids: userId, isVirtual: false, isList: false },
-      organization: { ids: organizationId, isVirtual: false, isList: false },
+      user: { ids: userId, isVirtual: false, isList: false, isRequired: false },
+      organization: { ids: organizationId, isVirtual: false, isList: false, isRequired: false },
     }
 
     for (const [relationName, config] of Object.entries(relationMappings)) {
@@ -1424,8 +1460,8 @@ export class ApiCrudDataAccessService {
     const data: any = regularFields
 
     const relationMappings = {
-      user: { ids: userId, isVirtual: false, isList: false },
-      organization: { ids: organizationId, isVirtual: false, isList: false },
+      user: { ids: userId, isVirtual: false, isList: false, isRequired: false },
+      organization: { ids: organizationId, isVirtual: false, isList: false, isRequired: false },
     }
 
     for (const [relationName, config] of Object.entries(relationMappings)) {
@@ -1439,9 +1475,12 @@ export class ApiCrudDataAccessService {
           const relationOperation = config.isVirtual ? 'set' : 'connect'
           data[relationName] = { [relationOperation]: ids }
         } else {
-          // Single relationship - always use connect
+          // Single relationship - connect when an id is provided; disconnect when null on update
           data[relationName] = { connect: { id: config.ids } }
         }
+      } else if (config.ids === null && !config.isList && !config.isRequired && !config.isVirtual) {
+        // Explicitly null - disconnect the optional single relationship (only when this model owns the FK)
+        data[relationName] = { disconnect: true }
       }
     }
 
@@ -1463,7 +1502,7 @@ export class ApiCrudDataAccessService {
     const data: any = regularFields
 
     const relationMappings = {
-      subscriptions: { ids: subscriptionsIds, isVirtual: true, isList: true },
+      subscriptions: { ids: subscriptionsIds, isVirtual: true, isList: true, isRequired: false },
     }
 
     for (const [relationName, config] of Object.entries(relationMappings)) {
@@ -1530,7 +1569,7 @@ export class ApiCrudDataAccessService {
     const data: any = regularFields
 
     const relationMappings = {
-      subscriptions: { ids: subscriptionsIds, isVirtual: true, isList: true },
+      subscriptions: { ids: subscriptionsIds, isVirtual: true, isList: true, isRequired: false },
     }
 
     for (const [relationName, config] of Object.entries(relationMappings)) {
@@ -1544,9 +1583,12 @@ export class ApiCrudDataAccessService {
           const relationOperation = config.isVirtual ? 'set' : 'connect'
           data[relationName] = { [relationOperation]: ids }
         } else {
-          // Single relationship - always use connect
+          // Single relationship - connect when an id is provided; disconnect when null on update
           data[relationName] = { connect: { id: config.ids } }
         }
+      } else if (config.ids === null && !config.isList && !config.isRequired && !config.isVirtual) {
+        // Explicitly null - disconnect the optional single relationship (only when this model owns the FK)
+        data[relationName] = { disconnect: true }
       }
     }
 
@@ -1575,11 +1617,11 @@ export class ApiCrudDataAccessService {
     const data: any = regularFields
 
     const relationMappings = {
-      permissions: { ids: permissionsIds, isVirtual: true, isList: true },
-      members: { ids: membersIds, isVirtual: true, isList: true },
-      teamMembers: { ids: teamMembersIds, isVirtual: true, isList: true },
-      invites: { ids: invitesIds, isVirtual: true, isList: true },
-      organization: { ids: organizationId, isVirtual: false, isList: false },
+      permissions: { ids: permissionsIds, isVirtual: true, isList: true, isRequired: false },
+      members: { ids: membersIds, isVirtual: true, isList: true, isRequired: false },
+      teamMembers: { ids: teamMembersIds, isVirtual: true, isList: true, isRequired: false },
+      invites: { ids: invitesIds, isVirtual: true, isList: true, isRequired: false },
+      organization: { ids: organizationId, isVirtual: false, isList: false, isRequired: false },
     }
 
     for (const [relationName, config] of Object.entries(relationMappings)) {
@@ -1653,11 +1695,11 @@ export class ApiCrudDataAccessService {
     const data: any = regularFields
 
     const relationMappings = {
-      permissions: { ids: permissionsIds, isVirtual: true, isList: true },
-      members: { ids: membersIds, isVirtual: true, isList: true },
-      teamMembers: { ids: teamMembersIds, isVirtual: true, isList: true },
-      invites: { ids: invitesIds, isVirtual: true, isList: true },
-      organization: { ids: organizationId, isVirtual: false, isList: false },
+      permissions: { ids: permissionsIds, isVirtual: true, isList: true, isRequired: false },
+      members: { ids: membersIds, isVirtual: true, isList: true, isRequired: false },
+      teamMembers: { ids: teamMembersIds, isVirtual: true, isList: true, isRequired: false },
+      invites: { ids: invitesIds, isVirtual: true, isList: true, isRequired: false },
+      organization: { ids: organizationId, isVirtual: false, isList: false, isRequired: false },
     }
 
     for (const [relationName, config] of Object.entries(relationMappings)) {
@@ -1671,9 +1713,12 @@ export class ApiCrudDataAccessService {
           const relationOperation = config.isVirtual ? 'set' : 'connect'
           data[relationName] = { [relationOperation]: ids }
         } else {
-          // Single relationship - always use connect
+          // Single relationship - connect when an id is provided; disconnect when null on update
           data[relationName] = { connect: { id: config.ids } }
         }
+      } else if (config.ids === null && !config.isList && !config.isRequired && !config.isVirtual) {
+        // Explicitly null - disconnect the optional single relationship (only when this model owns the FK)
+        data[relationName] = { disconnect: true }
       }
     }
 
@@ -1695,7 +1740,7 @@ export class ApiCrudDataAccessService {
     const data: any = regularFields
 
     const relationMappings = {
-      user: { ids: userId, isVirtual: false, isList: false },
+      user: { ids: userId, isVirtual: false, isList: false, isRequired: true },
     }
 
     for (const [relationName, config] of Object.entries(relationMappings)) {
@@ -1766,7 +1811,7 @@ export class ApiCrudDataAccessService {
     const data: any = regularFields
 
     const relationMappings = {
-      user: { ids: userId, isVirtual: false, isList: false },
+      user: { ids: userId, isVirtual: false, isList: false, isRequired: true },
     }
 
     for (const [relationName, config] of Object.entries(relationMappings)) {
@@ -1780,9 +1825,12 @@ export class ApiCrudDataAccessService {
           const relationOperation = config.isVirtual ? 'set' : 'connect'
           data[relationName] = { [relationOperation]: ids }
         } else {
-          // Single relationship - always use connect
+          // Single relationship - connect when an id is provided; disconnect when null on update
           data[relationName] = { connect: { id: config.ids } }
         }
+      } else if (config.ids === null && !config.isList && !config.isRequired && !config.isVirtual) {
+        // Explicitly null - disconnect the optional single relationship (only when this model owns the FK)
+        data[relationName] = { disconnect: true }
       }
     }
 
@@ -1804,8 +1852,8 @@ export class ApiCrudDataAccessService {
     const data: any = regularFields
 
     const relationMappings = {
-      organization: { ids: organizationId, isVirtual: false, isList: false },
-      plan: { ids: planId, isVirtual: false, isList: false },
+      organization: { ids: organizationId, isVirtual: false, isList: false, isRequired: true },
+      plan: { ids: planId, isVirtual: false, isList: false, isRequired: true },
     }
 
     for (const [relationName, config] of Object.entries(relationMappings)) {
@@ -1876,8 +1924,8 @@ export class ApiCrudDataAccessService {
     const data: any = regularFields
 
     const relationMappings = {
-      organization: { ids: organizationId, isVirtual: false, isList: false },
-      plan: { ids: planId, isVirtual: false, isList: false },
+      organization: { ids: organizationId, isVirtual: false, isList: false, isRequired: true },
+      plan: { ids: planId, isVirtual: false, isList: false, isRequired: true },
     }
 
     for (const [relationName, config] of Object.entries(relationMappings)) {
@@ -1891,9 +1939,12 @@ export class ApiCrudDataAccessService {
           const relationOperation = config.isVirtual ? 'set' : 'connect'
           data[relationName] = { [relationOperation]: ids }
         } else {
-          // Single relationship - always use connect
+          // Single relationship - connect when an id is provided; disconnect when null on update
           data[relationName] = { connect: { id: config.ids } }
         }
+      } else if (config.ids === null && !config.isList && !config.isRequired && !config.isVirtual) {
+        // Explicitly null - disconnect the optional single relationship (only when this model owns the FK)
+        data[relationName] = { disconnect: true }
       }
     }
 
@@ -1915,8 +1966,8 @@ export class ApiCrudDataAccessService {
     const data: any = regularFields
 
     const relationMappings = {
-      members: { ids: membersIds, isVirtual: true, isList: true },
-      organization: { ids: organizationId, isVirtual: false, isList: false },
+      members: { ids: membersIds, isVirtual: true, isList: true, isRequired: false },
+      organization: { ids: organizationId, isVirtual: false, isList: false, isRequired: true },
     }
 
     for (const [relationName, config] of Object.entries(relationMappings)) {
@@ -1983,8 +2034,8 @@ export class ApiCrudDataAccessService {
     const data: any = regularFields
 
     const relationMappings = {
-      members: { ids: membersIds, isVirtual: true, isList: true },
-      organization: { ids: organizationId, isVirtual: false, isList: false },
+      members: { ids: membersIds, isVirtual: true, isList: true, isRequired: false },
+      organization: { ids: organizationId, isVirtual: false, isList: false, isRequired: true },
     }
 
     for (const [relationName, config] of Object.entries(relationMappings)) {
@@ -1998,9 +2049,12 @@ export class ApiCrudDataAccessService {
           const relationOperation = config.isVirtual ? 'set' : 'connect'
           data[relationName] = { [relationOperation]: ids }
         } else {
-          // Single relationship - always use connect
+          // Single relationship - connect when an id is provided; disconnect when null on update
           data[relationName] = { connect: { id: config.ids } }
         }
+      } else if (config.ids === null && !config.isList && !config.isRequired && !config.isVirtual) {
+        // Explicitly null - disconnect the optional single relationship (only when this model owns the FK)
+        data[relationName] = { disconnect: true }
       }
     }
 
@@ -2022,9 +2076,9 @@ export class ApiCrudDataAccessService {
     const data: any = regularFields
 
     const relationMappings = {
-      team: { ids: teamId, isVirtual: false, isList: false },
-      user: { ids: userId, isVirtual: false, isList: false },
-      role: { ids: roleId, isVirtual: false, isList: false },
+      team: { ids: teamId, isVirtual: false, isList: false, isRequired: true },
+      user: { ids: userId, isVirtual: false, isList: false, isRequired: true },
+      role: { ids: roleId, isVirtual: false, isList: false, isRequired: true },
     }
 
     for (const [relationName, config] of Object.entries(relationMappings)) {
@@ -2091,9 +2145,9 @@ export class ApiCrudDataAccessService {
     const data: any = regularFields
 
     const relationMappings = {
-      team: { ids: teamId, isVirtual: false, isList: false },
-      user: { ids: userId, isVirtual: false, isList: false },
-      role: { ids: roleId, isVirtual: false, isList: false },
+      team: { ids: teamId, isVirtual: false, isList: false, isRequired: true },
+      user: { ids: userId, isVirtual: false, isList: false, isRequired: true },
+      role: { ids: roleId, isVirtual: false, isList: false, isRequired: true },
     }
 
     for (const [relationName, config] of Object.entries(relationMappings)) {
@@ -2107,9 +2161,12 @@ export class ApiCrudDataAccessService {
           const relationOperation = config.isVirtual ? 'set' : 'connect'
           data[relationName] = { [relationOperation]: ids }
         } else {
-          // Single relationship - always use connect
+          // Single relationship - connect when an id is provided; disconnect when null on update
           data[relationName] = { connect: { id: config.ids } }
         }
+      } else if (config.ids === null && !config.isList && !config.isRequired && !config.isVirtual) {
+        // Explicitly null - disconnect the optional single relationship (only when this model owns the FK)
+        data[relationName] = { disconnect: true }
       }
     }
 
@@ -2131,8 +2188,8 @@ export class ApiCrudDataAccessService {
     const data: any = regularFields
 
     const relationMappings = {
-      user: { ids: userId, isVirtual: false, isList: false },
-      organization: { ids: organizationId, isVirtual: false, isList: false },
+      user: { ids: userId, isVirtual: false, isList: false, isRequired: false },
+      organization: { ids: organizationId, isVirtual: false, isList: false, isRequired: false },
     }
 
     for (const [relationName, config] of Object.entries(relationMappings)) {
@@ -2199,8 +2256,8 @@ export class ApiCrudDataAccessService {
     const data: any = regularFields
 
     const relationMappings = {
-      user: { ids: userId, isVirtual: false, isList: false },
-      organization: { ids: organizationId, isVirtual: false, isList: false },
+      user: { ids: userId, isVirtual: false, isList: false, isRequired: false },
+      organization: { ids: organizationId, isVirtual: false, isList: false, isRequired: false },
     }
 
     for (const [relationName, config] of Object.entries(relationMappings)) {
@@ -2214,9 +2271,12 @@ export class ApiCrudDataAccessService {
           const relationOperation = config.isVirtual ? 'set' : 'connect'
           data[relationName] = { [relationOperation]: ids }
         } else {
-          // Single relationship - always use connect
+          // Single relationship - connect when an id is provided; disconnect when null on update
           data[relationName] = { connect: { id: config.ids } }
         }
+      } else if (config.ids === null && !config.isList && !config.isRequired && !config.isVirtual) {
+        // Explicitly null - disconnect the optional single relationship (only when this model owns the FK)
+        data[relationName] = { disconnect: true }
       }
     }
 
@@ -2256,22 +2316,27 @@ export class ApiCrudDataAccessService {
     const data: any = regularFields
 
     const relationMappings = {
-      emails: { ids: emailsIds, isVirtual: true, isList: true },
-      links: { ids: linksIds, isVirtual: true, isList: true },
-      phoneNumbers: { ids: phoneNumbersIds, isVirtual: true, isList: true },
-      images: { ids: imagesIds, isVirtual: true, isList: true },
-      organizations: { ids: organizationsIds, isVirtual: true, isList: true },
-      addresses: { ids: addressesIds, isVirtual: true, isList: true },
-      invitesSent: { ids: invitesSentIds, isVirtual: true, isList: true },
-      activeSessions: { ids: activeSessionsIds, isVirtual: true, isList: true },
-      passwordHistory: { ids: passwordHistoryIds, isVirtual: true, isList: true },
-      loginAttempts: { ids: loginAttemptsIds, isVirtual: true, isList: true },
-      AuditLog: { ids: AuditLogIds, isVirtual: true, isList: true },
-      UserPreference: { ids: UserPreferenceIds, isVirtual: true, isList: true },
-      TeamMember: { ids: TeamMemberIds, isVirtual: true, isList: true },
-      SecurityEvent: { ids: SecurityEventIds, isVirtual: true, isList: true },
-      apiTokens: { ids: apiTokensIds, isVirtual: true, isList: true },
-      oAuthAccounts: { ids: oAuthAccountsIds, isVirtual: true, isList: true },
+      emails: { ids: emailsIds, isVirtual: true, isList: true, isRequired: false },
+      links: { ids: linksIds, isVirtual: true, isList: true, isRequired: false },
+      phoneNumbers: { ids: phoneNumbersIds, isVirtual: true, isList: true, isRequired: false },
+      images: { ids: imagesIds, isVirtual: true, isList: true, isRequired: false },
+      organizations: { ids: organizationsIds, isVirtual: true, isList: true, isRequired: false },
+      addresses: { ids: addressesIds, isVirtual: true, isList: true, isRequired: false },
+      invitesSent: { ids: invitesSentIds, isVirtual: true, isList: true, isRequired: false },
+      activeSessions: { ids: activeSessionsIds, isVirtual: true, isList: true, isRequired: false },
+      passwordHistory: {
+        ids: passwordHistoryIds,
+        isVirtual: true,
+        isList: true,
+        isRequired: false,
+      },
+      loginAttempts: { ids: loginAttemptsIds, isVirtual: true, isList: true, isRequired: false },
+      AuditLog: { ids: AuditLogIds, isVirtual: true, isList: true, isRequired: false },
+      UserPreference: { ids: UserPreferenceIds, isVirtual: true, isList: true, isRequired: false },
+      TeamMember: { ids: TeamMemberIds, isVirtual: true, isList: true, isRequired: false },
+      SecurityEvent: { ids: SecurityEventIds, isVirtual: true, isList: true, isRequired: false },
+      apiTokens: { ids: apiTokensIds, isVirtual: true, isList: true, isRequired: false },
+      oAuthAccounts: { ids: oAuthAccountsIds, isVirtual: true, isList: true, isRequired: false },
     }
 
     for (const [relationName, config] of Object.entries(relationMappings)) {
@@ -2356,22 +2421,27 @@ export class ApiCrudDataAccessService {
     const data: any = regularFields
 
     const relationMappings = {
-      emails: { ids: emailsIds, isVirtual: true, isList: true },
-      links: { ids: linksIds, isVirtual: true, isList: true },
-      phoneNumbers: { ids: phoneNumbersIds, isVirtual: true, isList: true },
-      images: { ids: imagesIds, isVirtual: true, isList: true },
-      organizations: { ids: organizationsIds, isVirtual: true, isList: true },
-      addresses: { ids: addressesIds, isVirtual: true, isList: true },
-      invitesSent: { ids: invitesSentIds, isVirtual: true, isList: true },
-      activeSessions: { ids: activeSessionsIds, isVirtual: true, isList: true },
-      passwordHistory: { ids: passwordHistoryIds, isVirtual: true, isList: true },
-      loginAttempts: { ids: loginAttemptsIds, isVirtual: true, isList: true },
-      AuditLog: { ids: AuditLogIds, isVirtual: true, isList: true },
-      UserPreference: { ids: UserPreferenceIds, isVirtual: true, isList: true },
-      TeamMember: { ids: TeamMemberIds, isVirtual: true, isList: true },
-      SecurityEvent: { ids: SecurityEventIds, isVirtual: true, isList: true },
-      apiTokens: { ids: apiTokensIds, isVirtual: true, isList: true },
-      oAuthAccounts: { ids: oAuthAccountsIds, isVirtual: true, isList: true },
+      emails: { ids: emailsIds, isVirtual: true, isList: true, isRequired: false },
+      links: { ids: linksIds, isVirtual: true, isList: true, isRequired: false },
+      phoneNumbers: { ids: phoneNumbersIds, isVirtual: true, isList: true, isRequired: false },
+      images: { ids: imagesIds, isVirtual: true, isList: true, isRequired: false },
+      organizations: { ids: organizationsIds, isVirtual: true, isList: true, isRequired: false },
+      addresses: { ids: addressesIds, isVirtual: true, isList: true, isRequired: false },
+      invitesSent: { ids: invitesSentIds, isVirtual: true, isList: true, isRequired: false },
+      activeSessions: { ids: activeSessionsIds, isVirtual: true, isList: true, isRequired: false },
+      passwordHistory: {
+        ids: passwordHistoryIds,
+        isVirtual: true,
+        isList: true,
+        isRequired: false,
+      },
+      loginAttempts: { ids: loginAttemptsIds, isVirtual: true, isList: true, isRequired: false },
+      AuditLog: { ids: AuditLogIds, isVirtual: true, isList: true, isRequired: false },
+      UserPreference: { ids: UserPreferenceIds, isVirtual: true, isList: true, isRequired: false },
+      TeamMember: { ids: TeamMemberIds, isVirtual: true, isList: true, isRequired: false },
+      SecurityEvent: { ids: SecurityEventIds, isVirtual: true, isList: true, isRequired: false },
+      apiTokens: { ids: apiTokensIds, isVirtual: true, isList: true, isRequired: false },
+      oAuthAccounts: { ids: oAuthAccountsIds, isVirtual: true, isList: true, isRequired: false },
     }
 
     for (const [relationName, config] of Object.entries(relationMappings)) {
@@ -2385,9 +2455,12 @@ export class ApiCrudDataAccessService {
           const relationOperation = config.isVirtual ? 'set' : 'connect'
           data[relationName] = { [relationOperation]: ids }
         } else {
-          // Single relationship - always use connect
+          // Single relationship - connect when an id is provided; disconnect when null on update
           data[relationName] = { connect: { id: config.ids } }
         }
+      } else if (config.ids === null && !config.isList && !config.isRequired && !config.isVirtual) {
+        // Explicitly null - disconnect the optional single relationship (only when this model owns the FK)
+        data[relationName] = { disconnect: true }
       }
     }
 
@@ -2409,7 +2482,7 @@ export class ApiCrudDataAccessService {
     const data: any = regularFields
 
     const relationMappings = {
-      user: { ids: userId, isVirtual: false, isList: false },
+      user: { ids: userId, isVirtual: false, isList: false, isRequired: true },
     }
 
     for (const [relationName, config] of Object.entries(relationMappings)) {
@@ -2480,7 +2553,7 @@ export class ApiCrudDataAccessService {
     const data: any = regularFields
 
     const relationMappings = {
-      user: { ids: userId, isVirtual: false, isList: false },
+      user: { ids: userId, isVirtual: false, isList: false, isRequired: true },
     }
 
     for (const [relationName, config] of Object.entries(relationMappings)) {
@@ -2494,9 +2567,12 @@ export class ApiCrudDataAccessService {
           const relationOperation = config.isVirtual ? 'set' : 'connect'
           data[relationName] = { [relationOperation]: ids }
         } else {
-          // Single relationship - always use connect
+          // Single relationship - connect when an id is provided; disconnect when null on update
           data[relationName] = { connect: { id: config.ids } }
         }
+      } else if (config.ids === null && !config.isList && !config.isRequired && !config.isVirtual) {
+        // Explicitly null - disconnect the optional single relationship (only when this model owns the FK)
+        data[relationName] = { disconnect: true }
       }
     }
 
@@ -2518,7 +2594,7 @@ export class ApiCrudDataAccessService {
     const data: any = regularFields
 
     const relationMappings = {
-      user: { ids: userId, isVirtual: false, isList: false },
+      user: { ids: userId, isVirtual: false, isList: false, isRequired: true },
     }
 
     for (const [relationName, config] of Object.entries(relationMappings)) {
@@ -2585,7 +2661,7 @@ export class ApiCrudDataAccessService {
     const data: any = regularFields
 
     const relationMappings = {
-      user: { ids: userId, isVirtual: false, isList: false },
+      user: { ids: userId, isVirtual: false, isList: false, isRequired: true },
     }
 
     for (const [relationName, config] of Object.entries(relationMappings)) {
@@ -2599,9 +2675,12 @@ export class ApiCrudDataAccessService {
           const relationOperation = config.isVirtual ? 'set' : 'connect'
           data[relationName] = { [relationOperation]: ids }
         } else {
-          // Single relationship - always use connect
+          // Single relationship - connect when an id is provided; disconnect when null on update
           data[relationName] = { connect: { id: config.ids } }
         }
+      } else if (config.ids === null && !config.isList && !config.isRequired && !config.isVirtual) {
+        // Explicitly null - disconnect the optional single relationship (only when this model owns the FK)
+        data[relationName] = { disconnect: true }
       }
     }
 
@@ -2623,7 +2702,7 @@ export class ApiCrudDataAccessService {
     const data: any = regularFields
 
     const relationMappings = {
-      user: { ids: userId, isVirtual: false, isList: false },
+      user: { ids: userId, isVirtual: false, isList: false, isRequired: true },
     }
 
     for (const [relationName, config] of Object.entries(relationMappings)) {
@@ -2694,7 +2773,7 @@ export class ApiCrudDataAccessService {
     const data: any = regularFields
 
     const relationMappings = {
-      user: { ids: userId, isVirtual: false, isList: false },
+      user: { ids: userId, isVirtual: false, isList: false, isRequired: true },
     }
 
     for (const [relationName, config] of Object.entries(relationMappings)) {
@@ -2708,9 +2787,12 @@ export class ApiCrudDataAccessService {
           const relationOperation = config.isVirtual ? 'set' : 'connect'
           data[relationName] = { [relationOperation]: ids }
         } else {
-          // Single relationship - always use connect
+          // Single relationship - connect when an id is provided; disconnect when null on update
           data[relationName] = { connect: { id: config.ids } }
         }
+      } else if (config.ids === null && !config.isList && !config.isRequired && !config.isVirtual) {
+        // Explicitly null - disconnect the optional single relationship (only when this model owns the FK)
+        data[relationName] = { disconnect: true }
       }
     }
 

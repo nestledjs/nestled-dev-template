@@ -6,7 +6,7 @@ query __AdminLoginAttempt($loginAttemptId: String!) {
 
 query __AdminLoginAttempts($input: ListLoginAttemptInput) {
   loginAttempts(input: $input) {
-    ...__AdminLoginAttemptList
+    ...__AdminLoginAttemptSummary
   }
   counters: loginAttemptsCount(input: $input) {
     ...CorePagingDetails

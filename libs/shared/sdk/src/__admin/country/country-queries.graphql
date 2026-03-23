@@ -6,7 +6,7 @@ query __AdminCountry($countryId: String!) {
 
 query __AdminCountries($input: ListCountryInput) {
   countries(input: $input) {
-    ...__AdminCountryList
+    ...__AdminCountrySummary
   }
   counters: countriesCount(input: $input) {
     ...CorePagingDetails

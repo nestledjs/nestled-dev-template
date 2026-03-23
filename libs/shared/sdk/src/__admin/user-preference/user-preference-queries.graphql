@@ -6,7 +6,7 @@ query __AdminUserPreference($userPreferenceId: String!) {
 
 query __AdminUserPreferences($input: ListUserPreferenceInput) {
   userPreferences(input: $input) {
-    ...__AdminUserPreferenceList
+    ...__AdminUserPreferenceSummary
   }
   counters: userPreferencesCount(input: $input) {
     ...CorePagingDetails
