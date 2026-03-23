@@ -6,7 +6,7 @@ query __AdminPlan($planId: String!) {
 
 query __AdminPlans($input: ListPlanInput) {
   plans(input: $input) {
-    ...__AdminPlanList
+    ...__AdminPlanSummary
   }
   counters: plansCount(input: $input) {
     ...CorePagingDetails

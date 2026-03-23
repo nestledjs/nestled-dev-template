@@ -6,7 +6,7 @@ query __AdminStoredFile($storedFileId: String!) {
 
 query __AdminStoredFiles($input: ListStoredFileInput) {
   storedFiles(input: $input) {
-    ...__AdminStoredFileList
+    ...__AdminStoredFileSummary
   }
   counters: storedFilesCount(input: $input) {
     ...CorePagingDetails

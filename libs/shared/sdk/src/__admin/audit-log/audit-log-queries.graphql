@@ -6,7 +6,7 @@ query __AdminAuditLog($auditLogId: String!) {
 
 query __AdminAuditLogs($input: ListAuditLogInput) {
   auditLogs(input: $input) {
-    ...__AdminAuditLogList
+    ...__AdminAuditLogSummary
   }
   counters: auditLogsCount(input: $input) {
     ...CorePagingDetails

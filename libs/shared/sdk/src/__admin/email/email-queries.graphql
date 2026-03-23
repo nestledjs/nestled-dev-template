@@ -6,7 +6,7 @@ query __AdminEmail($emailId: String!) {
 
 query __AdminEmails($input: ListEmailInput) {
   emails(input: $input) {
-    ...__AdminEmailList
+    ...__AdminEmailSummary
   }
   counters: emailsCount(input: $input) {
     ...CorePagingDetails

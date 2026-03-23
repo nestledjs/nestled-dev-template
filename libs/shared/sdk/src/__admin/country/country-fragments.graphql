@@ -1,4 +1,4 @@
-fragment __AdminCountryList on Country {
+fragment __AdminCountrySummary on Country {
   id
   createdAt
   updatedAt
@@ -16,5 +16,5 @@ fragment __AdminCountryList on Country {
 }
 
 fragment __AdminCountryDetails on Country {
-  ...__AdminCountryList
+  ...__AdminCountrySummary
 }

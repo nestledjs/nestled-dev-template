@@ -1,4 +1,4 @@
-fragment __AdminRoleList on Role {
+fragment __AdminRoleSummary on Role {
   id
   name
   description
@@ -9,5 +9,5 @@ fragment __AdminRoleList on Role {
 }
 
 fragment __AdminRoleDetails on Role {
-  ...__AdminRoleList
+  ...__AdminRoleSummary
 }

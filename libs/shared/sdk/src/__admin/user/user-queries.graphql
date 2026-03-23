@@ -6,7 +6,7 @@ query __AdminUser($userId: String!) {
 
 query __AdminUsers($input: ListUserInput) {
   users(input: $input) {
-    ...__AdminUserList
+    ...__AdminUserSummary
   }
   counters: usersCount(input: $input) {
     ...CorePagingDetails

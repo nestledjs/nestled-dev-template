@@ -1,4 +1,4 @@
-fragment __AdminLinkList on Link {
+fragment __AdminLinkSummary on Link {
   id
   createdAt
   updatedAt
@@ -15,5 +15,5 @@ fragment __AdminLinkList on Link {
 }
 
 fragment __AdminLinkDetails on Link {
-  ...__AdminLinkList
+  ...__AdminLinkSummary
 }

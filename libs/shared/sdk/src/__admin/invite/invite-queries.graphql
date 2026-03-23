@@ -6,7 +6,7 @@ query __AdminInvite($inviteId: String!) {
 
 query __AdminInvites($input: ListInviteInput) {
   invites(input: $input) {
-    ...__AdminInviteList
+    ...__AdminInviteSummary
   }
   counters: invitesCount(input: $input) {
     ...CorePagingDetails

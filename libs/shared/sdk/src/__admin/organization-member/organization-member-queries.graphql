@@ -6,7 +6,7 @@ query __AdminOrganizationMember($organizationMemberId: String!) {
 
 query __AdminOrganizationMembers($input: ListOrganizationMemberInput) {
   organizationMembers(input: $input) {
-    ...__AdminOrganizationMemberList
+    ...__AdminOrganizationMemberSummary
   }
   counters: organizationMembersCount(input: $input) {
     ...CorePagingDetails

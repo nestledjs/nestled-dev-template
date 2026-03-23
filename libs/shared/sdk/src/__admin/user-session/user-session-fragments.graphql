@@ -1,4 +1,4 @@
-fragment __AdminUserSessionList on UserSession {
+fragment __AdminUserSessionSummary on UserSession {
   id
   createdAt
   updatedAt
@@ -14,5 +14,5 @@ fragment __AdminUserSessionList on UserSession {
 }
 
 fragment __AdminUserSessionDetails on UserSession {
-  ...__AdminUserSessionList
+  ...__AdminUserSessionSummary
 }

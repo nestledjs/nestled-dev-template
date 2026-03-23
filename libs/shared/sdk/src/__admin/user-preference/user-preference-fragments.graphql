@@ -1,4 +1,4 @@
-fragment __AdminUserPreferenceList on UserPreference {
+fragment __AdminUserPreferenceSummary on UserPreference {
   id
   createdAt
   updatedAt
@@ -11,5 +11,5 @@ fragment __AdminUserPreferenceList on UserPreference {
 }
 
 fragment __AdminUserPreferenceDetails on UserPreference {
-  ...__AdminUserPreferenceList
+  ...__AdminUserPreferenceSummary
 }

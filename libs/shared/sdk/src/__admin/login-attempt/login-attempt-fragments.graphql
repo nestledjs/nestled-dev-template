@@ -1,4 +1,4 @@
-fragment __AdminLoginAttemptList on LoginAttempt {
+fragment __AdminLoginAttemptSummary on LoginAttempt {
   id
   createdAt
   updatedAt
@@ -15,5 +15,5 @@ fragment __AdminLoginAttemptList on LoginAttempt {
 }
 
 fragment __AdminLoginAttemptDetails on LoginAttempt {
-  ...__AdminLoginAttemptList
+  ...__AdminLoginAttemptSummary
 }

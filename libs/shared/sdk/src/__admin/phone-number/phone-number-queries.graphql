@@ -6,7 +6,7 @@ query __AdminPhoneNumber($phoneNumberId: String!) {
 
 query __AdminPhoneNumbers($input: ListPhoneNumberInput) {
   phoneNumbers(input: $input) {
-    ...__AdminPhoneNumberList
+    ...__AdminPhoneNumberSummary
   }
   counters: phoneNumbersCount(input: $input) {
     ...CorePagingDetails

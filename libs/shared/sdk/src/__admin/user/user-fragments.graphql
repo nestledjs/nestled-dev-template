@@ -1,4 +1,4 @@
-fragment __AdminUserList on User {
+fragment __AdminUserSummary on User {
   id
   createdAt
   updatedAt
@@ -28,5 +28,5 @@ fragment __AdminUserList on User {
 }
 
 fragment __AdminUserDetails on User {
-  ...__AdminUserList
+  ...__AdminUserSummary
 }

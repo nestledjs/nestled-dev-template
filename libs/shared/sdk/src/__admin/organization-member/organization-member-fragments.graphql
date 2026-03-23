@@ -1,4 +1,4 @@
-fragment __AdminOrganizationMemberList on OrganizationMember {
+fragment __AdminOrganizationMemberSummary on OrganizationMember {
   id
   createdAt
   updatedAt
@@ -17,5 +17,5 @@ fragment __AdminOrganizationMemberList on OrganizationMember {
 }
 
 fragment __AdminOrganizationMemberDetails on OrganizationMember {
-  ...__AdminOrganizationMemberList
+  ...__AdminOrganizationMemberSummary
 }

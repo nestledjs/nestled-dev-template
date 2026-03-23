@@ -6,7 +6,7 @@ query __AdminSecurityEvent($securityEventId: String!) {
 
 query __AdminSecurityEvents($input: ListSecurityEventInput) {
   securityEvents(input: $input) {
-    ...__AdminSecurityEventList
+    ...__AdminSecurityEventSummary
   }
   counters: securityEventsCount(input: $input) {
     ...CorePagingDetails

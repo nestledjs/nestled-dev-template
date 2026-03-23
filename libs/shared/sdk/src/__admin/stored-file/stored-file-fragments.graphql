@@ -1,4 +1,4 @@
-fragment __AdminStoredFileList on StoredFile {
+fragment __AdminStoredFileSummary on StoredFile {
   id
   createdAt
   updatedAt
@@ -25,5 +25,5 @@ fragment __AdminStoredFileList on StoredFile {
 }
 
 fragment __AdminStoredFileDetails on StoredFile {
-  ...__AdminStoredFileList
+  ...__AdminStoredFileSummary
 }

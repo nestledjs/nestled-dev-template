@@ -1,4 +1,4 @@
-fragment __AdminSecurityEventList on SecurityEvent {
+fragment __AdminSecurityEventSummary on SecurityEvent {
   id
   createdAt
   updatedAt
@@ -13,5 +13,5 @@ fragment __AdminSecurityEventList on SecurityEvent {
 }
 
 fragment __AdminSecurityEventDetails on SecurityEvent {
-  ...__AdminSecurityEventList
+  ...__AdminSecurityEventSummary
 }

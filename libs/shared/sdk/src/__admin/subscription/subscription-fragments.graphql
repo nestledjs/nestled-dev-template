@@ -1,4 +1,4 @@
-fragment __AdminSubscriptionList on Subscription {
+fragment __AdminSubscriptionSummary on Subscription {
   id
   createdAt
   updatedAt
@@ -23,5 +23,5 @@ fragment __AdminSubscriptionList on Subscription {
 }
 
 fragment __AdminSubscriptionDetails on Subscription {
-  ...__AdminSubscriptionList
+  ...__AdminSubscriptionSummary
 }
