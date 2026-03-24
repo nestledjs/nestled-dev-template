@@ -3,20 +3,26 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/data-browser/src",
   "projectType": "library",
-  "tags": ["publishable"],
+  "tags": [
+    "publishable"
+  ],
   "targets": {
     "test": {
       "executor": "@nx/vitest:test",
-      "outputs": ["{workspaceRoot}/coverage/libs/data-browser"],
+      "outputs": [
+        "{workspaceRoot}/coverage/libs/data-browser"
+      ],
       "options": {
         "passWithNoTests": false,
-        "reportsDirectory": "../../coverage/libs/data-browser",
+        "reportsDirectory": "{projectRoot}/../../coverage/libs/data-browser",
         "configFile": "libs/data-browser/vitest.config.ts"
       }
     },
     "build": {
       "executor": "nx:run-commands",
-      "outputs": ["{workspaceRoot}/dist/libs/data-browser"],
+      "outputs": [
+        "{workspaceRoot}/dist/libs/data-browser"
+      ],
       "options": {
         "commands": [
           "NODE_ENV=production vite build --mode production",
@@ -29,7 +35,9 @@
     },
     "publish": {
       "executor": "nx:run-commands",
-      "dependsOn": ["build"],
+      "dependsOn": [
+        "build"
+      ],
       "options": {
         "command": "npm publish dist/libs/data-browser --access public"
       }

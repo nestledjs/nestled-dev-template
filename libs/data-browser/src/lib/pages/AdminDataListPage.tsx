@@ -6,6 +6,7 @@ import { AdminLocalStorage } from '../utils/secure-storage'
 import { formatFieldName, kebabCase } from '../utils/string-utils'
 import { Link, useParams, useSearchParams } from 'react-router'
 import { FilterField } from '../components/FilterField'
+import { ExportButton } from '../components/ExportButton'
 import { useAdminList } from '../hooks/useAdminList'
 import { getAdminDocuments } from '../utils/graphql-utils'
 import { useAdminDataContext } from '../context/AdminDataContext'
@@ -907,6 +908,27 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
           )}
         </button>
         {columnSelector}
+        {query && (
+          <ExportButton
+            query={query}
+            dataPath={dataPath}
+            variables={variables}
+            visibleColumns={visibleColumns}
+            fieldNames={fieldNames}
+            modelName={model.name}
+            hasActiveFilters={Object.keys(filters).length > 0}
+          />
+        )}
+        <select
+          value={pageSize}
+          onChange={e => dispatch({ type: 'SET_PAGE_SIZE', payload: Number(e.target.value) })}
+          className="px-3 py-2 border border-gray-300 dark:border-gray-600 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-web"
+          aria-label="Rows per page"
+        >
+          <option value={20}>20 / page</option>
+          <option value={50}>50 / page</option>
+          <option value={100}>100 / page</option>
+        </select>
         <Link
           to={createLink}
           className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-600"

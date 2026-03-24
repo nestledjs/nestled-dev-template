@@ -630,6 +630,15 @@ function AdminDataEditPageContent({ model, id, basePath, formTheme, displayField
   )
 
   // ALL useEffect hooks MUST be called before any early returns
+  // Navigate to list after successful delete
+  useEffect(() => {
+    if (deleteState.status !== 'success') return
+    const timer = setTimeout(() => {
+      navigate(`${basePath}/${toKebabCase(model.pluralName)}`)
+    }, 1500)
+    return () => clearTimeout(timer)
+  }, [deleteState.status, navigate, basePath, model.pluralName])
+
   // Clear submission state after errors
   useEffect(() => {
     if (submissionState.status === 'error') {
@@ -727,7 +736,9 @@ function AdminDataEditPageContent({ model, id, basePath, formTheme, displayField
       message: result.message,
     })
 
-    window.scrollTo({ top: 0, behavior: 'smooth' })
+    if (typeof window !== 'undefined') {
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    }
 
     if (result.success) {
       await refetch()
@@ -745,11 +756,6 @@ function AdminDataEditPageContent({ model, id, basePath, formTheme, displayField
       message: result.message,
     })
 
-    if (result.success) {
-      setTimeout(() => {
-        navigate(`${basePath}/${toKebabCase(model.pluralName)}`)
-      }, 1500)
-    }
   }
 
   return (
