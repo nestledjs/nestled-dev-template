@@ -277,11 +277,6 @@ function AdminDataCreatePageContent({ model, basePath, formTheme, displayFieldCo
         status: 'success',
         message: `${toReadableText(model.name)} created successfully!`,
       })
-
-      // Redirect after a brief delay to show success message
-      setTimeout(() => {
-        navigate(`${basePath}/${toKebabCase(model.pluralName)}`)
-      }, 1500)
     } catch (error) {
       setSubmissionState({
         status: 'error',
@@ -289,6 +284,15 @@ function AdminDataCreatePageContent({ model, basePath, formTheme, displayFieldCo
       })
     }
   }
+
+  // Navigate to list after successful create
+  useEffect(() => {
+    if (submissionState.status !== 'success') return
+    const timer = setTimeout(() => {
+      navigate(`${basePath}/${toKebabCase(model.pluralName)}`)
+    }, 1500)
+    return () => clearTimeout(timer)
+  }, [submissionState.status, navigate, basePath, model.pluralName])
 
   // Clear submission state after errors
   useEffect(() => {

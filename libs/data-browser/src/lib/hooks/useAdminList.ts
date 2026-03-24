@@ -11,7 +11,7 @@ function adminListReducer(state: AdminListState, action: AdminListAction): Admin
     case 'SET_SKIP':
       return { ...state, skip: action.payload }
     case 'SET_PAGE_SIZE':
-      return { ...state, pageSize: action.payload }
+      return { ...state, pageSize: action.payload, skip: 0 }
     case 'SET_SORT':
       return { ...state, sort: action.payload }
     case 'SET_VISIBLE_COLUMNS':
