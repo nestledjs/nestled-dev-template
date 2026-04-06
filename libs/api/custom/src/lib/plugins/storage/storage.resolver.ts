@@ -63,6 +63,27 @@ export class StorageResolver {
   }
 
   /**
+   * Remove the authenticated user's avatar
+   */
+  @Mutation(() => Boolean)
+  async removeUserAvatar(@CtxUser() user: User): Promise<boolean> {
+    await this.storageService.removeUserAvatar(user.id)
+    return true
+  }
+
+  /**
+   * Remove an organization's logo (requires org membership)
+   */
+  @Mutation(() => Boolean)
+  async removeOrganizationLogo(
+    @Args('organizationId', { type: () => String }) organizationId: string,
+    @CtxUser() user: User,
+  ): Promise<boolean> {
+    await this.storageService.removeOrganizationLogo(organizationId, user.id)
+    return true
+  }
+
+  /**
    * Get signed URL for temporary access to a private file
    */
   @Query(() => String)

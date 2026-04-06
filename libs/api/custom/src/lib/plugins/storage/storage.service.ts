@@ -1,4 +1,4 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common'
+import { ForbiddenException, Injectable, Logger, NotFoundException } from '@nestjs/common'
 import { StoredFile, StorageProvider } from '@nestled-template/api/prisma'
 import { ApiCoreDataAccessService } from '@nestled-template/api/core/data-access'
 import { StorageFactory } from './storage.factory'
@@ -118,12 +118,15 @@ export class StorageService {
    * Upload organization logo
    * Folder structure: org_avatars/{organizationId}/filename.ext
    * Uses FK pointer (organization.logoId) — deletes the exact old file, no metadata filtering
+   * Requires the user to be an Owner or Admin of the organization
    */
   async uploadOrganizationLogo(
     fileUpload: FileUpload,
     userId: string,
     organizationId: string,
   ): Promise<StoredFile> {
+    await this.assertOrgAdminOrOwner(userId, organizationId)
+
     // Read the current logo FK before uploading
     const org = await this.prisma.organization.findUnique({ where: { id: organizationId }, select: { logoId: true } })
 
@@ -220,6 +223,75 @@ export class StorageService {
       skip: offset,
       orderBy: { createdAt: 'desc' },
     })
+  }
+
+  /**
+   * Remove the user's avatar — nulls avatarId and deletes the file
+   */
+  async removeUserAvatar(userId: string): Promise<void> {
+    const user = await this.prisma.user.findUnique({ where: { id: userId }, select: { avatarId: true } })
+    if (!user?.avatarId) return
+
+    const file = await this.prisma.storedFile.findUnique({ where: { id: user.avatarId } })
+
+    // Null the FK first so onDelete: SetNull doesn't race with our explicit delete
+    await this.prisma.user.update({ where: { id: userId }, data: { avatarId: null } })
+
+    if (file) {
+      try {
+        const storageProvider = this.storageFactory.getProviderByName(file.provider.toLowerCase())
+        await storageProvider.delete(file.providerFileId)
+      } catch (error) {
+        this.logger.warn(`Failed to delete user avatar from provider: ${error}`)
+      }
+      await this.prisma.storedFile.delete({ where: { id: file.id } })
+    }
+  }
+
+  /**
+   * Remove an organization's logo — requires Owner or Admin membership
+   * Nulls logoId and deletes the file
+   */
+  async removeOrganizationLogo(organizationId: string, userId: string): Promise<void> {
+    await this.assertOrgAdminOrOwner(userId, organizationId)
+
+    const org = await this.prisma.organization.findUnique({ where: { id: organizationId }, select: { logoId: true } })
+    if (!org?.logoId) return
+
+    const file = await this.prisma.storedFile.findUnique({ where: { id: org.logoId } })
+
+    // Null the FK first
+    await this.prisma.organization.update({ where: { id: organizationId }, data: { logoId: null } })
+
+    if (file) {
+      try {
+        const storageProvider = this.storageFactory.getProviderByName(file.provider.toLowerCase())
+        await storageProvider.delete(file.providerFileId)
+      } catch (error) {
+        this.logger.warn(`Failed to delete organization logo from provider: ${error}`)
+      }
+      await this.prisma.storedFile.delete({ where: { id: file.id } })
+    }
+  }
+
+  /**
+   * Assert the user is an Owner or Admin of the given organization.
+   * Throws ForbiddenException if not.
+   */
+  private async assertOrgAdminOrOwner(userId: string, organizationId: string): Promise<void> {
+    const membership = await this.prisma.organizationMember.findFirst({
+      where: { userId, organizationId },
+      select: { role: { select: { name: true } } },
+    })
+
+    if (!membership) {
+      throw new ForbiddenException('You are not a member of this organization')
+    }
+
+    const roleName = membership.role.name
+    if (roleName !== 'Owner' && roleName !== 'Admin') {
+      throw new ForbiddenException('Only Owners and Admins can manage the organization logo')
+    }
   }
 
   /**
