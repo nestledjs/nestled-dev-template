@@ -31,6 +31,14 @@ fragment AuthUserDetails on User {
     phone
     primary
   }
+  avatar {
+    id
+    url
+    publicUrl
+    filename
+    mimeType
+    createdAt
+  }
   images {
     id
     url

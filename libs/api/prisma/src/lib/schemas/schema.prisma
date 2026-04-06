@@ -150,6 +150,8 @@ model Organization {
   createdAt    DateTime             @default(now())
   updatedAt    DateTime             @updatedAt
   name         String
+  logoId       String?              @unique
+  logo         StoredFile?          @relation("Organization_logo", fields: [logoId], references: [id], onDelete: SetNull)
   emails       Email[]              @relation("Email_belongsTo_Organization")
   links        Link[]               @relation("Link_belongsTo_Organization")
   phoneNumbers PhoneNumber[]        @relation("PhoneNumber_belongsTo_Organization")
@@ -326,6 +328,8 @@ model StoredFile {
   organizationId String?
   user           User?         @relation("StoredFile_belongsTo_User", fields: [userId], references: [id])
   organization   Organization? @relation("StoredFile_belongsTo_Organization", fields: [organizationId], references: [id])
+  userAvatar     User?         @relation("User_avatar")
+  organizationLogo Organization? @relation("Organization_logo")
 
   @@index([userId])
   @@index([organizationId])
@@ -350,6 +354,8 @@ model User {
   emails                    Email[]              @relation("Email_belongsTo_User")
   links                     Link[]               @relation("Link_belongsTo_User")
   phoneNumbers              PhoneNumber[]        @relation("PhoneNumber_belongsTo_User")
+  avatarId                  String?              @unique
+  avatar                    StoredFile?          @relation("User_avatar", fields: [avatarId], references: [id], onDelete: SetNull)
   images                    StoredFile[]         @relation("StoredFile_belongsTo_User")
   organizations             OrganizationMember[] @relation("OrganizationMember_belongsTo_User")
   activeOrganizationId      String?

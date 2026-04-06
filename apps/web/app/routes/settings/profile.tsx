@@ -91,20 +91,10 @@ function downloadJsonFile(data: unknown, filename: string) {
   URL.revokeObjectURL(url)
 }
 
-type UserImage = {
+type UserAvatar = {
   id: string
-  type?: string
-  folder?: string | null
-  createdAt: string
   publicUrl?: string | null
   url?: string | null
-  metadata?: { type?: string } | null
-}
-
-const getImageCreatedTime = (img: UserImage): number => {
-  if (!img?.createdAt) return 0
-  const time = new Date(img.createdAt).getTime()
-  return Number.isNaN(time) ? 0 : time
 }
 
 export default function ProfileSettings() {
@@ -140,11 +130,7 @@ export default function ProfileSettings() {
 
   const primaryEmail = user.emails?.find(e => e.primary)
 
-  // Get user's avatar: filter by type, sort by date desc, pick most recent
-  const userAvatars = (user.images as UserImage[] | undefined)
-    ?.filter((img) => (img.metadata as { type?: string })?.type === 'avatar' || img.folder === 'avatars')
-    ?.sort((a, b) => getImageCreatedTime(b) - getImageCreatedTime(a))
-  const userAvatar = userAvatars && userAvatars.length > 0 ? userAvatars[0] : undefined
+  const userAvatar = user.avatar as UserAvatar | undefined | null
 
   const handleAvatarUpload = async (file: File) => {
     try {
@@ -166,38 +152,19 @@ export default function ProfileSettings() {
   }
 
   const handleAvatarRemove = async () => {
-    // Get ALL avatar images for this user to delete accumulated ones
-    const avatarImages = (user.images as UserImage[])?.filter(
-      (img) => (img.metadata as { type?: string })?.type === 'avatar' || img.folder === 'avatars',
-    ) || []
-
-    if (avatarImages.length === 0) {
+    if (!userAvatar) {
       setAvatarMessage({ type: 'error', text: 'No avatar to remove' })
       setTimeout(() => setAvatarMessage(null), 3000)
       return
     }
 
-    let successCount = 0
-    let errorCount = 0
-
-    // Try to delete all of them
-    for (const image of avatarImages) {
-      try {
-        await deleteFile({ variables: { uploadId: image.id } })
-        successCount++
-      } catch (error) {
-        console.error('Avatar removal failed:', error)
-        errorCount++
-      }
-    }
-
-    // Refresh user data to update UI
-    await client.refetchQueries({ include: [Me] })
-
-    if (errorCount > 0) {
-      setAvatarMessage({ type: 'error', text: `Removed ${successCount} images, ${errorCount} failed` })
-    } else {
+    try {
+      await deleteFile({ variables: { uploadId: userAvatar.id } })
+      await client.refetchQueries({ include: [Me] })
       setAvatarMessage({ type: 'success', text: 'Avatar removed' })
+    } catch (error) {
+      console.error('Avatar removal failed:', error)
+      setAvatarMessage({ type: 'error', text: (error as Error).message || 'Failed to remove avatar' })
     }
     setTimeout(() => setAvatarMessage(null), 3000)
   }

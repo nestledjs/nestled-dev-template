@@ -928,6 +928,9 @@ export class CreateOrganizationInput {
   @Field({ nullable: false })
   name!: string
 
+  @Field({ nullable: true })
+  logoId?: string
+
   @Field(() => [String], { nullable: true })
   emailsIds?: string[]
 
@@ -976,6 +979,9 @@ export class UpdateOrganizationInput {
   @Field({ nullable: true })
   name?: string
 
+  @Field({ nullable: true })
+  logoId?: string
+
   @Field(() => [String], { nullable: true })
   emailsIds?: string[]
 
@@ -1023,6 +1029,9 @@ export class ListOrganizationInput extends CorePagingInput {
 
   @Field({ nullable: true })
   name?: string
+
+  @Field({ nullable: true })
+  logoId?: string
 
   @Field(() => [String], { nullable: true })
   emailsIds?: string[]
@@ -1884,6 +1893,12 @@ export class CreateStoredFileInput {
 
   @Field({ nullable: true })
   organizationId?: string
+
+  @Field({ nullable: true })
+  userAvatarId?: string
+
+  @Field({ nullable: true })
+  organizationLogoId?: string
 }
 
 @InputType()
@@ -1938,6 +1953,12 @@ export class UpdateStoredFileInput {
 
   @Field({ nullable: true })
   organizationId?: string
+
+  @Field({ nullable: true })
+  userAvatarId?: string
+
+  @Field({ nullable: true })
+  organizationLogoId?: string
 }
 
 @InputType()
@@ -1992,6 +2013,12 @@ export class ListStoredFileInput extends CorePagingInput {
 
   @Field({ nullable: true })
   organizationId?: string
+
+  @Field({ nullable: true })
+  userAvatarId?: string
+
+  @Field({ nullable: true })
+  organizationLogoId?: string
 }
 
 @InputType()
@@ -2037,6 +2064,9 @@ export class CreateUserInput {
 
   @Field(() => GraphQLISODateTime, { nullable: true })
   validateEmailTokenExpires?: Date
+
+  @Field({ nullable: true })
+  avatarId?: string
 
   @Field({ nullable: true })
   activeOrganizationId?: string
@@ -2171,6 +2201,9 @@ export class UpdateUserInput {
   validateEmailTokenExpires?: Date
 
   @Field({ nullable: true })
+  avatarId?: string
+
+  @Field({ nullable: true })
   activeOrganizationId?: string
 
   @Field({ nullable: true })
@@ -2301,6 +2334,9 @@ export class ListUserInput extends CorePagingInput {
 
   @Field(() => GraphQLISODateTime, { nullable: true })
   validateEmailTokenExpires?: Date
+
+  @Field({ nullable: true })
+  avatarId?: string
 
   @Field({ nullable: true })
   activeOrganizationId?: string

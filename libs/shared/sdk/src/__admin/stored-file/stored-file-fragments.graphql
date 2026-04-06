@@ -22,6 +22,12 @@ fragment __AdminStoredFileSummary on StoredFile {
   organization {
     id
   }
+  userAvatar {
+    id
+  }
+  organizationLogo {
+    id
+  }
 }
 
 fragment __AdminStoredFileDetails on StoredFile {

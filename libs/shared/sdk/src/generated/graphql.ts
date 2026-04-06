@@ -388,6 +388,7 @@ export type CreateOrganizationInput = {
   imagesIds?: InputMaybe<Array<Scalars['String']['input']>>
   invitesIds?: InputMaybe<Array<Scalars['String']['input']>>
   linksIds?: InputMaybe<Array<Scalars['String']['input']>>
+  logoId?: InputMaybe<Scalars['String']['input']>
   membersIds?: InputMaybe<Array<Scalars['String']['input']>>
   name: Scalars['String']['input']
   phoneNumbersIds?: InputMaybe<Array<Scalars['String']['input']>>
@@ -479,6 +480,7 @@ export type CreateStoredFileInput = {
   metadata?: InputMaybe<Scalars['JSON']['input']>
   mimeType: Scalars['String']['input']
   organizationId?: InputMaybe<Scalars['String']['input']>
+  organizationLogoId?: InputMaybe<Scalars['String']['input']>
   originalName: Scalars['String']['input']
   provider: StorageProvider
   providerFileId: Scalars['String']['input']
@@ -486,6 +488,7 @@ export type CreateStoredFileInput = {
   size: Scalars['Int']['input']
   updatedAt?: InputMaybe<Scalars['DateTime']['input']>
   url: Scalars['String']['input']
+  userAvatarId?: InputMaybe<Scalars['String']['input']>
   userId?: InputMaybe<Scalars['String']['input']>
   width?: InputMaybe<Scalars['Int']['input']>
 }
@@ -536,6 +539,7 @@ export type CreateUserInput = {
   activeSessionsIds?: InputMaybe<Array<Scalars['String']['input']>>
   addressesIds?: InputMaybe<Array<Scalars['String']['input']>>
   apiTokensIds?: InputMaybe<Array<Scalars['String']['input']>>
+  avatarId?: InputMaybe<Scalars['String']['input']>
   bio?: InputMaybe<Scalars['String']['input']>
   createdAt?: InputMaybe<Scalars['DateTime']['input']>
   deactivatedAt?: InputMaybe<Scalars['DateTime']['input']>
@@ -909,6 +913,7 @@ export type ListOrganizationInput = {
   imagesIds?: InputMaybe<Array<Scalars['String']['input']>>
   invitesIds?: InputMaybe<Array<Scalars['String']['input']>>
   linksIds?: InputMaybe<Array<Scalars['String']['input']>>
+  logoId?: InputMaybe<Scalars['String']['input']>
   membersIds?: InputMaybe<Array<Scalars['String']['input']>>
   name?: InputMaybe<Scalars['String']['input']>
   orderBy?: InputMaybe<Scalars['String']['input']>
@@ -1058,6 +1063,7 @@ export type ListStoredFileInput = {
   orderBy?: InputMaybe<Scalars['String']['input']>
   orderDirection?: InputMaybe<Scalars['String']['input']>
   organizationId?: InputMaybe<Scalars['String']['input']>
+  organizationLogoId?: InputMaybe<Scalars['String']['input']>
   originalName?: InputMaybe<Scalars['String']['input']>
   provider?: InputMaybe<StorageProvider>
   providerFileId?: InputMaybe<Scalars['String']['input']>
@@ -1069,6 +1075,7 @@ export type ListStoredFileInput = {
   take?: InputMaybe<Scalars['Float']['input']>
   updatedAt?: InputMaybe<Scalars['DateTime']['input']>
   url?: InputMaybe<Scalars['String']['input']>
+  userAvatarId?: InputMaybe<Scalars['String']['input']>
   userId?: InputMaybe<Scalars['String']['input']>
   width?: InputMaybe<Scalars['Int']['input']>
 }
@@ -1140,6 +1147,7 @@ export type ListUserInput = {
   activeSessionsIds?: InputMaybe<Array<Scalars['String']['input']>>
   addressesIds?: InputMaybe<Array<Scalars['String']['input']>>
   apiTokensIds?: InputMaybe<Array<Scalars['String']['input']>>
+  avatarId?: InputMaybe<Scalars['String']['input']>
   bio?: InputMaybe<Scalars['String']['input']>
   createdAt?: InputMaybe<Scalars['DateTime']['input']>
   deactivatedAt?: InputMaybe<Scalars['DateTime']['input']>
@@ -1923,6 +1931,8 @@ export type Organization = {
   images?: Maybe<Array<StoredFile>>
   invites?: Maybe<Array<Invite>>
   links?: Maybe<Array<Link>>
+  logo?: Maybe<StoredFile>
+  logoId?: Maybe<Scalars['String']['output']>
   members?: Maybe<Array<OrganizationMember>>
   name: Scalars['String']['output']
   phoneNumbers?: Maybe<Array<PhoneNumber>>
@@ -2595,6 +2605,7 @@ export type StoredFile = {
   mimeType: Scalars['String']['output']
   organization?: Maybe<Organization>
   organizationId?: Maybe<Scalars['String']['output']>
+  organizationLogo?: Maybe<Organization>
   originalName: Scalars['String']['output']
   provider: StorageProvider
   providerFileId: Scalars['String']['output']
@@ -2603,6 +2614,7 @@ export type StoredFile = {
   updatedAt: Scalars['DateTime']['output']
   url: Scalars['String']['output']
   user?: Maybe<User>
+  userAvatar?: Maybe<User>
   userId?: Maybe<Scalars['String']['output']>
   width?: Maybe<Scalars['Int']['output']>
 }
@@ -2816,6 +2828,7 @@ export type UpdateOrganizationInput = {
   imagesIds?: InputMaybe<Array<Scalars['String']['input']>>
   invitesIds?: InputMaybe<Array<Scalars['String']['input']>>
   linksIds?: InputMaybe<Array<Scalars['String']['input']>>
+  logoId?: InputMaybe<Scalars['String']['input']>
   membersIds?: InputMaybe<Array<Scalars['String']['input']>>
   name?: InputMaybe<Scalars['String']['input']>
   phoneNumbersIds?: InputMaybe<Array<Scalars['String']['input']>>
@@ -2907,6 +2920,7 @@ export type UpdateStoredFileInput = {
   metadata?: InputMaybe<Scalars['JSON']['input']>
   mimeType?: InputMaybe<Scalars['String']['input']>
   organizationId?: InputMaybe<Scalars['String']['input']>
+  organizationLogoId?: InputMaybe<Scalars['String']['input']>
   originalName?: InputMaybe<Scalars['String']['input']>
   provider?: InputMaybe<StorageProvider>
   providerFileId?: InputMaybe<Scalars['String']['input']>
@@ -2914,6 +2928,7 @@ export type UpdateStoredFileInput = {
   size?: InputMaybe<Scalars['Int']['input']>
   updatedAt?: InputMaybe<Scalars['DateTime']['input']>
   url?: InputMaybe<Scalars['String']['input']>
+  userAvatarId?: InputMaybe<Scalars['String']['input']>
   userId?: InputMaybe<Scalars['String']['input']>
   width?: InputMaybe<Scalars['Int']['input']>
 }
@@ -2964,6 +2979,7 @@ export type UpdateUserInput = {
   activeSessionsIds?: InputMaybe<Array<Scalars['String']['input']>>
   addressesIds?: InputMaybe<Array<Scalars['String']['input']>>
   apiTokensIds?: InputMaybe<Array<Scalars['String']['input']>>
+  avatarId?: InputMaybe<Scalars['String']['input']>
   bio?: InputMaybe<Scalars['String']['input']>
   createdAt?: InputMaybe<Scalars['DateTime']['input']>
   deactivatedAt?: InputMaybe<Scalars['DateTime']['input']>
@@ -3053,6 +3069,8 @@ export type User = {
   activeSessions?: Maybe<Array<UserSession>>
   addresses?: Maybe<Array<Address>>
   apiTokens?: Maybe<Array<ApiToken>>
+  avatar?: Maybe<StoredFile>
+  avatarId?: Maybe<Scalars['String']['output']>
   bio?: Maybe<Scalars['String']['output']>
   createdAt: Scalars['DateTime']['output']
   deactivatedAt?: Maybe<Scalars['DateTime']['output']>
@@ -4778,6 +4796,8 @@ export type __AdminOrganizationSummaryFragment = {
   createdAt: any
   updatedAt: any
   name: string
+  logoId?: string | null
+  logo?: { __typename?: 'StoredFile'; id: string } | null
   subscription?: { __typename?: 'Subscription'; id: string } | null
 }
 
@@ -4787,6 +4807,8 @@ export type __AdminOrganizationDetailsFragment = {
   createdAt: any
   updatedAt: any
   name: string
+  logoId?: string | null
+  logo?: { __typename?: 'StoredFile'; id: string } | null
   subscription?: { __typename?: 'Subscription'; id: string } | null
 }
 
@@ -4802,6 +4824,8 @@ export type __AdminCreateOrganizationMutation = {
     createdAt: any
     updatedAt: any
     name: string
+    logoId?: string | null
+    logo?: { __typename?: 'StoredFile'; id: string } | null
     subscription?: { __typename?: 'Subscription'; id: string } | null
   } | null
 }
@@ -4828,6 +4852,8 @@ export type __AdminUpdateOrganizationMutation = {
     createdAt: any
     updatedAt: any
     name: string
+    logoId?: string | null
+    logo?: { __typename?: 'StoredFile'; id: string } | null
     subscription?: { __typename?: 'Subscription'; id: string } | null
   } | null
 }
@@ -4844,6 +4870,8 @@ export type __AdminOrganizationQuery = {
     createdAt: any
     updatedAt: any
     name: string
+    logoId?: string | null
+    logo?: { __typename?: 'StoredFile'; id: string } | null
     subscription?: { __typename?: 'Subscription'; id: string } | null
   } | null
 }
@@ -4860,6 +4888,8 @@ export type __AdminOrganizationsQuery = {
     createdAt: any
     updatedAt: any
     name: string
+    logoId?: string | null
+    logo?: { __typename?: 'StoredFile'; id: string } | null
     subscription?: { __typename?: 'Subscription'; id: string } | null
   }> | null
   counters?: {
@@ -5757,6 +5787,8 @@ export type __AdminStoredFileSummaryFragment = {
   organizationId?: string | null
   user?: { __typename?: 'User'; id: string } | null
   organization?: { __typename?: 'Organization'; id: string } | null
+  userAvatar?: { __typename?: 'User'; id: string } | null
+  organizationLogo?: { __typename?: 'Organization'; id: string } | null
 }
 
 export type __AdminStoredFileDetailsFragment = {
@@ -5780,6 +5812,8 @@ export type __AdminStoredFileDetailsFragment = {
   organizationId?: string | null
   user?: { __typename?: 'User'; id: string } | null
   organization?: { __typename?: 'Organization'; id: string } | null
+  userAvatar?: { __typename?: 'User'; id: string } | null
+  organizationLogo?: { __typename?: 'Organization'; id: string } | null
 }
 
 export type __AdminCreateStoredFileMutationVariables = Exact<{
@@ -5809,6 +5843,8 @@ export type __AdminCreateStoredFileMutation = {
     organizationId?: string | null
     user?: { __typename?: 'User'; id: string } | null
     organization?: { __typename?: 'Organization'; id: string } | null
+    userAvatar?: { __typename?: 'User'; id: string } | null
+    organizationLogo?: { __typename?: 'Organization'; id: string } | null
   } | null
 }
 
@@ -5849,6 +5885,8 @@ export type __AdminUpdateStoredFileMutation = {
     organizationId?: string | null
     user?: { __typename?: 'User'; id: string } | null
     organization?: { __typename?: 'Organization'; id: string } | null
+    userAvatar?: { __typename?: 'User'; id: string } | null
+    organizationLogo?: { __typename?: 'Organization'; id: string } | null
   } | null
 }
 
@@ -5879,6 +5917,8 @@ export type __AdminStoredFileQuery = {
     organizationId?: string | null
     user?: { __typename?: 'User'; id: string } | null
     organization?: { __typename?: 'Organization'; id: string } | null
+    userAvatar?: { __typename?: 'User'; id: string } | null
+    organizationLogo?: { __typename?: 'Organization'; id: string } | null
   } | null
 }
 
@@ -5909,6 +5949,8 @@ export type __AdminStoredFilesQuery = {
     organizationId?: string | null
     user?: { __typename?: 'User'; id: string } | null
     organization?: { __typename?: 'Organization'; id: string } | null
+    userAvatar?: { __typename?: 'User'; id: string } | null
+    organizationLogo?: { __typename?: 'Organization'; id: string } | null
   }> | null
   counters?: {
     __typename?: 'CorePaging'
@@ -6730,6 +6772,7 @@ export type __AdminUserSummaryFragment = {
   emailValidated: boolean
   validateEmailToken?: string | null
   validateEmailTokenExpires?: any | null
+  avatarId?: string | null
   activeOrganizationId?: string | null
   twoFactorEnabled: boolean
   twoFactorSecret?: string | null
@@ -6742,6 +6785,7 @@ export type __AdminUserSummaryFragment = {
   deactivatedAt?: any | null
   termsAcceptedAt?: any | null
   privacyPolicyAcceptedAt?: any | null
+  avatar?: { __typename?: 'StoredFile'; id: string } | null
 }
 
 export type __AdminUserDetailsFragment = {
@@ -6760,6 +6804,7 @@ export type __AdminUserDetailsFragment = {
   emailValidated: boolean
   validateEmailToken?: string | null
   validateEmailTokenExpires?: any | null
+  avatarId?: string | null
   activeOrganizationId?: string | null
   twoFactorEnabled: boolean
   twoFactorSecret?: string | null
@@ -6772,6 +6817,7 @@ export type __AdminUserDetailsFragment = {
   deactivatedAt?: any | null
   termsAcceptedAt?: any | null
   privacyPolicyAcceptedAt?: any | null
+  avatar?: { __typename?: 'StoredFile'; id: string } | null
 }
 
 export type __AdminCreateUserMutationVariables = Exact<{
@@ -6796,6 +6842,7 @@ export type __AdminCreateUserMutation = {
     emailValidated: boolean
     validateEmailToken?: string | null
     validateEmailTokenExpires?: any | null
+    avatarId?: string | null
     activeOrganizationId?: string | null
     twoFactorEnabled: boolean
     twoFactorSecret?: string | null
@@ -6808,6 +6855,7 @@ export type __AdminCreateUserMutation = {
     deactivatedAt?: any | null
     termsAcceptedAt?: any | null
     privacyPolicyAcceptedAt?: any | null
+    avatar?: { __typename?: 'StoredFile'; id: string } | null
   } | null
 }
 
@@ -6843,6 +6891,7 @@ export type __AdminUpdateUserMutation = {
     emailValidated: boolean
     validateEmailToken?: string | null
     validateEmailTokenExpires?: any | null
+    avatarId?: string | null
     activeOrganizationId?: string | null
     twoFactorEnabled: boolean
     twoFactorSecret?: string | null
@@ -6855,6 +6904,7 @@ export type __AdminUpdateUserMutation = {
     deactivatedAt?: any | null
     termsAcceptedAt?: any | null
     privacyPolicyAcceptedAt?: any | null
+    avatar?: { __typename?: 'StoredFile'; id: string } | null
   } | null
 }
 
@@ -6880,6 +6930,7 @@ export type __AdminUserQuery = {
     emailValidated: boolean
     validateEmailToken?: string | null
     validateEmailTokenExpires?: any | null
+    avatarId?: string | null
     activeOrganizationId?: string | null
     twoFactorEnabled: boolean
     twoFactorSecret?: string | null
@@ -6892,6 +6943,7 @@ export type __AdminUserQuery = {
     deactivatedAt?: any | null
     termsAcceptedAt?: any | null
     privacyPolicyAcceptedAt?: any | null
+    avatar?: { __typename?: 'StoredFile'; id: string } | null
   } | null
 }
 
@@ -6917,6 +6969,7 @@ export type __AdminUsersQuery = {
     emailValidated: boolean
     validateEmailToken?: string | null
     validateEmailTokenExpires?: any | null
+    avatarId?: string | null
     activeOrganizationId?: string | null
     twoFactorEnabled: boolean
     twoFactorSecret?: string | null
@@ -6929,6 +6982,7 @@ export type __AdminUsersQuery = {
     deactivatedAt?: any | null
     termsAcceptedAt?: any | null
     privacyPolicyAcceptedAt?: any | null
+    avatar?: { __typename?: 'StoredFile'; id: string } | null
   }> | null
   counters?: {
     __typename?: 'CorePaging'
@@ -7789,6 +7843,15 @@ export type UserTokenDetailsFragment = {
       phone: string
       primary: boolean
     }> | null
+    avatar?: {
+      __typename?: 'StoredFile'
+      id: string
+      url: string
+      publicUrl?: string | null
+      filename: string
+      mimeType: string
+      createdAt: any
+    } | null
     images?: Array<{
       __typename?: 'StoredFile'
       id: string
@@ -7830,6 +7893,15 @@ export type AuthUserDetailsFragment = {
     phone: string
     primary: boolean
   }> | null
+  avatar?: {
+    __typename?: 'StoredFile'
+    id: string
+    url: string
+    publicUrl?: string | null
+    filename: string
+    mimeType: string
+    createdAt: any
+  } | null
   images?: Array<{
     __typename?: 'StoredFile'
     id: string
@@ -7881,6 +7953,15 @@ export type LoginMutation = {
         phone: string
         primary: boolean
       }> | null
+      avatar?: {
+        __typename?: 'StoredFile'
+        id: string
+        url: string
+        publicUrl?: string | null
+        filename: string
+        mimeType: string
+        createdAt: any
+      } | null
       images?: Array<{
         __typename?: 'StoredFile'
         id: string
@@ -7934,6 +8015,15 @@ export type RegisterMutation = {
         phone: string
         primary: boolean
       }> | null
+      avatar?: {
+        __typename?: 'StoredFile'
+        id: string
+        url: string
+        publicUrl?: string | null
+        filename: string
+        mimeType: string
+        createdAt: any
+      } | null
       images?: Array<{
         __typename?: 'StoredFile'
         id: string
@@ -7987,6 +8077,15 @@ export type RegisterWithInvitationMutation = {
         phone: string
         primary: boolean
       }> | null
+      avatar?: {
+        __typename?: 'StoredFile'
+        id: string
+        url: string
+        publicUrl?: string | null
+        filename: string
+        mimeType: string
+        createdAt: any
+      } | null
       images?: Array<{
         __typename?: 'StoredFile'
         id: string
@@ -8045,6 +8144,15 @@ export type ResetPasswordMutation = {
       phone: string
       primary: boolean
     }> | null
+    avatar?: {
+      __typename?: 'StoredFile'
+      id: string
+      url: string
+      publicUrl?: string | null
+      filename: string
+      mimeType: string
+      createdAt: any
+    } | null
     images?: Array<{
       __typename?: 'StoredFile'
       id: string
@@ -8092,6 +8200,15 @@ export type VerifyEmailMutation = {
       phone: string
       primary: boolean
     }> | null
+    avatar?: {
+      __typename?: 'StoredFile'
+      id: string
+      url: string
+      publicUrl?: string | null
+      filename: string
+      mimeType: string
+      createdAt: any
+    } | null
     images?: Array<{
       __typename?: 'StoredFile'
       id: string
@@ -8153,6 +8270,15 @@ export type EmulateUserMutation = {
         phone: string
         primary: boolean
       }> | null
+      avatar?: {
+        __typename?: 'StoredFile'
+        id: string
+        url: string
+        publicUrl?: string | null
+        filename: string
+        mimeType: string
+        createdAt: any
+      } | null
       images?: Array<{
         __typename?: 'StoredFile'
         id: string
@@ -8204,6 +8330,15 @@ export type EndEmulationMutation = {
         phone: string
         primary: boolean
       }> | null
+      avatar?: {
+        __typename?: 'StoredFile'
+        id: string
+        url: string
+        publicUrl?: string | null
+        filename: string
+        mimeType: string
+        createdAt: any
+      } | null
       images?: Array<{
         __typename?: 'StoredFile'
         id: string
@@ -8258,6 +8393,15 @@ export type VerifyEmailChangeMutation = {
       phone: string
       primary: boolean
     }> | null
+    avatar?: {
+      __typename?: 'StoredFile'
+      id: string
+      url: string
+      publicUrl?: string | null
+      filename: string
+      mimeType: string
+      createdAt: any
+    } | null
     images?: Array<{
       __typename?: 'StoredFile'
       id: string
@@ -8334,6 +8478,15 @@ export type MeQuery = {
       phone: string
       primary: boolean
     }> | null
+    avatar?: {
+      __typename?: 'StoredFile'
+      id: string
+      url: string
+      publicUrl?: string | null
+      filename: string
+      mimeType: string
+      createdAt: any
+    } | null
     images?: Array<{
       __typename?: 'StoredFile'
       id: string
@@ -8456,6 +8609,15 @@ export type Complete2FaLoginMutation = {
         phone: string
         primary: boolean
       }> | null
+      avatar?: {
+        __typename?: 'StoredFile'
+        id: string
+        url: string
+        publicUrl?: string | null
+        filename: string
+        mimeType: string
+        createdAt: any
+      } | null
       images?: Array<{
         __typename?: 'StoredFile'
         id: string
@@ -9530,6 +9692,15 @@ export type OrganizationListFragment = {
   createdAt: any
   updatedAt: any
   name: string
+  logo?: {
+    __typename?: 'StoredFile'
+    id: string
+    url: string
+    publicUrl?: string | null
+    filename: string
+    mimeType: string
+    createdAt: any
+  } | null
   images?: Array<{
     __typename?: 'StoredFile'
     id: string
@@ -9579,6 +9750,15 @@ export type OrganizationDetailsFragment = {
     name: string
     description?: string | null
   }> | null
+  logo?: {
+    __typename?: 'StoredFile'
+    id: string
+    url: string
+    publicUrl?: string | null
+    filename: string
+    mimeType: string
+    createdAt: any
+  } | null
   images?: Array<{
     __typename?: 'StoredFile'
     id: string
@@ -9634,6 +9814,15 @@ export type UserCreateOrganizationMutation = {
       name: string
       description?: string | null
     }> | null
+    logo?: {
+      __typename?: 'StoredFile'
+      id: string
+      url: string
+      publicUrl?: string | null
+      filename: string
+      mimeType: string
+      createdAt: any
+    } | null
     images?: Array<{
       __typename?: 'StoredFile'
       id: string
@@ -9700,6 +9889,15 @@ export type UserUpdateOrganizationMutation = {
       name: string
       description?: string | null
     }> | null
+    logo?: {
+      __typename?: 'StoredFile'
+      id: string
+      url: string
+      publicUrl?: string | null
+      filename: string
+      mimeType: string
+      createdAt: any
+    } | null
     images?: Array<{
       __typename?: 'StoredFile'
       id: string
@@ -9774,6 +9972,15 @@ export type AcceptOrganizationInvitationMutation = {
       name: string
       description?: string | null
     }> | null
+    logo?: {
+      __typename?: 'StoredFile'
+      id: string
+      url: string
+      publicUrl?: string | null
+      filename: string
+      mimeType: string
+      createdAt: any
+    } | null
     images?: Array<{
       __typename?: 'StoredFile'
       id: string
@@ -9847,6 +10054,15 @@ export type MyOrganizationsQuery = {
     createdAt: any
     updatedAt: any
     name: string
+    logo?: {
+      __typename?: 'StoredFile'
+      id: string
+      url: string
+      publicUrl?: string | null
+      filename: string
+      mimeType: string
+      createdAt: any
+    } | null
     images?: Array<{
       __typename?: 'StoredFile'
       id: string
@@ -9943,6 +10159,15 @@ export type MyOrganizationsWithMembersQuery = {
       name: string
       description?: string | null
     }> | null
+    logo?: {
+      __typename?: 'StoredFile'
+      id: string
+      url: string
+      publicUrl?: string | null
+      filename: string
+      mimeType: string
+      createdAt: any
+    } | null
     images?: Array<{
       __typename?: 'StoredFile'
       id: string
@@ -13046,6 +13271,15 @@ export const __AdminOrganizationSummaryFragmentDoc = {
           { kind: 'Field', name: { kind: 'Name', value: 'createdAt' } },
           { kind: 'Field', name: { kind: 'Name', value: 'updatedAt' } },
           { kind: 'Field', name: { kind: 'Name', value: 'name' } },
+          { kind: 'Field', name: { kind: 'Name', value: 'logoId' } },
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'logo' },
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [{ kind: 'Field', name: { kind: 'Name', value: 'id' } }],
+            },
+          },
           {
             kind: 'Field',
             name: { kind: 'Name', value: 'subscription' },
@@ -13084,6 +13318,15 @@ export const __AdminOrganizationDetailsFragmentDoc = {
           { kind: 'Field', name: { kind: 'Name', value: 'createdAt' } },
           { kind: 'Field', name: { kind: 'Name', value: 'updatedAt' } },
           { kind: 'Field', name: { kind: 'Name', value: 'name' } },
+          { kind: 'Field', name: { kind: 'Name', value: 'logoId' } },
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'logo' },
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [{ kind: 'Field', name: { kind: 'Name', value: 'id' } }],
+            },
+          },
           {
             kind: 'Field',
             name: { kind: 'Name', value: 'subscription' },
@@ -13551,6 +13794,22 @@ export const __AdminStoredFileSummaryFragmentDoc = {
               selections: [{ kind: 'Field', name: { kind: 'Name', value: 'id' } }],
             },
           },
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'userAvatar' },
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [{ kind: 'Field', name: { kind: 'Name', value: 'id' } }],
+            },
+          },
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'organizationLogo' },
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [{ kind: 'Field', name: { kind: 'Name', value: 'id' } }],
+            },
+          },
         ],
       },
     },
@@ -13605,6 +13864,22 @@ export const __AdminStoredFileDetailsFragmentDoc = {
           {
             kind: 'Field',
             name: { kind: 'Name', value: 'organization' },
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [{ kind: 'Field', name: { kind: 'Name', value: 'id' } }],
+            },
+          },
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'userAvatar' },
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [{ kind: 'Field', name: { kind: 'Name', value: 'id' } }],
+            },
+          },
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'organizationLogo' },
             selectionSet: {
               kind: 'SelectionSet',
               selections: [{ kind: 'Field', name: { kind: 'Name', value: 'id' } }],
@@ -14056,6 +14331,7 @@ export const __AdminUserSummaryFragmentDoc = {
           { kind: 'Field', name: { kind: 'Name', value: 'emailValidated' } },
           { kind: 'Field', name: { kind: 'Name', value: 'validateEmailToken' } },
           { kind: 'Field', name: { kind: 'Name', value: 'validateEmailTokenExpires' } },
+          { kind: 'Field', name: { kind: 'Name', value: 'avatarId' } },
           { kind: 'Field', name: { kind: 'Name', value: 'activeOrganizationId' } },
           { kind: 'Field', name: { kind: 'Name', value: 'twoFactorEnabled' } },
           { kind: 'Field', name: { kind: 'Name', value: 'twoFactorSecret' } },
@@ -14068,6 +14344,14 @@ export const __AdminUserSummaryFragmentDoc = {
           { kind: 'Field', name: { kind: 'Name', value: 'deactivatedAt' } },
           { kind: 'Field', name: { kind: 'Name', value: 'termsAcceptedAt' } },
           { kind: 'Field', name: { kind: 'Name', value: 'privacyPolicyAcceptedAt' } },
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'avatar' },
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [{ kind: 'Field', name: { kind: 'Name', value: 'id' } }],
+            },
+          },
         ],
       },
     },
@@ -14108,6 +14392,7 @@ export const __AdminUserDetailsFragmentDoc = {
           { kind: 'Field', name: { kind: 'Name', value: 'emailValidated' } },
           { kind: 'Field', name: { kind: 'Name', value: 'validateEmailToken' } },
           { kind: 'Field', name: { kind: 'Name', value: 'validateEmailTokenExpires' } },
+          { kind: 'Field', name: { kind: 'Name', value: 'avatarId' } },
           { kind: 'Field', name: { kind: 'Name', value: 'activeOrganizationId' } },
           { kind: 'Field', name: { kind: 'Name', value: 'twoFactorEnabled' } },
           { kind: 'Field', name: { kind: 'Name', value: 'twoFactorSecret' } },
@@ -14120,6 +14405,14 @@ export const __AdminUserDetailsFragmentDoc = {
           { kind: 'Field', name: { kind: 'Name', value: 'deactivatedAt' } },
           { kind: 'Field', name: { kind: 'Name', value: 'termsAcceptedAt' } },
           { kind: 'Field', name: { kind: 'Name', value: 'privacyPolicyAcceptedAt' } },
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'avatar' },
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [{ kind: 'Field', name: { kind: 'Name', value: 'id' } }],
+            },
+          },
         ],
       },
     },
@@ -14387,6 +14680,21 @@ export const AuthUserDetailsFragmentDoc = {
           },
           {
             kind: 'Field',
+            name: { kind: 'Name', value: 'avatar' },
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [
+                { kind: 'Field', name: { kind: 'Name', value: 'id' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'url' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'publicUrl' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'filename' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'mimeType' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'createdAt' } },
+              ],
+            },
+          },
+          {
+            kind: 'Field',
             name: { kind: 'Name', value: 'images' },
             selectionSet: {
               kind: 'SelectionSet',
@@ -14474,6 +14782,21 @@ export const UserTokenDetailsFragmentDoc = {
                 { kind: 'Field', name: { kind: 'Name', value: 'id' } },
                 { kind: 'Field', name: { kind: 'Name', value: 'phone' } },
                 { kind: 'Field', name: { kind: 'Name', value: 'primary' } },
+              ],
+            },
+          },
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'avatar' },
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [
+                { kind: 'Field', name: { kind: 'Name', value: 'id' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'url' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'publicUrl' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'filename' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'mimeType' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'createdAt' } },
               ],
             },
           },
@@ -15013,6 +15336,21 @@ export const OrganizationListFragmentDoc = {
           { kind: 'Field', name: { kind: 'Name', value: 'name' } },
           {
             kind: 'Field',
+            name: { kind: 'Name', value: 'logo' },
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [
+                { kind: 'Field', name: { kind: 'Name', value: 'id' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'url' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'publicUrl' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'filename' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'mimeType' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'createdAt' } },
+              ],
+            },
+          },
+          {
+            kind: 'Field',
             name: { kind: 'Name', value: 'images' },
             selectionSet: {
               kind: 'SelectionSet',
@@ -15118,6 +15456,21 @@ export const OrganizationDetailsFragmentDoc = {
           { kind: 'Field', name: { kind: 'Name', value: 'createdAt' } },
           { kind: 'Field', name: { kind: 'Name', value: 'updatedAt' } },
           { kind: 'Field', name: { kind: 'Name', value: 'name' } },
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'logo' },
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [
+                { kind: 'Field', name: { kind: 'Name', value: 'id' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'url' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'publicUrl' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'filename' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'mimeType' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'createdAt' } },
+              ],
+            },
+          },
           {
             kind: 'Field',
             name: { kind: 'Name', value: 'images' },
@@ -20895,6 +21248,15 @@ export const __AdminCreateOrganization = {
           { kind: 'Field', name: { kind: 'Name', value: 'createdAt' } },
           { kind: 'Field', name: { kind: 'Name', value: 'updatedAt' } },
           { kind: 'Field', name: { kind: 'Name', value: 'name' } },
+          { kind: 'Field', name: { kind: 'Name', value: 'logoId' } },
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'logo' },
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [{ kind: 'Field', name: { kind: 'Name', value: 'id' } }],
+            },
+          },
           {
             kind: 'Field',
             name: { kind: 'Name', value: 'subscription' },
@@ -21032,6 +21394,15 @@ export const __AdminUpdateOrganization = {
           { kind: 'Field', name: { kind: 'Name', value: 'createdAt' } },
           { kind: 'Field', name: { kind: 'Name', value: 'updatedAt' } },
           { kind: 'Field', name: { kind: 'Name', value: 'name' } },
+          { kind: 'Field', name: { kind: 'Name', value: 'logoId' } },
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'logo' },
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [{ kind: 'Field', name: { kind: 'Name', value: 'id' } }],
+            },
+          },
           {
             kind: 'Field',
             name: { kind: 'Name', value: 'subscription' },
@@ -21113,6 +21484,15 @@ export const __AdminOrganization = {
           { kind: 'Field', name: { kind: 'Name', value: 'createdAt' } },
           { kind: 'Field', name: { kind: 'Name', value: 'updatedAt' } },
           { kind: 'Field', name: { kind: 'Name', value: 'name' } },
+          { kind: 'Field', name: { kind: 'Name', value: 'logoId' } },
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'logo' },
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [{ kind: 'Field', name: { kind: 'Name', value: 'id' } }],
+            },
+          },
           {
             kind: 'Field',
             name: { kind: 'Name', value: 'subscription' },
@@ -21206,6 +21586,15 @@ export const __AdminOrganizations = {
           { kind: 'Field', name: { kind: 'Name', value: 'createdAt' } },
           { kind: 'Field', name: { kind: 'Name', value: 'updatedAt' } },
           { kind: 'Field', name: { kind: 'Name', value: 'name' } },
+          { kind: 'Field', name: { kind: 'Name', value: 'logoId' } },
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'logo' },
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [{ kind: 'Field', name: { kind: 'Name', value: 'id' } }],
+            },
+          },
           {
             kind: 'Field',
             name: { kind: 'Name', value: 'subscription' },
@@ -24140,6 +24529,22 @@ export const __AdminCreateStoredFile = {
               selections: [{ kind: 'Field', name: { kind: 'Name', value: 'id' } }],
             },
           },
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'userAvatar' },
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [{ kind: 'Field', name: { kind: 'Name', value: 'id' } }],
+            },
+          },
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'organizationLogo' },
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [{ kind: 'Field', name: { kind: 'Name', value: 'id' } }],
+            },
+          },
         ],
       },
     },
@@ -24298,6 +24703,22 @@ export const __AdminUpdateStoredFile = {
               selections: [{ kind: 'Field', name: { kind: 'Name', value: 'id' } }],
             },
           },
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'userAvatar' },
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [{ kind: 'Field', name: { kind: 'Name', value: 'id' } }],
+            },
+          },
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'organizationLogo' },
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [{ kind: 'Field', name: { kind: 'Name', value: 'id' } }],
+            },
+          },
         ],
       },
     },
@@ -24395,6 +24816,22 @@ export const __AdminStoredFile = {
           {
             kind: 'Field',
             name: { kind: 'Name', value: 'organization' },
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [{ kind: 'Field', name: { kind: 'Name', value: 'id' } }],
+            },
+          },
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'userAvatar' },
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [{ kind: 'Field', name: { kind: 'Name', value: 'id' } }],
+            },
+          },
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'organizationLogo' },
             selectionSet: {
               kind: 'SelectionSet',
               selections: [{ kind: 'Field', name: { kind: 'Name', value: 'id' } }],
@@ -24509,6 +24946,22 @@ export const __AdminStoredFiles = {
           {
             kind: 'Field',
             name: { kind: 'Name', value: 'organization' },
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [{ kind: 'Field', name: { kind: 'Name', value: 'id' } }],
+            },
+          },
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'userAvatar' },
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [{ kind: 'Field', name: { kind: 'Name', value: 'id' } }],
+            },
+          },
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'organizationLogo' },
             selectionSet: {
               kind: 'SelectionSet',
               selections: [{ kind: 'Field', name: { kind: 'Name', value: 'id' } }],
@@ -27116,6 +27569,7 @@ export const __AdminCreateUser = {
           { kind: 'Field', name: { kind: 'Name', value: 'emailValidated' } },
           { kind: 'Field', name: { kind: 'Name', value: 'validateEmailToken' } },
           { kind: 'Field', name: { kind: 'Name', value: 'validateEmailTokenExpires' } },
+          { kind: 'Field', name: { kind: 'Name', value: 'avatarId' } },
           { kind: 'Field', name: { kind: 'Name', value: 'activeOrganizationId' } },
           { kind: 'Field', name: { kind: 'Name', value: 'twoFactorEnabled' } },
           { kind: 'Field', name: { kind: 'Name', value: 'twoFactorSecret' } },
@@ -27128,6 +27582,14 @@ export const __AdminCreateUser = {
           { kind: 'Field', name: { kind: 'Name', value: 'deactivatedAt' } },
           { kind: 'Field', name: { kind: 'Name', value: 'termsAcceptedAt' } },
           { kind: 'Field', name: { kind: 'Name', value: 'privacyPolicyAcceptedAt' } },
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'avatar' },
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [{ kind: 'Field', name: { kind: 'Name', value: 'id' } }],
+            },
+          },
         ],
       },
     },
@@ -27258,6 +27720,7 @@ export const __AdminUpdateUser = {
           { kind: 'Field', name: { kind: 'Name', value: 'emailValidated' } },
           { kind: 'Field', name: { kind: 'Name', value: 'validateEmailToken' } },
           { kind: 'Field', name: { kind: 'Name', value: 'validateEmailTokenExpires' } },
+          { kind: 'Field', name: { kind: 'Name', value: 'avatarId' } },
           { kind: 'Field', name: { kind: 'Name', value: 'activeOrganizationId' } },
           { kind: 'Field', name: { kind: 'Name', value: 'twoFactorEnabled' } },
           { kind: 'Field', name: { kind: 'Name', value: 'twoFactorSecret' } },
@@ -27270,6 +27733,14 @@ export const __AdminUpdateUser = {
           { kind: 'Field', name: { kind: 'Name', value: 'deactivatedAt' } },
           { kind: 'Field', name: { kind: 'Name', value: 'termsAcceptedAt' } },
           { kind: 'Field', name: { kind: 'Name', value: 'privacyPolicyAcceptedAt' } },
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'avatar' },
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [{ kind: 'Field', name: { kind: 'Name', value: 'id' } }],
+            },
+          },
         ],
       },
     },
@@ -27347,6 +27818,7 @@ export const __AdminUser = {
           { kind: 'Field', name: { kind: 'Name', value: 'emailValidated' } },
           { kind: 'Field', name: { kind: 'Name', value: 'validateEmailToken' } },
           { kind: 'Field', name: { kind: 'Name', value: 'validateEmailTokenExpires' } },
+          { kind: 'Field', name: { kind: 'Name', value: 'avatarId' } },
           { kind: 'Field', name: { kind: 'Name', value: 'activeOrganizationId' } },
           { kind: 'Field', name: { kind: 'Name', value: 'twoFactorEnabled' } },
           { kind: 'Field', name: { kind: 'Name', value: 'twoFactorSecret' } },
@@ -27359,6 +27831,14 @@ export const __AdminUser = {
           { kind: 'Field', name: { kind: 'Name', value: 'deactivatedAt' } },
           { kind: 'Field', name: { kind: 'Name', value: 'termsAcceptedAt' } },
           { kind: 'Field', name: { kind: 'Name', value: 'privacyPolicyAcceptedAt' } },
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'avatar' },
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [{ kind: 'Field', name: { kind: 'Name', value: 'id' } }],
+            },
+          },
         ],
       },
     },
@@ -27451,6 +27931,7 @@ export const __AdminUsers = {
           { kind: 'Field', name: { kind: 'Name', value: 'emailValidated' } },
           { kind: 'Field', name: { kind: 'Name', value: 'validateEmailToken' } },
           { kind: 'Field', name: { kind: 'Name', value: 'validateEmailTokenExpires' } },
+          { kind: 'Field', name: { kind: 'Name', value: 'avatarId' } },
           { kind: 'Field', name: { kind: 'Name', value: 'activeOrganizationId' } },
           { kind: 'Field', name: { kind: 'Name', value: 'twoFactorEnabled' } },
           { kind: 'Field', name: { kind: 'Name', value: 'twoFactorSecret' } },
@@ -27463,6 +27944,14 @@ export const __AdminUsers = {
           { kind: 'Field', name: { kind: 'Name', value: 'deactivatedAt' } },
           { kind: 'Field', name: { kind: 'Name', value: 'termsAcceptedAt' } },
           { kind: 'Field', name: { kind: 'Name', value: 'privacyPolicyAcceptedAt' } },
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'avatar' },
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [{ kind: 'Field', name: { kind: 'Name', value: 'id' } }],
+            },
+          },
         ],
       },
     },
@@ -29903,6 +30392,21 @@ export const Login = {
           },
           {
             kind: 'Field',
+            name: { kind: 'Name', value: 'avatar' },
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [
+                { kind: 'Field', name: { kind: 'Name', value: 'id' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'url' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'publicUrl' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'filename' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'mimeType' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'createdAt' } },
+              ],
+            },
+          },
+          {
+            kind: 'Field',
             name: { kind: 'Name', value: 'images' },
             selectionSet: {
               kind: 'SelectionSet',
@@ -30027,6 +30531,21 @@ export const Register = {
                 { kind: 'Field', name: { kind: 'Name', value: 'id' } },
                 { kind: 'Field', name: { kind: 'Name', value: 'phone' } },
                 { kind: 'Field', name: { kind: 'Name', value: 'primary' } },
+              ],
+            },
+          },
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'avatar' },
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [
+                { kind: 'Field', name: { kind: 'Name', value: 'id' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'url' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'publicUrl' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'filename' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'mimeType' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'createdAt' } },
               ],
             },
           },
@@ -30159,6 +30678,21 @@ export const RegisterWithInvitation = {
                 { kind: 'Field', name: { kind: 'Name', value: 'id' } },
                 { kind: 'Field', name: { kind: 'Name', value: 'phone' } },
                 { kind: 'Field', name: { kind: 'Name', value: 'primary' } },
+              ],
+            },
+          },
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'avatar' },
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [
+                { kind: 'Field', name: { kind: 'Name', value: 'id' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'url' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'publicUrl' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'filename' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'mimeType' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'createdAt' } },
               ],
             },
           },
@@ -30323,6 +30857,21 @@ export const ResetPassword = {
           },
           {
             kind: 'Field',
+            name: { kind: 'Name', value: 'avatar' },
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [
+                { kind: 'Field', name: { kind: 'Name', value: 'id' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'url' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'publicUrl' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'filename' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'mimeType' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'createdAt' } },
+              ],
+            },
+          },
+          {
+            kind: 'Field',
             name: { kind: 'Name', value: 'images' },
             selectionSet: {
               kind: 'SelectionSet',
@@ -30424,6 +30973,21 @@ export const VerifyEmail = {
                 { kind: 'Field', name: { kind: 'Name', value: 'id' } },
                 { kind: 'Field', name: { kind: 'Name', value: 'phone' } },
                 { kind: 'Field', name: { kind: 'Name', value: 'primary' } },
+              ],
+            },
+          },
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'avatar' },
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [
+                { kind: 'Field', name: { kind: 'Name', value: 'id' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'url' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'publicUrl' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'filename' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'mimeType' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'createdAt' } },
               ],
             },
           },
@@ -30597,6 +31161,21 @@ export const EmulateUser = {
           },
           {
             kind: 'Field',
+            name: { kind: 'Name', value: 'avatar' },
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [
+                { kind: 'Field', name: { kind: 'Name', value: 'id' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'url' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'publicUrl' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'filename' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'mimeType' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'createdAt' } },
+              ],
+            },
+          },
+          {
+            kind: 'Field',
             name: { kind: 'Name', value: 'images' },
             selectionSet: {
               kind: 'SelectionSet',
@@ -30704,6 +31283,21 @@ export const EndEmulation = {
                 { kind: 'Field', name: { kind: 'Name', value: 'id' } },
                 { kind: 'Field', name: { kind: 'Name', value: 'phone' } },
                 { kind: 'Field', name: { kind: 'Name', value: 'primary' } },
+              ],
+            },
+          },
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'avatar' },
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [
+                { kind: 'Field', name: { kind: 'Name', value: 'id' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'url' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'publicUrl' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'filename' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'mimeType' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'createdAt' } },
               ],
             },
           },
@@ -30846,6 +31440,21 @@ export const VerifyEmailChange = {
                 { kind: 'Field', name: { kind: 'Name', value: 'id' } },
                 { kind: 'Field', name: { kind: 'Name', value: 'phone' } },
                 { kind: 'Field', name: { kind: 'Name', value: 'primary' } },
+              ],
+            },
+          },
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'avatar' },
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [
+                { kind: 'Field', name: { kind: 'Name', value: 'id' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'url' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'publicUrl' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'filename' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'mimeType' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'createdAt' } },
               ],
             },
           },
@@ -31093,6 +31702,21 @@ export const Me = {
                 { kind: 'Field', name: { kind: 'Name', value: 'id' } },
                 { kind: 'Field', name: { kind: 'Name', value: 'phone' } },
                 { kind: 'Field', name: { kind: 'Name', value: 'primary' } },
+              ],
+            },
+          },
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'avatar' },
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [
+                { kind: 'Field', name: { kind: 'Name', value: 'id' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'url' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'publicUrl' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'filename' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'mimeType' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'createdAt' } },
               ],
             },
           },
@@ -31447,6 +32071,21 @@ export const Complete2FaLogin = {
                 { kind: 'Field', name: { kind: 'Name', value: 'id' } },
                 { kind: 'Field', name: { kind: 'Name', value: 'phone' } },
                 { kind: 'Field', name: { kind: 'Name', value: 'primary' } },
+              ],
+            },
+          },
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'avatar' },
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [
+                { kind: 'Field', name: { kind: 'Name', value: 'id' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'url' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'publicUrl' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'filename' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'mimeType' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'createdAt' } },
               ],
             },
           },
@@ -34545,6 +35184,21 @@ export const UserCreateOrganization = {
           { kind: 'Field', name: { kind: 'Name', value: 'name' } },
           {
             kind: 'Field',
+            name: { kind: 'Name', value: 'logo' },
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [
+                { kind: 'Field', name: { kind: 'Name', value: 'id' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'url' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'publicUrl' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'filename' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'mimeType' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'createdAt' } },
+              ],
+            },
+          },
+          {
+            kind: 'Field',
             name: { kind: 'Name', value: 'images' },
             selectionSet: {
               kind: 'SelectionSet',
@@ -34742,6 +35396,21 @@ export const UserUpdateOrganization = {
           { kind: 'Field', name: { kind: 'Name', value: 'createdAt' } },
           { kind: 'Field', name: { kind: 'Name', value: 'updatedAt' } },
           { kind: 'Field', name: { kind: 'Name', value: 'name' } },
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'logo' },
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [
+                { kind: 'Field', name: { kind: 'Name', value: 'id' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'url' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'publicUrl' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'filename' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'mimeType' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'createdAt' } },
+              ],
+            },
+          },
           {
             kind: 'Field',
             name: { kind: 'Name', value: 'images' },
@@ -34967,6 +35636,21 @@ export const AcceptOrganizationInvitation = {
           { kind: 'Field', name: { kind: 'Name', value: 'createdAt' } },
           { kind: 'Field', name: { kind: 'Name', value: 'updatedAt' } },
           { kind: 'Field', name: { kind: 'Name', value: 'name' } },
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'logo' },
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [
+                { kind: 'Field', name: { kind: 'Name', value: 'id' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'url' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'publicUrl' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'filename' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'mimeType' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'createdAt' } },
+              ],
+            },
+          },
           {
             kind: 'Field',
             name: { kind: 'Name', value: 'images' },
@@ -35304,6 +35988,21 @@ export const MyOrganizations = {
           { kind: 'Field', name: { kind: 'Name', value: 'name' } },
           {
             kind: 'Field',
+            name: { kind: 'Name', value: 'logo' },
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [
+                { kind: 'Field', name: { kind: 'Name', value: 'id' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'url' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'publicUrl' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'filename' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'mimeType' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'createdAt' } },
+              ],
+            },
+          },
+          {
+            kind: 'Field',
             name: { kind: 'Name', value: 'images' },
             selectionSet: {
               kind: 'SelectionSet',
@@ -35482,6 +36181,21 @@ export const MyOrganizationsWithMembers = {
           { kind: 'Field', name: { kind: 'Name', value: 'createdAt' } },
           { kind: 'Field', name: { kind: 'Name', value: 'updatedAt' } },
           { kind: 'Field', name: { kind: 'Name', value: 'name' } },
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'logo' },
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [
+                { kind: 'Field', name: { kind: 'Name', value: 'id' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'url' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'publicUrl' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'filename' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'mimeType' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'createdAt' } },
+              ],
+            },
+          },
           {
             kind: 'Field',
             name: { kind: 'Name', value: 'images' },

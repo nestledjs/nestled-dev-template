@@ -13,6 +13,7 @@ fragment __AdminUserSummary on User {
   emailValidated
   validateEmailToken
   validateEmailTokenExpires
+  avatarId
   activeOrganizationId
   twoFactorEnabled
   twoFactorSecret
@@ -25,6 +26,9 @@ fragment __AdminUserSummary on User {
   deactivatedAt
   termsAcceptedAt
   privacyPolicyAcceptedAt
+  avatar {
+    id
+  }
 }
 
 fragment __AdminUserDetails on User {
