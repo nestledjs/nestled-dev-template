@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router'
-import { type FormField, FormFieldClass } from '@nestledjs/forms'
+import { type FormField, FormFieldClass } from '@nestledjs/forms-core'
 
 import type { DatabaseModel } from '../types'
 import type { DisplayFieldConfig } from '../context/AdminDataContext'

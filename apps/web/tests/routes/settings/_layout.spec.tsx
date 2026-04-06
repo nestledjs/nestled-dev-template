@@ -362,14 +362,11 @@ describe('SettingsLayout Component', () => {
     it('should display user avatar from images', () => {
       const userWithAvatar = {
         ...mockUser,
-        images: [
-          {
-            id: 'img-1',
-            url: 'https://example.com/avatar.png',
-            publicUrl: 'https://example.com/avatar.png',
-            metadata: { type: 'avatar' },
-          },
-        ],
+        avatar: {
+          id: 'img-1',
+          url: 'https://example.com/avatar.png',
+          publicUrl: 'https://example.com/avatar.png',
+        },
       }
 
       vi.mocked(useGlobalCtx).mockReturnValue({
@@ -391,14 +388,11 @@ describe('SettingsLayout Component', () => {
     it('should display organization logo from images', () => {
       const orgWithLogo = {
         ...mockOrganization,
-        images: [
-          {
-            id: 'img-1',
-            url: 'https://example.com/logo.png',
-            publicUrl: 'https://example.com/logo.png',
-            metadata: { type: 'logo' },
-          },
-        ],
+        logo: {
+          id: 'img-1',
+          url: 'https://example.com/logo.png',
+          publicUrl: 'https://example.com/logo.png',
+        },
       }
 
       vi.mocked(useQuery).mockReturnValue({
