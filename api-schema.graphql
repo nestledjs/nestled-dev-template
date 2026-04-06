@@ -348,6 +348,7 @@ input CreateOrganizationInput {
   imagesIds: [String!]
   invitesIds: [String!]
   linksIds: [String!]
+  logoId: String
   membersIds: [String!]
   name: String!
   phoneNumbersIds: [String!]
@@ -439,6 +440,7 @@ input CreateStoredFileInput {
   metadata: JSON
   mimeType: String!
   organizationId: String
+  organizationLogoId: String
   originalName: String!
   provider: StorageProvider!
   providerFileId: String!
@@ -446,6 +448,7 @@ input CreateStoredFileInput {
   size: Int!
   updatedAt: DateTime
   url: String!
+  userAvatarId: String
   userId: String
   width: Int
 }
@@ -496,6 +499,7 @@ input CreateUserInput {
   activeSessionsIds: [String!]
   addressesIds: [String!]
   apiTokensIds: [String!]
+  avatarId: String
   bio: String
   createdAt: DateTime
   deactivatedAt: DateTime
@@ -881,6 +885,7 @@ input ListOrganizationInput {
   imagesIds: [String!]
   invitesIds: [String!]
   linksIds: [String!]
+  logoId: String
   membersIds: [String!]
   name: String
   orderBy: String
@@ -1030,6 +1035,7 @@ input ListStoredFileInput {
   orderBy: String
   orderDirection: String
   organizationId: String
+  organizationLogoId: String
   originalName: String
   provider: StorageProvider
   providerFileId: String
@@ -1041,6 +1047,7 @@ input ListStoredFileInput {
   take: Float = 20
   updatedAt: DateTime
   url: String
+  userAvatarId: String
   userId: String
   width: Int
 }
@@ -1112,6 +1119,7 @@ input ListUserInput {
   activeSessionsIds: [String!]
   addressesIds: [String!]
   apiTokensIds: [String!]
+  avatarId: String
   bio: String
   createdAt: DateTime
   deactivatedAt: DateTime
@@ -1376,6 +1384,8 @@ type Organization {
   images: [StoredFile!]
   invites: [Invite!]
   links: [Link!]
+  logo: StoredFile
+  logoId: String
   members: [OrganizationMember!]
   name: String!
   phoneNumbers: [PhoneNumber!]
@@ -1680,6 +1690,7 @@ type StoredFile {
   mimeType: String!
   organization: Organization
   organizationId: String
+  organizationLogo: Organization
   originalName: String!
   provider: StorageProvider!
   providerFileId: String!
@@ -1688,6 +1699,7 @@ type StoredFile {
   updatedAt: DateTime!
   url: String!
   user: User
+  userAvatar: User
   userId: String
   width: Int
 }
@@ -1898,6 +1910,7 @@ input UpdateOrganizationInput {
   imagesIds: [String!]
   invitesIds: [String!]
   linksIds: [String!]
+  logoId: String
   membersIds: [String!]
   name: String
   phoneNumbersIds: [String!]
@@ -1989,6 +2002,7 @@ input UpdateStoredFileInput {
   metadata: JSON
   mimeType: String
   organizationId: String
+  organizationLogoId: String
   originalName: String
   provider: StorageProvider
   providerFileId: String
@@ -1996,6 +2010,7 @@ input UpdateStoredFileInput {
   size: Int
   updatedAt: DateTime
   url: String
+  userAvatarId: String
   userId: String
   width: Int
 }
@@ -2046,6 +2061,7 @@ input UpdateUserInput {
   activeSessionsIds: [String!]
   addressesIds: [String!]
   apiTokensIds: [String!]
+  avatarId: String
   bio: String
   createdAt: DateTime
   deactivatedAt: DateTime
@@ -2136,6 +2152,8 @@ type User {
   activeSessions: [UserSession!]
   addresses: [Address!]
   apiTokens: [ApiToken!]
+  avatar: StoredFile
+  avatarId: String
   bio: String
   createdAt: DateTime!
   deactivatedAt: DateTime

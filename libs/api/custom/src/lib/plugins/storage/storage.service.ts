@@ -82,35 +82,33 @@ export class StorageService {
   /**
    * Upload user avatar
    * Folder structure: user_avatars/{userId}/filename.ext
-   * Deletes existing avatars before uploading to prevent accumulation
+   * Uses FK pointer (user.avatarId) — deletes the exact old file, no metadata filtering
    */
   async uploadUserAvatar(fileUpload: FileUpload, userId: string): Promise<StoredFile> {
+    // Read the current avatar FK before uploading
+    const user = await this.prisma.user.findUnique({ where: { id: userId }, select: { avatarId: true } })
+
     // Upload new avatar first to prevent data loss if upload fails
     const newAvatar = await this.uploadFile(fileUpload, userId, {
       folder: `user_avatars/${userId}`,
-      metadata: { type: 'avatar' },
       isPublic: true,
     })
 
-    // Delete existing user avatars only after successful upload
-    const existingAvatars =
-      (await this.prisma.storedFile.findMany({
-        where: {
-          userId,
-          metadata: { path: ['type'], equals: 'avatar' },
-          id: { not: newAvatar.id }, // Exclude the newly uploaded avatar
-        },
-      })) || []
+    // Point the FK to the new file
+    await this.prisma.user.update({ where: { id: userId }, data: { avatarId: newAvatar.id } })
 
-    for (const avatar of existingAvatars) {
-      try {
-        const providerName = avatar.provider.toLowerCase()
-        const storageProvider = this.storageFactory.getProviderByName(providerName)
-        await storageProvider.delete(avatar.providerFileId)
-      } catch (error) {
-        this.logger.warn(`Failed to delete old avatar from provider: ${error}`)
+    // Delete the old avatar file after the FK is updated
+    if (user?.avatarId) {
+      const oldFile = await this.prisma.storedFile.findUnique({ where: { id: user.avatarId } })
+      if (oldFile) {
+        try {
+          const storageProvider = this.storageFactory.getProviderByName(oldFile.provider.toLowerCase())
+          await storageProvider.delete(oldFile.providerFileId)
+        } catch (error) {
+          this.logger.warn(`Failed to delete old user avatar from provider: ${error}`)
+        }
+        await this.prisma.storedFile.delete({ where: { id: oldFile.id } })
       }
-      await this.prisma.storedFile.delete({ where: { id: avatar.id } })
     }
 
     return newAvatar
@@ -119,40 +117,38 @@ export class StorageService {
   /**
    * Upload organization logo
    * Folder structure: org_avatars/{organizationId}/filename.ext
-   * Deletes existing logos before uploading to prevent accumulation
+   * Uses FK pointer (organization.logoId) — deletes the exact old file, no metadata filtering
    */
   async uploadOrganizationLogo(
     fileUpload: FileUpload,
     userId: string,
     organizationId: string,
   ): Promise<StoredFile> {
+    // Read the current logo FK before uploading
+    const org = await this.prisma.organization.findUnique({ where: { id: organizationId }, select: { logoId: true } })
+
     // Upload new logo first to prevent data loss if upload fails
     const newLogo = await this.uploadFile(fileUpload, userId, {
       folder: `org_avatars/${organizationId}`,
       organizationId,
-      metadata: { type: 'logo' },
       isPublic: true,
     })
 
-    // Delete existing organization logos only after successful upload
-    const existingLogos =
-      (await this.prisma.storedFile.findMany({
-        where: {
-          organizationId,
-          metadata: { path: ['type'], equals: 'logo' },
-          id: { not: newLogo.id }, // Exclude the newly uploaded logo
-        },
-      })) || []
+    // Point the FK to the new file
+    await this.prisma.organization.update({ where: { id: organizationId }, data: { logoId: newLogo.id } })
 
-    for (const logo of existingLogos) {
-      try {
-        const providerName = logo.provider.toLowerCase()
-        const storageProvider = this.storageFactory.getProviderByName(providerName)
-        await storageProvider.delete(logo.providerFileId)
-      } catch (error) {
-        this.logger.warn(`Failed to delete old logo from provider: ${error}`)
+    // Delete the old logo file after the FK is updated
+    if (org?.logoId) {
+      const oldFile = await this.prisma.storedFile.findUnique({ where: { id: org.logoId } })
+      if (oldFile) {
+        try {
+          const storageProvider = this.storageFactory.getProviderByName(oldFile.provider.toLowerCase())
+          await storageProvider.delete(oldFile.providerFileId)
+        } catch (error) {
+          this.logger.warn(`Failed to delete old organization logo from provider: ${error}`)
+        }
+        await this.prisma.storedFile.delete({ where: { id: oldFile.id } })
       }
-      await this.prisma.storedFile.delete({ where: { id: logo.id } })
     }
 
     return newLogo
