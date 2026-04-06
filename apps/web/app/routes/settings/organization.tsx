@@ -12,10 +12,10 @@ import {
   type MyOrganizationsQuery,
   UserUpdateOrganization,
   UploadOrganizationLogo,
-  DeleteFile,
   type UserUpdateOrganizationMutation,
   type UploadOrganizationLogoMutation,
-  type DeleteFileMutation,
+  RemoveOrganizationLogo,
+  type RemoveOrganizationLogoMutation,
 } from '@nestled-template/shared/sdk'
 import { useApolloClient, useReadQuery, type QueryRef, useMutation } from '@apollo/client/react'
 import { AvatarUpload } from '@nestled-template/web-ui'
@@ -27,11 +27,7 @@ export const loader = apolloLoader()(({ preloadQuery }) => {
   return { myOrganizationsQueryRef }
 })
 
-type OrgLogo = {
-  id: string
-  publicUrl?: string | null
-  url?: string | null
-}
+type OrgLogo = NonNullable<MyOrganizationsQuery['myOrganizations'][number]['logo']>
 
 export default function OrganizationSettings() {
   const loaderData = useLoaderData() as { myOrganizationsQueryRef: QueryRef<MyOrganizationsQuery> }
@@ -44,7 +40,7 @@ export default function OrganizationSettings() {
   const [updateOrganization] = useMutation<UserUpdateOrganizationMutation>(UserUpdateOrganization)
   const [uploadOrganizationLogo] =
     useMutation<UploadOrganizationLogoMutation>(UploadOrganizationLogo)
-  const [deleteFile] = useMutation<DeleteFileMutation>(DeleteFile)
+  const [removeOrganizationLogo] = useMutation<RemoveOrganizationLogoMutation>(RemoveOrganizationLogo)
   const revalidator = useRevalidator()
   const client = useApolloClient()
 
@@ -74,7 +70,7 @@ export default function OrganizationSettings() {
     }
   }
 
-  const organizationLogo = (activeOrganization as any)?.logo as OrgLogo | undefined | null
+  const organizationLogo = activeOrganization?.logo as OrgLogo | undefined | null
 
   const handleLogoUpload = async (file: File) => {
     if (!activeOrganization) return
@@ -101,14 +97,14 @@ export default function OrganizationSettings() {
   }
 
   const handleLogoRemove = async () => {
-    if (!organizationLogo) {
+    if (!activeOrganization || !organizationLogo) {
       setLogoMessage({ type: 'error', text: 'No logo to remove' })
       setTimeout(() => setLogoMessage(null), 3000)
       return
     }
 
     try {
-      await deleteFile({ variables: { uploadId: organizationLogo.id } })
+      await removeOrganizationLogo({ variables: { organizationId: activeOrganization.id } })
       await client.refetchQueries({ include: [Me, MyOrganizations] })
       setLogoMessage({ type: 'success', text: 'Logo removed' })
     } catch (error) {
