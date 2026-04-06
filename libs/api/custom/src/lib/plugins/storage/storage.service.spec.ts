@@ -27,6 +27,17 @@ describe('StorageService', () => {
         findMany: jest.fn(),
         delete: jest.fn(),
       },
+      user: {
+        findUnique: jest.fn(),
+        update: jest.fn(),
+      },
+      organization: {
+        findUnique: jest.fn(),
+        update: jest.fn(),
+      },
+      organizationMember: {
+        findFirst: jest.fn(),
+      },
     }
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -223,20 +234,22 @@ describe('StorageService', () => {
       mockPrisma.storedFile.create.mockResolvedValue({
         id: 'stored-avatar',
         folder: 'user_avatars/user-123',
-        metadata: { type: 'avatar' },
       } as any)
-      // Mock findMany to return empty array (no existing avatars to delete)
-      mockPrisma.storedFile.findMany.mockResolvedValue([])
+      // No existing avatar
+      mockPrisma.user.findUnique.mockResolvedValue({ avatarId: null })
+      mockPrisma.user.update.mockResolvedValue({})
       const result = await service.uploadUserAvatar(mockFileUpload as any, 'user-123')
       expect(result.folder).toBe('user_avatars/user-123')
-      expect(result.metadata).toEqual({ type: 'avatar' })
       expect(mockStorageProvider.upload).toHaveBeenCalledWith(
         expect.any(Buffer),
         expect.objectContaining({
           folder: 'user_avatars/user-123',
-          metadata: { type: 'avatar' },
         }),
       )
+      expect(mockPrisma.user.update).toHaveBeenCalledWith({
+        where: { id: 'user-123' },
+        data: { avatarId: 'stored-avatar' },
+      })
     })
   })
   describe('uploadOrganizationLogo', () => {
@@ -263,20 +276,25 @@ describe('StorageService', () => {
       })
       mockPrisma.storedFile.create.mockResolvedValue({
         id: 'stored-logo',
-        folder: 'logos',
+        folder: 'org_avatars/org-123',
         organizationId: 'org-123',
-        metadata: { type: 'logo' },
       } as any)
-      // Mock findMany to return empty array (no existing logos to delete)
-      mockPrisma.storedFile.findMany.mockResolvedValue([])
+      // Mock org membership check (Owner/Admin)
+      mockPrisma.organizationMember.findFirst.mockResolvedValue({ role: { name: 'Owner' } })
+      // No existing logo
+      mockPrisma.organization.findUnique.mockResolvedValue({ logoId: null })
+      mockPrisma.organization.update.mockResolvedValue({})
       const result = await service.uploadOrganizationLogo(
         mockFileUpload as any,
         'user-123',
         'org-123',
       )
-      expect(result.folder).toBe('logos')
+      expect(result.folder).toBe('org_avatars/org-123')
       expect(result.organizationId).toBe('org-123')
-      expect(result.metadata).toEqual({ type: 'logo' })
+      expect(mockPrisma.organization.update).toHaveBeenCalledWith({
+        where: { id: 'org-123' },
+        data: { logoId: 'stored-logo' },
+      })
     })
   })
   describe('deleteFile', () => {
