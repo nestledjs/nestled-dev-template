@@ -373,6 +373,12 @@ export class Organization {
   @Field(() => String)
   name!: string;
 
+  @Field(() => String, { nullable: true })
+  logoId?: string | null;
+
+  @Field(() => StoredFile, { nullable: true })
+  logo?: Partial<StoredFile> | null;
+
   @Field(() => [Email], { nullable: true })
   emails?: Partial<Email>[] | null;
 
@@ -773,6 +779,12 @@ export class StoredFile {
   @Field(() => Organization, { nullable: true })
   organization?: Partial<Organization> | null;
 
+  @Field(() => User, { nullable: true })
+  userAvatar?: Partial<User> | null;
+
+  @Field(() => Organization, { nullable: true })
+  organizationLogo?: Partial<Organization> | null;
+
 }
 
 @ObjectType({ description: undefined })
@@ -827,6 +839,12 @@ export class User {
 
   @Field(() => [PhoneNumber], { nullable: true })
   phoneNumbers?: Partial<PhoneNumber>[] | null;
+
+  @Field(() => String, { nullable: true })
+  avatarId?: string | null;
+
+  @Field(() => StoredFile, { nullable: true })
+  avatar?: Partial<StoredFile> | null;
 
   @Field(() => [StoredFile], { nullable: true })
   images?: Partial<StoredFile>[] | null;

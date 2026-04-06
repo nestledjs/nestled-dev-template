@@ -27,20 +27,10 @@ export const loader = apolloLoader()(({ preloadQuery }) => {
   return { myOrganizationsQueryRef }
 })
 
-type OrgImage = {
+type OrgLogo = {
   id: string
-  type?: string
-  folder?: string | null
-  createdAt: string
   publicUrl?: string | null
   url?: string | null
-  metadata?: { type?: string } | null
-}
-
-const getImageCreatedTime = (img: OrgImage): number => {
-  if (!img?.createdAt) return 0
-  const time = new Date(img.createdAt).getTime()
-  return Number.isNaN(time) ? 0 : time
 }
 
 export default function OrganizationSettings() {
@@ -84,11 +74,7 @@ export default function OrganizationSettings() {
     }
   }
 
-  // Get organization's logo: filter by type, sort by date desc, pick most recent
-  const orgLogos = (activeOrganization?.images as OrgImage[] | undefined)
-    ?.filter((img) => (img.metadata as { type?: string })?.type === 'logo' || img.folder === 'logos')
-    ?.sort((a, b) => getImageCreatedTime(b) - getImageCreatedTime(a))
-  const organizationLogo = orgLogos && orgLogos.length > 0 ? orgLogos[0] : undefined
+  const organizationLogo = (activeOrganization as any)?.logo as OrgLogo | undefined | null
 
   const handleLogoUpload = async (file: File) => {
     if (!activeOrganization) return
@@ -115,38 +101,19 @@ export default function OrganizationSettings() {
   }
 
   const handleLogoRemove = async () => {
-    // Get ALL logo images for this organization to delete accumulated ones
-    const logoImages = (activeOrganization?.images as OrgImage[])?.filter(
-      (img) => (img.metadata as { type?: string })?.type === 'logo' || img.folder === 'logos',
-    ) || []
-
-    if (logoImages.length === 0) {
+    if (!organizationLogo) {
       setLogoMessage({ type: 'error', text: 'No logo to remove' })
       setTimeout(() => setLogoMessage(null), 3000)
       return
     }
 
-    let successCount = 0
-    let errorCount = 0
-
-    // Try to delete all of them
-    for (const image of logoImages) {
-      try {
-        await deleteFile({ variables: { uploadId: image.id } })
-        successCount++
-      } catch (error) {
-        console.error('Logo removal failed:', error)
-        errorCount++
-      }
-    }
-
-    // Refresh both queries so sidebar and org page update
-    await client.refetchQueries({ include: [Me, MyOrganizations] })
-
-    if (errorCount > 0) {
-      setLogoMessage({ type: 'error', text: `Removed ${successCount} images, ${errorCount} failed` })
-    } else {
+    try {
+      await deleteFile({ variables: { uploadId: organizationLogo.id } })
+      await client.refetchQueries({ include: [Me, MyOrganizations] })
       setLogoMessage({ type: 'success', text: 'Logo removed' })
+    } catch (error) {
+      console.error('Logo removal failed:', error)
+      setLogoMessage({ type: 'error', text: (error as Error).message || 'Failed to remove logo' })
     }
     setTimeout(() => setLogoMessage(null), 3000)
   }

@@ -3,6 +3,10 @@ fragment __AdminOrganizationSummary on Organization {
   createdAt
   updatedAt
   name
+  logoId
+  logo {
+    id
+  }
   subscription {
     id
   }

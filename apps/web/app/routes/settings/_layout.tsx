@@ -87,20 +87,10 @@ export default function SettingsLayout() {
     return location.pathname === href || location.pathname.startsWith(`${href}/`)
   }
 
-  type SettingsImage = {
+  type MediaFile = {
     id: string
-    type?: string
-    folder?: string | null
-    createdAt: string
     publicUrl?: string | null
     url?: string | null
-    metadata?: { type?: string } | null
-  }
-
-  const getImageCreatedTime = (img: SettingsImage): number => {
-    if (!img?.createdAt) return 0
-    const time = new Date(img.createdAt).getTime()
-    return Number.isNaN(time) ? 0 : time
   }
 
   // Simple permission check - make it very permissive for now
@@ -138,17 +128,8 @@ export default function SettingsLayout() {
     return true
   }
 
-  // Get user's avatar: filter by type, sort by date desc, pick most recent
-  const userAvatars = (user?.images as SettingsImage[] | undefined)
-    ?.filter((img) => (img.metadata as { type?: string })?.type === 'avatar' || img.folder === 'avatars')
-    ?.sort((a, b) => getImageCreatedTime(b) - getImageCreatedTime(a))
-  const userAvatar = userAvatars && userAvatars.length > 0 ? userAvatars[0] : undefined
-
-  // Get organization's logo: filter by type, sort by date desc, pick most recent
-  const orgLogos = (activeOrganization?.images as SettingsImage[] | undefined)
-    ?.filter((img) => (img.metadata as { type?: string })?.type === 'logo' || img.folder === 'logos')
-    ?.sort((a, b) => getImageCreatedTime(b) - getImageCreatedTime(a))
-  const organizationLogo = orgLogos && orgLogos.length > 0 ? orgLogos[0] : undefined
+  const userAvatar = (user as any)?.avatar as MediaFile | undefined | null
+  const organizationLogo = (activeOrganization as any)?.logo as MediaFile | undefined | null
 
   return (
     <div className="flex-1 bg-gradient-to-b from-zinc-50 to-zinc-100 dark:from-zinc-900 dark:to-zinc-950">

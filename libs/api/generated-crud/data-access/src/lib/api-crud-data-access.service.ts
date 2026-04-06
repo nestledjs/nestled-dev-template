@@ -1015,6 +1015,7 @@ export class ApiCrudDataAccessService {
       TeamIds,
       subscriptionId,
       rolesIds,
+      logoId,
       ...regularFields
     } = input
     const data: any = regularFields
@@ -1031,6 +1032,7 @@ export class ApiCrudDataAccessService {
       Team: { ids: TeamIds, isVirtual: true, isList: true, isRequired: false },
       subscription: { ids: subscriptionId, isVirtual: true, isList: false, isRequired: false },
       roles: { ids: rolesIds, isVirtual: true, isList: true, isRequired: false },
+      logo: { ids: logoId, isVirtual: false, isList: false, isRequired: false },
     }
 
     for (const [relationName, config] of Object.entries(relationMappings)) {
@@ -1109,6 +1111,7 @@ export class ApiCrudDataAccessService {
       TeamIds,
       subscriptionId,
       rolesIds,
+      logoId,
       ...regularFields
     } = input
     const data: any = regularFields
@@ -1125,6 +1128,7 @@ export class ApiCrudDataAccessService {
       Team: { ids: TeamIds, isVirtual: true, isList: true, isRequired: false },
       subscription: { ids: subscriptionId, isVirtual: true, isList: false, isRequired: false },
       roles: { ids: rolesIds, isVirtual: true, isList: true, isRequired: false },
+      logo: { ids: logoId, isVirtual: false, isList: false, isRequired: false },
     }
 
     for (const [relationName, config] of Object.entries(relationMappings)) {
@@ -2184,10 +2188,17 @@ export class ApiCrudDataAccessService {
   }
 
   async createStoredFile(info: GraphQLResolveInfo, input: dto.CreateStoredFileInput) {
-    const { userId, organizationId, ...regularFields } = input
+    const { userAvatarId, organizationLogoId, userId, organizationId, ...regularFields } = input
     const data: any = regularFields
 
     const relationMappings = {
+      userAvatar: { ids: userAvatarId, isVirtual: true, isList: false, isRequired: false },
+      organizationLogo: {
+        ids: organizationLogoId,
+        isVirtual: true,
+        isList: false,
+        isRequired: false,
+      },
       user: { ids: userId, isVirtual: false, isList: false, isRequired: false },
       organization: { ids: organizationId, isVirtual: false, isList: false, isRequired: false },
     }
@@ -2252,10 +2263,17 @@ export class ApiCrudDataAccessService {
   }
 
   async updateStoredFile(info: GraphQLResolveInfo, id: string, input: dto.UpdateStoredFileInput) {
-    const { userId, organizationId, ...regularFields } = input
+    const { userAvatarId, organizationLogoId, userId, organizationId, ...regularFields } = input
     const data: any = regularFields
 
     const relationMappings = {
+      userAvatar: { ids: userAvatarId, isVirtual: true, isList: false, isRequired: false },
+      organizationLogo: {
+        ids: organizationLogoId,
+        isVirtual: true,
+        isList: false,
+        isRequired: false,
+      },
       user: { ids: userId, isVirtual: false, isList: false, isRequired: false },
       organization: { ids: organizationId, isVirtual: false, isList: false, isRequired: false },
     }
@@ -2311,6 +2329,7 @@ export class ApiCrudDataAccessService {
       SecurityEventIds,
       apiTokensIds,
       oAuthAccountsIds,
+      avatarId,
       ...regularFields
     } = input
     const data: any = regularFields
@@ -2337,6 +2356,7 @@ export class ApiCrudDataAccessService {
       SecurityEvent: { ids: SecurityEventIds, isVirtual: true, isList: true, isRequired: false },
       apiTokens: { ids: apiTokensIds, isVirtual: true, isList: true, isRequired: false },
       oAuthAccounts: { ids: oAuthAccountsIds, isVirtual: true, isList: true, isRequired: false },
+      avatar: { ids: avatarId, isVirtual: false, isList: false, isRequired: false },
     }
 
     for (const [relationName, config] of Object.entries(relationMappings)) {
@@ -2416,6 +2436,7 @@ export class ApiCrudDataAccessService {
       SecurityEventIds,
       apiTokensIds,
       oAuthAccountsIds,
+      avatarId,
       ...regularFields
     } = input
     const data: any = regularFields
@@ -2442,6 +2463,7 @@ export class ApiCrudDataAccessService {
       SecurityEvent: { ids: SecurityEventIds, isVirtual: true, isList: true, isRequired: false },
       apiTokens: { ids: apiTokensIds, isVirtual: true, isList: true, isRequired: false },
       oAuthAccounts: { ids: oAuthAccountsIds, isVirtual: true, isList: true, isRequired: false },
+      avatar: { ids: avatarId, isVirtual: false, isList: false, isRequired: false },
     }
 
     for (const [relationName, config] of Object.entries(relationMappings)) {

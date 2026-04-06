@@ -107,7 +107,8 @@ export const loader = apolloLoader()(({ preloadQuery, request }) => {
   }
 
   // For public routes, if authenticated preload Me so user is globally available
-  if (isAuthenticated) {
+  // Skip on /logout — the session will be invalidated mid-flight, causing useReadQuery to throw
+  if (isAuthenticated && !url.pathname.startsWith('/logout')) {
     try {
       const meQueryRef = preloadQuery<MeQuery>(Me)
       return { meQueryRef, theme }
