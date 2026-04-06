@@ -12,6 +12,7 @@ import { useGlobalCtx } from '@nestled-template/web'
 import {
   MyOrganizationsWithMembers,
   type MyOrganizationsWithMembersQuery,
+  type MeQuery,
 } from '@nestled-template/shared/sdk'
 import { Avatar } from '@nestled-template/web-ui'
 import { cn } from '@nestled-template/shared/utils'
@@ -87,11 +88,8 @@ export default function SettingsLayout() {
     return location.pathname === href || location.pathname.startsWith(`${href}/`)
   }
 
-  type MediaFile = {
-    id: string
-    publicUrl?: string | null
-    url?: string | null
-  }
+  type AuthUser = NonNullable<MeQuery['me']>
+  type OrgListItem = MyOrganizationsWithMembersQuery['myOrganizations'][number]
 
   // Simple permission check - make it very permissive for now
   const hasPermission = (permission?: string) => {
@@ -128,8 +126,8 @@ export default function SettingsLayout() {
     return true
   }
 
-  const userAvatar = (user as any)?.avatar as MediaFile | undefined | null
-  const organizationLogo = (activeOrganization as any)?.logo as MediaFile | undefined | null
+  const userAvatar = (user as AuthUser | null | undefined)?.avatar
+  const organizationLogo = (activeOrganization as OrgListItem | null | undefined)?.logo
 
   return (
     <div className="flex-1 bg-gradient-to-b from-zinc-50 to-zinc-100 dark:from-zinc-900 dark:to-zinc-950">

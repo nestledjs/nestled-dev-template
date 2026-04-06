@@ -1327,7 +1327,9 @@ export type Mutation = {
   register?: Maybe<UserToken>
   registerWithInvitation?: Maybe<UserToken>
   rejectOrganizationInvitation: Scalars['Boolean']['output']
+  removeOrganizationLogo: Scalars['Boolean']['output']
   removeOrganizationMember: Scalars['Boolean']['output']
+  removeUserAvatar: Scalars['Boolean']['output']
   resendOrganizationInvitation: Scalars['Boolean']['output']
   resendVerificationEmail: Scalars['Boolean']['output']
   resetPassword?: Maybe<User>
@@ -1666,6 +1668,10 @@ export type MutationRegisterWithInvitationArgs = {
 
 export type MutationRejectOrganizationInvitationArgs = {
   input: RejectInvitationInput
+}
+
+export type MutationRemoveOrganizationLogoArgs = {
+  organizationId: Scalars['String']['input']
 }
 
 export type MutationRemoveOrganizationMemberArgs = {
@@ -11099,6 +11105,19 @@ export type DeleteFileMutationVariables = Exact<{
 }>
 
 export type DeleteFileMutation = { __typename?: 'Mutation'; deleteFile: boolean }
+
+export type RemoveOrganizationLogoMutationVariables = Exact<{
+  organizationId: Scalars['String']['input']
+}>
+
+export type RemoveOrganizationLogoMutation = {
+  __typename?: 'Mutation'
+  removeOrganizationLogo: boolean
+}
+
+export type RemoveUserAvatarMutationVariables = Exact<{ [key: string]: never }>
+
+export type RemoveUserAvatarMutation = { __typename?: 'Mutation'; removeUserAvatar: boolean }
 
 export type UserFilesQueryVariables = Exact<{
   limit?: InputMaybe<Scalars['Int']['input']>
@@ -39212,6 +39231,59 @@ export const DeleteFile = {
     },
   ],
 } as unknown as DocumentNode<DeleteFileMutation, DeleteFileMutationVariables>
+export const RemoveOrganizationLogo = {
+  kind: 'Document',
+  definitions: [
+    {
+      kind: 'OperationDefinition',
+      operation: 'mutation',
+      name: { kind: 'Name', value: 'RemoveOrganizationLogo' },
+      variableDefinitions: [
+        {
+          kind: 'VariableDefinition',
+          variable: { kind: 'Variable', name: { kind: 'Name', value: 'organizationId' } },
+          type: {
+            kind: 'NonNullType',
+            type: { kind: 'NamedType', name: { kind: 'Name', value: 'String' } },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'removeOrganizationLogo' },
+            arguments: [
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'organizationId' },
+                value: { kind: 'Variable', name: { kind: 'Name', value: 'organizationId' } },
+              },
+            ],
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  RemoveOrganizationLogoMutation,
+  RemoveOrganizationLogoMutationVariables
+>
+export const RemoveUserAvatar = {
+  kind: 'Document',
+  definitions: [
+    {
+      kind: 'OperationDefinition',
+      operation: 'mutation',
+      name: { kind: 'Name', value: 'RemoveUserAvatar' },
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [{ kind: 'Field', name: { kind: 'Name', value: 'removeUserAvatar' } }],
+      },
+    },
+  ],
+} as unknown as DocumentNode<RemoveUserAvatarMutation, RemoveUserAvatarMutationVariables>
 export const UserFiles = {
   kind: 'Document',
   definitions: [

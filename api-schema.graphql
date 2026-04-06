@@ -1297,7 +1297,9 @@ type Mutation {
   register(input: RegisterInput!): UserToken
   registerWithInvitation(input: RegisterWithInvitationInput!): UserToken
   rejectOrganizationInvitation(input: RejectInvitationInput!): Boolean!
+  removeOrganizationLogo(organizationId: String!): Boolean!
   removeOrganizationMember(input: RemoveOrganizationMemberInput!): Boolean!
+  removeUserAvatar: Boolean!
   resendOrganizationInvitation(input: ResendInvitationInput!): Boolean!
   resendVerificationEmail(email: String!): Boolean!
   resetPassword(input: ResetPasswordInput!): User
