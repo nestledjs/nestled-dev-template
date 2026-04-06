@@ -58,3 +58,6 @@ storybook-static
 # Uploads
 uploads
 .temp-review/*
+
+.claude/worktrees
+.claude/settings.local.json

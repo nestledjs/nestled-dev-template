@@ -169,5 +169,6 @@
         }
       }
     }
-  }
+  },
+  "analytics": true
 }

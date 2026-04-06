@@ -37,7 +37,7 @@
   "peerDependencies": {
     "@apollo/client": "^4.0.0",
     "@heroicons/react": "^2.0.0",
-    "@nestledjs/forms": "^0.6.3",
+    "@nestledjs/forms": "0.7.7",
     "@nestledjs/shared-components": "^1.0.14",
     "react": "^19.0.0",
     "react-router": "^7.0.0"
