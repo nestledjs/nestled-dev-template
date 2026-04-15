@@ -82,6 +82,63 @@ pnpm nx graph
 
 ---
 
+## Deployment & Domain Setup
+
+### Plan Your Domains First
+
+Before deploying, decide on your domain names. The app and API **must share the same root domain** because the auth cookie is scoped to the root domain (e.g., `.example.com`). The recommended pattern is:
+
+- Web app: `app.example.com` (or `example.com`)
+- API: `api.example.com`
+
+Both subdomains share the `example.com` root, so the cookie works across both.
+
+### Initial Deployment — Use Placeholder URLs
+
+The template requires API and web URLs to be set in your environment config before deploying. If you don't have your custom domains ready yet, fill in placeholder values (e.g., `https://example.com` and `https://api.example.com`) just to get the initial deploy up. You'll update them after adding custom domains.
+
+### Railway Build Configuration
+
+Railway's template deploy doesn't support setting the build command or enabling Metal upfront, so you need to configure both services manually after the initial deploy. Do this at the same time as your domain setup so you only need one redeploy.
+
+**API service** → Settings → Build:
+- Enable **Use Metal build environment**
+- Set **Build Command** to: `npm run build:api`
+
+**Web service** → Settings → Build:
+- Enable **Use Metal build environment**
+- Set **Build Command** to: `npm run build:web`
+
+After saving both, hit **Deploy** once to pick up all the changes.
+
+### Adding Custom Domains on Railway
+
+After your initial deploy, add custom domains to each service:
+
+**API service:**
+1. Click the API service → **Settings** tab
+2. Under **Networking**, click **Add Custom Domain**
+3. Enter your API domain (e.g., `api.example.com`)
+4. Set the port to **3000**
+5. Click **Add Domain** — Railway will show you DNS records to add
+
+**Web service:**
+1. Click the web service → **Settings** tab
+2. Under **Networking**, click **Add Custom Domain**
+3. Enter your web domain (e.g., `app.example.com`)
+4. Click **Add Domain** — Railway will show you DNS records to add
+
+### DNS Configuration (Cloudflare)
+
+When adding Railway's DNS records in Cloudflare:
+
+- **CNAME records** can be proxied (orange cloud) — this is fine and expected
+- **TXT verification records** are not proxied — this is normal; Cloudflare doesn't proxy TXT records
+
+Once DNS propagates and Railway verifies the domain, update your environment variables with the real URLs and redeploy.
+
+---
+
 ## Billing & Stripe Setup
 
 This template includes Stripe integration for subscriptions and payments. To enable billing:

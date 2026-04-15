@@ -25,9 +25,10 @@ export class StripeService implements OnModuleInit {
   onModuleInit() {
     const { secretKey } = this.configService.stripe
 
-    if (!secretKey) {
+    const isPlaceholder = !secretKey || secretKey.includes('your_key') || secretKey === 'sk_test_...' || secretKey === 'sk_live_...'
+    if (isPlaceholder) {
       this.logger.warn('STRIPE_SECRET_KEY is not configured. Billing features will not work.')
-      return // Gracefully handle missing configuration
+      return // Gracefully handle missing or placeholder configuration
     }
 
     if (!secretKey.startsWith('sk_')) {
