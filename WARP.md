@@ -327,7 +327,7 @@ To persist custom exports through codegen, add them to `/libs/api/custom/src/lib
 Configured via environment variables. See README.md "Billing & Stripe Setup" section for webhook setup and product sync instructions.
 
 **Environment Variables:**
-Required secrets include: `DATABASE_URL`, `JWT_SECRET`, `STRIPE_SECRET_KEY`, `STRIPE_PUBLISHABLE_KEY`, etc. See `.env.example`.
+Required secrets: `DATABASE_URL`, `JWT_SECRET`. Stripe variables (`STRIPE_SECRET_KEY`, etc.) are optional — billing features are disabled if not set. See `.env.example`.
 
 ## Useful Nx Commands
 
