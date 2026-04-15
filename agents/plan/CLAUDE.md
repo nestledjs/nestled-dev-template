@@ -66,7 +66,8 @@ cd ~/IdeaProjects/nestled-template && git add plans/ && git commit -m "plan: <sl
 Call `mcp__task-os__create_task` with:
 - `title`: the task title
 - `description`: `Implement the plan at ~/IdeaProjects/nestled-template/plans/YYYY-MM-DD-<slug>.md`
-- `context`: `nestled-template`
+- `context`: `nestled`
+- `project`: `nestled-template`
 - `agent_path`: `/Users/justinhandley/IdeaProjects/nestled-template/agents/execute`
 
 That single line in the description is the prompt that will be passed to `claude --remote`. Keep it short and clear.
