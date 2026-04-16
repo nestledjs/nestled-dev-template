@@ -137,6 +137,54 @@ When adding Railway's DNS records in Cloudflare:
 
 Once DNS propagates and Railway verifies the domain, update your environment variables with the real URLs and redeploy.
 
+### Set Up Local Database and Apply Migrations
+
+This project uses proper Prisma migrations (not `db push`), so you need a local database first, then deploy migrations to production.
+
+**Step 1 — Start your local database:**
+
+Make sure Docker is running, then:
+
+```bash
+npx nx g @nestledjs/api:workspace-setup
+```
+
+This creates a local Dockerized Postgres database and configures your `.env` with `DATABASE_URL`.
+
+**Step 2 — Create your first migration:**
+
+```bash
+npx prisma migrate dev
+```
+
+This generates the initial migration files against your local database.
+
+**Step 3 — Enable TCP proxy on your Railway Postgres service:**
+1. Click the Postgres service → **Settings** tab
+2. Under **Networking**, enable **TCP Proxy** (or "Public Networking")
+3. Railway will show a public host and port — use these to build your connection URL:
+
+```
+postgresql://<user>:<password>@<host>:<tcp-port>/<database>
+```
+
+**Step 4 — Deploy migrations to production:**
+
+In your `.env`, comment out the local `DATABASE_URL` and temporarily uncomment/add the production one:
+
+```bash
+# DATABASE_URL=postgresql://prisma:prisma@localhost:5432/prisma  ← local, comment out
+DATABASE_URL=postgresql://...  ← production URL from Railway
+```
+
+Then run:
+
+```bash
+npx prisma migrate deploy
+```
+
+`migrate deploy` applies pending migrations without prompting — safe for production. When done, swap `DATABASE_URL` back to your local one for development.
+
 ---
 
 ## Billing & Stripe Setup
