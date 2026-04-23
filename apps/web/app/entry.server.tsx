@@ -63,7 +63,26 @@ export default function handleRequest(
           pipe(body)
         },
         onShellError(error: unknown) {
-          reject(error)
+          console.error('[SSR] Shell render error:', error)
+          const msg = (error as Error)?.message ?? ''
+          // Apollo streaming signals auth/network failure via this redacted error.
+          // Redirect to force-logout to clear the stale cookie instead of serving 500.
+          if (msg.includes('event stream') || msg.includes('Redacted for security concerns')) {
+            console.error('[SSR] Apollo event stream error detected — redirecting to force-logout')
+            const cookieName = process.env.VITE_COOKIE_NAME || '__session'
+            const cookieDomain = process.env.VITE_COOKIE_DOMAIN
+            const expired = 'Expires=Thu, 01 Jan 1970 00:00:00 GMT'
+            const base = `${cookieName}=; Path=/; ${expired}; HttpOnly; SameSite=Lax`
+            const url = new URL(request.url)
+            const returnParam = url.pathname !== '/' ? `?return_url=${encodeURIComponent(url.pathname)}` : ''
+            const headers = new Headers({ Location: `/force-logout${returnParam}` })
+            headers.append('Set-Cookie', cookieDomain && cookieDomain !== 'localhost'
+              ? `${base}; Domain=${cookieDomain}`
+              : base)
+            resolve(new Response(null, { status: 302, headers }))
+          } else {
+            reject(error)
+          }
         },
         onError(error: unknown) {
           responseStatusCode = 500
