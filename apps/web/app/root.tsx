@@ -10,7 +10,6 @@ import {
   type LinksFunction,
   Meta,
   type MetaFunction,
-  redirect,
   Scripts,
   ScrollRestoration,
   useLoaderData,
@@ -33,6 +32,18 @@ export const links: LinksFunction = () => [
   },
 ]
 
+function clearSessionCookieHeaders(cookieName: string): Headers {
+  const expired = 'Expires=Thu, 01 Jan 1970 00:00:00 GMT'
+  const base = `${cookieName}=; Path=/; ${expired}; HttpOnly; SameSite=Lax`
+  const domain = process.env.VITE_COOKIE_DOMAIN
+  const headers = new Headers()
+  if (domain && domain !== 'localhost' && !domain.startsWith('127.')) {
+    headers.append('Set-Cookie', `${base}; Domain=${domain}`)
+  }
+  headers.append('Set-Cookie', base)
+  return headers
+}
+
 export const loader = apolloLoader()(({ preloadQuery, request }) => {
   const url = new URL(request.url)
   const cookieName = getSessionCookieName()
@@ -54,12 +65,9 @@ export const loader = apolloLoader()(({ preloadQuery, request }) => {
     if (url.pathname && url.pathname !== '/') {
       loginRedirect += '?return_url=' + encodeURIComponent(url.pathname)
     }
-    return redirect(loginRedirect, {
-      headers: {
-        'Set-Cookie':
-          `${cookieName}=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; SameSite=Lax`,
-      },
-    })
+    const headers = clearSessionCookieHeaders(cookieName)
+    headers.set('Location', loginRedirect)
+    return new Response(null, { status: 302, headers })
   }
 
   // If accessing a private route with authentication, preload the Me query
@@ -70,21 +78,12 @@ export const loader = apolloLoader()(({ preloadQuery, request }) => {
     } catch (error) {
       console.error('[Root Loader] Error during Me query preload:', error)
       const errorMessage = (error as Error)?.message || ''
-      const errorName = (error as Error)?.name || ''
-      const errorStack = (error as Error)?.stack || ''
-
-      console.error('[Root Loader] Error details:', {
-        message: errorMessage,
-        name: errorName,
-        stack: errorStack,
-      })
 
       let loginRedirect = '/login'
       if (url.pathname && url.pathname !== '/') {
         loginRedirect += '?return_url=' + encodeURIComponent(url.pathname)
       }
 
-      // Check for network/connection errors using utility function
       if (isNetworkError(error)) {
         console.log('[Root Loader] Network error detected, returning serviceUnavailable')
         return { serviceUnavailable: true, theme }
@@ -92,15 +91,11 @@ export const loader = apolloLoader()(({ preloadQuery, request }) => {
 
       if (errorMessage.includes('Unauthorized') || errorMessage.includes('401')) {
         console.log('[Root Loader] Auth error detected, redirecting to login')
-        return redirect(loginRedirect, {
-          headers: {
-            'Set-Cookie':
-              `${cookieName}=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; SameSite=Lax`,
-          },
-        })
+        const headers = clearSessionCookieHeaders(cookieName)
+        headers.set('Location', loginRedirect)
+        return new Response(null, { status: 302, headers })
       }
 
-      // For any other errors, assume service unavailable
       console.log('[Root Loader] Unknown error, returning serviceUnavailable as fallback')
       return { serviceUnavailable: true, theme }
     }
