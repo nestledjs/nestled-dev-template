@@ -387,6 +387,10 @@ export function makeClient(request?: Request, options?: ClientOptions) {
     cache: createCache(), // Create a fresh cache for each client to avoid SSR cache pollution
     ssrMode: typeof window === 'undefined',
     assumeImmutableResults: true, // This can help with fragment handling
-    defaultOptions: { watchQuery: { fetchPolicy: 'cache-and-network' } },
+    defaultOptions: {
+      watchQuery: { fetchPolicy: 'cache-and-network' },
+      query: { errorPolicy: 'all' },
+      mutate: { errorPolicy: 'all' },
+    },
   })
 }

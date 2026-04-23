@@ -2,9 +2,34 @@ import { Outlet, useLoaderData } from 'react-router'
 import { GlobalContextProvider } from '@nestled-template/web'
 import { useReadQuery, type QueryRef } from '@apollo/client/react'
 import type { MeQuery } from '@nestled-template/shared/sdk'
-import { useEffect, useState } from 'react'
+import { Component, type ReactNode, useEffect, useState } from 'react'
 import { isViteCacheError, isNetworkError } from '@nestled-template/shared/utils'
 import { WebUiServiceUnavailable, WebUiViteCacheError } from '@nestled-template/web-ui'
+
+class MeQueryErrorBoundary extends Component<
+  { children: ReactNode },
+  { hasError: boolean }
+> {
+  constructor(props: { children: ReactNode }) {
+    super(props)
+    this.state = { hasError: false }
+  }
+
+  static getDerivedStateFromError() {
+    return { hasError: true }
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <GlobalContextProvider user={null}>
+          <Outlet />
+        </GlobalContextProvider>
+      )
+    }
+    return this.props.children
+  }
+}
 
 export function loader({ context }: { context: { meQueryRef?: QueryRef<MeQuery> } }) {
   const { meQueryRef } = context
@@ -105,7 +130,11 @@ export function App() {
     )
   }
   // Only call useReadQuery if meQueryRef is present
-  return <AppWithUser meQueryRef={meQueryRef} />
+  return (
+    <MeQueryErrorBoundary>
+      <AppWithUser meQueryRef={meQueryRef} />
+    </MeQueryErrorBoundary>
+  )
 }
 
 function AppWithUser({ meQueryRef }: Readonly<{ meQueryRef: QueryRef<MeQuery> }>) {
