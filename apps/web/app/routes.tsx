@@ -26,6 +26,8 @@ export default [
     // route('unauthorized', './routes/_public/unauthorized.tsx'),
     // Logout route clears cookies and cache, then redirects to login
     route('logout', './routes/logout.tsx'),
+    // Force logout - server-side only, clears HttpOnly cookie and redirects to login (no Apollo)
+    route('force-logout', './routes/force-logout.tsx'),
     // Accept organization invitation route
     route('accept-invitation', './routes/accept-invitation.tsx'),
     // Checkout routes

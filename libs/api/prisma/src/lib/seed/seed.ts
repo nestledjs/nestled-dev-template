@@ -43,6 +43,30 @@ async function main() {
   }
   console.log(`✓ ${defaultPermissions.length} permissions seeded`)
 
+  // Fix any existing org roles that were created before permissions were seeded
+  console.log('Reconnecting permissions to existing org roles...')
+  const allPermissions = await prisma.permission.findMany()
+  const existingOrgRoles = await prisma.role.findMany({
+    where: { organizationId: { not: null } },
+    include: { permissions: true },
+  })
+  let fixedCount = 0
+  for (const role of existingOrgRoles) {
+    const template = defaultRoles.find(t => t.name === role.name)
+    if (!template) continue
+    if (role.permissions.length > 0) continue // already has permissions, skip
+    const toConnect = allPermissions.filter(p =>
+      template.permissions.includes(`${p.subject}:${p.action}`)
+    )
+    if (toConnect.length === 0) continue
+    await prisma.role.update({
+      where: { id: role.id },
+      data: { permissions: { connect: toConnect.map(p => ({ id: p.id })) } },
+    })
+    fixedCount++
+  }
+  console.log(`✓ Fixed ${fixedCount} org role(s) with missing permissions`)
+
   // Note: Roles are organization-specific and will be created when organizations are created
   // See the auth service register function for automatic role creation
 

@@ -1,6 +1,7 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common'
 import { ConfigService } from '@nestled-template/api/config'
-import Stripe from 'stripe'
+import StripeLib from 'stripe'
+import type { Stripe } from 'stripe/cjs/stripe.core'
 
 /**
  * Stripe Integration Service
@@ -38,8 +39,8 @@ export class StripeService implements OnModuleInit {
     const isTestMode = secretKey.includes('_test_')
     this.logger.log(`Initializing Stripe client in ${isTestMode ? 'TEST' : 'LIVE'} mode`)
 
-    this.stripe = new Stripe(secretKey, {
-      apiVersion: '2025-09-30.clover',
+    this.stripe = new StripeLib(secretKey, {
+      apiVersion: '2026-03-25.dahlia',
       typescript: true,
       maxNetworkRetries: 3,
       timeout: 30000,

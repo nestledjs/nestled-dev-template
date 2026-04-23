@@ -10,7 +10,7 @@ import { UserToken } from './models'
 import { EmailService } from '@nestled-template/api/integrations'
 import { generateExpireDate, generateToken, generateUsernameSlug, generateUsernameWithSuffix, hashPassword, validatePassword } from './auth.helper'
 import { ConfigService } from '@nestjs/config'
-import { defaultRoles } from '@nestled-template/api/prisma'
+import { defaultPermissions, defaultRoles } from '@nestled-template/api/prisma'
 import { SecurityEventsService } from '../security'
 import { SessionService, SessionInfo } from './session.service'
 import {
@@ -142,11 +142,18 @@ export class AuthService {
    * Creates default roles for a new organization with proper permissions
    */
   private async createOrganizationRoles(organizationId: string) {
-    // Get all permissions from database
+    // Ensure global permissions exist (idempotent — safe to call on a fresh DB)
+    for (const perm of defaultPermissions) {
+      await this.data.permission.upsert({
+        where: { action_subject: { action: perm.action, subject: perm.subject } },
+        update: {},
+        create: perm,
+      })
+    }
+
     const allPermissions = await this.data.permission.findMany()
 
     for (const roleTemplate of defaultRoles) {
-      // Find permissions that match this role's permission strings
       const rolePermissions = allPermissions.filter(p =>
         roleTemplate.permissions.includes(`${p.subject}:${p.action}`)
       )

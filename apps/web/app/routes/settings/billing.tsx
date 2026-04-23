@@ -104,7 +104,7 @@ export default function BillingSettings() {
       trialing: 'border-sky-500/30 bg-sky-500/10 text-sky-300',
       past_due: 'border-rose-500/30 bg-rose-500/10 text-rose-300',
       canceled: 'border-amber-500/30 bg-amber-500/10 text-amber-300',
-      inactive: 'border-white/10 bg-white/5 text-zinc-400',
+      inactive: 'border-zinc-200 dark:border-white/10 bg-zinc-100 dark:bg-white/5 text-zinc-500 dark:text-zinc-400',
     }
     return badges[status] || badges.inactive
   }
@@ -112,14 +112,14 @@ export default function BillingSettings() {
   return (
     <RequireOwner
       fallback={
-        <div className="rounded-xl border border-amber-500/20 bg-white/5 p-6 shadow-2xl backdrop-blur">
+        <div className="rounded-xl border border-amber-500/20 bg-white dark:bg-white/5 p-6 shadow-2xl backdrop-blur">
           <div className="flex items-center gap-3">
             <div className="rounded-lg bg-amber-500/10 p-3">
-              <CreditCardIcon className="h-6 w-6 text-amber-400" />
+              <CreditCardIcon className="h-6 w-6 text-amber-500 dark:text-amber-400" />
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-amber-300">Permission Required</h3>
-              <p className="text-sm text-zinc-400 mt-1">
+              <h3 className="text-lg font-semibold text-amber-600 dark:text-amber-300">Permission Required</h3>
+              <p className="text-sm text-zinc-600 dark:text-zinc-400 mt-1">
                 Only organization owners can manage billing settings.
               </p>
             </div>
@@ -129,16 +129,16 @@ export default function BillingSettings() {
     >
       <div className="space-y-6">
         {/* Header */}
-        <div className="rounded-xl border border-white/10 bg-white/5 p-6 shadow-2xl backdrop-blur">
+        <div className="rounded-xl border border-zinc-200 dark:border-white/10 bg-white dark:bg-white/5 p-6 shadow-2xl backdrop-blur">
           <div className="flex items-center gap-3">
             <div className="rounded-lg bg-emerald-500/10 p-3">
-              <CreditCardIcon className="h-6 w-6 text-emerald-300" />
+              <CreditCardIcon className="h-6 w-6 text-emerald-600 dark:text-emerald-300" />
             </div>
             <div>
-              <h2 className="text-2xl font-extrabold tracking-tight text-white">
+              <h2 className="text-2xl font-extrabold tracking-tight text-zinc-900 dark:text-white">
                 Billing & Subscription
               </h2>
-              <p className="text-sm text-zinc-400">
+              <p className="text-sm text-zinc-600 dark:text-zinc-400">
                 Manage your subscription, payment methods, and invoices
               </p>
             </div>
@@ -146,13 +146,13 @@ export default function BillingSettings() {
         </div>
 
         {/* Current Plan */}
-        <div className="rounded-xl border border-white/10 bg-white/5 p-6 shadow-2xl backdrop-blur">
-          <h3 className="text-lg font-semibold text-white mb-4">Current Plan</h3>
+        <div className="rounded-xl border border-zinc-200 dark:border-white/10 bg-white dark:bg-white/5 p-6 shadow-2xl backdrop-blur">
+          <h3 className="text-lg font-semibold text-zinc-900 dark:text-white mb-4">Current Plan</h3>
 
-          <div className="flex items-center justify-between p-6 rounded-lg bg-gradient-to-br from-emerald-500/5 to-sky-500/5 border border-white/10">
+          <div className="flex items-center justify-between p-6 rounded-lg bg-gradient-to-br from-emerald-500/5 to-sky-500/5 border border-zinc-200 dark:border-white/10">
             <div className="flex-1">
               <div className="flex items-center gap-3">
-                <h4 className="text-2xl font-extrabold tracking-tight text-white">
+                <h4 className="text-2xl font-extrabold tracking-tight text-zinc-900 dark:text-white">
                   {plan?.name || 'No Plan'}
                 </h4>
                 <span
@@ -163,17 +163,17 @@ export default function BillingSettings() {
               </div>
               {plan && (
                 <>
-                  <p className="text-lg text-zinc-300 mt-1">
+                  <p className="text-lg text-zinc-700 dark:text-zinc-300 mt-1">
                     ${parseFloat(plan.price || '0').toFixed(2)}
-                    <span className="text-sm text-zinc-400">/{plan.interval}</span>
+                    <span className="text-sm text-zinc-500 dark:text-zinc-400">/{plan.interval}</span>
                   </p>
                   {isTrialing && trialEndsAt && (
-                    <p className="text-sm text-sky-300 mt-2">
+                    <p className="text-sm text-sky-600 dark:text-sky-300 mt-2">
                       Trial ends: {trialEndsAt.toLocaleDateString()}
                     </p>
                   )}
                   {periodEndsAt && !isTrialing && (
-                    <p className="text-sm text-zinc-400 mt-2">
+                    <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-2">
                       {isCanceled ? 'Access until' : 'Next billing date'}:{' '}
                       {periodEndsAt.toLocaleDateString()}
                     </p>
@@ -181,7 +181,7 @@ export default function BillingSettings() {
                 </>
               )}
               {!plan && (
-                <p className="text-sm text-zinc-300 mt-2">
+                <p className="text-sm text-zinc-600 dark:text-zinc-300 mt-2">
                   You don't have an active subscription.{' '}
                   <Link
                     to="/pricing"
@@ -218,12 +218,12 @@ export default function BillingSettings() {
 
         {/* Usage & Limits */}
         {(teamMemberLimit.hasLimit || storageLimit.hasLimit) && (
-          <div className="rounded-xl border border-white/10 bg-white/5 p-6 shadow-2xl backdrop-blur">
+          <div className="rounded-xl border border-zinc-200 dark:border-white/10 bg-white dark:bg-white/5 p-6 shadow-2xl backdrop-blur">
             <div className="flex items-center gap-3 mb-6">
               <div className="rounded-lg bg-sky-500/10 p-2">
-                <BanknotesIcon className="h-5 w-5 text-sky-300" />
+                <BanknotesIcon className="h-5 w-5 text-sky-600 dark:text-sky-300" />
               </div>
-              <h3 className="text-lg font-semibold text-white">Usage & Limits</h3>
+              <h3 className="text-lg font-semibold text-zinc-900 dark:text-white">Usage & Limits</h3>
             </div>
 
             <div className="space-y-6">
@@ -231,8 +231,8 @@ export default function BillingSettings() {
               {teamMemberLimit.hasLimit && (
                 <div>
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-medium text-zinc-300">Team Members</span>
-                    <span className="text-sm text-zinc-400">
+                    <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">Team Members</span>
+                    <span className="text-sm text-zinc-500 dark:text-zinc-400">
                       {memberCount} /{' '}
                       {teamMemberLimit.limit === -1 ? 'Unlimited' : teamMemberLimit.limit}
                     </span>
@@ -263,8 +263,8 @@ export default function BillingSettings() {
               {storageLimit.hasLimit && (
                 <div>
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-medium text-zinc-300">Storage</span>
-                    <span className="text-sm text-zinc-400">
+                    <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">Storage</span>
+                    <span className="text-sm text-zinc-500 dark:text-zinc-400">
                       0 GB / {storageLimit.limit === -1 ? 'Unlimited' : `${storageLimit.limit} GB`}
                     </span>
                   </div>
@@ -276,7 +276,7 @@ export default function BillingSettings() {
                       />
                     </div>
                   )}
-                  <p className="text-xs text-zinc-400 mt-2">Storage tracking coming soon</p>
+                  <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-2">Storage tracking coming soon</p>
                 </div>
               )}
             </div>
@@ -285,10 +285,10 @@ export default function BillingSettings() {
 
         {/* Stripe Customer Portal */}
         {hasActiveSubscription && (
-          <div className="rounded-xl border border-white/10 bg-white/5 p-6 shadow-2xl backdrop-blur">
-            <h3 className="text-lg font-semibold text-white mb-4">Manage Billing</h3>
+          <div className="rounded-xl border border-zinc-200 dark:border-white/10 bg-white dark:bg-white/5 p-6 shadow-2xl backdrop-blur">
+            <h3 className="text-lg font-semibold text-zinc-900 dark:text-white mb-4">Manage Billing</h3>
 
-            <p className="text-sm text-zinc-300 mb-4">
+            <p className="text-sm text-zinc-600 dark:text-zinc-300 mb-4">
               Use the Stripe Customer Portal to manage your subscription, update payment methods,
               view invoices, and more.
             </p>
@@ -296,7 +296,7 @@ export default function BillingSettings() {
             <button
               onClick={handleManageBilling}
               disabled={portalLoading}
-              className="rounded-lg border border-white/15 bg-white/5 px-5 py-2.5 font-semibold text-white transition hover:bg-white/10 disabled:opacity-50"
+              className="rounded-lg border border-zinc-300 dark:border-white/15 bg-white dark:bg-white/5 px-5 py-2.5 font-semibold text-zinc-900 dark:text-white transition hover:bg-zinc-100 dark:hover:bg-white/10 disabled:opacity-50"
             >
               {portalLoading ? 'Loading...' : 'Open Customer Portal'}
             </button>
@@ -305,10 +305,10 @@ export default function BillingSettings() {
 
         {/* No Subscription CTA */}
         {!hasActiveSubscription && (
-          <div className="rounded-xl border-2 border-dashed border-white/20 bg-white/5 p-8 backdrop-blur text-center">
-            <CreditCardIcon className="h-12 w-12 text-zinc-500 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-white mb-2">No Active Subscription</h3>
-            <p className="text-sm text-zinc-300 mb-6 max-w-md mx-auto">
+          <div className="rounded-xl border-2 border-dashed border-zinc-300 dark:border-white/20 bg-white dark:bg-white/5 p-8 backdrop-blur text-center">
+            <CreditCardIcon className="h-12 w-12 text-zinc-400 dark:text-zinc-500 mx-auto mb-4" />
+            <h3 className="text-lg font-semibold text-zinc-900 dark:text-white mb-2">No Active Subscription</h3>
+            <p className="text-sm text-zinc-600 dark:text-zinc-300 mb-6 max-w-md mx-auto">
               Subscribe to a plan to unlock premium features, increase your limits, and get the most
               out of your account.
             </p>
@@ -321,7 +321,7 @@ export default function BillingSettings() {
               </Link>
               <button
                 onClick={() => setShowUpgrade(true)}
-                className="rounded-lg border border-white/15 bg-white/5 px-5 py-2.5 font-semibold text-white transition hover:bg-white/10"
+                className="rounded-lg border border-zinc-300 dark:border-white/15 bg-white dark:bg-white/5 px-5 py-2.5 font-semibold text-zinc-900 dark:text-white transition hover:bg-zinc-100 dark:hover:bg-white/10"
               >
                 Quick Subscribe
               </button>
