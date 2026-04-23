@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common'
 import { SubscriptionStatus } from '@nestled-template/api/prisma'
 import { ApiCoreDataAccessService } from '@nestled-template/api/core/data-access'
-import Stripe from 'stripe'
+import type { Stripe } from 'stripe/cjs/stripe.core'
 
 /**
  * Stripe Webhook Handler Service

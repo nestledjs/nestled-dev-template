@@ -48,8 +48,7 @@ module.exports = {
         request.includes('@prisma/client') ||
         request.includes('.prisma/client') ||
         request.includes('@prisma/adapter-pg') ||
-        request.includes('@prisma/internals') ||
-        request.includes('@prisma/extension-optimize')
+        request.includes('@prisma/internals')
       )) {
         return callback(null, `commonjs ${request}`)
       }

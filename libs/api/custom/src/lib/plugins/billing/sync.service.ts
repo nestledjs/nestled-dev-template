@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common'
 import { ApiCoreDataAccessService } from '@nestled-template/api/core/data-access'
 import { StripeService } from '@nestled-template/api/integrations'
-import Stripe from 'stripe'
+import type { Stripe } from 'stripe/cjs/stripe.core'
 
 /**
  * Stripe Sync Service

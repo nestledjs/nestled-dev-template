@@ -44,18 +44,6 @@ export class ApiCoreDataAccessService
 
     super(config)
     this.queryCount = 0
-
-    // Only add Prisma Optimize extension in development
-    if (process.env['OPTIMIZE_API_KEY'] && process.env['USE_OPTIMIZE'] === 'true') {
-      const apiKey = process.env['OPTIMIZE_API_KEY']
-      if (!apiKey) {
-        console.warn('Not Running Prisma Optimize - No API Key Set')
-      }
-
-      const { withOptimize } = require('@prisma/extension-optimize')
-      const extendedClient = new PrismaClient(config).$extends(withOptimize({ apiKey }))
-      Object.assign(this, extendedClient)
-    }
   }
 
   public queryCount: number
