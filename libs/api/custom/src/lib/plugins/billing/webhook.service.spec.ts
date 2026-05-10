@@ -63,7 +63,7 @@ describe('WebhookService', () => {
             },
           },
         },
-      } as any as Stripe.Event
+      } as any
       mockPrisma.subscription.updateMany.mockResolvedValue({ count: 1 } as any)
       // Process the same event twice
       await service.handleWebhookEvent(mockEvent)
@@ -95,7 +95,7 @@ describe('WebhookService', () => {
             },
           },
         },
-      } as any as Stripe.Event
+      } as any
       // Simulate database error on the method that's actually called
       mockPrisma.subscription.updateMany.mockRejectedValue(new Error('Database error'))
       await expect(service.handleWebhookEvent(mockEvent)).rejects.toThrow('Database error')
@@ -114,7 +114,7 @@ describe('WebhookService', () => {
             },
           },
         },
-      } as any as Stripe.Event
+      } as any
       mockPrisma.subscription.upsert.mockResolvedValue({
         id: 'sub-123',
         organizationId: 'org-123',
@@ -162,7 +162,7 @@ describe('WebhookService', () => {
             },
           },
         },
-      } as any as Stripe.Event
+      } as any
       mockPrisma.subscription.updateMany.mockResolvedValue({ count: 1 } as any)
       await service.handleWebhookEvent(mockEvent)
       expect(mockPrisma.subscription.updateMany).toHaveBeenCalledWith(
@@ -198,7 +198,7 @@ describe('WebhookService', () => {
             },
           },
         },
-      } as any as Stripe.Event
+      } as any
       mockPrisma.subscription.updateMany.mockResolvedValue({ count: 1 } as any)
       await service.handleWebhookEvent(mockEvent)
       expect(mockPrisma.subscription.updateMany).toHaveBeenCalledWith(
@@ -218,21 +218,21 @@ describe('WebhookService', () => {
         data: {
           object: {},
         },
-      } as any as Stripe.Event
+      } as any
       // Should not throw
       await expect(service.handleWebhookEvent(mockEvent)).resolves.toBeUndefined()
     })
   })
   describe('Event Memory Management', () => {
     it('should clean up old processed events when limit exceeded', async () => {
-      const events: Stripe.Event[] = []
+      const events: any[] = []
       // Create 10001 unique events
       for (let i = 0; i < 10001; i++) {
         events.push({
           id: `evt_test_${i}`,
           type: 'some.unknown.event',
           data: { object: {} },
-        } as any as Stripe.Event)
+        } as any)
       }
       // Process all events
       for (const event of events) {
@@ -258,7 +258,7 @@ describe('WebhookService', () => {
             metadata: {},
           },
         },
-      } as any as Stripe.Event
+      } as any
       // Should log error but not throw
       await expect(service.handleWebhookEvent(mockEvent)).resolves.toBeUndefined()
     })
@@ -274,7 +274,7 @@ describe('WebhookService', () => {
             },
           },
         },
-      } as any as Stripe.Event
+      } as any
       // Should log error but not throw
       await expect(service.handleWebhookEvent(mockEvent)).resolves.toBeUndefined()
     })
@@ -305,7 +305,7 @@ describe('WebhookService', () => {
             },
           },
         },
-      } as any as Stripe.Event
+      } as any
       mockPrisma.subscription.updateMany.mockResolvedValue({ count: 1 } as any)
       await service.handleWebhookEvent(mockEvent)
       expect(mockPrisma.subscription.updateMany).toHaveBeenCalled()
@@ -336,7 +336,7 @@ describe('WebhookService', () => {
             },
           },
         },
-      } as any as Stripe.Event
+      } as any
       mockPrisma.subscription.updateMany.mockResolvedValue({ count: 1 } as any)
       // Process the same event multiple times
       await service.handleWebhookEvent(mockEvent)
@@ -358,7 +358,7 @@ describe('WebhookService', () => {
             period_end: 1614729600,
           },
         },
-      } as any as Stripe.Event
+      } as any
       mockPrisma.subscription.updateMany.mockResolvedValue({ count: 1 } as any)
       await service.handleWebhookEvent(mockEvent)
       expect(mockPrisma.subscription.updateMany).toHaveBeenCalledWith(
@@ -381,7 +381,7 @@ describe('WebhookService', () => {
             period_end: 1614729600,
           },
         },
-      } as any as Stripe.Event
+      } as any
       mockPrisma.subscription.updateMany.mockResolvedValue({ count: 1 } as any)
       await service.handleWebhookEvent(mockEvent)
       expect(mockPrisma.subscription.updateMany).toHaveBeenCalled()
@@ -396,7 +396,7 @@ describe('WebhookService', () => {
             subscription: 'sub_test_123',
           },
         },
-      } as any as Stripe.Event
+      } as any
       mockPrisma.subscription.updateMany.mockResolvedValue({ count: 1 } as any)
       await service.handleWebhookEvent(mockEvent)
       expect(mockPrisma.subscription.updateMany).toHaveBeenCalledWith(
@@ -418,7 +418,7 @@ describe('WebhookService', () => {
             subscription: 'sub_test_123',
           },
         },
-      } as any as Stripe.Event
+      } as any
       // Should not throw and should process successfully
       await expect(service.handleWebhookEvent(mockEvent)).resolves.toBeUndefined()
     })
@@ -435,7 +435,7 @@ describe('WebhookService', () => {
             period_end: 1614729600,
           },
         },
-      } as any as Stripe.Event
+      } as any
       mockPrisma.subscription.updateMany.mockResolvedValue({ count: 1 } as any)
       await service.handleWebhookEvent(mockEvent)
       expect(mockPrisma.subscription.updateMany).toHaveBeenCalledWith(
@@ -457,7 +457,7 @@ describe('WebhookService', () => {
             currency: 'usd',
           },
         },
-      } as any as Stripe.Event
+      } as any
       await expect(service.handleWebhookEvent(mockEvent)).resolves.toBeUndefined()
     })
     it('should handle payment_intent.payment_failed event', async () => {
@@ -469,7 +469,7 @@ describe('WebhookService', () => {
             id: 'pi_test_123',
           },
         },
-      } as any as Stripe.Event
+      } as any
       await expect(service.handleWebhookEvent(mockEvent)).resolves.toBeUndefined()
     })
   })
@@ -483,7 +483,7 @@ describe('WebhookService', () => {
             id: 'ch_test_123',
           },
         },
-      } as any as Stripe.Event
+      } as any
       await expect(service.handleWebhookEvent(mockEvent)).resolves.toBeUndefined()
     })
     it('should handle charge.refunded event', async () => {
@@ -495,7 +495,7 @@ describe('WebhookService', () => {
             id: 'ch_test_123',
           },
         },
-      } as any as Stripe.Event
+      } as any
       await expect(service.handleWebhookEvent(mockEvent)).resolves.toBeUndefined()
     })
   })
@@ -512,7 +512,7 @@ describe('WebhookService', () => {
             active: true,
           },
         },
-      } as any as Stripe.Event
+      } as any
       mockPrisma.plan.updateMany.mockResolvedValue({ count: 1 } as any)
       await service.handleWebhookEvent(mockEvent)
       expect(mockPrisma.plan.updateMany).toHaveBeenCalledWith(
@@ -537,7 +537,7 @@ describe('WebhookService', () => {
             active: false,
           },
         },
-      } as any as Stripe.Event
+      } as any
       mockPrisma.plan.updateMany.mockResolvedValue({ count: 1 } as any)
       await service.handleWebhookEvent(mockEvent)
       expect(mockPrisma.plan.updateMany).toHaveBeenCalled()
@@ -552,7 +552,7 @@ describe('WebhookService', () => {
             active: true,
           },
         },
-      } as any as Stripe.Event
+      } as any
       mockPrisma.plan.updateMany.mockResolvedValue({ count: 1 } as any)
       await service.handleWebhookEvent(mockEvent)
       expect(mockPrisma.plan.updateMany).toHaveBeenCalledWith(
@@ -574,7 +574,7 @@ describe('WebhookService', () => {
             active: false,
           },
         },
-      } as any as Stripe.Event
+      } as any
       mockPrisma.plan.updateMany.mockResolvedValue({ count: 1 } as any)
       await service.handleWebhookEvent(mockEvent)
       expect(mockPrisma.plan.updateMany).toHaveBeenCalled()
@@ -590,7 +590,7 @@ describe('WebhookService', () => {
             id: 'cus_test_123',
           },
         },
-      } as any as Stripe.Event
+      } as any
       await expect(service.handleWebhookEvent(mockEvent)).resolves.toBeUndefined()
     })
     it('should handle customer.updated event', async () => {
@@ -602,7 +602,7 @@ describe('WebhookService', () => {
             id: 'cus_test_123',
           },
         },
-      } as any as Stripe.Event
+      } as any
       await expect(service.handleWebhookEvent(mockEvent)).resolves.toBeUndefined()
     })
     it('should handle customer.deleted event', async () => {
@@ -614,7 +614,7 @@ describe('WebhookService', () => {
             id: 'cus_test_123',
           },
         },
-      } as any as Stripe.Event
+      } as any
       mockPrisma.subscription.updateMany.mockResolvedValue({ count: 2 } as any)
       await service.handleWebhookEvent(mockEvent)
       expect(mockPrisma.subscription.updateMany).toHaveBeenCalledWith(
