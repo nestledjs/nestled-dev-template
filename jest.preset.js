@@ -11,5 +11,7 @@ module.exports = {
     ...nxPreset.moduleNameMapper,
     // Mock prisma-graphql-type-decimal since it's ESM-only and causes issues with Jest
     '^prisma-graphql-type-decimal$': path.join(workspaceRoot, 'jest-mocks/prisma-graphql-type-decimal.js'),
+    // Mock uuid since v14+ is ESM-only
+    '^uuid$': path.join(workspaceRoot, 'jest-mocks/uuid.js'),
   },
 }

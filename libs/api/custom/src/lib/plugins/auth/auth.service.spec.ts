@@ -77,6 +77,7 @@ describe('AuthService', () => {
       },
       permission: {
         findMany: jest.fn(),
+        upsert: jest.fn().mockResolvedValue({}),
       },
       passwordHistory: {
         create: jest.fn(),
