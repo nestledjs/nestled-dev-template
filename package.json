@@ -24,6 +24,8 @@
     "test:db:reset": "./scripts/test-db.sh reset",
     "test:e2e": "./scripts/run-e2e-tests.sh",
     "test:e2e:auth": "./scripts/run-e2e-tests.sh auth",
+    "template:create-upgrade-note": "tsx scripts/create-upgrade-note.ts",
+    "template:validate-upgrade-notes": "tsx scripts/validate-upgrade-notes.ts",
     "clean": "git reset --hard HEAD && git clean -fd && rm -rf node_modules && rm -rf tmp && rm -rf dist && rm -rf apps && rm -rf libs && pnpm install",
     "affected": "nx affected",
     "affected:apps": "nx affected:apps",
