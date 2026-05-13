@@ -38,6 +38,7 @@ Names and boundaries may consolidate as we remove legacy.
 ## Getting Started
 
 Prerequisites:
+
 - Node 20+ recommended
 - pnpm installed globally (`npm i -g pnpm`)
 - PostgreSQL
@@ -82,6 +83,47 @@ pnpm nx graph
 
 ---
 
+## Template Upgrade Notes
+
+Every meaningful template change must declare whether it should propagate downstream.
+When a change should be reviewed by downstream Nestled projects, add one upgrade note:
+
+```bash
+pnpm template:create-upgrade-note --id 2026-05-13-auth-session-hardening
+```
+
+Then edit the generated file in `.nestled-template/upgrade-notes/`. Upgrade notes should
+describe the downstream invariant or behavior, not just the patch to copy. Set
+`delivery` to the propagation method:
+
+- `code-patch`: downstream projects should adapt local source files. Include
+  `affectedPaths`.
+- `package-release`: the change ships through `@nestledjs/data-browser` or
+  `@nestledjs/shared-components`. Include `packageReleases`; downstream projects should
+  update dependency versions instead of copying library source.
+- `hybrid`: downstream projects need both a package update and local source adaptation.
+  Include both `affectedPaths` and `packageReleases`.
+
+The published package source paths are `libs/data-browser` and `libs/shared-components`.
+If a note uses `package-release`, fill in `targetVersion` and `versionRange` after the
+package is released; the upgrader should not apply it until a published target version
+is known. The detailed upgrader contract lives in
+`.nestled-template/UPGRADER-CONTRACT.md`.
+
+For template-only changes, either omit an upgrade note or add one with `priority: ignore`
+and explain the reason in the PR description.
+
+Validate notes locally with:
+
+```bash
+pnpm template:validate-upgrade-notes
+```
+
+Template PRs should fill out the `Downstream Upgrade` block in the PR description and
+mention the note path when propagation is needed.
+
+---
+
 ## Deployment & Domain Setup
 
 ### Plan Your Domains First
@@ -102,10 +144,12 @@ The template requires API and web URLs to be set in your environment config befo
 Railway's template deploy doesn't support setting the build command or enabling Metal upfront, so you need to configure both services manually after the initial deploy. Do this at the same time as your domain setup so you only need one redeploy.
 
 **API service** → Settings → Build:
+
 - Enable **Use Metal build environment**
 - Set **Build Command** to: `npm run build:api`
 
 **Web service** → Settings → Build:
+
 - Enable **Use Metal build environment**
 - Set **Build Command** to: `npm run build:web`
 
@@ -116,6 +160,7 @@ After saving both, hit **Deploy** once to pick up all the changes.
 After your initial deploy, add custom domains to each service:
 
 **API service:**
+
 1. Click the API service → **Settings** tab
 2. Under **Networking**, click **Add Custom Domain**
 3. Enter your API domain (e.g., `api.example.com`)
@@ -123,6 +168,7 @@ After your initial deploy, add custom domains to each service:
 5. Click **Add Domain** — Railway will show you DNS records to add
 
 **Web service:**
+
 1. Click the web service → **Settings** tab
 2. Under **Networking**, click **Add Custom Domain**
 3. Enter your web domain (e.g., `app.example.com`)
@@ -160,6 +206,7 @@ npx prisma migrate dev
 This generates the initial migration files against your local database.
 
 **Step 3 — Enable TCP proxy on your Railway Postgres service:**
+
 1. Click the Postgres service → **Settings** tab
 2. Under **Networking**, enable **TCP Proxy** (or "Public Networking")
 3. Railway will show a public host and port — use these to build your connection URL:

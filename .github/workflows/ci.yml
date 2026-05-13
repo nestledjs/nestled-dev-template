@@ -39,7 +39,6 @@ jobs:
           filter: tree:0
           fetch-depth: 0
 
-
       - uses: pnpm/action-setup@v4
         name: Install pnpm
         with:
@@ -51,7 +50,6 @@ jobs:
       # Learn more at https://nx.dev/ci/reference/nx-cloud-cli#npx-nxcloud-startcirun
       # Uncomment this line to enable task distribution
       # - run: pnpm dlx nx-cloud start-ci-run --distribute-on="3 linux-medium-js" --stop-agents-after="build"
-
 
       # Cache node_modules
       - uses: actions/setup-node@v4
@@ -66,6 +64,8 @@ jobs:
         run: pnpm exec playwright install --with-deps chromium
 
       - uses: nrwl/nx-set-shas@v4
+
+      - run: pnpm template:validate-upgrade-notes
 
       # Prepend any command with "nx-cloud record --" to record its logs to Nx Cloud
       # - run: pnpm exec nx-cloud record -- echo Hello World

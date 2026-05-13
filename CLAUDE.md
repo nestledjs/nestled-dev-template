@@ -1,5 +1,89 @@
 # Claude Code Memory - Nestled Template Project
 
+## Downstream Upgrade Notes
+
+Every meaningful template or published library change must explicitly decide whether it
+should propagate to downstream Nestled projects.
+
+### When a Change Should Propagate
+
+Create one upgrade note:
+
+```bash
+pnpm template:create-upgrade-note --id YYYY-MM-DD-short-description
+```
+
+Then edit `.nestled-template/upgrade-notes/<upgrade-id>.yaml`.
+
+The note should describe the downstream behavior or invariant, not just the files to
+copy. Downstream projects may have diverged, so agents need the concept, expected
+behavior, propagation method, affected path or package hints, skip conditions, and
+verification path.
+
+Required fields for propagating notes:
+
+- `id` - must match the filename without `.yaml`
+- `title`
+- `priority` - `critical`, `high`, `normal`, `low`, or `ignore`
+- `area` - `auth`, `billing`, `admin`, `ui`, `api`, `web`, `database`, `infra`, or `docs`
+- `type` - `security`, `correctness`, `feature`, `infra`, `deps`, `design`, `docs`, or `cleanup`
+- `delivery` - `code-patch`, `package-release`, or `hybrid`
+- `intent`
+- `why`
+
+For `delivery: code-patch`, include `affectedPaths`; downstream projects should adapt
+local source files.
+
+For `delivery: package-release`, include `packageReleases`; downstream projects should
+update package versions for `@nestledjs/data-browser` or `@nestledjs/shared-components`
+instead of copying source from `libs/data-browser` or `libs/shared-components`.
+
+For `delivery: hybrid`, include both `affectedPaths` and `packageReleases`.
+
+Recommended fields:
+
+- `skipIf`
+- `verification`
+- `agentHints`
+
+Good `intent` example:
+
+```yaml
+intent: >
+  Reject expired sessions inside API resolver auth checks before any protected data is loaded.
+```
+
+Weak `intent` example:
+
+```yaml
+intent: >
+  Copy the new auth middleware file.
+```
+
+Before finishing, run:
+
+```bash
+pnpm template:validate-upgrade-notes
+```
+
+### When a Change Should Not Propagate
+
+Either omit an upgrade note and explain why in the PR/final response, or add a note with
+`priority: ignore`.
+
+For PR descriptions, include the `Downstream Upgrade` block and mention the note path
+when one exists:
+
+```markdown
+## Downstream Upgrade
+
+- Propagate downstream: yes
+- Upgrade note: `.nestled-template/upgrade-notes/<upgrade-id>.yaml`
+- Area: auth
+- Priority: high
+- Verification: `pnpm lint`, `pnpm test`
+```
+
 ## @crudAuth System for Declarative Security
 
 This project uses a custom `@crudAuth` annotation system in the Prisma schema to declaratively configure CRUD authorization at the model level.
@@ -25,6 +109,7 @@ model UserPreference {
 ### CRUD Operations
 
 You can configure security for these operations:
+
 - `readOne` - Single record query
 - `readMany` - List/collection queries
 - `count` - Count queries
@@ -37,14 +122,17 @@ You can configure security for these operations:
 1. **Only specify non-admin levels**: Since all operations default to `"admin"`, only include the operations you want to change.
 
    Example - User can read/write their own preferences:
+
    ```prisma
    /// @crudAuth: { "readOne": "user", "readMany": "user", "create": "user", "update": "user", "delete": "user" }
    ```
 
 2. **Run code generation after changes**: After updating the schema, always run:
+
    ```bash
    pnpm db-update
    ```
+
    This regenerates all CRUD resolvers, GraphQL types, and SDK code with the updated guards.
 
 3. **Context-based security**: The generated resolvers automatically inject the authenticated user via `@CtxUser()` decorator, ensuring userId comes from the server context, not the client.
@@ -71,6 +159,7 @@ model UserPreference {
 ```
 
 This configuration:
+
 - Allows authenticated users to read/write their own preferences
 - Prevents users from specifying userId in mutations (injected from context)
 - Eliminates security vulnerabilities from client-side userId manipulation
@@ -81,6 +170,7 @@ This configuration:
 **CRITICAL RULE**: When creating custom resolvers, **NEVER extend the generated resolver class**. Always create a completely separate resolver with a different name.
 
 **WRONG** ❌:
+
 ```typescript
 export class UserPreferenceResolver extends GeneratedUserPreferenceResolver {
   // This will cause conflicts - generated methods are still registered!
@@ -88,6 +178,7 @@ export class UserPreferenceResolver extends GeneratedUserPreferenceResolver {
 ```
 
 **CORRECT** ✅:
+
 ```typescript
 // Create a separate resolver with custom/user prefix
 export class UserUserPreferenceResolver {
@@ -122,6 +213,7 @@ export class UserUserPreferenceResolver {
 When you need user-specific operations in addition to admin CRUD:
 
 **CORRECT** ✅:
+
 ```typescript
 // Standard admin CRUD is generated automatically (organization, organizations, createOrganization, etc.)
 
@@ -134,13 +226,17 @@ export class UserOrganizationResolver {
   }
 
   @Mutation(() => Organization)
-  userCreateOrganization(@CtxUser() user: User, @Args('input') input: CreateOrganizationInput): Promise<Organization> {
+  userCreateOrganization(
+    @CtxUser() user: User,
+    @Args('input') input: CreateOrganizationInput,
+  ): Promise<Organization> {
     // User-specific creation logic
   }
 }
 ```
 
 **WRONG** ❌:
+
 ```prisma
 /// @skipCrud  // NEVER DO THIS
 model Organization {
@@ -161,7 +257,7 @@ import { PrismaClient, User, Upload, StorageProvider } from '@nestled-template/a
 ### Incorrect Import Pattern ❌
 
 ```typescript
-import { User, Upload } from '@prisma/client'  // WRONG - Will cause build errors
+import { User, Upload } from '@prisma/client' // WRONG - Will cause build errors
 ```
 
 **Why**: This project uses a custom Prisma wrapper at `@nestled-template/api/prisma` that exports the generated Prisma client and all types. Importing directly from `@prisma/client` will fail because the types are generated in a custom location.
@@ -169,6 +265,7 @@ import { User, Upload } from '@prisma/client'  // WRONG - Will cause build error
 ### Common Types to Import
 
 All Prisma-generated types should come from `@nestled-template/api/prisma`:
+
 - `PrismaClient` - The Prisma database client
 - Model types: `User`, `Organization`, `Upload`, etc.
 - Enum types: `StorageProvider`, `AddressType`, `EmailType`, etc.
@@ -197,6 +294,7 @@ export class MyService {
 ### When to Update routes.tsx
 
 **ALWAYS update routes.tsx when:**
+
 1. Creating a new page component
 2. Moving an existing page to a different path
 3. Renaming a page file
@@ -229,11 +327,13 @@ export default [
 ### Example: Adding a New Admin Page
 
 **Step 1**: Create the page component
+
 ```
 apps/web/app/routes/admin/audit-logs/_index.tsx
 ```
 
 **Step 2**: Register in routes.tsx
+
 ```typescript
 route('admin', './routes/admin/_layout.tsx', [
   index('./routes/admin/_index.tsx'),
@@ -252,6 +352,7 @@ route('admin', './routes/admin/_layout.tsx', [
 ### Verification Checklist
 
 After creating/moving pages:
+
 - [ ] Route registered in `/apps/web/app/routes.tsx`
 - [ ] File path in route config matches actual file location
 - [ ] URL path matches intended navigation structure
@@ -296,6 +397,7 @@ Example: "I've updated the UserPreference resolver. Please restart the API serve
 To ensure your custom modules/middleware are always exported even after code generation:
 
 **DO**: Add exports to `/libs/api/custom/src/lib/plugins/index.ts`
+
 ```typescript
 export * from './auth'
 export * from './contact-mailer'
@@ -310,6 +412,7 @@ export * from '../middleware'
 **DON'T**: Manually edit `/libs/api/custom/src/index.ts` - it will be overwritten
 
 This pattern works because:
+
 1. The auto-generated `/libs/api/custom/src/index.ts` always includes `export * from './lib/plugins'`
 2. The plugins folder is not auto-generated, so your changes persist
 3. By re-exporting from plugins, all custom code remains accessible
