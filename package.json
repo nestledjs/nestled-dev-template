@@ -41,7 +41,7 @@
     "format:check": "nx format:check",
     "format:write": "nx format:write",
     "help": "nx help",
-    "lint": "nx workspace-lint && nx lint",
+    "lint": "nx run-many -t lint",
     "nx": "nx",
     "pre-commit:lint": "nx format:write --uncommitted & nx affected --target eslint --uncommitted",
     "test": "nx test",
