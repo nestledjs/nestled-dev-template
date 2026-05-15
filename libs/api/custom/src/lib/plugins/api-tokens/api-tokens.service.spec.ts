@@ -298,6 +298,7 @@ describe('ApiTokensService', () => {
       expect(result).toEqual({
         userId: 'user-123',
         tokenId: 'token-123',
+        organizationId: null,
       })
       expect(mockData.apiToken.findFirst).toHaveBeenCalledWith({
         where: {
@@ -348,6 +349,7 @@ describe('ApiTokensService', () => {
       expect(result).toEqual({
         userId: 'user-123',
         tokenId: 'token-123',
+        organizationId: null,
       })
     })
     it('should handle lastUsedAt update failure gracefully', async () => {
@@ -367,6 +369,7 @@ describe('ApiTokensService', () => {
       expect(result).toEqual({
         userId: 'user-123',
         tokenId: 'token-123',
+        organizationId: null,
       })
     })
   })

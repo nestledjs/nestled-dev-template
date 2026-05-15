@@ -89,6 +89,12 @@ export class ApiToken {
   @Field(() => Boolean)
   revoked!: boolean;
 
+  @Field(() => String, { nullable: true })
+  organizationId?: string | null;
+
+  @Field(() => Organization, { nullable: true })
+  organization?: Partial<Organization> | null;
+
 }
 
 @ObjectType({ description: undefined })
@@ -411,6 +417,9 @@ export class Organization {
 
   @Field(() => [Role], { nullable: true })
   roles?: Partial<Role>[] | null;
+
+  @Field(() => [ApiToken], { nullable: true })
+  apiTokens?: Partial<ApiToken>[] | null;
 
 }
 
