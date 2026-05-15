@@ -7,6 +7,31 @@ set +e  # Don't exit on error
 
 # Use tee to show output in real-time AND capture it
 TMPFILE=$(mktemp)
+export TEST_DATABASE_URL="${TEST_DATABASE_URL:-postgresql://postgres:postgres@localhost:5433/nestled_template_test}"
+export DATABASE_URL="$TEST_DATABASE_URL"
+
+TEST_DB_STARTED=false
+
+cleanup() {
+  if [ "$TEST_DB_STARTED" = true ]; then
+    ./scripts/test-db.sh stop >/dev/null 2>&1 || true
+  fi
+}
+
+trap cleanup EXIT
+
+if ! PGPASSWORD=postgres psql -U postgres -h localhost -p 5433 -d nestled_template_test -c "SELECT 1" >/dev/null 2>&1; then
+  if ! docker info >/dev/null 2>&1; then
+    echo "❌ Test database is not accessible and Docker is not running"
+    echo "   Start Docker or set TEST_DATABASE_URL to an accessible test database"
+    rm -f "$TMPFILE"
+    exit 1
+  fi
+
+  ./scripts/test-db.sh start
+  TEST_DB_STARTED=true
+fi
+
 # Call vitest directly to avoid infinite loop (since NX now calls this script)
 npx vitest run --config apps/api-e2e/vitest.config.ts 2>&1 | tee "$TMPFILE"
 EXIT_CODE=${PIPESTATUS[0]}
