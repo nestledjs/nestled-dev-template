@@ -1,43 +1,355 @@
 # Repository Guidelines
 
+## Project Overview
+
+**Nestled Template** is a production-ready SaaS starter template with auth, profiles, organizations/teams, RBAC, billing/subscriptions, admin area, and audit logging. Built as an Nx monorepo with a NestJS GraphQL API and React web frontend.
+
+**Key Stack:**
+- **Monorepo:** Nx with pnpm
+- **API:** NestJS + GraphQL + Prisma (PostgreSQL)
+- **Web:** React with React Router v7 + Apollo Client
+- **Shared:** Generated GraphQL SDK, TypeScript utilities
+
 ## Project Structure & Module Organization
 
-This is an Nx monorepo managed with pnpm. Application code lives in `apps/`: `apps/api` is the NestJS GraphQL API, `apps/web` is the React/React Router web app, and `apps/api-e2e` contains API end-to-end tests. Shared code lives in `libs/`, including backend modules under `libs/api/*`, generated SDK and utilities under `libs/shared/*`, and UI packages under `libs/web-ui`, `libs/web`, `libs/shared-components`, and `libs/data-browser`. Static assets are in `apps/web/public`; helper scripts are in `scripts/`.
+Application code lives in `apps/`: `apps/api` is the NestJS GraphQL API, `apps/web` is the React/React Router web app, and `apps/api-e2e` contains API end-to-end tests. Shared code lives in `libs/`:
+
+- `libs/api/*` — Backend libraries:
+  - `config` — Configuration module
+  - `core` — Core business logic and models
+  - `custom` — Custom resolvers and plugins
+  - `generated-crud` — Auto-generated CRUD resolvers (do not edit)
+  - `integrations` — External service integrations (Stripe, email, storage)
+  - `prisma` — Prisma client and database utilities
+  - `utils` — Backend utilities (guards, decorators, helpers)
+- `libs/shared/*` — Isomorphic code:
+  - `apollo` — Apollo Client configuration
+  - `sdk` — Generated GraphQL SDK (TypeScript types + operations)
+  - `styles` — Shared styles
+  - `utils` — Shared utilities
+- `libs/web/*` — Web-specific helpers/components
+- `libs/web-ui` — Low-level UI primitives (Storybook available)
+- `libs/shared-components` — Shared React components
+- `libs/data-browser` — Data browsing UI components
+
+Static assets are in `apps/web/public`; helper scripts are in `scripts/`.
 
 ## Build, Test, and Development Commands
 
 Use pnpm from the repository root.
 
-- `pnpm install`: install workspace dependencies.
-- `pnpm dev:api`: run the API through Nx.
-- `pnpm dev:web`: run the web app through Nx.
-- `pnpm build:api`: generate Prisma client and build the production API.
-- `pnpm build:web`: build the React Router web app.
-- `pnpm test`: run Nx test targets.
-- `pnpm test:e2e`: run scripted end-to-end tests.
-- `pnpm lint`: run workspace and project linting.
-- `pnpm format` / `pnpm format:check`: write or check Nx formatting.
-- `pnpm typecheck`: generate React Router types and run TypeScript checks for `apps/web`.
+### Install & Setup
+```bash
+pnpm install
+cp .env.example .env   # then edit DATABASE_URL and other secrets
+pnpm nx run api-prisma:generate
+pnpm prisma:seed
+```
+
+### Running the Apps
+```bash
+pnpm dev:api      # API server (localhost:3000)
+pnpm dev:web      # Web app (separate terminal)
+```
+
+### Building
+```bash
+pnpm build:api
+pnpm build:web
+pnpm nx build <project-name>
+```
+
+### Testing
+```bash
+pnpm test                          # run Nx test targets
+pnpm test:e2e                      # scripted end-to-end tests
+pnpm nx test <project-name>        # focused project test
+pnpm nx e2e api-e2e                # API e2e tests
+
+# Test database management (port 5433, separate from dev DB on 5432)
+pnpm test:db:start
+pnpm test:db:reset
+pnpm test:db:stop
+./scripts/test-db.sh start|stop|reset|migrate
+```
+
+### Linting & Formatting
+```bash
+pnpm lint               # run workspace and project linting
+pnpm format             # write Nx formatting
+pnpm format:check       # check formatting
+pnpm typecheck          # generate React Router types + TypeScript checks for apps/web
+```
+
+### Prisma Operations
+```bash
+pnpm prisma:generate    # generate Prisma client
+pnpm prisma:format      # format schema
+pnpm prisma:db-push     # push schema to DB
+pnpm prisma:migrate     # apply migrations
+pnpm prisma:seed        # seed database
+pnpm prisma:reset       # reset database (destroys data)
+pnpm prisma:studio      # open Prisma Studio
+```
+
+### Code Generation
+```bash
+pnpm db-update          # full regen: Prisma → CRUD resolvers → Models → SDK
+pnpm sdk                # generate GraphQL SDK only
+pnpm sdk:watch          # watch mode for SDK generation
+pnpm generate:models    # generate TypeScript models from Prisma
+```
+
+### Docker
+```bash
+pnpm docker:build
+pnpm docker:up
+pnpm docker:down
+pnpm docker:logs
+```
 
 ## Coding Style & Naming Conventions
 
-TypeScript is the default language. Follow `.editorconfig`: UTF-8, two-space indentation, final newlines, and trimmed trailing whitespace. Prettier uses single quotes, no semicolons, trailing commas, 100-character width, and `arrowParens: avoid`. Use PascalCase for React components, `useCamelCase` for hooks, `*.spec.ts(x)` for tests, and `*.stories.tsx` for Storybook.
+TypeScript is the default language. Follow `.editorconfig`: UTF-8, two-space indentation, final newlines, trimmed trailing whitespace. Prettier uses single quotes, no semicolons, trailing commas, 100-character width, `arrowParens: avoid`. Use PascalCase for React components, `useCamelCase` for hooks, `*.spec.ts(x)` for tests, `*.stories.tsx` for Storybook.
 
 ## Testing Guidelines
 
-Unit and component tests use Jest and Vitest through Nx project targets. Place tests next to the source they cover when practical, or in existing folders such as `apps/web/tests` and `apps/api-e2e/src`. Run focused checks with Nx, for example `pnpm nx test web-ui` or `pnpm nx e2e api-e2e`. Use `pnpm test:db:start`, `pnpm test:db:reset`, and `pnpm test:db:stop` when tests need the local test database.
+Unit and component tests use Jest and Vitest through Nx project targets. Place tests next to the source they cover when practical, or in existing folders such as `apps/web/tests` and `apps/api-e2e/src`. Run focused checks with Nx, e.g. `pnpm nx test web-ui` or `pnpm nx e2e api-e2e`.
 
 ## Commit & Pull Request Guidelines
 
-Recent history uses short imperative subjects, often Conventional Commit prefixes such as `feat:` and `chore:`. Keep commits scoped and descriptive, for example `feat: add billing webhook validation`. Before opening a PR, run relevant lint, test, typecheck, and build commands. PRs should include a concise summary, linked issue or task when available, screenshots for UI changes, and notes for migrations, environment variables, or deployment steps.
+Recent history uses short imperative subjects, often Conventional Commit prefixes such as `feat:` and `chore:`. Keep commits scoped and descriptive, e.g. `feat: add billing webhook validation`. Before opening a PR, run relevant lint, test, typecheck, and build commands. PRs should include a concise summary, linked issue or task when available, screenshots for UI changes, and notes for migrations, environment variables, or deployment steps.
 
 ## Downstream Upgrade Notes
 
-For every meaningful template or published library change, decide whether it should propagate to downstream Nestled projects. If it should propagate, create one upgrade note with `pnpm template:create-upgrade-note --id YYYY-MM-DD-short-description`, then edit the generated `.nestled-template/upgrade-notes/<upgrade-id>.yaml`.
+Every meaningful template or published library change must explicitly decide whether it should propagate to downstream Nestled projects.
 
-Upgrade notes must describe the downstream behavior or invariant, not just the patch to copy. Set `delivery` to `code-patch`, `package-release`, or `hybrid`. Use `code-patch` for downstream source edits and fill in `affectedPaths`. Use `package-release` for changes shipped through `@nestledjs/data-browser` or `@nestledjs/shared-components` and fill in `packageReleases` so downstream projects update dependency versions instead of copying library source. Use `hybrid` when both are required. Fill in `intent`, `why`, and practical `verification` commands. Use a stable date-prefixed slug, set an appropriate `priority`, `area`, and `type`, and run `pnpm template:validate-upgrade-notes` before finishing.
+### When a Change Should Propagate
 
-If a meaningful change should not propagate, either omit the note and explain why in the PR/final response, or add a note with `priority: ignore`. When preparing PR text, include the `Downstream Upgrade` block and mention the upgrade note path when one exists.
+Create one upgrade note:
+
+```bash
+pnpm template:create-upgrade-note --id YYYY-MM-DD-short-description
+```
+
+Then edit `.nestled-template/upgrade-notes/<upgrade-id>.yaml`.
+
+The note should describe the downstream behavior or invariant, not just the files to copy. Downstream projects may have diverged, so agents need the concept, expected behavior, propagation method, affected path or package hints, skip conditions, and verification path.
+
+Required fields for propagating notes:
+
+- `id` - must match the filename without `.yaml`
+- `title`
+- `priority` - `critical`, `high`, `normal`, `low`, or `ignore`
+- `area` - `auth`, `billing`, `admin`, `ui`, `api`, `web`, `database`, `infra`, or `docs`
+- `type` - `security`, `correctness`, `feature`, `infra`, `deps`, `design`, `docs`, or `cleanup`
+- `delivery` - `code-patch`, `package-release`, or `hybrid`
+- `intent`
+- `why`
+
+For `delivery: code-patch`, include `affectedPaths`; downstream projects should adapt local source files.
+
+For `delivery: package-release`, include `packageReleases`; downstream projects should update package versions for `@nestledjs/data-browser` or `@nestledjs/shared-components` instead of copying source from `libs/data-browser` or `libs/shared-components`.
+
+For `delivery: hybrid`, include both `affectedPaths` and `packageReleases`.
+
+Recommended fields: `skipIf`, `verification`, `agentHints`.
+
+Good `intent` example:
+
+```yaml
+intent: >
+  Reject expired sessions inside API resolver auth checks before any protected data is loaded.
+```
+
+Weak `intent` example:
+
+```yaml
+intent: >
+  Copy the new auth middleware file.
+```
+
+Before finishing, run:
+
+```bash
+pnpm template:validate-upgrade-notes
+```
+
+### When a Change Should Not Propagate
+
+Either omit an upgrade note and explain why in the PR/final response, or add a note with `priority: ignore`.
+
+For PR descriptions, include the `Downstream Upgrade` block and mention the upgrade note path when one exists:
+
+```markdown
+## Downstream Upgrade
+
+- Propagate downstream: yes
+- Upgrade note: `.nestled-template/upgrade-notes/<upgrade-id>.yaml`
+- Area: auth
+- Priority: high
+- Verification: `pnpm lint`, `pnpm test`
+```
+
+## @crudAuth System for Declarative Security
+
+This project uses a custom `@crudAuth` annotation system in the Prisma schema to declaratively configure CRUD authorization at the model level.
+
+### How it works
+
+Add a comment above any model in `/libs/api/prisma/src/lib/schemas/schema.prisma`:
+
+```prisma
+/// @crudAuth: { "readOne": "user", "readMany": "user", "create": "user", "update": "user", "delete": "user" }
+model UserPreference {
+  id        String   @id @default(uuid())
+  // ... rest of model
+}
+```
+
+### Auth Levels
+
+- `"admin"` - Uses `GqlAuthAdminGuard` (default for all operations)
+- `"user"` - Uses `GqlAuthGuard` (authenticated user)
+- `"custom"` - Uses a custom guard (e.g., `"organizationOwner"` would require `GqlAuthOrganizationOwnerGuard` in `/libs/api/utils/src/lib/guards/`)
+
+### CRUD Operations
+
+Configure security for: `readOne`, `readMany`, `count`, `create`, `update`, `delete`.
+
+**Best practice:** Only specify non-admin levels. Since all operations default to `"admin"`, only include operations you want to change.
+
+### Custom Resolvers — NEVER Extend Generated Resolvers
+
+**CRITICAL RULE**: When creating custom resolvers, **NEVER extend the generated resolver class**. Always create a completely separate resolver with a different name.
+
+**WRONG** ❌:
+```typescript
+export class UserPreferenceResolver extends GeneratedUserPreferenceResolver {
+  // This will cause conflicts - generated methods are still registered!
+}
+```
+
+**CORRECT** ✅:
+```typescript
+export class UserUserPreferenceResolver {
+  // Completely independent resolver
+}
+```
+
+**Why**: Extending generated resolvers causes method conflicts where both parent and child methods get registered with GraphQL, and NestJS will choose the wrong one.
+
+### Standard Pattern Summary
+
+1. Every model gets generated admin CRUD (organization, createOrganization, updateOrganization, etc.)
+2. User-specific operations get custom resolvers (myOrganizations, userCreateOrganization, etc.)
+3. No `@skipCrud` annotations ever
+4. No extending generated resolvers
+5. Admin operations are admin-only by default
+6. User operations are in separate resolvers with clear naming
+
+## CRITICAL RULE: Never Skip CRUD Generation
+
+**FUNDAMENTAL PRINCIPLE**: We NEVER use `@skipCrud` and NEVER skip CRUD generation for any model.
+
+Every model needs admin-level CRUD operations. Generated CRUD uses standard names; custom resolvers use prefixed names. When you need user-specific operations, create a separate resolver:
+
+```typescript
+@Resolver(() => Organization)
+export class UserOrganizationResolver {
+  @Query(() => [Organization])
+  myOrganizations(@CtxUser() user: User): Promise<Organization[]> { ... }
+
+  @Mutation(() => Organization)
+  userCreateOrganization(@CtxUser() user: User, @Args('input') input: CreateOrganizationInput): Promise<Organization> { ... }
+}
+```
+
+**WRONG** ❌:
+```prisma
+/// @skipCrud  // NEVER DO THIS — breaks admin access and SDK generation
+model Organization { ... }
+```
+
+## Prisma Import Paths
+
+**CRITICAL**: Always import Prisma types from the project's wrapper, NOT from `@prisma/client` directly.
+
+```typescript
+// ✅ CORRECT
+import { PrismaClient, User, Upload, StorageProvider } from '@nestled-template/api/prisma'
+
+// ❌ WRONG — will cause build errors
+import { User } from '@prisma/client'
+```
+
+**Why**: This project uses a custom Prisma wrapper at `@nestled-template/api/prisma`. Importing directly from `@prisma/client` will fail because types are generated in a custom location.
+
+## Route Registration — CRITICAL WORKFLOW STEP
+
+**CRITICAL RULE**: Every time you create or move a page component, you MUST update the route configuration in `/apps/web/app/routes.tsx`.
+
+Routes are NOT auto-discovered from the file system. Without route registration, pages will 404 even if the file exists.
+
+```typescript
+// apps/web/app/routes.tsx
+export default [
+  route('', './routes/_layout.tsx', [
+    route('', './routes/_authenticated/_layout.tsx', [
+      route('admin', './routes/admin/_layout.tsx', [
+        index('./routes/admin/_index.tsx'),
+        route('users', './routes/admin/users/_index.tsx'),
+        route('audit-logs', './routes/admin/audit-logs/_index.tsx'), // ← new pages go here
+      ]),
+    ]),
+  ]),
+] satisfies RouteConfig
+```
+
+## Code Generation Workflow
+
+After making changes to the Prisma schema:
+
+1. Update schema annotations in `/libs/api/prisma/src/lib/schemas/schema.prisma`
+2. Run `pnpm db-update` to regenerate:
+   - Prisma client
+   - GraphQL resolvers with updated guards
+   - GraphQL schema types
+   - TypeScript SDK
+3. Generated code appears in:
+   - `/libs/api/generated-crud/feature/` — Resolvers
+   - `/libs/api/generated-crud/data-access/` — Data access services
+   - `/libs/shared/sdk/` — TypeScript SDK for frontend
+
+## API Server Management
+
+**IMPORTANT**: Never attempt to automatically restart the API server. Always ask the user to restart it manually.
+
+**Why**: The project may have multiple background API processes, custom startup configurations, or development workflows that cannot be safely managed automatically.
+
+## Auto-Generated Files and Safe Export Patterns
+
+The following files are overwritten when running `pnpm db-update`:
+
+- `/libs/api/custom/src/index.ts` — Main barrel export file
+- `/libs/api/custom/src/lib/default/index.ts` — Default resolvers export
+
+**Safe pattern**: Add exports to `/libs/api/custom/src/lib/plugins/index.ts` (this file is preserved through codegen). The auto-generated `index.ts` always includes `export * from './lib/plugins'`, so anything exported from plugins remains accessible.
+
+## Auth & Security
+
+**Authorization Guards:**
+- `GqlAuthAdminGuard` — Super admin only (default for generated CRUD)
+- `GqlAuthGuard` — Authenticated user
+- Custom guards in `libs/api/utils/src/lib/guards/`
+
+**GraphQL Schema:** Auto-generated at `api-schema.graphql` (do not edit manually). SDK is generated from this schema + `.graphql` operation files in `libs/shared/sdk/src/graphql/` and `libs/shared/sdk/src/__admin/`.
+
+## Billing & Integrations
+
+**Stripe:** Configured via environment variables. See README.md "Billing & Stripe Setup" for webhook setup and product sync instructions. Stripe variables (`STRIPE_SECRET_KEY`, etc.) are optional — billing features are disabled if not set.
+
+**Required environment variables:** `DATABASE_URL`, `JWT_SECRET`. See `.env.example` for all options.
 
 ## Security & Configuration Tips
 
@@ -46,3 +358,27 @@ Do not commit secrets. Start from `.env.example` and keep local values in `.env`
 ## Agent-Specific Instructions
 
 Qalatra agents are registered with `agents/**/agent.config`; do not replace those files with `AGENTS.md`. Use nested `AGENTS.md` files only for contributor and coding guidance that applies to files under that directory.
+
+<!-- nx configuration start-->
+<!-- Leave the start & end comments to automatically receive updates. -->
+
+## General Guidelines for working with Nx
+
+- For navigating/exploring the workspace, invoke the `nx-workspace` skill first - it has patterns for querying projects, targets, and dependencies
+- When running tasks (for example build, lint, test, e2e, etc.), always prefer running the task through `nx` (i.e. `nx run`, `nx run-many`, `nx affected`) instead of using the underlying tooling directly
+- Prefix nx commands with the workspace's package manager (e.g., `pnpm nx build`, `npm exec nx test`) - avoids using globally installed CLI
+- You have access to the Nx MCP server and its tools, use them to help the user
+- For Nx plugin best practices, check `node_modules/@nx/<plugin>/PLUGIN.md`. Not all plugins have this file - proceed without it if unavailable.
+- NEVER guess CLI flags - always check nx_docs or `--help` first when unsure
+
+## Scaffolding & Generators
+
+- For scaffolding tasks (creating apps, libs, project structure, setup), ALWAYS invoke the `nx-generate` skill FIRST before exploring or calling MCP tools
+
+## When to use nx_docs
+
+- USE for: advanced config options, unfamiliar flags, migration guides, plugin configuration, edge cases
+- DON'T USE for: basic generator syntax (`nx g @nx/react:app`), standard commands, things you already know
+- The `nx-generate` skill handles generator discovery internally - don't call nx_docs just to look up generator syntax
+
+<!-- nx configuration end-->
