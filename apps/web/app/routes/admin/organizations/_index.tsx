@@ -50,7 +50,7 @@ export default function AdminOrganizationsPage() {
 
   const getSubscriptionStatus = (org: Organization) => {
     const subscription = org.subscription
-    if (subscription && subscription.status === 'ACTIVE') {
+    if (subscription?.status === 'ACTIVE') {
       return {
         status: 'Active',
         plan: subscription.plan?.name || 'Unknown',

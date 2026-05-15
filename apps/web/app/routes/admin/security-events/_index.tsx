@@ -425,26 +425,29 @@ export default function AdminSecurityEventsPage() {
 
       {/* Events Timeline */}
       <div className="rounded-xl border border-zinc-200 dark:border-white/10 bg-white dark:bg-white/5 shadow-sm overflow-hidden backdrop-blur">
-        {loading ? (
+        {loading && (
           <div className="p-12 text-center">
             <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-emerald-600 dark:border-emerald-400 border-r-transparent"></div>
             <p className="mt-4 text-sm text-zinc-600 dark:text-zinc-400">
               Loading security events...
             </p>
           </div>
-        ) : error ? (
+        )}
+        {!loading && error && (
           <div className="p-12 text-center">
             <p className="text-red-600 dark:text-red-400">Error loading events: {error.message}</p>
           </div>
-        ) : events.length === 0 ? (
+        )}
+        {!loading && !error && events.length === 0 && (
           <div className="p-12 text-center text-zinc-500 dark:text-zinc-400">
             {hasActiveFilters
               ? 'No events found matching your filters'
               : 'No security events recorded yet'}
           </div>
-        ) : (
+        )}
+        {!loading && !error && events.length > 0 && (
           <div className="p-6 space-y-4">
-            {events.map((event) => (
+            {events.map(event => (
               <SecurityEventItem key={event.id} event={event} formatDate={formatDate} />
             ))}
           </div>

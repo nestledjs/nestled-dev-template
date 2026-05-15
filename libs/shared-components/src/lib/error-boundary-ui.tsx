@@ -53,7 +53,7 @@ function renderStringWithEmbeddedJson(str: string) {
 
   // Use safer regex with possessive quantifier simulation (limit backtracking)
   // Match opening bracket/brace, then up to 5000 chars (reasonable for error messages), then closing
-  const jsonRegex = /([\[{][\s\S]{0,5000}?[\]}])/g
+  const jsonRegex = /([[{][\s\S]{0,5000}?[}\]])/g
   const parts: (string | object)[] = []
   let lastIndex = 0
   let match
@@ -78,15 +78,16 @@ function renderStringWithEmbeddedJson(str: string) {
   }
   return (
     <>
-      {parts.map((part, i) =>
-        typeof part === 'object' && part !== null ? (
-          <pre key={i} className="bg-gray-50 rounded border border-gray-200 p-3 overflow-x-auto text-left text-xs font-mono mt-2 max-h-64 whitespace-pre-wrap">
+      {parts.map((part) => {
+        const partKey = typeof part === 'string' ? `s-${part.slice(0, 30)}` : `o-${JSON.stringify(part).slice(0, 30)}`
+        return typeof part === 'object' && part !== null ? (
+          <pre key={partKey} className="bg-gray-50 rounded border border-gray-200 p-3 overflow-x-auto text-left text-xs font-mono mt-2 max-h-64 whitespace-pre-wrap">
             {JSON5.stringify(part, null, 2)}
           </pre>
         ) : (
-          <span key={i} className="font-mono text-xs text-gray-700">{String(part)}</span>
+          <span key={partKey} className="font-mono text-xs text-gray-700">{String(part)}</span>
         )
-      )}
+      })}
     </>
   )
 }
@@ -136,8 +137,9 @@ export function ErrorBoundaryUi({ error }: { error: Error }) {
         <div className="mt-6">
           <h2 className="font-semibold text-gray-800 mb-2">Details:</h2>
           <ul className="list-disc list-inside space-y-4">
-            {errors.map((err: any, i: number) => (
-              <li key={i} className="mb-2">
+            {errors.map((err: any) => {
+              const errKey = err?.message?.slice(0, 40) ?? err?.name ?? String(err)
+              return (<li key={errKey} className="mb-2">
                 <div className="font-medium text-gray-900">{renderPretty(err?.message || String(err))}</div>
                 {/* Show stack if available - always render to prevent hydration mismatch */}
                 <details className="mt-2" style={{ display: err?.stack ? 'block' : 'none' }}>
@@ -154,7 +156,7 @@ export function ErrorBoundaryUi({ error }: { error: Error }) {
                     </div>
                   ))}
               </li>
-            ))}
+            )})}
           </ul>
         </div>
       </div>

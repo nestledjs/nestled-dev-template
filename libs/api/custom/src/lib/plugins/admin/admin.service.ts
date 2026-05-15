@@ -9,6 +9,29 @@ export class AdminService {
 
   constructor(private readonly prisma: ApiCoreDataAccessService) {}
 
+  private buildSearchClause(search: string) {
+    return [
+      { id: { contains: search, mode: 'insensitive' } },
+      { firstName: { contains: search, mode: 'insensitive' } },
+      { lastName: { contains: search, mode: 'insensitive' } },
+      { emails: { some: { email: { contains: search, mode: 'insensitive' } } } },
+    ]
+  }
+
+  private buildAccountLockedClause(accountLocked: boolean) {
+    if (accountLocked) {
+      return { lockedUntil: { gt: new Date() } }
+    }
+    return { OR: [{ lockedUntil: null }, { lockedUntil: { lte: new Date() } }] }
+  }
+
+  private buildDateRangeClause(after?: Date, before?: Date) {
+    const range: any = {}
+    if (after) range.gte = after
+    if (before) range.lte = before
+    return range
+  }
+
   private buildUserWhereClause(filters: AdminUserFiltersInput): any {
     const {
       search,
@@ -26,12 +49,7 @@ export class AdminService {
     const where: any = {}
 
     if (search) {
-      where.OR = [
-        { id: { contains: search, mode: 'insensitive' } },
-        { firstName: { contains: search, mode: 'insensitive' } },
-        { lastName: { contains: search, mode: 'insensitive' } },
-        { emails: { some: { email: { contains: search, mode: 'insensitive' } } } },
-      ]
+      where.OR = this.buildSearchClause(search)
     }
 
     if (organizationId) {
@@ -51,23 +69,15 @@ export class AdminService {
     }
 
     if (accountLocked !== undefined) {
-      if (accountLocked) {
-        where.lockedUntil = { gt: new Date() }
-      } else {
-        where.OR = [{ lockedUntil: null }, { lockedUntil: { lte: new Date() } }]
-      }
+      Object.assign(where, this.buildAccountLockedClause(accountLocked))
     }
 
     if (registeredAfter || registeredBefore) {
-      where.createdAt = {}
-      if (registeredAfter) where.createdAt.gte = registeredAfter
-      if (registeredBefore) where.createdAt.lte = registeredBefore
+      where.createdAt = this.buildDateRangeClause(registeredAfter, registeredBefore)
     }
 
     if (lastLoginAfter || lastLoginBefore) {
-      where.lastSuccessfulLogin = {}
-      if (lastLoginAfter) where.lastSuccessfulLogin.gte = lastLoginAfter
-      if (lastLoginBefore) where.lastSuccessfulLogin.lte = lastLoginBefore
+      where.lastSuccessfulLogin = this.buildDateRangeClause(lastLoginAfter, lastLoginBefore)
     }
 
     return where

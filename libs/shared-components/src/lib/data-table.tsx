@@ -42,15 +42,13 @@ interface PaginationButtonProps {
 function PaginationButton({ show, onClick, label, className = '' }: PaginationButtonProps) {
   if (!show) return null
   return (
-    <div
+    <button
+      type="button"
       onClick={onClick}
-      role="button"
-      tabIndex={0}
-      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onClick() } }}
       className={`relative inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer ${className}`}
     >
       {label}
-    </div>
+    </button>
   )
 }
 
@@ -97,13 +95,12 @@ function SortableHeaderCell({ field, index, sort, onSort, formatFieldName }: Sor
   const thClassName = index === 0 ? FIRST_COLUMN_CLASS : OTHER_COLUMN_CLASS
 
   return (
-    <th scope="col" className={thClassName}>
+    <th scope="col" className={thClassName} aria-sort={getAriaSortValue(field, sort)}>
       <button
         type="button"
         onClick={() => onSort(field)}
         className="flex justify-between items-center w-full text-left hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500 rounded px-2 py-1 -mx-2 -my-1"
         aria-label={`Sort by ${formatFieldName(field)}`}
-        aria-sort={getAriaSortValue(field, sort)}
       >
         <span>{formatFieldName(field)}</span>
         <OrderDirectionIcon field={field} sort={sort} />
@@ -125,6 +122,56 @@ export interface DataTableProps {
   additionalFilters?: ReactElement | null
   setSort?: Dispatch<SetStateAction<{ orderBy: string; orderDirection: string }>>
   sort?: { orderBy: string; orderDirection: string }
+}
+
+function getNestedProperty(item: any, fieldPath: string) {
+  const value = fieldPath
+    .split('.')
+    .reduce((obj, key) => obj?.[key], item)
+
+  if (fieldPath.toLowerCase().includes('date') && value) {
+    return dayjs(value).format('MMMM D, YYYY') // Format the date as desired
+  }
+
+  return value
+}
+
+// Render values safely in table cells
+function renderValue(value: unknown): ReactNode {
+  if (value === null || value === undefined) return ''
+
+  // Arrays (e.g., many-to-many relations)
+  if (Array.isArray(value)) {
+    if (value.length === 0) return ''
+    const labels = value.map((entry) => {
+      if (entry === null || entry === undefined) return ''
+      if (typeof entry === 'object') {
+        const obj = entry as Record<string, unknown>
+        const label = (obj.name as string) ?? (obj.title as string) ?? (obj.id as string) ?? (obj.slug as string)
+        return label ?? JSON.stringify(obj)
+      }
+      return String(entry)
+    })
+    return labels.filter(Boolean).join(', ')
+  }
+
+  // Objects (e.g., relation values)
+  if (typeof value === 'object') {
+    const obj = value as Record<string, unknown>
+    const label = (obj.name as string) ?? (obj.title as string) ?? (obj.id as string) ?? (obj.slug as string)
+    return label ?? JSON.stringify(obj)
+  }
+
+  // Primitives
+  return String(value)
+}
+
+function formatFieldName(fieldName: string) {
+  return fieldName
+    .replace(/([a-z])([A-Z])/g, '$1 $2') // Insert a space between lowercase and uppercase letters
+    .split('.') // Split by periods if necessary
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1)) // Capitalize the first letter of each part
+    .join(' ')
 }
 
 export function DataTable(props: DataTableProps) {
@@ -151,55 +198,6 @@ export function DataTable(props: DataTableProps) {
       // ignore
     }
   }, [])
-  function getNestedProperty(item: any, fieldPath: string) {
-    const value = fieldPath
-      .split('.')
-      .reduce((obj, key) => (obj && obj[key] !== undefined ? obj[key] : undefined), item)
-
-    if (fieldPath.toLowerCase().includes('date') && value) {
-      return dayjs(value).format('MMMM D, YYYY') // Format the date as desired
-    }
-
-    return value
-  }
-
-  // Render values safely in table cells
-  function renderValue(value: unknown): ReactNode {
-    if (value === null || value === undefined) return ''
-
-    // Arrays (e.g., many-to-many relations)
-    if (Array.isArray(value)) {
-      if (value.length === 0) return ''
-      const labels = value.map((entry) => {
-        if (entry === null || entry === undefined) return ''
-        if (typeof entry === 'object') {
-          const obj = entry as Record<string, unknown>
-          const label = (obj.name as string) ?? (obj.title as string) ?? (obj.id as string) ?? (obj.slug as string)
-          return label ?? JSON.stringify(obj)
-        }
-        return String(entry)
-      })
-      return labels.filter(Boolean).join(', ')
-    }
-
-    // Objects (e.g., relation values)
-    if (typeof value === 'object') {
-      const obj = value as Record<string, unknown>
-      const label = (obj.name as string) ?? (obj.title as string) ?? (obj.id as string) ?? (obj.slug as string)
-      return label ?? JSON.stringify(obj)
-    }
-
-    // Primitives
-    return String(value)
-  }
-
-  function formatFieldName(fieldName: string) {
-    return fieldName
-      .replace(/([a-z])([A-Z])/g, '$1 $2') // Insert a space between lowercase and uppercase letters
-      .split('.') // Split by periods if necessary
-      .map((part) => part.charAt(0).toUpperCase() + part.slice(1)) // Capitalize the first letter of each part
-      .join(' ')
-  }
 
   function handleSort(fieldName: string) {
     const isCurrentSortField = props?.sort?.orderBy === fieldName

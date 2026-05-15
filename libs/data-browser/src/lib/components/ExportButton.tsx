@@ -51,6 +51,20 @@ function downloadCsv(csv: string, filename: string) {
   URL.revokeObjectURL(url)
 }
 
+function buildExportInput(
+  mode: 'all' | 'filtered',
+  variables: { input: Record<string, unknown> },
+): { take: number; skip: number; orderBy?: string; orderDirection?: string; [key: string]: any } {
+  if (mode === 'all') return { take: MAX_EXPORT_ROWS, skip: 0, orderBy: 'id', orderDirection: 'desc' }
+  return { ...variables.input, take: MAX_EXPORT_ROWS, skip: 0 }
+}
+
+function buildExportFilename(modelName: string, mode: 'all' | 'filtered', hasActiveFilters: boolean): string {
+  const timestamp = new Date().toISOString().slice(0, 10)
+  const suffix = mode === 'filtered' && hasActiveFilters ? '-filtered' : ''
+  return `${modelName}${suffix}-${timestamp}.csv`
+}
+
 interface ExportButtonProps {
   query: any
   dataPath: string
@@ -88,11 +102,7 @@ export function ExportButton({
       setError(null)
 
       const columns = mode === 'all' ? fieldNames : (visibleColumns.length > 0 ? visibleColumns : fieldNames)
-
-      const input =
-        mode === 'all'
-          ? { take: MAX_EXPORT_ROWS, skip: 0, orderBy: 'id', orderDirection: 'desc' }
-          : { ...variables.input, take: MAX_EXPORT_ROWS, skip: 0 }
+      const input = buildExportInput(mode, variables)
 
       try {
         const { data, error: queryError } = await runQuery({ variables: { input } })
@@ -103,9 +113,7 @@ export function ExportButton({
         const items = findItemsInData(anyData, dataPath)
 
         const csv = generateCsv(items, columns)
-        const timestamp = new Date().toISOString().slice(0, 10)
-        const suffix = mode === 'filtered' && hasActiveFilters ? '-filtered' : ''
-        downloadCsv(csv, `${modelName}${suffix}-${timestamp}.csv`)
+        downloadCsv(csv, buildExportFilename(modelName, mode, hasActiveFilters))
         setOpen(false)
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Export failed')

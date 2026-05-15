@@ -216,6 +216,46 @@ function mergeAndSortOptions(
 }
 
 /**
+ * Resolve the scalar value for a relation field from the current item.
+ * Tries relationFieldName first, then falls back to the nested object's id.
+ */
+function resolveRelationValue(field: any, currentItem: any, operation: string): string | undefined {
+  if (!currentItem || operation !== 'update') return undefined
+
+  const relationFieldName = field.relationFromFields?.[0] || `${field.name}Id`
+  let value: any = currentItem[relationFieldName]
+
+  if (value === undefined) {
+    const relObj = currentItem[field.name]
+    if (relObj && typeof relObj === 'object' && relObj.id) value = relObj.id
+  }
+
+  if (value && typeof value === 'object' && (value as any).id) {
+    value = (value as any).id
+  }
+
+  if (value === null) return ''
+  return value
+}
+
+/**
+ * Build the initial options array for a relation select field.
+ */
+function buildInitialOptions(
+  field: any,
+  currentItem: any,
+  operation: string,
+  getDisplayLabel: (item: any) => string,
+): Array<{ value: string; label: string }> {
+  if (!currentItem || operation !== 'update') return []
+  const currentRelationData = currentItem[field.name]
+  if (currentRelationData && typeof currentRelationData === 'object' && currentRelationData.id) {
+    return [{ value: currentRelationData.id, label: getDisplayLabel(currentRelationData) }]
+  }
+  return []
+}
+
+/**
  * Build a relation (searchSelectApollo or text fallback) form field
  */
 function buildRelationFormField(
@@ -229,16 +269,7 @@ function buildRelationFormField(
   displayFieldConfig?: DisplayFieldConfig,
 ): FormField {
   const relationFieldName = field.relationFromFields?.[0] || `${field.name}Id`
-
-  let relationValue = currentItem && operation === 'update' ? currentItem[relationFieldName] : undefined
-  if (relationValue === undefined && currentItem && operation === 'update') {
-    const relObj = currentItem[field.name]
-    if (relObj && typeof relObj === 'object' && relObj.id) relationValue = relObj.id
-  }
-  if (relationValue && typeof relationValue === 'object' && (relationValue as any).id) {
-    relationValue = (relationValue as any).id
-  }
-  if (relationValue === null) relationValue = ''
+  const relationValue = resolveRelationValue(field, currentItem, operation)
 
   const properPluralName = getPluralName(field.type)
   const adminDocumentName = `__Admin${properPluralName}`
@@ -263,13 +294,7 @@ function buildRelationFormField(
     return allValues.length > 0 ? allValues.join(' ') : item.id
   }
 
-  let initialOptions: Array<{ value: string; label: string }> = []
-  if (currentItem && operation === 'update') {
-    const currentRelationData = currentItem[field.name]
-    if (currentRelationData && typeof currentRelationData === 'object' && currentRelationData.id) {
-      initialOptions = [{ value: currentRelationData.id, label: getDisplayLabel(currentRelationData) }]
-    }
-  }
+  const initialOptions = buildInitialOptions(field, currentItem, operation, getDisplayLabel)
 
   return FormFieldClass.searchSelectApollo(relationFieldName, {
     label,

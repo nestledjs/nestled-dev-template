@@ -437,7 +437,7 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
   }, [])
 
   // Main GraphQL query with comprehensive error handling
-  const { data, loading, error, networkStatus, refetch } = useQuery(query ?? (sdk as any).__AdminUsersDocument, {
+  const { data, loading, error } = useQuery(query ?? (sdk as any).__AdminUsersDocument, {
     variables,
     skip: !model || !query,
     errorPolicy: 'all', // Continue processing even if there are GraphQL errors
