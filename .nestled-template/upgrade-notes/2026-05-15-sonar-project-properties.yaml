@@ -20,7 +20,7 @@ why: >
   SonarCloud scanner in CI — no UI configuration needed.
 
 affectedPaths:
-  - sonar-project.properties
+  - .sonarcloud.properties
 
 packageReleases: []
 
