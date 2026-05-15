@@ -23,7 +23,7 @@ export default function McpConnectPage() {
 
   function selectOrg(orgId: string) {
     const separator = back.includes('?') ? '&' : '?'
-    window.location.href = `${back}${separator}org=${encodeURIComponent(orgId)}`
+    globalThis.location.href = `${back}${separator}org=${encodeURIComponent(orgId)}`
   }
 
   return (

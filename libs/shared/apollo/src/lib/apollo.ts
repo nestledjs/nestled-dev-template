@@ -96,7 +96,14 @@ function pickNewestJwt(values: string[]): string {
       const parts = token.split('.')
       if (parts.length !== 3) continue
       const payload = JSON.parse(Buffer.from(parts[1], 'base64').toString('utf8')) as { iat?: number; exp?: number }
-      const iat = typeof payload.iat === 'number' ? payload.iat : typeof payload.exp === 'number' ? payload.exp : 0
+      let iat: number
+      if (typeof payload.iat === 'number') {
+        iat = payload.iat
+      } else if (typeof payload.exp === 'number') {
+        iat = payload.exp
+      } else {
+        iat = 0
+      }
       if (!best || iat > best.iat) {
         best = { token, iat }
       }
@@ -151,7 +158,7 @@ function resolveAuthToken(request?: Request, options?: ClientOptions): string | 
   }
 
   // 4. Check browser cookies (client-side only)
-  if (typeof window !== 'undefined' && typeof document !== 'undefined') {
+  if (typeof globalThis.window !== 'undefined' && typeof document !== 'undefined') {
     const browserToken = getCookieFromHeader(document.cookie, getSessionCookieName())
     if (browserToken) {
       return browserToken
@@ -175,7 +182,7 @@ function handleAuthenticationError(): void {
   console.log('[Apollo] Authentication error detected, redirecting to logout then login')
 
   // Redirect through logout to clear server-side session (client-side only)
-  if (typeof globalThis.window === 'undefined') {
+  if (globalThis.window === undefined) {
     return
   }
 
@@ -255,7 +262,7 @@ function isNetworkConnectivityError(networkError: Error): boolean {
 }
 
 function shouldShowServiceUnavailableMessage(): boolean {
-  return typeof window !== 'undefined' && !hasShownServiceUnavailableMessage
+  return typeof globalThis.window !== 'undefined' && !hasShownServiceUnavailableMessage
 }
 
 function dispatchServiceUnavailableEvent(networkError: Error, operation: Operation): void {
@@ -269,7 +276,7 @@ function dispatchServiceUnavailableEvent(networkError: Error, operation: Operati
     },
   })
 
-  window.dispatchEvent(serviceUnavailableEvent)
+  globalThis.window.dispatchEvent(serviceUnavailableEvent)
 
   // Reset the flag after a delay to allow retry
   setTimeout(() => {
@@ -341,7 +348,7 @@ function createLinkChain(uri: string, token: string | null, isDev: boolean): Apo
       'apollo-require-preflight': 'true', // Prevent CSRF blocking
     },
   })
-  const isServer = typeof window === 'undefined'
+  const isServer = typeof globalThis.window === 'undefined'
 
   const splitLink = isServer
     ? uploadLink
@@ -387,7 +394,7 @@ export function makeClient(request?: Request, options?: ClientOptions) {
   return new ApolloClient({
     link,
     cache: createCache(), // Create a fresh cache for each client to avoid SSR cache pollution
-    ssrMode: typeof window === 'undefined',
+    ssrMode: globalThis.window === undefined,
     assumeImmutableResults: true, // This can help with fragment handling
     defaultOptions: {
       watchQuery: { fetchPolicy: 'cache-and-network' },

@@ -19,7 +19,7 @@ export function WebUiServiceUnavailable({
     if (onRefresh) {
       onRefresh()
     } else {
-      window.location.reload()
+      globalThis.location.reload()
     }
   }
 

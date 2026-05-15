@@ -1,9 +1,9 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
-import { v2 as cloudinary, UploadApiResponse } from 'cloudinary'
+import { v2 as cloudinary } from 'cloudinary'
 import { IStorageService, UploadOptions, UploadResult } from '../interfaces'
 import { v4 as uuidv4 } from 'uuid'
-import * as path from 'path'
+import * as path from 'node:path'
 
 /**
  * Cloudinary Storage Provider
@@ -77,7 +77,7 @@ export class CloudinaryStorageService implements IStorageService, OnModuleInit {
           context: {
             ...(options.userId && { userId: options.userId }),
             ...(options.organizationId && { organizationId: options.organizationId }),
-            ...(options.metadata ? options.metadata : {}),
+            ...(options.metadata ?? {}),
           },
           // Apply transformation options if provided
           ...(options.width && { width: options.width }),

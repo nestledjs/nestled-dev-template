@@ -87,8 +87,8 @@ export class SyncService {
           stripeProductId,
           stripePriceId: defaultPrice.id,
           active: product.active,
-          features: (product.metadata?.features ? JSON.parse(product.metadata.features) : null) as any,
-          limits: (product.metadata?.limits ? JSON.parse(product.metadata.limits) : null) as any,
+          features: product.metadata?.['features'] ? JSON.parse(product.metadata['features']) : null,
+          limits: product.metadata?.['limits'] ? JSON.parse(product.metadata['limits']) : null,
           trialPeriodDays: defaultPrice.recurring?.trial_period_days || undefined,
         },
         update: {
@@ -98,8 +98,8 @@ export class SyncService {
           interval,
           stripePriceId: defaultPrice.id,
           active: product.active,
-          features: (product.metadata?.features ? JSON.parse(product.metadata.features) : null) as any,
-          limits: (product.metadata?.limits ? JSON.parse(product.metadata.limits) : null) as any,
+          features: product.metadata?.['features'] ? JSON.parse(product.metadata['features']) : null,
+          limits: product.metadata?.['limits'] ? JSON.parse(product.metadata['limits']) : null,
           trialPeriodDays: defaultPrice.recurring?.trial_period_days || undefined,
         },
       })
@@ -171,8 +171,8 @@ export class SyncService {
           stripeProductId: productId,
           stripePriceId,
           active: price.active && product.active,
-          features: (product.metadata?.features ? JSON.parse(product.metadata.features) : null) as any,
-          limits: (product.metadata?.limits ? JSON.parse(product.metadata.limits) : null) as any,
+          features: product.metadata?.['features'] ? JSON.parse(product.metadata['features']) : null,
+          limits: product.metadata?.['limits'] ? JSON.parse(product.metadata['limits']) : null,
           trialPeriodDays: price.recurring?.trial_period_days || undefined,
         },
         update: {
@@ -263,7 +263,7 @@ export class SyncService {
     this.logger.log(`Syncing customer from Stripe: ${stripeCustomerId}`)
 
     try {
-      const customer = await this.stripe.getCustomer(stripeCustomerId)
+      await this.stripe.getCustomer(stripeCustomerId)
 
       // Update subscription with customer ID if found
       const subscription = await this.prisma.subscription.findFirst({

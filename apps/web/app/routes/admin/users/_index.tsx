@@ -39,9 +39,9 @@ function UserStatusBadges({
   twoFactorEnabled,
   isLocked,
 }: {
-  emailVerified: boolean
-  twoFactorEnabled: boolean | null | undefined
-  isLocked: boolean
+  readonly emailVerified: boolean
+  readonly twoFactorEnabled: boolean | null | undefined
+  readonly isLocked: boolean
 }) {
   return (
     <div className="flex flex-col gap-1">
@@ -78,10 +78,10 @@ function UserTableRow({
   onView,
   onEmulate,
 }: {
-  user: UserRow
-  emulating: boolean
-  onView: (id: string) => void
-  onEmulate: (id: string, email: string) => void
+  readonly user: UserRow
+  readonly emulating: boolean
+  readonly onView: (id: string) => void
+  readonly onEmulate: (id: string, email: string) => void
 }) {
   const email = user.emails?.find(e => e.primary)?.email || 'No email'
   const emailVerified = user.emails?.find(e => e.primary)?.verified || false
@@ -207,7 +207,7 @@ export default function AdminUsersPage() {
   const [emulateUser, { loading: emulating }] = useMutation<EmulateUserMutation>(EmulateUser, {
     onCompleted: () => {
       // Reload the page to switch to the emulated user's session
-      window.location.href = '/members/dashboard'
+      globalThis.location.href = '/members/dashboard'
     },
     onError: error => {
       setErrorMessage(error.message)
@@ -537,33 +537,33 @@ export default function AdminUsersPage() {
                   {/* Basic Info */}
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="text-sm font-medium text-zinc-500 dark:text-zinc-400">
+                      <p className="text-sm font-medium text-zinc-500 dark:text-zinc-400">
                         Name
-                      </label>
+                      </p>
                       <p className="mt-1 text-base font-medium text-zinc-900 dark:text-white">
                         {userDetails.firstName} {userDetails.lastName}
                       </p>
                     </div>
                     <div>
-                      <label className="text-sm font-medium text-zinc-500 dark:text-zinc-400">
+                      <p className="text-sm font-medium text-zinc-500 dark:text-zinc-400">
                         User ID
-                      </label>
+                      </p>
                       <p className="mt-1 text-sm text-zinc-900 dark:text-white font-mono">
                         {userDetails.id}
                       </p>
                     </div>
                     <div>
-                      <label className="text-sm font-medium text-zinc-500 dark:text-zinc-400">
+                      <p className="text-sm font-medium text-zinc-500 dark:text-zinc-400">
                         Created
-                      </label>
+                      </p>
                       <p className="mt-1 text-sm text-zinc-900 dark:text-white">
                         {formatDate(userDetails.createdAt)}
                       </p>
                     </div>
                     <div>
-                      <label className="text-sm font-medium text-zinc-500 dark:text-zinc-400">
+                      <p className="text-sm font-medium text-zinc-500 dark:text-zinc-400">
                         Last Login
-                      </label>
+                      </p>
                       <p className="mt-1 text-sm text-zinc-900 dark:text-white">
                         {formatDate(userDetails.lastSuccessfulLogin)}
                       </p>
@@ -572,9 +572,9 @@ export default function AdminUsersPage() {
 
                   {/* Emails */}
                   <div>
-                    <label className="text-sm font-medium text-zinc-500 dark:text-zinc-400">
+                    <p className="text-sm font-medium text-zinc-500 dark:text-zinc-400">
                       Email Addresses
-                    </label>
+                    </p>
                     <div className="mt-2 space-y-2">
                       {userDetails.emails?.map(email => (
                         <div
@@ -609,9 +609,9 @@ export default function AdminUsersPage() {
 
                   {/* Security Status */}
                   <div>
-                    <label className="text-sm font-medium text-zinc-500 dark:text-zinc-400">
+                    <p className="text-sm font-medium text-zinc-500 dark:text-zinc-400">
                       Security Status
-                    </label>
+                    </p>
                     <div className="mt-2 grid grid-cols-2 gap-4">
                       <div className="flex items-center justify-between rounded-lg border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-white/5 px-4 py-3">
                         <span className="text-sm text-zinc-700 dark:text-zinc-300">
@@ -658,9 +658,9 @@ export default function AdminUsersPage() {
                   {/* Organizations */}
                   {userDetails.organizations && userDetails.organizations.length > 0 && (
                     <div>
-                      <label className="text-sm font-medium text-zinc-500 dark:text-zinc-400">
+                      <p className="text-sm font-medium text-zinc-500 dark:text-zinc-400">
                         Organizations
-                      </label>
+                      </p>
                       <div className="mt-2 space-y-2">
                         {userDetails.organizations.map(org => (
                           <div
@@ -687,9 +687,9 @@ export default function AdminUsersPage() {
                   {/* Active Sessions */}
                   {userDetails.activeSessions && userDetails.activeSessions.length > 0 && (
                     <div>
-                      <label className="text-sm font-medium text-zinc-500 dark:text-zinc-400">
-                        Active Sessions ({userDetails.activeSessions.filter(s => s.isValid).length})
-                      </label>
+                      <p className="text-sm font-medium text-zinc-500 dark:text-zinc-400">
+                        Active Sessions ({userDetails.activeSessions.some(s => s.isValid) ? userDetails.activeSessions.filter(s => s.isValid).length : 0})
+                      </p>
                       <div className="mt-2 space-y-2">
                         {userDetails.activeSessions
                           .filter(s => s.isValid)
@@ -719,9 +719,9 @@ export default function AdminUsersPage() {
                   {/* Recent Activity */}
                   {userDetails.AuditLog && userDetails.AuditLog.length > 0 && (
                     <div>
-                      <label className="text-sm font-medium text-zinc-500 dark:text-zinc-400">
+                      <p className="text-sm font-medium text-zinc-500 dark:text-zinc-400">
                         Recent Activity
-                      </label>
+                      </p>
                       <div className="mt-2 space-y-2 max-h-64 overflow-y-auto">
                         {userDetails.AuditLog.slice(0, 10).map(log => (
                           <div

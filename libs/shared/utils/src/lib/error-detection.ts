@@ -2,7 +2,7 @@
  * Detects if an error is caused by Vite development cache issues
  * This typically happens when the browser cache gets out of sync with the Vite dev server
  */
-export function isViteCacheError(error: Error | unknown): boolean {
+export function isViteCacheError(error: unknown): boolean {
   if (!error || typeof error !== 'object') {
     return false
   }
@@ -47,7 +47,7 @@ export function isViteCacheError(error: Error | unknown): boolean {
 /**
  * Detects if an error is network-related (for API/Apollo errors)
  */
-export function isNetworkError(error: Error | unknown): boolean {
+export function isNetworkError(error: unknown): boolean {
   if (!error || typeof error !== 'object') {
     return false
   }
@@ -55,7 +55,6 @@ export function isNetworkError(error: Error | unknown): boolean {
   const errorObj = error as Error
   const errorMessage = errorObj.message || ''
   const errorName = errorObj.name || ''
-  const errorStack = errorObj.stack || ''
   const anyErr = error as any
 
   // Exclude Vite cache errors from network errors
@@ -107,20 +106,20 @@ export function isNetworkError(error: Error | unknown): boolean {
  * @param delay - Delay in milliseconds before reloading (default: 0)
  */
 export function handleViteCacheError(
-  error: Error | unknown, 
-  autoReload = true, 
+  error: unknown,
+  autoReload = true,
   delay = 0
 ): boolean {
   if (isViteCacheError(error)) {
     console.log('[Error Handler] Vite cache error detected:', error)
-    
-    if (autoReload && typeof window !== 'undefined') {
+
+    if (autoReload && typeof globalThis.window !== 'undefined') {
       if (delay > 0) {
         setTimeout(() => {
-          window.location.reload()
+          globalThis.location.reload()
         }, delay)
       } else {
-        window.location.reload()
+        globalThis.location.reload()
       }
     }
     return true

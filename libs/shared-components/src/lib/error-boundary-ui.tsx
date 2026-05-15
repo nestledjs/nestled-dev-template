@@ -118,7 +118,7 @@ function renderPretty(obj: any): React.ReactNode {
   return <span className="font-mono text-xs text-gray-700">{String(obj)}</span>
 }
 
-export function ErrorBoundaryUi({ error }: { error: Error }) {
+export function ErrorBoundaryUi({ error }: { readonly error: Error }) {
   // Log the full error object for debugging
   console.error('Route ErrorBoundary caught:', error)
 

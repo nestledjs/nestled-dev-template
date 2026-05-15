@@ -127,7 +127,7 @@ export class AuthResolver {
     }
 
     if (token) {
-      const decoded = (this.service as any).jwtService.decode(token) as any
+      const decoded = (this.service as any).jwtService.decode(token)
       const sessionId = decoded?.sessionId
       if (sessionId) {
         await this.sessionService.invalidateSession(sessionId)

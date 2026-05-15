@@ -60,7 +60,7 @@ export class OAuthService {
       })
 
       const payload = ticket.getPayload()
-      if (!payload || !payload.sub || !payload.email) {
+      if (!payload?.sub || !payload.email) {
         throw new UnauthorizedException('Invalid Google token payload')
       }
 
@@ -72,6 +72,7 @@ export class OAuthService {
         picture: payload.picture,
       }
     } catch (error) {
+      if (error instanceof UnauthorizedException) throw error
       throw new UnauthorizedException('Invalid Google token')
     }
   }

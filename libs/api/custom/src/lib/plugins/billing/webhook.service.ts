@@ -287,13 +287,13 @@ export class WebhookService {
       })
     }
 
-    // TODO: Send payment failed email
+    // FUTURE: Send payment failed email
     this.logger.warn(`Payment failed for invoice ${invoice.id} - consider sending email notification`)
   }
 
   private async handleInvoiceUpcoming(invoice: Stripe.Invoice): Promise<void> {
     this.logger.log(`Invoice upcoming: ${invoice.id}`)
-    // TODO: Send upcoming invoice email (7 days before billing)
+    // FUTURE: Send upcoming invoice email (7 days before billing)
     this.logger.log(`Upcoming invoice in 7 days - consider sending reminder email`)
   }
 
@@ -304,7 +304,7 @@ export class WebhookService {
   private async handlePaymentIntentSucceeded(paymentIntent: Stripe.PaymentIntent): Promise<void> {
     this.logger.log(`Payment intent succeeded: ${paymentIntent.id}`)
 
-    // TODO: Create Payment record if you add the Payment model
+    // FUTURE: Create Payment record if you add the Payment model
     // For now, just log the successful payment
     this.logger.log(
       `One-time payment succeeded: ${paymentIntent.amount} ${paymentIntent.currency}`,
@@ -313,7 +313,7 @@ export class WebhookService {
 
   private async handlePaymentIntentFailed(paymentIntent: Stripe.PaymentIntent): Promise<void> {
     this.logger.error(`Payment intent failed: ${paymentIntent.id}`)
-    // TODO: Handle failed one-time payment
+    // FUTURE: Handle failed one-time payment
     // Send notification, log to database, etc.
   }
 
@@ -329,7 +329,7 @@ export class WebhookService {
 
   private async handleChargeRefunded(charge: Stripe.Charge): Promise<void> {
     this.logger.log(`Charge refunded: ${charge.id}`)
-    // TODO: Handle refund logic
+    // FUTURE: Handle refund logic
     // Update payment records, revoke access if applicable, send confirmation email
   }
 

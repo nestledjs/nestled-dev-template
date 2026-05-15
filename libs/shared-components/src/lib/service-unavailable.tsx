@@ -19,7 +19,7 @@ export function ServiceUnavailable({
     if (onRefresh) {
       onRefresh()
     } else {
-      window.location.reload()
+      globalThis.location.reload()
     }
   }
 

@@ -16,7 +16,7 @@ describe('useClickOutside', () => {
   })
 
   afterEach(() => {
-    document.body.removeChild(container)
+    container.remove()
   })
 
   describe('basic click detection', () => {
@@ -39,7 +39,7 @@ describe('useClickOutside', () => {
 
       expect(handler).toHaveBeenCalledTimes(1)
 
-      document.body.removeChild(outsideElement)
+      outsideElement.remove()
     })
 
     it('should not call handler when clicking inside the ref element', () => {
@@ -96,7 +96,7 @@ describe('useClickOutside', () => {
 
       expect(handler).not.toHaveBeenCalled()
 
-      document.body.removeChild(outsideElement)
+      outsideElement.remove()
     })
 
     it('should call handler when isActive is true', () => {
@@ -117,7 +117,7 @@ describe('useClickOutside', () => {
 
       expect(handler).toHaveBeenCalledTimes(1)
 
-      document.body.removeChild(outsideElement)
+      outsideElement.remove()
     })
 
     it('should toggle behavior when isActive changes', () => {
@@ -149,7 +149,7 @@ describe('useClickOutside', () => {
 
       expect(handler).toHaveBeenCalledTimes(1)
 
-      document.body.removeChild(outsideElement)
+      outsideElement.remove()
     })
 
     it('should default to active when isActive is not provided', () => {
@@ -170,7 +170,7 @@ describe('useClickOutside', () => {
 
       expect(handler).toHaveBeenCalledTimes(1)
 
-      document.body.removeChild(outsideElement)
+      outsideElement.remove()
     })
   })
 
@@ -213,7 +213,7 @@ describe('useClickOutside', () => {
       // Should not call handler since ref is null
       expect(handler).not.toHaveBeenCalled()
 
-      document.body.removeChild(outsideElement)
+      outsideElement.remove()
     })
   })
 
@@ -255,7 +255,7 @@ describe('useClickOutside', () => {
 
       expect(handler).not.toHaveBeenCalled()
 
-      document.body.removeChild(outsideElement)
+      outsideElement.remove()
     })
 
     it('should cleanup and re-add listener when isActive changes', () => {
@@ -315,7 +315,7 @@ describe('useClickOutside', () => {
       expect(handler1).not.toHaveBeenCalled()
       expect(handler2).toHaveBeenCalledTimes(1)
 
-      document.body.removeChild(outsideElement)
+      outsideElement.remove()
     })
   })
 
@@ -402,7 +402,7 @@ describe('useClickOutside', () => {
       outside.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }))
       expect(closeDropdown).toHaveBeenCalledTimes(1)
 
-      document.body.removeChild(outside)
+      outside.remove()
     })
 
     it('should work for modal dialogs', () => {
@@ -430,8 +430,8 @@ describe('useClickOutside', () => {
       modalOverlay.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }))
       expect(closeModal).toHaveBeenCalledTimes(1)
 
-      document.body.removeChild(modalOverlay)
-      document.body.removeChild(modalContent)
+      modalOverlay.remove()
+      modalContent.remove()
     })
 
     it('should work for context menus', () => {
@@ -457,7 +457,7 @@ describe('useClickOutside', () => {
       outside.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }))
       expect(closeContextMenu).toHaveBeenCalledTimes(1)
 
-      document.body.removeChild(outside)
+      outside.remove()
     })
   })
 
@@ -483,7 +483,7 @@ describe('useClickOutside', () => {
 
       expect(handler).toHaveBeenCalledTimes(3)
 
-      document.body.removeChild(outside)
+      outside.remove()
     })
 
     it('should handle clicks on dynamically added elements', () => {
@@ -505,7 +505,7 @@ describe('useClickOutside', () => {
 
       expect(handler).toHaveBeenCalledTimes(1)
 
-      document.body.removeChild(dynamic)
+      dynamic.remove()
     })
   })
 })

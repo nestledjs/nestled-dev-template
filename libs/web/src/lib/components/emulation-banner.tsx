@@ -15,12 +15,11 @@ export function EmulationBanner() {
 
   // Check emulation status from user object (set server-side)
   const isEmulating = !!(user as any)?.isEmulating
-  const originalAdminId = (user as any)?.originalAdminId || null
 
   const [endEmulation, { loading }] = useMutation<EndEmulationMutation>(EndEmulation, {
     onCompleted: () => {
       // Reload page to switch back to admin session
-      window.location.href = '/admin/users'
+      globalThis.location.href = '/admin/users'
     },
     onError: (error) => {
       setErrorMessage(error.message)

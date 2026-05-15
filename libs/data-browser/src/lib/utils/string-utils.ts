@@ -57,14 +57,14 @@ export function normalizeModelNameForDocument(modelName: string): string {
   // 2. Acronym at end of string: "CourseFAQ" -> "CourseFaq"
   return modelName
     // First handle acronyms followed by another capital+lowercase (e.g., APIToken -> ApiToken)
-    .replace(/([A-Z]{2,})([A-Z][a-z])/g, (_, acronym, rest) => {
+    .replaceAll(/([A-Z]{2,})([A-Z][a-z])/g, (_, acronym, rest) => {
       if (acronym.length >= 2) {
         return acronym.charAt(0).toUpperCase() + acronym.slice(1).toLowerCase() + rest
       }
       return acronym + rest
     })
     // Then handle acronyms at end of string (e.g., CourseFAQ -> CourseFaq)
-    .replace(/[A-Z]{3,}$/g, match =>
+    .replaceAll(/[A-Z]{3,}$/g, match =>
       match.charAt(0).toUpperCase() + match.slice(1).toLowerCase()
     )
 }

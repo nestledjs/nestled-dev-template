@@ -14,11 +14,11 @@ interface Organization {
 }
 
 interface OrganizationSwitcherProps {
-  organizations: Organization[]
-  activeOrganization: Organization | null
-  onSwitchOrganization: (organizationId: string) => Promise<void>
-  onCreateOrganization?: () => void
-  className?: string
+  readonly organizations: Organization[]
+  readonly activeOrganization: Organization | null
+  readonly onSwitchOrganization: (organizationId: string) => Promise<void>
+  readonly onCreateOrganization?: () => void
+  readonly className?: string
 }
 
 export function OrganizationSwitcher({
@@ -37,7 +37,7 @@ export function OrganizationSwitcher({
     try {
       await onSwitchOrganization(organizationId)
       // Page will refresh due to organization context change
-      window.location.reload()
+      globalThis.location.reload()
     } catch (error) {
       console.error('Failed to switch organization:', error)
       setIsSwitching(false)

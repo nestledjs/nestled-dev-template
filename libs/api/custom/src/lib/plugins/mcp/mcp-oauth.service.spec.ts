@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing'
 import { ConfigService } from '@nestjs/config'
-import { createHash } from 'crypto'
+import { createHash } from 'node:crypto'
 import { McpOAuthService } from './mcp-oauth.service'
 import { ApiTokensService } from '../api-tokens/api-tokens.service'
 import { ApiCoreDataAccessService } from '@nestled-template/api/core/data-access'

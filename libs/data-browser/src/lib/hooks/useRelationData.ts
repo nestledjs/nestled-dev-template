@@ -98,6 +98,7 @@ export function useRelationData(relatedModelName: string, searchTerm: string, is
         return true
       })
     } catch (error) {
+      console.error('Unexpected error:', error)
       return []
     }
   }, [relatedData, relatedDataPath, relationError])

@@ -22,9 +22,9 @@ function getSessionCookieName(): string {
 function getCookieValue(name: string): string | null {
   if (typeof document === 'undefined') return null
 
-  const matches = document.cookie.match(new RegExp(
-    '(?:^|; )' + name.replace(/([.$?*|{}()[\]\\/+^])/g, '\\$1') + '=([^;]*)'
-  ))
+  const escaped = name.replaceAll(/([.$?*|{}()[\]\\/+^])/g, String.raw`\$1`)
+  const cookieRegex = new RegExp(String.raw`(?:^|; )` + escaped + String.raw`=([^;]*)`)
+  const matches = cookieRegex.exec(document.cookie)
   return matches ? decodeURIComponent(matches[1]) : null
 }
 

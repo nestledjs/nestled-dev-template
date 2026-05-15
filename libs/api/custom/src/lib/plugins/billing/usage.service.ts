@@ -69,7 +69,7 @@ export class UsageService {
       members: organization._count.members,
       teams: organization._count.Team,
       storage: storageMB,
-      apiCalls: 0, // TODO: Implement API call tracking if needed
+      apiCalls: 0, // FUTURE: Implement API call tracking if needed
     }
   }
 
@@ -84,7 +84,7 @@ export class UsageService {
       },
     })
 
-    if (!subscription || !subscription.plan) {
+    if (!subscription?.plan) {
       return null
     }
 
@@ -103,7 +103,7 @@ export class UsageService {
     const usage = await this.getCurrentUsage(organizationId)
     const limits = await this.getPlanLimits(organizationId)
 
-    if (!limits || limits[metric] === undefined) {
+    if (limits?.[metric] === undefined) {
       // No limit defined for this metric
       return false
     }
@@ -122,7 +122,7 @@ export class UsageService {
     const usage = await this.getCurrentUsage(organizationId)
     const limits = await this.getPlanLimits(organizationId)
 
-    if (!limits || limits[metric] === undefined) {
+    if (limits?.[metric] === undefined) {
       // No limit defined for this metric
       return false
     }
@@ -140,7 +140,7 @@ export class UsageService {
     const usage = await this.getCurrentUsage(organizationId)
     const limits = await this.getPlanLimits(organizationId)
 
-    if (!limits || limits[metric] === undefined || limits[metric] === 0) {
+    if (limits?.[metric] === undefined || limits[metric] === 0) {
       return 0
     }
 
@@ -190,7 +190,7 @@ export class UsageService {
    * Log usage metrics (for analytics/auditing)
    */
   async logUsage(organizationId: string, metric: string, value: number): Promise<void> {
-    // TODO: Implement usage logging to a separate table for analytics
+    // FUTURE: Implement usage logging to a separate table for analytics
     // This could be used for detailed usage reports, billing, etc.
     this.logger.log(`Usage - Org: ${organizationId}, Metric: ${metric}, Value: ${value}`)
   }

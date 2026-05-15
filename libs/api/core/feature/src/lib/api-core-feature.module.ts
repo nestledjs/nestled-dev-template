@@ -1,7 +1,7 @@
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo'
 import { Module } from '@nestjs/common'
 import { GraphQLModule } from '@nestjs/graphql'
-import { join } from 'path'
+import { join } from 'node:path'
 import { Request, Response } from 'express'
 import { apiCorePubSub } from '@nestled-template/api/core/data-access'
 import { Context } from 'graphql-ws'
@@ -13,6 +13,22 @@ import { NoCachePlugin } from './plugins/no-cache.plugin'
 
 interface ConnectionParameters {
   headers?: Record<string, string>
+}
+
+function extractTokenFromWsContext(extra: unknown): string {
+  if (
+    extra &&
+    typeof extra === 'object' &&
+    'request' in extra &&
+    extra.request &&
+    typeof extra.request === 'object' &&
+    'rawHeaders' in extra.request
+  ) {
+    const rawHeaders = (extra as any).request.rawHeaders as string[] | undefined
+    const cookieName = process.env['VITE_COOKIE_NAME'] || '__session'
+    return rawHeaders ? extractTokenFromRawHeaders(rawHeaders, cookieName) : ''
+  }
+  return ''
 }
 
 function extractTokenFromRawHeaders(rawHeaders: string[], cookieName: string): string {
@@ -44,24 +60,8 @@ const redisPubSubProvider = {
         'graphql-ws': {
           onConnect: async (context: Context<Record<string, unknown> | undefined>) => {
             const { extra } = context
-            if (
-              extra &&
-              typeof extra === 'object' &&
-              'request' in extra &&
-              extra.request &&
-              typeof extra.request === 'object' &&
-              'rawHeaders' in extra.request
-            ) {
-              const rawHeaders = extra.request.rawHeaders as string[] | undefined
-              const cookieName = process.env['VITE_COOKIE_NAME'] || '__session'
-              const token = rawHeaders
-                ? extractTokenFromRawHeaders(rawHeaders, cookieName)
-                : ''
-
-              if (token === '') {
-                throw new Error('Authentication token is missing')
-              }
-            } else {
+            const token = extractTokenFromWsContext(extra)
+            if (token === '') {
               throw new Error('Authentication token is missing')
             }
             return true

@@ -17,10 +17,9 @@ import { useSubscription } from '../hooks/use-subscription'
  * - Subscription canceled
  * - No active subscription (optional)
  */
-export function SubscriptionStatusBanner({ showNoSubscriptionWarning = false }: { showNoSubscriptionWarning?: boolean }) {
+export function SubscriptionStatusBanner({ showNoSubscriptionWarning = false }: { readonly showNoSubscriptionWarning?: boolean }) {
   const [dismissed, setDismissed] = useState(false)
   const {
-    subscription,
     hasActiveSubscription,
     isTrialing,
     isCanceled,
@@ -38,7 +37,7 @@ export function SubscriptionStatusBanner({ showNoSubscriptionWarning = false }: 
     const now = new Date()
     const diff = trialEndsAt.getTime() - now.getTime()
     const days = Math.ceil(diff / (1000 * 60 * 60 * 24))
-    return days > 0 ? days : 0
+    return Math.max(days, 0)
   }
 
   // Calculate days until access ends (for canceled subscriptions)
@@ -47,7 +46,7 @@ export function SubscriptionStatusBanner({ showNoSubscriptionWarning = false }: 
     const now = new Date()
     const diff = periodEndsAt.getTime() - now.getTime()
     const days = Math.ceil(diff / (1000 * 60 * 60 * 24))
-    return days > 0 ? days : 0
+    return Math.max(days, 0)
   }
 
   const daysUntilTrialEnd = getDaysUntilTrialEnd()

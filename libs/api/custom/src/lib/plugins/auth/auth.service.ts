@@ -2,7 +2,7 @@ import { BadRequestException, Injectable, Logger, NotFoundException } from '@nes
 import { JwtService } from '@nestjs/jwt'
 import { ApiCoreDataAccessService } from '@nestled-template/api/core/data-access'
 import { EmailType, User } from '@nestled-template/api/core/models'
-import { ChangePasswordInput, EmulateUserInput, LoginInput, RegisterInput, RegisterWithInvitationInput, UserCreateInput } from './dto'
+import { ChangePasswordInput, EmulateUserInput, LoginInput, RegisterInput, RegisterWithInvitationInput, UserCreateInput, Disable2FAInput, Enable2FAOutput, Setup2FAOutput } from './dto'
 import { ApiCoreFeatureService } from '@nestled-template/api/core/feature'
 import { Response } from 'express'
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/client'
@@ -22,7 +22,6 @@ import {
   decryptSecret,
   hashBackupCode,
 } from './twofa.helper'
-import { Disable2FAInput, Enable2FAOutput, Setup2FAOutput } from './dto'
 
 @Injectable()
 export class AuthService {
@@ -658,7 +657,7 @@ export class AuthService {
       include: { user: true }
     })
 
-    if (!email || !email.user) {
+    if (!email?.user) {
       throw new NotFoundException('Invalid or already used verification token')
     }
 

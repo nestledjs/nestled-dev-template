@@ -3,7 +3,7 @@ import { GraphQLJSONObject } from 'graphql-type-json';
 import Decimal from 'decimal.js';
 import { GraphQLDecimal } from 'prisma-graphql-type-decimal';
 import type { JsonValue } from '@prisma/client/runtime/client';
-import { AddressType, EmailType, FailureReason, ImageType, InviteStatus, PhoneType, SecurityEventType, StorageProvider, SubscriptionStatus, TwoFactorMethod } from './enums';
+import { AddressType, EmailType, FailureReason, InviteStatus, PhoneType, SecurityEventType, StorageProvider, SubscriptionStatus, TwoFactorMethod } from './enums';
 
 @ObjectType({ description: undefined })
 export class Address {

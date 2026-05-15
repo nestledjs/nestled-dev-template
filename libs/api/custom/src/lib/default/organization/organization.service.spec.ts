@@ -8,7 +8,6 @@ describe('OrganizationService', () => {
   let service: OrganizationService
   let data: any // Use any to avoid Prisma type conflicts with Jest mocks
   let emailService: jest.Mocked<EmailService>
-  let configService: jest.Mocked<ConfigService>
   beforeEach(async () => {
     // Create mock data service - cast to any to avoid TypeScript strictness
     const mockData: any = {
@@ -82,7 +81,6 @@ describe('OrganizationService', () => {
     service = module.get<OrganizationService>(OrganizationService)
     data = module.get(ApiCoreDataAccessService)
     emailService = module.get(EmailService) as jest.Mocked<EmailService>
-    configService = module.get(ConfigService) as jest.Mocked<ConfigService>
   })
   afterEach(() => {
     jest.clearAllMocks()

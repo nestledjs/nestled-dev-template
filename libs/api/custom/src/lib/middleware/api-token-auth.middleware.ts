@@ -16,7 +16,7 @@ export class ApiTokenAuthMiddleware implements NestMiddleware {
     // Check for Authorization header with Bearer token
     const authHeader = req.headers['authorization'] as string | undefined
 
-    if (authHeader && authHeader.startsWith('Bearer ')) {
+    if (authHeader?.startsWith('Bearer ')) {
       const token = authHeader.substring(7) // Remove 'Bearer ' prefix
 
       try {

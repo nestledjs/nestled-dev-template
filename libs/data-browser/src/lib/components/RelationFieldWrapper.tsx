@@ -12,7 +12,7 @@ interface RelationFieldWrapperProps {
 // Convert PascalCase to kebab-case for URLs (CourseChapter -> course-chapter)
 const toKebabCase = (str: string): string => {
   return str
-    .replace(/([a-z])([A-Z])/g, '$1-$2') // Insert dash between lowercase and uppercase
+    .replaceAll(/([a-z])([A-Z])/g, '$1-$2') // Insert dash between lowercase and uppercase
     .toLowerCase() // Convert to lowercase
 }
 

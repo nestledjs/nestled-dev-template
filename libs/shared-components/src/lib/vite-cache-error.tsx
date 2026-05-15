@@ -17,7 +17,7 @@ export function ViteCacheError({
     if (!autoRefresh) return
 
     const timer = setTimeout(() => {
-      window.location.reload()
+      globalThis.location.reload()
     }, autoRefreshDelay)
 
     const countdownTimer = setInterval(() => {
@@ -31,7 +31,7 @@ export function ViteCacheError({
   }, [autoRefresh, autoRefreshDelay])
 
   const handleManualRefresh = () => {
-    window.location.reload()
+    globalThis.location.reload()
   }
 
   const content = (

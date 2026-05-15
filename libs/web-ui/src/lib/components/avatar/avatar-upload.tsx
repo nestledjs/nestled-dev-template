@@ -2,13 +2,13 @@ import React, { useState, useRef } from 'react'
 import { CameraIcon, TrashIcon } from '@heroicons/react/24/outline'
 
 interface AvatarUploadProps {
-  currentImageUrl?: string
-  fallbackText: string
-  onUpload: (file: File) => Promise<void>
-  onRemove?: () => Promise<void>
-  size?: 'sm' | 'md' | 'lg' | 'xl'
-  disabled?: boolean
-  className?: string
+  readonly currentImageUrl?: string
+  readonly fallbackText: string
+  readonly onUpload: (file: File) => Promise<void>
+  readonly onRemove?: () => Promise<void>
+  readonly size?: 'sm' | 'md' | 'lg' | 'xl'
+  readonly disabled?: boolean
+  readonly className?: string
 }
 
 const sizeClasses = {
@@ -64,7 +64,8 @@ export function AvatarUpload({
     // Create preview
     const reader = new FileReader()
     reader.onload = (e) => {
-      setPreviewUrl(e.target?.result as string)
+      const result = e.target?.result
+      setPreviewUrl(typeof result === 'string' ? result : null)
     }
     reader.readAsDataURL(file)
 
@@ -172,10 +173,10 @@ export function AvatarUpload({
 
 // Simpler display-only Avatar component
 interface AvatarProps {
-  imageUrl?: string
-  fallbackText: string
-  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl'
-  className?: string
+  readonly imageUrl?: string
+  readonly fallbackText: string
+  readonly size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl'
+  readonly className?: string
 }
 
 const displaySizeClasses = {

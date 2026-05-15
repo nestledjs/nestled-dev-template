@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config'
 import { Storage, Bucket } from '@google-cloud/storage'
 import { IStorageService, UploadOptions, UploadResult } from '../interfaces'
 import { v4 as uuidv4 } from 'uuid'
-import * as path from 'path'
+import * as path from 'node:path'
 
 /**
  * Google Cloud Storage Provider

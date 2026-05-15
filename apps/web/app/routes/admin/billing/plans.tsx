@@ -99,7 +99,7 @@ export default function AdminBillingPlans() {
                 <div className="mb-4">
                   <div className="flex items-baseline">
                     <span className="text-4xl font-bold text-gray-900">
-                      ${parseFloat(plan.price).toFixed(2)}
+                      ${Number.parseFloat(plan.price).toFixed(2)}
                     </span>
                     <span className="ml-2 text-sm text-gray-500">/ {plan.interval}</span>
                   </div>
@@ -121,8 +121,8 @@ export default function AdminBillingPlans() {
                 <div className="p-6">
                   <h4 className="text-sm font-medium text-gray-900 mb-3">Features</h4>
                   <ul className="space-y-2">
-                    {plan.features.map((feature: string, index: number) => (
-                      <li key={index} className="flex items-start">
+                    {plan.features.map((feature: string) => (
+                      <li key={feature} className="flex items-start">
                         <CheckCircleIcon className="h-5 w-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
                         <span className="text-sm text-gray-700">{feature}</span>
                       </li>

@@ -1,10 +1,9 @@
-import { Controller, Get, Query, Res, HttpStatus, BadRequestException, Req } from '@nestjs/common'
+import { Controller, Get, Query, Res, BadRequestException, Req } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { Request, Response } from 'express'
 import { OAuthService } from './oauth.service'
 import { AuthService } from './auth.service'
 import { SessionService } from './session.service'
-import { OAuthProvider } from './dto'
 
 @Controller('api/auth')
 export class OAuthController {

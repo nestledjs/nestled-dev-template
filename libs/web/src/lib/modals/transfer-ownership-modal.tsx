@@ -136,10 +136,11 @@ export default function TransferOwnershipModal({
             <div className="space-y-4">
               {/* Organization Selection */}
               <div>
-                <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
+                <label htmlFor="transfer-organization" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
                   Select Organization to Transfer
                 </label>
                 <select
+                  id="transfer-organization"
                   value={selectedOrganization}
                   onChange={e => {
                     setSelectedOrganization(e.target.value)
@@ -159,7 +160,7 @@ export default function TransferOwnershipModal({
               {/* New Owner Selection */}
               {selectedOrganization && (
                 <div>
-                  <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
+                  <label htmlFor="transfer-new-owner" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
                     Select New Owner
                   </label>
                   {selectedOrgMembers.length === 0 ? (
@@ -168,6 +169,7 @@ export default function TransferOwnershipModal({
                     </div>
                   ) : (
                     <select
+                      id="transfer-new-owner"
                       value={selectedNewOwner}
                       onChange={e => setSelectedNewOwner(e.target.value)}
                       className="w-full rounded-lg border border-zinc-200 dark:border-white/10 bg-white dark:bg-zinc-800 px-3 py-2 text-sm text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
@@ -204,10 +206,11 @@ export default function TransferOwnershipModal({
               {/* Confirmation */}
               {selectedOrganization && selectedNewOwner && (
                 <div>
-                  <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
+                  <label htmlFor="transfer-confirm" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
                     Type <strong>TRANSFER</strong> to confirm
                   </label>
                   <input
+                    id="transfer-confirm"
                     type="text"
                     value={confirmText}
                     onChange={e => setConfirmText(e.target.value)}

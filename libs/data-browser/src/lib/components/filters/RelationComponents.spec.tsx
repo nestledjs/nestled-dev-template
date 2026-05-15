@@ -422,7 +422,7 @@ describe('RelationComponents', () => {
 
     it('should render error icon SVG', () => {
       const error = { message: 'Error' }
-      const { container } = render(
+      render(
         <RelationItemList
           items={[]}
           loading={false}

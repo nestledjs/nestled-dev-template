@@ -92,17 +92,17 @@ export function App() {
     // noisy during normal usage
 
     // Listen for Apollo service unavailable events
-    window.addEventListener('apollo-service-unavailable', handleServiceUnavailable)
+    globalThis.addEventListener('apollo-service-unavailable', handleServiceUnavailable)
 
     // Fallback: Listen for global errors
-    window.addEventListener('error', handleGlobalError)
-    window.addEventListener('unhandledrejection', handleUnhandledRejection)
+    globalThis.addEventListener('error', handleGlobalError)
+    globalThis.addEventListener('unhandledrejection', handleUnhandledRejection)
 
     return () => {
       // noisy during normal usage
-      window.removeEventListener('apollo-service-unavailable', handleServiceUnavailable)
-      window.removeEventListener('error', handleGlobalError)
-      window.removeEventListener('unhandledrejection', handleUnhandledRejection)
+      globalThis.removeEventListener('apollo-service-unavailable', handleServiceUnavailable)
+      globalThis.removeEventListener('error', handleGlobalError)
+      globalThis.removeEventListener('unhandledrejection', handleUnhandledRejection)
     }
   }, [])
 

@@ -1,4 +1,4 @@
-import React, { createContext, useContext, ReactNode } from 'react'
+import React, { createContext, useContext, useMemo, ReactNode } from 'react'
 import { useQuery } from '@apollo/client/react'
 import { CurrentSubscription, type CurrentSubscriptionQuery, Subscription, Plan } from '@nestled-template/shared/sdk'
 import { useGlobalCtx } from './global.context'
@@ -29,7 +29,7 @@ export interface SubscriptionContextType {
 export const SubscriptionContext = createContext<SubscriptionContextType | undefined>(undefined)
 
 interface SubscriptionProviderProps {
-  children: ReactNode
+  readonly children: ReactNode
 }
 
 export function SubscriptionProvider({ children }: SubscriptionProviderProps) {
@@ -107,7 +107,7 @@ export function SubscriptionProvider({ children }: SubscriptionProviderProps) {
     return currentValue < limit
   }
 
-  const value: SubscriptionContextType = {
+  const value = useMemo<SubscriptionContextType>(() => ({
     subscription: subscription as any,
     plan: plan as any,
     isLoading: loading,
@@ -121,7 +121,8 @@ export function SubscriptionProvider({ children }: SubscriptionProviderProps) {
     isWithinLimit,
     trialEndsAt,
     periodEndsAt,
-  }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }), [subscription, plan, loading, error, hasActiveSubscription, isTrialing, isCanceled, isPastDue, trialEndsAt, periodEndsAt])
 
   return <SubscriptionContext.Provider value={value}>{children}</SubscriptionContext.Provider>
 }

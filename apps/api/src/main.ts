@@ -5,7 +5,7 @@ import { ConfigService } from '@nestled-template/api/config'
 import cookieParser from 'cookie-parser'
 import { graphqlUploadExpress } from 'graphql-upload-minimal'
 import * as express from 'express'
-import * as path from 'path'
+import * as path from 'node:path'
 import helmet from 'helmet'
 import { NextFunction, Request, Response } from 'express'
 
@@ -198,14 +198,14 @@ bootstrap().catch(error => {
 // Graceful shutdown for local dev restarts
 process.once('SIGINT', async () => {
   try {
-    await (global as any).prisma?.$disconnect?.()
+    await (globalThis as any).prisma?.$disconnect?.()
   } finally {
     process.exit(0)
   }
 })
 process.once('SIGTERM', async () => {
   try {
-    await (global as any).prisma?.$disconnect?.()
+    await (globalThis as any).prisma?.$disconnect?.()
   } finally {
     process.exit(0)
   }

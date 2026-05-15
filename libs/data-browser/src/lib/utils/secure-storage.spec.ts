@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { describe, it, expect, beforeEach } from 'vitest'
 import { SecureAdminLocalStorage, type AdminConfig } from './secure-storage'
 
 // Mock localStorage
@@ -19,7 +19,7 @@ const localStorageMock = (() => {
   }
 })()
 
-Object.defineProperty(global, 'localStorage', {
+Object.defineProperty(globalThis, 'localStorage', {
   value: localStorageMock,
   writable: true,
 })
@@ -82,7 +82,7 @@ describe('secure-storage', () => {
         version: '1.0',
         models: {
           Model: {
-            visibleColumns: Array(10000).fill('column'),
+            visibleColumns: new Array(10000).fill('column'),
           },
         },
       }
@@ -113,7 +113,7 @@ describe('secure-storage', () => {
       }
       const result = SecureAdminLocalStorage.setConfig(validConfig)
       expect(result).toBe(true)
-      expect(JSON.parse(localStorageMock.getItem('mi-admin-config')!)).toEqual(validConfig)
+      expect(JSON.parse(localStorageMock.getItem('mi-admin-config') ?? '')).toEqual(validConfig)
     })
 
     it('should reject invalid config', () => {
@@ -130,7 +130,7 @@ describe('secure-storage', () => {
         version: '1.0',
         models: {
           Model: {
-            visibleColumns: Array(10000).fill('column'),
+            visibleColumns: new Array(10000).fill('column'),
           },
         },
       }
@@ -214,7 +214,7 @@ describe('secure-storage', () => {
       const columns = SecureAdminLocalStorage.getColumnVisibility('User')
       // Storage validates and sanitizes on input
       expect(columns).toBeDefined()
-      expect(columns!.length).toBeGreaterThan(0)
+      expect(columns?.length).toBeGreaterThan(0)
     })
 
     it('should reject invalid model names', () => {
@@ -369,7 +369,7 @@ describe('secure-storage', () => {
       const fields = SecureAdminLocalStorage.getSearchFields('User')
       // Storage validates and sanitizes on input
       expect(fields).toBeDefined()
-      expect(fields!.length).toBeGreaterThan(0)
+      expect(fields?.length).toBeGreaterThan(0)
     })
   })
 
@@ -387,14 +387,14 @@ describe('secure-storage', () => {
 
       const exported = SecureAdminLocalStorage.exportConfig()
       expect(exported).not.toBeNull()
-      expect(JSON.parse(exported!)).toEqual(config)
+      expect(JSON.parse(exported ?? '')).toEqual(config)
     })
 
     it('should return default config when there is invalid data stored', () => {
       localStorageMock.setItem('mi-admin-config', 'invalid')
       const exported = SecureAdminLocalStorage.exportConfig()
       expect(exported).not.toBeNull()
-      const parsed = JSON.parse(exported!)
+      const parsed = JSON.parse(exported ?? '')
       expect(parsed).toEqual({
         version: '1.0',
         models: {},
@@ -452,7 +452,7 @@ describe('secure-storage', () => {
         version: '1.0',
         models: {
           Model: {
-            visibleColumns: Array(10000).fill('column'),
+            visibleColumns: new Array(10000).fill('column'),
           },
         },
       }
@@ -537,17 +537,17 @@ describe('secure-storage', () => {
     })
 
     it('should limit array sizes', () => {
-      const largeArray = Array(200).fill('column')
+      const largeArray = new Array(200).fill('column')
       SecureAdminLocalStorage.setColumnVisibility('User', largeArray)
       const columns = SecureAdminLocalStorage.getColumnVisibility('User')
-      expect(columns!.length).toBeLessThanOrEqual(100)
+      expect(columns?.length).toBeLessThanOrEqual(100)
     })
 
     it('should limit string lengths', () => {
       const longString = 'a'.repeat(2000)
       SecureAdminLocalStorage.setColumnVisibility('User', [longString])
       const columns = SecureAdminLocalStorage.getColumnVisibility('User')
-      expect(columns![0].length).toBeLessThanOrEqual(1000)
+      expect(columns?.[0].length).toBeLessThanOrEqual(1000)
     })
 
     it('should remove javascript: protocols', () => {

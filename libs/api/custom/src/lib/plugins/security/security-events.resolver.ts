@@ -1,4 +1,4 @@
-import { Args, Query, Resolver } from '@nestjs/graphql'
+import { Args, Query, Resolver, ObjectType, Field, Int } from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
 import { SecurityEventsService } from './security-events.service'
 import { CtxUser, GqlAuthGuard } from '@nestled-template/api/utils'
@@ -45,8 +45,6 @@ export class SecurityEventsResolver {
 }
 
 // Define SecuritySummary type for GraphQL
-import { ObjectType, Field, Int } from '@nestjs/graphql'
-
 @ObjectType()
 export class SecuritySummary {
   @Field(() => Int)
