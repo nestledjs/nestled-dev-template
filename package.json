@@ -44,7 +44,7 @@
     "lint": "nx run-many -t lint",
     "nx": "nx",
     "pre-commit:lint": "nx format:write --uncommitted & nx affected --target eslint --uncommitted",
-    "test": "nx test",
+    "test": "nx run-many -t test",
     "test:api": "pnpm nx e2e api-e2e",
     "test:ci": "pnpm test:api",
     "update": "nx migrate latest",
