@@ -13,9 +13,10 @@ export DATABASE_URL="$TEST_DATABASE_URL"
 TEST_DB_STARTED=false
 
 cleanup() {
-  if [ "$TEST_DB_STARTED" = true ]; then
+  if [[ "$TEST_DB_STARTED" = true ]]; then
     ./scripts/test-db.sh stop >/dev/null 2>&1 || true
   fi
+  return 0
 }
 
 trap cleanup EXIT

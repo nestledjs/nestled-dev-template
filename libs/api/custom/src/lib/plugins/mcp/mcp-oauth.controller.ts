@@ -4,6 +4,16 @@ import { Request, Response } from 'express'
 import { ConfigService } from '@nestjs/config'
 import { McpOAuthService } from './mcp-oauth.service'
 
+interface AuthorizeQuery {
+  client_id: string
+  redirect_uri: string
+  state?: string
+  code_challenge: string
+  code_challenge_method?: string
+  scope?: string
+  org?: string
+}
+
 @Controller('mcp')
 export class McpOAuthController {
   private readonly logger = new Logger(McpOAuthController.name)
@@ -66,16 +76,11 @@ export class McpOAuthController {
    */
   @Get('authorize')
   async authorize(
-    @Query('client_id') clientId: string,
-    @Query('redirect_uri') redirectUri: string,
-    @Query('state') state: string | undefined,
-    @Query('code_challenge') codeChallenge: string,
-    @Query('code_challenge_method') codeChallengeMethod: string | undefined,
-    @Query('scope') scope: string | undefined,
-    @Query('org') orgId: string | undefined,
+    @Query() query: AuthorizeQuery,
     @Req() req: Request,
     @Res() res: Response,
   ) {
+    const { client_id: clientId, redirect_uri: redirectUri, state, code_challenge: codeChallenge, code_challenge_method: codeChallengeMethod, scope, org: orgId } = query
     const siteUrl = this.config.get<string>('siteUrl') || 'http://localhost:4200'
     const mcpBase = this.oauth.getMcpBaseUrl(req)
 
@@ -88,18 +93,7 @@ export class McpOAuthController {
       return res.status(400).json({ error: 'invalid_client', error_description: 'Unknown client_id' })
     }
 
-    const cookieName = process.env['VITE_COOKIE_NAME'] || '__session'
-    const cookieToken = (req.cookies as Record<string, string>)?.[cookieName]
-    let userId: string | null = null
-
-    if (cookieToken) {
-      try {
-        const payload = this.jwtService.verify<{ userId: string }>(cookieToken)
-        if (payload?.userId) userId = payload.userId
-      } catch {
-        // expired or invalid cookie — user needs to log in
-      }
-    }
+    const userId = this.getUserIdFromCookie(req)
 
     const authorizeParams = new URLSearchParams({
       client_id: clientId,
@@ -181,6 +175,18 @@ export class McpOAuthController {
     this.logger.log(`MCP OAuth token issued for user ${authCode.userId} org=${authCode.organizationId}`)
 
     return res.json({ access_token: accessToken, token_type: 'bearer', scope: authCode.scope })
+  }
+
+  private getUserIdFromCookie(req: Request): string | null {
+    const cookieName = process.env['VITE_COOKIE_NAME'] || '__session'
+    const cookieToken = (req.cookies as Record<string, string>)?.[cookieName]
+    if (!cookieToken) return null
+    try {
+      const payload = this.jwtService.verify<{ userId: string }>(cookieToken)
+      return payload?.userId ?? null
+    } catch {
+      return null
+    }
   }
 
   private buildMetadata(req: Request) {
