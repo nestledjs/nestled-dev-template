@@ -1045,13 +1045,6 @@ export class AuthService {
   }
 
   public setCookie(res: Response, token: string): Response {
-    console.log('[setCookie] Cookie options:', {
-      name: this.core.cookie.name,
-      options: this.core.cookie.options,
-      domain: this.core.cookie.options.domain,
-      secure: this.core.cookie.options.secure,
-      sameSite: this.core.cookie.options.sameSite
-    })
     return res?.cookie(this.core.cookie.name, token, this.core.cookie.options)
   }
 
