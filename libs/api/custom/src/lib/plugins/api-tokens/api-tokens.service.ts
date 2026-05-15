@@ -34,6 +34,7 @@ export class ApiTokensService {
         tokenHash,
         userId,
         expiresAt: input.expiresAt,
+        organizationId: input.organizationId,
         lastUsedAt: null,
         revoked: false,
       },
@@ -157,7 +158,7 @@ export class ApiTokensService {
   /**
    * Validate an API token and return the associated user
    */
-  async validateApiToken(token: string): Promise<{ userId: string; tokenId: string } | null> {
+  async validateApiToken(token: string): Promise<{ userId: string; tokenId: string; organizationId: string | null } | null> {
     const tokenHash = this.hashToken(token)
 
     // Find token by hash
@@ -193,6 +194,7 @@ export class ApiTokensService {
     return {
       userId: apiToken.userId,
       tokenId: apiToken.id,
+      organizationId: apiToken.organizationId ?? null,
     }
   }
 
