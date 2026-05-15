@@ -1,0 +1,39 @@
+id: 2026-05-15-sonar-project-properties
+title: Add sonar-project.properties with generated-code exclusions and test rule suppressions
+priority: normal
+area: infra
+type: infra
+delivery: code-patch
+
+intent: >
+  A sonar-project.properties file at the repo root tells SonarCloud to fully
+  exclude auto-generated code from analysis (generated-crud, sdk/generated,
+  prisma-generated, enums.ts) and to suppress systematically noisy rules in
+  spec and stories files while keeping real bug rules (e.g. React hooks
+  violations) active everywhere.
+
+why: >
+  Without this file, every Nestled project accumulates hundreds of false
+  positives from generated code that no one edits, and from test-specific
+  patterns (useless assignments, type casts, removeChild) that Sonar flags as
+  smells but are idiomatic in tests. The file is read automatically by the
+  SonarCloud scanner in CI — no UI configuration needed.
+
+affectedPaths:
+  - sonar-project.properties
+
+packageReleases: []
+
+skipIf:
+  - A sonar-project.properties already exists at the repo root with project-specific exclusions
+
+verification:
+  - Trigger a SonarCloud scan (push to main or run sonar-scanner in CI)
+  - Confirm generated-crud files no longer appear in the issues list
+  - Confirm the quality gate still passes
+
+agentHints:
+  - Copy sonar-project.properties verbatim to the downstream repo root
+  - Do NOT copy sonar.projectKey or sonar.organization — these are set in CI per project
+  - The generated-crud path (libs/api/generated-crud/**) must match the downstream project structure; adjust if the monorepo layout differs
+  - If the downstream project does not use Storybook, the stories-* entries are harmless but can be removed
