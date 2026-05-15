@@ -33,6 +33,8 @@ export default [
     // Checkout routes
     route('checkout/success', './routes/checkout/success.tsx'),
     route('checkout/cancel', './routes/checkout/cancel.tsx'),
+    // MCP OAuth org picker — shown when connecting an AI assistant to a multi-org account
+    route('mcp-connect', './routes/mcp-connect.tsx'),
 
     // Authenticated areas - all share the same sidebar/userback layout
     // route('', './routes/_auth_layout.tsx', [

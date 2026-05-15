@@ -1,0 +1,52 @@
+id: 2026-05-15-mcp-server-plugin
+title: MCP Server Plugin — Built-in Model Context Protocol support
+priority: high
+area: api
+type: feature
+delivery: code-patch
+
+intent: >
+  Every Nestled project ships with a ready-to-use MCP (Model Context Protocol) server at
+  /api/mcp, secured by OAuth 2.0 + PKCE. Downstream projects can expose domain-specific
+  tools to AI assistants by adding tool files under
+  libs/api/custom/src/lib/plugins/mcp/tools/ without touching OAuth, transport, or auth
+  plumbing. The server also requires @modelcontextprotocol/sdk@^1.27.1 in the workspace.
+
+why: >
+  MCP is the emerging standard for AI assistant integrations. Shipping it as a
+  foundational plugin gives every Nestled project AI-readiness out of the box and provides
+  a universal extension point — muzebook and other downstream apps can simply add their
+  domain tools on top of the shared OAuth/transport/auth scaffolding.
+
+affectedPaths:
+  - libs/api/custom/src/lib/plugins/mcp/
+  - libs/api/custom/src/lib/plugins/index.ts
+  - libs/api/custom/src/lib/middleware/api-token-auth.middleware.ts
+  - libs/api/custom/src/lib/plugins/api-tokens/api-tokens.service.ts
+  - libs/api/custom/src/lib/plugins/api-tokens/dto/generate-api-token.input.ts
+  - apps/web/app/routes/mcp-connect.tsx
+  - apps/web/app/routes.tsx
+  - package.json
+
+skipIf:
+  - downstream project already has its own MCP implementation (e.g. muzebook)
+
+verification:
+  - pnpm lint
+  - pnpm build
+  - curl -s http://localhost:3000/api/mcp/.well-known/oauth-authorization-server | jq .issuer
+
+agentHints:
+  - The full plugin lives at libs/api/custom/src/lib/plugins/mcp/. Do not regenerate it
+    via pnpm db-update — it is not auto-generated.
+  - Add domain-specific MCP tools in libs/api/custom/src/lib/plugins/mcp/tools/ and
+    register them in mcp-server.factory.ts. The two starter tools (get_organization,
+    list_organizations, get_profile) show the exact pattern.
+  - The McpModule depends on ApiTokensModule from the same plugins folder — ensure that
+    module is not removed or renamed.
+  - The middleware fix (memberships to organizations in api-token-auth.middleware.ts) is
+    a correctness bugfix that must be applied even if the downstream project does not use MCP.
+  - The /mcp-connect page in the web app is the multi-org org-picker shown during OAuth.
+    It reads MyOrganizations from @nestled-template/shared/sdk; downstream apps may need
+    to regenerate the SDK if they renamed this query.
+

@@ -84,6 +84,7 @@
     "@heroicons/react": "^2.2.0",
     "@mdx-js/react": "^3.1.1",
     "@mdx-js/rollup": "^3.1.1",
+    "@modelcontextprotocol/sdk": "^1.29.0",
     "@nestjs/apollo": "^13.3.0",
     "@nestjs/axios": "^4.0.1",
     "@nestjs/common": "^11.1.19",
