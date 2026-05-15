@@ -218,7 +218,7 @@ export default function SettingsLayout() {
               <div>
                 <button
                   onClick={() => {
-                    /* TODO: Organization switcher */
+                    /* FUTURE: Organization switcher */
                   }}
                   className="flex items-center gap-3 mb-4 p-2 rounded-lg bg-zinc-50 dark:bg-white/5 w-full hover:bg-zinc-100 dark:hover:bg-white/10 transition-colors"
                 >

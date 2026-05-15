@@ -18,8 +18,8 @@ interface WebUiHeaderProps {
 export function WebUiHeader(props: Readonly<WebUiHeaderProps>) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
-    if (typeof window === 'undefined') return 'dark'
-    const saved = window.localStorage.getItem('theme') as 'light' | 'dark' | null
+    if (typeof globalThis.window === 'undefined') return 'dark'
+    const saved = globalThis.localStorage.getItem('theme') as 'light' | 'dark' | null
     return saved ?? 'dark'
   })
 
@@ -32,7 +32,7 @@ export function WebUiHeader(props: Readonly<WebUiHeaderProps>) {
       root.classList.remove('dark')
     }
     // Save to localStorage for persistence
-    window.localStorage.setItem('theme', theme)
+    globalThis.localStorage.setItem('theme', theme)
     // Save to cookie for SSR
     document.cookie = `theme=${theme}; path=/; max-age=31536000; SameSite=Lax`
   }, [theme])
@@ -169,7 +169,7 @@ export function WebUiHeader(props: Readonly<WebUiHeaderProps>) {
                 )}
               </div>
               <div className="py-6">
-                {!props?.isAuthenticated ? (
+                {props?.isAuthenticated ? null : (
                   <Link
                     to="/login"
                     onClick={() => setMobileMenuOpen(false)}
@@ -177,7 +177,7 @@ export function WebUiHeader(props: Readonly<WebUiHeaderProps>) {
                   >
                     Login
                   </Link>
-                ) : null}
+                )}
                 <button
                   type="button"
                   onClick={() => setTheme(t => (t === 'dark' ? 'light' : 'dark'))}

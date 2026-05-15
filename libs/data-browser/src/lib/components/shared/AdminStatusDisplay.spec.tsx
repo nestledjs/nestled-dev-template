@@ -304,13 +304,13 @@ describe('AdminUserStatus', () => {
     })
 
     it('should size label text for small', () => {
-      const { container } = render(<AdminUserStatus status="online" size="small" showLabel={true} />)
+      render(<AdminUserStatus status="online" size="small" showLabel={true} />)
       const label = screen.getByText('Online')
       expect(label).toHaveClass('text-xs')
     })
 
     it('should size label text for large', () => {
-      const { container } = render(<AdminUserStatus status="online" size="large" showLabel={true} />)
+      render(<AdminUserStatus status="online" size="large" showLabel={true} />)
       const label = screen.getByText('Online')
       expect(label).toHaveClass('text-base')
     })
@@ -361,7 +361,7 @@ describe('AdminUserStatus', () => {
     })
 
     it('should have proper spacing between dot and label', () => {
-      const { container } = render(<AdminUserStatus status="online" showLabel={true} />)
+      render(<AdminUserStatus status="online" showLabel={true} />)
       const label = screen.getByText('Online')
       expect(label).toHaveClass('ml-2')
     })

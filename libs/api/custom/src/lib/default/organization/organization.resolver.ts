@@ -3,12 +3,12 @@ import { UseGuards, Injectable } from '@nestjs/common'
 import { CtxUser, GqlAuthGuard } from '@nestled-template/api/utils'
 import { Organization, User, OrganizationMember, Invite, Role } from '@nestled-template/api/core/models'
 import { OrganizationService } from './organization.service'
-import { ApiCrudDataAccessService } from '@nestled-template/api/generated-crud/data-access'
-import { GeneratedOrganizationResolver } from '@nestled-template/api/generated-crud/feature'
 import {
+  ApiCrudDataAccessService,
   CreateOrganizationInput,
   UpdateOrganizationInput,
 } from '@nestled-template/api/generated-crud/data-access'
+import { GeneratedOrganizationResolver } from '@nestled-template/api/generated-crud/feature'
 import {
   AddOrganizationMemberInput,
   RemoveOrganizationMemberInput,

@@ -33,12 +33,13 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
       const values = Object.values(enumObject).filter(value => typeof value === 'string')
 
       if (values.length === 0) {
-        const keys = Object.keys(enumObject).filter(key => isNaN(Number(key)))
+        const keys = Object.keys(enumObject).filter(key => Number.isNaN(Number(key)))
         return keys.length > 0 ? keys : null
       }
 
-      return values as string[]
+      return values as string[] // values is filtered to only strings above
     } catch (error) {
+      console.error('Unexpected error:', error)
       return null
     }
   }, [sdk])
@@ -111,10 +112,6 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
   } = state
 
   // State setters using dispatch for backwards compatibility - memoized to prevent infinite loops
-  const setSkip = useCallback(
-    (skip: number) => dispatch({ type: 'SET_SKIP', payload: skip }),
-    [dispatch],
-  )
   const setFilters = useCallback(
     (filters: Record<string, any>) => dispatch({ type: 'SET_FILTERS', payload: filters }),
     [dispatch],
@@ -229,7 +226,7 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
   const dataPath = useMemo(() => {
     return (
       model?.pluralModelPropertyName ||
-      pluralParam.replace(/-([a-z])/g, (_, letter) => letter.toUpperCase())
+      pluralParam.replaceAll(/-([a-z])/g, (_, letter) => letter.toUpperCase())
     )
   }, [model, pluralParam])
 
@@ -328,7 +325,7 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
     // Sort (per model); fallback to first field if stored invalid
     const storedSort = AdminLocalStorage.getSortPreference(model.name)
     const sortFieldValid = storedSort && (storedSort.orderBy === 'id' || fieldNames.includes(storedSort.orderBy))
-    const nextSort = sortFieldValid ? storedSort! : { orderBy: 'id', orderDirection: 'desc' }
+    const nextSort = sortFieldValid && storedSort ? storedSort : { orderBy: 'id', orderDirection: 'desc' }
     dispatch({ type: 'SET_SORT', payload: nextSort })
 
     // Search fields (per model), sanitized to valid fields
@@ -422,7 +419,7 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
     let processedItems = dataPath && anyData[dataPath] ? anyData[dataPath] : []
     if (!processedItems || processedItems.length === 0) {
       for (const [, value] of Object.entries(anyData)) {
-        if (Array.isArray(value) && (value as any[]).length > 0 && (value as any[])[0]?.id) {
+        if (Array.isArray(value) && value.length > 0 && (value[0] as any)?.id) {
           processedItems = value
           break
         }
@@ -437,7 +434,7 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
   }, [])
 
   // Main GraphQL query with comprehensive error handling
-  const { data, loading, error } = useQuery(query ?? (sdk as any).__AdminUsersDocument, {
+  const { data, loading, error } = useQuery(query ?? sdk.__AdminUsersDocument, {
     variables,
     skip: !model || !query,
     errorPolicy: 'all', // Continue processing even if there are GraphQL errors
@@ -557,7 +554,7 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
               </p>
               <div className="mt-6 space-y-3">
                 <button
-                  onClick={() => window.location.reload()}
+                  onClick={() => globalThis.location.reload()}
                   className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-web hover:bg-green-web-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-web"
                 >
                   Reload Page
@@ -849,7 +846,7 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
             id="search"
             name="search"
             className="block w-full pl-10 pr-12 py-2 border border-gray-300 dark:border-gray-600 rounded-md leading-5 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:placeholder-gray-400 dark:focus:placeholder-gray-500 focus:ring-1 focus:ring-green-web focus:border-green-web sm:text-sm"
-            placeholder={`Search ${searchFields.length > 0 ? searchFields.map((field: string) => field.replace(/([a-z])([A-Z])/g, '$1 $2').replace(/^./, (str: string) => str.toUpperCase())).join(', ') : getPluralName(model.name).toLowerCase()}...`}
+            placeholder={`Search ${searchFields.length > 0 ? searchFields.map((field: string) => field.replaceAll(/([a-z])([A-Z])/g, '$1 $2').replace(/^./, (str: string) => str.toUpperCase())).join(', ') : getPluralName(model.name).toLowerCase()}...`}
             type="search"
             value={state.search || ''}
             onChange={e => dispatch({ type: 'SET_SEARCH', payload: e.target.value })}

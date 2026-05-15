@@ -13,7 +13,7 @@ export class SmtpEmailProvider implements EmailProvider {
     this.templateManager = new SimpleTemplateManager()
     this.transporter = createTransport({
       host: this.config.mailerConfig.host,
-      port: parseInt(this.config.mailerConfig.port.toString()),
+      port: Number.parseInt(this.config.mailerConfig.port.toString()),
       secure: this.config.mailerConfig.secure,
       auth: {
         user: this.config.mailerConfig.auth.user,

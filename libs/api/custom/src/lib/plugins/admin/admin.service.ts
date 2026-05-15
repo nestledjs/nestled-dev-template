@@ -495,7 +495,7 @@ export class AdminService {
    */
   async forcePasswordReset(userId: string) {
     // Generate a reset token
-    const crypto = await import('crypto')
+    const crypto = await import('node:crypto')
     const resetToken = crypto.randomBytes(32).toString('hex')
     const resetExpires = new Date(Date.now() + 3600000) // 1 hour
 

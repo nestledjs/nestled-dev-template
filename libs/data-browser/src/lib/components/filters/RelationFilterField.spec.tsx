@@ -569,7 +569,6 @@ describe('RelationFilterField', () => {
     })
 
     it('should call onChange with ID object when text is entered', async () => {
-      const user = userEvent.setup()
       mockUseRelationData.mockReturnValue({
         relatedItems: [],
         loading: false,

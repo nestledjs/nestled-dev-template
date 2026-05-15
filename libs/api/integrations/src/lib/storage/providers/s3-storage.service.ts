@@ -4,7 +4,7 @@ import { S3Client, PutObjectCommand, DeleteObjectCommand, HeadObjectCommand } fr
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 import { IStorageService, UploadOptions, UploadResult } from '../interfaces'
 import { v4 as uuidv4 } from 'uuid'
-import * as path from 'path'
+import * as path from 'node:path'
 
 /**
  * AWS S3 Storage Provider

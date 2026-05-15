@@ -140,6 +140,12 @@ export default function NotificationsSettings() {
     }
   })
 
+  function handleUpdatePreferenceCache(cache: Parameters<typeof updatePreferencesCache>[0], data: { updateUserPreference?: Parameters<typeof updatePreferencesCache>[1] } | null | undefined) {
+    if (data?.updateUserPreference) {
+      updatePreferencesCache(cache, data.updateUserPreference)
+    }
+  }
+
   const updateExistingPreference = async (
     existing: (typeof preferences)[0],
     newValue: boolean,
@@ -159,11 +165,7 @@ export default function NotificationsSettings() {
           updatedAt: new Date().toISOString(),
         },
       },
-      update: (cache, { data }) => {
-        if (data?.updateUserPreference) {
-          updatePreferencesCache(cache, data.updateUserPreference)
-        }
-      },
+      update: (cache, { data }) => handleUpdatePreferenceCache(cache, data),
     })
   }
 
@@ -346,8 +348,8 @@ export default function NotificationsSettings() {
 }
 
 interface NotificationToggleProps {
-  notification: NotificationSetting
-  onToggle: (key: string, currentValue: boolean) => void
+  readonly notification: NotificationSetting
+  readonly onToggle: (key: string, currentValue: boolean) => void
 }
 
 function NotificationToggle({ notification, onToggle }: NotificationToggleProps) {

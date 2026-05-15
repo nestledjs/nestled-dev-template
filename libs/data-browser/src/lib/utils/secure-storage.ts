@@ -17,9 +17,9 @@ const sanitizeString = (value: unknown): string => {
   if (typeof value !== 'string') return ''
   // Remove potential XSS vectors while preserving legitimate data
   return value
-    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '') // Remove script tags
-    .replace(/javascript:/gi, '') // Remove javascript: protocols
-    .replace(/on\w+\s*=/gi, '') // Remove event handlers
+    .replaceAll(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '') // Remove script tags
+    .replaceAll(/javascript:/gi, '') // Remove javascript: protocols
+    .replaceAll(/on\w+\s*=/gi, '') // Remove event handlers
     .trim()
     .substring(0, 1000) // Limit length
 }
@@ -42,12 +42,12 @@ const sanitizeSortPreference = (value: unknown): { orderBy: string; orderDirecti
   // Validate sort direction
   if (!['asc', 'desc'].includes(orderDirection)) return null
   // Validate field name (alphanumeric + underscore only)
-  if (!/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(orderBy)) return null
-  
+  if (!/^[a-zA-Z_]\w*$/.test(orderBy)) return null
+
   return { orderBy, orderDirection }
 }
 
-const isValidModelName = (name: string): boolean => /^[a-zA-Z_][a-zA-Z0-9_]*$/.test(name)
+const isValidModelName = (name: string): boolean => /^[a-zA-Z_]\w*$/.test(name)
 
 const isValidModelConfig = (modelConfig: unknown): boolean => {
   if (!modelConfig || typeof modelConfig !== 'object') return true
@@ -108,8 +108,8 @@ export const SecureAdminLocalStorage = {
       // Clear potentially corrupted data
       try {
         localStorage.removeItem(ADMIN_CONFIG_KEY)
-    } catch {
-        // Ignore cleanup errors
+      } catch (cleanupError) {
+        console.error('Unexpected error:', cleanupError)
       }
       return { version: ADMIN_CONFIG_VERSION, models: {} }
     }
@@ -134,6 +134,7 @@ export const SecureAdminLocalStorage = {
       return true
 
     } catch (error) {
+      console.error('Unexpected error:', error)
       return false
     }
   },
@@ -225,6 +226,7 @@ export const SecureAdminLocalStorage = {
       }
       return JSON.stringify(config, null, 2)
     } catch (error) {
+      console.error('Unexpected error:', error)
       return null
     }
   },
@@ -264,6 +266,7 @@ export const SecureAdminLocalStorage = {
       return SecureAdminLocalStorage.setConfig(config)
 
     } catch (error) {
+      console.error('Unexpected error:', error)
       return false
     }
   },
@@ -274,6 +277,7 @@ export const SecureAdminLocalStorage = {
       localStorage.removeItem(ADMIN_CONFIG_KEY)
       return true
     } catch (error) {
+      console.error('Unexpected error:', error)
       return false
     }
   }

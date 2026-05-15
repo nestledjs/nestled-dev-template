@@ -43,17 +43,13 @@ export class TenancyMiddleware implements NestMiddleware {
       }
 
       // Check Redis cache for membership context
-      if (this.authCache?.isEnabled()) {
-        const cachedContext = await this.authCache.getMembership(req.user.id, organizationId)
-        if (cachedContext) {
-          // Apply super admin boost if needed
-          const finalContext = this.applySuperAdminBoost(cachedContext, req.user)
-          req.organizationContext = finalContext
-          this.logger.debug(
-            `Organization context from cache: User ${req.user.id} -> Org ${organizationId} (${cachedContext.roleName})`
-          )
-          return next()
-        }
+      const cachedContext = await this.getCachedMembership(req.user.id, organizationId)
+      if (cachedContext) {
+        req.organizationContext = this.applySuperAdminBoost(cachedContext, req.user)
+        this.logger.debug(
+          `Organization context from cache: User ${req.user.id} -> Org ${organizationId} (${cachedContext.roleName})`
+        )
+        return next()
       }
 
       // Query database for membership
@@ -112,6 +108,11 @@ export class TenancyMiddleware implements NestMiddleware {
       this.logger.error(`Error in tenancy middleware: ${err.message}`, err.stack)
       next(error)
     }
+  }
+
+  private async getCachedMembership(userId: string, organizationId: string): Promise<OrganizationContext | null> {
+    if (!this.authCache?.isEnabled()) return null
+    return (await this.authCache.getMembership(userId, organizationId)) ?? null
   }
 
   /**

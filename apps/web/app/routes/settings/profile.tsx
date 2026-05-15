@@ -84,7 +84,7 @@ function collectUserUpdates(
   if (values.firstName !== user?.firstName) updates.firstName = values.firstName
   if (values.lastName !== user?.lastName) updates.lastName = values.lastName
   if (values.displayName && values.displayName !== user?.displayName) {
-    updates.displayName = values.displayName.toLowerCase().replace(/[^a-z0-9.]/g, '')
+    updates.displayName = values.displayName.toLowerCase().replaceAll(/[^a-z0-9.]/g, '')
   }
   return updates
 }
@@ -104,6 +104,52 @@ type UserAvatar = {
   id: string
   publicUrl?: string | null
   url?: string | null
+}
+
+interface AvatarSectionProps {
+  readonly userAvatar: UserAvatar | undefined | null
+  readonly user: { firstName?: string | null; lastName?: string | null; displayName?: string | null }
+  readonly onUpload: (file: File) => Promise<void>
+  readonly onRemove: (() => Promise<void>) | undefined
+  readonly avatarMessage: { type: 'success' | 'error'; text: string } | null
+}
+
+function AvatarSection({ userAvatar, user, onUpload, onRemove, avatarMessage }: AvatarSectionProps) {
+  return (
+    <div className="space-y-3">
+      <div className="flex items-center gap-6">
+        <AvatarUpload
+          currentImageUrl={userAvatar?.publicUrl ?? userAvatar?.url ?? undefined}
+          fallbackText={
+            `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.displayName || 'User'
+          }
+          onUpload={onUpload}
+          onRemove={userAvatar ? onRemove : undefined}
+          size="xl"
+        />
+        <div>
+          <h3 className="text-lg font-semibold text-zinc-900 dark:text-white">Profile Picture</h3>
+          <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-2">
+            Upload a photo to personalize your account
+          </p>
+          <p className="text-xs text-zinc-500 dark:text-zinc-400">
+            Recommended: Square image, at least 200x200px. Max file size: 5MB.
+          </p>
+        </div>
+      </div>
+      {avatarMessage && (
+        <div
+          className={`rounded-lg p-3 text-sm ${
+            avatarMessage.type === 'success'
+              ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/20'
+              : 'bg-rose-50 dark:bg-rose-500/10 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-500/20'
+          }`}
+        >
+          {avatarMessage.text}
+        </div>
+      )}
+    </div>
+  )
 }
 
 export default function ProfileSettings() {
@@ -212,41 +258,6 @@ export default function ProfileSettings() {
     }
   }
 
-  const AvatarSection = () => (
-    <div className="space-y-3">
-      <div className="flex items-center gap-6">
-        <AvatarUpload
-          currentImageUrl={userAvatar?.publicUrl ?? userAvatar?.url ?? undefined}
-          fallbackText={
-            `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.displayName || 'User'
-          }
-          onUpload={handleAvatarUpload}
-          onRemove={userAvatar ? handleAvatarRemove : undefined}
-          size="xl"
-        />
-        <div>
-          <h3 className="text-lg font-semibold text-zinc-900 dark:text-white">Profile Picture</h3>
-          <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-2">
-            Upload a photo to personalize your account
-          </p>
-          <p className="text-xs text-zinc-500 dark:text-zinc-400">
-            Recommended: Square image, at least 200x200px. Max file size: 5MB.
-          </p>
-        </div>
-      </div>
-      {avatarMessage && (
-        <div
-          className={`rounded-lg p-3 text-sm ${
-            avatarMessage.type === 'success'
-              ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/20'
-              : 'bg-rose-50 dark:bg-rose-500/10 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-500/20'
-          }`}
-        >
-          {avatarMessage.text}
-        </div>
-      )}
-    </div>
-  )
 
   const editProfileFields = [
     FormFieldClass.text('firstName', {
@@ -420,7 +431,7 @@ export default function ProfileSettings() {
 
       alert('Your account has been deleted. You will be logged out now.')
       // Redirect to login page
-      window.location.href = '/login'
+      globalThis.location.href = '/login'
     } catch (error) {
       alert('Failed to delete account: ' + (error as Error).message)
       setShowDeleteConfirm(false)
@@ -456,7 +467,13 @@ export default function ProfileSettings() {
 
       {/* Avatar Section */}
       <div className="rounded-xl border border-zinc-200 dark:border-white/10 bg-white dark:bg-white/5 p-6 backdrop-blur">
-        <AvatarSection />
+        <AvatarSection
+          userAvatar={userAvatar}
+          user={user}
+          onUpload={handleAvatarUpload}
+          onRemove={handleAvatarRemove}
+          avatarMessage={avatarMessage}
+        />
       </div>
 
       {/* Personal Information Form */}
@@ -639,15 +656,7 @@ export default function ProfileSettings() {
           removed from all organizations.
         </p>
 
-        {!showDeleteConfirm ? (
-          <button
-            type="button"
-            onClick={() => setShowDeleteConfirm(true)}
-            className="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-sm font-medium transition-colors"
-          >
-            Delete My Account
-          </button>
-        ) : (
+        {showDeleteConfirm ? (
           <div className="space-y-3">
             <div className="p-4 border-2 border-rose-300 dark:border-rose-500/30 rounded-lg bg-white dark:bg-rose-500/5">
               <p className="text-sm font-medium text-rose-900 dark:text-rose-300 mb-2">
@@ -686,6 +695,14 @@ export default function ProfileSettings() {
               </button>
             </div>
           </div>
+        ) : (
+          <button
+            type="button"
+            onClick={() => setShowDeleteConfirm(true)}
+            className="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-sm font-medium transition-colors"
+          >
+            Delete My Account
+          </button>
         )}
       </div>
 

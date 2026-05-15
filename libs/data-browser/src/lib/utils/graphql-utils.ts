@@ -15,7 +15,7 @@ import { normalizeModelNameForDocument } from './string-utils'
 function getEnumValues(sdk: any, enumType: string): string[] | null {
   try {
     // Try to get the enum from the SDK
-    const enumObject = (sdk as any)[enumType]
+    const enumObject = sdk[enumType]
 
     if (!enumObject || typeof enumObject !== 'object') {
       return null
@@ -31,12 +31,13 @@ function getEnumValues(sdk: any, enumType: string): string[] | null {
 
     if (values.length === 0) {
       // Try to get values from Object.keys for string enums where keys === values
-      const keys = Object.keys(enumObject).filter(key => isNaN(Number(key)))
+      const keys = Object.keys(enumObject).filter(key => Number.isNaN(Number(key)))
       return keys.length > 0 ? keys : null
     }
 
-    return values as string[]
+    return values as string[] // values is filtered to only strings above
   } catch (error) {
+    console.error('Unexpected error:', error)
     return null
   }
 }
@@ -60,12 +61,13 @@ export function getAdminDocuments(sdk: any, model: DatabaseModel) {
   const deleteDocumentName = `__AdminDelete${normalizedModelName}`
   const createDocumentName = `__AdminCreate${normalizedModelName}`
 
+  const sdkRecord = sdk as Record<string, any>
   const documents = {
-    query: (sdk as Record<string, any>)[singleQueryDocumentName], // For single item
-    listQuery: (sdk as Record<string, any>)[listQueryDocumentName], // For lists
-    update: (sdk as Record<string, any>)[updateDocumentName],
-    delete: (sdk as Record<string, any>)[deleteDocumentName],
-    create: (sdk as Record<string, any>)[createDocumentName],
+    query: sdkRecord[singleQueryDocumentName], // For single item
+    listQuery: sdkRecord[listQueryDocumentName], // For lists
+    update: sdkRecord[updateDocumentName],
+    delete: sdkRecord[deleteDocumentName],
+    create: sdkRecord[createDocumentName],
   }
 
   // Validate that required documents exist
@@ -111,7 +113,7 @@ export function getMutationName(
  */
 function toKebabCase(str: string): string {
   return str
-    .replace(/([a-z])([A-Z])/g, '$1-$2')
+    .replaceAll(/([a-z])([A-Z])/g, '$1-$2')
     .toLowerCase()
 }
 
@@ -160,7 +162,8 @@ function normalizeDateInitialValue(value: unknown, fieldType: string): unknown {
     const dateValue = value instanceof Date ? value : new Date(value as string)
     if (fieldType === 'date') return dateValue.toISOString().split('T')[0]
     return dateValue.toISOString().substring(0, 16)
-  } catch {
+  } catch (e) {
+    console.error('Unexpected error:', e)
     return ''
   }
 }
@@ -194,7 +197,7 @@ function getFieldInitialValue(field: any, currentItem: any, operation: string): 
 function buildEnumSelectOptions(values: string[]): Array<{ value: string; label: string }> {
   return values.map(value => ({
     value,
-    label: value.replace(/_/g, ' ').toLowerCase().replace(/^./, (s: string) => s.toUpperCase()),
+    label: value.replaceAll('_', ' ').toLowerCase().replace(/^./, (s: string) => s.toUpperCase()),
   }))
 }
 
@@ -207,7 +210,7 @@ function mergeAndSortOptions(
 ): Array<{ value: string; label: string }> {
   const merged = [...initialOptions]
   for (const option of queryOptions) {
-    if (!merged.find(existing => existing.value === option.value)) {
+    if (!merged.some(existing => existing.value === option.value)) {
       merged.push(option)
     }
   }
@@ -230,8 +233,8 @@ function resolveRelationValue(field: any, currentItem: any, operation: string): 
     if (relObj && typeof relObj === 'object' && relObj.id) value = relObj.id
   }
 
-  if (value && typeof value === 'object' && (value as any).id) {
-    value = (value as any).id
+  if (value && typeof value === 'object' && (value as Record<string, unknown>).id) {
+    value = (value as Record<string, unknown>).id
   }
 
   if (value === null) return ''
@@ -274,7 +277,7 @@ function buildRelationFormField(
   const properPluralName = getPluralName(field.type)
   const adminDocumentName = `__Admin${properPluralName}`
   const regularDocumentName = `${properPluralName}`
-  const relationDocument = (sdk as any)[adminDocumentName] || (sdk as any)[regularDocumentName]
+  const relationDocument = sdk[adminDocumentName] || sdk[regularDocumentName]
 
   if (!relationDocument) {
     return FormFieldClass.text(relationFieldName, {
@@ -332,7 +335,7 @@ function buildRegularFormField(
   displayFieldConfig?: DisplayFieldConfig,
 ): FormField {
   const label = field.name
-    .replace(/([a-z])([A-Z])/g, '$1 $2')
+    .replaceAll(/([a-z])([A-Z])/g, '$1 $2')
     .replace(/^./, (str: string) => str.toUpperCase())
 
   const initialValue = getFieldInitialValue(field, currentItem, operation)
@@ -423,12 +426,84 @@ function buildDefaultFormField(
   if (field.kind === 'enum' && field.enumValues) {
     const selectOptions = field.enumValues.map((value: string) => ({
       value,
-      label: value.replace(/_/g, ' ').toLowerCase().replace(/^./, (s: string) => s.toUpperCase()),
+      label: value.replaceAll('_', ' ').toLowerCase().replace(/^./, (s: string) => s.toUpperCase()),
     }))
     return FormFieldClass.select(field.name, { ...options, options: selectOptions })
   }
 
   return FormFieldClass.text(field.name, options)
+}
+
+/**
+ * Build a FormField for a list relation field (shows a "See Related" link)
+ */
+function buildListRelationFormField(
+  field: any,
+  model: DatabaseModel,
+  currentItem: any,
+  databaseModels: DatabaseModel[] | undefined,
+  basePath: string,
+): ReturnType<typeof FormFieldClass.content> | null {
+  const label = field.name
+    .replaceAll(/([a-z])([A-Z])/g, '$1 $2')
+    .replace(/^./, (str: string) => str.toUpperCase())
+
+  const pluralModelName = getPluralName(field.type)
+  const relatedModelKebab = toKebabCase(pluralModelName)
+  const displayName = field.type.replaceAll(/([a-z])([A-Z])/g, '$1 $2')
+  const pluralDisplayName = getPluralName(displayName)
+
+  const relatedModel = databaseModels?.find((m: DatabaseModel) => m.name === field.type)
+  const foreignKeyFieldName =
+    findForeignKeyFieldName(relatedModel, model.name, field.relationName) ||
+    `${toLowerCamelCase(model.name)}Id`
+
+  const filterUrl = `${basePath}/${relatedModelKebab}?${foreignKeyFieldName}=${currentItem.id}`
+
+  const countData = currentItem._count?.[field.name]
+  const countText = countData === undefined ? '' : ` (${countData})`
+
+  return FormFieldClass.content(field.name, {
+    content: React.createElement('div', { className: 'py-2' }, [
+      React.createElement(
+        'label',
+        {
+          key: 'label',
+          className: 'block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1',
+        },
+        label,
+      ),
+      React.createElement(
+        Link,
+        {
+          key: 'link',
+          to: filterUrl,
+          className:
+            'inline-flex items-center text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 hover:underline',
+        },
+        [
+          React.createElement(
+            'svg',
+            {
+              key: 'icon',
+              className: 'h-4 w-4 mr-1',
+              fill: 'none',
+              stroke: 'currentColor',
+              viewBox: '0 0 24 24',
+              xmlns: 'http://www.w3.org/2000/svg',
+            },
+            React.createElement('path', {
+              strokeLinecap: 'round',
+              strokeLinejoin: 'round',
+              strokeWidth: 2,
+              d: 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2',
+            }),
+          ),
+          `See Related ${pluralDisplayName}${countText}`,
+        ],
+      ),
+    ]),
+  })
 }
 
 /**
@@ -504,77 +579,12 @@ export function buildFormFields(
   })
 
   // Now process list relationship fields (they go at the bottom)
-  listRelationFields.forEach((field: any) => {
-    const label = field.name
-      .replace(/([a-z])([A-Z])/g, '$1 $2')
-      .replace(/^./, (str: string) => str.toUpperCase())
-
-    // Only show list relationships on update operations
-    if (operation === 'update' && currentItem) {
-      const pluralModelName = getPluralName(field.type)
-      const relatedModelKebab = toKebabCase(pluralModelName)
-      const displayName = field.type.replace(/([a-z])([A-Z])/g, '$1 $2')
-      const pluralDisplayName = getPluralName(displayName)
-
-      // Determine the foreign key field name on the related model
-      // Look up the related model and find the actual foreign key field
-      const relatedModel = databaseModels?.find((m: DatabaseModel) => m.name === field.type)
-      const foreignKeyFieldName =
-        findForeignKeyFieldName(relatedModel, model.name, field.relationName) ||
-        `${toLowerCamelCase(model.name)}Id` // Fallback to convention
-
-      // Create the filter URL with the foreign key
-      const filterUrl = `${basePath}/${relatedModelKebab}?${foreignKeyFieldName}=${currentItem.id}`
-
-      // Get count if available in the current item data
-      const countData = currentItem._count?.[field.name]
-      const countText = countData !== undefined ? ` (${countData})` : ''
-
-      const formField = FormFieldClass.content(field.name, {
-        content: React.createElement('div', { className: 'py-2' }, [
-          React.createElement(
-            'label',
-            {
-              key: 'label',
-              className: 'block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1',
-            },
-            label,
-          ),
-          React.createElement(
-            Link,
-            {
-              key: 'link',
-              to: filterUrl,
-              className:
-                'inline-flex items-center text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 hover:underline',
-            },
-            [
-              React.createElement(
-                'svg',
-                {
-                  key: 'icon',
-                  className: 'h-4 w-4 mr-1',
-                  fill: 'none',
-                  stroke: 'currentColor',
-                  viewBox: '0 0 24 24',
-                  xmlns: 'http://www.w3.org/2000/svg',
-                },
-                React.createElement('path', {
-                  strokeLinecap: 'round',
-                  strokeLinejoin: 'round',
-                  strokeWidth: 2,
-                  d: 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2',
-                }),
-              ),
-              `See Related ${pluralDisplayName}${countText}`,
-            ],
-          ),
-        ]),
-      })
-
-      formFields.push(formField)
-    }
-  })
+  if (operation === 'update' && currentItem) {
+    listRelationFields.forEach((field: any) => {
+      const formField = buildListRelationFormField(field, model, currentItem, databaseModels, basePath)
+      if (formField) formFields.push(formField)
+    })
+  }
 
   // Add submit button with loading state
   const loadingText = operation === 'create' ? 'Creating...' : 'Updating...'
@@ -627,7 +637,7 @@ function cleanEnumArrayValue(value: unknown): unknown {
 function cleanObjectValue(
   obj: Record<string, unknown>,
   model: Parameters<typeof cleanFormInput>[1],
-): unknown | undefined {
+): unknown {
   if (obj.value !== undefined && obj.label !== undefined && typeof obj.value === 'string') {
     return obj.value
   }
@@ -661,7 +671,7 @@ function cleanInputEntry(
   }
 
   if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
-    const cleaned = cleanObjectValue(value as Record<string, unknown>, model)
+    const cleaned = cleanObjectValue(value as Record<string, unknown>, model) // required narrowing for unknown
     if (cleaned === undefined) return null
     return [key, cleaned]
   }
@@ -703,7 +713,7 @@ function convertStringValue(value: string, field?: any): string | number | boole
     const numericPattern = /^-?\d+(\.\d+)?$/
     if (numericPattern.test(value)) {
       const numericValue = Number(value)
-      if (!isNaN(numericValue)) {
+      if (!Number.isNaN(numericValue)) {
         return numericValue
       }
     }

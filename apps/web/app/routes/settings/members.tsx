@@ -512,10 +512,14 @@ export default function MembersSettings() {
               </div>
 
               <div className="mb-4">
-                <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
+                <label
+                  htmlFor="select-new-role"
+                  className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2"
+                >
                   Select New Role
                 </label>
                 <select
+                  id="select-new-role"
                   defaultValue={editingMember.role?.id}
                   onChange={e => {
                     if (e.target.value) {

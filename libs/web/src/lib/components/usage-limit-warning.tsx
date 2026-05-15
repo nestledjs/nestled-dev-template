@@ -34,11 +34,11 @@ function UsageIcon({ isAtLimit, shouldWarn }: { isAtLimit: boolean; shouldWarn: 
 }
 
 interface UsageLimitWarningProps {
-  limitKey: string
-  currentValue: number
-  warningThreshold?: number // Show warning when usage reaches this % (default 80)
-  label?: string
-  showBar?: boolean
+  readonly limitKey: string
+  readonly currentValue: number
+  readonly warningThreshold?: number // Show warning when usage reaches this % (default 80)
+  readonly label?: string
+  readonly showBar?: boolean
 }
 
 /**
@@ -63,7 +63,7 @@ export function UsageLimitWarning({
   showBar = true,
 }: UsageLimitWarningProps) {
   const [showUpgrade, setShowUpgrade] = useState(false)
-  const { limit, hasLimit, isWithin, isAtLimit, remaining, percentUsed } = useLimit(limitKey, currentValue)
+  const { limit, hasLimit, isAtLimit, remaining, percentUsed } = useLimit(limitKey, currentValue)
 
   // Don't show anything if no limit exists (unlimited)
   if (!hasLimit || limit === -1) {
@@ -71,7 +71,7 @@ export function UsageLimitWarning({
   }
 
   const shouldWarn = percentUsed >= warningThreshold
-  const displayLabel = label || limitKey.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())
+  const displayLabel = label || limitKey.replaceAll('_', ' ').replace(/\b\w/g, l => l.toUpperCase())
 
   return (
     <>
@@ -132,9 +132,9 @@ export function UsageLimitWarning({
 }
 
 interface MultiUsageLimitWarningProps {
-  limits: Record<string, number> // limitKey -> currentValue
-  warningThreshold?: number
-  showBars?: boolean
+  readonly limits: Record<string, number> // limitKey -> currentValue
+  readonly warningThreshold?: number
+  readonly showBars?: boolean
 }
 
 /**
@@ -189,7 +189,7 @@ export function MultiUsageLimitWarning({
  * <UsageBadge limitKey="max_api_calls" currentValue={apiCallCount} />
  * ```
  */
-export function UsageBadge({ limitKey, currentValue }: { limitKey: string; currentValue: number }) {
+export function UsageBadge({ limitKey, currentValue }: { readonly limitKey: string; readonly currentValue: number }) {
   const { limit, hasLimit, isAtLimit, percentUsed } = useLimit(limitKey, currentValue)
 
   if (!hasLimit || limit === -1) {

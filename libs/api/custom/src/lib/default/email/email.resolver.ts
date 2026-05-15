@@ -1,11 +1,10 @@
 import { ApiCrudDataAccessService, UpdateEmailInput } from '@nestled-template/api/generated-crud/data-access'
 import { GeneratedEmailResolver } from '@nestled-template/api/generated-crud/feature'
-import { Injectable } from '@nestjs/common'
+import { Injectable, UseGuards } from '@nestjs/common'
 import { Args, Info, Mutation, Resolver } from '@nestjs/graphql'
 import { Email } from '@nestled-template/api/core/models'
 import { EmailService } from './email.service'
 import { GraphQLResolveInfo } from 'graphql'
-import { UseGuards } from '@nestjs/common'
 import { GqlAuthAdminGuard } from '@nestled-template/api/utils'
 
 @Resolver(() => Email)

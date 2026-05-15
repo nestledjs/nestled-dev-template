@@ -18,7 +18,7 @@ export class EmailService {
       }
 
       // Check if the email being updated would be verified after the update
-      const wouldBeVerified = input.verified !== undefined ? input.verified : email.verified
+      const wouldBeVerified = input.verified ?? email.verified
 
       if (!wouldBeVerified) {
         throw new BadRequestException(

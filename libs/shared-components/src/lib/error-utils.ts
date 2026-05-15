@@ -2,7 +2,7 @@
  * Detects if an error is caused by Vite development cache issues
  * This typically happens when the browser cache gets out of sync with the Vite dev server
  */
-export function isViteCacheError(error: Error | unknown): boolean {
+export function isViteCacheError(error: unknown): boolean {
   if (!error || typeof error !== 'object') {
     return false
   }
@@ -47,7 +47,7 @@ export function isViteCacheError(error: Error | unknown): boolean {
 /**
  * Detects if an error is network-related (for API/Apollo errors)
  */
-export function isNetworkError(error: Error | unknown): boolean {
+export function isNetworkError(error: unknown): boolean {
   if (!error || typeof error !== 'object') {
     return false
   }

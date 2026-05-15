@@ -15,7 +15,7 @@ function escapeCsvValue(val: unknown): string {
     str = String(val)
   }
   if (str.includes(',') || str.includes('"') || str.includes('\n') || str.includes('\r')) {
-    return `"${str.replace(/"/g, '""')}"`
+    return `"${str.replaceAll('"', '""')}"`
   }
   return str
 }
@@ -47,7 +47,7 @@ function downloadCsv(csv: string, filename: string) {
   link.download = filename
   document.body.appendChild(link)
   link.click()
-  document.body.removeChild(link)
+  link.remove()
   URL.revokeObjectURL(url)
 }
 
@@ -66,14 +66,14 @@ function buildExportFilename(modelName: string, mode: 'all' | 'filtered', hasAct
 }
 
 interface ExportButtonProps {
-  query: any
-  dataPath: string
+  readonly query: any
+  readonly dataPath: string
   /** Current query variables (includes filters, search, sort) */
-  variables: { input: Record<string, unknown> }
-  visibleColumns: string[]
-  fieldNames: string[]
-  modelName: string
-  hasActiveFilters: boolean
+  readonly variables: { input: Record<string, unknown> }
+  readonly visibleColumns: string[]
+  readonly fieldNames: string[]
+  readonly modelName: string
+  readonly hasActiveFilters: boolean
 }
 
 type ExportMode = 'all' | 'filtered'
@@ -101,7 +101,12 @@ export function ExportButton({
       setExporting(mode)
       setError(null)
 
-      const columns = mode === 'all' ? fieldNames : (visibleColumns.length > 0 ? visibleColumns : fieldNames)
+      let columns: string[]
+      if (mode === 'all') {
+        columns = fieldNames
+      } else {
+        columns = visibleColumns.length > 0 ? visibleColumns : fieldNames
+      }
       const input = buildExportInput(mode, variables)
 
       try {
@@ -130,6 +135,7 @@ export function ExportButton({
   return (
     <div className="relative">
       <button
+        type="button"
         onClick={() => { setOpen(!open); setError(null) }}
         className="inline-flex items-center px-3 py-2 border border-gray-300 dark:border-gray-600 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-web"
       >
@@ -142,12 +148,11 @@ export function ExportButton({
       {open && (
         <>
           {/* Backdrop */}
-          <div
-            className="fixed inset-0 z-40"
+          <button
+            type="button"
+            className="fixed inset-0 z-40 cursor-default bg-transparent border-0 p-0"
             onClick={() => setOpen(false)}
-            role="button"
-            tabIndex={0}
-            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setOpen(false) } }}
+            aria-label="Close export menu"
           />
 
           {/* Modal */}
@@ -198,7 +203,7 @@ export function ExportButton({
                   </p>
                   <ul className="text-xs text-gray-500 dark:text-gray-400 mb-2 space-y-0.5">
                     <li>{visibleColumns.length > 0 ? visibleColumns.length : fieldNames.length} columns selected</li>
-                    {activeFilterCount > 0 && <li>{activeFilterCount} filter{activeFilterCount !== 1 ? 's' : ''} active</li>}
+                    {activeFilterCount > 0 && <li>{activeFilterCount} filter{activeFilterCount === 1 ? '' : 's'} active</li>}
                     {hasSearch && <li>Search: "{variables.input.search as string}"</li>}
                   </ul>
                   <button

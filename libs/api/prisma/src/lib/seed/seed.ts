@@ -107,7 +107,7 @@ async function main() {
         String((e as any).meta?.driverAdapterError).includes('UniqueConstraintViolation')
 
       if (isPrismaError && isDisplayNameViolation) {
-        console.log(`  User with displayName \"${user.displayName}\" already exists. Skipping.`)
+        console.log(`  User with displayName "${user.displayName}" already exists. Skipping.`)
       } else {
         throw e
       }

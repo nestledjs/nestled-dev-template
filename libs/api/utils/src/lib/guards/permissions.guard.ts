@@ -22,7 +22,7 @@ export const RequirePermissions = (...permissions: PermissionRequirement[]) =>
  */
 @Injectable()
 export class PermissionsGuard implements CanActivate {
-  constructor(private reflector: Reflector) {}
+  constructor(private readonly reflector: Reflector) {}
 
   canActivate(context: ExecutionContext): boolean {
     const requiredPermissions = this.reflector.getAllAndOverride<PermissionRequirement[]>(

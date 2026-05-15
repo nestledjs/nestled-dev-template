@@ -110,18 +110,14 @@ function SortableHeaderCell({ field, index, sort, onSort, formatFieldName }: Sor
 }
 
 export interface DataTableProps {
-  data?: any
-  path: string
-  fields: string[]
-  pagination?: Paging | null
-  setSkip?: (skip: number) => void
-  filters?: any
-  setFilters?: (filters: any) => void
-  filterOptions?: { id: string; name: string; options: { value: string; label: string }[] }[]
-  loading?: boolean
-  additionalFilters?: ReactElement | null
-  setSort?: Dispatch<SetStateAction<{ orderBy: string; orderDirection: string }>>
-  sort?: { orderBy: string; orderDirection: string }
+  readonly data?: any
+  readonly path: string
+  readonly fields: string[]
+  readonly pagination?: Paging | null
+  readonly setSkip?: (skip: number) => void
+  readonly additionalFilters?: ReactElement | null
+  readonly setSort?: Dispatch<SetStateAction<{ orderBy: string; orderDirection: string }>>
+  readonly sort?: { orderBy: string; orderDirection: string }
 }
 
 function getNestedProperty(item: any, fieldPath: string) {
@@ -168,7 +164,7 @@ function renderValue(value: unknown): ReactNode {
 
 function formatFieldName(fieldName: string) {
   return fieldName
-    .replace(/([a-z])([A-Z])/g, '$1 $2') // Insert a space between lowercase and uppercase letters
+    .replaceAll(/([a-z])([A-Z])/g, '$1 $2') // Insert a space between lowercase and uppercase letters
     .split('.') // Split by periods if necessary
     .map((part) => part.charAt(0).toUpperCase() + part.slice(1)) // Capitalize the first letter of each part
     .join(' ')
@@ -247,64 +243,62 @@ export function DataTable(props: DataTableProps) {
                     </td>
                     {props.fields.map((field, index) => {
                       const fieldValue = getNestedProperty(item, field)
-                      switch (index) {
-                        case 0:
-                          return (
-                            <td
-                              key={field}
-                              className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 dark:text-gray-100 sm:pl-6"
-                            >
-                              {/* Special handling for ID field: show copy + eye icons instead of raw ID */}
-                              {field.toLowerCase() === 'id' ? (
-                                <div className="flex items-center gap-3">
-                                  <div className="relative">
-                                    <button
-                                      type="button"
-                                      className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100"
-                                      onClick={() => copyToClipboard(String(item.id))}
-                                      title="Copy ID"
-                                      aria-label="Copy ID"
-                                    >
-                                      <DocumentDuplicateIcon className="w-5 h-5" />
-                                    </button>
-                                    {copiedId === String(item.id) && (
-                                      <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 text-xs px-2 py-1 rounded whitespace-nowrap">
-                                        Copied!
-                                      </div>
-                                    )}
-                                  </div>
+                      if (index === 0) {
+                        return (
+                          <td
+                            key={field}
+                            className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 dark:text-gray-100 sm:pl-6"
+                          >
+                            {/* Special handling for ID field: show copy + eye icons instead of raw ID */}
+                            {field.toLowerCase() === 'id' ? (
+                              <div className="flex items-center gap-3">
+                                <div className="relative">
                                   <button
                                     type="button"
                                     className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100"
-                                    onClick={() => toggleIdVisibility(String(item.id))}
-                                    title={visibleIds.has(String(item.id)) ? 'Hide ID' : 'Show ID'}
-                                    aria-label={visibleIds.has(String(item.id)) ? 'Hide ID' : 'Show ID'}
+                                    onClick={() => copyToClipboard(String(item.id))}
+                                    title="Copy ID"
+                                    aria-label="Copy ID"
                                   >
-                                    {visibleIds.has(String(item.id)) ? (
-                                      <EyeSlashIcon className="w-5 h-5" />
-                                    ) : (
-                                      <EyeIcon className="w-5 h-5" />
-                                    )}
+                                    <DocumentDuplicateIcon className="w-5 h-5" />
                                   </button>
-                                  {visibleIds.has(String(item.id)) && (
-                                    <span className="text-xs text-gray-500 dark:text-gray-400 font-mono">{String(item.id)}</span>
+                                  {copiedId === String(item.id) && (
+                                    <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 text-xs px-2 py-1 rounded whitespace-nowrap">
+                                      Copied!
+                                    </div>
                                   )}
                                 </div>
-                              ) : (
-                                renderValue(fieldValue)
-                              )}
-                            </td>
-                          )
-                        default:
-                          return (
-                            <td
-                              key={field}
-                              className="hidden whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400 lg:table-cell"
-                            >
-                              {renderValue(fieldValue)}
-                            </td>
-                          )
+                                <button
+                                  type="button"
+                                  className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100"
+                                  onClick={() => toggleIdVisibility(String(item.id))}
+                                  title={visibleIds.has(String(item.id)) ? 'Hide ID' : 'Show ID'}
+                                  aria-label={visibleIds.has(String(item.id)) ? 'Hide ID' : 'Show ID'}
+                                >
+                                  {visibleIds.has(String(item.id)) ? (
+                                    <EyeSlashIcon className="w-5 h-5" />
+                                  ) : (
+                                    <EyeIcon className="w-5 h-5" />
+                                  )}
+                                </button>
+                                {visibleIds.has(String(item.id)) && (
+                                  <span className="text-xs text-gray-500 dark:text-gray-400 font-mono">{String(item.id)}</span>
+                                )}
+                              </div>
+                            ) : (
+                              renderValue(fieldValue)
+                            )}
+                          </td>
+                        )
                       }
+                      return (
+                        <td
+                          key={field}
+                          className="hidden whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400 lg:table-cell"
+                        >
+                          {renderValue(fieldValue)}
+                        </td>
+                      )
                     })}
 
                     {/* Removed trailing Edit cell */}

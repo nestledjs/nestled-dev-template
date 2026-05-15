@@ -93,9 +93,9 @@ export default function SecurityEventsPage() {
                 >
                   <td className="px-6 py-4 font-medium text-zinc-900 dark:text-white">
                     {event.eventType
-                      ?.replace(/_/g, ' ')
+                      ?.replaceAll(/_/g, ' ')
                       .toLowerCase()
-                      .replace(/\b\w/g, l => l.toUpperCase()) || 'Security event'}
+                      .replaceAll(/\b\w/g, l => l.toUpperCase()) || 'Security event'}
                   </td>
                   <td className="px-6 py-4 text-zinc-600 dark:text-zinc-400">
                     {new Date(event.createdAt).toLocaleString()}

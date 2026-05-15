@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing'
-import { BadRequestException, UnauthorizedException } from '@nestjs/common'
+import { BadRequestException } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
 import { ConfigService } from '@nestjs/config'
 import { AuthService } from './auth.service'
@@ -233,7 +233,7 @@ describe('AuthService', () => {
       }
       const result = await service.register(registerInput, sessionInfo)
       expect(result).toBeDefined()
-      expect(result!.token).toBe('jwt-token')
+      expect(result?.token).toBe('jwt-token')
       expect(mockData.user.create).toHaveBeenCalled()
       expect(mockData.passwordHistory.create).toHaveBeenCalled()
       expect(mockData.organization.create).toHaveBeenCalled()
@@ -269,7 +269,7 @@ describe('AuthService', () => {
       mockData.organizationMember.create.mockResolvedValue({} as any)
       mockSessionService.createSession.mockResolvedValue('session-123')
       mockJwtService.sign.mockReturnValue('jwt-token')
-      const result = await service.register(registerInput, {} as any)
+      await service.register(registerInput, {})
       expect(mockData.user.create).toHaveBeenCalledWith(
         expect.objectContaining({
           data: expect.objectContaining({
@@ -830,14 +830,12 @@ describe('AuthService', () => {
         twoFactorEnabled: false,
         emails: [{ email: 'test@example.com', primary: true }],
       }
-      const decryptSecretMock = jest.fn().mockReturnValue('decrypted-secret')
-      const verify2FACodeMock = jest.fn().mockReturnValue(true)
       mockData.user.findUnique.mockResolvedValue(mockUser as any)
       mockData.user.update.mockResolvedValue({ ...mockUser, twoFactorEnabled: true } as any)
       mockSessionService.invalidateAllUserSessions.mockResolvedValue(2)
       // We can't easily test the actual verify because of module mocking complexity
       // Just verify the flow works
-      const result = await service.enable2FA(userId, code, {} as any).catch(() => null)
+      await service.enable2FA(userId, code, {}).catch(() => null)
       // Test may fail due to mocking complexity, but we're testing the structure
       expect(mockData.user.findUnique).toHaveBeenCalledWith({
         where: { id: userId },
@@ -860,7 +858,7 @@ describe('AuthService', () => {
       mockData.user.update.mockResolvedValue({ ...mockUser, twoFactorEnabled: false } as any)
       mockSessionService.invalidateAllUserSessions.mockResolvedValue(2)
       // Test structure - actual verification may fail due to mock complexity
-      const result = await service.disable2FA(userId, input, {} as any).catch(() => null)
+      await service.disable2FA(userId, input, {}).catch(() => null)
       expect(mockData.user.findUnique).toHaveBeenCalledWith({ where: { id: userId } })
     })
   })

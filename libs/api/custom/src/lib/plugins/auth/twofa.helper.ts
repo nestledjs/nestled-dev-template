@@ -1,6 +1,6 @@
 import * as speakeasy from 'speakeasy'
 import * as QRCode from 'qrcode'
-import { createCipheriv, createDecipheriv, createHash, randomBytes } from 'crypto'
+import { createCipheriv, createDecipheriv, createHash, randomBytes } from 'node:crypto'
 
 /**
  * Generate a new TOTP secret for 2FA
@@ -37,7 +37,7 @@ export async function generateQRCode(otpauthUrl: string): Promise<string> {
   try {
     return await QRCode.toDataURL(otpauthUrl)
   } catch (error) {
-    throw new Error('Failed to generate QR code')
+    throw new Error(`Failed to generate QR code: ${(error as Error).message}`)
   }
 }
 

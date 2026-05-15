@@ -7,7 +7,7 @@ import { Form } from '@nestledjs/forms'
 import { useAdminDataContext } from '../context/AdminDataContext'
 
 function toReadableText(text: string): string {
-  return text.replace(/([a-z])([A-Z])/g, '$1 $2').replace(/^./, str => str.toUpperCase())
+  return text.replaceAll(/([a-z])([A-Z])/g, '$1 $2').replace(/^./, str => str.toUpperCase())
 }
 import { Link, useNavigate, useParams } from 'react-router'
 
@@ -23,9 +23,9 @@ function sanitizeInput(input: string | undefined): string {
 
   // Remove potentially dangerous characters and limit length
   return input
-    .replace(/[<>"'%;()&+]/g, '') // Remove common injection characters
-    .replace(/javascript:/gi, '') // Remove javascript: protocols
-    .replace(/on\w+\s*=/gi, '') // Remove event handlers
+    .replaceAll(/[<>"'%;()&+]/g, '') // Remove common injection characters
+    .replaceAll(/javascript:/gi, '') // Remove javascript: protocols
+    .replaceAll(/on\w+\s*=/gi, '') // Remove event handlers
     .trim()
     .substring(0, 100) // Limit length to prevent DoS
 }
@@ -33,7 +33,7 @@ function sanitizeInput(input: string | undefined): string {
 // Convert PascalCase to kebab-case for URLs (CourseChapter -> course-chapter)
 const toKebabCase = (str: string): string => {
   return str
-    .replace(/([a-z])([A-Z])/g, '$1-$2') // Insert dash between lowercase and uppercase
+    .replaceAll(/([a-z])([A-Z])/g, '$1-$2') // Insert dash between lowercase and uppercase
     .toLowerCase() // Convert to lowercase
 }
 
@@ -120,7 +120,7 @@ export function AdminDataCreatePage() {
               <ExclamationCircleIcon className="mx-auto h-12 w-12 text-red-400" />
               <h2 className="mt-4 text-lg font-medium text-gray-900 dark:text-gray-100">Access Denied</h2>
               <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                You don't have permission to create {toReadableText(validatedDataType!)} records.
+                You don't have permission to create {toReadableText(validatedDataType ?? '')} records.
               </p>
               <div className="mt-6">
                 <Link
@@ -164,7 +164,8 @@ export function AdminDataCreatePage() {
   }
 
   // At this point we know model exists and is valid
-  return <AdminDataCreatePageContent model={model!} basePath={basePath} formTheme={formTheme} displayFieldConfig={displayFieldConfig} />
+  if (!model) return null
+  return <AdminDataCreatePageContent model={model} basePath={basePath} formTheme={formTheme} displayFieldConfig={displayFieldConfig} />
 }
 
 // =================================
@@ -186,6 +187,7 @@ function AdminDataCreatePageContent({ model, basePath, formTheme, displayFieldCo
     try {
       return getAdminDocuments(sdk, model)
     } catch (error) {
+      console.error('Unexpected error:', error)
       return null
     }
   }, [sdk, model])
@@ -200,6 +202,7 @@ function AdminDataCreatePageContent({ model, basePath, formTheme, displayFieldCo
 
       return gql(documents.create)
     } catch (error) {
+      console.error('Unexpected error:', error)
       return null
     }
   }, [documents])
@@ -360,44 +363,32 @@ function AdminDataCreatePageContent({ model, basePath, formTheme, displayFieldCo
         </div>
 
         {/* Submission Status */}
-        {submissionState.status !== 'idle' && (
-          <div
-            className={`mb-6 rounded-md p-4 ${
-              submissionState.status === 'success'
-                ? 'bg-green-50 border border-green-200'
-                : submissionState.status === 'error'
-                  ? 'bg-red-50 border border-red-200'
-                  : 'bg-blue-50 border border-blue-200'
-            }`}
-          >
-            <div className="flex">
-              <div className="flex-shrink-0">
-                {submissionState.status === 'success' ? (
-                  <CheckCircleIcon className="h-5 w-5 text-green-400" />
-                ) : submissionState.status === 'error' ? (
-                  <ExclamationCircleIcon className="h-5 w-5 text-red-400" />
-                ) : (
-                  <div className="h-5 w-5 border-2 border-blue-400 border-t-transparent rounded-full animate-spin" />
-                )}
-              </div>
-              <div className="ml-3">
-                <p
-                  className={`text-sm font-medium ${
-                    submissionState.status === 'success'
-                      ? 'text-green-800'
-                      : submissionState.status === 'error'
-                        ? 'text-red-800'
-                        : 'text-blue-800'
-                  }`}
-                >
-                  {submissionState.status === 'loading'
-                    ? `Creating ${toReadableText(model.name)}...`
-                    : submissionState.message}
-                </p>
+        {submissionState.status !== 'idle' && (() => {
+          const isSuccess = submissionState.status === 'success'
+          const isError = submissionState.status === 'error'
+          let bgClass = 'bg-blue-50 border border-blue-200'
+          if (isSuccess) bgClass = 'bg-green-50 border border-green-200'
+          else if (isError) bgClass = 'bg-red-50 border border-red-200'
+          let textClass = 'text-blue-800'
+          if (isSuccess) textClass = 'text-green-800'
+          else if (isError) textClass = 'text-red-800'
+          let icon = <div className="h-5 w-5 border-2 border-blue-400 border-t-transparent rounded-full animate-spin" />
+          if (isSuccess) icon = <CheckCircleIcon className="h-5 w-5 text-green-400" />
+          else if (isError) icon = <ExclamationCircleIcon className="h-5 w-5 text-red-400" />
+          const message = submissionState.status === 'loading'
+            ? `Creating ${toReadableText(model.name)}...`
+            : submissionState.message
+          return (
+            <div className={`mb-6 rounded-md p-4 ${bgClass}`}>
+              <div className="flex">
+                <div className="flex-shrink-0">{icon}</div>
+                <div className="ml-3">
+                  <p className={`text-sm font-medium ${textClass}`}>{message}</p>
+                </div>
               </div>
             </div>
-          </div>
-        )}
+          )
+        })()}
 
         {/* Form */}
         <div className="bg-white dark:bg-gray-800 shadow-sm rounded-lg">

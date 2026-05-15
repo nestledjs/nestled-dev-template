@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react'
+import React, { createContext, useContext, useState, useEffect, useMemo, ReactNode } from 'react'
 import { useQuery, useMutation } from '@apollo/client/react'
 import {
   MyOrganizationsWithMembers,
@@ -41,8 +41,8 @@ export interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 interface AuthProviderProps {
-  children: ReactNode
-  initialUser?: AuthUser | null
+  readonly children: ReactNode
+  readonly initialUser?: AuthUser | null
 }
 
 export function AuthProvider({ children, initialUser = null }: AuthProviderProps) {
@@ -134,7 +134,7 @@ export function AuthProvider({ children, initialUser = null }: AuthProviderProps
     }
   }, [user, activeOrganization])
 
-  const value: AuthContextType = {
+  const value = useMemo<AuthContextType>(() => ({
     user,
     isAuthenticated,
     isLoading,
@@ -148,7 +148,7 @@ export function AuthProvider({ children, initialUser = null }: AuthProviderProps
     switchOrganization,
     refreshOrganizations,
     setUser,
-  }
+  }), [user, isAuthenticated, isLoading, organizations, activeOrganization, activeOrganizationMember, isEmulating, originalUser, login, logout, switchOrganization, refreshOrganizations, setUser])
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }

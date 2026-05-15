@@ -2,26 +2,25 @@ import { Maybe } from 'graphql/jsutils/Maybe'
 import { FormField } from '@nestledjs/forms-core'
 
 function isValidDate(d: any) {
-  return d instanceof Date && !isNaN(d as any)
+  return d instanceof Date && !Number.isNaN(d as any)
 }
 
 function normalizeDateValue(v: unknown): string {
-  if (v instanceof Date) return (v as Date).toISOString().split('T')[0]
+  if (v instanceof Date) return v.toISOString().split('T')[0]
   if (typeof v === 'number') return new Date(v).toISOString().split('T')[0]
   if (typeof v === 'string') {
-    const s = v as string
-    return s.includes('T') ? s.split('T')[0] : s
+    return v.includes('T') ? v.split('T')[0] : v
   }
   try {
     const d = new Date(v as any)
-    if (!isNaN(d.getTime())) return d.toISOString().split('T')[0]
+    if (!Number.isNaN(d.getTime())) return d.toISOString().split('T')[0]
   } catch {}
   return ''
 }
 
 function formatDate(value: unknown): string {
-  if (typeof value === 'object' && value instanceof Date) {
-    return (value as Date).toISOString().split('T')[0]
+  if (value instanceof Date) {
+    return value.toISOString().split('T')[0]
   } else if (typeof value === 'string') {
     return value.split('T')[0]
   }
@@ -43,8 +42,6 @@ export function cleanFormInput(
   const multiSelectFields = fields
     ?.filter(field => field.type === 'SearchSelectMultiApollo' || field.type === 'SearchSelectMulti')
     .map(field => field.key)
-  const checkboxFields = fields?.filter(field => field.type === 'Checkbox').map(field => field.key)
-
   return Object.fromEntries(
     Object.entries(obj)
       // Remove id, __typename, updatedAt, createdAt, and empty fields
@@ -52,9 +49,6 @@ export function cleanFormInput(
         return (
           validKeys.includes(k) &&
           !(
-            // (!checkboxFields?.includes(k) && v === undefined) ||
-            // (!checkboxFields?.includes(k) && !v) ||
-            // (!checkboxFields?.includes(k) && v === '') ||
             (
               (v instanceof Array && !v.length) ||
               k === 'createdAt' ||

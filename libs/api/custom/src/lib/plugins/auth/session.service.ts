@@ -1,4 +1,4 @@
-import { Injectable, Logger, BadRequestException } from '@nestjs/common'
+import { Injectable, Logger } from '@nestjs/common'
 import { ApiCoreDataAccessService } from '@nestled-template/api/core/data-access'
 import { ConfigService } from '@nestjs/config'
 
@@ -17,7 +17,7 @@ export class SessionService {
     private readonly config: ConfigService,
   ) {
     // Default to 5 concurrent sessions, configurable via env
-    this.maxConcurrentSessions = parseInt(
+    this.maxConcurrentSessions = Number.parseInt(
       this.config.get('session.maxConcurrent') ?? '5',
       10
     )
@@ -61,7 +61,7 @@ export class SessionService {
       })
     } catch (error) {
       // Session might not exist or be invalid, log but don't throw
-      Logger.warn(`Failed to update session activity: ${sessionId}`)
+      Logger.warn(`Failed to update session activity: ${sessionId} - ${(error as Error).message}`)
     }
   }
 

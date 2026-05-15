@@ -99,7 +99,7 @@ export default function AccountSettings() {
 
       alert('Your account has been deleted. You will be logged out now.')
       // Redirect to login page
-      window.location.href = '/login'
+      globalThis.location.href = '/login'
     } catch (error) {
       alert('Failed to delete account: ' + (error as Error).message)
       setShowDeleteConfirm(false)
@@ -170,18 +170,18 @@ export default function AccountSettings() {
 
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
+            <p className="text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
               Full Name
-            </label>
+            </p>
             <div className="text-sm text-zinc-900 dark:text-white bg-zinc-50 dark:bg-white/5 border border-zinc-200 dark:border-white/10 rounded-lg px-3 py-2">
               {user.firstName} {user.lastName}
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
+            <p className="text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
               Email Address
-            </label>
+            </p>
             <div className="text-sm text-zinc-900 dark:text-white bg-zinc-50 dark:bg-white/5 border border-zinc-200 dark:border-white/10 rounded-lg px-3 py-2">
               {user.emails?.find(e => e.primary)?.email || 'No email set'}
             </div>
@@ -192,9 +192,9 @@ export default function AccountSettings() {
 
           {user.isSuperAdmin && (
             <div>
-              <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
+              <p className="text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
                 Super Admin Status
-              </label>
+              </p>
               <div className="flex items-center gap-2">
                 <div className="h-2 w-2 rounded-full bg-emerald-500"></div>
                 <span className="text-sm text-zinc-900 dark:text-white">
@@ -358,15 +358,7 @@ export default function AccountSettings() {
           removed from all organizations.
         </p>
 
-        {!showDeleteConfirm ? (
-          <button
-            type="button"
-            onClick={() => setShowDeleteConfirm(true)}
-            className="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-sm font-medium transition-colors"
-          >
-            Delete My Account
-          </button>
-        ) : (
+        {showDeleteConfirm ? (
           <div className="space-y-3">
             <div className="p-4 border-2 border-rose-300 dark:border-rose-500/30 rounded-lg bg-white dark:bg-rose-500/5">
               <p className="text-sm font-medium text-rose-900 dark:text-rose-300 mb-2">
@@ -405,6 +397,14 @@ export default function AccountSettings() {
               </button>
             </div>
           </div>
+        ) : (
+          <button
+            type="button"
+            onClick={() => setShowDeleteConfirm(true)}
+            className="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-sm font-medium transition-colors"
+          >
+            Delete My Account
+          </button>
         )}
       </div>
 

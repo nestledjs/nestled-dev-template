@@ -1,4 +1,4 @@
-import { Resolver, Query, Mutation, Args } from '@nestjs/graphql'
+import { Resolver, Mutation, Args } from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
 import { GqlAuthAdminGuard } from '@nestled-template/api/utils'
 import { SyncService } from './sync.service'

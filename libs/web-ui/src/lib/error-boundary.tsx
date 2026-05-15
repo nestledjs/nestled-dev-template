@@ -1,25 +1,72 @@
 import { type ReactNode } from 'react'
 import JSON5 from 'json5'
 
+// Helper: find the matching closing brace index
+function findMatchingBraceEnd(str: string, braceStart: number): number {
+  let braceCount = 0
+  for (let i = braceStart; i < str.length; i++) {
+    if (str[i] === '{') braceCount++
+    if (str[i] === '}') braceCount--
+    if (braceCount === 0) return i
+  }
+  return -1
+}
+
+// Helper: render extracted JSON parts as React nodes
+function renderJsonParts(parts: (string | object)[]) {
+  return (
+    <>
+      {parts.map((part, i) =>
+        typeof part === 'object' && part !== null ? (
+          <pre key={`json-${i}`} className="bg-gray-50 rounded border border-gray-200 p-3 overflow-x-auto text-left text-xs font-mono mt-2 max-h-64 whitespace-pre-wrap">
+            {JSON5.stringify(part, null, 2)}
+          </pre>
+        ) : (
+          <span key={`str-${i}`} className="font-mono text-xs text-gray-700">{String(part)}</span>
+        )
+      )}
+    </>
+  )
+}
+
+// Helper: parse generic JSON blocks from a string into parts array
+function parseGenericJsonParts(str: string): (string | object)[] {
+  const MAX_STRING_LENGTH = 10000
+  const safeStr = str.length > MAX_STRING_LENGTH ? str.slice(0, MAX_STRING_LENGTH) + '...' : str
+  const jsonRegex = /([{[][\s\S]{0,5000}?[}\]])/g
+  const parts: (string | object)[] = []
+  let lastIndex = 0
+  let match
+  let iterations = 0
+  const MAX_ITERATIONS = 100
+
+  while ((match = jsonRegex.exec(safeStr)) !== null && iterations < MAX_ITERATIONS) {
+    iterations++
+    if (match.index > lastIndex) {
+      parts.push(safeStr.slice(lastIndex, match.index))
+    }
+    try {
+      const parsed = JSON5.parse(match[0])
+      parts.push(parsed)
+    } catch {
+      parts.push(match[0])
+    }
+    lastIndex = match.index + match[0].length
+  }
+  if (lastIndex < safeStr.length) {
+    parts.push(safeStr.slice(lastIndex))
+  }
+  return parts
+}
+
 // Helper: extract and pretty-print JSON-like substrings from a string
 function renderStringWithEmbeddedJson(str: string) {
   // Special handling for 'invocation:'
   const invocationIdx = str.indexOf('invocation:')
   if (invocationIdx !== -1) {
-    // Find the first '{' after 'invocation:'
     const braceStart = str.indexOf('{', invocationIdx)
     if (braceStart !== -1) {
-      // Find the matching closing '}' (handle nested braces)
-      let braceCount = 0
-      let endIdx = -1
-      for (let i = braceStart; i < str.length; i++) {
-        if (str[i] === '{') braceCount++
-        if (str[i] === '}') braceCount--
-        if (braceCount === 0) {
-          endIdx = i
-          break
-        }
-      }
+      const endIdx = findMatchingBraceEnd(str, braceStart)
       if (endIdx !== -1) {
         const before = str.slice(0, braceStart)
         const objStr = str.slice(braceStart, endIdx + 1)
@@ -47,48 +94,7 @@ function renderStringWithEmbeddedJson(str: string) {
     }
   }
   // Fallback: previous logic for generic JSON blocks
-  // Limit string length to prevent ReDoS attacks
-  const MAX_STRING_LENGTH = 10000
-  const safeStr = str.length > MAX_STRING_LENGTH ? str.slice(0, MAX_STRING_LENGTH) + '...' : str
-
-  // Use safer regex with possessive quantifier simulation (limit backtracking)
-  // Match opening bracket/brace, then up to 5000 chars (reasonable for error messages), then closing
-  const jsonRegex = /([[{][\s\S]{0,5000}?[}\]])/g
-  const parts: (string | object)[] = []
-  let lastIndex = 0
-  let match
-  let iterations = 0
-  const MAX_ITERATIONS = 100 // Prevent infinite loops
-
-  while ((match = jsonRegex.exec(safeStr)) !== null && iterations < MAX_ITERATIONS) {
-    iterations++
-    if (match.index > lastIndex) {
-      parts.push(safeStr.slice(lastIndex, match.index))
-    }
-    try {
-      const parsed = JSON5.parse(match[0])
-      parts.push(parsed)
-    } catch {
-      parts.push(match[0])
-    }
-    lastIndex = match.index + match[0].length
-  }
-  if (lastIndex < safeStr.length) {
-    parts.push(safeStr.slice(lastIndex))
-  }
-  return (
-    <>
-      {parts.map((part, i) =>
-        typeof part === 'object' && part !== null ? (
-          <pre key={i} className="bg-gray-50 rounded border border-gray-200 p-3 overflow-x-auto text-left text-xs font-mono mt-2 max-h-64 whitespace-pre-wrap">
-            {JSON5.stringify(part, null, 2)}
-          </pre>
-        ) : (
-          <span key={i} className="font-mono text-xs text-gray-700">{String(part)}</span>
-        )
-      )}
-    </>
-  )
+  return renderJsonParts(parseGenericJsonParts(str))
 }
 
 function renderPretty(obj: any): ReactNode {
@@ -117,7 +123,7 @@ function renderPretty(obj: any): ReactNode {
   return <span className="font-mono text-xs text-gray-700">{String(obj)}</span>
 }
 
-export function WebErrorBoundaryUi({ error }: { error: Error }) {
+export function WebErrorBoundaryUi({ error }: Readonly<{ error: Error }>) {
   // Log the full error object for debugging
   console.error('Route ErrorBoundary caught:', error)
 
@@ -137,7 +143,7 @@ export function WebErrorBoundaryUi({ error }: { error: Error }) {
           <h2 className="font-semibold text-gray-800 mb-2">Details:</h2>
           <ul className="list-disc list-inside space-y-4">
             {errors.map((err: any, i: number) => (
-              <li key={i} className="mb-2">
+              <li key={`err-${i}`} className="mb-2">
                 <div className="font-medium text-gray-900">{renderPretty(err?.message || String(err))}</div>
                 {/* Show stack if available - always render to prevent hydration mismatch */}
                 <details className="mt-2" style={{ display: err?.stack ? 'block' : 'none' }}>

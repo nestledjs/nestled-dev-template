@@ -83,3 +83,53 @@ are intentionally not suppressed.
 | `typescript:S6853` | `**/*.spec.ts` | Form label association — not enforced in test files |
 | `typescript:S6853` | `**/*.spec.tsx` | |
 | `typescript:S2137` | `**/*.stories.tsx` | "Error" variable name — Storybook convention for error-state stories |
+| `typescript:S7764` | `**/*.spec.ts` | globalThis preference — test mocks intentionally use `global` |
+| `typescript:S7764` | `**/*.spec.tsx` | |
+| `typescript:S1128` | `**/*.spec.ts` | Unused imports — common in test helpers and shared fixtures |
+| `typescript:S1128` | `**/*.spec.tsx` | |
+| `typescript:S7780` | `**/*.spec.ts` | String.raw preference — not required in test utility strings |
+| `typescript:S7780` | `**/*.spec.tsx` | |
+| `typescript:S4623` | `**/*.spec.ts` | Redundant undefined — common pattern in test helper optional params |
+| `typescript:S4623` | `**/*.spec.tsx` | |
+| `typescript:S7723` | `**/*.spec.ts` | new Array() preference — explicit array construction in test data factories |
+| `typescript:S7723` | `**/*.spec.tsx` | |
+| `typescript:S2486` | `**/*.spec.ts` | Empty catch — intentional in test teardown and error-boundary tests |
+| `typescript:S2486` | `**/*.spec.tsx` | |
+| `typescript:S7744` | `**/*.spec.ts` | Empty object useless — common in test mocks and stubs |
+| `typescript:S7744` | `**/*.spec.tsx` | |
+| `typescript:S3358` | `**/*.spec.ts` | Nested ternaries — used in test assertion helpers |
+| `typescript:S3358` | `**/*.spec.tsx` | |
+| `typescript:S4030` | `**/*.spec.ts` | Unused collection — intermediate collections in test setup |
+| `typescript:S4030` | `**/*.spec.tsx` | |
+| `typescript:S3863` | `**/*.spec.ts` | Duplicate imports — test files may import same symbol from multiple paths |
+| `typescript:S3863` | `**/*.spec.tsx` | |
+| `typescript:S6479` | `**/*.spec.tsx` | Array index keys — acceptable in test renders where stable IDs are not needed |
+| `typescript:S7735` | `**/*.spec.ts` | Negated condition — used in test assertions for readability |
+| `typescript:S7735` | `**/*.spec.tsx` | |
+| `typescript:S7773` | `**/*.spec.ts` | Number methods preference — test data uses legacy number coercion patterns |
+| `typescript:S7773` | `**/*.spec.tsx` | |
+| `typescript:S7772` | `**/*.spec.ts` | node: imports — not required in test files |
+| `typescript:S7772` | `**/*.spec.tsx` | |
+| `typescript:S3863` | `**/*.stories.tsx` | Duplicate imports — Storybook story files may import from multiple paths |
+| `typescript:S1128` | `**/*.stories.tsx` | Unused imports — Storybook decorators and args often appear unused |
+| `typescript:S2068` | `apps/api-e2e/**` | Hardcoded credentials — test credentials are intentional in e2e fixtures |
+| `typescript:S3776` | `apps/api-e2e/**` | Cognitive complexity — e2e test flows are legitimately complex |
+| `typescript:S2486` | `apps/api-e2e/**` | Empty catch — intentional in e2e cleanup handlers |
+| `typescript:S7772` | `apps/api-e2e/**` | node: imports — not required in e2e test files |
+| `typescript:S7764` | `apps/api-e2e/**` | globalThis preference — e2e mocks may use `global` |
+| `typescript:S3776` | `scripts/validate-upgrade-notes.ts` | Cognitive complexity — excluded per project decision; complexity is inherent in schema validation logic |
+| `shelldre:S7682` | `scripts/*.sh` | Explicit return at end of shell functions — add `return 0` or `return $?` |
+| `shelldre:S7688` | `scripts/*.sh` | Use `[[` instead of `[` for conditional tests in bash |
+
+---
+
+## Important Notes on Suppression Methods
+
+**`// NOSONAR` comments do NOT work with Automatic Analysis.**
+SonarCloud's Automatic Analysis mode does not process inline suppression comments. Adding `// NOSONAR` to source files has no effect.
+
+**`.sonarcloud.properties` does NOT work with Automatic Analysis.**
+Local configuration files are ignored in Automatic Analysis mode. Do not add `.sonarcloud.properties` to the repo for suppression purposes.
+
+**All suppressions must be configured via the SonarCloud web UI:**
+Navigate to **Project Settings → General Settings → Analysis Scope** and **Code Quality → Ignore Issues** to configure all rule exclusions.

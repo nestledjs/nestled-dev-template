@@ -5,12 +5,12 @@ import { Link } from 'react-router'
 import { LockClosedIcon } from '@heroicons/react/24/outline'
 
 interface RequirePlanProps {
-  children: ReactNode
-  fallback?: ReactNode
-  feature?: string
-  features?: string[]
-  requireAll?: boolean
-  message?: string
+  readonly children: ReactNode
+  readonly fallback?: ReactNode
+  readonly feature?: string
+  readonly features?: string[]
+  readonly requireAll?: boolean
+  readonly message?: string
 }
 
 /**
@@ -114,10 +114,10 @@ export function RequirePlanInline({
   features,
   requireAll = true,
 }: {
-  children: ReactNode
-  feature?: string
-  features?: string[]
-  requireAll?: boolean
+  readonly children: ReactNode
+  readonly feature?: string
+  readonly features?: string[]
+  readonly requireAll?: boolean
 }) {
   const { isLoading } = useSubscription()
 
@@ -138,11 +138,11 @@ export function RequirePlanInline({
 }
 
 interface RequireLimitProps {
-  children: ReactNode
-  fallback?: ReactNode
-  limitKey: string
-  currentValue: number
-  message?: string
+  readonly children: ReactNode
+  readonly fallback?: ReactNode
+  readonly limitKey: string
+  readonly currentValue: number
+  readonly message?: string
 }
 
 /**
@@ -219,9 +219,9 @@ export function RequireLimitInline({
   limitKey,
   currentValue,
 }: {
-  children: ReactNode
-  limitKey: string
-  currentValue: number
+  readonly children: ReactNode
+  readonly limitKey: string
+  readonly currentValue: number
 }) {
   const { isLoading } = useSubscription()
   const { isWithin } = useLimit(limitKey, currentValue)

@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
-import { randomBytes, createHash } from 'crypto'
+import { randomBytes, createHash } from 'node:crypto'
 import { ApiTokensService } from '../api-tokens/api-tokens.service'
 import { ApiCoreDataAccessService } from '@nestled-template/api/core/data-access'
 

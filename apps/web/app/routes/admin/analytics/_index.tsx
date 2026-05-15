@@ -27,12 +27,18 @@ function formatDuration(ms: number | null | undefined) {
   return `${(ms / 1000).toFixed(2)}s`
 }
 
+function getEndpointErrorRateColor(errorRate: number): string {
+  if (errorRate > 5) return 'text-red-600 dark:text-red-400'
+  if (errorRate > 1) return 'text-amber-600 dark:text-amber-400'
+  return 'text-green-600 dark:text-green-400'
+}
+
 function MetricChange({
   change,
   suffix,
 }: {
-  change: number | null | undefined
-  suffix: string
+  readonly change: number | null | undefined
+  readonly suffix: string
 }) {
   if (change === null || change === undefined) return null
   const positive = change >= 0
@@ -53,7 +59,7 @@ function MetricChange({
   )
 }
 
-function TableLoadingState({ message }: { message: string }) {
+function TableLoadingState({ message }: { readonly message: string }) {
   return (
     <div className="p-12 text-center">
       <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-emerald-600 dark:border-emerald-400 border-r-transparent"></div>
@@ -317,8 +323,8 @@ export default function AdminAnalyticsPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-zinc-200 dark:divide-white/10 bg-white dark:bg-white/5">
-                  {analytics.topEndpoints.map((endpoint, index) => (
-                    <tr key={index} className="hover:bg-zinc-50 dark:hover:bg-white/5 transition">
+                  {analytics.topEndpoints.map(endpoint => (
+                    <tr key={endpoint.name} className="hover:bg-zinc-50 dark:hover:bg-white/5 transition">
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm font-medium text-zinc-900 dark:text-white font-mono">
                           {endpoint.name}
@@ -338,11 +344,7 @@ export default function AdminAnalyticsPage() {
                         <div
                           className={cn(
                             'text-sm font-medium',
-                            endpoint.errorRate > 5
-                              ? 'text-red-600 dark:text-red-400'
-                              : endpoint.errorRate > 1
-                                ? 'text-amber-600 dark:text-amber-400'
-                                : 'text-green-600 dark:text-green-400',
+                            getEndpointErrorRateColor(endpoint.errorRate),
                           )}
                         >
                           {formatPercent(endpoint.errorRate)}
@@ -389,8 +391,8 @@ export default function AdminAnalyticsPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-zinc-200 dark:divide-white/10 bg-white dark:bg-white/5">
-                  {analytics.featureUsage.map((feature, index) => (
-                    <tr key={index} className="hover:bg-zinc-50 dark:hover:bg-white/5 transition">
+                  {analytics.featureUsage.map(feature => (
+                    <tr key={feature.featureName} className="hover:bg-zinc-50 dark:hover:bg-white/5 transition">
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm font-medium text-zinc-900 dark:text-white">
                           {feature.featureName}

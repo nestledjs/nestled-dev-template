@@ -38,7 +38,14 @@ function pickNewestJwt(values: string[]): string {
       const parts = token.split('.')
       if (parts.length !== 3) continue
       const payload = JSON.parse(Buffer.from(parts[1], 'base64').toString('utf8')) as { iat?: number; exp?: number }
-      const iat = typeof payload.iat === 'number' ? payload.iat : typeof payload.exp === 'number' ? payload.exp : 0
+      let iat: number
+      if (typeof payload.iat === 'number') {
+        iat = payload.iat
+      } else if (typeof payload.exp === 'number') {
+        iat = payload.exp
+      } else {
+        iat = 0
+      }
       if (!best || iat > best.iat) {
         best = { token, iat }
       }
@@ -49,18 +56,16 @@ function pickNewestJwt(values: string[]): string {
   return best?.token ?? values[values.length - 1]
 }
 
+function normalizeHeaders(headers: Headers | Record<string, string>): Headers {
+  return headers instanceof Headers ? headers : new Headers(headers)
+}
+
 // Returns cookie as string or undefined
 export function getCookie<T extends string = string>(
   headers: Headers | Record<string, string>,
   name: string,
 ): T | undefined {
-  let normalizedHeaders: Headers
-  if (headers instanceof Headers) {
-    normalizedHeaders = headers
-  } else {
-    normalizedHeaders = new Headers(headers)
-  }
-  const values = parseCookies(normalizedHeaders.get('cookie'))[name]
+  const values = parseCookies(normalizeHeaders(headers).get('cookie'))[name]
   if (!values || values.length === 0) return undefined
   if (values.length === 1) return values[0] as T
   return pickNewestJwt(values) as T
@@ -68,13 +73,7 @@ export function getCookie<T extends string = string>(
 
 // Returns cookie parsed as object or null
 export function getJsonCookie<T extends object>(headers: Headers | Record<string, string>, name: string): T | null {
-  let normalizedHeaders: Headers
-  if (headers instanceof Headers) {
-    normalizedHeaders = headers
-  } else {
-    normalizedHeaders = new Headers(headers)
-  }
-  const values = parseCookies(normalizedHeaders.get('cookie'))[name]
+  const values = parseCookies(normalizeHeaders(headers).get('cookie'))[name]
   if (!values || values.length === 0) return null
   const raw = values[values.length - 1]
 

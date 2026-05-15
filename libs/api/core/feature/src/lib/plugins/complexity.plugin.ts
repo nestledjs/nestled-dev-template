@@ -7,17 +7,17 @@ import { Logger } from '@nestjs/common'
 
 @Plugin()
 export class ComplexityPlugin implements ApolloServerPlugin {
-  constructor(private gqlSchemaHost: GraphQLSchemaHost) {}
+  constructor(private readonly gqlSchemaHost: GraphQLSchemaHost) {}
 
   async requestDidStart(): Promise<void | GraphQLRequestListener<any>> {
     const maxComplexity = process.env['QUERY_COMPLEXITY_LIMIT']
-      ? parseInt(process.env['QUERY_COMPLEXITY_LIMIT'])
+      ? Number.parseInt(process.env['QUERY_COMPLEXITY_LIMIT'])
       : 15000
     const logQueryComplexity = process.env['LOG_QUERY_COMPLEXITY']
       ? process.env['LOG_QUERY_COMPLEXITY'] === 'true'
       : false
     const logQueryComplexityThreshold = process.env['LOG_QUERY_COMPLEXITY_THRESHOLD']
-      ? parseInt(process.env['LOG_QUERY_COMPLEXITY_THRESHOLD'])
+      ? Number.parseInt(process.env['LOG_QUERY_COMPLEXITY_THRESHOLD'])
       : 5000
     const queryComplexityVerboseErrors = process.env['QUERY_COMPLEXITY_VERBOSE_ERRORS']
       ? process.env['QUERY_COMPLEXITY_VERBOSE_ERRORS'] === 'true'
@@ -50,7 +50,6 @@ export class ComplexityPlugin implements ApolloServerPlugin {
           throw new GraphQLError(message)
         }
 
-        return Promise.resolve()
       },
     }
   }

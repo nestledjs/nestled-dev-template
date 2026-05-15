@@ -14,24 +14,24 @@ export function WebUiViteCacheError({
   const [countdown, setCountdown] = useState(Math.ceil(autoRefreshDelay / 1000))
 
   useEffect(() => {
-    if (!autoRefresh) return
+    if (autoRefresh) {
+      const timer = setTimeout(() => {
+        globalThis.location.reload()
+      }, autoRefreshDelay)
 
-    const timer = setTimeout(() => {
-      window.location.reload()
-    }, autoRefreshDelay)
+      const countdownTimer = setInterval(() => {
+        setCountdown(prev => prev - 1)
+      }, 1000)
 
-    const countdownTimer = setInterval(() => {
-      setCountdown(prev => prev - 1)
-    }, 1000)
-
-    return () => {
-      clearTimeout(timer)
-      clearInterval(countdownTimer)
+      return () => {
+        clearTimeout(timer)
+        clearInterval(countdownTimer)
+      }
     }
   }, [autoRefresh, autoRefreshDelay])
 
   const handleManualRefresh = () => {
-    window.location.reload()
+    globalThis.location.reload()
   }
 
   const content = (

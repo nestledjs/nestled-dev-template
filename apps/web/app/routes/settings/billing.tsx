@@ -52,7 +52,7 @@ export default function BillingSettings() {
   const memberCount =
     (activeOrganization as OrganizationWithMemberCount | null)?._count?.members || 0
   const teamMemberLimit = useLimit('max_team_members', memberCount)
-  const storageLimit = useLimit('max_storage_gb', 0) // TODO: Implement storage tracking
+  const storageLimit = useLimit('max_storage_gb', 0) // FUTURE: Implement storage tracking
 
   const handleManageBilling = async () => {
     setPortalLoading(true)
@@ -168,7 +168,7 @@ export default function BillingSettings() {
               {plan && (
                 <>
                   <p className="text-lg text-zinc-700 dark:text-zinc-300 mt-1">
-                    ${parseFloat(plan.price || '0').toFixed(2)}
+                    ${Number.parseFloat(plan.price || '0').toFixed(2)}
                     <span className="text-sm text-zinc-500 dark:text-zinc-400">
                       /{plan.interval}
                     </span>

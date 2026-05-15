@@ -267,9 +267,6 @@ describe('useRelationData', () => {
 
       renderHook(() => useRelationData('Organization', 'test', true), { wrapper })
 
-      const call = mockUseQuery.mock.calls[0]
-      const variables = call[1]?.variables as any
-
       // Boolean field 'active' should be included in searchable fields
       const searchableFields = mockDatabaseModels[1].fields
         .filter((f: any) => {

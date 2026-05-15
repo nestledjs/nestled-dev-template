@@ -23,7 +23,7 @@ function getModelResponseFieldName(modelName: string): string {
 }
 
 function toReadableText(text: string): string {
-  return text.replace(/([a-z])([A-Z])/g, '$1 $2').replace(/^./, str => str.toUpperCase())
+  return text.replaceAll(/([a-z])([A-Z])/g, '$1 $2').replace(/^./, str => str.toUpperCase())
 }
 import { Link, useNavigate, useParams } from 'react-router'
 
@@ -41,9 +41,9 @@ const sanitizeInput = (input: string | undefined): string => {
 
   // Remove potentially dangerous characters and limit length
   return input
-    .replace(/[<>"'%;()&+]/g, '') // Remove common injection characters
-    .replace(/javascript:/gi, '') // Remove javascript: protocols
-    .replace(/on\w+\s*=/gi, '') // Remove event handlers
+    .replaceAll(/[<>"'%;()&+]/g, '') // Remove common injection characters
+    .replaceAll(/javascript:/gi, '') // Remove javascript: protocols
+    .replaceAll(/on\w+\s*=/gi, '') // Remove event handlers
     .trim()
     .substring(0, 100) // Limit length to prevent DoS
 }
@@ -51,7 +51,7 @@ const sanitizeInput = (input: string | undefined): string => {
 // Convert PascalCase to kebab-case for URLs (CourseChapter -> course-chapter)
 const toKebabCase = (str: string): string => {
   return str
-    .replace(/([a-z])([A-Z])/g, '$1-$2') // Insert dash between lowercase and uppercase
+    .replaceAll(/([a-z])([A-Z])/g, '$1-$2') // Insert dash between lowercase and uppercase
     .toLowerCase() // Convert to lowercase
 }
 
@@ -101,6 +101,7 @@ function processDateFieldValue(field: any, value: any): string {
       return dateValue.toISOString().substring(0, 16)
     }
   } catch (e) {
+    console.error('Unexpected error:', e)
     return ''
   }
 }
@@ -549,6 +550,7 @@ function AdminDataEditPageContent({ model, id, basePath, formTheme, displayField
     try {
       return getAdminDocuments(sdk, model)
     } catch (error) {
+      console.error('Unexpected error:', error)
       return null
     }
   }, [sdk, model])
@@ -562,6 +564,7 @@ function AdminDataEditPageContent({ model, id, basePath, formTheme, displayField
       }
       return gql(documents.query)
     } catch (error) {
+      console.error('Unexpected error:', error)
       return null
     }
   }, [documents])
@@ -575,6 +578,7 @@ function AdminDataEditPageContent({ model, id, basePath, formTheme, displayField
       }
       return gql(documents.update)
     } catch (error) {
+      console.error('Unexpected error:', error)
       return null
     }
   }, [documents])
@@ -588,6 +592,7 @@ function AdminDataEditPageContent({ model, id, basePath, formTheme, displayField
       }
       return gql(documents.delete)
     } catch (error) {
+      console.error('Unexpected error:', error)
       return null
     }
   }, [documents])
@@ -736,8 +741,8 @@ function AdminDataEditPageContent({ model, id, basePath, formTheme, displayField
       message: result.message,
     })
 
-    if (typeof window !== 'undefined') {
-      window.scrollTo({ top: 0, behavior: 'smooth' })
+    if (typeof globalThis.window !== 'undefined') {
+      globalThis.scrollTo({ top: 0, behavior: 'smooth' })
     }
 
     if (result.success) {

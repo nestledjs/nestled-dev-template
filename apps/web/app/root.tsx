@@ -199,8 +199,8 @@ export function ErrorBoundary({ error }: Readonly<{ error: Error }>) {
       e => (e.message || '').includes('Unauthorized') || e.extensions?.code === 'UNAUTHENTICATED',
     )
 
-  if (isUnauthorized && typeof window !== 'undefined') {
-    window.location.href = '/force-logout'
+  if (isUnauthorized && typeof globalThis.window !== 'undefined') {
+    globalThis.location.href = '/force-logout'
     return null
   }
 

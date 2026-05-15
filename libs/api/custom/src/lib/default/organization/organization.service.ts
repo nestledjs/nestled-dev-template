@@ -19,7 +19,7 @@ import {
 } from './dto'
 import { EmailService } from '@nestled-template/api/integrations'
 import { ConfigService } from '@nestjs/config'
-import { randomBytes } from 'crypto'
+import { randomBytes } from 'node:crypto'
 import { AuthCacheService } from '@nestled-template/api/utils'
 
 @Injectable()
@@ -377,7 +377,7 @@ export class OrganizationService {
     const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 days
 
     // Create invitation
-    const invite = await this.data.invite.create({
+    await this.data.invite.create({
       data: {
         email: input.email.toLowerCase().trim(),
         token,

@@ -11,10 +11,10 @@ import {
 import { useSubscription } from '../hooks/use-subscription'
 
 interface UpgradeModalProps {
-  isOpen: boolean
-  onClose: () => void
-  feature?: string
-  reason?: string
+  readonly isOpen: boolean
+  readonly onClose: () => void
+  readonly feature?: string
+  readonly reason?: string
 }
 
 /**
@@ -49,7 +49,7 @@ export function UpgradeModal({ isOpen, onClose, feature, reason }: UpgradeModalP
 
       if (data?.createCheckoutSession) {
         // Redirect to Stripe Checkout
-        window.location.href = data.createCheckoutSession
+        globalThis.location.href = data.createCheckoutSession
       }
     } catch (error) {
       console.error('Failed to create checkout session:', error)
@@ -133,11 +133,14 @@ export function UpgradeModal({ isOpen, onClose, feature, reason }: UpgradeModalP
                         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                           {plans.map((plan: any) => {
                             const isCurrentPlan = currentPlan?.id === plan.id
-                            const features = Array.isArray(plan.features)
-                              ? plan.features
-                              : typeof plan.features === 'object'
-                              ? Object.keys(plan.features || {})
-                              : []
+                            let features: string[]
+                            if (Array.isArray(plan.features)) {
+                              features = plan.features
+                            } else if (typeof plan.features === 'object') {
+                              features = Object.keys(plan.features || {})
+                            } else {
+                              features = []
+                            }
 
                             return (
                               <div
@@ -165,7 +168,7 @@ export function UpgradeModal({ isOpen, onClose, feature, reason }: UpgradeModalP
 
                                 <div className="mb-4">
                                   <span className="text-3xl font-bold text-gray-900">
-                                    ${parseFloat(plan.price || '0').toFixed(2)}
+                                    ${Number.parseFloat(plan.price || '0').toFixed(2)}
                                   </span>
                                   <span className="text-gray-500">/{plan.interval}</span>
                                 </div>
@@ -180,8 +183,8 @@ export function UpgradeModal({ isOpen, onClose, feature, reason }: UpgradeModalP
 
                                 {features.length > 0 && (
                                   <ul className="mb-6 space-y-2">
-                                    {features.slice(0, 5).map((feat: string, idx: number) => (
-                                      <li key={idx} className="flex items-start">
+                                    {features.slice(0, 5).map((feat: string) => (
+                                      <li key={feat} className="flex items-start">
                                         <CheckIcon className="mr-2 h-5 w-5 flex-shrink-0 text-green-500" />
                                         <span className="text-sm text-gray-600">{feat}</span>
                                       </li>
@@ -198,7 +201,7 @@ export function UpgradeModal({ isOpen, onClose, feature, reason }: UpgradeModalP
                                       : 'bg-blue-600 text-white hover:bg-blue-500 focus-visible:outline-blue-600'
                                   }`}
                                 >
-                                  {isCurrentPlan ? 'Current Plan' : checkoutLoading ? 'Loading...' : 'Select Plan'}
+                                  {isCurrentPlan ? 'Current Plan' : (checkoutLoading ? 'Loading...' : 'Select Plan')}
                                 </button>
                               </div>
                             )

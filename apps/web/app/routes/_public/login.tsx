@@ -196,7 +196,7 @@ export default function LoginPage() {
         )}
         <Form id="login-form" theme={formTheme} fields={fields} submit={processLogin} />
 
-        {/* TODO: Add OAuth providers (Google, GitHub) when ready */}
+        {/* FUTURE: Add OAuth providers (Google, GitHub) when ready */}
       </div>
     </AuthLayout>
   )

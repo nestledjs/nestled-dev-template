@@ -15,18 +15,95 @@ import {
 import dayjs from 'dayjs'
 
 export interface WebUiDataTableProps {
-  data?: any
-  path: string
-  fields: string[]
-  pagination?: CorePaging | null
-  setSkip?: (skip: number) => void
-  filters?: any
-  setFilters?: (filters: any) => void
-  filterOptions?: { id: string; name: string; options: { value: string; label: string }[] }[]
-  loading?: boolean
-  additionalFilters?: ReactElement | null
-  setSort?: Dispatch<SetStateAction<{ orderBy: string; orderDirection: string }>>
-  sort?: { orderBy: string; orderDirection: string }
+  readonly data?: any
+  readonly path: string
+  readonly fields: string[]
+  readonly pagination?: CorePaging | null
+  readonly setSkip?: (skip: number) => void
+  readonly additionalFilters?: ReactElement | null
+  readonly setSort?: Dispatch<SetStateAction<{ orderBy: string; orderDirection: string }>>
+  readonly sort?: { orderBy: string; orderDirection: string }
+}
+
+function getNestedProperty(item: any, fieldPath: string) {
+  const value = fieldPath
+    .split('.')
+    .reduce((obj, key) => (obj && obj[key] !== undefined ? obj[key] : undefined), item)
+
+  if (fieldPath.toLowerCase().includes('date') && value) {
+    return dayjs(value).format('MMMM D, YYYY')
+  }
+
+  return value
+}
+
+// Render values safely in table cells
+function renderValue(value: unknown): ReactNode {
+  if (value === null || value === undefined) return ''
+
+  // Arrays (e.g., many-to-many relations)
+  if (Array.isArray(value)) {
+    if (value.length === 0) return ''
+    const labels = value.map((entry) => {
+      if (entry === null || entry === undefined) return ''
+      if (typeof entry === 'object') {
+        const obj = entry as Record<string, unknown>
+        const label = (obj.name as string) ?? (obj.title as string) ?? (obj.id as string) ?? (obj.slug as string)
+        return label ?? JSON.stringify(obj)
+      }
+      return String(entry)
+    })
+    return labels.filter(Boolean).join(', ')
+  }
+
+  // Objects (e.g., relation values)
+  if (typeof value === 'object') {
+    const obj = value as Record<string, unknown>
+    const label = (obj.name as string) ?? (obj.title as string) ?? (obj.id as string) ?? (obj.slug as string)
+    return label ?? JSON.stringify(obj)
+  }
+
+  // Primitives
+  return String(value)
+}
+
+function formatFieldName(fieldName: string) {
+  return fieldName
+    .replaceAll(/([a-z])([A-Z])/g, '$1 $2')
+    .split('.')
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(' ')
+}
+
+function headerThClass(index: number) {
+  if (index === 0) return 'py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6'
+  return 'hidden px-3 py-3.5 text-left text-sm font-semibold text-gray-900 lg:table-cell'
+}
+
+interface OrderDirectionIconProps {
+  readonly fieldName: string
+  readonly sort?: { orderBy: string; orderDirection: string }
+}
+
+function OrderDirectionIcon({ fieldName, sort }: OrderDirectionIconProps) {
+  if (fieldName === sort?.orderBy) {
+    if (sort.orderDirection === 'desc') {
+      return <ChevronUpIcon className={'w-5 h-5 font-bold'} />
+    }
+    if (sort.orderDirection === 'asc') {
+      return <ChevronDownIcon className={'w-5 h-5 font-bold'} />
+    }
+    return <ChevronUpDownIcon className={'w-6 h-6'} />
+  }
+  return <ChevronUpDownIcon className={'w-6 h-6'} />
+}
+
+function getAriaSortValue(
+  field: string,
+  sort?: { orderBy: string; orderDirection: string },
+): 'ascending' | 'descending' | 'none' {
+  if (sort?.orderBy !== field) return 'none'
+  return sort.orderDirection === 'asc' ? 'ascending' : 'descending'
 }
 
 export function WebUiDataTable(props: WebUiDataTableProps) {
@@ -53,60 +130,6 @@ export function WebUiDataTable(props: WebUiDataTableProps) {
       // ignore
     }
   }, [])
-  function getNestedProperty(item: any, fieldPath: string) {
-    const value = fieldPath
-      .split('.')
-      .reduce((obj, key) => (obj && obj[key] !== undefined ? obj[key] : undefined), item)
-
-    if (fieldPath.toLowerCase().includes('date') && value) {
-      return dayjs(value).format('MMMM D, YYYY') // Format the date as desired
-    }
-
-    return value
-  }
-
-  // Render values safely in table cells
-  function renderValue(value: unknown): ReactNode {
-    if (value === null || value === undefined) return ''
-
-    // Arrays (e.g., many-to-many relations)
-    if (Array.isArray(value)) {
-      if (value.length === 0) return ''
-      const labels = value.map((entry) => {
-        if (entry === null || entry === undefined) return ''
-        if (typeof entry === 'object') {
-          const obj = entry as Record<string, unknown>
-          const label = (obj.name as string) ?? (obj.title as string) ?? (obj.id as string) ?? (obj.slug as string)
-          return label ?? JSON.stringify(obj)
-        }
-        return String(entry)
-      })
-      return labels.filter(Boolean).join(', ')
-    }
-
-    // Objects (e.g., relation values)
-    if (typeof value === 'object') {
-      const obj = value as Record<string, unknown>
-      const label = (obj.name as string) ?? (obj.title as string) ?? (obj.id as string) ?? (obj.slug as string)
-      return label ?? JSON.stringify(obj)
-    }
-
-    // Primitives
-    return String(value)
-  }
-
-  function formatFieldName(fieldName: string) {
-    return fieldName
-      .replace(/([a-z])([A-Z])/g, '$1 $2') // Insert a space between lowercase and uppercase letters
-      .split('.') // Split by periods if necessary
-      .map((part) => part.charAt(0).toUpperCase() + part.slice(1)) // Capitalize the first letter of each part
-      .join(' ')
-  }
-
-  function headerThClass(index: number) {
-    if (index === 0) return 'py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6'
-    return 'hidden px-3 py-3.5 text-left text-sm font-semibold text-gray-900 lg:table-cell'
-  }
 
   function handleSort(fieldName: string) {
     const isCurrentSortField = props?.sort?.orderBy === fieldName
@@ -116,18 +139,47 @@ export function WebUiDataTable(props: WebUiDataTableProps) {
     })
   }
 
-  function OrderDirectionIcon({ fieldName }: { fieldName: string }) {
-    if (fieldName === props?.sort?.orderBy) {
-      switch (props?.sort?.orderDirection) {
-        case 'desc':
-          return <ChevronUpIcon className={'w-5 h-5 font-bold'} />
-        case 'asc':
-          return <ChevronDownIcon className={'w-5 h-5 font-bold'} />
-        default:
-          return <ChevronUpDownIcon className={'w-6 h-6'} />
-      }
+  function renderFirstColumnCell(item: any, field: string, fieldValue: unknown) {
+    if (field.toLowerCase() !== 'id') {
+      return renderValue(fieldValue)
     }
-    return <ChevronUpDownIcon className={'w-6 h-6'} />
+    const itemId = String(item.id)
+    return (
+      <div className="flex items-center gap-3">
+        <div className="relative">
+          <button
+            type="button"
+            className="text-gray-600 hover:text-gray-900"
+            onClick={() => copyToClipboard(itemId)}
+            title="Copy ID"
+            aria-label="Copy ID"
+          >
+            <DocumentDuplicateIcon className="w-5 h-5" />
+          </button>
+          {copiedId === itemId && (
+            <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-xs px-2 py-1 rounded whitespace-nowrap">
+              Copied!
+            </div>
+          )}
+        </div>
+        <button
+          type="button"
+          className="text-gray-600 hover:text-gray-900"
+          onClick={() => toggleIdVisibility(itemId)}
+          title={visibleIds.has(itemId) ? 'Hide ID' : 'Show ID'}
+          aria-label={visibleIds.has(itemId) ? 'Hide ID' : 'Show ID'}
+        >
+          {visibleIds.has(itemId) ? (
+            <EyeSlashIcon className="w-5 h-5" />
+          ) : (
+            <EyeIcon className="w-5 h-5" />
+          )}
+        </button>
+        {visibleIds.has(itemId) && (
+          <span className="text-xs text-gray-500 font-mono">{itemId}</span>
+        )}
+      </div>
+    )
   }
 
   return (
@@ -143,27 +195,21 @@ export function WebUiDataTable(props: WebUiDataTableProps) {
                 <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">
                   <span className="sr-only">Edit</span>
                 </th>
-                {props?.fields?.map((field, index) => (
+                {props?.fields?.map((field, fieldIndex) => (
                   <th
-                    key={index}
+                    key={field}
                     scope="col"
-                    className={headerThClass(index)}
+                    className={headerThClass(fieldIndex)}
+                    aria-sort={getAriaSortValue(field, props.sort)}
                   >
                     <button
                       type="button"
                       onClick={() => handleSort(field)}
                       className="flex justify-between items-center w-full text-left hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500 rounded px-2 py-1 -mx-2 -my-1"
-                      aria-label={`Sort by ${formatFieldName(props.fields[index])}`}
-                      aria-sort={
-                        props.sort?.orderBy === field
-                          ? props.sort.orderDirection === 'asc'
-                            ? 'ascending'
-                            : 'descending'
-                          : 'none'
-                      }
+                      aria-label={`Sort by ${formatFieldName(field)}`}
                     >
-                      <span>{formatFieldName(props.fields[index])}</span>
-                      <OrderDirectionIcon fieldName={props.fields[index]} />
+                      <span>{formatFieldName(field)}</span>
+                      <OrderDirectionIcon fieldName={field} sort={props.sort} />
                     </button>
                   </th>
                 ))}
@@ -183,64 +229,24 @@ export function WebUiDataTable(props: WebUiDataTableProps) {
                     </td>
                     {props.fields.map((field, index) => {
                       const fieldValue = getNestedProperty(item, field)
-                      switch (index) {
-                        case 0:
-                          return (
-                            <td
-                              key={index}
-                              className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6"
-                            >
-                              {/* Special handling for ID field: show copy + eye icons instead of raw ID */}
-                              {field.toLowerCase() === 'id' ? (
-                                <div className="flex items-center gap-3">
-                                  <div className="relative">
-                                    <button
-                                      type="button"
-                                      className="text-gray-600 hover:text-gray-900"
-                                      onClick={() => copyToClipboard(String(item.id))}
-                                      title="Copy ID"
-                                      aria-label="Copy ID"
-                                    >
-                                      <DocumentDuplicateIcon className="w-5 h-5" />
-                                    </button>
-                                    {copiedId === String(item.id) && (
-                                      <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-xs px-2 py-1 rounded whitespace-nowrap">
-                                        Copied!
-                                      </div>
-                                    )}
-                                  </div>
-                                  <button
-                                    type="button"
-                                    className="text-gray-600 hover:text-gray-900"
-                                    onClick={() => toggleIdVisibility(String(item.id))}
-                                    title={visibleIds.has(String(item.id)) ? 'Hide ID' : 'Show ID'}
-                                    aria-label={visibleIds.has(String(item.id)) ? 'Hide ID' : 'Show ID'}
-                                  >
-                                    {visibleIds.has(String(item.id)) ? (
-                                      <EyeSlashIcon className="w-5 h-5" />
-                                    ) : (
-                                      <EyeIcon className="w-5 h-5" />
-                                    )}
-                                  </button>
-                                  {visibleIds.has(String(item.id)) && (
-                                    <span className="text-xs text-gray-500 font-mono">{String(item.id)}</span>
-                                  )}
-                                </div>
-                              ) : (
-                                renderValue(fieldValue)
-                              )}
-                            </td>
-                          )
-                        default:
-                          return (
-                            <td
-                              key={index}
-                              className="hidden whitespace-nowrap px-3 py-4 text-sm text-gray-500 lg:table-cell"
-                            >
-                              {renderValue(fieldValue)}
-                            </td>
-                          )
+                      if (index === 0) {
+                        return (
+                          <td
+                            key={field}
+                            className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6"
+                          >
+                            {renderFirstColumnCell(item, field, fieldValue)}
+                          </td>
+                        )
                       }
+                      return (
+                        <td
+                          key={field}
+                          className="hidden whitespace-nowrap px-3 py-4 text-sm text-gray-500 lg:table-cell"
+                        >
+                          {renderValue(fieldValue)}
+                        </td>
+                      )
                     })}
 
                     {/* Removed trailing Edit cell */}
@@ -268,30 +274,26 @@ export function WebUiDataTable(props: WebUiDataTableProps) {
             </div>
             <div className="flex-1 flex justify-between sm:justify-end">
               {(props?.pagination?.skip ?? 0) > 0 ? (
-                <div
+                <button
+                  type="button"
                   onClick={() => {
                     props.setSkip?.((props?.pagination?.skip ?? 0) - (props?.pagination?.take ?? 0))
                   }}
-                  role="button"
-                  tabIndex={0}
-                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); props.setSkip?.((props?.pagination?.skip ?? 0) - (props?.pagination?.take ?? 0)) } }}
                   className="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
                 >
                   Previous
-                </div>
+                </button>
               ) : null}
               {(props?.pagination?.skip ?? 0) + (props?.pagination?.take ?? 0) < (props?.pagination?.count ?? 0) ? (
-                <div
+                <button
+                  type="button"
                   onClick={() => {
                     props.setSkip?.((props?.pagination?.skip ?? 0) + (props?.pagination?.take ?? 0))
                   }}
-                  role="button"
-                  tabIndex={0}
-                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); props.setSkip?.((props?.pagination?.skip ?? 0) + (props?.pagination?.take ?? 0)) } }}
                   className="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
                 >
                   Next
-                </div>
+                </button>
               ) : null}
             </div>
           </nav>

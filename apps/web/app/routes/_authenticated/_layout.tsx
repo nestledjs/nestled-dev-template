@@ -45,7 +45,7 @@ export default function AuthenticatedLayout() {
   }
 
   const organizations = orgsData?.myOrganizations || []
-  const userWithActiveOrganization = user as typeof user & UserWithActiveOrganization
+  const userWithActiveOrganization = user as UserWithActiveOrganization
   const activeOrganization =
     organizations.find(org => org.id === userWithActiveOrganization.activeOrganizationId) ||
     organizations[0] ||

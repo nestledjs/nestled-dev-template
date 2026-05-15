@@ -534,14 +534,14 @@ describe('AdminService', () => {
       let secondToken: string
       mockData.user.update.mockImplementation((args: any) => {
         const token = args.data.passwordResetToken
-        if (!firstToken) {
-          firstToken = token
-        } else {
+        if (firstToken) {
           secondToken = token
+        } else {
+          firstToken = token
         }
-        return Promise.resolve({ id: 'user-123', passwordResetToken: token, emails: [] } as any)
+        return Promise.resolve({ id: 'user-123', passwordResetToken: token, emails: [] })
       })
-      mockData.userSession.updateMany.mockResolvedValue({ count: 0 } as any)
+      mockData.userSession.updateMany.mockResolvedValue({ count: 0 })
       await service.forcePasswordReset('user-1')
       await service.forcePasswordReset('user-2')
       expect(firstToken!).toBeDefined()

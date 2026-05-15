@@ -10,7 +10,7 @@ export function useClickOutside(
     if (!isActive) return
 
     const handleClickOutside = (event: MouseEvent) => {
-      if (ref.current && !ref.current.contains(event.target as Node)) {
+      if (ref.current && !ref.current.contains(event.target as Node)) { // event.target narrowing required
         handler()
       }
     }

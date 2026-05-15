@@ -33,7 +33,7 @@ export default function PricingPage() {
   const handleSubscribe = async (stripePriceId: string) => {
     if (!user) {
       // Redirect to login with return URL
-      window.location.href = `/login?returnTo=/pricing`
+      globalThis.location.href = `/login?returnTo=/pricing`
       return
     }
 
@@ -43,7 +43,7 @@ export default function PricingPage() {
       })
 
       if (data?.createCheckoutSession) {
-        window.location.href = data.createCheckoutSession
+        globalThis.location.href = data.createCheckoutSession
       }
     } catch (error) {
       console.error('Failed to create checkout session:', error)
@@ -139,7 +139,7 @@ export default function PricingPage() {
                   <div className="mb-8">
                     <div className="flex items-baseline">
                       <span className="text-5xl font-extrabold tracking-tight text-white">
-                        ${parseFloat(plan.price || '0').toFixed(0)}
+                        ${Number.parseFloat(plan.price || '0').toFixed(0)}
                       </span>
                       <span className="ml-2 text-zinc-400">/{plan.interval}</span>
                     </div>
@@ -153,12 +153,12 @@ export default function PricingPage() {
                   {/* Features */}
                   <ul className="space-y-4 mb-8">
                     {Array.isArray(features) ? (
-                      features.map((feature, idx) => {
+                      features.map(feature => {
                         const isIncluded = feature.included
                         const featureName = feature.name
 
                         return (
-                          <li key={idx} className="flex items-start">
+                          <li key={featureName} className="flex items-start">
                             {isIncluded ? (
                               <CheckIcon className="h-5 w-5 text-emerald-300 flex-shrink-0 mr-3" />
                             ) : (
