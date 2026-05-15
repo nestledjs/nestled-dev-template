@@ -2,7 +2,12 @@ import { ApolloHydrationHelper } from '@apollo/client-integration-react-router'
 import '@nestled-template/shared/styles'
 import { apolloLoader } from '@nestled-template/shared/apollo'
 import { Me, type MeQuery } from '@nestled-template/shared/sdk'
-import { getCookie, getSessionCookieName, isJwtExpired, isNetworkError } from '@nestled-template/shared/utils'
+import {
+  getCookie,
+  getSessionCookieName,
+  isJwtExpired,
+  isNetworkError,
+} from '@nestled-template/shared/utils'
 import { WebUiErrorBoundary } from '@nestled-template/web-ui'
 import { ReactNode } from 'react'
 import {
@@ -168,13 +173,24 @@ export function Layout({ children }: Readonly<{ children: ReactNode }>) {
 
 export default App
 
+type GraphQLErrorLike = {
+  message?: string
+  extensions?: {
+    code?: string
+  }
+}
+
+type ErrorWithGraphQLErrors = Error & {
+  graphQLErrors?: GraphQLErrorLike[]
+}
+
 export function ErrorBoundary({ error }: Readonly<{ error: Error }>) {
   // Auth errors should send the user through logout to clear their session
+  const graphQLError = error as ErrorWithGraphQLErrors
   const isUnauthorized =
     error.message?.includes('Unauthorized') ||
-    (error as any)?.graphQLErrors?.some(
-      (e: any) =>
-        (e?.message || '').includes('Unauthorized') || e?.extensions?.code === 'UNAUTHENTICATED',
+    graphQLError.graphQLErrors?.some(
+      e => (e.message || '').includes('Unauthorized') || e.extensions?.code === 'UNAUTHENTICATED',
     )
 
   if (isUnauthorized && typeof window !== 'undefined') {

@@ -1,0 +1,37 @@
+id: 2026-05-15-clean-web-lint
+title: Clean Web Lint
+priority: normal
+area: web
+type: correctness
+delivery: code-patch
+
+intent: >
+  The web lint target should complete with no warnings for application source and
+  route tests. App code should avoid loose any casts, non-null assertions, unused
+  variables, and inaccessible emoji while route specs may keep intentionally loose
+  mock plumbing through a scoped test-file ESLint override.
+
+why: >
+  Downstream projects use this repository as a starter template, so a warning-free
+  lint baseline makes future lint regressions visible instead of normalizing noisy
+  generated starter output.
+
+affectedPaths:
+  - eslint.config.mjs
+  - apps/web/eslint.config.mjs
+  - apps/web/app/**
+  - apps/web/tests/**
+
+packageReleases: []
+
+skipIf:
+  - Project has intentionally different web lint rules and already reports no warnings from pnpm lint.
+
+verification:
+  - pnpm lint
+  - pnpm nx lint web --skip-nx-cache
+
+agentHints:
+  - Preserve strict linting for app source while keeping the spec-file override scoped to apps/web/tests/**/*.spec.ts(x).
+  - Prefer replacing any casts in route code with generated GraphQL SDK types or small local helper types.
+  - Keep the React Router server entry signature intact and explicitly consume unused framework parameters when required.

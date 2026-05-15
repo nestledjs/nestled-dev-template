@@ -11,6 +11,10 @@ import {
 import { gql } from '@apollo/client'
 import { useQuery, useMutation } from '@apollo/client/react'
 
+type CacheReference = {
+  __ref?: string
+}
+
 interface NotificationSetting {
   key: string
   title: string
@@ -143,13 +147,15 @@ export default function NotificationsSettings() {
             },
           },
           update: (cache, { data }) => {
-            if (data?.updateUserPreference) {
+            const updatedPreference = data?.updateUserPreference
+            if (updatedPreference) {
+              const updatedPreferenceId = cache.identify(updatedPreference)
               // Update the cache directly
               cache.modify({
                 fields: {
                   userPreferences(existingPreferences = []) {
-                    return existingPreferences.map((pref: any) =>
-                      pref.__ref === cache.identify(data.updateUserPreference!)
+                    return (existingPreferences as CacheReference[]).map(pref =>
+                      pref.__ref === updatedPreferenceId
                         ? { ...pref, value: String(newValue) }
                         : pref,
                     )

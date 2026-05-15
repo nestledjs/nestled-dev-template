@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router'
 import {
   CheckCircleIcon,
@@ -55,14 +55,7 @@ export default function AcceptInvitation() {
 
   const invitationDetails = inviteData?.getInvitationDetails
 
-  // If user is already logged in, accept the invitation automatically
-  useEffect(() => {
-    if (user && token && invitationDetails) {
-      acceptInvitationAsync()
-    }
-  }, [user, token, invitationDetails])
-
-  async function acceptInvitationAsync() {
+  const acceptInvitationAsync = useCallback(async () => {
     if (!token) return
 
     try {
@@ -81,7 +74,14 @@ export default function AcceptInvitation() {
       setFormError((error as Error)?.message || 'Failed to accept invitation. Please try again.')
       setIsProcessing(false)
     }
-  }
+  }, [acceptInvitation, navigate, token])
+
+  // If user is already logged in, accept the invitation automatically
+  useEffect(() => {
+    if (user && token && invitationDetails) {
+      acceptInvitationAsync()
+    }
+  }, [acceptInvitationAsync, invitationDetails, token, user])
 
   async function handleLogin(input: { email: string; password: string; remember?: boolean }) {
     if (!token) return

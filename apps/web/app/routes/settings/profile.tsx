@@ -28,7 +28,13 @@ import {
   type UploadUserAvatarMutation,
   type DeleteFileMutation,
 } from '@nestled-template/shared/sdk'
-import { useApolloClient, useReadQuery, type QueryRef, useLazyQuery, useMutation } from '@apollo/client/react'
+import {
+  useApolloClient,
+  useReadQuery,
+  type QueryRef,
+  useLazyQuery,
+  useMutation,
+} from '@apollo/client/react'
 import { Form } from '@nestledjs/forms'
 import { FormFieldClass } from '@nestledjs/forms-core'
 import { formTheme } from '@nestled-template/shared/styles'
@@ -44,7 +50,10 @@ export const loader = apolloLoader()(({ preloadQuery }) => {
 function validateUsername(username: string): { valid: boolean; error?: string } {
   const cleanedUsername = username.toLowerCase().replaceAll(/[^a-z0-9.]/g, '')
   if (cleanedUsername !== username) {
-    return { valid: false, error: 'Username can only contain lowercase letters, numbers, and periods' }
+    return {
+      valid: false,
+      error: 'Username can only contain lowercase letters, numbers, and periods',
+    }
   }
   if (cleanedUsername.length < 3) {
     return { valid: false, error: 'Username must be at least 3 characters' }
@@ -69,7 +78,7 @@ function getErrorMessage(error: Error): string {
 // Helper function to collect user updates
 function collectUserUpdates(
   values: { firstName?: string; lastName?: string; displayName?: string },
-  user: any,
+  user: MeQuery['me'],
 ): Record<string, string | undefined> {
   const updates: Record<string, string | undefined> = {}
   if (values.firstName !== user?.firstName) updates.firstName = values.firstName
@@ -122,7 +131,10 @@ export default function ProfileSettings() {
   const [emailResendSuccess, setEmailResendSuccess] = useState(false)
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
-  const [avatarMessage, setAvatarMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
+  const [avatarMessage, setAvatarMessage] = useState<{
+    type: 'success' | 'error'
+    text: string
+  } | null>(null)
 
   if (!user) {
     return <div>Loading...</div>
@@ -146,7 +158,10 @@ export default function ProfileSettings() {
       }
     } catch (error) {
       console.error('Avatar upload failed:', error)
-      setAvatarMessage({ type: 'error', text: (error as Error).message || 'Failed to upload avatar' })
+      setAvatarMessage({
+        type: 'error',
+        text: (error as Error).message || 'Failed to upload avatar',
+      })
       setTimeout(() => setAvatarMessage(null), 5000)
     }
   }
@@ -164,7 +179,10 @@ export default function ProfileSettings() {
       setAvatarMessage({ type: 'success', text: 'Avatar removed' })
     } catch (error) {
       console.error('Avatar removal failed:', error)
-      setAvatarMessage({ type: 'error', text: (error as Error).message || 'Failed to remove avatar' })
+      setAvatarMessage({
+        type: 'error',
+        text: (error as Error).message || 'Failed to remove avatar',
+      })
     }
     setTimeout(() => setAvatarMessage(null), 3000)
   }
@@ -312,7 +330,7 @@ export default function ProfileSettings() {
       if (values.displayName && values.displayName !== user?.displayName) {
         const validation = validateUsername(values.displayName)
         if (!validation.valid) {
-          setMessage({ type: 'error', text: validation.error! })
+          setMessage({ type: 'error', text: validation.error ?? 'Invalid username' })
           setLoading(false)
           return
         }

@@ -51,7 +51,10 @@ export default function PublicIndex() {
         </div>
 
         <p className="mt-6 text-sm text-zinc-400">
-          Not your vibe? No worries — this screen is just a placeholder. Make it yours. 💅
+          Not your vibe? No worries — this screen is just a placeholder. Make it yours.{' '}
+          <span role="img" aria-label="nail polish">
+            💅
+          </span>
         </p>
       </div>
     </div>

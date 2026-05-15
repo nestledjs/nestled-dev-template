@@ -675,7 +675,10 @@ export default function SecuritySettings() {
               </button>
 
               <p className="text-xs text-center text-amber-600 dark:text-amber-400">
-                ⚠️ You won't be able to see these codes again!
+                <span role="img" aria-label="warning">
+                  ⚠️
+                </span>{' '}
+                You won't be able to see these codes again!
               </p>
             </div>
           </div>

@@ -313,7 +313,7 @@ export default function AdminAnalyticsPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-zinc-200 dark:divide-white/10 bg-white dark:bg-white/5">
-                  {analytics.topEndpoints.map((endpoint, index: any) => (
+                  {analytics.topEndpoints.map((endpoint, index) => (
                     <tr key={index} className="hover:bg-zinc-50 dark:hover:bg-white/5 transition">
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm font-medium text-zinc-900 dark:text-white font-mono">
@@ -390,7 +390,7 @@ export default function AdminAnalyticsPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-zinc-200 dark:divide-white/10 bg-white dark:bg-white/5">
-                  {analytics.featureUsage.map((feature, index: any) => (
+                  {analytics.featureUsage.map((feature, index) => (
                     <tr key={index} className="hover:bg-zinc-50 dark:hover:bg-white/5 transition">
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm font-medium text-zinc-900 dark:text-white">

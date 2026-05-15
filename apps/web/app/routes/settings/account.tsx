@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useLoaderData, useNavigate } from 'react-router'
+import { useLoaderData } from 'react-router'
 import {
   ArrowDownTrayIcon,
   ArrowsRightLeftIcon,
@@ -32,7 +32,6 @@ export default function AccountSettings() {
   const loaderData = useLoaderData() as { meQueryRef: QueryRef<MeQuery> }
   const { data } = useReadQuery(loaderData.meQueryRef)
   const user = data?.me
-  const navigate = useNavigate()
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const [deleteConfirmText, setDeleteConfirmText] = useState('')
   const [isExporting, setIsExporting] = useState(false)
