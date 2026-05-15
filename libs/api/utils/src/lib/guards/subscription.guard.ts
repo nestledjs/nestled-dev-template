@@ -18,6 +18,15 @@ import { ApiCoreDataAccessService } from '@nestled-template/api/core/data-access
 export class SubscriptionGuard implements CanActivate {
   constructor(private readonly prisma: ApiCoreDataAccessService) {}
 
+  private isWithinGracePeriod(subscription: { stripeCurrentPeriodEnd?: Date | null }): boolean {
+    const gracePeriodDays = 3
+    const currentPeriodEnd = subscription.stripeCurrentPeriodEnd
+    if (!currentPeriodEnd) return false
+    const gracePeriodEnd = new Date(currentPeriodEnd)
+    gracePeriodEnd.setDate(gracePeriodEnd.getDate() + gracePeriodDays)
+    return new Date() <= gracePeriodEnd
+  }
+
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const ctx = GqlExecutionContext.create(context)
     const { req } = ctx.getContext()
@@ -55,19 +64,8 @@ export class SubscriptionGuard implements CanActivate {
     ]
 
     if (!validStatuses.includes(subscription.status)) {
-      // Check if there's a grace period for past_due subscriptions
-      if (subscription.status === SubscriptionStatus.PAST_DUE) {
-        const gracePeriodDays = 3
-        const currentPeriodEnd = subscription.stripeCurrentPeriodEnd
-        if (currentPeriodEnd) {
-          const gracePeriodEnd = new Date(currentPeriodEnd)
-          gracePeriodEnd.setDate(gracePeriodEnd.getDate() + gracePeriodDays)
-
-          if (new Date() <= gracePeriodEnd) {
-            // Still within grace period
-            return true
-          }
-        }
+      if (subscription.status === SubscriptionStatus.PAST_DUE && this.isWithinGracePeriod(subscription)) {
+        return true
       }
 
       throw new HttpException(

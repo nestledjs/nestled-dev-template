@@ -49,6 +49,64 @@ async function isPortInUse(port: number, host: string = 'localhost'): Promise<bo
   })
 }
 
+async function startApiServer(
+  projectRoot: string,
+  testDatabaseUrl: string,
+  port: number,
+  host: string,
+): Promise<ChildProcess> {
+  const apiProcess = spawn('pnpm', ['nx', 'serve', 'api'], {
+    cwd: projectRoot,
+    env: {
+      ...process.env,
+      DATABASE_URL: testDatabaseUrl,
+      PORT: port.toString(),
+      HOST: host,
+      NODE_ENV: 'test',
+    },
+    stdio: ['ignore', 'pipe', 'pipe'],
+  })
+
+  let startupOutput = ''
+  apiProcess.stdout?.on('data', data => {
+    const text = data.toString()
+    startupOutput += text
+    if (
+      text.includes('Nest application successfully started') ||
+      text.includes('listening on') ||
+      text.includes('Application is running')
+    ) {
+      console.log('   ' + text.trim())
+    }
+  })
+
+  apiProcess.stderr?.on('data', data => {
+    const text = data.toString()
+    startupOutput += text
+    if (text.includes('Error') || text.includes('error')) {
+      console.error('   ⚠️  ' + text.trim())
+    }
+  })
+
+  apiProcess.unref()
+  apiProcess.stdout?.unref()
+  apiProcess.stderr?.unref()
+
+  console.log(`⏳ Waiting for API to start...`)
+  try {
+    await waitForPortOpen(port, { host, timeout: 45000 })
+  } catch (portError) {
+    console.error('❌ API server did not start within timeout')
+    console.error('Last output from API server:')
+    console.error(startupOutput.slice(-1000))
+    throw portError
+  }
+
+  await new Promise(resolve => setTimeout(resolve, 2000))
+  console.log('✅ API server started and ready!')
+  return apiProcess
+}
+
 module.exports = async function () {
   // Start services that the app needs to run (e.g. database, docker-compose, etc.).
   console.log('\n🚀 Setting up E2E tests...\n')
@@ -134,67 +192,11 @@ module.exports = async function () {
     console.log(`🚀 Starting API server with test database on ${host}:${port}...`)
 
     try {
-      apiProcess = spawn('pnpm', ['nx', 'serve', 'api'], {
-        cwd: projectRoot,
-        env: {
-          ...process.env,
-          DATABASE_URL: testDatabaseUrl,
-          PORT: port.toString(),
-          HOST: host,
-          NODE_ENV: 'test',
-        },
-        stdio: ['ignore', 'pipe', 'pipe'], // Capture stdout/stderr to debug startup issues
-        // NOTE: NOT using detached:true so that when test process exits, API server dies automatically
-      })
-
-      // Log output for debugging startup issues
-      let startupOutput = ''
-      apiProcess.stdout?.on('data', data => {
-        const text = data.toString()
-        startupOutput += text
-        // Show important startup messages
-        if (
-          text.includes('Nest application successfully started') ||
-          text.includes('listening on') ||
-          text.includes('Application is running')
-        ) {
-          console.log('   ' + text.trim())
-        }
-      })
-
-      apiProcess.stderr?.on('data', data => {
-        const text = data.toString()
-        startupOutput += text
-        // Always show errors
-        if (text.includes('Error') || text.includes('error')) {
-          console.error('   ⚠️  ' + text.trim())
-        }
-      })
-
-      // Unref the process and its stdio streams so they don't keep the parent alive
-      apiProcess.unref()
-      apiProcess.stdout?.unref()
-      apiProcess.stderr?.unref()
+      apiProcess = await startApiServer(projectRoot, testDatabaseUrl, port, host)
 
       // Store process reference for teardown
       globalThis.__API_PROCESS__ = apiProcess
       globalThis.__WE_STARTED_API__ = true
-
-      // Wait for API to be ready
-      console.log(`⏳ Waiting for API to start...`)
-      try {
-        await waitForPortOpen(port, { host, timeout: 45000 })
-      } catch (portError) {
-        console.error('❌ API server did not start within timeout')
-        console.error('Last output from API server:')
-        console.error(startupOutput.slice(-1000)) // Show last 1000 chars
-        throw portError
-      }
-
-      // Give it a moment to fully initialize
-      await new Promise(resolve => setTimeout(resolve, 2000))
-
-      console.log('✅ API server started and ready!')
       globalThis.__SKIP_E2E_TESTS__ = false
     } catch (error) {
       console.error('❌ Failed to start API server')

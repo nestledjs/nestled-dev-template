@@ -73,11 +73,8 @@ export const WebUiButton = ({
 
   const roundedStyles = rounded ? 'rounded-full' : 'rounded-md'
 
-  const iconComponent =
-    icon &&
-    cloneElement(icon, {
-      className: `${iconLocation === 'left' ? '-ml-2' : '-mr-0.5'} h-6 w-6`,
-    })
+  const iconClass = iconLocation === 'left' ? '-ml-2 h-6 w-6' : '-mr-0.5 h-6 w-6'
+  const iconComponent = icon && cloneElement(icon, { className: iconClass })
 
   return linkTo ? (
     <Link

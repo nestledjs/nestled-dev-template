@@ -48,6 +48,9 @@ export function WebUiSimpleListItem(props: WebUiSimpleListItemProps) {
     <div
       className={cn(globalClasses, selectedClasses, 'border-2 border-zinc-100')}
       onClick={props?.onClick}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); props?.onClick?.() } }}
     >
       <InnerList {...props} />
     </div>
@@ -55,6 +58,9 @@ export function WebUiSimpleListItem(props: WebUiSimpleListItemProps) {
     <li
       className={cn(globalClasses, selectedClasses, 'border-2 border-zinc-100')}
       onClick={props?.onClick}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); props?.onClick?.() } }}
     >
       <InnerList {...props} />
     </li>

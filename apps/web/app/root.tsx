@@ -49,76 +49,82 @@ function clearSessionCookieHeaders(cookieName: string): Headers {
   return headers
 }
 
+function buildLoginRedirect(pathname: string) {
+  if (pathname && pathname !== '/') {
+    return '/login?return_url=' + encodeURIComponent(pathname)
+  }
+  return '/login'
+}
+
+function buildAuthRedirectResponse(cookieName: string, loginRedirect: string) {
+  const headers = clearSessionCookieHeaders(cookieName)
+  headers.set('Location', loginRedirect)
+  return new Response(null, { status: 302, headers })
+}
+
+function handlePrivateRoutePreloadError(
+  error: unknown,
+  cookieName: string,
+  loginRedirect: string,
+  theme: string,
+) {
+  console.error('[Root Loader] Error during Me query preload:', error)
+  const errorMessage = (error as Error)?.message || ''
+
+  if (isNetworkError(error)) {
+    console.log('[Root Loader] Network error detected, returning serviceUnavailable')
+    return { serviceUnavailable: true, theme }
+  }
+
+  if (errorMessage.includes('Unauthorized') || errorMessage.includes('401')) {
+    console.log('[Root Loader] Auth error detected, redirecting to login')
+    return buildAuthRedirectResponse(cookieName, loginRedirect)
+  }
+
+  console.log('[Root Loader] Unknown error, returning serviceUnavailable as fallback')
+  return { serviceUnavailable: true, theme }
+}
+
 export const loader = apolloLoader()(({ preloadQuery, request }) => {
   const url = new URL(request.url)
   const cookieName = getSessionCookieName()
   const token = getCookie(request.headers, cookieName)
   const isAuthenticated = token && !isJwtExpired(token)
-
-  // Get theme preference from cookie, default to 'dark' if not set
   const theme = getCookie(request.headers, 'theme') || 'dark'
 
-  // Define private routes that require authentication
   const isPrivateRoute =
     url.pathname.startsWith('/members') ||
     url.pathname.startsWith('/admin') ||
     url.pathname.startsWith('/leaders')
 
-  // If accessing a private route without authentication, redirect to login
   if (isPrivateRoute && !isAuthenticated) {
-    let loginRedirect = '/login'
-    if (url.pathname && url.pathname !== '/') {
-      loginRedirect += '?return_url=' + encodeURIComponent(url.pathname)
-    }
-    const headers = clearSessionCookieHeaders(cookieName)
-    headers.set('Location', loginRedirect)
-    return new Response(null, { status: 302, headers })
+    return buildAuthRedirectResponse(cookieName, buildLoginRedirect(url.pathname))
   }
 
-  // If accessing a private route with authentication, preload the Me query
   if (isPrivateRoute && isAuthenticated) {
     try {
       const meQueryRef = preloadQuery<MeQuery>(Me)
       return { meQueryRef, theme }
     } catch (error) {
-      console.error('[Root Loader] Error during Me query preload:', error)
-      const errorMessage = (error as Error)?.message || ''
-
-      let loginRedirect = '/login'
-      if (url.pathname && url.pathname !== '/') {
-        loginRedirect += '?return_url=' + encodeURIComponent(url.pathname)
-      }
-
-      if (isNetworkError(error)) {
-        console.log('[Root Loader] Network error detected, returning serviceUnavailable')
-        return { serviceUnavailable: true, theme }
-      }
-
-      if (errorMessage.includes('Unauthorized') || errorMessage.includes('401')) {
-        console.log('[Root Loader] Auth error detected, redirecting to login')
-        const headers = clearSessionCookieHeaders(cookieName)
-        headers.set('Location', loginRedirect)
-        return new Response(null, { status: 302, headers })
-      }
-
-      console.log('[Root Loader] Unknown error, returning serviceUnavailable as fallback')
-      return { serviceUnavailable: true, theme }
+      return handlePrivateRoutePreloadError(
+        error,
+        cookieName,
+        buildLoginRedirect(url.pathname),
+        theme,
+      )
     }
   }
 
-  // For public routes, if authenticated preload Me so user is globally available
-  // Skip on /logout — the session will be invalidated mid-flight, causing useReadQuery to throw
   if (isAuthenticated && !url.pathname.startsWith('/logout')) {
     try {
       const meQueryRef = preloadQuery<MeQuery>(Me)
       return { meQueryRef, theme }
     } catch (error) {
-      // On error for public pages, just continue without user
       console.warn('[Root Loader] Failed to preload Me on public route:', error)
       return { theme }
     }
   }
-  // Not authenticated and not private
+
   return { theme }
 })
 

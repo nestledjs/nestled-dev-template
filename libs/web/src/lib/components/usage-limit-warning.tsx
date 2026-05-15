@@ -3,6 +3,36 @@ import { useLimit, useLimits } from '../hooks/use-plan'
 import { ExclamationTriangleIcon, InformationCircleIcon } from '@heroicons/react/24/outline'
 import { UpgradeModal } from './upgrade-modal'
 
+function usageBorderClass(isAtLimit: boolean, shouldWarn: boolean) {
+  if (isAtLimit) return 'border-red-300 bg-red-50'
+  if (shouldWarn) return 'border-yellow-300 bg-yellow-50'
+  return 'border-gray-200 bg-white'
+}
+
+function usageTextClass(isAtLimit: boolean, shouldWarn: boolean) {
+  if (isAtLimit) return 'text-red-800'
+  if (shouldWarn) return 'text-yellow-800'
+  return 'text-gray-900'
+}
+
+function usageSubTextClass(isAtLimit: boolean, shouldWarn: boolean) {
+  if (isAtLimit) return 'text-red-700'
+  if (shouldWarn) return 'text-yellow-700'
+  return 'text-gray-600'
+}
+
+function usageBarClass(isAtLimit: boolean, shouldWarn: boolean) {
+  if (isAtLimit) return 'bg-red-500'
+  if (shouldWarn) return 'bg-yellow-500'
+  return 'bg-blue-500'
+}
+
+function UsageIcon({ isAtLimit, shouldWarn }: { isAtLimit: boolean; shouldWarn: boolean }) {
+  if (isAtLimit) return <ExclamationTriangleIcon className="mr-3 h-5 w-5 text-red-500" />
+  if (shouldWarn) return <ExclamationTriangleIcon className="mr-3 h-5 w-5 text-yellow-500" />
+  return <InformationCircleIcon className="mr-3 h-5 w-5 text-gray-400" />
+}
+
 interface UsageLimitWarningProps {
   limitKey: string
   currentValue: number
@@ -45,21 +75,15 @@ export function UsageLimitWarning({
 
   return (
     <>
-      <div className={`rounded-lg border p-4 ${isAtLimit ? 'border-red-300 bg-red-50' : shouldWarn ? 'border-yellow-300 bg-yellow-50' : 'border-gray-200 bg-white'}`}>
+      <div className={`rounded-lg border p-4 ${usageBorderClass(isAtLimit, shouldWarn)}`}>
         <div className="flex items-start justify-between">
           <div className="flex items-start">
-            {isAtLimit ? (
-              <ExclamationTriangleIcon className="mr-3 h-5 w-5 text-red-500" />
-            ) : shouldWarn ? (
-              <ExclamationTriangleIcon className="mr-3 h-5 w-5 text-yellow-500" />
-            ) : (
-              <InformationCircleIcon className="mr-3 h-5 w-5 text-gray-400" />
-            )}
+            <UsageIcon isAtLimit={isAtLimit} shouldWarn={shouldWarn} />
             <div className="flex-1">
-              <h4 className={`text-sm font-medium ${isAtLimit ? 'text-red-800' : shouldWarn ? 'text-yellow-800' : 'text-gray-900'}`}>
+              <h4 className={`text-sm font-medium ${usageTextClass(isAtLimit, shouldWarn)}`}>
                 {displayLabel}
               </h4>
-              <p className={`mt-1 text-sm ${isAtLimit ? 'text-red-700' : shouldWarn ? 'text-yellow-700' : 'text-gray-600'}`}>
+              <p className={`mt-1 text-sm ${usageSubTextClass(isAtLimit, shouldWarn)}`}>
                 {currentValue} of {limit} used
                 {!isAtLimit && remaining > 0 && (
                   <span className="ml-1">({remaining} remaining)</span>
@@ -69,7 +93,7 @@ export function UsageLimitWarning({
               {showBar && (
                 <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-gray-200">
                   <div
-                    className={`h-full transition-all ${isAtLimit ? 'bg-red-500' : shouldWarn ? 'bg-yellow-500' : 'bg-blue-500'}`}
+                    className={`h-full transition-all ${usageBarClass(isAtLimit, shouldWarn)}`}
                     style={{ width: `${Math.min(100, percentUsed)}%` }}
                   />
                 </div>

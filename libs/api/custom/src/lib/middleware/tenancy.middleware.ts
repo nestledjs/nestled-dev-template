@@ -13,6 +13,20 @@ export class TenancyMiddleware implements NestMiddleware {
     @Optional() private readonly authCache?: AuthCacheService
   ) {}
 
+  private async resolveOrganizationId(req: Request & { user?: User }): Promise<string | undefined> {
+    const fromHeader = req.headers['x-organization-id'] as string
+    if (fromHeader) return fromHeader
+
+    if (req.user!.activeOrganizationId) return req.user!.activeOrganizationId
+
+    if (this.authCache?.isEnabled()) {
+      const cachedOrgId = await this.authCache.getUserActiveOrganization(req.user!.id)
+      if (cachedOrgId) return cachedOrgId
+    }
+
+    return undefined
+  }
+
   async use(req: Request & { user?: User; organizationContext?: OrganizationContext }, res: Response, next: NextFunction) {
     // Skip if no authenticated user
     if (!req.user) {
@@ -20,21 +34,7 @@ export class TenancyMiddleware implements NestMiddleware {
     }
 
     try {
-      // TIER 1: Try to get organization ID from header (explicit context)
-      let organizationId = req.headers['x-organization-id'] as string
-
-      // TIER 2: Fall back to user's active organization
-      if (!organizationId && req.user.activeOrganizationId) {
-        organizationId = req.user.activeOrganizationId
-      }
-
-      // TIER 3: Try Redis cache for active organization
-      if (!organizationId && this.authCache?.isEnabled()) {
-        const cachedOrgId = await this.authCache.getUserActiveOrganization(req.user.id)
-        if (cachedOrgId) {
-          organizationId = cachedOrgId
-        }
-      }
+      const organizationId = await this.resolveOrganizationId(req)
 
       // If still no organization, skip (some endpoints don't require org context)
       if (!organizationId) {

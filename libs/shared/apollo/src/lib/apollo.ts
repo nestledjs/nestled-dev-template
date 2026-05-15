@@ -89,26 +89,7 @@ function getSessionCookieName(): string {
   return '__session'
 }
 
-// Helper to parse cookies from a cookie header string
-function getCookieFromHeader(cookieHeader: string | null | undefined, name: string): string | null {
-  if (!cookieHeader) return null
-
-  // Parse all cookies and pick the newest JWT by iat if duplicates exist
-  const pairs = cookieHeader.split(';').map(part => part.trim())
-  const values: string[] = []
-  for (const pair of pairs) {
-    const eqIdx = pair.indexOf('=')
-    if (eqIdx === -1) continue
-    const key = pair.substring(0, eqIdx)
-    const val = pair.substring(eqIdx + 1)
-    if (key === name) {
-      values.push(decodeURIComponent(val))
-    }
-  }
-  if (values.length === 0) return null
-  if (values.length === 1) return values[0]
-
-  // If multiple cookies with same name exist, prefer the one with the latest JWT iat
+function pickNewestJwt(values: string[]): string {
   let best: { token: string; iat: number } | null = null
   for (const token of values) {
     try {
@@ -124,6 +105,27 @@ function getCookieFromHeader(cookieHeader: string | null | undefined, name: stri
     }
   }
   return best?.token ?? values[values.length - 1]
+}
+
+// Helper to parse cookies from a cookie header string
+function getCookieFromHeader(cookieHeader: string | null | undefined, name: string): string | null {
+  if (!cookieHeader) return null
+
+  const pairs = cookieHeader.split(';').map(part => part.trim())
+  const values: string[] = []
+  for (const pair of pairs) {
+    const eqIdx = pair.indexOf('=')
+    if (eqIdx === -1) continue
+    const key = pair.substring(0, eqIdx)
+    const val = pair.substring(eqIdx + 1)
+    if (key === name) {
+      values.push(decodeURIComponent(val))
+    }
+  }
+  if (values.length === 0) return null
+  if (values.length === 1) return values[0]
+
+  return pickNewestJwt(values)
 }
 
 function resolveAuthToken(request?: Request, options?: ClientOptions): string | null {

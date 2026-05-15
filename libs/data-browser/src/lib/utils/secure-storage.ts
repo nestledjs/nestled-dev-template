@@ -47,42 +47,36 @@ const sanitizeSortPreference = (value: unknown): { orderBy: string; orderDirecti
   return { orderBy, orderDirection }
 }
 
+const isValidModelName = (name: string): boolean => /^[a-zA-Z_][a-zA-Z0-9_]*$/.test(name)
+
+const isValidModelConfig = (modelConfig: unknown): boolean => {
+  if (!modelConfig || typeof modelConfig !== 'object') return true
+  const cfg = modelConfig as Record<string, unknown>
+  if (cfg.visibleColumns !== undefined && !Array.isArray(cfg.visibleColumns)) return false
+  if (cfg.sortPreference !== undefined) {
+    const sortPref = sanitizeSortPreference(cfg.sortPreference)
+    if (cfg.sortPreference !== null && sortPref === null) return false
+  }
+  if (cfg.searchFields !== undefined && !Array.isArray(cfg.searchFields)) return false
+  return true
+}
+
 // Enhanced validation with security checks
 const validateAdminConfig = (config: unknown): config is AdminConfig => {
   if (!config || typeof config !== 'object') return false
-  
+
   const configObj = config as Record<string, unknown>
-  
-  // Validate version
+
   if (configObj.version !== ADMIN_CONFIG_VERSION) return false
-  
-  // Validate models object
   if (!configObj.models || typeof configObj.models !== 'object') return false
-  
+
   const models = configObj.models as Record<string, unknown>
-  
-  // Validate each model configuration
+
   for (const [modelName, modelConfig] of Object.entries(models)) {
-    // Sanitize model name
-    if (!/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(modelName)) return false
-    
-    if (modelConfig && typeof modelConfig === 'object') {
-      const config = modelConfig as Record<string, unknown>
-      
-      // Validate visible columns if present
-      if (config.visibleColumns !== undefined && !Array.isArray(config.visibleColumns)) return false
-      
-      // Validate sort preference if present
-      if (config.sortPreference !== undefined) {
-        const sortPref = sanitizeSortPreference(config.sortPreference)
-        if (config.sortPreference !== null && sortPref === null) return false
-      }
-      
-      // Validate search fields if present
-      if (config.searchFields !== undefined && !Array.isArray(config.searchFields)) return false
-    }
+    if (!isValidModelName(modelName)) return false
+    if (!isValidModelConfig(modelConfig)) return false
   }
-  
+
   return true
 }
 
