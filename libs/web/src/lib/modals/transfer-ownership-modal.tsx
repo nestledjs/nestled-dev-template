@@ -118,19 +118,21 @@ export default function TransferOwnershipModal({
             </button>
           </div>
 
-          {loading ? (
+          {loading && (
             <div className="text-center py-8">
               <div className="text-sm text-zinc-600 dark:text-zinc-400">
                 Loading organizations...
               </div>
             </div>
-          ) : ownedOrganizations.length === 0 ? (
+          )}
+          {!loading && ownedOrganizations.length === 0 && (
             <div className="text-center py-8">
               <div className="text-sm text-zinc-600 dark:text-zinc-400">
                 You don't own any organizations to transfer.
               </div>
             </div>
-          ) : (
+          )}
+          {!loading && ownedOrganizations.length > 0 && (
             <div className="space-y-4">
               {/* Organization Selection */}
               <div>

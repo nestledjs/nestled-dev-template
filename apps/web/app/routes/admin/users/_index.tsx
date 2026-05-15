@@ -363,20 +363,23 @@ export default function AdminUsersPage() {
 
       {/* Users Table */}
       <div className="rounded-xl border border-zinc-200 dark:border-white/10 bg-white dark:bg-white/5 shadow-sm overflow-hidden backdrop-blur">
-        {loading ? (
+        {loading && (
           <div className="p-12 text-center">
             <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-emerald-600 dark:border-emerald-400 border-r-transparent"></div>
             <p className="mt-4 text-sm text-zinc-600 dark:text-zinc-400">Loading users...</p>
           </div>
-        ) : error ? (
+        )}
+        {!loading && error && (
           <div className="p-12 text-center">
             <p className="text-red-600 dark:text-red-400">Error loading users: {error.message}</p>
           </div>
-        ) : users.length === 0 ? (
+        )}
+        {!loading && !error && users.length === 0 && (
           <div className="p-12 text-center text-zinc-500 dark:text-zinc-400">
             No users found matching your criteria
           </div>
-        ) : (
+        )}
+        {!loading && !error && users.length > 0 && (
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-zinc-200 dark:divide-white/10">
               <thead className="bg-zinc-50 dark:bg-white/5">
@@ -524,11 +527,12 @@ export default function AdminUsersPage() {
 
             {/* Modal Content */}
             <div className="p-6">
-              {loadingDetails ? (
+              {loadingDetails && (
                 <div className="flex items-center justify-center py-12">
                   <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-emerald-600 dark:border-emerald-400 border-r-transparent"></div>
                 </div>
-              ) : userDetails ? (
+              )}
+              {!loadingDetails && userDetails && (
                 <div className="space-y-6">
                   {/* Basic Info */}
                   <div className="grid grid-cols-2 gap-4">
@@ -743,7 +747,8 @@ export default function AdminUsersPage() {
                     </div>
                   )}
                 </div>
-              ) : (
+              )}
+              {!loadingDetails && !userDetails && (
                 <div className="text-center py-8 text-zinc-500 dark:text-zinc-400">
                   Failed to load user details
                 </div>

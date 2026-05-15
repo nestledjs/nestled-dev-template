@@ -53,7 +53,7 @@ function renderStringWithEmbeddedJson(str: string) {
 
   // Use safer regex with possessive quantifier simulation (limit backtracking)
   // Match opening bracket/brace, then up to 5000 chars (reasonable for error messages), then closing
-  const jsonRegex = /([\[{][\s\S]{0,5000}?[\]}])/g
+  const jsonRegex = /([[{][\s\S]{0,5000}?[}\]])/g
   const parts: (string | object)[] = []
   let lastIndex = 0
   let match

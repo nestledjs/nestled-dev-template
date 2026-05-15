@@ -109,21 +109,8 @@ export class McpOAuthController {
       return res.redirect(`${siteUrl}/login?redirect=${encodeURIComponent(authorizeUrl)}`)
     }
 
-    let organizationId: string | null = null
-
-    if (orgId) {
-      const isMember = await this.oauth.validateOrgMembership(userId, orgId)
-      if (!isMember) {
-        return res.status(400).json({ error: 'invalid_request', error_description: 'Not a member of that organization' })
-      }
-      organizationId = orgId
-    } else {
-      const orgCount = await this.oauth.countUserOrganizations(userId)
-      if (orgCount > 1) {
-        return res.redirect(`${siteUrl}/mcp-connect?back=${encodeURIComponent(authorizeUrl)}`)
-      }
-      organizationId = await this.oauth.resolveOrganizationId(userId)
-    }
+    const organizationId = await this.resolveOrganizationId(userId, orgId, siteUrl, authorizeUrl, res)
+    if (organizationId === null) return
 
     const code = this.oauth.createAuthCode({
       userId,
@@ -138,6 +125,31 @@ export class McpOAuthController {
     const params = new URLSearchParams({ code })
     if (state) params.set('state', state)
     return res.redirect(`${redirectUri}?${params.toString()}`)
+  }
+
+  private async resolveOrganizationId(
+    userId: string,
+    orgId: string | undefined,
+    siteUrl: string,
+    authorizeUrl: string,
+    res: Response,
+  ): Promise<string | null> {
+    if (orgId) {
+      const isMember = await this.oauth.validateOrgMembership(userId, orgId)
+      if (!isMember) {
+        res.status(400).json({ error: 'invalid_request', error_description: 'Not a member of that organization' })
+        return null
+      }
+      return orgId
+    }
+
+    const orgCount = await this.oauth.countUserOrganizations(userId)
+    if (orgCount > 1) {
+      res.redirect(`${siteUrl}/mcp-connect?back=${encodeURIComponent(authorizeUrl)}`)
+      return null
+    }
+
+    return this.oauth.resolveOrganizationId(userId)
   }
 
   /** OAuth 2.0 Token Endpoint — exchanges auth code for an API token */

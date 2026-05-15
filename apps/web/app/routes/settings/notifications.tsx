@@ -8,11 +8,29 @@ import {
   type CreateUserPreferenceMutation,
   type UpdateUserPreferenceMutation,
 } from '@nestled-template/shared/sdk'
-import { gql } from '@apollo/client'
+import { gql, type ApolloCache } from '@apollo/client'
 import { useQuery, useMutation } from '@apollo/client/react'
 
 type CacheReference = {
   __ref?: string
+}
+
+function updatePreferencesCache(
+  cache: ApolloCache<unknown>,
+  updatedPreference: { __typename?: string; id: string; value: string },
+) {
+  const updatedPreferenceId = cache.identify(updatedPreference)
+  cache.modify({
+    fields: {
+      userPreferences(existingPreferences = []) {
+        return (existingPreferences as CacheReference[]).map(pref =>
+          pref.__ref === updatedPreferenceId
+            ? { ...pref, value: String(updatedPreference.value) }
+            : pref,
+        )
+      },
+    },
+  })
 }
 
 interface NotificationSetting {
@@ -142,20 +160,9 @@ export default function NotificationsSettings() {
         },
       },
       update: (cache, { data }) => {
-        const updatedPreference = data?.updateUserPreference
-        if (!updatedPreference) return
-        const updatedPreferenceId = cache.identify(updatedPreference)
-        cache.modify({
-          fields: {
-            userPreferences(existingPreferences = []) {
-              return (existingPreferences as CacheReference[]).map(pref =>
-                pref.__ref === updatedPreferenceId
-                  ? { ...pref, value: String(newValue) }
-                  : pref,
-              )
-            },
-          },
-        })
+        if (data?.updateUserPreference) {
+          updatePreferencesCache(cache, data.updateUserPreference)
+        }
       },
     })
   }
