@@ -28,6 +28,17 @@ function generateCsv(items: Record<string, unknown>[], columns: string[]): strin
   return [header, ...rows].join('\r\n')
 }
 
+function findItemsInData(data: Record<string, unknown>, dataPath: string): Record<string, unknown>[] {
+  const direct = data?.[dataPath] as Record<string, unknown>[] | undefined
+  if (direct?.length) return direct
+  for (const value of Object.values(data ?? {})) {
+    if (Array.isArray(value) && value.length > 0 && (value[0] as any)?.id) {
+      return value as Record<string, unknown>[]
+    }
+  }
+  return []
+}
+
 function downloadCsv(csv: string, filename: string) {
   const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
   const url = URL.createObjectURL(blob)
@@ -89,17 +100,7 @@ export function ExportButton({
         if (queryError) throw queryError
 
         const anyData = data as Record<string, unknown>
-        let items = (anyData?.[dataPath] as Record<string, unknown>[]) ?? []
-
-        // Fallback: find first array with id-bearing objects
-        if (!items.length) {
-          for (const value of Object.values(anyData ?? {})) {
-            if (Array.isArray(value) && value.length > 0 && (value[0] as any)?.id) {
-              items = value as Record<string, unknown>[]
-              break
-            }
-          }
-        }
+        const items = findItemsInData(anyData, dataPath)
 
         const csv = generateCsv(items, columns)
         const timestamp = new Date().toISOString().slice(0, 10)
@@ -136,6 +137,9 @@ export function ExportButton({
           <div
             className="fixed inset-0 z-40"
             onClick={() => setOpen(false)}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setOpen(false) } }}
           />
 
           {/* Modal */}

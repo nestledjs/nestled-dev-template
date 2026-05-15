@@ -122,95 +122,97 @@ export default function NotificationsSettings() {
     }
   })
 
+  const updateExistingPreference = async (
+    existing: (typeof preferences)[0],
+    newValue: boolean,
+  ) => {
+    await updatePreference({
+      variables: {
+        userPreferenceId: existing.id,
+        input: { value: String(newValue) },
+      },
+      optimisticResponse: {
+        updateUserPreference: {
+          __typename: 'UserPreference',
+          id: existing.id,
+          key: existing.key,
+          value: String(newValue),
+          createdAt: existing.createdAt,
+          updatedAt: new Date().toISOString(),
+        },
+      },
+      update: (cache, { data }) => {
+        const updatedPreference = data?.updateUserPreference
+        if (!updatedPreference) return
+        const updatedPreferenceId = cache.identify(updatedPreference)
+        cache.modify({
+          fields: {
+            userPreferences(existingPreferences = []) {
+              return (existingPreferences as CacheReference[]).map(pref =>
+                pref.__ref === updatedPreferenceId
+                  ? { ...pref, value: String(newValue) }
+                  : pref,
+              )
+            },
+          },
+        })
+      },
+    })
+  }
+
+  const createNewPreference = async (key: string, newValue: boolean) => {
+    await createPreference({
+      variables: {
+        input: {
+          key,
+          value: String(newValue),
+        },
+      },
+      optimisticResponse: {
+        createUserPreference: {
+          __typename: 'UserPreference',
+          id: `temp-${Date.now()}`,
+          key,
+          value: String(newValue),
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        },
+      },
+      update: (cache, { data }) => {
+        if (!data?.createUserPreference) return
+        cache.modify({
+          fields: {
+            userPreferences(existingPreferences = []) {
+              const newPrefRef = cache.writeFragment({
+                data: data.createUserPreference,
+                fragment: gql`
+                  fragment NewUserPreference on UserPreference {
+                    id
+                    key
+                    value
+                    createdAt
+                    updatedAt
+                  }
+                `,
+              })
+              return [...existingPreferences, newPrefRef]
+            },
+          },
+        })
+      },
+    })
+  }
+
   const toggleNotification = async (key: string, currentValue: boolean) => {
     const newValue = !currentValue
 
     try {
-      // Check if preference exists
       const existing = preferences.find(p => p.key === key)
-
       if (existing) {
-        // Update existing preference with optimistic response
-        await updatePreference({
-          variables: {
-            userPreferenceId: existing.id,
-            input: { value: String(newValue) },
-          },
-          optimisticResponse: {
-            updateUserPreference: {
-              __typename: 'UserPreference',
-              id: existing.id,
-              key: existing.key,
-              value: String(newValue),
-              createdAt: existing.createdAt,
-              updatedAt: new Date().toISOString(),
-            },
-          },
-          update: (cache, { data }) => {
-            const updatedPreference = data?.updateUserPreference
-            if (updatedPreference) {
-              const updatedPreferenceId = cache.identify(updatedPreference)
-              // Update the cache directly
-              cache.modify({
-                fields: {
-                  userPreferences(existingPreferences = []) {
-                    return (existingPreferences as CacheReference[]).map(pref =>
-                      pref.__ref === updatedPreferenceId
-                        ? { ...pref, value: String(newValue) }
-                        : pref,
-                    )
-                  },
-                },
-              })
-            }
-          },
-        })
+        await updateExistingPreference(existing, newValue)
       } else {
-        // Create new preference with optimistic response
-        await createPreference({
-          variables: {
-            input: {
-              key,
-              value: String(newValue),
-            },
-          },
-          optimisticResponse: {
-            createUserPreference: {
-              __typename: 'UserPreference',
-              id: `temp-${Date.now()}`,
-              key,
-              value: String(newValue),
-              createdAt: new Date().toISOString(),
-              updatedAt: new Date().toISOString(),
-            },
-          },
-          update: (cache, { data }) => {
-            if (data?.createUserPreference) {
-              // Update the cache to include the new preference
-              cache.modify({
-                fields: {
-                  userPreferences(existingPreferences = []) {
-                    const newPrefRef = cache.writeFragment({
-                      data: data.createUserPreference,
-                      fragment: gql`
-                        fragment NewUserPreference on UserPreference {
-                          id
-                          key
-                          value
-                          createdAt
-                          updatedAt
-                        }
-                      `,
-                    })
-                    return [...existingPreferences, newPrefRef]
-                  },
-                },
-              })
-            }
-          },
-        })
+        await createNewPreference(key, newValue)
       }
-
       showSuccess('Notification preferences saved!')
     } catch (error) {
       showError((error as Error)?.message ?? 'Failed to save preferences')

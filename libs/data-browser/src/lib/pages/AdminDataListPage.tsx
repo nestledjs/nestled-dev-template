@@ -417,6 +417,25 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
     },
   }
 
+  // Helper: extract items array from GraphQL response data
+  const extractItems = useCallback((anyData: any, dataPath: string): any[] => {
+    let processedItems = dataPath && anyData[dataPath] ? anyData[dataPath] : []
+    if (!processedItems || processedItems.length === 0) {
+      for (const [, value] of Object.entries(anyData)) {
+        if (Array.isArray(value) && (value as any[]).length > 0 && (value as any[])[0]?.id) {
+          processedItems = value
+          break
+        }
+      }
+    }
+    return processedItems
+  }, [])
+
+  // Helper: filter items to valid records
+  const filterValidItems = useCallback((items: any[]): any[] => {
+    return items.filter((item) => item && typeof item === 'object' && item.id)
+  }, [])
+
   // Main GraphQL query with comprehensive error handling
   const { data, loading, error, networkStatus, refetch } = useQuery(query ?? (sdk as any).__AdminUsersDocument, {
     variables,
@@ -432,20 +451,6 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
 
   // Comprehensive data validation and error handling
   const { validatedItems, validatedPagination, dataError } = useMemo(() => {
-    // Handle GraphQL errors
-    if (error) {
-      // Check for specific error types
-      const apolloError = error as any
-      if (apolloError.networkError) {
-        // Network error occurred
-      }
-
-      if (apolloError.graphQLErrors?.length > 0) {
-        // GraphQL errors occurred
-      }
-    }
-
-    // If no data available, return empty state
     if (!data) {
       return {
         validatedItems: [],
@@ -456,24 +461,10 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
 
     try {
       const anyData = data as any
-      let processedItems = dataPath && anyData[dataPath] ? anyData[dataPath] : []
       const processedPagination =
         paginationPath && anyData[paginationPath] ? anyData[paginationPath] : undefined
+      const processedItems = extractItems(anyData, dataPath)
 
-      // Fallback: if no items found, try to find array data in the response
-      if (!processedItems || processedItems.length === 0) {
-        for (const [key, value] of Object.entries(anyData)) {
-          if (Array.isArray(value)) {
-            // If this looks like the right data (first item has an 'id' field), use it
-            if (value.length > 0 && value[0]?.id) {
-              processedItems = value
-              break
-            }
-          }
-        }
-      }
-
-      // Validate items array
       if (!Array.isArray(processedItems)) {
         return {
           validatedItems: [],
@@ -482,21 +473,8 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
         }
       }
 
-      // Validate and filter each item
-      const filteredItems = processedItems.filter((item, index) => {
-        if (!item || typeof item !== 'object') {
-          return false
-        }
-
-        if (!item.id) {
-          return false
-        }
-
-        return true
-      })
-
       return {
-        validatedItems: filteredItems,
+        validatedItems: filterValidItems(processedItems),
         validatedPagination: processedPagination,
         dataError: null,
       }
@@ -507,7 +485,7 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
         dataError: err instanceof Error ? err : new Error('Unknown data processing error'),
       }
     }
-  }, [data, dataPath, paginationPath, error])
+  }, [data, dataPath, paginationPath, error, extractItems, filterValidItems])
 
   const items = validatedItems
   const pagination = validatedPagination

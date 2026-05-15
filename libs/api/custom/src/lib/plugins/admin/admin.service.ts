@@ -9,10 +9,7 @@ export class AdminService {
 
   constructor(private readonly prisma: ApiCoreDataAccessService) {}
 
-  /**
-   * Get filtered and paginated list of users for admin panel
-   */
-  async getUsers(filters: AdminUserFiltersInput): Promise<AdminUsersResponse> {
+  private buildUserWhereClause(filters: AdminUserFiltersInput): any {
     const {
       search,
       organizationId,
@@ -24,16 +21,10 @@ export class AdminService {
       registeredBefore,
       lastLoginAfter,
       lastLoginBefore,
-      skip = 0,
-      take = 50,
-      sortBy = 'createdAt',
-      sortOrder = 'desc',
     } = filters
 
-    // Build where clause
     const where: any = {}
 
-    // Text search across email and name
     if (search) {
       where.OR = [
         { id: { contains: search, mode: 'insensitive' } },
@@ -43,55 +34,52 @@ export class AdminService {
       ]
     }
 
-    // Organization filter
     if (organizationId) {
-      where.organizations = {
-        some: { organizationId },
-      }
+      where.organizations = { some: { organizationId } }
     }
 
-    // Super admin filter
     if (isSuperAdmin !== undefined) {
       where.isSuperAdmin = isSuperAdmin
     }
 
-    // Email verified filter
     if (emailVerified !== undefined) {
-      where.emails = {
-        some: { verified: emailVerified, primary: true },
-      }
+      where.emails = { some: { verified: emailVerified, primary: true } }
     }
 
-    // 2FA filter
     if (twoFactorEnabled !== undefined) {
       where.twoFactorEnabled = twoFactorEnabled
     }
 
-    // Account locked filter
     if (accountLocked !== undefined) {
       if (accountLocked) {
         where.lockedUntil = { gt: new Date() }
       } else {
-        where.OR = [
-          { lockedUntil: null },
-          { lockedUntil: { lte: new Date() } },
-        ]
+        where.OR = [{ lockedUntil: null }, { lockedUntil: { lte: new Date() } }]
       }
     }
 
-    // Registration date filters
     if (registeredAfter || registeredBefore) {
       where.createdAt = {}
       if (registeredAfter) where.createdAt.gte = registeredAfter
       if (registeredBefore) where.createdAt.lte = registeredBefore
     }
 
-    // Last login filters
     if (lastLoginAfter || lastLoginBefore) {
       where.lastSuccessfulLogin = {}
       if (lastLoginAfter) where.lastSuccessfulLogin.gte = lastLoginAfter
       if (lastLoginBefore) where.lastSuccessfulLogin.lte = lastLoginBefore
     }
+
+    return where
+  }
+
+  /**
+   * Get filtered and paginated list of users for admin panel
+   */
+  async getUsers(filters: AdminUserFiltersInput): Promise<AdminUsersResponse> {
+    const { skip = 0, take = 50, sortBy = 'createdAt', sortOrder = 'desc' } = filters
+
+    const where = this.buildUserWhereClause(filters)
 
     // Build orderBy
     const orderBy: any = {}

@@ -103,6 +103,11 @@ export function WebUiDataTable(props: WebUiDataTableProps) {
       .join(' ')
   }
 
+  function headerThClass(index: number) {
+    if (index === 0) return 'py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6'
+    return 'hidden px-3 py-3.5 text-left text-sm font-semibold text-gray-900 lg:table-cell'
+  }
+
   function handleSort(fieldName: string) {
     const isCurrentSortField = props?.sort?.orderBy === fieldName
     props?.setSort?.({
@@ -138,85 +143,30 @@ export function WebUiDataTable(props: WebUiDataTableProps) {
                 <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">
                   <span className="sr-only">Edit</span>
                 </th>
-                {props?.fields?.map((field, index) => {
-                  switch (index) {
-                    case 0:
-                      return (
-                        <th
-                          key={index}
-                          scope="col"
-                          className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6"
-                        >
-                          <button
-                            type="button"
-                            onClick={() => handleSort(field)}
-                            className="flex justify-between items-center w-full text-left hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500 rounded px-2 py-1 -mx-2 -my-1"
-                            aria-label={`Sort by ${formatFieldName(props.fields[index])}`}
-                            aria-sort={
-                              props.sort?.orderBy === field
-                                ? props.sort.orderDirection === 'asc'
-                                  ? 'ascending'
-                                  : 'descending'
-                                : 'none'
-                            }
-                          >
-                            <span>{formatFieldName(props.fields[index])}</span>
-                            <OrderDirectionIcon fieldName={props.fields[index]} />
-                          </button>
-                        </th>
-                      )
-                    case props.fields.length - 1:
-                      return (
-                        <th
-                          key={index}
-                          scope="col"
-                          className="hidden px-3 py-3.5 text-left text-sm font-semibold text-gray-900 lg:table-cell"
-                        >
-                          <button
-                            type="button"
-                            onClick={() => handleSort(field)}
-                            className="flex justify-between items-center w-full text-left hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500 rounded px-2 py-1 -mx-2 -my-1"
-                            aria-label={`Sort by ${formatFieldName(props.fields[index])}`}
-                            aria-sort={
-                              props.sort?.orderBy === field
-                                ? props.sort.orderDirection === 'asc'
-                                  ? 'ascending'
-                                  : 'descending'
-                                : 'none'
-                            }
-                          >
-                            <span>{formatFieldName(props.fields[index])}</span>
-                            <OrderDirectionIcon fieldName={props.fields[index]} />
-                          </button>
-                        </th>
-                      )
-                    default:
-                      return (
-                        <th
-                          key={index}
-                          scope="col"
-                          className="hidden px-3 py-3.5 text-left text-sm font-semibold text-gray-900 lg:table-cell"
-                        >
-                          <button
-                            type="button"
-                            onClick={() => handleSort(field)}
-                            className="flex justify-between items-center w-full text-left hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500 rounded px-2 py-1 -mx-2 -my-1"
-                            aria-label={`Sort by ${formatFieldName(props.fields[index])}`}
-                            aria-sort={
-                              props.sort?.orderBy === field
-                                ? props.sort.orderDirection === 'asc'
-                                  ? 'ascending'
-                                  : 'descending'
-                                : 'none'
-                            }
-                          >
-                            <span>{formatFieldName(props.fields[index])}</span>
-                            <OrderDirectionIcon fieldName={props.fields[index]} />
-                          </button>
-                        </th>
-                      )
-                  }
-                })}
+                {props?.fields?.map((field, index) => (
+                  <th
+                    key={index}
+                    scope="col"
+                    className={headerThClass(index)}
+                  >
+                    <button
+                      type="button"
+                      onClick={() => handleSort(field)}
+                      className="flex justify-between items-center w-full text-left hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500 rounded px-2 py-1 -mx-2 -my-1"
+                      aria-label={`Sort by ${formatFieldName(props.fields[index])}`}
+                      aria-sort={
+                        props.sort?.orderBy === field
+                          ? props.sort.orderDirection === 'asc'
+                            ? 'ascending'
+                            : 'descending'
+                          : 'none'
+                      }
+                    >
+                      <span>{formatFieldName(props.fields[index])}</span>
+                      <OrderDirectionIcon fieldName={props.fields[index]} />
+                    </button>
+                  </th>
+                ))}
                 {/* Removed trailing Edit column */}
               </tr>
             </thead>
@@ -322,6 +272,9 @@ export function WebUiDataTable(props: WebUiDataTableProps) {
                   onClick={() => {
                     props.setSkip?.((props?.pagination?.skip ?? 0) - (props?.pagination?.take ?? 0))
                   }}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); props.setSkip?.((props?.pagination?.skip ?? 0) - (props?.pagination?.take ?? 0)) } }}
                   className="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
                 >
                   Previous
@@ -332,6 +285,9 @@ export function WebUiDataTable(props: WebUiDataTableProps) {
                   onClick={() => {
                     props.setSkip?.((props?.pagination?.skip ?? 0) + (props?.pagination?.take ?? 0))
                   }}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); props.setSkip?.((props?.pagination?.skip ?? 0) + (props?.pagination?.take ?? 0)) } }}
                   className="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
                 >
                   Next

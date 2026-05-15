@@ -70,6 +70,9 @@ export function WebUiEditableText({
         <p
           className={`cursor-pointer ${isTextEmpty(currentText ?? '') ? 'bg-amber-200 p-2' : ''}`}
           onClick={() => setIsEditing(true)}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setIsEditing(true) } }}
         >
           {isTextEmpty(currentText ?? '') ? defaultText : currentText}
         </p>

@@ -11,28 +11,63 @@ import {
 } from '@heroicons/react/24/outline'
 import { cn } from '@nestled-template/shared/utils'
 
+function formatNumber(num: number | null | undefined) {
+  if (num === null || num === undefined) return '0'
+  return num.toLocaleString()
+}
+
+function formatPercent(num: number | null | undefined) {
+  if (num === null || num === undefined) return '0%'
+  return `${num.toFixed(1)}%`
+}
+
+function formatDuration(ms: number | null | undefined) {
+  if (ms === null || ms === undefined) return '0ms'
+  if (ms < 1000) return `${ms.toFixed(0)}ms`
+  return `${(ms / 1000).toFixed(2)}s`
+}
+
+function MetricChange({
+  change,
+  suffix,
+}: {
+  change: number | null | undefined
+  suffix: string
+}) {
+  if (change === null || change === undefined) return null
+  const positive = change >= 0
+  return (
+    <div
+      className={cn(
+        'mt-2 flex items-center gap-1 text-sm',
+        positive ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400',
+      )}
+    >
+      {positive ? (
+        <ArrowTrendingUpIcon className="h-4 w-4" />
+      ) : (
+        <ArrowTrendingDownIcon className="h-4 w-4" />
+      )}
+      {formatPercent(Math.abs(change))} {suffix}
+    </div>
+  )
+}
+
+function TableLoadingState({ message }: { message: string }) {
+  return (
+    <div className="p-12 text-center">
+      <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-emerald-600 dark:border-emerald-400 border-r-transparent"></div>
+      <p className="mt-4 text-sm text-zinc-600 dark:text-zinc-400">{message}</p>
+    </div>
+  )
+}
+
 export default function AdminAnalyticsPage() {
   const { data, loading, error, refetch } = useQuery<AdminAnalyticsQuery>(AdminAnalytics, {
     fetchPolicy: 'cache-and-network',
   })
 
   const analytics = data?.adminAnalytics
-
-  const formatNumber = (num: number | null | undefined) => {
-    if (num === null || num === undefined) return '0'
-    return num.toLocaleString()
-  }
-
-  const formatPercent = (num: number | null | undefined) => {
-    if (num === null || num === undefined) return '0%'
-    return `${num.toFixed(1)}%`
-  }
-
-  const formatDuration = (ms: number | null | undefined) => {
-    if (ms === null || ms === undefined) return '0ms'
-    if (ms < 1000) return `${ms.toFixed(0)}ms`
-    return `${(ms / 1000).toFixed(2)}s`
-  }
 
   return (
     <div className="space-y-6">
@@ -107,22 +142,8 @@ export default function AdminAnalyticsPage() {
                 formatNumber(analytics?.dailyActiveUsers)
               )}
             </div>
-            {!loading && analytics?.dauChange !== null && analytics?.dauChange !== undefined && (
-              <div
-                className={cn(
-                  'mt-2 flex items-center gap-1 text-sm',
-                  analytics.dauChange >= 0
-                    ? 'text-green-600 dark:text-green-400'
-                    : 'text-red-600 dark:text-red-400',
-                )}
-              >
-                {analytics.dauChange >= 0 ? (
-                  <ArrowTrendingUpIcon className="h-4 w-4" />
-                ) : (
-                  <ArrowTrendingDownIcon className="h-4 w-4" />
-                )}
-                {formatPercent(Math.abs(analytics.dauChange))} vs yesterday
-              </div>
+            {!loading && (
+              <MetricChange change={analytics?.dauChange} suffix="vs yesterday" />
             )}
           </div>
 
@@ -141,22 +162,8 @@ export default function AdminAnalyticsPage() {
                 formatNumber(analytics?.monthlyActiveUsers)
               )}
             </div>
-            {!loading && analytics?.mauChange !== null && analytics?.mauChange !== undefined && (
-              <div
-                className={cn(
-                  'mt-2 flex items-center gap-1 text-sm',
-                  analytics.mauChange >= 0
-                    ? 'text-green-600 dark:text-green-400'
-                    : 'text-red-600 dark:text-red-400',
-                )}
-              >
-                {analytics.mauChange >= 0 ? (
-                  <ArrowTrendingUpIcon className="h-4 w-4" />
-                ) : (
-                  <ArrowTrendingDownIcon className="h-4 w-4" />
-                )}
-                {formatPercent(Math.abs(analytics.mauChange))} vs last month
-              </div>
+            {!loading && (
+              <MetricChange change={analytics?.mauChange} suffix="vs last month" />
             )}
           </div>
 
@@ -285,10 +292,7 @@ export default function AdminAnalyticsPage() {
         </h3>
         <div className="rounded-xl border border-zinc-200 dark:border-white/10 bg-white dark:bg-white/5 shadow-sm overflow-hidden backdrop-blur">
           {loading ? (
-            <div className="p-12 text-center">
-              <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-emerald-600 dark:border-emerald-400 border-r-transparent"></div>
-              <p className="mt-4 text-sm text-zinc-600 dark:text-zinc-400">Loading endpoints...</p>
-            </div>
+            <TableLoadingState message="Loading endpoints..." />
           ) : !analytics?.topEndpoints || analytics.topEndpoints.length === 0 ? (
             <div className="p-12 text-center text-zinc-500 dark:text-zinc-400">
               No endpoint data available
@@ -360,12 +364,7 @@ export default function AdminAnalyticsPage() {
         </h3>
         <div className="rounded-xl border border-zinc-200 dark:border-white/10 bg-white dark:bg-white/5 shadow-sm overflow-hidden backdrop-blur">
           {loading ? (
-            <div className="p-12 text-center">
-              <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-emerald-600 dark:border-emerald-400 border-r-transparent"></div>
-              <p className="mt-4 text-sm text-zinc-600 dark:text-zinc-400">
-                Loading feature usage...
-              </p>
-            </div>
+            <TableLoadingState message="Loading feature usage..." />
           ) : !analytics?.featureUsage || analytics.featureUsage.length === 0 ? (
             <div className="p-12 text-center text-zinc-500 dark:text-zinc-400">
               No feature usage data available

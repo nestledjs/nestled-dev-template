@@ -91,6 +91,32 @@ function renderStringWithEmbeddedJson(str: string) {
   )
 }
 
+function renderPretty(obj: any): React.ReactNode {
+  if (typeof obj === 'object' && obj !== null) {
+    return (
+      <pre className="bg-gray-50 rounded border border-gray-200 p-3 overflow-x-auto text-left text-xs font-mono mt-2 max-h-64 whitespace-pre-wrap">
+        {JSON5.stringify(obj, null, 2)}
+      </pre>
+    )
+  }
+  if (typeof obj === 'string') {
+    try {
+      const parsed = JSON5.parse(obj)
+      if (typeof parsed === 'object' && parsed !== null) {
+        return (
+          <pre className="bg-gray-50 rounded border border-gray-200 p-3 overflow-x-auto text-left text-xs font-mono mt-2 max-h-64 whitespace-pre-wrap">
+            {JSON5.stringify(parsed, null, 2)}
+          </pre>
+        )
+      }
+    } catch {
+      return renderStringWithEmbeddedJson(obj)
+    }
+    return <span className="font-mono text-xs text-gray-700">{obj}</span>
+  }
+  return <span className="font-mono text-xs text-gray-700">{String(obj)}</span>
+}
+
 export function ErrorBoundaryUi({ error }: { error: Error }) {
   // Log the full error object for debugging
   console.error('Route ErrorBoundary caught:', error)
@@ -98,35 +124,6 @@ export function ErrorBoundaryUi({ error }: { error: Error }) {
   // Detect aggregate error by checking for an 'errors' array
   const isAggregate = Array.isArray((error as any).errors)
   const errors = isAggregate ? (error as any).errors : [error]
-
-  // Helper to pretty-print objects/arrays or parseable JSON strings, and extract embedded JSON from strings
-  function renderPretty(obj: any) {
-    if (typeof obj === 'object' && obj !== null) {
-      return (
-        <pre className="bg-gray-50 rounded border border-gray-200 p-3 overflow-x-auto text-left text-xs font-mono mt-2 max-h-64 whitespace-pre-wrap">
-          {JSON5.stringify(obj, null, 2)}
-        </pre>
-      )
-    }
-    if (typeof obj === 'string') {
-      // Try to parse as JSON5
-      try {
-        const parsed = JSON5.parse(obj)
-        if (typeof parsed === 'object' && parsed !== null) {
-          return (
-            <pre className="bg-gray-50 rounded border border-gray-200 p-3 overflow-x-auto text-left text-xs font-mono mt-2 max-h-64 whitespace-pre-wrap">
-              {JSON5.stringify(parsed, null, 2)}
-            </pre>
-          )
-        }
-      } catch {
-        // Not pure JSON, try to extract embedded JSON or invocation object
-        return renderStringWithEmbeddedJson(obj)
-      }
-      return <span className="font-mono text-xs text-gray-700">{obj}</span>
-    }
-    return <span className="font-mono text-xs text-gray-700">{String(obj)}</span>
-  }
 
   return (
     <div className="flex justify-center items-center min-h-[60vh]">

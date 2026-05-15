@@ -152,6 +152,261 @@ function findForeignKeyFieldName(
 }
 
 /**
+ * Normalize a date/datetime field's initial value to the expected string format
+ */
+function normalizeDateInitialValue(value: unknown, fieldType: string): unknown {
+  if (!(value instanceof Date) && !(value && typeof value === 'string')) return value
+  try {
+    const dateValue = value instanceof Date ? value : new Date(value as string)
+    if (fieldType === 'date') return dateValue.toISOString().split('T')[0]
+    return dateValue.toISOString().substring(0, 16)
+  } catch {
+    return ''
+  }
+}
+
+/**
+ * Derive the initial value for a form field from the current item
+ */
+function getFieldInitialValue(field: any, currentItem: any, operation: string): unknown {
+  let initialValue = currentItem && operation === 'update' ? currentItem[field.name] : undefined
+
+  const fieldTypeLower = field.type.toLowerCase()
+  if (fieldTypeLower === 'datetime' || fieldTypeLower === 'date') {
+    initialValue = normalizeDateInitialValue(initialValue, fieldTypeLower)
+  }
+
+  if (initialValue && typeof initialValue === 'object' && !Array.isArray(initialValue) && field.relationName) {
+    const rel = initialValue as Record<string, unknown>
+    initialValue = rel.id && typeof rel.id === 'string' ? rel.id : ''
+  }
+
+  if (initialValue === null && fieldTypeLower !== 'boolean') {
+    initialValue = ''
+  }
+
+  return initialValue
+}
+
+/**
+ * Build a select-options array from enum string values
+ */
+function buildEnumSelectOptions(values: string[]): Array<{ value: string; label: string }> {
+  return values.map(value => ({
+    value,
+    label: value.replace(/_/g, ' ').toLowerCase().replace(/^./, (s: string) => s.toUpperCase()),
+  }))
+}
+
+/**
+ * Merge query option results into an existing options list, avoiding duplicates, then sort
+ */
+function mergeAndSortOptions(
+  initialOptions: Array<{ value: string; label: string }>,
+  queryOptions: Array<{ value: string; label: string }>,
+): Array<{ value: string; label: string }> {
+  const merged = [...initialOptions]
+  for (const option of queryOptions) {
+    if (!merged.find(existing => existing.value === option.value)) {
+      merged.push(option)
+    }
+  }
+  merged.sort((a, b) => a.label.localeCompare(b.label))
+  return merged
+}
+
+/**
+ * Build a relation (searchSelectApollo or text fallback) form field
+ */
+function buildRelationFormField(
+  field: any,
+  label: string,
+  options: { label: string; required: boolean },
+  currentItem: any,
+  operation: string,
+  sdk: any,
+  basePath: string,
+  displayFieldConfig?: DisplayFieldConfig,
+): FormField {
+  const relationFieldName = field.relationFromFields?.[0] || `${field.name}Id`
+
+  let relationValue = currentItem && operation === 'update' ? currentItem[relationFieldName] : undefined
+  if (relationValue === undefined && currentItem && operation === 'update') {
+    const relObj = currentItem[field.name]
+    if (relObj && typeof relObj === 'object' && relObj.id) relationValue = relObj.id
+  }
+  if (relationValue && typeof relationValue === 'object' && (relationValue as any).id) {
+    relationValue = (relationValue as any).id
+  }
+  if (relationValue === null) relationValue = ''
+
+  const properPluralName = getPluralName(field.type)
+  const adminDocumentName = `__Admin${properPluralName}`
+  const regularDocumentName = `${properPluralName}`
+  const relationDocument = (sdk as any)[adminDocumentName] || (sdk as any)[regularDocumentName]
+
+  if (!relationDocument) {
+    return FormFieldClass.text(relationFieldName, {
+      label: `${label} ID`,
+      required: options.required,
+      helpText: 'Enter the ID of the related record',
+      ...(relationValue !== undefined && { value: relationValue }),
+    })
+  }
+
+  const config = displayFieldConfig?.[field.type]
+  const displayFields = config?.display || ['name', 'title']
+  const searchFields = config?.search || displayFields
+
+  const getDisplayLabel = (item: any) => {
+    const allValues = displayFields.map((f: string) => item[f]).filter((v: unknown) => v != null && v !== '')
+    return allValues.length > 0 ? allValues.join(' ') : item.id
+  }
+
+  let initialOptions: Array<{ value: string; label: string }> = []
+  if (currentItem && operation === 'update') {
+    const currentRelationData = currentItem[field.name]
+    if (currentRelationData && typeof currentRelationData === 'object' && currentRelationData.id) {
+      initialOptions = [{ value: currentRelationData.id, label: getDisplayLabel(currentRelationData) }]
+    }
+  }
+
+  return FormFieldClass.searchSelectApollo(relationFieldName, {
+    label,
+    required: options.required,
+    dataType: properPluralName.charAt(0).toLowerCase() + properPluralName.slice(1),
+    document: relationDocument,
+    searchFields,
+    selectOptionsFunction: (items: unknown[]) => {
+      const queryOptions = items.map((item: any) => ({
+        value: item.id,
+        label: getDisplayLabel(item),
+      }))
+      return mergeAndSortOptions(initialOptions, queryOptions)
+    },
+    ...(initialOptions.length > 0 && { initialOptions }),
+    ...(relationValue !== undefined && { value: relationValue }),
+    customWrapper: (fieldElement: React.ReactNode) =>
+      React.createElement(
+        RelationFieldWrapper,
+        { relationType: field.type, initialValue: relationValue, fieldName: relationFieldName, basePath },
+        fieldElement,
+      ),
+  })
+}
+
+/**
+ * Build a FormField for a single regular (non-list-relation) field
+ */
+function buildRegularFormField(
+  field: any,
+  sdk: any,
+  currentItem: any,
+  operation: string,
+  basePath: string,
+  displayFieldConfig?: DisplayFieldConfig,
+): FormField {
+  const label = field.name
+    .replace(/([a-z])([A-Z])/g, '$1 $2')
+    .replace(/^./, (str: string) => str.toUpperCase())
+
+  const initialValue = getFieldInitialValue(field, currentItem, operation)
+  const isArrayField = Boolean(field.isList)
+  const isRequired = isArrayField ? false : !field.isOptional
+  const options = { label, required: isRequired, ...(initialValue !== undefined && { value: initialValue }) }
+
+  switch (field.type.toLowerCase()) {
+    case 'string':
+      if (field.name.toLowerCase().includes('email')) return FormFieldClass.email(field.name, options)
+      if (
+        field.name.toLowerCase().includes('description') ||
+        field.name.toLowerCase().includes('content') ||
+        field.name.toLowerCase().includes('notes')
+      ) return FormFieldClass.textArea(field.name, options)
+      return FormFieldClass.text(field.name, options)
+
+    case 'int':
+    case 'bigint':
+    case 'float':
+    case 'decimal':
+      return FormFieldClass.text(field.name, options)
+
+    case 'boolean': {
+      const booleanValue = currentItem && operation === 'update' ? Boolean(currentItem[field.name]) : false
+      return FormFieldClass.checkbox(field.name, {
+        ...options,
+        required: false,
+        ...(operation === 'update' && { value: booleanValue }),
+      })
+    }
+
+    case 'datetime':
+      return FormFieldClass.dateTimePicker(field.name, options)
+
+    case 'date':
+      return FormFieldClass.datePicker(field.name, options)
+
+    default:
+      return buildDefaultFormField(field, label, options, initialValue, sdk, currentItem, operation, basePath, displayFieldConfig)
+  }
+}
+
+/**
+ * Build a FormField for the 'default' switch case (enums and relations)
+ */
+function buildDefaultFormField(
+  field: any,
+  label: string,
+  options: { label: string; required: boolean; value?: unknown },
+  initialValue: unknown,
+  sdk: any,
+  currentItem: any,
+  operation: string,
+  basePath: string,
+  displayFieldConfig?: DisplayFieldConfig,
+): FormField {
+  const enumValues = getEnumValues(sdk, field.type)
+  if (enumValues) {
+    if (field.isList) {
+      let defaultValue = ''
+      if (Array.isArray(initialValue) && initialValue.length > 0) defaultValue = initialValue.join(',')
+      const checkboxOptions = enumValues.map((value: string) => ({
+        key: value,
+        value,
+        label: value.replaceAll('_', ' ').toLowerCase().replace(/^./, (s: string) => s.toUpperCase()),
+      }))
+      return FormFieldClass.checkboxGroup(field.name, {
+        label: options.label,
+        required: options.required,
+        checkboxOptions,
+        checkboxDirection: 'column',
+        ...(operation !== 'update' && defaultValue && { defaultValue }),
+      })
+    }
+
+    const selectOptions = buildEnumSelectOptions(enumValues)
+    const enumOptions = operation === 'update'
+      ? { label: options.label, required: options.required, options: selectOptions }
+      : { ...options, options: selectOptions }
+    return FormFieldClass.select(field.name, enumOptions)
+  }
+
+  if (field.relationName && !field.isList) {
+    return buildRelationFormField(field, label, options, currentItem, operation, sdk, basePath, displayFieldConfig)
+  }
+
+  if (field.kind === 'enum' && field.enumValues) {
+    const selectOptions = field.enumValues.map((value: string) => ({
+      value,
+      label: value.replace(/_/g, ' ').toLowerCase().replace(/^./, (s: string) => s.toUpperCase()),
+    }))
+    return FormFieldClass.select(field.name, { ...options, options: selectOptions })
+  }
+
+  return FormFieldClass.text(field.name, options)
+}
+
+/**
  * Options for building form fields
  */
 export interface BuildFormFieldsOptions {
@@ -218,318 +473,9 @@ export function buildFormFields(
 
   // Process regular fields first
   regularFields.forEach((field: any) => {
-    const label = field.name
-      .replace(/([a-z])([A-Z])/g, '$1 $2')
-      .replace(/^./, (str: string) => str.toUpperCase())
-
-    // Get initial value from currentItem for update operations
-    let initialValue = currentItem && operation === 'update' ? currentItem[field.name] : undefined
-
-    // Convert Date objects to proper format for date/datetime fields
-    if (field.type.toLowerCase() === 'datetime' || field.type.toLowerCase() === 'date') {
-      if (initialValue instanceof Date || (initialValue && typeof initialValue === 'string')) {
-        try {
-          const dateValue = initialValue instanceof Date ? initialValue : new Date(initialValue)
-
-          if (field.type.toLowerCase() === 'date') {
-            // Date fields: YYYY-MM-DD format
-            initialValue = dateValue.toISOString().split('T')[0]
-          } else {
-            // DateTime fields: YYYY-MM-DDTHH:mm format (for datetime-local input)
-            const isoString = dateValue.toISOString()
-            // Extract YYYY-MM-DDTHH:mm (remove seconds and timezone)
-            initialValue = isoString.substring(0, 16)
-          }
-        } catch (e) {
-          initialValue = ''
-        }
-      }
-    }
-
-    // Convert relation objects to their ID strings
-    if (initialValue && typeof initialValue === 'object' && !Array.isArray(initialValue) && field.relationName) {
-      const relationObj = initialValue as Record<string, unknown>
-      if (relationObj.id && typeof relationObj.id === 'string') {
-        initialValue = relationObj.id
-      } else {
-        initialValue = ''
-      }
-    }
-
-    // Convert null to empty string for form fields (except boolean fields)
-    if (initialValue === null && field.type.toLowerCase() !== 'boolean') {
-      initialValue = ''
-    }
-
-    // Arrays (isList) should be optional in forms regardless of model optionality
-    const isArrayField = Boolean(field.isList)
-    const isRequired = isArrayField ? false : !field.isOptional
-
-    const options = {
-      label,
-      required: isRequired,
-      ...(initialValue !== undefined && { value: initialValue }),
-    }
-
-    // Determine field type based on Prisma type
-    let formField: FormField
-
-    switch (field.type.toLowerCase()) {
-      case 'string':
-        if (field.name.toLowerCase().includes('email')) {
-          formField = FormFieldClass.email(field.name, options)
-        }
-        // For long text fields, use textarea
-        else if (
-          field.name.toLowerCase().includes('description') ||
-          field.name.toLowerCase().includes('content') ||
-          field.name.toLowerCase().includes('notes')
-        ) {
-          formField = FormFieldClass.textArea(field.name, options)
-        } else {
-          formField = FormFieldClass.text(field.name, options)
-        }
-        break
-
-      case 'int':
-      case 'bigint':
-        formField = FormFieldClass.text(field.name, options)
-        break
-
-      case 'float':
-      case 'decimal':
-        formField = FormFieldClass.text(field.name, options)
-        break
-
-      case 'boolean': {
-        // Boolean fields should never be "required" in forms, even if required in DB
-        // Required in DB means "must have value (true OR false)", not "must be true"
-        // For boolean fields, convert null/undefined to false for checkbox display
-        const booleanValue =
-          currentItem && operation === 'update' ? Boolean(currentItem[field.name]) : false
-        formField = FormFieldClass.checkbox(field.name, {
-          ...options,
-          required: false,
-          ...(operation === 'update' && { value: booleanValue }),
-        })
-        break
-      }
-
-      case 'datetime':
-        formField = FormFieldClass.dateTimePicker(field.name, options)
-        break
-
-      case 'date':
-        formField = FormFieldClass.datePicker(field.name, options)
-        break
-
-      default: {
-        // Handle enum fields (check if field type exists in the SDK)
-        const enumValues = getEnumValues(sdk, field.type)
-        if (enumValues) {
-          // For array enums (isList: true), use checkboxGroup for multi-select
-          if (field.isList) {
-            // Convert array values to comma-separated string for checkboxGroup
-            let defaultValue = ''
-            if (Array.isArray(initialValue) && initialValue.length > 0) {
-              defaultValue = initialValue.join(',')
-            }
-
-            const checkboxOptions = enumValues.map((value: string) => ({
-              key: value,
-              value: value,
-              label: value
-                .replaceAll('_', ' ')
-                .toLowerCase()
-                .replace(/^./, (str: string) => str.toUpperCase()),
-            }))
-
-            formField = FormFieldClass.checkboxGroup(field.name, {
-              label: options.label,
-              required: options.required,
-              checkboxOptions: checkboxOptions,
-              checkboxDirection: 'column',
-              // Don't set value in field options for update operations
-              ...(operation !== 'update' && defaultValue && { defaultValue }),
-            })
-            break
-          }
-
-          // For single enum values, use select dropdown
-          const selectOptions = enumValues.map((value: string) => ({
-            value,
-            label: value
-              .replace(/_/g, ' ')
-              .toLowerCase()
-              .replace(/^./, (str: string) => str.toUpperCase()),
-          }))
-
-          // For update operations, don't set individual field value - rely on form-level defaultValues
-          // This prevents conflicts where the field value doesn't update when defaultValues changes
-          const enumOptions = operation === 'update'
-            ? { label: options.label, required: options.required, options: selectOptions }
-            : { ...options, options: selectOptions }
-
-          formField = FormFieldClass.select(field.name, enumOptions)
-          break
-        }
-
-        // Handle relation fields with Apollo-powered select dropdowns
-        if (field.relationName && !field.isList) {
-          // CRITICAL FIX: Always use the foreign key field name, not the relation field name
-          // This ensures the form submits with "avatarId" instead of "avatar"
-          const relationFieldName = field.relationFromFields?.[0] || `${field.name}Id`
-
-          // For relation fields, get the foreign key value or extract ID from relation object
-          let relationValue =
-            currentItem && operation === 'update' ? currentItem[relationFieldName] : undefined
-
-          // If we didn't find the foreign key value, try to get it from the relation object
-          if (relationValue === undefined && currentItem && operation === 'update') {
-            const relationObject = currentItem[field.name]
-            if (relationObject && typeof relationObject === 'object' && relationObject.id) {
-              relationValue = relationObject.id
-            }
-          }
-
-          // If relationValue is an object (like {__typename: 'Course', id: '...' }), extract the ID
-          if (relationValue && typeof relationValue === 'object' && relationValue.id) {
-            relationValue = relationValue.id
-          }
-
-          // Convert null to empty string
-          if (relationValue === null) {
-            relationValue = ''
-          }
-
-          // Use Apollo-powered select for relationships
-          // Try to get the Admin GraphQL document for the relation type (with __ prefix)
-          // Use proper pluralization from getPluralName helper
-          const properPluralName = getPluralName(field.type)
-          const adminDocumentName = `__Admin${properPluralName}` // e.g., __AdminCourses
-          const regularDocumentName = `${properPluralName}` // e.g., Courses (fallback)
-          const relationDocument =
-            (sdk as any)[adminDocumentName] || (sdk as any)[regularDocumentName]
-
-          if (relationDocument) {
-            // Get display and search fields from config, or use sensible defaults
-            const config = displayFieldConfig?.[field.type]
-            const displayFields = config?.display || ['name', 'title'] // Try name, then title by default
-            const searchFields = config?.search || displayFields
-
-            // Helper to get display label for an item
-            const getDisplayLabel = (item: any) => {
-              // Try to join all available display fields
-              const allValues = displayFields
-                .map(field => item[field])
-                .filter(val => val != null && val !== '')
-
-              if (allValues.length > 0) {
-                return allValues.join(' ')
-              }
-
-              // Final fallback to ID
-              return item.id
-            }
-
-            // Create initial option from current item if we're in edit mode
-            let initialOptions: Array<{ value: string; label: string }> = []
-            if (currentItem && operation === 'update') {
-              const currentRelationData = currentItem[field.name] // e.g., course: {__typename: 'Course', id: '...'}
-              if (
-                currentRelationData &&
-                typeof currentRelationData === 'object' &&
-                currentRelationData.id
-              ) {
-                const displayLabel = getDisplayLabel(currentRelationData)
-                initialOptions = [
-                  {
-                    value: currentRelationData.id,
-                    label: displayLabel,
-                  },
-                ]
-              }
-            }
-
-            formField = FormFieldClass.searchSelectApollo(relationFieldName, {
-              label: label, // Remove "ID" suffix - just use the field name
-              required: options.required,
-              dataType: properPluralName.charAt(0).toLowerCase() + properPluralName.slice(1), // e.g., Course → courses (camelCase)
-              document: relationDocument,
-              searchFields: searchFields, // For searching
-              selectOptionsFunction: (items: unknown[]) => {
-                // Combine initial options with query results (avoiding duplicates)
-                const queryOptions = items.map((item: any) => ({
-                  value: item.id,
-                  label: getDisplayLabel(item),
-                }))
-
-                // Add initial option if it's not already in the query results
-                const allOptions = [...initialOptions]
-                queryOptions.forEach(option => {
-                  if (!allOptions.find(existing => existing.value === option.value)) {
-                    allOptions.push(option)
-                  }
-                })
-
-                // Sort alphabetically by label
-                allOptions.sort((a, b) => a.label.localeCompare(b.label))
-
-                return allOptions
-              },
-              ...(initialOptions.length > 0 && { initialOptions }), // Provide initial options if available
-              ...(relationValue !== undefined && { value: relationValue }),
-              // Add custom wrapper to show view record link
-              customWrapper: (fieldElement: React.ReactNode) => {
-                return React.createElement(
-                  RelationFieldWrapper,
-                  {
-                    relationType: field.type,
-                    initialValue: relationValue,
-                    fieldName: relationFieldName,
-                    basePath,
-                  },
-                  fieldElement
-                )
-              },
-            })
-            break
-          } else {
-            // Fallback to text input if document not found
-            formField = FormFieldClass.text(relationFieldName, {
-              label: `${label} ID`,
-              required: options.required,
-              helpText: 'Enter the ID of the related record',
-              ...(relationValue !== undefined && { value: relationValue }),
-            })
-            break
-          }
-        }
-
-        // Handle legacy enum fields (with enumValues property)
-        if (field.kind === 'enum' && field.enumValues) {
-          const selectOptions = field.enumValues.map((value: string) => ({
-            value,
-            label: value
-              .replace(/_/g, ' ')
-              .toLowerCase()
-              .replace(/^./, (str: string) => str.toUpperCase()),
-          }))
-
-          formField = FormFieldClass.select(field.name, {
-            ...options,
-            options: selectOptions,
-          })
-          break
-        }
-
-        formField = FormFieldClass.text(field.name, options)
-        break
-      }
-    }
-
-    // Push the form field
-    formFields.push(formField)
+    formFields.push(
+      buildRegularFormField(field, sdk, currentItem, operation, basePath, displayFieldConfig),
+    )
   })
 
   // Now process list relationship fields (they go at the bottom)
@@ -640,6 +586,65 @@ function shouldSkipValue(key: string, value: unknown): boolean {
 }
 
 /**
+ * Process a single enum-array field entry, returning the cleaned value
+ */
+function cleanEnumArrayValue(value: unknown): unknown {
+  if (typeof value === 'string') {
+    return value.split(',').filter(v => v.trim() !== '')
+  }
+  if (Array.isArray(value)) return value
+  return []
+}
+
+/**
+ * Process a single object entry, extracting ID from Apollo option objects or cleaning nested objects
+ */
+function cleanObjectValue(
+  obj: Record<string, unknown>,
+  model: Parameters<typeof cleanFormInput>[1],
+): unknown | undefined {
+  if (obj.value !== undefined && obj.label !== undefined && typeof obj.value === 'string') {
+    return obj.value
+  }
+  return processNestedObject(obj, model) ?? undefined
+}
+
+/**
+ * Process a single input entry, returning [key, cleanedValue] or null to skip
+ */
+function cleanInputEntry(
+  key: string,
+  value: unknown,
+  booleanFields: Set<string>,
+  enumArrayFields: Set<string>,
+  requiredArrayFields: Set<string>,
+  model: Parameters<typeof cleanFormInput>[1],
+): [string, unknown] | null {
+  if (booleanFields.has(key) && value === undefined) return [key, false]
+
+  if (enumArrayFields.has(key)) return [key, cleanEnumArrayValue(value)]
+
+  if (requiredArrayFields.has(key) && (value === undefined || value === null || value === '')) {
+    return [key, []]
+  }
+
+  if (shouldSkipValue(key, value)) return null
+
+  if (typeof value === 'string') {
+    const field = model?.fields?.find((f: any) => f.name === key)
+    return [key, convertStringValue(value, field)]
+  }
+
+  if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+    const cleaned = cleanObjectValue(value as Record<string, unknown>, model)
+    if (cleaned === undefined) return null
+    return [key, cleaned]
+  }
+
+  return [key, value]
+}
+
+/**
  * Convert string values to appropriate types (number, boolean, null, datetime)
  */
 function convertStringValue(value: string, field?: any): string | number | boolean | null {
@@ -705,94 +710,21 @@ export function cleanFormInput(
 ): Record<string, unknown> {
   const cleaned: Record<string, unknown> = {}
 
-  // Get boolean field names for special handling
   const booleanFields = new Set(
-    model?.fields
-      ?.filter(field => field.type.toLowerCase() === 'boolean')
-      ?.map(field => field.name) || [],
+    model?.fields?.filter(field => field.type.toLowerCase() === 'boolean')?.map(field => field.name) || [],
   )
-
-  // Get required array field names (isList: true and not optional, excluding relations)
   const requiredArrayFields = new Set(
-    model?.fields
-      ?.filter(field => field.isList && !field.isOptional && !field.relationName)
-      ?.map(field => field.name) || [],
+    model?.fields?.filter(field => field.isList && !field.isOptional && !field.relationName)?.map(field => field.name) || [],
   )
-
-  // Get enum array field names (isList: true and kind: 'enum')
   const enumArrayFields = new Set(
-    model?.fields
-      ?.filter(field => field.isList && field.kind === 'enum')
-      ?.map(field => field.name) || [],
+    model?.fields?.filter(field => field.isList && field.kind === 'enum')?.map(field => field.name) || [],
   )
 
   for (const [key, value] of Object.entries(input)) {
-    // Special handling for boolean fields: convert undefined to false
-    if (booleanFields.has(key) && value === undefined) {
-      cleaned[key] = false
-      continue
+    const entry = cleanInputEntry(key, value, booleanFields, enumArrayFields, requiredArrayFields, model)
+    if (entry !== null) {
+      cleaned[entry[0]] = entry[1]
     }
-
-    // Special handling for enum array fields: convert comma-separated string to array
-    if (enumArrayFields.has(key)) {
-      if (typeof value === 'string') {
-        // Split by comma and filter out empty strings
-        const arrayValue = value.split(',').filter(v => v.trim() !== '')
-        cleaned[key] = arrayValue
-        continue
-      } else if (Array.isArray(value)) {
-        // Already an array, just use it
-        cleaned[key] = value
-        continue
-      } else if (value === undefined || value === null || value === '') {
-        // Empty value - use empty array for enum arrays (required or not)
-        cleaned[key] = []
-        continue
-      }
-    }
-
-    // Special handling for required array fields: convert undefined/null/empty to []
-    if (requiredArrayFields.has(key) && (value === undefined || value === null || value === '')) {
-      cleaned[key] = []
-      continue
-    }
-
-    // Skip system fields and undefined values
-    if (shouldSkipValue(key, value)) {
-      continue
-    }
-
-    // Handle string values with type conversion
-    if (typeof value === 'string') {
-      // Find the field definition to help with type conversion
-      const field = model?.fields?.find((f: any) => f.name === key)
-      const convertedValue = convertStringValue(value, field)
-      // Always include the value, even if null (null clears the field)
-      cleaned[key] = convertedValue
-      continue
-    }
-
-    // Handle searchSelectApollo option objects: {value: "id", label: "name"}
-    if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
-      const obj = value as Record<string, unknown>
-
-      // Check if this looks like a searchSelectApollo option object
-      if (obj.value !== undefined && obj.label !== undefined && typeof obj.value === 'string') {
-        // Extract just the value (the ID) for GraphQL mutations
-        cleaned[key] = obj.value
-        continue
-      }
-
-      // Handle other nested objects
-      const processedNested = processNestedObject(obj, model)
-      if (processedNested !== null) {
-        cleaned[key] = processedNested
-      }
-      continue
-    }
-
-    // Pass through other values as-is (including arrays that aren't in arrayFields)
-    cleaned[key] = value
   }
 
   return cleaned

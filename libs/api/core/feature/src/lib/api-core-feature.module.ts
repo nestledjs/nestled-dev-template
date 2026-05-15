@@ -15,6 +15,18 @@ interface ConnectionParameters {
   headers?: Record<string, string>
 }
 
+function extractTokenFromRawHeaders(rawHeaders: string[], cookieName: string): string {
+  for (let i = 0; i < rawHeaders.length; i += 2) {
+    if (rawHeaders[i].toLowerCase() !== 'cookie') continue
+    for (const cookie of rawHeaders[i + 1].split(';')) {
+      const [name, value] = cookie.trim().split('=')
+      if (name === cookieName) return value
+    }
+    break
+  }
+  return ''
+}
+
 const redisPubSubProvider = {
   provide: 'REDIS_PUB_SUB',
   useValue: apiCorePubSub,
@@ -41,23 +53,10 @@ const redisPubSubProvider = {
               'rawHeaders' in extra.request
             ) {
               const rawHeaders = extra.request.rawHeaders as string[] | undefined
-              let token = ''
               const cookieName = process.env['VITE_COOKIE_NAME'] || '__session'
-              if (rawHeaders) {
-                for (let i = 0; i < rawHeaders.length; i += 2) {
-                  if (rawHeaders[i].toLowerCase() === 'cookie') {
-                    const cookies = rawHeaders[i + 1].split(';')
-                    for (const cookie of cookies) {
-                      const [name, value] = cookie.trim().split('=')
-                      if (name === cookieName) {
-                        token = value
-                        break
-                      }
-                    }
-                    break
-                  }
-                }
-              }
+              const token = rawHeaders
+                ? extractTokenFromRawHeaders(rawHeaders, cookieName)
+                : ''
 
               if (token === '') {
                 throw new Error('Authentication token is missing')

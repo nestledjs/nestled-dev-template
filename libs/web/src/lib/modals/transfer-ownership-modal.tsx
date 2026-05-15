@@ -93,6 +93,9 @@ export default function TransferOwnershipModal({
         <div
           className="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity"
           onClick={handleClose}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleClose() } }}
         />
 
         {/* Modal */}

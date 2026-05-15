@@ -5,6 +5,20 @@ function isValidDate(d: any) {
   return d instanceof Date && !isNaN(d as any)
 }
 
+function normalizeDateValue(v: unknown): string {
+  if (v instanceof Date) return (v as Date).toISOString().split('T')[0]
+  if (typeof v === 'number') return new Date(v).toISOString().split('T')[0]
+  if (typeof v === 'string') {
+    const s = v as string
+    return s.includes('T') ? s.split('T')[0] : s
+  }
+  try {
+    const d = new Date(v as any)
+    if (!isNaN(d.getTime())) return d.toISOString().split('T')[0]
+  } catch {}
+  return ''
+}
+
 function formatDate(value: unknown): string {
   if (typeof value === 'object' && value instanceof Date) {
     return (value as Date).toISOString().split('T')[0]
@@ -55,27 +69,7 @@ export function cleanFormInput(
       .map(([k, v]) => {
         // Reformat date strings for storage in database
         if (k.toLowerCase().includes('date') || k.toLowerCase().includes('datetime')) {
-          // Normalize various date input types to YYYY-MM-DD
-          if (v instanceof Date) {
-            return [k, (v as Date).toISOString().split('T')[0]]
-          }
-          if (typeof v === 'number') {
-            return [k, new Date(v).toISOString().split('T')[0]]
-          }
-          if (typeof v === 'string') {
-            // Accept 'YYYY-MM-DDTHH:mm' or 'YYYY-MM-DD'
-            const s = v as string
-            const parts = s.includes('T') ? s.split('T')[0] : s
-            return [k, parts]
-          }
-          // Fallback: try to construct a Date from unknown object
-          try {
-            const d = new Date(v as any)
-            if (!isNaN(d.getTime())) {
-              return [k, d.toISOString().split('T')[0]]
-            }
-          } catch {}
-          return [k, '']
+          return [k, normalizeDateValue(v)]
         }
         // Return array of values for multiselect fields
         if (multiSelectFields?.includes(k)) {

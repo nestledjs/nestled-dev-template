@@ -25,10 +25,8 @@ export default function handleRequest(
   responseStatusCode: number,
   responseHeaders: Headers,
   routerContext: EntryContext,
-  loadContext: AppLoadContext,
+  _loadContext: AppLoadContext,
 ) {
-  void loadContext
-
   const userAgent = request.headers.get('user-agent')
 
   // Ensure requests from bots and SPA Mode renders wait for all content to load before responding
