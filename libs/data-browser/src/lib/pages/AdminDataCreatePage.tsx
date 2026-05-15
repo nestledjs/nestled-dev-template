@@ -214,6 +214,25 @@ function AdminDataCreatePageContent({ model, basePath, formTheme, displayFieldCo
       `,
   )
 
+  // Navigate to list after successful create
+  useEffect(() => {
+    if (submissionState.status !== 'success') return
+    const timer = setTimeout(() => {
+      navigate(`${basePath}/${toKebabCase(model.pluralName)}`)
+    }, 1500)
+    return () => clearTimeout(timer)
+  }, [submissionState.status, navigate, basePath, model.pluralName])
+
+  // Clear submission state after errors
+  useEffect(() => {
+    if (submissionState.status === 'error') {
+      const timer = setTimeout(() => {
+        setSubmissionState({ status: 'idle' })
+      }, 5000)
+      return () => clearTimeout(timer)
+    }
+  }, [submissionState.status])
+
   // Early return AFTER all hooks are called
   if (!documents || !CREATE_MUTATION) {
     return (
@@ -284,25 +303,6 @@ function AdminDataCreatePageContent({ model, basePath, formTheme, displayFieldCo
       })
     }
   }
-
-  // Navigate to list after successful create
-  useEffect(() => {
-    if (submissionState.status !== 'success') return
-    const timer = setTimeout(() => {
-      navigate(`${basePath}/${toKebabCase(model.pluralName)}`)
-    }, 1500)
-    return () => clearTimeout(timer)
-  }, [submissionState.status, navigate, basePath, model.pluralName])
-
-  // Clear submission state after errors
-  useEffect(() => {
-    if (submissionState.status === 'error') {
-      const timer = setTimeout(() => {
-        setSubmissionState({ status: 'idle' })
-      }, 5000)
-      return () => clearTimeout(timer)
-    }
-  }, [submissionState.status])
 
   return (
     <div className="space-y-6">

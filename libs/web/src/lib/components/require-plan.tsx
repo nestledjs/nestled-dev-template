@@ -1,5 +1,5 @@
 import React, { ReactNode } from 'react'
-import { useSubscription, useHasFeature } from '../hooks/use-subscription'
+import { useSubscription, useHasFeatures, useHasAnyFeature } from '../hooks/use-subscription'
 import { useLimit } from '../hooks/use-plan'
 import { Link } from 'react-router'
 import { LockClosedIcon } from '@heroicons/react/24/outline'
@@ -47,23 +47,15 @@ export function RequirePlan({
 }: RequirePlanProps) {
   const { isLoading, plan } = useSubscription()
 
-  // Determine if user has required features
-  let hasRequiredFeatures = true
+  const singleFeature = useHasFeatures(feature ? [feature] : [])
+  const allFeatures = useHasFeatures(features && requireAll ? features : [])
+  const anyFeature = useHasAnyFeature(features && !requireAll ? features : [])
 
+  let hasRequiredFeatures = true
   if (feature) {
-    hasRequiredFeatures = useHasFeature(feature)
+    hasRequiredFeatures = singleFeature
   } else if (features && features.length > 0) {
-    if (requireAll) {
-      hasRequiredFeatures = features.every(f => {
-        const hasIt = useHasFeature(f)
-        return hasIt
-      })
-    } else {
-      hasRequiredFeatures = features.some(f => {
-        const hasIt = useHasFeature(f)
-        return hasIt
-      })
-    }
+    hasRequiredFeatures = requireAll ? allFeatures : anyFeature
   }
 
   // Show loading state
@@ -129,16 +121,15 @@ export function RequirePlanInline({
 }) {
   const { isLoading } = useSubscription()
 
-  let hasRequiredFeatures = true
+  const singleFeature = useHasFeatures(feature ? [feature] : [])
+  const allFeatures = useHasFeatures(features && requireAll ? features : [])
+  const anyFeature = useHasAnyFeature(features && !requireAll ? features : [])
 
+  let hasRequiredFeatures = true
   if (feature) {
-    hasRequiredFeatures = useHasFeature(feature)
+    hasRequiredFeatures = singleFeature
   } else if (features && features.length > 0) {
-    if (requireAll) {
-      hasRequiredFeatures = features.every(f => useHasFeature(f))
-    } else {
-      hasRequiredFeatures = features.some(f => useHasFeature(f))
-    }
+    hasRequiredFeatures = requireAll ? allFeatures : anyFeature
   }
 
   if (isLoading || !hasRequiredFeatures) return null

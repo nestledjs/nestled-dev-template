@@ -77,7 +77,7 @@ export class CloudinaryStorageService implements IStorageService, OnModuleInit {
           context: {
             ...(options.userId && { userId: options.userId }),
             ...(options.organizationId && { organizationId: options.organizationId }),
-            ...(options.metadata && options.metadata),
+            ...(options.metadata ? options.metadata : {}),
           },
           // Apply transformation options if provided
           ...(options.width && { width: options.width }),

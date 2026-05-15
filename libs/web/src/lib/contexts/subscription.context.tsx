@@ -26,7 +26,7 @@ export interface SubscriptionContextType {
   periodEndsAt: Date | null
 }
 
-const SubscriptionContext = createContext<SubscriptionContextType | undefined>(undefined)
+export const SubscriptionContext = createContext<SubscriptionContextType | undefined>(undefined)
 
 interface SubscriptionProviderProps {
   children: ReactNode
