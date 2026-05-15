@@ -1,20 +1,21 @@
 id: 2026-05-14-fix-lint-script
-title: Fix pnpm lint script — replace removed nx workspace-lint
+title: Fix pnpm lint and test scripts — replace bare nx commands with nx run-many
 priority: normal
 area: infra
 type: correctness
 delivery: code-patch
 
 intent: >
-  The root package.json lint script must use "nx run-many -t lint" to run ESLint
-  across all workspace projects. The legacy "nx workspace-lint" command and bare
-  "nx lint" (targeting the root project) no longer work in nx 15+.
+  The root package.json lint and test scripts must use "nx run-many -t <target>"
+  to run across all workspace projects. Bare "nx lint" and "nx test" (which target
+  the root project) and the removed "nx workspace-lint" command no longer work in
+  nx 15+.
 
 why: >
-  nx removed the built-in workspace-lint command. Bare "nx lint" targets the root
-  project, which has no lint target, so it fails immediately. Both commands were
-  present in the script from an older nx setup and have been broken since the
-  upgrade to nx 22.
+  nx removed the built-in workspace-lint command. Bare "nx lint" and "nx test"
+  target the root project (@nestled-template/source), which has no lint or test
+  targets defined, causing both scripts to fail immediately. These were leftover
+  from an older nx setup and have been broken since the upgrade to nx 22.
 
 affectedPaths:
   - package.json
@@ -23,6 +24,7 @@ packageReleases: []
 
 skipIf:
   - The lint script in package.json already uses "nx run-many -t lint"
+  - The test script in package.json already uses "nx run-many -t test"
 
 verification:
   - pnpm lint
@@ -30,4 +32,5 @@ verification:
 agentHints:
   - Change the "lint" script in package.json from "nx workspace-lint && nx lint"
     (or any variation) to "nx run-many -t lint".
-  - Do not add a workspace-lint target to project.json — it is not needed.
+  - Change the "test" script in package.json from "nx test" to "nx run-many -t test".
+  - Do not add workspace-lint, lint, or test targets to the root project.json.
