@@ -18,7 +18,7 @@ async function isDatabaseAccessible(databaseUrl: string): Promise<boolean> {
     execSync(`psql -U ${username} -h ${host} -p ${port} -d ${database} -c "SELECT 1"`, {
       env: { ...process.env, PGPASSWORD: password },
       stdio: 'pipe',
-      timeout: 2000
+      timeout: 2000,
     })
     return true
   } catch {
@@ -30,7 +30,7 @@ async function isDatabaseAccessible(databaseUrl: string): Promise<boolean> {
  * Check if a port is already in use
  */
 async function isPortInUse(port: number, host: string = 'localhost'): Promise<boolean> {
-  return new Promise((resolve) => {
+  return new Promise(resolve => {
     const socket = createConnection({ port, host, timeout: 100 })
 
     socket.on('connect', () => {
@@ -57,7 +57,9 @@ module.exports = async function () {
   process.env.NODE_ENV = 'test'
 
   // Always use TEST_DATABASE_URL for E2E tests
-  const testDatabaseUrl = process.env.TEST_DATABASE_URL || 'postgresql://justinhandley@localhost:5432/nestled_template_test'
+  const testDatabaseUrl =
+    process.env.TEST_DATABASE_URL ||
+    'postgresql://postgres:postgres@localhost:5433/nestled_template_test'
   process.env.DATABASE_URL = testDatabaseUrl
 
   const host = process.env.HOST ?? 'localhost'
@@ -97,7 +99,7 @@ module.exports = async function () {
     execSync('pnpm prisma db push', {
       cwd: projectRoot,
       env: { ...process.env, DATABASE_URL: testDatabaseUrl },
-      stdio: 'inherit'
+      stdio: 'inherit',
     })
     console.log('✅ Database schema synced')
   } catch (error) {
@@ -111,7 +113,7 @@ module.exports = async function () {
     execSync('pnpm prisma:seed', {
       cwd: projectRoot,
       env: { ...process.env, DATABASE_URL: testDatabaseUrl },
-      stdio: 'inherit'
+      stdio: 'inherit',
     })
     console.log('✅ Database seeded')
   } catch (error) {
@@ -124,7 +126,7 @@ module.exports = async function () {
 
   if (apiAlreadyRunning) {
     console.log(`⚠️  API is already running on ${host}:${port}`)
-    console.log('   Using existing API server (make sure it\'s using the test database!)')
+    console.log("   Using existing API server (make sure it's using the test database!)")
     globalThis.__WE_STARTED_API__ = false
     globalThis.__SKIP_E2E_TESTS__ = false
   } else {
@@ -139,26 +141,28 @@ module.exports = async function () {
           DATABASE_URL: testDatabaseUrl,
           PORT: port.toString(),
           HOST: host,
-          NODE_ENV: 'test'
+          NODE_ENV: 'test',
         },
-        stdio: ['ignore', 'pipe', 'pipe'] // Capture stdout/stderr to debug startup issues
+        stdio: ['ignore', 'pipe', 'pipe'], // Capture stdout/stderr to debug startup issues
         // NOTE: NOT using detached:true so that when test process exits, API server dies automatically
       })
 
       // Log output for debugging startup issues
       let startupOutput = ''
-      apiProcess.stdout?.on('data', (data) => {
+      apiProcess.stdout?.on('data', data => {
         const text = data.toString()
         startupOutput += text
         // Show important startup messages
-        if (text.includes('Nest application successfully started') ||
-            text.includes('listening on') ||
-            text.includes('Application is running')) {
+        if (
+          text.includes('Nest application successfully started') ||
+          text.includes('listening on') ||
+          text.includes('Application is running')
+        ) {
           console.log('   ' + text.trim())
         }
       })
 
-      apiProcess.stderr?.on('data', (data) => {
+      apiProcess.stderr?.on('data', data => {
         const text = data.toString()
         startupOutput += text
         // Always show errors
