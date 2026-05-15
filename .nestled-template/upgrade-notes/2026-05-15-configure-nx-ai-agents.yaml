@@ -1,0 +1,43 @@
+id: 2026-05-15-configure-nx-ai-agents
+title: Configure Nx Ai Agents
+priority: normal
+area: infra
+type: infra
+delivery: code-patch
+
+intent: >
+  Keep downstream agent tooling aligned with Nx's current AI agent configuration.
+  Agents should have access to the Nx MCP server, Nx workspace/run/generate/import
+  skills, and the generated CI monitor subagent metadata for supported editors and
+  CLIs.
+
+why: >
+  Nx warns when agent configuration is outdated. Updating the generated agent
+  configuration removes that warning and gives coding agents consistent guidance for
+  exploring Nx project configuration, running Nx tasks, and using generators safely.
+
+affectedPaths:
+  - AGENTS.md
+  - CLAUDE.md
+  - .gitignore
+  - .agents/skills/**
+  - .claude/**
+  - .codex/**
+  - .cursor/**
+  - .opencode/**
+  - opencode.json
+
+packageReleases: []
+
+skipIf:
+  - Project does not use checked-in AI agent configuration.
+  - Project has intentionally customized agent instructions and has already run pnpm nx configure-ai-agents.
+
+verification:
+  - pnpm nx configure-ai-agents
+  - pnpm lint
+
+agentHints:
+  - Preserve existing project-specific instructions outside the generated nx configuration comment blocks.
+  - If rerunning the command interactively, select the agents used by the downstream project.
+  - Keep .claude/settings.local.json local-only and do not commit local editor secrets.
