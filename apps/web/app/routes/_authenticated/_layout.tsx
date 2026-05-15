@@ -10,9 +10,14 @@ import { WebUiFooter, WebUiHeader } from '@nestled-template/web-ui'
 import { apolloLoader } from '@nestled-template/shared/apollo'
 import {
   MyOrganizationsWithMembers,
+  type MeQuery,
   type MyOrganizationsWithMembersQuery,
 } from '@nestled-template/shared/sdk'
 import { useReadQuery, type QueryRef } from '@apollo/client/react'
+
+type UserWithActiveOrganization = NonNullable<MeQuery['me']> & {
+  activeOrganizationId?: string | null
+}
 
 export const loader = apolloLoader()(({ preloadQuery }) => {
   const myOrganizationsQueryRef = preloadQuery<MyOrganizationsWithMembersQuery>(
@@ -39,11 +44,14 @@ export default function AuthenticatedLayout() {
     return <Navigate to="/login" state={{ from: location }} replace />
   }
 
-  const organizations = (orgsData?.myOrganizations || []) as any
+  const organizations = orgsData?.myOrganizations || []
+  const userWithActiveOrganization = user as typeof user & UserWithActiveOrganization
   const activeOrganization =
-    organizations.find((org: any) => org?.id === (user as any).activeOrganizationId) || organizations[0] || null
+    organizations.find(org => org.id === userWithActiveOrganization.activeOrganizationId) ||
+    organizations[0] ||
+    null
   const activeOrganizationMember =
-    activeOrganization?.members?.find((member: any) => member.userId === user?.id) || null
+    activeOrganization?.members?.find(member => member.userId === user?.id) || null
 
   // Build navigation based on user permissions
   const navigation = [

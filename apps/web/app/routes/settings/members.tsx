@@ -74,9 +74,12 @@ function groupPermissionsBySubject(permissions: Array<{ subject: string; action:
 
 // Role badge colors
 const roleBadgeColors: Record<string, string> = {
-  Owner: 'bg-violet-100 dark:bg-violet-500/10 text-violet-700 dark:text-violet-400 border-violet-200 dark:border-violet-500/20',
-  Admin: 'bg-sky-100 dark:bg-sky-500/10 text-sky-700 dark:text-sky-400 border-sky-200 dark:border-sky-500/20',
-  Member: 'bg-emerald-100 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/20',
+  Owner:
+    'bg-violet-100 dark:bg-violet-500/10 text-violet-700 dark:text-violet-400 border-violet-200 dark:border-violet-500/20',
+  Admin:
+    'bg-sky-100 dark:bg-sky-500/10 text-sky-700 dark:text-sky-400 border-sky-200 dark:border-sky-500/20',
+  Member:
+    'bg-emerald-100 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/20',
 }
 
 // Subject display names
@@ -88,6 +91,8 @@ const subjectDisplayNames: Record<string, string> = {
   team: 'Teams',
   audit: 'Audit Logs',
 }
+
+type OrganizationMemberRow = UserOrganizationMembersQuery['userOrganizationMembers'][number]
 
 interface RolePermissionsCardProps {
   role: {
@@ -102,7 +107,9 @@ function RolePermissionsCard({ role }: Readonly<RolePermissionsCardProps>) {
   const [isExpanded, setIsExpanded] = useState(false)
   const permissions = role.permissions || []
   const groupedPermissions = groupPermissionsBySubject(permissions)
-  const badgeColor = roleBadgeColors[role.name] || 'bg-zinc-100 dark:bg-zinc-500/10 text-zinc-700 dark:text-zinc-400 border-zinc-200 dark:border-zinc-500/20'
+  const badgeColor =
+    roleBadgeColors[role.name] ||
+    'bg-zinc-100 dark:bg-zinc-500/10 text-zinc-700 dark:text-zinc-400 border-zinc-200 dark:border-zinc-500/20'
 
   return (
     <div className="border border-zinc-200 dark:border-white/10 rounded-lg overflow-hidden">
@@ -148,7 +155,7 @@ function RolePermissionsCard({ role }: Readonly<RolePermissionsCardProps>) {
                     </h4>
                   </div>
                   <ul className="space-y-1 pl-6">
-                    {actions.map((action) => {
+                    {actions.map(action => {
                       const permKey = `${subject}:${action}`
                       return (
                         <li key={action} className="text-xs text-zinc-600 dark:text-zinc-400">
@@ -186,11 +193,11 @@ export default function MembersSettings() {
   const activeOrganization = organizations[0] || null
   const user = meData?.me
   const activeOrganizationMember =
-    activeOrganization?.members?.find((member) => member.userId === user?.id) || null
+    activeOrganization?.members?.find(member => member.userId === user?.id) || null
   const [showInviteForm, setShowInviteForm] = useState(false)
   const [formError, setFormError] = useState<string | null>(null)
   const [formSuccess, setFormSuccess] = useState<string | null>(null)
-  const [editingMember, setEditingMember] = useState<any | null>(null)
+  const [editingMember, setEditingMember] = useState<OrganizationMemberRow | null>(null)
   const [confirmModal, setConfirmModal] = useState<{
     isOpen: boolean
     title: string
@@ -240,17 +247,22 @@ export default function MembersSettings() {
   const members = data?.userOrganizationMembers || []
   const roles = rolesData?.organizationRoles || []
   const invitations =
-    invitationsData?.organizationInvitations?.filter((inv) => inv.status === 'PENDING') || []
+    invitationsData?.organizationInvitations?.filter(inv => inv.status === 'PENDING') || []
 
   async function handleInviteMember(input: { email: string; roleId: string }) {
     setFormError(null)
     setFormSuccess(null)
 
+    if (!activeOrganization) {
+      setFormError('No active organization selected')
+      return
+    }
+
     try {
       await inviteMember({
         variables: {
           input: {
-            organizationId: activeOrganization!.id,
+            organizationId: activeOrganization.id,
             email: input.email,
             roleId: input.roleId,
           },
@@ -275,6 +287,11 @@ export default function MembersSettings() {
         setConfirmModal(null)
         setFormError(null)
         setFormSuccess(null)
+
+        if (!activeOrganization) {
+          setFormError('No active organization selected')
+          return
+        }
 
         try {
           await resendInvitation({
@@ -308,7 +325,7 @@ export default function MembersSettings() {
           await removeMember({
             variables: {
               input: {
-                organizationId: activeOrganization!.id,
+                organizationId: activeOrganization.id,
                 userId: userId,
               },
             },
@@ -329,11 +346,16 @@ export default function MembersSettings() {
     setFormError(null)
     setFormSuccess(null)
 
+    if (!activeOrganization) {
+      setFormError('No active organization selected')
+      return
+    }
+
     try {
       await updateMemberRole({
         variables: {
           input: {
-            organizationId: activeOrganization!.id,
+            organizationId: activeOrganization.id,
             userId: editingMember.user.id,
             roleId: newRoleId,
           },
@@ -361,7 +383,7 @@ export default function MembersSettings() {
       required: true,
       options: [
         { value: '', label: 'Select a role...' },
-        ...roles.map((role) => ({
+        ...roles.map(role => ({
           value: role.id,
           label: role.name,
         })),
@@ -484,7 +506,7 @@ export default function MembersSettings() {
                   </strong>
                 </p>
                 <p className="text-xs text-zinc-500 dark:text-zinc-500">
-                  {editingMember.user?.emails?.find((e: any) => e.primary)?.email ||
+                  {editingMember.user?.emails?.find(e => e.primary)?.email ||
                     editingMember.user?.emails?.[0]?.email}
                 </p>
               </div>
@@ -503,7 +525,7 @@ export default function MembersSettings() {
                   className="w-full px-3 py-2 bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 rounded-lg text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-sky-500"
                 >
                   <option value="">Select a role...</option>
-                  {roles.map((role) => (
+                  {roles.map(role => (
                     <option key={role.id} value={role.id}>
                       {role.name}
                     </option>
@@ -581,7 +603,7 @@ export default function MembersSettings() {
 
           {!loading && !error && members.length > 0 && (
             <div className="space-y-3">
-              {members.map((member) => (
+              {members.map(member => (
                 <div
                   key={member.id}
                   className="flex items-center justify-between p-4 rounded-lg bg-zinc-50 dark:bg-white/5 border border-zinc-200 dark:border-white/10"
@@ -601,7 +623,7 @@ export default function MembersSettings() {
                         )}
                       </h4>
                       <p className="text-xs text-zinc-600 dark:text-zinc-400">
-                        {member.user?.emails?.find((e) => e.primary)?.email ||
+                        {member.user?.emails?.find(e => e.primary)?.email ||
                           member.user?.emails?.[0]?.email}
                       </p>
                     </div>
@@ -671,7 +693,7 @@ export default function MembersSettings() {
 
           {!invitationsLoading && invitations.length > 0 && (
             <div className="space-y-3">
-              {invitations.map((invitation) => (
+              {invitations.map(invitation => (
                 <div
                   key={invitation.id}
                   className="flex items-center justify-between p-4 rounded-lg bg-zinc-50 dark:bg-white/5 border border-zinc-200 dark:border-white/10"
@@ -718,17 +740,16 @@ export default function MembersSettings() {
             Role Permissions
           </h3>
           <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-6">
-            Each role grants specific permissions within the organization. Click to expand and see detailed permissions.
+            Each role grants specific permissions within the organization. Click to expand and see
+            detailed permissions.
           </p>
 
           <div className="space-y-4">
-            {roles.map((role) => (
+            {roles.map(role => (
               <RolePermissionsCard key={role.id} role={role} />
             ))}
             {roles.length === 0 && (
-              <p className="text-sm text-zinc-500 dark:text-zinc-400 italic">
-                Loading roles...
-              </p>
+              <p className="text-sm text-zinc-500 dark:text-zinc-400 italic">Loading roles...</p>
             )}
           </div>
         </div>

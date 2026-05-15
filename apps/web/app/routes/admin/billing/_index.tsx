@@ -139,12 +139,12 @@ export default function AdminBillingOverview() {
   const subscriptions = subsData?.subscriptions || []
   const totalSubscriptions = subsData?.subscriptionsCount?.total || 0
 
-  const activeSubscriptions = subscriptions.filter((s) => s.status === 'ACTIVE').length
-  const activePlans = plans.filter((p) => p.active).length
+  const activeSubscriptions = subscriptions.filter(s => s.status === 'ACTIVE').length
+  const activePlans = plans.filter(p => p.active).length
 
   const monthlyRecurringRevenue = subscriptions
-    .filter((s) => s.status === 'ACTIVE' && s.plan?.price)
-    .reduce((sum: number, s: any) => {
+    .filter(s => s.status === 'ACTIVE' && s.plan?.price)
+    .reduce((sum: number, s: Subscription) => {
       const price = parseFloat(s.plan.price)
       return sum + price
     }, 0)
@@ -281,7 +281,7 @@ export default function AdminBillingOverview() {
             <p className="text-sm text-gray-500">No subscriptions yet</p>
           ) : (
             <div className="space-y-4">
-              {subscriptions.map((sub) => (
+              {subscriptions.map(sub => (
                 <div key={sub.id} className="flex items-center justify-between">
                   <div>
                     <p className="text-sm font-medium text-gray-900">{sub.organization?.name}</p>

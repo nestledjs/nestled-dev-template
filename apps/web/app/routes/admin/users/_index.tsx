@@ -18,10 +18,8 @@ import {
   XCircleIcon,
 } from '@heroicons/react/24/outline'
 import { cn } from '@nestled-template/shared/utils'
-import { useNavigate } from 'react-router'
 
 export default function AdminUsersPage() {
-  const navigate = useNavigate()
   const [search, setSearch] = useState('')
   const [filters, setFilters] = useState({
     isSuperAdmin: undefined as boolean | undefined,
@@ -54,11 +52,14 @@ export default function AdminUsersPage() {
   })
 
   // Query user details
-  const { data: detailsData, loading: loadingDetails } = useQuery<AdminUserManagementDetailsQuery>(AdminUserManagementDetails, {
-    variables: { userId: selectedUserId! },
-    skip: !selectedUserId,
-    fetchPolicy: 'network-only',
-  })
+  const { data: detailsData, loading: loadingDetails } = useQuery<AdminUserManagementDetailsQuery>(
+    AdminUserManagementDetails,
+    {
+      variables: { userId: selectedUserId || '' },
+      skip: !selectedUserId,
+      fetchPolicy: 'network-only',
+    },
+  )
 
   const userDetails = detailsData?.adminUserDetails
 

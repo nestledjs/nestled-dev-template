@@ -18,6 +18,10 @@ import { Avatar } from '@nestled-template/web-ui'
 import { cn } from '@nestled-template/shared/utils'
 import { useQuery } from '@apollo/client/react'
 
+type UserWithActiveOrganization = NonNullable<MeQuery['me']> & {
+  activeOrganizationId?: string | null
+}
+
 interface NavItem {
   name: string
   href: string
@@ -34,10 +38,13 @@ export default function SettingsLayout() {
   // Fetch user's organizations with member data
   const { data: orgsData } = useQuery<MyOrganizationsWithMembersQuery>(MyOrganizationsWithMembers)
   const organizations = orgsData?.myOrganizations || []
+  const userWithActiveOrganization = user as UserWithActiveOrganization | null | undefined
   const activeOrganization =
-    organizations.find(org => org.id === (user as any)?.activeOrganizationId) || organizations[0] || null
+    organizations.find(org => org.id === userWithActiveOrganization?.activeOrganizationId) ||
+    organizations[0] ||
+    null
   const activeOrganizationMember =
-    activeOrganization?.members?.find((member) => member.userId === user?.id) || null
+    activeOrganization?.members?.find(member => member.userId === user?.id) || null
 
   const personalSettings: NavItem[] = [
     {
@@ -118,7 +125,7 @@ export default function SettingsLayout() {
     if (activeOrganizationMember?.role?.permissions) {
       const [subject, action] = permission.split(':')
       return activeOrganizationMember.role.permissions.some(
-        (p) => p.subject === subject && p.action === action,
+        p => p.subject === subject && p.action === action,
       )
     }
 

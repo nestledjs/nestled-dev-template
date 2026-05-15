@@ -36,11 +36,15 @@ export default function OrganizationSettings() {
   const activeOrganization = organizations[0] || null
   const [formError, setFormError] = useState<string | null>(null)
   const [formSuccess, setFormSuccess] = useState<string | null>(null)
-  const [logoMessage, setLogoMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
+  const [logoMessage, setLogoMessage] = useState<{
+    type: 'success' | 'error'
+    text: string
+  } | null>(null)
   const [updateOrganization] = useMutation<UserUpdateOrganizationMutation>(UserUpdateOrganization)
   const [uploadOrganizationLogo] =
     useMutation<UploadOrganizationLogoMutation>(UploadOrganizationLogo)
-  const [removeOrganizationLogo] = useMutation<RemoveOrganizationLogoMutation>(RemoveOrganizationLogo)
+  const [removeOrganizationLogo] =
+    useMutation<RemoveOrganizationLogoMutation>(RemoveOrganizationLogo)
   const revalidator = useRevalidator()
   const client = useApolloClient()
 
@@ -48,11 +52,16 @@ export default function OrganizationSettings() {
     setFormError(null)
     setFormSuccess(null)
 
+    if (!activeOrganization) {
+      setFormError('No active organization selected')
+      return
+    }
+
     try {
       const result = await updateOrganization({
         variables: {
           input: {
-            organizationId: activeOrganization!.id,
+            organizationId: activeOrganization.id,
             name: input.name,
           },
         },

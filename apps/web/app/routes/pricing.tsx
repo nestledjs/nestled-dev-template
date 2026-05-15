@@ -10,9 +10,14 @@ import {
 } from '@nestled-template/shared/sdk'
 import { useSubscription, useGlobalCtx } from '@nestled-template/web'
 
+type PricingFeature = {
+  name: string
+  included: boolean
+}
+
 export default function PricingPage() {
   const { user } = useGlobalCtx()
-  const { subscription, plan: currentPlan } = useSubscription()
+  const { plan: currentPlan } = useSubscription()
   const { data, loading } = useQuery<ActivePlansQuery>(ActivePlans)
   const [createCheckoutSession, { loading: checkoutLoading }] =
     useMutation<CreateCheckoutSessionMutation>(CreateCheckoutSession)
@@ -83,13 +88,22 @@ export default function PricingPage() {
         {/* Plans Grid */}
         {!loading && plans.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
-            {plans.map((plan) => {
+            {plans.map(plan => {
               const isCurrent = isCurrentPlan(plan.id)
-              const features = Array.isArray(plan.features)
-                ? plan.features
+              const features: PricingFeature[] = Array.isArray(plan.features)
+                ? plan.features.map(feature =>
+                    typeof feature === 'object' && feature !== null
+                      ? {
+                          name: 'name' in feature ? String(feature.name) : String(feature),
+                          included: 'included' in feature ? feature.included === true : true,
+                        }
+                      : { name: String(feature), included: true },
+                  )
                 : typeof plan.features === 'object'
                   ? Object.entries(plan.features).map(([key, value]) => ({
-                      name: key.replaceAll(/_/g, ' ').replaceAll(/\b\w/g, (char) => char.toUpperCase()),
+                      name: key
+                        .replaceAll(/_/g, ' ')
+                        .replaceAll(/\b\w/g, char => char.toUpperCase()),
                       included: value === true,
                     }))
                   : []
@@ -139,9 +153,9 @@ export default function PricingPage() {
                   {/* Features */}
                   <ul className="space-y-4 mb-8">
                     {Array.isArray(features) ? (
-                      features.map((feature: any, idx: number) => {
-                        const isIncluded = typeof feature === 'object' ? feature.included : true
-                        const featureName = typeof feature === 'object' ? feature.name : feature
+                      features.map((feature, idx) => {
+                        const isIncluded = feature.included
+                        const featureName = feature.name
 
                         return (
                           <li key={idx} className="flex items-start">

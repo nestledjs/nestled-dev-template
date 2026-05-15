@@ -19,18 +19,21 @@ export default function AdminOrganizationsPage() {
   const [page, setPage] = useState(0)
   const pageSize = 50
 
-  const { data, loading, error } = useQuery<AdminPlatformOrganizationsQuery>(AdminPlatformOrganizations, {
-    variables: {
-      filters: {
-        take: pageSize,
-        skip: page * pageSize,
-        search: search || undefined,
+  const { data, loading, error } = useQuery<AdminPlatformOrganizationsQuery>(
+    AdminPlatformOrganizations,
+    {
+      variables: {
+        filters: {
+          take: pageSize,
+          skip: page * pageSize,
+          search: search || undefined,
+        },
       },
+      fetchPolicy: 'network-only',
     },
-    fetchPolicy: 'network-only',
-  })
+  )
 
-  type Organization = NonNullable<AdminPlatformOrganizationsQuery['adminOrganizations']['organizations'][number]>
+  type Organization = AdminPlatformOrganizationsQuery['adminOrganizations']['organizations'][number]
 
   const organizations = data?.adminOrganizations?.organizations || []
   const total = data?.adminOrganizations?.total || 0
@@ -45,7 +48,7 @@ export default function AdminOrganizationsPage() {
     })
   }
 
-  const getSubscriptionStatus = (org: any) => {
+  const getSubscriptionStatus = (org: Organization) => {
     const subscription = org.subscription
     if (subscription && subscription.status === 'ACTIVE') {
       return {
@@ -141,11 +144,10 @@ export default function AdminOrganizationsPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-zinc-200 dark:divide-white/10 bg-white dark:bg-white/5">
-                {organizations.map((org) => {
+                {organizations.map(org => {
                   const subscription = getSubscriptionStatus(org)
                   const memberCount = org.members?.length || 0
-                  const ownerCount =
-                    org.members?.filter((m) => m.role?.name === 'Owner').length || 0
+                  const ownerCount = org.members?.filter(m => m.role?.name === 'Owner').length || 0
 
                   return (
                     <tr key={org.id} className="hover:bg-zinc-50 dark:hover:bg-white/5 transition">
