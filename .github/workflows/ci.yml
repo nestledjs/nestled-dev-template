@@ -11,6 +11,7 @@ on:
 permissions:
   actions: read
   contents: read
+  pull-requests: read
 
 jobs:
   main:
@@ -70,12 +71,18 @@ jobs:
       # Prepend any command with "nx-cloud record --" to record its logs to Nx Cloud
       # - run: pnpm exec nx-cloud record -- echo Hello World
       # Nx Affected runs only tasks affected by the changes in this PR/commit. Learn more: https://nx.dev/ci/features/affected
-      - run: pnpm exec nx affected -t lint test build
+      - run: pnpm exec nx affected -t lint build
+
+      - name: Run tests with coverage
+        run: pnpm exec nx affected -t test -- --coverage
         env:
-          # E2E tests will run against the PostgreSQL service
           TEST_DATABASE_URL: postgresql://prisma:prisma@localhost:5432/nestled_template_test
           NODE_ENV: test
-          # JWT secret for test environment (not a real secret, just for CI)
           JWT_SECRET: test-jwt-secret-for-ci-only-not-production
-          # Use mock email provider to avoid SMTP errors in CI
           EMAIL_PROVIDER: mock
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@v3
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

@@ -26,7 +26,7 @@ export default defineConfig({
     coverage: {
       reportsDirectory: '../../coverage/libs/data-browser',
       provider: 'v8',
-      reporter: ['text', 'json', 'html'],
+      reporter: ['text', 'json', 'html', 'lcov'],
       exclude: [
         'node_modules/',
         'src/test-setup.ts',
