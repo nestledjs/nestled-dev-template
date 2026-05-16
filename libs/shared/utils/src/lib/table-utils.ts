@@ -22,7 +22,7 @@ export function renderValue(value: unknown): ReactNode {
         if (typeof rawLabel === 'string' || typeof rawLabel === 'number') return String(rawLabel)
         return JSON.stringify(obj)
       }
-      return String(entry)
+      return String(entry as string | number | boolean)
     })
     return labels.filter(Boolean).join(', ')
   }
@@ -34,7 +34,7 @@ export function renderValue(value: unknown): ReactNode {
     return JSON.stringify(obj)
   }
 
-  return String(value)
+  return String(value as string | number | boolean)
 }
 
 export function formatFieldName(fieldName: string): string {
