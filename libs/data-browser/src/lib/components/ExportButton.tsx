@@ -12,7 +12,7 @@ function escapeCsvValue(val: unknown): string {
     const id = obj.id
     str = typeof id === 'string' || typeof id === 'number' ? String(id) : JSON.stringify(val)
   } else {
-    str = String(val as string | number | boolean)
+    str = String(val)
   }
   if (str.includes(',') || str.includes('"') || str.includes('\n') || str.includes('\r')) {
     return `"${str.replaceAll('"', '""')}"`
