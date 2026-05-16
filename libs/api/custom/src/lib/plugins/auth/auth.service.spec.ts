@@ -4,7 +4,6 @@ import { JwtService } from '@nestjs/jwt'
 import { ConfigService } from '@nestjs/config'
 import { AuthService } from './auth.service'
 import { ApiCoreDataAccessService } from '@nestled-template/api/core/data-access'
-import { ApiCoreFeatureService } from '@nestled-template/api/core/feature'
 import { EmailService } from '@nestled-template/api/integrations'
 import { SecurityEventsService } from '../security'
 import { SessionService } from './session.service'
@@ -34,7 +33,6 @@ jest.mock('./twofa.helper', () => ({
 describe('AuthService', () => {
   let service: AuthService
   let mockData: any // Use any to avoid Prisma type conflicts with Jest mocks
-  let mockCore: jest.Mocked<ApiCoreFeatureService>
   let mockJwtService: jest.Mocked<JwtService>
   let mockEmailService: jest.Mocked<EmailService>
   let mockConfigService: jest.Mocked<ConfigService>
@@ -100,17 +98,6 @@ describe('AuthService', () => {
         return Promise.all(arg)
       }),
     }
-    mockCore = {
-      cookie: {
-        name: 'test-cookie',
-        options: {
-          domain: 'localhost',
-          secure: false,
-          httpOnly: true,
-          sameSite: 'lax',
-        },
-      },
-    } as any
     mockJwtService = {
       sign: jest.fn(),
       verify: jest.fn(),
@@ -169,7 +156,6 @@ describe('AuthService', () => {
       providers: [
         AuthService,
         { provide: ApiCoreDataAccessService, useValue: mockData },
-        { provide: ApiCoreFeatureService, useValue: mockCore },
         { provide: JwtService, useValue: mockJwtService },
         { provide: EmailService, useValue: mockEmailService },
         { provide: ConfigService, useValue: mockConfigService },
