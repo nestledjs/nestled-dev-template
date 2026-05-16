@@ -1,4 +1,4 @@
-import React, { Dispatch, ReactElement, ReactNode, SetStateAction, useCallback, useState } from 'react'
+import React, { Dispatch, ReactElement, SetStateAction, useCallback, useState } from 'react'
 import { Link } from 'react-router'
 import {
   ChevronDownIcon,
@@ -9,7 +9,7 @@ import {
   EyeSlashIcon,
   PencilIcon,
 } from '@heroicons/react/24/outline'
-import dayjs from 'dayjs'
+import { formatFieldName, getNestedProperty, renderValue } from '@nestled-template/shared/utils'
 
 // Inlined type from CorePaging
 export interface Paging {
@@ -118,57 +118,6 @@ export interface DataTableProps {
   readonly additionalFilters?: ReactElement | null
   readonly setSort?: Dispatch<SetStateAction<{ orderBy: string; orderDirection: string }>>
   readonly sort?: { orderBy: string; orderDirection: string }
-}
-
-function getNestedProperty(item: any, fieldPath: string) {
-  const value = fieldPath
-    .split('.')
-    .reduce((obj, key) => obj?.[key], item)
-
-  if (fieldPath.toLowerCase().includes('date') && value) {
-    return dayjs(value).format('MMMM D, YYYY') // Format the date as desired
-  }
-
-  return value
-}
-
-// Render values safely in table cells
-function renderValue(value: unknown): ReactNode {
-  if (value === null || value === undefined) return ''
-
-  // Arrays (e.g., many-to-many relations)
-  if (Array.isArray(value)) {
-    if (value.length === 0) return ''
-    const labels = value.map((entry) => {
-      if (entry === null || entry === undefined) return ''
-      if (typeof entry === 'object') {
-        const obj = entry as Record<string, unknown>
-        const label = (obj.name as string) ?? (obj.title as string) ?? (obj.id as string) ?? (obj.slug as string)
-        return label ?? JSON.stringify(obj)
-      }
-      return String(entry)
-    })
-    return labels.filter(Boolean).join(', ')
-  }
-
-  // Objects (e.g., relation values)
-  if (typeof value === 'object') {
-    const obj = value as Record<string, unknown>
-    const rawLabel = obj.name ?? obj.title ?? obj.id ?? obj.slug
-    if (typeof rawLabel === 'string' || typeof rawLabel === 'number') return String(rawLabel)
-    return JSON.stringify(obj)
-  }
-
-  // Primitives
-  return String(value)
-}
-
-function formatFieldName(fieldName: string) {
-  return fieldName
-    .replaceAll(/([a-z])([A-Z])/g, '$1 $2') // Insert a space between lowercase and uppercase letters
-    .split('.') // Split by periods if necessary
-    .map((part) => part.charAt(0).toUpperCase() + part.slice(1)) // Capitalize the first letter of each part
-    .join(' ')
 }
 
 export function DataTable(props: DataTableProps) {
