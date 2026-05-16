@@ -196,15 +196,13 @@ export function UsageBadge({ limitKey, currentValue }: { readonly limitKey: stri
     return null
   }
 
+  let colorClass = 'bg-gray-100 text-gray-700'
+  if (isAtLimit) colorClass = 'bg-red-100 text-red-700'
+  else if (percentUsed >= 80) colorClass = 'bg-yellow-100 text-yellow-700'
+
   return (
     <span
-      className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${
-        isAtLimit
-          ? 'bg-red-100 text-red-700'
-          : percentUsed >= 80
-          ? 'bg-yellow-100 text-yellow-700'
-          : 'bg-gray-100 text-gray-700'
-      }`}
+      className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${colorClass}`}
     >
       {currentValue}/{limit}
     </span>

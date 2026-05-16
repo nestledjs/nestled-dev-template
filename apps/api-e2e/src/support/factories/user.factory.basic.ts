@@ -33,10 +33,7 @@ export class UserFactory {
   }
 
   static createVerifiedUser(overrides: CreateUserData = {}): Required<CreateUserData> {
-    return this.create({
-      ...overrides,
-      verified: true,
-    })
+    return this.createAdmin(overrides)
   }
 
   static createUnverifiedUser(overrides: CreateUserData = {}): Required<CreateUserData> {

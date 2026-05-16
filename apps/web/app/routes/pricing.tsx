@@ -90,23 +90,26 @@ export default function PricingPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
             {plans.map(plan => {
               const isCurrent = isCurrentPlan(plan.id)
-              const features: PricingFeature[] = Array.isArray(plan.features)
-                ? plan.features.map(feature =>
-                    typeof feature === 'object' && feature !== null
-                      ? {
-                          name: 'name' in feature ? String(feature.name) : String(feature),
-                          included: 'included' in feature ? feature.included === true : true,
-                        }
-                      : { name: String(feature), included: true },
-                  )
-                : typeof plan.features === 'object'
-                  ? Object.entries(plan.features).map(([key, value]) => ({
-                      name: key
-                        .replaceAll(/_/g, ' ')
-                        .replaceAll(/\b\w/g, char => char.toUpperCase()),
-                      included: value === true,
-                    }))
-                  : []
+              let features: PricingFeature[]
+              if (Array.isArray(plan.features)) {
+                features = plan.features.map(feature =>
+                  typeof feature === 'object' && feature !== null
+                    ? {
+                        name: 'name' in feature ? String(feature.name) : String(feature),
+                        included: 'included' in feature ? feature.included === true : true,
+                      }
+                    : { name: String(feature), included: true },
+                )
+              } else if (typeof plan.features === 'object') {
+                features = Object.entries(plan.features).map(([key, value]) => ({
+                  name: key
+                    .replaceAll(/_/g, ' ')
+                    .replaceAll(/\b\w/g, char => char.toUpperCase()),
+                  included: value === true,
+                }))
+              } else {
+                features = []
+              }
 
               return (
                 <div

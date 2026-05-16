@@ -21,8 +21,8 @@ vi.mock('@nestled-template/web-ui', () => ({
       <div data-testid="site-name">{siteName}</div>
       <div data-testid="auth-status">{isAuthenticated ? 'authenticated' : 'unauthenticated'}</div>
       <nav data-testid="navigation">
-        {navigation?.map((item: any, idx: number) => (
-          <a key={idx} href={item.href}>{item.name}</a>
+        {navigation?.map((item: any) => (
+          <a key={item.href} href={item.href}>{item.name}</a>
         ))}
       </nav>
     </header>

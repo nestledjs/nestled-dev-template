@@ -110,6 +110,12 @@ const DEFAULT_NOTIFICATIONS: NotificationSetting[] = [
 
 export const loader = () => ({})
 
+function handleUpdatePreferenceCache(cache: Parameters<typeof updatePreferencesCache>[0], data: { updateUserPreference?: Parameters<typeof updatePreferencesCache>[1] } | null | undefined) {
+  if (data?.updateUserPreference) {
+    updatePreferencesCache(cache, data.updateUserPreference)
+  }
+}
+
 export default function NotificationsSettings() {
   const { data: preferencesData } = useQuery<UserPreferencesQuery>(UserPreferences)
   const preferences = preferencesData?.userPreferences || []
@@ -139,12 +145,6 @@ export default function NotificationsSettings() {
       enabled: userPref ? userPref.value === 'true' : defaultSetting.enabled,
     }
   })
-
-  function handleUpdatePreferenceCache(cache: Parameters<typeof updatePreferencesCache>[0], data: { updateUserPreference?: Parameters<typeof updatePreferencesCache>[1] } | null | undefined) {
-    if (data?.updateUserPreference) {
-      updatePreferencesCache(cache, data.updateUserPreference)
-    }
-  }
 
   const updateExistingPreference = async (
     existing: (typeof preferences)[0],

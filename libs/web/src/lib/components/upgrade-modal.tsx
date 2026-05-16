@@ -121,15 +121,18 @@ export function UpgradeModal({ isOpen, onClose, feature, reason }: UpgradeModalP
                     )}
 
                     <div className="mt-6">
-                      {loading ? (
-                        <div className="flex items-center justify-center py-12">
-                          <div className="text-sm text-gray-500">Loading plans...</div>
-                        </div>
-                      ) : plans.length === 0 ? (
-                        <div className="rounded-md bg-yellow-50 p-4">
-                          <p className="text-sm text-yellow-800">No plans available at this time.</p>
-                        </div>
-                      ) : (
+                      {(() => {
+                        if (loading) return (
+                          <div className="flex items-center justify-center py-12">
+                            <div className="text-sm text-gray-500">Loading plans...</div>
+                          </div>
+                        )
+                        if (plans.length === 0) return (
+                          <div className="rounded-md bg-yellow-50 p-4">
+                            <p className="text-sm text-yellow-800">No plans available at this time.</p>
+                          </div>
+                        )
+                        return (
                         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                           {plans.map((plan: any) => {
                             const isCurrentPlan = currentPlan?.id === plan.id
@@ -201,13 +204,18 @@ export function UpgradeModal({ isOpen, onClose, feature, reason }: UpgradeModalP
                                       : 'bg-blue-600 text-white hover:bg-blue-500 focus-visible:outline-blue-600'
                                   }`}
                                 >
-                                  {isCurrentPlan ? 'Current Plan' : (checkoutLoading ? 'Loading...' : 'Select Plan')}
+                                  {(() => {
+                                    if (isCurrentPlan) return 'Current Plan'
+                                    if (checkoutLoading) return 'Loading...'
+                                    return 'Select Plan'
+                                  })()}
                                 </button>
                               </div>
                             )
                           })}
                         </div>
-                      )}
+                      )
+                    })()}
                     </div>
                   </div>
                 </div>

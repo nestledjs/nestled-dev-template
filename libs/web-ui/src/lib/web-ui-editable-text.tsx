@@ -19,7 +19,7 @@ export function WebUiEditableText({
   const [currentText, setCurrentText] = useState(text)
 
   const isTextEmpty = (text: string) => {
-    return !text || !text.trim().replaceAll('\n', '')
+    return !text?.trim().replaceAll('\n', '')
   }
 
   const handleSave = async () => {

@@ -200,12 +200,10 @@ module.exports = async function () {
       globalThis.__SKIP_E2E_TESTS__ = false
     } catch (error) {
       console.error('❌ Failed to start API server')
-      if (apiProcess?.pid) {
-        try {
-          apiProcess.kill('SIGKILL')
-        } catch {
-          // Process already dead
-        }
+      try {
+        apiProcess?.kill('SIGKILL')
+      } catch {
+        // Process already dead
       }
       throw error
     }
