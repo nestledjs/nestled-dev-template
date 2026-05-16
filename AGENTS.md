@@ -5,6 +5,7 @@
 **Nestled Template** is a production-ready SaaS starter template with auth, profiles, organizations/teams, RBAC, billing/subscriptions, admin area, and audit logging. Built as an Nx monorepo with a NestJS GraphQL API and React web frontend.
 
 **Key Stack:**
+
 - **Monorepo:** Nx with pnpm
 - **API:** NestJS + GraphQL + Prisma (PostgreSQL)
 - **Web:** React with React Router v7 + Apollo Client
@@ -39,6 +40,7 @@ Static assets are in `apps/web/public`; helper scripts are in `scripts/`.
 Use pnpm from the repository root.
 
 ### Install & Setup
+
 ```bash
 pnpm install
 cp .env.example .env   # then edit DATABASE_URL and other secrets
@@ -47,12 +49,14 @@ pnpm prisma:seed
 ```
 
 ### Running the Apps
+
 ```bash
 pnpm dev:api      # API server (localhost:3000)
 pnpm dev:web      # Web app (separate terminal)
 ```
 
 ### Building
+
 ```bash
 pnpm build:api
 pnpm build:web
@@ -60,6 +64,7 @@ pnpm nx build <project-name>
 ```
 
 ### Testing
+
 ```bash
 pnpm test                          # run Nx test targets
 pnpm test:e2e                      # scripted end-to-end tests
@@ -74,6 +79,7 @@ pnpm test:db:stop
 ```
 
 ### Linting & Formatting
+
 ```bash
 pnpm lint               # run workspace and project linting
 pnpm format             # write Nx formatting
@@ -82,6 +88,7 @@ pnpm typecheck          # generate React Router types + TypeScript checks for ap
 ```
 
 ### Prisma Operations
+
 ```bash
 pnpm prisma:generate    # generate Prisma client
 pnpm prisma:format      # format schema
@@ -92,6 +99,7 @@ pnpm prisma:studio      # open Prisma Studio
 ```
 
 ### Code Generation
+
 ```bash
 pnpm db-update          # full regen: Prisma → CRUD resolvers → Models → SDK
 pnpm sdk                # generate GraphQL SDK only
@@ -100,6 +108,7 @@ pnpm generate:models    # generate TypeScript models from Prisma
 ```
 
 ### Docker
+
 ```bash
 pnpm docker:build
 pnpm docker:up
@@ -282,12 +291,14 @@ export class UserOrganizationResolver {
 ```
 
 **WRONG** ❌:
+
 ```prisma
 /// @skipCrud  // Do not use this for normal application models.
 model Organization { ... }
 ```
 
 **ACCEPTABLE** ✅:
+
 ```prisma
 /// @skipCrud
 /// Security-sensitive internal credential history. Password hashes should not be exposed
@@ -363,6 +374,7 @@ The following files are overwritten when running `pnpm db-update`:
 ## Auth & Security
 
 **Authorization Guards:**
+
 - `GqlAuthAdminGuard` — Super admin only (default for generated CRUD)
 - `GqlAuthGuard` — Authenticated user
 - Custom guards in `libs/api/utils/src/lib/guards/`
@@ -378,6 +390,26 @@ The following files are overwritten when running `pnpm db-update`:
 ## Security & Configuration Tips
 
 Do not commit secrets. Start from `.env.example` and keep local values in `.env`. Be careful with database and cleanup commands; prefer documented Prisma scripts such as `pnpm prisma:generate`, `pnpm prisma:db-push`, and `pnpm prisma:seed`.
+
+## SonarQube Quality Expectations
+
+This repository is kept clean under SonarQube. When editing code, proactively avoid common Sonar findings instead of relying on a later cleanup pass:
+
+- Keep functions small and focused. If a function starts accumulating nested branches, loops, or mixed responsibilities, extract named helpers before cognitive complexity becomes high.
+- Avoid deeply nested control flow. Prefer early returns, guard helpers, and small validation functions.
+- Do not use regexes that can backtrack heavily on malformed input. Prefer simple anchored patterns, `RegExp.exec()` loops for repeated matches, or explicit parsers/scanners for non-trivial parsing.
+- Do not rely on default object stringification. Before converting unknown values to strings, explicitly handle objects with `JSON.stringify`, domain labels, or selected fields.
+- Avoid dead fallback branches such as `typeof value === 'object' ? ... : String(value)` after an object branch already returned; Sonar may still flag these as unclear.
+- Keep generated, doctor, script, and test-support code clean too. Do not exclude files from Sonar just because they are internal unless there is a deliberate project decision.
+
+Before finishing non-trivial changes, run the relevant local checks:
+
+```bash
+pnpm run nestled-doctor
+pnpm format:check
+pnpm nx test <affected-project>
+pnpm nx build <affected-project>
+```
 
 ## Agent-Specific Instructions
 
