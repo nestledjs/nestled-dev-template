@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { within, expect } from 'storybook/test';
 import { WebUiDataTable } from './web-ui-data-table';
 import type { StoryContext } from '@storybook/react-vite';
-import React, { useState } from 'react';
+import React from 'react';
 
 const mockData = [
   { id: '1', name: 'Alice', email: 'alice@example.com', createdAt: '2024-01-01' },
