@@ -4,7 +4,7 @@ import { useReadQuery, type QueryRef } from '@apollo/client/react'
 import type { MeQuery } from '@nestled-template/shared/sdk'
 import { Component, type ReactNode, useEffect, useState } from 'react'
 import { isViteCacheError, isNetworkError } from '@nestled-template/shared/utils'
-import { WebUiServiceUnavailable, WebUiViteCacheError } from '@nestled-template/web-ui'
+import { ServiceUnavailable, ViteCacheError } from '@nestledjs/shared-components'
 
 class MeQueryErrorBoundary extends Component<
   { children: ReactNode },
@@ -108,13 +108,13 @@ export function App() {
 
   // Show Vite cache error UI if detected
   if (viteCacheError) {
-    return <WebUiViteCacheError autoRefresh={true} autoRefreshDelay={3000} />
+    return <ViteCacheError autoRefresh={true} autoRefreshDelay={3000} />
   }
 
   // Show service unavailable UI if Apollo detected network issues
   if (serviceUnavailable) {
     return (
-      <WebUiServiceUnavailable
+      <ServiceUnavailable
         title="API Unavailable"
         message="Our servers are currently unreachable. Please check your internet connection or refresh the page to try again."
       />
