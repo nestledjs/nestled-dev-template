@@ -5,37 +5,15 @@ import { CheckCircleIcon, ExclamationCircleIcon } from '@heroicons/react/24/outl
 import { ErrorBoundary } from '@nestledjs/shared-components'
 import { Form } from '@nestledjs/forms'
 import { useAdminDataContext } from '../context/AdminDataContext'
-
-function toReadableText(text: string): string {
-  return text.replaceAll(/([a-z])([A-Z])/g, '$1 $2').replace(/^./, str => str.toUpperCase())
-}
 import { Link, useNavigate, useParams } from 'react-router'
-
-import { buildFormFields, cleanFormInput, getAdminDocuments } from '../utils/graphql-utils' // =================================
-
-// =================================
-// SECURITY UTILITIES
-// =================================
-
-// Sanitize and validate user input
-function sanitizeInput(input: string | undefined): string {
-  if (!input || typeof input !== 'string') return ''
-
-  // Remove potentially dangerous characters and limit length
-  return input
-    .replaceAll(/[<>"'%;()&+]/g, '') // Remove common injection characters
-    .replaceAll(/javascript:/gi, '') // Remove javascript: protocols
-    .replaceAll(/on\w+\s*=/gi, '') // Remove event handlers
-    .trim()
-    .substring(0, 100) // Limit length to prevent DoS
-}
-
-// Convert PascalCase to kebab-case for URLs (CourseChapter -> course-chapter)
-const toKebabCase = (str: string): string => {
-  return str
-    .replaceAll(/([a-z])([A-Z])/g, '$1-$2') // Insert dash between lowercase and uppercase
-    .toLowerCase() // Convert to lowercase
-}
+import {
+  buildFormFields,
+  cleanFormInput,
+  getAdminDocuments,
+  sanitizeInput,
+  toKebabCase,
+  toReadableText,
+} from '../utils/graphql-utils'
 
 // Validation functions moved into component to access databaseModels from context
 

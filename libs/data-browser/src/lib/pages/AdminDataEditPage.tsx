@@ -22,37 +22,19 @@ function getModelResponseFieldName(modelName: string): string {
   return toLowerCamelCase(modelName)
 }
 
-function toReadableText(text: string): string {
-  return text.replaceAll(/([a-z])([A-Z])/g, '$1 $2').replace(/^./, str => str.toUpperCase())
-}
 import { Link, useNavigate, useParams } from 'react-router'
+import {
+  buildFormFields,
+  cleanFormInput,
+  getAdminDocuments,
+  sanitizeInput,
+  toKebabCase,
+  toReadableText,
+} from '../utils/graphql-utils'
 
-import { buildFormFields, cleanFormInput, getAdminDocuments } from '../utils/graphql-utils' // Load Apollo error messages in development
-
-// Load Apollo error messages in development
 if (process.env.NODE_ENV !== 'production') {
   loadDevMessages()
   loadErrorMessages()
-}
-
-// Security validation utilities
-const sanitizeInput = (input: string | undefined): string => {
-  if (!input || typeof input !== 'string') return ''
-
-  // Remove potentially dangerous characters and limit length
-  return input
-    .replaceAll(/[<>"'%;()&+]/g, '') // Remove common injection characters
-    .replaceAll(/javascript:/gi, '') // Remove javascript: protocols
-    .replaceAll(/on\w+\s*=/gi, '') // Remove event handlers
-    .trim()
-    .substring(0, 100) // Limit length to prevent DoS
-}
-
-// Convert PascalCase to kebab-case for URLs (CourseChapter -> course-chapter)
-const toKebabCase = (str: string): string => {
-  return str
-    .replaceAll(/([a-z])([A-Z])/g, '$1-$2') // Insert dash between lowercase and uppercase
-    .toLowerCase() // Convert to lowercase
 }
 
 // =================================

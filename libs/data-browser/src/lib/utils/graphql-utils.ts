@@ -111,7 +111,7 @@ export function getMutationName(
 /**
  * Convert model name to kebab-case for URLs
  */
-function toKebabCase(str: string): string {
+export function toKebabCase(str: string): string {
   return str
     .replaceAll(/([a-z])([A-Z])/g, '$1-$2')
     .toLowerCase()
@@ -764,3 +764,19 @@ export function cleanFormInput(
 
   return cleaned
 }
+
+export function toReadableText(text: string): string {
+  return text.replaceAll(/([a-z])([A-Z])/g, '$1 $2').replace(/^./, str => str.toUpperCase())
+}
+
+export function sanitizeInput(input: string | undefined): string {
+  if (!input || typeof input !== 'string') return ''
+  return input
+    .replaceAll(/[<>"'%;()&+]/g, '')
+    .replaceAll(/javascript:/gi, '')
+    .replaceAll(/on\w+\s*=/gi, '')
+    .trim()
+    .substring(0, 100)
+}
+
+
