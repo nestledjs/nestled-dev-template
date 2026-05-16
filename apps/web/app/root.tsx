@@ -8,7 +8,7 @@ import {
   isJwtExpired,
   isNetworkError,
 } from '@nestled-template/shared/utils'
-import { WebUiErrorBoundary } from '@nestled-template/web-ui'
+import { ErrorBoundary as AppErrorBoundary } from '@nestledjs/shared-components'
 import { ReactNode } from 'react'
 import {
   Links,
@@ -206,5 +206,5 @@ export function ErrorBoundary({ error }: Readonly<{ error: Error }>) {
 
   // Layout always wraps this component and provides <html>/<head>/<body> —
   // do not render document-level tags here.
-  return <WebUiErrorBoundary error={error} autoRefresh={true} autoRefreshDelay={3000} />
+  return <AppErrorBoundary error={error} autoRefresh={true} autoRefreshDelay={3000} />
 }
