@@ -8,11 +8,11 @@ function escapeCsvValue(val: unknown): string {
   if (val === null || val === undefined) return ''
   let str: string
   if (typeof val === 'object') {
-    // Flatten simple relation objects to their id, otherwise stringify
     const obj = val as Record<string, unknown>
-    str = obj.id !== null && obj.id !== undefined && typeof obj.id !== 'object' ? String(obj.id) : JSON.stringify(val)
+    const id = obj.id
+    str = typeof id === 'string' || typeof id === 'number' ? String(id) : JSON.stringify(val)
   } else {
-    str = String(val)
+    str = String(val as string | number | boolean)
   }
   if (str.includes(',') || str.includes('"') || str.includes('\n') || str.includes('\r')) {
     return `"${str.replaceAll('"', '""')}"`
