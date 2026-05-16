@@ -4,14 +4,12 @@ Universal admin data browser for Nestled framework projects with full CRUD opera
 
 ## Features
 
-- 🔍 **Auto-generated CRUD Interface** - Automatically generates admin UI for all Prisma models
-- 📊 **Advanced Data Table** - Sorting, filtering, pagination, column selection
-- 🔎 **Smart Search** - Multi-field text search with debouncing
-- 📝 **Dynamic Forms** - Auto-generated create/edit forms from model schema
-- 🎨 **Dark Mode Support** - Full dark mode theming
-- 💾 **Persistent Preferences** - Saves column visibility, sort order, and search preferences per model
-- 🔐 **Type-Safe** - Full TypeScript support with GraphQL code generation
-- 📱 **Responsive** - Mobile-friendly with fullscreen mode
+- Auto-generated admin CRUD interface from Nestled model metadata
+- Sorting, filtering, pagination, column selection, and search
+- Dynamic create/edit forms based on generated model metadata
+- Persistent per-model table preferences
+- TypeScript-first API around a generated GraphQL SDK
+- Responsive admin workflow suitable for operational tools
 
 ## Installation
 
@@ -32,6 +30,7 @@ This package requires a Nestled framework project with:
 - **@nestledjs/forms** for form generation
 - **Prisma** for database models
 - **Generated GraphQL SDK** with admin CRUD operations
+- **A form theme** compatible with `@nestledjs/forms`
 
 ### Peer Dependencies
 
@@ -48,14 +47,10 @@ This package requires a Nestled framework project with:
 
 Your Nestled project must also export:
 
-1. **Web UI Components** from `@your-project/web-ui`:
-   - `WebUiDataTable`
-   - `WebUiErrorBoundary`
-
-2. **Form Theme** from `@your-project/shared/styles`:
+1. **Form Theme** from `@your-project/shared/styles`:
    - `formTheme`
 
-3. **GraphQL SDK** from `@your-project/shared/sdk`:
+2. **GraphQL SDK** from `@your-project/shared/sdk`:
    - `DATABASE_MODELS` (auto-generated model metadata)
    - GraphQL documents with `__Admin*Document` naming
 
@@ -67,23 +62,14 @@ Your Nestled project must also export:
 pnpm add @nestledjs/data-browser
 ```
 
-### Step 2: Update Import Paths
-
-Since this package imports from your project's namespaced packages, find and replace in the source:
-
-```
-@nestled-template → @your-project-name
-```
-
-This affects 3 files in `libs/admin-data/src/lib/pages/`.
-
-### Step 3: Create Route Wrapper
+### Step 2: Create Route Wrapper
 
 Create `apps/web/app/routes/admin/data/_layout.tsx`:
 
 ```typescript
 import * as Sdk from '@your-project/shared/sdk'
 import { DATABASE_MODELS } from '@your-project/shared/sdk'
+import { formTheme } from '@your-project/shared/styles'
 import { AdminDataProvider, AdminDataLayout } from '@nestledjs/data-browser'
 
 export default function DataLayoutRoute() {
@@ -91,6 +77,7 @@ export default function DataLayoutRoute() {
     <AdminDataProvider
       sdk={Sdk}
       databaseModels={DATABASE_MODELS}
+      formTheme={formTheme}
       basePath="/admin/data"
     >
       <AdminDataLayout />
@@ -99,7 +86,7 @@ export default function DataLayoutRoute() {
 }
 ```
 
-### Step 4: Create Page Routes
+### Step 3: Create Page Routes
 
 Create these minimal route files:
 
@@ -148,7 +135,7 @@ export function ErrorBoundary({ error }: Readonly<{ error: Error }>) {
 }
 ```
 
-### Step 5: Register Routes
+### Step 4: Register Routes
 
 In `apps/web/app/routes.tsx`:
 
@@ -167,9 +154,20 @@ export default [
 ] satisfies RouteConfig
 ```
 
-### Step 6: Access the Data Browser
+### Step 5: Access the Data Browser
 
-Navigate to `/admin/data` in your application!
+Navigate to `/admin/data` in your application.
+
+## Security Model
+
+The data browser assumes the backing GraphQL admin CRUD operations are protected
+by the API. In a standard Nestled project, generated CRUD is admin-only by
+default. User-facing workflows should use separate custom resolvers instead of
+relaxing generated admin CRUD.
+
+Do not expose security-sensitive internal models, such as password hash history
+or token material, through generic admin browsing unless you have a deliberate
+operational need and appropriate masking.
 
 ## Usage
 
@@ -204,9 +202,10 @@ The context provider that makes SDK and models available to all components.
 
 ```typescript
 <AdminDataProvider
-  sdk={Sdk}                    // Your GraphQL SDK namespace
-  databaseModels={DATABASE_MODELS}  // Array of model metadata
-  basePath="/admin/data"       // Optional: Custom route prefix
+  sdk={Sdk}
+  databaseModels={DATABASE_MODELS}
+  formTheme={formTheme}
+  basePath="/admin/data"
 >
   {children}
 </AdminDataProvider>
@@ -278,11 +277,9 @@ pnpm sdk
 
 **Solution**: Ensure all data browser components are children of `<AdminDataProvider>` in `_layout.tsx`.
 
-### Import errors for WebUiDataTable or formTheme
+### Import errors for formTheme
 
-**Solution**: Ensure your project exports these from:
-- `@your-project/web-ui`
-- `@your-project/shared/styles`
+**Solution**: Ensure your project exports a form theme from `@your-project/shared/styles`.
 
 ### DATABASE_MODELS is undefined
 
@@ -298,15 +295,15 @@ This creates the `DATABASE_MODELS` export from your Prisma schema.
 ### Build
 
 ```bash
-nx build admin-data
+pnpm nx build data-browser
 ```
 
-Output: `dist/libs/admin-data/`
+Output: `dist/libs/data-browser/`
 
 ### Publish
 
 ```bash
-nx publish admin-data
+pnpm nx publish data-browser
 ```
 
 ## License

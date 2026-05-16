@@ -86,7 +86,6 @@ pnpm typecheck          # generate React Router types + TypeScript checks for ap
 pnpm prisma:generate    # generate Prisma client
 pnpm prisma:format      # format schema
 pnpm prisma:db-push     # push schema to DB
-pnpm prisma:migrate     # apply migrations
 pnpm prisma:seed        # seed database
 pnpm prisma:reset       # reset database (destroys data)
 pnpm prisma:studio      # open Prisma Studio
@@ -219,40 +218,57 @@ Configure security for: `readOne`, `readMany`, `count`, `create`, `update`, `del
 
 **Best practice:** Only specify non-admin levels. Since all operations default to `"admin"`, only include operations you want to change.
 
-### Custom Resolvers — NEVER Extend Generated Resolvers
+### Custom Resolvers and Generated CRUD
 
-**CRITICAL RULE**: When creating custom resolvers, **NEVER extend the generated resolver class**. Always create a completely separate resolver with a different name.
+Generated CRUD methods and generated SDK admin operation names are reserved. Do not edit
+`libs/api/generated-crud/*`, do not override generated CRUD methods, and do not create custom
+operations that reuse generated names such as `create<Model>`, `update<Model>`, `delete<Model>`,
+`<model>`, `<models>`, `<models>Count`, or `__Admin*`.
 
-**WRONG** ❌:
+Default model resolver classes under `libs/api/custom/src/lib/default/<model>` must extend
+`Generated<Model>Resolver`. This inheritance is the required pass-through adapter that keeps
+generated admin CRUD registered for the model. Custom operations in these classes must be additive
+only; never override inherited generated methods.
+
+For custom user-facing operations, use names that cannot collide with generated admin CRUD:
+
 ```typescript
-export class UserPreferenceResolver extends GeneratedUserPreferenceResolver {
-  // This will cause conflicts - generated methods are still registered!
+@Resolver(() => Organization)
+export class OrganizationResolver extends GeneratedOrganizationResolver {
+  @Mutation(() => Organization)
+  userCreateOrganization(@CtxUser() user: User, @Args('input') input: CreateOrganizationInput) {
+    // Custom model-specific workflow.
+  }
 }
 ```
 
-**CORRECT** ✅:
-```typescript
-export class UserUserPreferenceResolver {
-  // Completely independent resolver
-}
-```
-
-**Why**: Extending generated resolvers causes method conflicts where both parent and child methods get registered with GraphQL, and NestJS will choose the wrong one.
+For cross-model features, create a separate plugin resolver under
+`libs/api/custom/src/lib/plugins/<feature>` instead of adding unrelated behavior to a default model.
 
 ### Standard Pattern Summary
 
 1. Every model gets generated admin CRUD (organization, createOrganization, updateOrganization, etc.)
 2. User-specific operations get custom resolvers (myOrganizations, userCreateOrganization, etc.)
-3. No `@skipCrud` annotations ever
-4. No extending generated resolvers
+3. Avoid `@skipCrud` except for documented security-sensitive internal models
+4. Default model resolvers must extend generated resolvers and only add non-colliding custom methods
 5. Admin operations are admin-only by default
 6. User operations are in separate resolvers with clear naming
 
-## CRITICAL RULE: Never Skip CRUD Generation
+## CRUD Generation and Security-Sensitive Exceptions
 
-**FUNDAMENTAL PRINCIPLE**: We NEVER use `@skipCrud` and NEVER skip CRUD generation for any model.
+**DEFAULT PRINCIPLE**: Generate admin CRUD for every normal application model. Do not use
+`@skipCrud` to avoid authorization work, hide incomplete models, or create user-specific behavior.
+Generated CRUD gives super admins a predictable management surface; custom user workflows belong in
+separate resolvers.
 
-Every model needs admin-level CRUD operations. Generated CRUD uses standard names; custom resolvers use prefixed names. When you need user-specific operations, create a separate resolver:
+`@skipCrud` is allowed only for explicitly documented security-sensitive internal models where even
+super-admin generic browsing would be risky or misleading, such as password hash history, token
+material, provider secrets, or one-way credential artifacts. When using `@skipCrud`, add a comment
+above the model explaining why generated admin CRUD must not exist and provide any necessary custom
+maintenance path.
+
+For normal models, generated CRUD uses standard names; custom resolvers use prefixed names. When you
+need user-specific operations, create a separate resolver:
 
 ```typescript
 @Resolver(() => Organization)
@@ -267,8 +283,16 @@ export class UserOrganizationResolver {
 
 **WRONG** ❌:
 ```prisma
-/// @skipCrud  // NEVER DO THIS — breaks admin access and SDK generation
+/// @skipCrud  // Do not use this for normal application models.
 model Organization { ... }
+```
+
+**ACCEPTABLE** ✅:
+```prisma
+/// @skipCrud
+/// Security-sensitive internal credential history. Password hashes should not be exposed
+/// through generic admin CRUD or the admin data browser.
+model PasswordHistory { ... }
 ```
 
 ## Prisma Import Paths

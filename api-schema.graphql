@@ -1313,6 +1313,8 @@ type Mutation {
   revokeApiToken(tokenId: String!): ApiToken!
   rotateApiToken(input: RotateApiTokenInput!): GenerateApiTokenOutput!
   setup2FA: Setup2FAOutput!
+  staffDeleteEmail(emailId: String!): Email
+  staffUpdateEmail(emailId: String!, input: UpdateEmailInput!): Email
   switchActiveOrganization(input: SwitchOrganizationInput!): User!
   syncStripePrice(priceId: String!): Boolean!
   syncStripePrices: Boolean!

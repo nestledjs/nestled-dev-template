@@ -48,7 +48,7 @@ export interface AdminDataProviderProps {
  * ```tsx
  * import * as Sdk from '@your-project/shared/sdk'
  * import { DATABASE_MODELS } from '@your-project/shared/sdk'
- * import { AdminDataProvider } from '@nestledjs/admin-data'
+ * import { AdminDataProvider } from '@nestledjs/data-browser'
  *
  * <AdminDataProvider
  *   sdk={Sdk}

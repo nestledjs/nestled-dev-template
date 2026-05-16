@@ -19,7 +19,7 @@ export class EmailResolver extends GeneratedEmailResolver {
 
   @Mutation(() => Email, { nullable: true })
   @UseGuards(GqlAuthAdminGuard)
-  override async updateEmail(
+  async staffUpdateEmail(
     @Info() info: GraphQLResolveInfo,
     @Args('emailId') emailId: string,
     @Args('input') input: UpdateEmailInput,
@@ -33,7 +33,7 @@ export class EmailResolver extends GeneratedEmailResolver {
 
   @Mutation(() => Email, { nullable: true })
   @UseGuards(GqlAuthAdminGuard)
-  override async deleteEmail(@Args('emailId') emailId: string) {
+  async staffDeleteEmail(@Args('emailId') emailId: string) {
     // Validate that we're not deleting the only email or primary without a replacement
     await this.customService.validateEmailDeletion(emailId)
 
