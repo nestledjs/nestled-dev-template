@@ -4,15 +4,36 @@ import { formatFieldName } from '../utils/string-utils'
 
 const MAX_EXPORT_ROWS = 50000
 
+function stringifyCsvScalar(value: unknown): string {
+  if (value === null || value === undefined) return ''
+
+  switch (typeof value) {
+    case 'string':
+      return value
+    case 'number':
+    case 'boolean':
+    case 'bigint':
+      return `${value}`
+    case 'symbol':
+      return value.description ?? ''
+    case 'function':
+      return value.name || '[function]'
+    case 'object':
+      return JSON.stringify(value)
+    default:
+      return ''
+  }
+}
+
 function escapeCsvValue(val: unknown): string {
   if (val === null || val === undefined) return ''
   let str: string
   if (typeof val === 'object') {
     const obj = val as Record<string, unknown>
     const id = obj.id
-    str = typeof id === 'string' || typeof id === 'number' ? String(id) : JSON.stringify(val)
+    str = typeof id === 'string' || typeof id === 'number' ? `${id}` : JSON.stringify(val)
   } else {
-    str = String(val)
+    str = stringifyCsvScalar(val)
   }
   if (str.includes(',') || str.includes('"') || str.includes('\n') || str.includes('\r')) {
     return `"${str.replaceAll('"', '""')}"`
