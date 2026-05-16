@@ -34,7 +34,8 @@ if ! PGPASSWORD=postgres psql -U postgres -h localhost -p 5433 -d nestled_templa
 fi
 
 # Call vitest directly to avoid infinite loop (since NX now calls this script)
-npx vitest run --config apps/api-e2e/vitest.config.ts 2>&1 | tee "$TMPFILE"
+# "$@" passes through any extra flags from the caller (e.g. --coverage)
+npx vitest run --config apps/api-e2e/vitest.config.ts "$@" 2>&1 | tee "$TMPFILE"
 EXIT_CODE=${PIPESTATUS[0]}
 
 # Read the captured output
