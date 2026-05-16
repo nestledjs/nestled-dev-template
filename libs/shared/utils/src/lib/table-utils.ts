@@ -14,7 +14,7 @@ export function renderValue(value: unknown): ReactNode {
 
   if (Array.isArray(value)) {
     if (value.length === 0) return ''
-    const labels = value.map((entry) => {
+    const labels = value.map(entry => {
       if (entry === null || entry === undefined) return ''
       if (typeof entry === 'object') {
         const obj = entry as Record<string, unknown>
@@ -34,13 +34,13 @@ export function renderValue(value: unknown): ReactNode {
     return JSON.stringify(obj)
   }
 
-  return typeof value === 'object' ? JSON.stringify(value) : String(value)
+  return String(value)
 }
 
 export function formatFieldName(fieldName: string): string {
   return fieldName
     .replaceAll(/([a-z])([A-Z])/g, '$1 $2')
     .split('.')
-    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .map(part => part.charAt(0).toUpperCase() + part.slice(1))
     .join(' ')
 }
