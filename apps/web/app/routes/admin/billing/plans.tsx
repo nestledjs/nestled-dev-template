@@ -5,7 +5,8 @@ import { CheckCircleIcon, XCircleIcon } from '@heroicons/react/24/outline'
 function formatLimitValue(value: unknown): string | number {
   if (value === -1 || value === null) return 'Unlimited'
   if (typeof value === 'number') return value
-  return String(value)
+  if (typeof value === 'string') return value
+  return JSON.stringify(value)
 }
 
 type Plan = {
