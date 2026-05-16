@@ -351,20 +351,26 @@ export default function MembersSettings() {
       return
     }
 
+    const editingUser = editingMember.user
+    if (!editingUser) {
+      setFormError('Selected member is missing user details')
+      return
+    }
+
     try {
       await updateMemberRole({
         variables: {
           input: {
             organizationId: activeOrganization.id,
-            userId: editingMember.user.id,
+            userId: editingUser.id,
             roleId: newRoleId,
           },
         },
       })
 
-      setFormSuccess(
-        `Role updated successfully for ${editingMember.user.firstName} ${editingMember.user.lastName}`,
-      )
+      const editingUserName =
+        [editingUser.firstName, editingUser.lastName].filter(Boolean).join(' ') || 'member'
+      setFormSuccess(`Role updated successfully for ${editingUserName}`)
       setEditingMember(null)
       refetch()
     } catch (error) {

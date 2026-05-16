@@ -5,3 +5,5 @@ tmp/
 coverage/
 api-schema.graphql
 pnpm-lock.yaml
+
+.nx/self-healing
