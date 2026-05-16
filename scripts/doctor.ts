@@ -1,9 +1,4 @@
-import {
-  existsSync,
-  readdirSync,
-  readFileSync,
-  statSync,
-} from 'node:fs'
+import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs'
 import { basename, dirname, join, relative } from 'node:path'
 
 type Finding = {
@@ -62,10 +57,88 @@ const directFiles = (dir: string, predicate: (path: string) => boolean): string[
     .filter(path => statSync(path).isFile() && predicate(path))
 }
 
-const stripComments = (source: string): string =>
-  source
-    .replace(/\/\*[\s\S]*?\*\//g, '')
-    .replace(/^\s*\/\/.*$/gm, '')
+const getRegexMatches = (pattern: RegExp, source: string): RegExpExecArray[] => {
+  pattern.lastIndex = 0
+  const matches: RegExpExecArray[] = []
+  let match: RegExpExecArray | null
+
+  while ((match = pattern.exec(source)) !== null) {
+    matches.push(match)
+    if (match[0] === '') {
+      pattern.lastIndex += 1
+    }
+  }
+
+  return matches
+}
+
+const startsWithBlockComment = (source: string, index: number): boolean =>
+  source[index] === '/' && source[index + 1] === '*'
+
+const startsWithLineComment = (
+  source: string,
+  index: number,
+  onlyWhitespaceOnLine: boolean,
+): boolean => onlyWhitespaceOnLine && source[index] === '/' && source[index + 1] === '/'
+
+const skipBlockComment = (
+  source: string,
+  startIndex: number,
+): { index: number; preservedNewlines: string } => {
+  let index = startIndex + 2
+  let preservedNewlines = ''
+
+  while (index < source.length) {
+    if (source[index] === '\n') {
+      preservedNewlines += '\n'
+      index += 1
+    } else if (source[index] === '*' && source[index + 1] === '/') {
+      index += 2
+      break
+    } else {
+      index += 1
+    }
+  }
+
+  return { index, preservedNewlines }
+}
+
+const skipLineComment = (source: string, startIndex: number): number => {
+  let index = startIndex
+  while (index < source.length && source[index] !== '\n') {
+    index += 1
+  }
+  return index
+}
+
+const updateWhitespaceState = (current: string, onlyWhitespaceOnLine: boolean): boolean => {
+  if (current === '\n') return true
+  if (current === ' ' || current === '\t' || current === '\r') return onlyWhitespaceOnLine
+  return false
+}
+
+const stripComments = (source: string): string => {
+  let output = ''
+  let index = 0
+  let onlyWhitespaceOnLine = true
+
+  while (index < source.length) {
+    if (startsWithBlockComment(source, index)) {
+      const skipped = skipBlockComment(source, index)
+      output += skipped.preservedNewlines
+      onlyWhitespaceOnLine = skipped.preservedNewlines.length > 0 || onlyWhitespaceOnLine
+      index = skipped.index
+    } else if (startsWithLineComment(source, index, onlyWhitespaceOnLine)) {
+      index = skipLineComment(source, index)
+    } else {
+      output += source[index]
+      onlyWhitespaceOnLine = updateWhitespaceState(source[index], onlyWhitespaceOnLine)
+      index += 1
+    }
+  }
+
+  return output
+}
 
 const getRegisteredRouteFiles = (): Set<string> => {
   if (!existsSync(routeConfigPath)) {
@@ -77,7 +150,7 @@ const getRegisteredRouteFiles = (): Set<string> => {
   const registered = new Set<string>()
   const routeFilePattern = /['"]\.\/routes\/([^'"]+\.(?:tsx|ts))['"]/g
 
-  for (const match of routeConfig.matchAll(routeFilePattern)) {
+  for (const match of getRegexMatches(routeFilePattern, routeConfig)) {
     registered.add(join(routeRoot, match[1]))
   }
 
@@ -101,11 +174,7 @@ const checkRoutes = () => {
 
   for (const file of routeFiles) {
     if (!registered.has(file)) {
-      fail(
-        'routes',
-        `Route file is not registered in ${routeConfigPath}`,
-        file,
-      )
+      fail('routes', `Route file is not registered in ${routeConfigPath}`, file)
     }
   }
 
@@ -117,13 +186,15 @@ const checkRoutes = () => {
 }
 
 const checkForbiddenPrismaImports = () => {
-  const files = walkFiles('.', path =>
-    /\.(ts|tsx|js|jsx|mjs|cjs)$/.test(path) &&
-    !path.includes('/node_modules/') &&
-    !path.includes('/build/') &&
-    !path.includes('/dist/') &&
-    !path.includes('/libs/shared/sdk/src/generated/') &&
-    !path.includes('/libs/api/generated-crud/'),
+  const files = walkFiles(
+    '.',
+    path =>
+      /\.(ts|tsx|js|jsx|mjs|cjs)$/.test(path) &&
+      !path.includes('/node_modules/') &&
+      !path.includes('/build/') &&
+      !path.includes('/dist/') &&
+      !path.includes('/libs/shared/sdk/src/generated/') &&
+      !path.includes('/libs/api/generated-crud/'),
   )
 
   const directImportPattern =
@@ -142,12 +213,14 @@ const checkForbiddenPrismaImports = () => {
 }
 
 const checkStaleConfigNames = () => {
-  const files = walkFiles('.', path =>
-    /\.(ts|tsx|js|jsx|mjs|cjs|md|yml|yaml|json)$/.test(path) &&
-    path !== 'scripts/doctor.ts' &&
-    !path.includes('/node_modules/') &&
-    !path.includes('/build/') &&
-    !path.includes('/dist/'),
+  const files = walkFiles(
+    '.',
+    path =>
+      /\.(ts|tsx|js|jsx|mjs|cjs|md|yml|yaml|json)$/.test(path) &&
+      path !== 'scripts/doctor.ts' &&
+      !path.includes('/node_modules/') &&
+      !path.includes('/build/') &&
+      !path.includes('/dist/'),
   )
 
   for (const file of files) {
@@ -177,9 +250,7 @@ const checkMcpWiring = () => {
 }
 
 const normalizePath = (path: string): string =>
-  `/${path}`
-    .replace(/\/+/g, '/')
-    .replace(/\/$/, '') || '/'
+  `/${path}`.replace(/\/+/g, '/').replace(/\/$/, '') || '/'
 
 const getDecoratorPath = (decoratorArgs: string | undefined): string => {
   if (!decoratorArgs) return ''
@@ -187,7 +258,7 @@ const getDecoratorPath = (decoratorArgs: string | undefined): string => {
   const trimmed = decoratorArgs.trim()
   if (!trimmed) return ''
 
-  const literalMatch = trimmed.match(/^['"`]([^'"`]*)['"`]/)
+  const literalMatch = /^['"`]([^'"`]*)['"`]/.exec(trimmed)
   return literalMatch?.[1] ?? ''
 }
 
@@ -207,75 +278,93 @@ const getAllowedApiPrefixes = (): string[] => {
   }
 
   const source = stripComments(readFileSync(mainPath, 'utf8'))
-  const match = source.match(/const\s+VALID_API_PREFIXES\s*=\s*\[([\s\S]*?)\]/)
+  const match = /const\s+VALID_API_PREFIXES\s*=\s*\[([\s\S]*?)\]/.exec(source)
   if (!match) {
     fail('api-routes', 'VALID_API_PREFIXES could not be found', mainPath)
     return []
   }
 
-  return Array.from(match[1].matchAll(/['"`]([^'"`]+)['"`]/g), item => normalizePath(item[1]))
+  return getRegexMatches(/['"`]([^'"`]+)['"`]/g, match[1]).map(item => normalizePath(item[1]))
+}
+
+const isControllerCandidateFile = (path: string): boolean =>
+  path.endsWith('.ts') &&
+  !path.includes('/node_modules/') &&
+  !path.includes('/build/') &&
+  !path.includes('/dist/') &&
+  !path.includes('/libs/api/generated-crud/') &&
+  !path.endsWith('.spec.ts')
+
+const getControllerClassSources = (source: string): { path: string; source: string }[] => {
+  const controllers = getRegexMatches(/@Controller\s*\(([^)]*)\)/g, source)
+  return controllers.map((controllerMatch, index) => {
+    const classStart = controllerMatch.index
+    const nextControllerIndex = controllers[index + 1]?.index ?? source.length
+    return {
+      path: getDecoratorPath(controllerMatch[1]),
+      source: source.slice(classStart, nextControllerIndex),
+    }
+  })
+}
+
+const getHttpMethodPaths = (source: string): string[] =>
+  getRegexMatches(/@(Get|Post|Put|Patch|Delete|All)\s*(?:\(([^)]*)\))?/g, source).map(match =>
+    getDecoratorPath(match[2]),
+  )
+
+const checkControllerMethodPaths = (
+  file: string,
+  controllerPath: string,
+  methodPaths: string[],
+  allowedPrefixes: string[],
+) => {
+  if (methodPaths.length === 0) {
+    warn('api-routes', 'Controller has no HTTP method decorators to check', file)
+    return
+  }
+
+  for (const methodPath of methodPaths) {
+    const routePath = toApiRoute(controllerPath, methodPath)
+    const isAllowed = allowedPrefixes.some(prefix => routePath.startsWith(prefix))
+    if (!isAllowed) {
+      fail(
+        'api-routes',
+        `Registered API route ${routePath} is not covered by VALID_API_PREFIXES`,
+        file,
+      )
+    }
+  }
 }
 
 const checkApiControllerRoutesAllowed = () => {
   const allowedPrefixes = getAllowedApiPrefixes()
   if (allowedPrefixes.length === 0) return
 
-  const controllerFiles = walkFiles('.', path =>
-    path.endsWith('.ts') &&
-    !path.includes('/node_modules/') &&
-    !path.includes('/build/') &&
-    !path.includes('/dist/') &&
-    !path.includes('/libs/api/generated-crud/') &&
-    !path.endsWith('.spec.ts'),
-  )
+  const controllerFiles = walkFiles('.', isControllerCandidateFile)
 
   for (const file of controllerFiles) {
     const source = stripComments(readFileSync(file, 'utf8'))
     if (!source.includes('@Controller')) continue
 
-    const controllerPattern = /@Controller\s*\(([^)]*)\)/g
-    for (const controllerMatch of source.matchAll(controllerPattern)) {
-      const controllerPath = getDecoratorPath(controllerMatch[1])
-      const classStart = controllerMatch.index ?? 0
-      const nextControllerIndex = source.indexOf('@Controller', classStart + controllerMatch[0].length)
-      const classSource =
-        nextControllerIndex === -1 ? source.slice(classStart) : source.slice(classStart, nextControllerIndex)
-
-      const methodPaths = Array.from(
-        classSource.matchAll(/@(Get|Post|Put|Patch|Delete|All)\s*(?:\(([^)]*)\))?/g),
-        match => getDecoratorPath(match[2]),
+    for (const controller of getControllerClassSources(source)) {
+      checkControllerMethodPaths(
+        file,
+        controller.path,
+        getHttpMethodPaths(controller.source),
+        allowedPrefixes,
       )
-
-      if (methodPaths.length === 0) {
-        warn('api-routes', 'Controller has no HTTP method decorators to check', file)
-        continue
-      }
-
-      for (const methodPath of methodPaths) {
-        const routePath = toApiRoute(controllerPath, methodPath)
-        const isAllowed = allowedPrefixes.some(prefix => routePath.startsWith(prefix))
-        if (!isAllowed) {
-          fail(
-            'api-routes',
-            `Registered API route ${routePath} is not covered by VALID_API_PREFIXES`,
-            file,
-          )
-        }
-      }
     }
   }
 }
 
 const getGraphqlResolverMethods = (source: string): string[] =>
-  Array.from(
-    source.matchAll(/^\s{2}(?:override\s+)?(?:async\s+)?(\w+)\s*\(/gm),
-    match => match[1],
-  ).filter(methodName => methodName !== 'constructor')
+  getRegexMatches(/^\s{2}(?:override\s+)?(?:async\s+)?(\w+)\s*\(/gm, source)
+    .map(match => match[1])
+    .filter(methodName => methodName !== 'constructor')
 
 const getGeneratedCrudMethodNames = (): Set<string> => {
-  const generatedResolverFiles = walkFiles(
-    'libs/api/generated-crud/feature/src/lib',
-    path => path.endsWith('.resolver.ts'),
+  const generatedResolverFiles = walkFiles('libs/api/generated-crud/feature/src/lib', path =>
+    path.endsWith('.resolver.ts'),
   )
   const methodNames = new Set<string>()
 
@@ -289,6 +378,53 @@ const getGeneratedCrudMethodNames = (): Set<string> => {
   return methodNames
 }
 
+const getCanonicalDefaultResolverPath = (file: string): string => {
+  const folderName = basename(dirname(file))
+  return join(dirname(file), `${folderName}.resolver.ts`)
+}
+
+const checkDefaultResolverInheritance = (file: string, source: string) => {
+  if (file !== getCanonicalDefaultResolverPath(file)) return
+  if (source.includes('extends Generated')) return
+
+  fail(
+    'api-names',
+    'Default model resolver must extend its generated resolver to keep admin CRUD registered',
+    file,
+  )
+}
+
+const checkResolverMethodName = (
+  file: string,
+  methodName: string,
+  generatedMethodNames: Set<string>,
+) => {
+  if (generatedMethodNames.has(methodName)) {
+    fail(
+      'api-names',
+      `Custom resolver method "${methodName}" collides with a generated CRUD field name`,
+      file,
+    )
+  }
+
+  if (/^admin[A-Z]/.test(methodName)) {
+    fail(
+      'api-names',
+      `Custom default resolver method "${methodName}" uses reserved admin* naming`,
+      file,
+    )
+  }
+}
+
+const checkDefaultResolverFile = (file: string, generatedMethodNames: Set<string>) => {
+  const source = stripComments(readFileSync(file, 'utf8'))
+  checkDefaultResolverInheritance(file, source)
+
+  for (const methodName of getGraphqlResolverMethods(source)) {
+    checkResolverMethodName(file, methodName, generatedMethodNames)
+  }
+}
+
 const checkDefaultResolverGeneratedNameCollisions = () => {
   const generatedMethodNames = getGeneratedCrudMethodNames()
   if (generatedMethodNames.size === 0) {
@@ -296,53 +432,21 @@ const checkDefaultResolverGeneratedNameCollisions = () => {
     return
   }
 
-  const defaultResolverFiles = walkFiles(
-    'libs/api/custom/src/lib/default',
-    path => path.endsWith('.resolver.ts'),
+  const defaultResolverFiles = walkFiles('libs/api/custom/src/lib/default', path =>
+    path.endsWith('.resolver.ts'),
   )
 
   for (const file of defaultResolverFiles) {
-    const source = stripComments(readFileSync(file, 'utf8'))
-    const folderName = basename(dirname(file))
-    const canonicalResolverPath = join(dirname(file), `${folderName}.resolver.ts`)
-
-    if (file === canonicalResolverPath && !source.includes('extends Generated')) {
-      fail(
-        'api-names',
-        'Default model resolver must extend its generated resolver to keep admin CRUD registered',
-        file,
-      )
-    }
-
-    for (const methodName of getGraphqlResolverMethods(source)) {
-      if (generatedMethodNames.has(methodName)) {
-        fail(
-          'api-names',
-          `Custom resolver method "${methodName}" collides with a generated CRUD field name`,
-          file,
-        )
-      }
-
-      if (/^admin[A-Z]/.test(methodName)) {
-        fail(
-          'api-names',
-          `Custom default resolver method "${methodName}" uses reserved admin* naming`,
-          file,
-        )
-      }
-    }
+    checkDefaultResolverFile(file, generatedMethodNames)
   }
 }
 
 const checkHandwrittenAdminSdkOperations = () => {
-  const graphqlFiles = walkFiles(
-    'libs/shared/sdk/src/graphql',
-    path => path.endsWith('.graphql'),
-  )
+  const graphqlFiles = walkFiles('libs/shared/sdk/src/graphql', path => path.endsWith('.graphql'))
 
   for (const file of graphqlFiles) {
     const source = stripComments(readFileSync(file, 'utf8'))
-    const adminOperation = source.match(/\b(?:query|mutation|subscription)\s+__Admin\w+/)
+    const adminOperation = /\b(?:query|mutation|subscription)\s+__Admin\w+/.exec(source)
     if (adminOperation) {
       fail(
         'api-names',
@@ -361,7 +465,57 @@ const pascalCase = (value: string): string =>
     .join('')
 
 const getModuleClasses = (source: string): string[] =>
-  Array.from(source.matchAll(/export\s+class\s+(\w+Module)\b/g), match => match[1])
+  getRegexMatches(/export\s+class\s+(\w+Module)\b/g, source).map(match => match[1])
+
+const isExportedFromIndex = (source: string, path: string): boolean =>
+  source.includes(`'./${path}'`) || source.includes(`"./${path}"`)
+
+const validatePluginModuleFile = (moduleFile: string, pluginIndex: string, appModule: string) => {
+  const moduleSource = readFileSync(moduleFile, 'utf8')
+  const moduleBasename = basename(moduleFile, '.ts')
+
+  if (!isExportedFromIndex(pluginIndex, moduleBasename)) {
+    fail('plugin-structure', 'Plugin module is not exported from its index.ts', moduleFile)
+  }
+
+  for (const moduleClass of getModuleClasses(moduleSource)) {
+    if (!appModule.includes(moduleClass)) {
+      fail(
+        'plugin-structure',
+        'Plugin module is not registered in apps/api/src/app.module.ts',
+        moduleFile,
+      )
+    }
+  }
+}
+
+const validatePluginDirectory = (
+  entry: string,
+  pluginsRoot: string,
+  rootIndex: string,
+  appModule: string,
+) => {
+  const pluginDir = join(pluginsRoot, entry)
+  if (!statSync(pluginDir).isDirectory()) return
+
+  const indexPath = join(pluginDir, 'index.ts')
+  const moduleFiles = walkFiles(pluginDir, path => path.endsWith('.module.ts'))
+  if (moduleFiles.length === 0) return
+
+  if (!existsSync(indexPath)) {
+    fail('plugin-structure', 'Plugin with module is missing index.ts barrel', indexPath)
+    return
+  }
+
+  if (!isExportedFromIndex(rootIndex, entry)) {
+    fail('plugin-structure', 'Plugin is not exported from plugins/index.ts', pluginDir)
+  }
+
+  const pluginIndex = readFileSync(indexPath, 'utf8')
+  for (const moduleFile of moduleFiles) {
+    validatePluginModuleFile(moduleFile, pluginIndex, appModule)
+  }
+}
 
 const checkPluginExportsAndRegistration = () => {
   const pluginsRoot = 'libs/api/custom/src/lib/plugins'
@@ -373,41 +527,53 @@ const checkPluginExportsAndRegistration = () => {
   const appModule = existsSync(appModulePath) ? readFileSync(appModulePath, 'utf8') : ''
 
   for (const entry of readdirSync(pluginsRoot)) {
-    const pluginDir = join(pluginsRoot, entry)
-    if (!statSync(pluginDir).isDirectory()) continue
+    validatePluginDirectory(entry, pluginsRoot, rootIndex, appModule)
+  }
+}
 
-    const indexPath = join(pluginDir, 'index.ts')
-    const moduleFiles = walkFiles(pluginDir, path => path.endsWith('.module.ts'))
+const getIntegrationFiles = (integrationDir: string): string[] => [
+  ...directFiles(integrationDir, path => path.endsWith('.module.ts')),
+  ...directFiles(integrationDir, path => path.endsWith('.service.ts')),
+]
 
-    if (moduleFiles.length === 0) continue
+const validateIntegrationDirectory = (
+  entry: string,
+  integrationsRoot: string,
+  rootIndex: string,
+) => {
+  const integrationDir = join(integrationsRoot, entry)
+  if (!statSync(integrationDir).isDirectory()) return
 
-    if (!existsSync(indexPath)) {
-      fail('plugin-structure', 'Plugin with module is missing index.ts barrel', indexPath)
-      continue
-    }
+  const indexPath = join(integrationDir, 'index.ts')
+  const integrationFiles = getIntegrationFiles(integrationDir)
+  if (integrationFiles.length === 0) return
 
-    if (!rootIndex.includes(`'./${entry}'`) && !rootIndex.includes(`"./${entry}"`)) {
-      fail('plugin-structure', 'Plugin is not exported from plugins/index.ts', pluginDir)
-    }
+  if (!existsSync(indexPath)) {
+    fail(
+      'integration-structure',
+      'Integration with service/module is missing index.ts barrel',
+      indexPath,
+    )
+    return
+  }
 
-    const pluginIndex = readFileSync(indexPath, 'utf8')
-    for (const moduleFile of moduleFiles) {
-      const moduleSource = readFileSync(moduleFile, 'utf8')
-      const moduleClasses = getModuleClasses(moduleSource)
-      const moduleBasename = basename(moduleFile, '.ts')
+  if (!rootIndex.includes(`'./lib/${entry}'`) && !rootIndex.includes(`"./lib/${entry}"`)) {
+    fail(
+      'integration-structure',
+      'Integration is not exported from integrations/src/index.ts',
+      integrationDir,
+    )
+  }
 
-      if (
-        !pluginIndex.includes(`'./${moduleBasename}'`) &&
-        !pluginIndex.includes(`"./${moduleBasename}"`)
-      ) {
-        fail('plugin-structure', 'Plugin module is not exported from its index.ts', moduleFile)
-      }
-
-      for (const moduleClass of moduleClasses) {
-        if (!appModule.includes(moduleClass)) {
-          fail('plugin-structure', 'Plugin module is not registered in apps/api/src/app.module.ts', moduleFile)
-        }
-      }
+  const integrationIndex = readFileSync(indexPath, 'utf8')
+  for (const integrationFile of integrationFiles) {
+    const expectedBasename = basename(integrationFile, '.ts')
+    if (!isExportedFromIndex(integrationIndex, expectedBasename)) {
+      fail(
+        'integration-structure',
+        'Integration module/service is not exported from its index.ts',
+        integrationFile,
+      )
     }
   }
 }
@@ -420,34 +586,7 @@ const checkIntegrationExports = () => {
   const rootIndex = existsSync(rootIndexPath) ? readFileSync(rootIndexPath, 'utf8') : ''
 
   for (const entry of readdirSync(integrationsRoot)) {
-    const integrationDir = join(integrationsRoot, entry)
-    if (!statSync(integrationDir).isDirectory()) continue
-
-    const indexPath = join(integrationDir, 'index.ts')
-    const moduleFiles = directFiles(integrationDir, path => path.endsWith('.module.ts'))
-    const serviceFiles = directFiles(integrationDir, path => path.endsWith('.service.ts'))
-
-    if (moduleFiles.length === 0 && serviceFiles.length === 0) continue
-
-    if (!existsSync(indexPath)) {
-      fail('integration-structure', 'Integration with service/module is missing index.ts barrel', indexPath)
-      continue
-    }
-
-    if (!rootIndex.includes(`'./lib/${entry}'`) && !rootIndex.includes(`"./lib/${entry}"`)) {
-      fail('integration-structure', 'Integration is not exported from integrations/src/index.ts', integrationDir)
-    }
-
-    const integrationIndex = readFileSync(indexPath, 'utf8')
-    const expectedBasenames = [...moduleFiles, ...serviceFiles].map(file => basename(file, '.ts'))
-    for (const expectedBasename of expectedBasenames) {
-      if (
-        !integrationIndex.includes(`'./${expectedBasename}'`) &&
-        !integrationIndex.includes(`"./${expectedBasename}"`)
-      ) {
-        fail('integration-structure', 'Integration module/service is not exported from its index.ts', join(integrationDir, `${expectedBasename}.ts`))
-      }
-    }
+    validateIntegrationDirectory(entry, integrationsRoot, rootIndex)
   }
 }
 
@@ -458,7 +597,10 @@ const checkSkipCrudDocumentation = () => {
   for (let index = 0; index < lines.length; index += 1) {
     if (!lines[index].includes('@skipCrud')) continue
 
-    const context = lines.slice(index, index + 5).join(' ').toLowerCase()
+    const context = lines
+      .slice(index, index + 5)
+      .join(' ')
+      .toLowerCase()
     const hasSecurityExplanation =
       context.includes('security') ||
       context.includes('credential') ||
