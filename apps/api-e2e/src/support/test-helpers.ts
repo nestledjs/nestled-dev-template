@@ -15,7 +15,7 @@ export interface TestUser {
 }
 
 export class TestHelpers {
-  private static baseURL = axios.defaults.baseURL || 'http://localhost:3000'
+  private static readonly baseURL = axios.defaults.baseURL || 'http://localhost:3000'
 
   // GraphQL helper
   static async graphql<T = any>(query: string, variables?: any): Promise<AxiosResponse<{ data: T; errors?: any[] }>> {

@@ -1,52 +1,58 @@
 import React from 'react'
 import JSON5 from 'json5'
 
+function findJsonBounds(str: string, braceStart: number): number {
+  let braceCount = 0
+  for (let i = braceStart; i < str.length; i++) {
+    if (str[i] === '{') braceCount++
+    if (str[i] === '}') braceCount--
+    if (braceCount === 0) return i
+  }
+  return -1
+}
+
+function renderInvocationJson(str: string): React.ReactNode | null {
+  const invocationIdx = str.indexOf('invocation:')
+  if (invocationIdx === -1) return null
+
+  const braceStart = str.indexOf('{', invocationIdx)
+  if (braceStart === -1) return null
+
+  const endIdx = findJsonBounds(str, braceStart)
+  if (endIdx === -1) return null
+
+  const before = str.slice(0, braceStart)
+  const objStr = str.slice(braceStart, endIdx + 1)
+  const after = str.slice(endIdx + 1)
+
+  let parsedObj = null
+  try {
+    parsedObj = JSON5.parse(objStr)
+  } catch {
+    // ignore
+  }
+
+  return (
+    <>
+      <span className="font-mono text-xs text-gray-700">{before}</span>
+      {parsedObj ? (
+        <pre className="bg-gray-50 rounded border border-gray-200 p-3 overflow-x-auto text-left text-xs font-mono mt-2 max-h-64 whitespace-pre-wrap">
+          {JSON5.stringify(parsedObj, null, 2)}
+        </pre>
+      ) : (
+        <span className="font-mono text-xs text-gray-700">{objStr}</span>
+      )}
+      <span className="font-mono text-xs text-gray-700">{after}</span>
+    </>
+  )
+}
+
 // Helper: extract and pretty-print JSON-like substrings from a string
 function renderStringWithEmbeddedJson(str: string) {
-  // Special handling for 'invocation:'
-  const invocationIdx = str.indexOf('invocation:')
-  if (invocationIdx !== -1) {
-    // Find the first '{' after 'invocation:'
-    const braceStart = str.indexOf('{', invocationIdx)
-    if (braceStart !== -1) {
-      // Find the matching closing '}' (handle nested braces)
-      let braceCount = 0
-      let endIdx = -1
-      for (let i = braceStart; i < str.length; i++) {
-        if (str[i] === '{') braceCount++
-        if (str[i] === '}') braceCount--
-        if (braceCount === 0) {
-          endIdx = i
-          break
-        }
-      }
-      if (endIdx !== -1) {
-        const before = str.slice(0, braceStart)
-        const objStr = str.slice(braceStart, endIdx + 1)
-        const after = str.slice(endIdx + 1)
-        let parsedObj = null
-        try {
-          parsedObj = JSON5.parse(objStr)
-        } catch {
-          // Do nothing, parsedObj remains null
-        }
-        return (
-          <>
-            <span className="font-mono text-xs text-gray-700">{before}</span>
-            {parsedObj ? (
-              <pre className="bg-gray-50 rounded border border-gray-200 p-3 overflow-x-auto text-left text-xs font-mono mt-2 max-h-64 whitespace-pre-wrap">
-                {JSON5.stringify(parsedObj, null, 2)}
-              </pre>
-            ) : (
-              <span className="font-mono text-xs text-gray-700">{objStr}</span>
-            )}
-            <span className="font-mono text-xs text-gray-700">{after}</span>
-          </>
-        )
-      }
-    }
-  }
-  // Fallback: previous logic for generic JSON blocks
+  const invocationResult = renderInvocationJson(str)
+  if (invocationResult !== null) return invocationResult
+
+  // Fallback: generic JSON block detection
   // Limit string length to prevent ReDoS attacks
   const MAX_STRING_LENGTH = 10000
   const safeStr = str.length > MAX_STRING_LENGTH ? str.slice(0, MAX_STRING_LENGTH) + '...' : str
@@ -78,7 +84,7 @@ function renderStringWithEmbeddedJson(str: string) {
   }
   return (
     <>
-      {parts.map((part) => {
+      {parts.map(part => {
         const partKey = typeof part === 'string' ? `s-${part.slice(0, 30)}` : `o-${JSON.stringify(part).slice(0, 30)}`
         return typeof part === 'object' && part !== null ? (
           <pre key={partKey} className="bg-gray-50 rounded border border-gray-200 p-3 overflow-x-auto text-left text-xs font-mono mt-2 max-h-64 whitespace-pre-wrap">

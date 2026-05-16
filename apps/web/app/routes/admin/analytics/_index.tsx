@@ -297,13 +297,14 @@ export default function AdminAnalyticsPage() {
           Top API Endpoints (24h)
         </h3>
         <div className="rounded-xl border border-zinc-200 dark:border-white/10 bg-white dark:bg-white/5 shadow-sm overflow-hidden backdrop-blur">
-          {loading ? (
-            <TableLoadingState message="Loading endpoints..." />
-          ) : !analytics?.topEndpoints || analytics.topEndpoints.length === 0 ? (
-            <div className="p-12 text-center text-zinc-500 dark:text-zinc-400">
-              No endpoint data available
-            </div>
-          ) : (
+          {(() => {
+            if (loading) return <TableLoadingState message="Loading endpoints..." />
+            if (!analytics?.topEndpoints || analytics.topEndpoints.length === 0) return (
+              <div className="p-12 text-center text-zinc-500 dark:text-zinc-400">
+                No endpoint data available
+              </div>
+            )
+            return (
             <div className="overflow-x-auto">
               <table className="min-w-full divide-y divide-zinc-200 dark:divide-white/10">
                 <thead className="bg-zinc-50 dark:bg-white/5">
@@ -355,7 +356,8 @@ export default function AdminAnalyticsPage() {
                 </tbody>
               </table>
             </div>
-          )}
+            )
+          })()}
         </div>
       </div>
 
@@ -365,13 +367,14 @@ export default function AdminAnalyticsPage() {
           Feature Usage (Last 7 Days)
         </h3>
         <div className="rounded-xl border border-zinc-200 dark:border-white/10 bg-white dark:bg-white/5 shadow-sm overflow-hidden backdrop-blur">
-          {loading ? (
-            <TableLoadingState message="Loading feature usage..." />
-          ) : !analytics?.featureUsage || analytics.featureUsage.length === 0 ? (
-            <div className="p-12 text-center text-zinc-500 dark:text-zinc-400">
-              No feature usage data available
-            </div>
-          ) : (
+          {(() => {
+            if (loading) return <TableLoadingState message="Loading feature usage..." />
+            if (!analytics?.featureUsage || analytics.featureUsage.length === 0) return (
+              <div className="p-12 text-center text-zinc-500 dark:text-zinc-400">
+                No feature usage data available
+              </div>
+            )
+            return (
             <div className="overflow-x-auto">
               <table className="min-w-full divide-y divide-zinc-200 dark:divide-white/10">
                 <thead className="bg-zinc-50 dark:bg-white/5">
@@ -426,7 +429,8 @@ export default function AdminAnalyticsPage() {
                 </tbody>
               </table>
             </div>
-          )}
+            )
+          })()}
         </div>
       </div>
     </div>

@@ -2,10 +2,8 @@ import { describe, it, expect, beforeEach } from 'vitest'
 import { TestHelpers } from '../support/test-helpers'
 import { UserFactory } from '../support/factories/user.factory'
 describe('Email Templates E2E', () => {
-  // Mock email service to capture sent emails
-  let mockEmailCapture: any[] = []
   beforeEach(() => {
-    mockEmailCapture = []
+    // reset state before each test
   })
   describe('Registration Email Flow', () => {
     it('should send verification email after registration', async () => {

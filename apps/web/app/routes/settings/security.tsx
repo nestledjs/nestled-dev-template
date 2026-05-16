@@ -181,7 +181,7 @@ export default function SecuritySettings() {
   }
 
   async function handleVerifyAndEnable2FA() {
-    if (!verificationCode || verificationCode.length !== 6) {
+    if (verificationCode?.length !== 6) {
       showError('Please enter a valid 6-digit code')
       return
     }

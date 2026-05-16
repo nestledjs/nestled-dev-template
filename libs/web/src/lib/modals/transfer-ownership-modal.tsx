@@ -90,12 +90,11 @@ export default function TransferOwnershipModal({
     <div className="fixed inset-0 z-50 overflow-y-auto">
       <div className="flex min-h-screen items-center justify-center px-4 py-6">
         {/* Backdrop */}
-        <div
-          className="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity"
+        <button
+          type="button"
+          className="fixed inset-0 w-full h-full bg-black/50 backdrop-blur-sm transition-opacity cursor-default"
           onClick={handleClose}
-          role="button"
-          tabIndex={0}
-          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleClose() } }}
+          aria-label="Close dialog"
         />
 
         {/* Modal */}

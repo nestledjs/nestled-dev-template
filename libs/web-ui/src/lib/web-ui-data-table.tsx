@@ -28,7 +28,7 @@ export interface WebUiDataTableProps {
 function getNestedProperty(item: any, fieldPath: string) {
   const value = fieldPath
     .split('.')
-    .reduce((obj, key) => (obj && obj[key] !== undefined ? obj[key] : undefined), item)
+    .reduce((obj: any, key) => obj?.[key], item)
 
   if (fieldPath.toLowerCase().includes('date') && value) {
     return dayjs(value).format('MMMM D, YYYY')

@@ -46,7 +46,7 @@ function getEnumValues(sdk: any, enumType: string): string[] | null {
  * Get GraphQL documents for admin CRUD operations
  */
 export function getAdminDocuments(sdk: any, model: DatabaseModel) {
-  if (!model || !model.name) {
+  if (!model?.name) {
     throw new Error('Invalid model provided to getAdminDocuments')
   }
 
@@ -268,9 +268,9 @@ function buildRelationFormField(
   currentItem: any,
   operation: string,
   sdk: any,
-  basePath: string,
-  displayFieldConfig?: DisplayFieldConfig,
+  ctx: { basePath: string; displayFieldConfig?: DisplayFieldConfig },
 ): FormField {
+  const { basePath, displayFieldConfig } = ctx
   const relationFieldName = field.relationFromFields?.[0] || `${field.name}Id`
   const relationValue = resolveRelationValue(field, currentItem, operation)
 
@@ -375,7 +375,7 @@ function buildRegularFormField(
       return FormFieldClass.datePicker(field.name, options)
 
     default:
-      return buildDefaultFormField(field, label, options, initialValue, sdk, currentItem, operation, basePath, displayFieldConfig)
+      return buildDefaultFormField(field, options, initialValue, sdk, currentItem, operation, { basePath, displayFieldConfig })
   }
 }
 
@@ -384,15 +384,15 @@ function buildRegularFormField(
  */
 function buildDefaultFormField(
   field: any,
-  label: string,
   options: { label: string; required: boolean; value?: unknown },
   initialValue: unknown,
   sdk: any,
   currentItem: any,
   operation: string,
-  basePath: string,
-  displayFieldConfig?: DisplayFieldConfig,
+  ctx: { basePath: string; displayFieldConfig?: DisplayFieldConfig },
 ): FormField {
+  const label = options.label
+  const { basePath, displayFieldConfig } = ctx
   const enumValues = getEnumValues(sdk, field.type)
   if (enumValues) {
     if (field.isList) {
@@ -420,7 +420,7 @@ function buildDefaultFormField(
   }
 
   if (field.relationName && !field.isList) {
-    return buildRelationFormField(field, label, options, currentItem, operation, sdk, basePath, displayFieldConfig)
+    return buildRelationFormField(field, label, options, currentItem, operation, sdk, { basePath, displayFieldConfig })
   }
 
   if (field.kind === 'enum' && field.enumValues) {
