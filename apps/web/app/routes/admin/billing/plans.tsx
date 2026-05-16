@@ -2,6 +2,12 @@ import { gql, type TypedDocumentNode } from '@apollo/client'
 import { useQuery } from '@apollo/client/react'
 import { CheckCircleIcon, XCircleIcon } from '@heroicons/react/24/outline'
 
+function formatLimitValue(value: unknown): string | number {
+  if (value === -1 || value === null) return 'Unlimited'
+  if (typeof value === 'number') return value
+  return String(value)
+}
+
 type Plan = {
   id: string
   createdAt: string
@@ -144,7 +150,7 @@ export default function AdminBillingPlans() {
                             {key.replaceAll(/([A-Z])/g, ' $1').toLowerCase()}
                           </dt>
                           <dd className="font-medium text-gray-900">
-                            {value === -1 || value === null ? 'Unlimited' : typeof value === 'number' ? value : String(value)}
+                            {formatLimitValue(value)}
                           </dd>
                         </div>
                       ))}
