@@ -20,10 +20,9 @@ export function WebUiLoading({ className }: Readonly<{ className?: string }>) {
   }
 
   return (
-    <div
+    <output
       aria-label="Loading"
       className={cn('w-full h-full flex items-center justify-center', className || '')}
-      role="status"
     >
       <div className="flex space-x-2">
         <div
@@ -39,6 +38,6 @@ export function WebUiLoading({ className }: Readonly<{ className?: string }>) {
           className="h-2.5 w-2.5 bg-blue-500 rounded-full animate-pulse delay-300"
         ></div>
       </div>
-    </div>
+    </output>
   )
 }

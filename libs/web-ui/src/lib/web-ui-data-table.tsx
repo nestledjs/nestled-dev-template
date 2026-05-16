@@ -60,7 +60,8 @@ function renderValue(value: unknown): ReactNode {
   if (typeof value === 'object') {
     const obj = value as Record<string, unknown>
     const rawLabel = obj.name ?? obj.title ?? obj.id ?? obj.slug
-    return rawLabel !== null && rawLabel !== undefined && typeof rawLabel !== 'object' ? String(rawLabel) : JSON.stringify(obj)
+    if (typeof rawLabel === 'string' || typeof rawLabel === 'number') return String(rawLabel)
+    return JSON.stringify(obj)
   }
 
   // Primitives
