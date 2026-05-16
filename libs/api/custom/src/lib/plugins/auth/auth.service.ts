@@ -3,8 +3,7 @@ import { JwtService } from '@nestjs/jwt'
 import { ApiCoreDataAccessService } from '@nestled-template/api/core/data-access'
 import { EmailType, User } from '@nestled-template/api/core/models'
 import { ChangePasswordInput, EmulateUserInput, LoginInput, RegisterInput, RegisterWithInvitationInput, UserCreateInput, Disable2FAInput, Enable2FAOutput, Setup2FAOutput } from './dto'
-import { ApiCoreFeatureService } from '@nestled-template/api/core/feature'
-import { Response } from 'express'
+import { CookieOptions, Response } from 'express'
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/client'
 import { UserToken } from './models'
 import { EmailService } from '@nestled-template/api/integrations'
@@ -27,7 +26,6 @@ import {
 export class AuthService {
   constructor(
     private readonly data: ApiCoreDataAccessService,
-    private readonly core: ApiCoreFeatureService,
     private readonly jwtService: JwtService,
     private readonly emailService: EmailService,
     private readonly config: ConfigService,
@@ -1044,15 +1042,17 @@ export class AuthService {
   }
 
   public setCookie(res: Response, token: string): Response {
-    return res?.cookie(this.core.cookie.name, token, this.core.cookie.options)
+    const cookie = this.config.getOrThrow<{ name: string; options: CookieOptions }>('api.cookie')
+    return res?.cookie(cookie.name, token, cookie.options)
   }
 
   public clearCookie(res: Response): Response {
-    return res.clearCookie(this.core.cookie.name, this.core.cookie.options)
+    const cookie = this.config.getOrThrow<{ name: string; options: CookieOptions }>('api.cookie')
+    return res.clearCookie(cookie.name, cookie.options)
   }
 
   public getCookieName(): string {
-    return this.core.cookie.name
+    return this.config.getOrThrow<{ name: string }>('api.cookie').name
   }
 
   public decodeToken(token: string): any {
