@@ -285,7 +285,7 @@ describe('ResetPassword Component', () => {
     })
 
     it('should display generic error when error has no message', async () => {
-      mockResetPasswordMutation.mockRejectedValue(new Error())
+      mockResetPasswordMutation.mockRejectedValue({})
 
       renderResetPassword()
       const user = userEvent.setup({ delay: null })

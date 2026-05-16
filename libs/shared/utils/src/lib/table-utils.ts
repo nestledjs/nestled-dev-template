@@ -34,7 +34,7 @@ export function renderValue(value: unknown): ReactNode {
     return JSON.stringify(obj)
   }
 
-  return String(value)
+  return typeof value === 'object' ? JSON.stringify(value) : String(value)
 }
 
 export function formatFieldName(fieldName: string): string {
