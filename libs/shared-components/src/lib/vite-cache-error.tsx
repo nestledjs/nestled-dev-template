@@ -52,7 +52,7 @@ export function ViteCacheError({
       </div>
       {autoRefresh && countdown > 0 && (
         <div className="text-center pt-4 text-sm text-gray-600">
-          Refreshing in {countdown} second{countdown !== 1 ? 's' : ''}...
+          Refreshing in {countdown} second{countdown === 1 ? '' : 's'}...
         </div>
       )}
       <button

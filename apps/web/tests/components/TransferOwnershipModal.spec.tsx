@@ -26,7 +26,7 @@ vi.mock('@nestled-template/shared/sdk', async importOriginal => {
 function closestSelect(element: HTMLElement): HTMLSelectElement {
   const select = element.closest('select')
   if (!(select instanceof HTMLSelectElement)) {
-    throw new Error('Expected element to be inside a select')
+    throw new TypeError('Expected element to be inside a select')
   }
   return select
 }
@@ -34,7 +34,7 @@ function closestSelect(element: HTMLElement): HTMLSelectElement {
 function closestButton(element: Element): HTMLButtonElement {
   const button = element.closest('button')
   if (!(button instanceof HTMLButtonElement)) {
-    throw new Error('Expected element to be inside a button')
+    throw new TypeError('Expected element to be inside a button')
   }
   return button
 }
@@ -147,7 +147,7 @@ describe('TransferOwnershipModal Component', () => {
     it('should render modal backdrop', () => {
       const { container } = renderModal(true)
 
-      const backdrop = container.querySelector('.fixed.inset-0.bg-black\\/50')
+      const backdrop = container.querySelector(String.raw`.fixed.inset-0.bg-black\/50`)
       expect(backdrop).toBeInTheDocument()
     })
 
@@ -359,7 +359,7 @@ describe('TransferOwnershipModal Component', () => {
       const { container } = renderModal(true)
 
       const backdrop = requiredElement(
-        container.querySelector('.fixed.inset-0.bg-black\\/50'),
+        container.querySelector(String.raw`.fixed.inset-0.bg-black\/50`),
         'Expected backdrop',
       )
       await user.click(backdrop)

@@ -154,6 +154,8 @@ type ApiToken {
   id: String!
   lastUsedAt: DateTime
   name: String!
+  organization: Organization
+  organizationId: String
   revoked: Boolean!
   tokenHash: String!
   updatedAt: DateTime!
@@ -236,6 +238,7 @@ input CreateApiTokenInput {
   id: String
   lastUsedAt: DateTime
   name: String!
+  organizationId: String
   revoked: Boolean
   tokenHash: String!
   updatedAt: DateTime
@@ -342,6 +345,7 @@ input CreateOrganizationInput {
   AuditLogIds: [String!]
   TeamIds: [String!]
   addressesIds: [String!]
+  apiTokensIds: [String!]
   createdAt: DateTime
   emailsIds: [String!]
   id: String
@@ -625,6 +629,7 @@ input ForgotPasswordInput {
 input GenerateApiTokenInput {
   expiresAt: DateTime
   name: String!
+  organizationId: String
 }
 
 type GenerateApiTokenOutput {
@@ -725,6 +730,7 @@ input ListApiTokenInput {
   name: String
   orderBy: String
   orderDirection: String
+  organizationId: String
   revoked: Boolean
   search: String
   searchFields: [String!]
@@ -878,6 +884,7 @@ input ListOrganizationInput {
   AuditLogIds: [String!]
   TeamIds: [String!]
   addressesIds: [String!]
+  apiTokensIds: [String!]
   createdAt: DateTime
   emailsIds: [String!]
   filters: JSONObject
@@ -1380,6 +1387,7 @@ type Organization {
   AuditLog: [AuditLog!]
   Team: [Team!]
   addresses: [Address!]
+  apiTokens: [ApiToken!]
   createdAt: DateTime!
   emails: [Email!]
   id: String!
@@ -1800,6 +1808,7 @@ input UpdateApiTokenInput {
   id: String
   lastUsedAt: DateTime
   name: String
+  organizationId: String
   revoked: Boolean
   tokenHash: String
   updatedAt: DateTime
@@ -1906,6 +1915,7 @@ input UpdateOrganizationInput {
   AuditLogIds: [String!]
   TeamIds: [String!]
   addressesIds: [String!]
+  apiTokensIds: [String!]
   createdAt: DateTime
   emailsIds: [String!]
   id: String

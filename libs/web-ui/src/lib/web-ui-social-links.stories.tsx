@@ -1,7 +1,6 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import type { Meta, StoryObj, StoryContext } from '@storybook/react-vite';
 import { within, expect } from 'storybook/test';
 import { WebUiSocialLinks } from './web-ui-social-links';
-import type { StoryContext } from '@storybook/react-vite';
 
 const mockUser = {
   facebook: 'https://facebook.com/testuser',

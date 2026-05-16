@@ -334,14 +334,14 @@ describe('Checkout Success Page', () => {
     it('should have responsive padding', () => {
       const { container } = renderCheckoutSuccess()
 
-      const card = container.querySelector('.p-8.md\\:p-12')
+      const card = container.querySelector(String.raw`.p-8.md\:p-12`)
       expect(card).toBeInTheDocument()
     })
 
     it('should stack buttons on mobile', () => {
       const { container } = renderCheckoutSuccess()
 
-      const buttonContainer = container.querySelector('.flex-col.sm\\:flex-row')
+      const buttonContainer = container.querySelector(String.raw`.flex-col.sm\:flex-row`)
       expect(buttonContainer).toBeInTheDocument()
     })
   })

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { cn } from '@nestled-template/shared/utils'
 
-
 export function WebUiLoading({ className }: Readonly<{ className?: string }>) {
   const [showLoading, setShowLoading] = useState(false)
 
@@ -21,7 +20,11 @@ export function WebUiLoading({ className }: Readonly<{ className?: string }>) {
   }
 
   return (
-    <div className={cn('w-full h-full flex items-center justify-center', className || '')}>
+    <div
+      aria-label="Loading"
+      className={cn('w-full h-full flex items-center justify-center', className || '')}
+      role="status"
+    >
       <div className="flex space-x-2">
         <div
           aria-hidden="true"

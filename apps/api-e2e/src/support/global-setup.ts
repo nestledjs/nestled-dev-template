@@ -107,7 +107,7 @@ async function startApiServer(
   return apiProcess
 }
 
-module.exports = async function () {
+module.exports = async function globalSetup() {
   // Start services that the app needs to run (e.g. database, docker-compose, etc.).
   console.log('\n🚀 Setting up E2E tests...\n')
 

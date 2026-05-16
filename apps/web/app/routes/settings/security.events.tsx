@@ -93,7 +93,7 @@ export default function SecurityEventsPage() {
                 >
                   <td className="px-6 py-4 font-medium text-zinc-900 dark:text-white">
                     {event.eventType
-                      ?.replaceAll(/_/g, ' ')
+                      ?.replaceAll('_', ' ')
                       .toLowerCase()
                       .replaceAll(/\b\w/g, l => l.toUpperCase()) || 'Security event'}
                   </td>

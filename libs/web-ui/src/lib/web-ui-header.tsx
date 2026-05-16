@@ -18,7 +18,7 @@ interface WebUiHeaderProps {
 export function WebUiHeader(props: Readonly<WebUiHeaderProps>) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
-    if (typeof globalThis.window === 'undefined') return 'dark'
+    if (globalThis.window === undefined) return 'dark'
     const saved = globalThis.localStorage.getItem('theme') as 'light' | 'dark' | null
     return saved ?? 'dark'
   })

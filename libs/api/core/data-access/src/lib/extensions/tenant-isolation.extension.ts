@@ -71,7 +71,7 @@ export function createTenantIsolationExtension(organizationId?: string) {
               return query({
                 ...args,
                 where: {
-                  ...(args.where ?? {}),
+                  ...args.where,
                   organizationId,
                 },
               })
@@ -92,7 +92,7 @@ export function createTenantIsolationExtension(organizationId?: string) {
                 return query({
                   ...args,
                   data: {
-                    ...(args.data ?? {}),
+                    ...args.data,
                     organizationId,
                   },
                 })
@@ -103,11 +103,11 @@ export function createTenantIsolationExtension(organizationId?: string) {
               return query({
                 ...args,
                 where: {
-                  ...(args.where ?? {}),
+                  ...args.where,
                   organizationId,
                 },
                 create: {
-                  ...(args.create ?? {}),
+                  ...args.create,
                   organizationId,
                 },
               })

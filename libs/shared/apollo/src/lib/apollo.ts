@@ -158,7 +158,7 @@ function resolveAuthToken(request?: Request, options?: ClientOptions): string | 
   }
 
   // 4. Check browser cookies (client-side only)
-  if (typeof globalThis.window !== 'undefined' && typeof document !== 'undefined') {
+  if (globalThis.window !== undefined && typeof document !== 'undefined') {
     const browserToken = getCookieFromHeader(document.cookie, getSessionCookieName())
     if (browserToken) {
       return browserToken
@@ -262,7 +262,7 @@ function isNetworkConnectivityError(networkError: Error): boolean {
 }
 
 function shouldShowServiceUnavailableMessage(): boolean {
-  return typeof globalThis.window !== 'undefined' && !hasShownServiceUnavailableMessage
+  return globalThis.window !== undefined && !hasShownServiceUnavailableMessage
 }
 
 function dispatchServiceUnavailableEvent(networkError: Error, operation: Operation): void {
@@ -348,7 +348,7 @@ function createLinkChain(uri: string, token: string | null, isDev: boolean): Apo
       'apollo-require-preflight': 'true', // Prevent CSRF blocking
     },
   })
-  const isServer = typeof globalThis.window === 'undefined'
+  const isServer = globalThis.window === undefined
 
   const splitLink = isServer
     ? uploadLink

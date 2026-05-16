@@ -144,7 +144,7 @@ export default function AdminBillingPlans() {
                             {key.replaceAll(/([A-Z])/g, ' $1').toLowerCase()}
                           </dt>
                           <dd className="font-medium text-gray-900">
-                            {value === -1 || value === null ? 'Unlimited' : value?.toString()}
+                            {value === -1 || value === null ? 'Unlimited' : typeof value === 'number' ? value : String(value)}
                           </dd>
                         </div>
                       ))}

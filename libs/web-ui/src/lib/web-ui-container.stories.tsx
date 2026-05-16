@@ -1,7 +1,6 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import type { Meta, StoryObj, StoryContext } from '@storybook/react-vite';
 import { expect, within } from 'storybook/test';
 import { WebUiContainer } from './web-ui-container';
-import type { StoryContext } from '@storybook/react-vite';
 
 const meta = {
   component: WebUiContainer,

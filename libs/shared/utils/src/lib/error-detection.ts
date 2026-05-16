@@ -113,7 +113,7 @@ export function handleViteCacheError(
   if (isViteCacheError(error)) {
     console.log('[Error Handler] Vite cache error detected:', error)
 
-    if (autoReload && typeof globalThis.window !== 'undefined') {
+    if (autoReload && globalThis.window !== undefined) {
       if (delay > 0) {
         setTimeout(() => {
           globalThis.location.reload()

@@ -453,7 +453,7 @@ export default function SecuritySettings() {
                 <div className="flex-1">
                   <p className="font-medium text-zinc-900 dark:text-white">
                     {event.eventType
-                      ?.replaceAll(/_/g, ' ')
+                      ?.replaceAll('_', ' ')
                       .toLowerCase()
                       .replaceAll(/\b\w/g, l => l.toUpperCase()) || 'Security event'}
                   </p>

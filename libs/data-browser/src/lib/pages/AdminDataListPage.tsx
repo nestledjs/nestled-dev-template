@@ -37,7 +37,7 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
         return keys.length > 0 ? keys : null
       }
 
-      return values as string[] // values is filtered to only strings above
+      return values.filter((v): v is string => typeof v === 'string')
     } catch (error) {
       console.error('Unexpected error:', error)
       return null
@@ -419,7 +419,7 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
     let processedItems = dataPath && anyData[dataPath] ? anyData[dataPath] : []
     if (!processedItems || processedItems.length === 0) {
       for (const [, value] of Object.entries(anyData)) {
-        if (Array.isArray(value) && value.length > 0 && (value[0] as any)?.id) {
+        if (Array.isArray(value) && value.length > 0 && (value[0] as Record<string, unknown>)?.id) {
           processedItems = value
           break
         }

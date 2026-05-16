@@ -4,9 +4,7 @@ import userEvent from '@testing-library/user-event'
 import { createTestRouter } from "../helpers/createTestRouter"
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import AcceptInvitation from '../../app/routes/accept-invitation'
-import { GlobalContextProvider } from '@nestled-template/web'
-
-import { useGlobalCtx } from '@nestled-template/web'
+import { GlobalContextProvider, useGlobalCtx } from '@nestled-template/web'
 
 // Mock Apollo Client
 const mockUseQuery = vi.fn()

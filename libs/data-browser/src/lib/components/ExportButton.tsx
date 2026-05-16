@@ -10,7 +10,7 @@ function escapeCsvValue(val: unknown): string {
   if (typeof val === 'object') {
     // Flatten simple relation objects to their id, otherwise stringify
     const obj = val as Record<string, unknown>
-    str = obj.id ? String(obj.id) : JSON.stringify(val)
+    str = obj.id !== null && obj.id !== undefined && typeof obj.id !== 'object' ? String(obj.id) : JSON.stringify(val)
   } else {
     str = String(val)
   }
@@ -32,7 +32,7 @@ function findItemsInData(data: Record<string, unknown>, dataPath: string): Recor
   const direct = data?.[dataPath] as Record<string, unknown>[] | undefined
   if (direct?.length) return direct
   for (const value of Object.values(data ?? {})) {
-    if (Array.isArray(value) && value.length > 0 && (value[0] as any)?.id) {
+    if (Array.isArray(value) && value.length > 0 && (value[0] as Record<string, unknown>)?.id) {
       return value as Record<string, unknown>[]
     }
   }
