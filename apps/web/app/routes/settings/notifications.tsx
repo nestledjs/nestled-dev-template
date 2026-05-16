@@ -16,7 +16,7 @@ type CacheReference = {
 }
 
 function updatePreferencesCache(
-  cache: ApolloCache<unknown>,
+  cache: ApolloCache,
   updatedPreference: { __typename?: string; id: string; value: string },
 ) {
   const updatedPreferenceId = cache.identify(updatedPreference)
@@ -110,7 +110,13 @@ const DEFAULT_NOTIFICATIONS: NotificationSetting[] = [
 
 export const loader = () => ({})
 
-function handleUpdatePreferenceCache(cache: Parameters<typeof updatePreferencesCache>[0], data: { updateUserPreference?: Parameters<typeof updatePreferencesCache>[1] } | null | undefined) {
+function handleUpdatePreferenceCache(
+  cache: Parameters<typeof updatePreferencesCache>[0],
+  data:
+    | { updateUserPreference?: Parameters<typeof updatePreferencesCache>[1] | null }
+    | null
+    | undefined,
+) {
   if (data?.updateUserPreference) {
     updatePreferencesCache(cache, data.updateUserPreference)
   }
@@ -146,10 +152,7 @@ export default function NotificationsSettings() {
     }
   })
 
-  const updateExistingPreference = async (
-    existing: (typeof preferences)[0],
-    newValue: boolean,
-  ) => {
+  const updateExistingPreference = async (existing: (typeof preferences)[0], newValue: boolean) => {
     await updatePreference({
       variables: {
         userPreferenceId: existing.id,

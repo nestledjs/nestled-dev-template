@@ -148,12 +148,14 @@ export default function AdminBillingOverview() {
   const activeSubscriptions = subscriptions.filter(s => s.status === 'ACTIVE').length
   const activePlans = plans.filter(p => p.active).length
 
-  const monthlyRecurringRevenue = subscriptions
-    .filter(s => s.status === 'ACTIVE' && s.plan?.price)
-    .reduce((sum: number, s: Subscription) => {
-      const price = Number.parseFloat(s.plan.price)
-      return sum + price
-    }, 0)
+  const monthlyRecurringRevenue = subscriptions.reduce((sum: number, s: Subscription) => {
+    if (s.status !== 'ACTIVE' || !s.plan?.price) {
+      return sum
+    }
+
+    const price = Number.parseFloat(s.plan.price)
+    return sum + price
+  }, 0)
 
   return (
     <div className="space-y-6">
