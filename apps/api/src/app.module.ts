@@ -13,6 +13,7 @@ import {
   InviteModule,
   LinkModule,
   LoginAttemptModule,
+  McpModule,
   OAuthAccountModule,
   OrganizationMemberModule,
   OrganizationModule,
@@ -88,6 +89,7 @@ export const pluginModules = [
   TenancyModule,
   StripeModule,
   BillingModule,
+  McpModule,
 ]
 // Combined modules used in the app
 export const appModules = [...coreModules, ...defaultModules, ...pluginModules]

@@ -67,10 +67,6 @@ export class ConfigService {
     return smtpHost ? 'smtp' : 'mock'
   }
 
-  get frontendUrl(): string {
-    return this.config.getOrThrow<string>('frontend.url')
-  }
-
   get mailerConfig() {
     return {
       host: this.config.getOrThrow<string>('smtp.host'),

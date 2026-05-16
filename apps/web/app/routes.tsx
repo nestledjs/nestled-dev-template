@@ -10,6 +10,7 @@ export default [
       route('login', './routes/_public/login.tsx'),
       route('register', './routes/_public/register.tsx'),
       route('forgot-password', './routes/_public/forgot-password.tsx'),
+      route('resend-verification', './routes/_public/resend-verification.tsx'),
       route('reset-password', './routes/_public/reset-password.tsx'),
       route('verify-email', './routes/_public/verify-email.tsx'),
       route('pricing', './routes/pricing.tsx'),

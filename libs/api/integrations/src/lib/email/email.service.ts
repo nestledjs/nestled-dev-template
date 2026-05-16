@@ -118,7 +118,7 @@ export class EmailService {
   }
 
   async sendPasswordResetEmail(to: string, resetToken: string, userName: string): Promise<EmailResult> {
-    const resetUrl = `${this.config.frontendUrl}/reset-password?token=${resetToken}`
+    const resetUrl = `${this.config.siteUrl}/reset-password?token=${resetToken}`
     
     return this.sendEmail({
       to,
@@ -129,7 +129,7 @@ export class EmailService {
   }
 
   async sendEmailVerification(to: string, verificationToken: string, userName: string): Promise<EmailResult> {
-    const verificationUrl = `${this.config.frontendUrl}/verify-email?token=${verificationToken}`
+    const verificationUrl = `${this.config.siteUrl}/verify-email?token=${verificationToken}`
     
     return this.sendEmail({
       to,
@@ -145,7 +145,7 @@ export class EmailService {
     organizationName: string,
     invitationToken: string
   ): Promise<EmailResult> {
-    const invitationUrl = `${this.config.frontendUrl}/accept-invitation?token=${invitationToken}`
+    const invitationUrl = `${this.config.siteUrl}/accept-invitation?token=${invitationToken}`
     
     return this.sendEmail({
       to,

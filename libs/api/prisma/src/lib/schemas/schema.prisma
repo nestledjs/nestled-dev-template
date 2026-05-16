@@ -414,6 +414,8 @@ model UserSession {
 }
 
 /// @skipCrud
+/// Security-sensitive internal credential history. Password hashes should not be exposed
+/// through generated admin CRUD or the generic admin data browser.
 model PasswordHistory {
   id           String   @id @default(uuid())
   createdAt    DateTime @default(now())

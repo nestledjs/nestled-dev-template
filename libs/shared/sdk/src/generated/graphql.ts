@@ -1343,6 +1343,8 @@ export type Mutation = {
   revokeApiToken: ApiToken
   rotateApiToken: GenerateApiTokenOutput
   setup2FA: Setup2FaOutput
+  staffDeleteEmail?: Maybe<Email>
+  staffUpdateEmail?: Maybe<Email>
   switchActiveOrganization: User
   syncStripePrice: Scalars['Boolean']['output']
   syncStripePrices: Scalars['Boolean']['output']
@@ -1703,6 +1705,15 @@ export type MutationRevokeApiTokenArgs = {
 
 export type MutationRotateApiTokenArgs = {
   input: RotateApiTokenInput
+}
+
+export type MutationStaffDeleteEmailArgs = {
+  emailId: Scalars['String']['input']
+}
+
+export type MutationStaffUpdateEmailArgs = {
+  emailId: Scalars['String']['input']
+  input: UpdateEmailInput
 }
 
 export type MutationSwitchActiveOrganizationArgs = {

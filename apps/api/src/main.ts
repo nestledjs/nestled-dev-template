@@ -19,6 +19,7 @@ const VALID_API_PREFIXES = [
   '/api/uptime', // Core feature controller
   '/api/webhooks/stripe', // Stripe webhook
   '/api/auth', // OAuth controller (google/github)
+  '/api/mcp', // MCP OAuth and tool endpoints
   '/uploads', // Static file uploads
 ]
 
@@ -114,18 +115,10 @@ async function bootstrap() {
     ? configService.apiCorsOrigins
     : ['http://localhost:4200']
 
-  // Add this logging
-  console.log('CORS Debug Info:')
-  console.log('- ALLOWED_ORIGINS env var:', process.env['ALLOWED_ORIGINS'])
-  console.log('- configService.apiCorsOrigins:', configService.apiCorsOrigins)
-  console.log('- Final origins array:', origins)
-  console.log('- Origins length:', origins.length)
-
-  console.log('Cookie Debug Info:')
-  console.log('- VITE_COOKIE_NAME:', process.env['VITE_COOKIE_NAME'])
-  console.log('- API_COOKIE_DOMAIN:', process.env['API_COOKIE_DOMAIN'])
-  console.log('- NODE_ENV:', process.env['NODE_ENV'])
-  console.log('- Cookie config:', configService.cookie)
+  if (process.env['DEBUG_CONFIG'] === 'true') {
+    Logger.debug(`CORS origins: ${JSON.stringify(origins)}`)
+    Logger.debug(`Cookie config: ${JSON.stringify(configService.cookie)}`)
+  }
 
   app.enableCors({
     credentials: true,
