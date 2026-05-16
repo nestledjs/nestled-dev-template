@@ -298,8 +298,8 @@ describe('Email Verification Tests', () => {
       })
 
       it('should display generic error message when verification fails with no message', async () => {
-        mockVerifyEmailChangeMutation.mockRejectedValue(new Error('Unexpected error'))
-        mockVerifyEmailMutation.mockRejectedValue(new Error('Unexpected error'))
+        mockVerifyEmailChangeMutation.mockRejectedValue(new Error(''))
+        mockVerifyEmailMutation.mockRejectedValue(new Error(''))
 
         renderVerifyEmail()
 
@@ -458,7 +458,7 @@ describe('Email Verification Tests', () => {
 
       it('should display generic error when error has no message', async () => {
         const user = userEvent.setup()
-        mockResendMutation.mockRejectedValue(new Error('Unexpected error'))
+        mockResendMutation.mockRejectedValue(new Error(''))
 
         renderResendVerification()
 
