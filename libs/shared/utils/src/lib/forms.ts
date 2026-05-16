@@ -50,7 +50,7 @@ export function cleanFormInput(
           validKeys.includes(k) &&
           !(
             (
-              (v instanceof Array && !v.length) ||
+              (Array.isArray(v) && !v.length) ||
               k === 'createdAt' ||
               k === 'updatedAt' ||
               k === '__typename' ||
@@ -102,7 +102,7 @@ export function cleanDatabaseOutput(
           v === undefined ||
           !v ||
           v === '' ||
-          (v instanceof Array && !v.length) ||
+          (Array.isArray(v) && !v.length) ||
           k === 'createdAt' ||
           k === 'updatedAt' ||
           k === '__typename' ||

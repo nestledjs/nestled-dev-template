@@ -159,7 +159,7 @@ describe('Landing Page (_public/_index)', () => {
     it('should stack CTA buttons on mobile', () => {
       const { container } = renderLandingPage()
 
-      const buttonContainer = container.querySelector('.flex-col.sm\\:flex-row')
+      const buttonContainer = container.querySelector(String.raw`.flex-col.sm\:flex-row`)
       expect(buttonContainer).toBeInTheDocument()
     })
   })

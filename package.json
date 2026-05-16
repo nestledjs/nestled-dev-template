@@ -38,7 +38,7 @@
     "dep-graph": "nx dep-graph",
     "dev:api": "nx serve api",
     "format": "nx format:write",
-    "format:check": "nx format:check",
+    "format:check": "nx format:check --base=develop",
     "format:write": "nx format:write",
     "help": "nx help",
     "lint": "nx run-many -t lint",
@@ -172,7 +172,8 @@
     "twilio": "^6.0.0",
     "type-graphql": "2.0.0-rc.3",
     "uuid": "^14.0.0",
-    "ws": "^8.20.0"
+    "ws": "^8.20.0",
+    "zod": "3.25.56"
   },
   "devDependencies": {
     "@babel/core": "^7.29.0",

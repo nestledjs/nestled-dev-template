@@ -1,7 +1,6 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import type { Meta, StoryObj, StoryContext } from '@storybook/react-vite';
 import { within, expect } from 'storybook/test';
 import { WebUiHeader } from './web-ui-header';
-import type { StoryContext } from '@storybook/react-vite';
 
 const navigation = [
   { name: 'Home', href: '/' },

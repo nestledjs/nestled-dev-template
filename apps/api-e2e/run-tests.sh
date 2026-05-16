@@ -42,19 +42,21 @@ OUTPUT=$(cat "$TMPFILE")
 rm -f "$TMPFILE"
 
 # Check if tests actually passed by looking for success indicators
+SEPARATOR="════════════════════════════════════════════════════════════"
+
 if echo "$OUTPUT" | grep -q "✅ Cleanup complete - all tests passed!" && \
    echo "$OUTPUT" | grep -q "Test Files.*passed" && \
    echo "$OUTPUT" | grep -q "Tests.*passed"; then
   echo ""
-  echo "════════════════════════════════════════════════════════════"
+  echo "$SEPARATOR"
   echo "✅ E2E Tests PASSED (exit code adjusted from $EXIT_CODE to 0)"
   echo "   Process was force-killed to prevent hanging - this is expected"
-  echo "════════════════════════════════════════════════════════════"
+  echo "$SEPARATOR"
   exit 0
 else
   echo ""
-  echo "════════════════════════════════════════════════════════════"
+  echo "$SEPARATOR"
   echo "❌ E2E Tests FAILED (exit code: $EXIT_CODE)"
-  echo "════════════════════════════════════════════════════════════"
+  echo "$SEPARATOR"
   exit $EXIT_CODE
 fi

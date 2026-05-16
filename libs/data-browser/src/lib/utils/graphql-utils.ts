@@ -35,7 +35,7 @@ function getEnumValues(sdk: any, enumType: string): string[] | null {
       return keys.length > 0 ? keys : null
     }
 
-    return values as string[] // values is filtered to only strings above
+    return values.filter((v): v is string => typeof v === 'string')
   } catch (error) {
     console.error('Unexpected error:', error)
     return null
@@ -159,7 +159,7 @@ function findForeignKeyFieldName(
 function normalizeDateInitialValue(value: unknown, fieldType: string): unknown {
   if (!(value instanceof Date) && !(value && typeof value === 'string')) return value
   try {
-    const dateValue = value instanceof Date ? value : new Date(value as string)
+    const dateValue = value instanceof Date ? value : new Date(String(value))
     if (fieldType === 'date') return dateValue.toISOString().split('T')[0]
     return dateValue.toISOString().substring(0, 16)
   } catch (e) {
@@ -694,7 +694,7 @@ function convertStringValue(value: string, field?: any): string | number | boole
       // datetime-local values are in local time, convert to ISO string
       const date = new Date(value)
       return date.toISOString()
-    } catch (e) {
+    } catch {
       return value
     }
   }

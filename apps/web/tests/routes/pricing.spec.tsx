@@ -475,7 +475,7 @@ describe('Pricing Page', () => {
     it('should use responsive grid layout for plans', () => {
       const { container } = renderPricingPage()
 
-      const gridContainer = container.querySelector('.grid.lg\\:grid-cols-3')
+      const gridContainer = container.querySelector(String.raw`.grid.lg\:grid-cols-3`)
       expect(gridContainer).toBeInTheDocument()
     })
   })

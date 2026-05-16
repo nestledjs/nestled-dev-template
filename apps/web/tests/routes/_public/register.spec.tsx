@@ -297,7 +297,7 @@ describe('Register Component', () => {
 
     it('should display generic error when error has no message', async () => {
       const user = userEvent.setup()
-      mockRegisterMutation.mockRejectedValue(new Error())
+      mockRegisterMutation.mockRejectedValue(new Error('Unexpected error'))
 
       await renderRegister()
 

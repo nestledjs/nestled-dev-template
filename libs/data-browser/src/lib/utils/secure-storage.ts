@@ -104,7 +104,7 @@ export const SecureAdminLocalStorage = {
       
       return parsed
 
-    } catch (error) {
+    } catch {
       // Clear potentially corrupted data
       try {
         localStorage.removeItem(ADMIN_CONFIG_KEY)

@@ -741,7 +741,7 @@ function AdminDataEditPageContent({ model, id, basePath, formTheme, displayField
       message: result.message,
     })
 
-    if (typeof globalThis.window !== 'undefined') {
+    if (globalThis.window !== undefined) {
       globalThis.scrollTo({ top: 0, behavior: 'smooth' })
     }
 

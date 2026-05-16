@@ -56,7 +56,7 @@ export class GcsStorageService implements IStorageService, OnModuleInit {
       ...(keyFilename && { keyFilename }),
     })
 
-    this.bucket = this.storage.bucket(bucketName!)
+    this.bucket = this.storage.bucket(this.bucketName)
   }
 
   async onModuleInit() {

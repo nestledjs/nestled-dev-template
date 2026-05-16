@@ -243,7 +243,7 @@ describe('ForgotPassword Component', () => {
 
     it('should display generic error when error has no message', async () => {
       const user = userEvent.setup()
-      mockForgotPasswordMutation.mockRejectedValue(new Error())
+      mockForgotPasswordMutation.mockRejectedValue(new Error('Unexpected error'))
 
       renderForgotPassword()
 

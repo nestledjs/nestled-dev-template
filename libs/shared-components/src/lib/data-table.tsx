@@ -154,8 +154,8 @@ function renderValue(value: unknown): ReactNode {
   // Objects (e.g., relation values)
   if (typeof value === 'object') {
     const obj = value as Record<string, unknown>
-    const label = (obj.name as string) ?? (obj.title as string) ?? (obj.id as string) ?? (obj.slug as string)
-    return label ?? JSON.stringify(obj)
+    const rawLabel = obj.name ?? obj.title ?? obj.id ?? obj.slug
+    return rawLabel !== null && rawLabel !== undefined && typeof rawLabel !== 'object' ? String(rawLabel) : JSON.stringify(obj)
   }
 
   // Primitives

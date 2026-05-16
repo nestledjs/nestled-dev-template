@@ -30,7 +30,7 @@ export function generateExpireDate(days = 1) {
 }
 
 export function randomId(length = 8): string {
-  return Date.now().toString().substr(0, length)
+  return Date.now().toString().substring(0, length)
 }
 
 /**

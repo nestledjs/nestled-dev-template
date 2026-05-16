@@ -75,7 +75,7 @@ export default function handleRequest(
             const base = `${cookieName}=; Path=/; ${expired}; HttpOnly; SameSite=Lax`
             const url = new URL(request.url)
             const returnParam =
-              url.pathname !== '/' ? `?return_url=${encodeURIComponent(url.pathname)}` : ''
+              url.pathname === '/' ? '' : `?return_url=${encodeURIComponent(url.pathname)}`
             const headers = new Headers({ Location: `/force-logout${returnParam}` })
             headers.append(
               'Set-Cookie',

@@ -191,6 +191,8 @@ export type ApiToken = {
   id: Scalars['String']['output']
   lastUsedAt?: Maybe<Scalars['DateTime']['output']>
   name: Scalars['String']['output']
+  organization?: Maybe<Organization>
+  organizationId?: Maybe<Scalars['String']['output']>
   revoked: Scalars['Boolean']['output']
   tokenHash: Scalars['String']['output']
   updatedAt: Scalars['DateTime']['output']
@@ -276,6 +278,7 @@ export type CreateApiTokenInput = {
   id?: InputMaybe<Scalars['String']['input']>
   lastUsedAt?: InputMaybe<Scalars['DateTime']['input']>
   name: Scalars['String']['input']
+  organizationId?: InputMaybe<Scalars['String']['input']>
   revoked?: InputMaybe<Scalars['Boolean']['input']>
   tokenHash: Scalars['String']['input']
   updatedAt?: InputMaybe<Scalars['DateTime']['input']>
@@ -382,6 +385,7 @@ export type CreateOrganizationInput = {
   AuditLogIds?: InputMaybe<Array<Scalars['String']['input']>>
   TeamIds?: InputMaybe<Array<Scalars['String']['input']>>
   addressesIds?: InputMaybe<Array<Scalars['String']['input']>>
+  apiTokensIds?: InputMaybe<Array<Scalars['String']['input']>>
   createdAt?: InputMaybe<Scalars['DateTime']['input']>
   emailsIds?: InputMaybe<Array<Scalars['String']['input']>>
   id?: InputMaybe<Scalars['String']['input']>
@@ -660,6 +664,7 @@ export type ForgotPasswordInput = {
 export type GenerateApiTokenInput = {
   expiresAt?: InputMaybe<Scalars['DateTime']['input']>
   name: Scalars['String']['input']
+  organizationId?: InputMaybe<Scalars['String']['input']>
 }
 
 export type GenerateApiTokenOutput = {
@@ -753,6 +758,7 @@ export type ListApiTokenInput = {
   name?: InputMaybe<Scalars['String']['input']>
   orderBy?: InputMaybe<Scalars['String']['input']>
   orderDirection?: InputMaybe<Scalars['String']['input']>
+  organizationId?: InputMaybe<Scalars['String']['input']>
   revoked?: InputMaybe<Scalars['Boolean']['input']>
   search?: InputMaybe<Scalars['String']['input']>
   searchFields?: InputMaybe<Array<Scalars['String']['input']>>
@@ -906,6 +912,7 @@ export type ListOrganizationInput = {
   AuditLogIds?: InputMaybe<Array<Scalars['String']['input']>>
   TeamIds?: InputMaybe<Array<Scalars['String']['input']>>
   addressesIds?: InputMaybe<Array<Scalars['String']['input']>>
+  apiTokensIds?: InputMaybe<Array<Scalars['String']['input']>>
   createdAt?: InputMaybe<Scalars['DateTime']['input']>
   emailsIds?: InputMaybe<Array<Scalars['String']['input']>>
   filters?: InputMaybe<Scalars['JSONObject']['input']>
@@ -1931,6 +1938,7 @@ export type Organization = {
   AuditLog?: Maybe<Array<AuditLog>>
   Team?: Maybe<Array<Team>>
   addresses?: Maybe<Array<Address>>
+  apiTokens?: Maybe<Array<ApiToken>>
   createdAt: Scalars['DateTime']['output']
   emails?: Maybe<Array<Email>>
   id: Scalars['String']['output']
@@ -2722,6 +2730,7 @@ export type UpdateApiTokenInput = {
   id?: InputMaybe<Scalars['String']['input']>
   lastUsedAt?: InputMaybe<Scalars['DateTime']['input']>
   name?: InputMaybe<Scalars['String']['input']>
+  organizationId?: InputMaybe<Scalars['String']['input']>
   revoked?: InputMaybe<Scalars['Boolean']['input']>
   tokenHash?: InputMaybe<Scalars['String']['input']>
   updatedAt?: InputMaybe<Scalars['DateTime']['input']>
@@ -2828,6 +2837,7 @@ export type UpdateOrganizationInput = {
   AuditLogIds?: InputMaybe<Array<Scalars['String']['input']>>
   TeamIds?: InputMaybe<Array<Scalars['String']['input']>>
   addressesIds?: InputMaybe<Array<Scalars['String']['input']>>
+  apiTokensIds?: InputMaybe<Array<Scalars['String']['input']>>
   createdAt?: InputMaybe<Scalars['DateTime']['input']>
   emailsIds?: InputMaybe<Array<Scalars['String']['input']>>
   id?: InputMaybe<Scalars['String']['input']>
@@ -3373,7 +3383,9 @@ export type __AdminApiTokenSummaryFragment = {
   expiresAt?: any | null
   lastUsedAt?: any | null
   revoked: boolean
+  organizationId?: string | null
   user?: { __typename?: 'User'; id: string } | null
+  organization?: { __typename?: 'Organization'; id: string } | null
 }
 
 export type __AdminApiTokenDetailsFragment = {
@@ -3387,7 +3399,9 @@ export type __AdminApiTokenDetailsFragment = {
   expiresAt?: any | null
   lastUsedAt?: any | null
   revoked: boolean
+  organizationId?: string | null
   user?: { __typename?: 'User'; id: string } | null
+  organization?: { __typename?: 'Organization'; id: string } | null
 }
 
 export type __AdminCreateApiTokenMutationVariables = Exact<{
@@ -3407,7 +3421,9 @@ export type __AdminCreateApiTokenMutation = {
     expiresAt?: any | null
     lastUsedAt?: any | null
     revoked: boolean
+    organizationId?: string | null
     user?: { __typename?: 'User'; id: string } | null
+    organization?: { __typename?: 'Organization'; id: string } | null
   } | null
 }
 
@@ -3438,7 +3454,9 @@ export type __AdminUpdateApiTokenMutation = {
     expiresAt?: any | null
     lastUsedAt?: any | null
     revoked: boolean
+    organizationId?: string | null
     user?: { __typename?: 'User'; id: string } | null
+    organization?: { __typename?: 'Organization'; id: string } | null
   } | null
 }
 
@@ -3459,7 +3477,9 @@ export type __AdminApiTokenQuery = {
     expiresAt?: any | null
     lastUsedAt?: any | null
     revoked: boolean
+    organizationId?: string | null
     user?: { __typename?: 'User'; id: string } | null
+    organization?: { __typename?: 'Organization'; id: string } | null
   } | null
 }
 
@@ -3480,7 +3500,9 @@ export type __AdminApiTokensQuery = {
     expiresAt?: any | null
     lastUsedAt?: any | null
     revoked: boolean
+    organizationId?: string | null
     user?: { __typename?: 'User'; id: string } | null
+    organization?: { __typename?: 'Organization'; id: string } | null
   }> | null
   counters?: {
     __typename?: 'CorePaging'
@@ -12517,9 +12539,18 @@ export const __AdminApiTokenSummaryFragmentDoc = {
           { kind: 'Field', name: { kind: 'Name', value: 'expiresAt' } },
           { kind: 'Field', name: { kind: 'Name', value: 'lastUsedAt' } },
           { kind: 'Field', name: { kind: 'Name', value: 'revoked' } },
+          { kind: 'Field', name: { kind: 'Name', value: 'organizationId' } },
           {
             kind: 'Field',
             name: { kind: 'Name', value: 'user' },
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [{ kind: 'Field', name: { kind: 'Name', value: 'id' } }],
+            },
+          },
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'organization' },
             selectionSet: {
               kind: 'SelectionSet',
               selections: [{ kind: 'Field', name: { kind: 'Name', value: 'id' } }],
@@ -12560,9 +12591,18 @@ export const __AdminApiTokenDetailsFragmentDoc = {
           { kind: 'Field', name: { kind: 'Name', value: 'expiresAt' } },
           { kind: 'Field', name: { kind: 'Name', value: 'lastUsedAt' } },
           { kind: 'Field', name: { kind: 'Name', value: 'revoked' } },
+          { kind: 'Field', name: { kind: 'Name', value: 'organizationId' } },
           {
             kind: 'Field',
             name: { kind: 'Name', value: 'user' },
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [{ kind: 'Field', name: { kind: 'Name', value: 'id' } }],
+            },
+          },
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'organization' },
             selectionSet: {
               kind: 'SelectionSet',
               selections: [{ kind: 'Field', name: { kind: 'Name', value: 'id' } }],
@@ -16875,9 +16915,18 @@ export const __AdminCreateApiToken = {
           { kind: 'Field', name: { kind: 'Name', value: 'expiresAt' } },
           { kind: 'Field', name: { kind: 'Name', value: 'lastUsedAt' } },
           { kind: 'Field', name: { kind: 'Name', value: 'revoked' } },
+          { kind: 'Field', name: { kind: 'Name', value: 'organizationId' } },
           {
             kind: 'Field',
             name: { kind: 'Name', value: 'user' },
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [{ kind: 'Field', name: { kind: 'Name', value: 'id' } }],
+            },
+          },
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'organization' },
             selectionSet: {
               kind: 'SelectionSet',
               selections: [{ kind: 'Field', name: { kind: 'Name', value: 'id' } }],
@@ -17008,9 +17057,18 @@ export const __AdminUpdateApiToken = {
           { kind: 'Field', name: { kind: 'Name', value: 'expiresAt' } },
           { kind: 'Field', name: { kind: 'Name', value: 'lastUsedAt' } },
           { kind: 'Field', name: { kind: 'Name', value: 'revoked' } },
+          { kind: 'Field', name: { kind: 'Name', value: 'organizationId' } },
           {
             kind: 'Field',
             name: { kind: 'Name', value: 'user' },
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [{ kind: 'Field', name: { kind: 'Name', value: 'id' } }],
+            },
+          },
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'organization' },
             selectionSet: {
               kind: 'SelectionSet',
               selections: [{ kind: 'Field', name: { kind: 'Name', value: 'id' } }],
@@ -17088,9 +17146,18 @@ export const __AdminApiToken = {
           { kind: 'Field', name: { kind: 'Name', value: 'expiresAt' } },
           { kind: 'Field', name: { kind: 'Name', value: 'lastUsedAt' } },
           { kind: 'Field', name: { kind: 'Name', value: 'revoked' } },
+          { kind: 'Field', name: { kind: 'Name', value: 'organizationId' } },
           {
             kind: 'Field',
             name: { kind: 'Name', value: 'user' },
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [{ kind: 'Field', name: { kind: 'Name', value: 'id' } }],
+            },
+          },
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'organization' },
             selectionSet: {
               kind: 'SelectionSet',
               selections: [{ kind: 'Field', name: { kind: 'Name', value: 'id' } }],
@@ -17183,9 +17250,18 @@ export const __AdminApiTokens = {
           { kind: 'Field', name: { kind: 'Name', value: 'expiresAt' } },
           { kind: 'Field', name: { kind: 'Name', value: 'lastUsedAt' } },
           { kind: 'Field', name: { kind: 'Name', value: 'revoked' } },
+          { kind: 'Field', name: { kind: 'Name', value: 'organizationId' } },
           {
             kind: 'Field',
             name: { kind: 'Name', value: 'user' },
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [{ kind: 'Field', name: { kind: 'Name', value: 'id' } }],
+            },
+          },
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'organization' },
             selectionSet: {
               kind: 'SelectionSet',
               selections: [{ kind: 'Field', name: { kind: 'Name', value: 'id' } }],
