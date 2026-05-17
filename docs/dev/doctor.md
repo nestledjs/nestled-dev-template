@@ -63,8 +63,8 @@ pnpm run nestled-doctor
 ## Source Template Mode
 
 Upgrade notes are a source-template responsibility. Doctor only enforces the upgrade-note gate when
-it can identify the repository as `github.com/nestledjs/nestled-dev-template`, or when
-`NESTLED_TEMPLATE_SOURCE=true` is set.
+it can identify the repository as `github.com/nestledjs/nestled-dev-template` or
+`github.com/nestledjs/nestled-template`, or when `NESTLED_TEMPLATE_SOURCE=true` is set.
 
 Downstream projects can still keep `.nestled-template/upgrade-notes` so the updater can read
 inbound notes, but they should not be required to create new notes for local application changes.

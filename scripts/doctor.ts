@@ -19,7 +19,7 @@ const notesDir = '.nestled-template/upgrade-notes'
 const guardBaselinePath = '.nestled-template/security/guard-baseline.json'
 const gitBaseRef = process.env.NX_BASE || process.env.GITHUB_BASE_REF || 'develop'
 const shouldUpdateGuardBaseline = process.argv.includes('--update-guard-baseline')
-const sourceTemplateRemotePattern = /github\.com[:/]nestledjs\/nestled-dev-template(?:\.git)?$/
+const sourceTemplateRemotePattern = /github\.com[:/]nestledjs\/nestled-(?:dev-)?template(?:\.git)?$/
 
 type GuardBaseline = Record<string, Record<string, string[]>>
 
