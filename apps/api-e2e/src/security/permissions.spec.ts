@@ -323,6 +323,22 @@ describe('CRITICAL: Permission Enforcement', () => {
         `Failed to accept member invitation: ${JSON.stringify(memberAcceptResponse.data.errors)}`,
       )
     }
+
+    const switchOrganizationMutation = `
+      mutation SwitchActiveOrganization($input: SwitchOrganizationInput!) {
+        switchActiveOrganization(input: $input) {
+          id
+          activeOrganizationId
+        }
+      }
+    `
+    await TestHelpers.authenticatedGraphql(switchOrganizationMutation, admin, {
+      input: { organizationId: owner.organizationId },
+    })
+    await TestHelpers.authenticatedGraphql(switchOrganizationMutation, member, {
+      input: { organizationId: owner.organizationId },
+    })
+
     console.log('\n📋 Permission Test Setup Complete:')
     console.log(`  - Owner: ${owner.email}`)
     console.log(`  - Admin: ${admin.email}`)
