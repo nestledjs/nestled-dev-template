@@ -87,7 +87,7 @@ export default function AdminBillingPlans() {
             <p className="text-gray-500">No plans found. Sync from Stripe to import plans.</p>
           </div>
         ) : (
-          plans.map((plan) => (
+          plans.map(plan => (
             <div
               key={plan.id}
               className="bg-white shadow rounded-lg divide-y divide-gray-200 border-2 border-gray-200 hover:border-blue-400 transition-colors"
@@ -150,9 +150,7 @@ export default function AdminBillingPlans() {
                           <dt className="text-gray-600 capitalize">
                             {key.replaceAll(/([A-Z])/g, ' $1').toLowerCase()}
                           </dt>
-                          <dd className="font-medium text-gray-900">
-                            {formatLimitValue(value)}
-                          </dd>
+                          <dd className="font-medium text-gray-900">{formatLimitValue(value)}</dd>
                         </div>
                       ))}
                     </dl>

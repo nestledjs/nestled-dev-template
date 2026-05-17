@@ -6,10 +6,7 @@ import { Component, type ReactNode, useEffect, useState } from 'react'
 import { isViteCacheError, isNetworkError } from '@nestled-template/shared/utils'
 import { ServiceUnavailable, ViteCacheError } from '@nestledjs/shared-components'
 
-class MeQueryErrorBoundary extends Component<
-  { children: ReactNode },
-  { hasError: boolean }
-> {
+class MeQueryErrorBoundary extends Component<{ children: ReactNode }, { hasError: boolean }> {
   constructor(props: { children: ReactNode }) {
     super(props)
     this.state = { hasError: false }

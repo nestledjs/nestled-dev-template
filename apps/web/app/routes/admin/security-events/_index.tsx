@@ -108,7 +108,9 @@ const EVENT_TYPE_CONFIG: Record<
 }
 
 // Extract SecurityEventItem component to reduce cognitive complexity
-type SecurityEvent = NonNullable<AdminPlatformSecurityEventsQuery['adminSecurityEvents']['events'][number]>
+type SecurityEvent = NonNullable<
+  AdminPlatformSecurityEventsQuery['adminSecurityEvents']['events'][number]
+>
 
 interface SecurityEventItemProps {
   readonly event: SecurityEvent
@@ -124,7 +126,12 @@ function SecurityEventItem({ event, formatDate }: SecurityEventItemProps) {
   return (
     <div className="flex gap-4 p-4 rounded-lg border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-white/5 hover:bg-zinc-100 dark:hover:bg-white/10 transition">
       {/* Icon */}
-      <div className={cn('flex-shrink-0 h-10 w-10 rounded-lg flex items-center justify-center', colorClasses.iconBg)}>
+      <div
+        className={cn(
+          'flex-shrink-0 h-10 w-10 rounded-lg flex items-center justify-center',
+          colorClasses.iconBg,
+        )}
+      >
         <Icon className={cn('h-5 w-5', colorClasses.iconText)} />
       </div>
 
@@ -133,7 +140,12 @@ function SecurityEventItem({ event, formatDate }: SecurityEventItemProps) {
         <div className="flex items-start justify-between gap-4">
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <span className={cn('inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium', colorClasses.badgeBg)}>
+              <span
+                className={cn(
+                  'inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium',
+                  colorClasses.badgeBg,
+                )}
+              >
                 {config.label}
               </span>
             </div>
@@ -187,20 +199,23 @@ export default function AdminSecurityEventsPage() {
   const [page, setPage] = useState(0)
   const pageSize = 50
 
-  const { data, loading, error } = useQuery<AdminPlatformSecurityEventsQuery>(AdminPlatformSecurityEvents, {
-    variables: {
-      filters: {
-        eventType: filters.eventType,
-        userId: filters.userId || undefined,
-        ipAddress: filters.ipAddress || undefined,
-        startDate: filters.startDate,
-        endDate: filters.endDate,
-        skip: page * pageSize,
-        take: pageSize,
+  const { data, loading, error } = useQuery<AdminPlatformSecurityEventsQuery>(
+    AdminPlatformSecurityEvents,
+    {
+      variables: {
+        filters: {
+          eventType: filters.eventType,
+          userId: filters.userId || undefined,
+          ipAddress: filters.ipAddress || undefined,
+          startDate: filters.startDate,
+          endDate: filters.endDate,
+          skip: page * pageSize,
+          take: pageSize,
+        },
       },
+      fetchPolicy: 'network-only',
     },
-    fetchPolicy: 'network-only',
-  })
+  )
 
   const events = data?.adminSecurityEvents?.events || []
   const total = data?.adminSecurityEvents?.total || 0

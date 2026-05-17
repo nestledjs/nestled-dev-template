@@ -158,7 +158,9 @@ export class ApiTokensService {
   /**
    * Validate an API token and return the associated user
    */
-  async validateApiToken(token: string): Promise<{ userId: string; tokenId: string; organizationId: string | null } | null> {
+  async validateApiToken(
+    token: string,
+  ): Promise<{ userId: string; tokenId: string; organizationId: string | null } | null> {
     const tokenHash = this.hashToken(token)
 
     // Find token by hash

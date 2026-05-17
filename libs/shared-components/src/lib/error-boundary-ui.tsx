@@ -85,13 +85,21 @@ function renderStringWithEmbeddedJson(str: string) {
   return (
     <>
       {parts.map(part => {
-        const partKey = typeof part === 'string' ? `s-${part.slice(0, 30)}` : `o-${JSON.stringify(part).slice(0, 30)}`
+        const partKey =
+          typeof part === 'string'
+            ? `s-${part.slice(0, 30)}`
+            : `o-${JSON.stringify(part).slice(0, 30)}`
         return typeof part === 'object' && part !== null ? (
-          <pre key={partKey} className="bg-gray-50 rounded border border-gray-200 p-3 overflow-x-auto text-left text-xs font-mono mt-2 max-h-64 whitespace-pre-wrap">
+          <pre
+            key={partKey}
+            className="bg-gray-50 rounded border border-gray-200 p-3 overflow-x-auto text-left text-xs font-mono mt-2 max-h-64 whitespace-pre-wrap"
+          >
             {JSON5.stringify(part, null, 2)}
           </pre>
         ) : (
-          <span key={partKey} className="font-mono text-xs text-gray-700">{String(part)}</span>
+          <span key={partKey} className="font-mono text-xs text-gray-700">
+            {String(part)}
+          </span>
         )
       })}
     </>
@@ -136,7 +144,19 @@ export function ErrorBoundaryUi({ error }: { readonly error: Error }) {
     <div className="flex justify-center items-center min-h-[60vh]">
       <div className="bg-white rounded-lg p-8 max-w-2xl w-full">
         <div className="flex items-center mb-4">
-          <svg className="w-7 h-7 text-red-500 mr-2" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01M21 12A9 9 0 1 1 3 12a9 9 0 0 1 18 0Z" /></svg>
+          <svg
+            className="w-7 h-7 text-red-500 mr-2"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M12 9v2m0 4h.01M21 12A9 9 0 1 1 3 12a9 9 0 0 1 18 0Z"
+            />
+          </svg>
           <h1 className="text-2xl font-bold text-red-600">Something went wrong</h1>
         </div>
         <p className="mt-2 text-gray-700 text-base">{renderPretty(error.message)}</p>
@@ -145,24 +165,30 @@ export function ErrorBoundaryUi({ error }: { readonly error: Error }) {
           <ul className="list-disc list-inside space-y-4">
             {errors.map((err: any) => {
               const errKey = err?.message?.slice(0, 40) ?? err?.name ?? String(err)
-              return (<li key={errKey} className="mb-2">
-                <div className="font-medium text-gray-900">{renderPretty(err?.message || String(err))}</div>
-                {/* Show stack if available - always render to prevent hydration mismatch */}
-                <details className="mt-2" style={{ display: err?.stack ? 'block' : 'none' }}>
-                  <summary className="cursor-pointer text-xs text-gray-500">Stack trace</summary>
-                  <pre className="bg-gray-100 rounded p-2 overflow-x-auto text-left text-xs font-mono max-h-40 whitespace-pre-wrap">{err?.stack || ''}</pre>
-                </details>
-                {/* Show extra fields prettily if present */}
-                {Object.keys(err || {})
-                  .filter((k) => !['message', 'stack', 'name'].includes(k))
-                  .map((k) => (
-                    <div key={k} className="mt-1">
-                      <span className="font-mono text-xs text-gray-600">{k}:</span>
-                      {renderPretty(err[k])}
-                    </div>
-                  ))}
-              </li>
-            )})}
+              return (
+                <li key={errKey} className="mb-2">
+                  <div className="font-medium text-gray-900">
+                    {renderPretty(err?.message || String(err))}
+                  </div>
+                  {/* Show stack if available - always render to prevent hydration mismatch */}
+                  <details className="mt-2" style={{ display: err?.stack ? 'block' : 'none' }}>
+                    <summary className="cursor-pointer text-xs text-gray-500">Stack trace</summary>
+                    <pre className="bg-gray-100 rounded p-2 overflow-x-auto text-left text-xs font-mono max-h-40 whitespace-pre-wrap">
+                      {err?.stack || ''}
+                    </pre>
+                  </details>
+                  {/* Show extra fields prettily if present */}
+                  {Object.keys(err || {})
+                    .filter(k => !['message', 'stack', 'name'].includes(k))
+                    .map(k => (
+                      <div key={k} className="mt-1">
+                        <span className="font-mono text-xs text-gray-600">{k}:</span>
+                        {renderPretty(err[k])}
+                      </div>
+                    ))}
+                </li>
+              )
+            })}
           </ul>
         </div>
       </div>

@@ -112,9 +112,7 @@ export function getMutationName(
  * Convert model name to kebab-case for URLs
  */
 export function toKebabCase(str: string): string {
-  return str
-    .replaceAll(/([a-z])([A-Z])/g, '$1-$2')
-    .toLowerCase()
+  return str.replaceAll(/([a-z])([A-Z])/g, '$1-$2').toLowerCase()
 }
 
 /**
@@ -179,7 +177,12 @@ function getFieldInitialValue(field: any, currentItem: any, operation: string): 
     initialValue = normalizeDateInitialValue(initialValue, fieldTypeLower)
   }
 
-  if (initialValue && typeof initialValue === 'object' && !Array.isArray(initialValue) && field.relationName) {
+  if (
+    initialValue &&
+    typeof initialValue === 'object' &&
+    !Array.isArray(initialValue) &&
+    field.relationName
+  ) {
     const rel = initialValue as Record<string, unknown>
     initialValue = rel.id && typeof rel.id === 'string' ? rel.id : ''
   }
@@ -197,7 +200,10 @@ function getFieldInitialValue(field: any, currentItem: any, operation: string): 
 function buildEnumSelectOptions(values: string[]): Array<{ value: string; label: string }> {
   return values.map(value => ({
     value,
-    label: value.replaceAll('_', ' ').toLowerCase().replace(/^./, (s: string) => s.toUpperCase()),
+    label: value
+      .replaceAll('_', ' ')
+      .toLowerCase()
+      .replace(/^./, (s: string) => s.toUpperCase()),
   }))
 }
 
@@ -293,7 +299,9 @@ function buildRelationFormField(
   const searchFields = config?.search || displayFields
 
   const getDisplayLabel = (item: any) => {
-    const allValues = displayFields.map((f: string) => item[f]).filter((v: unknown) => v != null && v !== '')
+    const allValues = displayFields
+      .map((f: string) => item[f])
+      .filter((v: unknown) => v != null && v !== '')
     return allValues.length > 0 ? allValues.join(' ') : item.id
   }
 
@@ -317,7 +325,12 @@ function buildRelationFormField(
     customWrapper: (fieldElement: React.ReactNode) =>
       React.createElement(
         RelationFieldWrapper,
-        { relationType: field.type, initialValue: relationValue, fieldName: relationFieldName, basePath },
+        {
+          relationType: field.type,
+          initialValue: relationValue,
+          fieldName: relationFieldName,
+          basePath,
+        },
         fieldElement,
       ),
   })
@@ -341,16 +354,22 @@ function buildRegularFormField(
   const initialValue = getFieldInitialValue(field, currentItem, operation)
   const isArrayField = Boolean(field.isList)
   const isRequired = isArrayField ? false : !field.isOptional
-  const options = { label, required: isRequired, ...(initialValue !== undefined && { value: initialValue }) }
+  const options = {
+    label,
+    required: isRequired,
+    ...(initialValue !== undefined && { value: initialValue }),
+  }
 
   switch (field.type.toLowerCase()) {
     case 'string':
-      if (field.name.toLowerCase().includes('email')) return FormFieldClass.email(field.name, options)
+      if (field.name.toLowerCase().includes('email'))
+        return FormFieldClass.email(field.name, options)
       if (
         field.name.toLowerCase().includes('description') ||
         field.name.toLowerCase().includes('content') ||
         field.name.toLowerCase().includes('notes')
-      ) return FormFieldClass.textArea(field.name, options)
+      )
+        return FormFieldClass.textArea(field.name, options)
       return FormFieldClass.text(field.name, options)
 
     case 'int':
@@ -360,7 +379,8 @@ function buildRegularFormField(
       return FormFieldClass.text(field.name, options)
 
     case 'boolean': {
-      const booleanValue = currentItem && operation === 'update' ? Boolean(currentItem[field.name]) : false
+      const booleanValue =
+        currentItem && operation === 'update' ? Boolean(currentItem[field.name]) : false
       return FormFieldClass.checkbox(field.name, {
         ...options,
         required: false,
@@ -375,7 +395,10 @@ function buildRegularFormField(
       return FormFieldClass.datePicker(field.name, options)
 
     default:
-      return buildDefaultFormField(field, options, initialValue, sdk, currentItem, operation, { basePath, displayFieldConfig })
+      return buildDefaultFormField(field, options, initialValue, sdk, currentItem, operation, {
+        basePath,
+        displayFieldConfig,
+      })
   }
 }
 
@@ -397,11 +420,15 @@ function buildDefaultFormField(
   if (enumValues) {
     if (field.isList) {
       let defaultValue = ''
-      if (Array.isArray(initialValue) && initialValue.length > 0) defaultValue = initialValue.join(',')
+      if (Array.isArray(initialValue) && initialValue.length > 0)
+        defaultValue = initialValue.join(',')
       const checkboxOptions = enumValues.map((value: string) => ({
         key: value,
         value,
-        label: value.replaceAll('_', ' ').toLowerCase().replace(/^./, (s: string) => s.toUpperCase()),
+        label: value
+          .replaceAll('_', ' ')
+          .toLowerCase()
+          .replace(/^./, (s: string) => s.toUpperCase()),
       }))
       return FormFieldClass.checkboxGroup(field.name, {
         label: options.label,
@@ -413,20 +440,27 @@ function buildDefaultFormField(
     }
 
     const selectOptions = buildEnumSelectOptions(enumValues)
-    const enumOptions = operation === 'update'
-      ? { label: options.label, required: options.required, options: selectOptions }
-      : { ...options, options: selectOptions }
+    const enumOptions =
+      operation === 'update'
+        ? { label: options.label, required: options.required, options: selectOptions }
+        : { ...options, options: selectOptions }
     return FormFieldClass.select(field.name, enumOptions)
   }
 
   if (field.relationName && !field.isList) {
-    return buildRelationFormField(field, label, options, currentItem, operation, sdk, { basePath, displayFieldConfig })
+    return buildRelationFormField(field, label, options, currentItem, operation, sdk, {
+      basePath,
+      displayFieldConfig,
+    })
   }
 
   if (field.kind === 'enum' && field.enumValues) {
     const selectOptions = field.enumValues.map((value: string) => ({
       value,
-      label: value.replaceAll('_', ' ').toLowerCase().replace(/^./, (s: string) => s.toUpperCase()),
+      label: value
+        .replaceAll('_', ' ')
+        .toLowerCase()
+        .replace(/^./, (s: string) => s.toUpperCase()),
     }))
     return FormFieldClass.select(field.name, { ...options, options: selectOptions })
   }
@@ -563,10 +597,12 @@ export function buildFormFields(
     if (idField) {
       formFields.push(
         FormFieldClass.text(idField.name, {
-          label: idField.name.replaceAll(/([a-z])([A-Z])/g, '$1 $2').replace(/^./, (str: string) => str.toUpperCase()),
+          label: idField.name
+            .replaceAll(/([a-z])([A-Z])/g, '$1 $2')
+            .replace(/^./, (str: string) => str.toUpperCase()),
           disabled: true,
           helpText: 'ID fields are immutable and cannot be changed',
-        })
+        }),
       )
     }
   }
@@ -581,7 +617,13 @@ export function buildFormFields(
   // Now process list relationship fields (they go at the bottom)
   if (operation === 'update' && currentItem) {
     listRelationFields.forEach((field: any) => {
-      const formField = buildListRelationFormField(field, model, currentItem, databaseModels, basePath)
+      const formField = buildListRelationFormField(
+        field,
+        model,
+        currentItem,
+        databaseModels,
+        basePath,
+      )
       if (formField) formFields.push(formField)
     })
   }
@@ -746,17 +788,30 @@ export function cleanFormInput(
   const cleaned: Record<string, unknown> = {}
 
   const booleanFields = new Set(
-    model?.fields?.filter(field => field.type.toLowerCase() === 'boolean')?.map(field => field.name) || [],
+    model?.fields
+      ?.filter(field => field.type.toLowerCase() === 'boolean')
+      ?.map(field => field.name) || [],
   )
   const requiredArrayFields = new Set(
-    model?.fields?.filter(field => field.isList && !field.isOptional && !field.relationName)?.map(field => field.name) || [],
+    model?.fields
+      ?.filter(field => field.isList && !field.isOptional && !field.relationName)
+      ?.map(field => field.name) || [],
   )
   const enumArrayFields = new Set(
-    model?.fields?.filter(field => field.isList && field.kind === 'enum')?.map(field => field.name) || [],
+    model?.fields
+      ?.filter(field => field.isList && field.kind === 'enum')
+      ?.map(field => field.name) || [],
   )
 
   for (const [key, value] of Object.entries(input)) {
-    const entry = cleanInputEntry(key, value, booleanFields, enumArrayFields, requiredArrayFields, model)
+    const entry = cleanInputEntry(
+      key,
+      value,
+      booleanFields,
+      enumArrayFields,
+      requiredArrayFields,
+      model,
+    )
     if (entry !== null) {
       cleaned[entry[0]] = entry[1]
     }
@@ -778,5 +833,3 @@ export function sanitizeInput(input: string | undefined): string {
     .trim()
     .substring(0, 100)
 }
-
-

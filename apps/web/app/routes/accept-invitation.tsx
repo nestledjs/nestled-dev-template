@@ -377,7 +377,13 @@ function InvitationAcceptingState({ organizationName }: { readonly organizationN
   )
 }
 
-function InvitationErrorState({ title, message }: { readonly title: string; readonly message: string }) {
+function InvitationErrorState({
+  title,
+  message,
+}: {
+  readonly title: string
+  readonly message: string
+}) {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-zinc-50 to-zinc-100 dark:from-zinc-900 dark:to-zinc-950 p-4">
       <div className="w-full max-w-md">

@@ -13,14 +13,24 @@ describe('NumberRangeFilter', () => {
   describe('basic rendering', () => {
     it('should render field label', () => {
       render(
-        <NumberRangeFilter fieldName="age" fieldType="int" currentValue={{}} onChange={mockOnChange} />
+        <NumberRangeFilter
+          fieldName="age"
+          fieldType="int"
+          currentValue={{}}
+          onChange={mockOnChange}
+        />,
       )
       expect(screen.getByText('Age')).toBeInTheDocument()
     })
 
     it('should render min and max inputs', () => {
       render(
-        <NumberRangeFilter fieldName="age" fieldType="int" currentValue={{}} onChange={mockOnChange} />
+        <NumberRangeFilter
+          fieldName="age"
+          fieldType="int"
+          currentValue={{}}
+          onChange={mockOnChange}
+        />,
       )
 
       expect(screen.getByLabelText('Min')).toBeInTheDocument()
@@ -29,7 +39,12 @@ describe('NumberRangeFilter', () => {
 
     it('should render empty inputs when no current value', () => {
       render(
-        <NumberRangeFilter fieldName="age" fieldType="int" currentValue={{}} onChange={mockOnChange} />
+        <NumberRangeFilter
+          fieldName="age"
+          fieldType="int"
+          currentValue={{}}
+          onChange={mockOnChange}
+        />,
       )
 
       const minInput = screen.getByLabelText('Min') as HTMLInputElement
@@ -43,7 +58,12 @@ describe('NumberRangeFilter', () => {
       const currentValue = { gte: 18, lte: 65 }
 
       render(
-        <NumberRangeFilter fieldName="age" fieldType="int" currentValue={currentValue} onChange={mockOnChange} />
+        <NumberRangeFilter
+          fieldName="age"
+          fieldType="int"
+          currentValue={currentValue}
+          onChange={mockOnChange}
+        />,
       )
 
       const minInput = screen.getByLabelText('Min') as HTMLInputElement
@@ -55,7 +75,12 @@ describe('NumberRangeFilter', () => {
 
     it('should show placeholder text', () => {
       render(
-        <NumberRangeFilter fieldName="age" fieldType="int" currentValue={{}} onChange={mockOnChange} />
+        <NumberRangeFilter
+          fieldName="age"
+          fieldType="int"
+          currentValue={{}}
+          onChange={mockOnChange}
+        />,
       )
 
       expect(screen.getByPlaceholderText('No minimum')).toBeInTheDocument()
@@ -66,7 +91,12 @@ describe('NumberRangeFilter', () => {
   describe('integer field type', () => {
     it('should have step="1" for int fields', () => {
       render(
-        <NumberRangeFilter fieldName="count" fieldType="int" currentValue={{}} onChange={mockOnChange} />
+        <NumberRangeFilter
+          fieldName="count"
+          fieldType="int"
+          currentValue={{}}
+          onChange={mockOnChange}
+        />,
       )
 
       const minInput = screen.getByLabelText('Min')
@@ -78,7 +108,12 @@ describe('NumberRangeFilter', () => {
 
     it('should have step="1" for bigint fields', () => {
       render(
-        <NumberRangeFilter fieldName="count" fieldType="bigint" currentValue={{}} onChange={mockOnChange} />
+        <NumberRangeFilter
+          fieldName="count"
+          fieldType="bigint"
+          currentValue={{}}
+          onChange={mockOnChange}
+        />,
       )
 
       const minInput = screen.getByLabelText('Min')
@@ -87,7 +122,12 @@ describe('NumberRangeFilter', () => {
 
     it('should parse integers correctly', () => {
       render(
-        <NumberRangeFilter fieldName="age" fieldType="int" currentValue={{}} onChange={mockOnChange} />
+        <NumberRangeFilter
+          fieldName="age"
+          fieldType="int"
+          currentValue={{}}
+          onChange={mockOnChange}
+        />,
       )
 
       const minInput = screen.getByLabelText('Min')
@@ -98,7 +138,12 @@ describe('NumberRangeFilter', () => {
 
     it('should handle negative integers', () => {
       render(
-        <NumberRangeFilter fieldName="temperature" fieldType="int" currentValue={{}} onChange={mockOnChange} />
+        <NumberRangeFilter
+          fieldName="temperature"
+          fieldType="int"
+          currentValue={{}}
+          onChange={mockOnChange}
+        />,
       )
 
       const minInput = screen.getByLabelText('Min')
@@ -109,7 +154,12 @@ describe('NumberRangeFilter', () => {
 
     it('should reject decimal values for int fields', () => {
       render(
-        <NumberRangeFilter fieldName="count" fieldType="int" currentValue={{}} onChange={mockOnChange} />
+        <NumberRangeFilter
+          fieldName="count"
+          fieldType="int"
+          currentValue={{}}
+          onChange={mockOnChange}
+        />,
       )
 
       const minInput = screen.getByLabelText('Min')
@@ -123,7 +173,12 @@ describe('NumberRangeFilter', () => {
   describe('float/decimal field types', () => {
     it('should have step="any" for float fields', () => {
       render(
-        <NumberRangeFilter fieldName="price" fieldType="float" currentValue={{}} onChange={mockOnChange} />
+        <NumberRangeFilter
+          fieldName="price"
+          fieldType="float"
+          currentValue={{}}
+          onChange={mockOnChange}
+        />,
       )
 
       const minInput = screen.getByLabelText('Min')
@@ -132,7 +187,12 @@ describe('NumberRangeFilter', () => {
 
     it('should have step="any" for decimal fields', () => {
       render(
-        <NumberRangeFilter fieldName="amount" fieldType="decimal" currentValue={{}} onChange={mockOnChange} />
+        <NumberRangeFilter
+          fieldName="amount"
+          fieldType="decimal"
+          currentValue={{}}
+          onChange={mockOnChange}
+        />,
       )
 
       const minInput = screen.getByLabelText('Min')
@@ -141,7 +201,12 @@ describe('NumberRangeFilter', () => {
 
     it('should parse floats correctly', () => {
       render(
-        <NumberRangeFilter fieldName="price" fieldType="float" currentValue={{}} onChange={mockOnChange} />
+        <NumberRangeFilter
+          fieldName="price"
+          fieldType="float"
+          currentValue={{}}
+          onChange={mockOnChange}
+        />,
       )
 
       const minInput = screen.getByLabelText('Min')
@@ -152,7 +217,12 @@ describe('NumberRangeFilter', () => {
 
     it('should handle decimal values', () => {
       render(
-        <NumberRangeFilter fieldName="amount" fieldType="decimal" currentValue={{}} onChange={mockOnChange} />
+        <NumberRangeFilter
+          fieldName="amount"
+          fieldType="decimal"
+          currentValue={{}}
+          onChange={mockOnChange}
+        />,
       )
 
       const minInput = screen.getByLabelText('Min')
@@ -163,7 +233,12 @@ describe('NumberRangeFilter', () => {
 
     it('should handle very small decimals', () => {
       render(
-        <NumberRangeFilter fieldName="precision" fieldType="float" currentValue={{}} onChange={mockOnChange} />
+        <NumberRangeFilter
+          fieldName="precision"
+          fieldType="float"
+          currentValue={{}}
+          onChange={mockOnChange}
+        />,
       )
 
       const minInput = screen.getByLabelText('Min')
@@ -176,7 +251,12 @@ describe('NumberRangeFilter', () => {
   describe('min value handling', () => {
     it('should call onChange with gte when min is set', () => {
       render(
-        <NumberRangeFilter fieldName="age" fieldType="int" currentValue={{}} onChange={mockOnChange} />
+        <NumberRangeFilter
+          fieldName="age"
+          fieldType="int"
+          currentValue={{}}
+          onChange={mockOnChange}
+        />,
       )
 
       const minInput = screen.getByLabelText('Min')
@@ -189,7 +269,12 @@ describe('NumberRangeFilter', () => {
       const currentValue = { lte: 100 }
 
       render(
-        <NumberRangeFilter fieldName="age" fieldType="int" currentValue={currentValue} onChange={mockOnChange} />
+        <NumberRangeFilter
+          fieldName="age"
+          fieldType="int"
+          currentValue={currentValue}
+          onChange={mockOnChange}
+        />,
       )
 
       const minInput = screen.getByLabelText('Min')
@@ -203,7 +288,12 @@ describe('NumberRangeFilter', () => {
       const currentValue = { gte: 18, lte: 65 }
 
       render(
-        <NumberRangeFilter fieldName="age" fieldType="int" currentValue={currentValue} onChange={mockOnChange} />
+        <NumberRangeFilter
+          fieldName="age"
+          fieldType="int"
+          currentValue={currentValue}
+          onChange={mockOnChange}
+        />,
       )
 
       const minInput = screen.getByLabelText('Min')
@@ -217,7 +307,12 @@ describe('NumberRangeFilter', () => {
       const currentValue = { gte: 18 }
 
       render(
-        <NumberRangeFilter fieldName="age" fieldType="int" currentValue={currentValue} onChange={mockOnChange} />
+        <NumberRangeFilter
+          fieldName="age"
+          fieldType="int"
+          currentValue={currentValue}
+          onChange={mockOnChange}
+        />,
       )
 
       const minInput = screen.getByLabelText('Min')
@@ -229,7 +324,12 @@ describe('NumberRangeFilter', () => {
     it('should handle NaN values by clearing gte', () => {
       const currentValue = { gte: 10 }
       render(
-        <NumberRangeFilter fieldName="age" fieldType="int" currentValue={currentValue} onChange={mockOnChange} />
+        <NumberRangeFilter
+          fieldName="age"
+          fieldType="int"
+          currentValue={currentValue}
+          onChange={mockOnChange}
+        />,
       )
 
       const minInput = screen.getByLabelText('Min')
@@ -243,7 +343,12 @@ describe('NumberRangeFilter', () => {
   describe('max value handling', () => {
     it('should call onChange with lte when max is set', () => {
       render(
-        <NumberRangeFilter fieldName="age" fieldType="int" currentValue={{}} onChange={mockOnChange} />
+        <NumberRangeFilter
+          fieldName="age"
+          fieldType="int"
+          currentValue={{}}
+          onChange={mockOnChange}
+        />,
       )
 
       const maxInput = screen.getByLabelText('Max')
@@ -256,7 +361,12 @@ describe('NumberRangeFilter', () => {
       const currentValue = { gte: 18 }
 
       render(
-        <NumberRangeFilter fieldName="age" fieldType="int" currentValue={currentValue} onChange={mockOnChange} />
+        <NumberRangeFilter
+          fieldName="age"
+          fieldType="int"
+          currentValue={currentValue}
+          onChange={mockOnChange}
+        />,
       )
 
       const maxInput = screen.getByLabelText('Max')
@@ -270,7 +380,12 @@ describe('NumberRangeFilter', () => {
       const currentValue = { gte: 18, lte: 65 }
 
       render(
-        <NumberRangeFilter fieldName="age" fieldType="int" currentValue={currentValue} onChange={mockOnChange} />
+        <NumberRangeFilter
+          fieldName="age"
+          fieldType="int"
+          currentValue={currentValue}
+          onChange={mockOnChange}
+        />,
       )
 
       const maxInput = screen.getByLabelText('Max')
@@ -284,7 +399,12 @@ describe('NumberRangeFilter', () => {
       const currentValue = { lte: 65 }
 
       render(
-        <NumberRangeFilter fieldName="age" fieldType="int" currentValue={currentValue} onChange={mockOnChange} />
+        <NumberRangeFilter
+          fieldName="age"
+          fieldType="int"
+          currentValue={currentValue}
+          onChange={mockOnChange}
+        />,
       )
 
       const maxInput = screen.getByLabelText('Max')
@@ -297,7 +417,12 @@ describe('NumberRangeFilter', () => {
   describe('range display', () => {
     it('should not show range text when no values are set', () => {
       render(
-        <NumberRangeFilter fieldName="age" fieldType="int" currentValue={{}} onChange={mockOnChange} />
+        <NumberRangeFilter
+          fieldName="age"
+          fieldType="int"
+          currentValue={{}}
+          onChange={mockOnChange}
+        />,
       )
 
       // The range display div should not be rendered
@@ -310,7 +435,12 @@ describe('NumberRangeFilter', () => {
       const currentValue = { gte: 18, lte: 65 }
 
       render(
-        <NumberRangeFilter fieldName="age" fieldType="int" currentValue={currentValue} onChange={mockOnChange} />
+        <NumberRangeFilter
+          fieldName="age"
+          fieldType="int"
+          currentValue={currentValue}
+          onChange={mockOnChange}
+        />,
       )
 
       expect(screen.getByText('18 to 65')).toBeInTheDocument()
@@ -320,7 +450,12 @@ describe('NumberRangeFilter', () => {
       const currentValue = { gte: 18 }
 
       render(
-        <NumberRangeFilter fieldName="age" fieldType="int" currentValue={currentValue} onChange={mockOnChange} />
+        <NumberRangeFilter
+          fieldName="age"
+          fieldType="int"
+          currentValue={currentValue}
+          onChange={mockOnChange}
+        />,
       )
 
       expect(screen.getByText('≥ 18')).toBeInTheDocument()
@@ -330,7 +465,12 @@ describe('NumberRangeFilter', () => {
       const currentValue = { lte: 65 }
 
       render(
-        <NumberRangeFilter fieldName="age" fieldType="int" currentValue={currentValue} onChange={mockOnChange} />
+        <NumberRangeFilter
+          fieldName="age"
+          fieldType="int"
+          currentValue={currentValue}
+          onChange={mockOnChange}
+        />,
       )
 
       expect(screen.getByText('≤ 65')).toBeInTheDocument()
@@ -340,7 +480,12 @@ describe('NumberRangeFilter', () => {
       const currentValue = { gte: 19.99, lte: 99.99 }
 
       render(
-        <NumberRangeFilter fieldName="price" fieldType="float" currentValue={currentValue} onChange={mockOnChange} />
+        <NumberRangeFilter
+          fieldName="price"
+          fieldType="float"
+          currentValue={currentValue}
+          onChange={mockOnChange}
+        />,
       )
 
       expect(screen.getByText('19.99 to 99.99')).toBeInTheDocument()
@@ -350,21 +495,36 @@ describe('NumberRangeFilter', () => {
   describe('field name formatting', () => {
     it('should format camelCase field names', () => {
       render(
-        <NumberRangeFilter fieldName="itemCount" fieldType="int" currentValue={{}} onChange={mockOnChange} />
+        <NumberRangeFilter
+          fieldName="itemCount"
+          fieldType="int"
+          currentValue={{}}
+          onChange={mockOnChange}
+        />,
       )
       expect(screen.getByText('Item Count')).toBeInTheDocument()
     })
 
     it('should capitalize first letter of snake_case field names', () => {
       render(
-        <NumberRangeFilter fieldName="total_amount" fieldType="decimal" currentValue={{}} onChange={mockOnChange} />
+        <NumberRangeFilter
+          fieldName="total_amount"
+          fieldType="decimal"
+          currentValue={{}}
+          onChange={mockOnChange}
+        />,
       )
       expect(screen.getByText('Total_amount')).toBeInTheDocument()
     })
 
     it('should capitalize first letter of kebab-case field names', () => {
       render(
-        <NumberRangeFilter fieldName="order-total" fieldType="float" currentValue={{}} onChange={mockOnChange} />
+        <NumberRangeFilter
+          fieldName="order-total"
+          fieldType="float"
+          currentValue={{}}
+          onChange={mockOnChange}
+        />,
       )
       expect(screen.getByText('Order-total')).toBeInTheDocument()
     })
@@ -373,7 +533,12 @@ describe('NumberRangeFilter', () => {
   describe('input ids and labels', () => {
     it('should have correct id for min input', () => {
       render(
-        <NumberRangeFilter fieldName="age" fieldType="int" currentValue={{}} onChange={mockOnChange} />
+        <NumberRangeFilter
+          fieldName="age"
+          fieldType="int"
+          currentValue={{}}
+          onChange={mockOnChange}
+        />,
       )
 
       const minInput = screen.getByLabelText('Min')
@@ -382,7 +547,12 @@ describe('NumberRangeFilter', () => {
 
     it('should have correct id for max input', () => {
       render(
-        <NumberRangeFilter fieldName="age" fieldType="int" currentValue={{}} onChange={mockOnChange} />
+        <NumberRangeFilter
+          fieldName="age"
+          fieldType="int"
+          currentValue={{}}
+          onChange={mockOnChange}
+        />,
       )
 
       const maxInput = screen.getByLabelText('Max')
@@ -393,7 +563,12 @@ describe('NumberRangeFilter', () => {
   describe('edge cases', () => {
     it('should handle null currentValue', () => {
       render(
-        <NumberRangeFilter fieldName="age" fieldType="int" currentValue={null} onChange={mockOnChange} />
+        <NumberRangeFilter
+          fieldName="age"
+          fieldType="int"
+          currentValue={null}
+          onChange={mockOnChange}
+        />,
       )
 
       const minInput = screen.getByLabelText('Min') as HTMLInputElement
@@ -405,7 +580,12 @@ describe('NumberRangeFilter', () => {
 
     it('should handle undefined currentValue', () => {
       render(
-        <NumberRangeFilter fieldName="age" fieldType="int" currentValue={undefined} onChange={mockOnChange} />
+        <NumberRangeFilter
+          fieldName="age"
+          fieldType="int"
+          currentValue={undefined}
+          onChange={mockOnChange}
+        />,
       )
 
       const minInput = screen.getByLabelText('Min') as HTMLInputElement
@@ -419,7 +599,12 @@ describe('NumberRangeFilter', () => {
       const currentValue = { gte: 0, lte: 0 }
 
       render(
-        <NumberRangeFilter fieldName="count" fieldType="int" currentValue={currentValue} onChange={mockOnChange} />
+        <NumberRangeFilter
+          fieldName="count"
+          fieldType="int"
+          currentValue={currentValue}
+          onChange={mockOnChange}
+        />,
       )
 
       const minInput = screen.getByLabelText('Min') as HTMLInputElement
@@ -432,7 +617,12 @@ describe('NumberRangeFilter', () => {
 
     it('should handle very large numbers', () => {
       render(
-        <NumberRangeFilter fieldName="population" fieldType="bigint" currentValue={{}} onChange={mockOnChange} />
+        <NumberRangeFilter
+          fieldName="population"
+          fieldType="bigint"
+          currentValue={{}}
+          onChange={mockOnChange}
+        />,
       )
 
       const minInput = screen.getByLabelText('Min')
@@ -446,7 +636,12 @@ describe('NumberRangeFilter', () => {
       const currentValue = { gte: 10 }
 
       render(
-        <NumberRangeFilter fieldName="age" fieldType="int" currentValue={currentValue} onChange={mockOnChange} />
+        <NumberRangeFilter
+          fieldName="age"
+          fieldType="int"
+          currentValue={currentValue}
+          onChange={mockOnChange}
+        />,
       )
 
       const minInput = screen.getByLabelText('Min')
@@ -459,7 +654,12 @@ describe('NumberRangeFilter', () => {
   describe('styling', () => {
     it('should apply correct classes to inputs', () => {
       render(
-        <NumberRangeFilter fieldName="age" fieldType="int" currentValue={{}} onChange={mockOnChange} />
+        <NumberRangeFilter
+          fieldName="age"
+          fieldType="int"
+          currentValue={{}}
+          onChange={mockOnChange}
+        />,
       )
 
       const minInput = screen.getByLabelText('Min')
@@ -471,7 +671,12 @@ describe('NumberRangeFilter', () => {
 
     it('should have focus styling classes', () => {
       render(
-        <NumberRangeFilter fieldName="age" fieldType="int" currentValue={{}} onChange={mockOnChange} />
+        <NumberRangeFilter
+          fieldName="age"
+          fieldType="int"
+          currentValue={{}}
+          onChange={mockOnChange}
+        />,
       )
 
       const minInput = screen.getByLabelText('Min')

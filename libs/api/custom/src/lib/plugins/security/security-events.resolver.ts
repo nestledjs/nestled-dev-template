@@ -13,7 +13,7 @@ export class SecurityEventsResolver {
   @UseGuards(GqlAuthGuard)
   async userSecurityEvents(
     @CtxUser() user: User,
-    @Args('limit', { type: () => Number, nullable: true }) limit?: number
+    @Args('limit', { type: () => Number, nullable: true }) limit?: number,
   ): Promise<SecurityEvent[]> {
     return this.securityEventsService.getUserSecurityEvents(user.id, limit || 50)
   }
@@ -22,7 +22,8 @@ export class SecurityEventsResolver {
   @UseGuards(GqlAuthGuard)
   async mySecurityEvents(
     @CtxUser() user: User,
-    @Args({ name: 'input', type: () => ListSecurityEventInput, nullable: true }) input?: ListSecurityEventInput
+    @Args({ name: 'input', type: () => ListSecurityEventInput, nullable: true })
+    input?: ListSecurityEventInput,
   ): Promise<SecurityEvent[]> {
     return this.securityEventsService.getUserSecurityEventsWithPaging(user.id, input)
   }
@@ -32,7 +33,7 @@ export class SecurityEventsResolver {
   async securityEventsByType(
     @CtxUser() user: User,
     @Args('eventType', { type: () => SecurityEventType }) eventType: SecurityEventType,
-    @Args('limit', { type: () => Number, nullable: true }) limit?: number
+    @Args('limit', { type: () => Number, nullable: true }) limit?: number,
   ): Promise<SecurityEvent[]> {
     return this.securityEventsService.getEventsByType(user.id, eventType, limit || 50)
   }

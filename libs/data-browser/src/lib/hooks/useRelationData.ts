@@ -6,7 +6,12 @@ import { getSmartSearchFields } from '../utils/string-utils'
 import { useDebounce } from './useDebounce'
 
 // Custom hook for relation data fetching and management
-export function useRelationData(relatedModelName: string, searchTerm: string, isOpen: boolean, currentValueId?: string) {
+export function useRelationData(
+  relatedModelName: string,
+  searchTerm: string,
+  isOpen: boolean,
+  currentValueId?: string,
+) {
   const { sdk, databaseModels } = useAdminDataContext()
   const debouncedSearchTerm = useDebounce(searchTerm, 300)
 

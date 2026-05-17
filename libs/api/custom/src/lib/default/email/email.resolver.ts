@@ -1,4 +1,7 @@
-import { ApiCrudDataAccessService, UpdateEmailInput } from '@nestled-template/api/generated-crud/data-access'
+import {
+  ApiCrudDataAccessService,
+  UpdateEmailInput,
+} from '@nestled-template/api/generated-crud/data-access'
 import { GeneratedEmailResolver } from '@nestled-template/api/generated-crud/feature'
 import { Injectable, UseGuards } from '@nestjs/common'
 import { Args, Info, Mutation, Resolver } from '@nestjs/graphql'

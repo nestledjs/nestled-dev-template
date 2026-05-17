@@ -516,14 +516,19 @@ export default function SecuritySettings() {
               </div>
 
               <div>
-                <label htmlFor="totp-code" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
+                <label
+                  htmlFor="totp-code"
+                  className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2"
+                >
                   2. Enter the 6-digit code from your app
                 </label>
                 <input
                   id="totp-code"
                   type="text"
                   value={verificationCode}
-                  onChange={e => setVerificationCode(e.target.value.replaceAll(/\D/g, '').slice(0, 6))}
+                  onChange={e =>
+                    setVerificationCode(e.target.value.replaceAll(/\D/g, '').slice(0, 6))
+                  }
                   placeholder="000000"
                   className="w-full px-4 py-2 rounded-lg border border-zinc-300 dark:border-white/10 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white text-center text-2xl font-mono tracking-widest focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                   maxLength={6}
@@ -582,7 +587,10 @@ export default function SecuritySettings() {
               </p>
 
               <div>
-                <label htmlFor="disable-2fa-password" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
+                <label
+                  htmlFor="disable-2fa-password"
+                  className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2"
+                >
                   Enter your password to confirm
                 </label>
                 <input

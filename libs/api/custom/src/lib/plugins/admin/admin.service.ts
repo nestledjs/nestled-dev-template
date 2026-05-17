@@ -227,12 +227,7 @@ export class AdminService {
    * Get user activity statistics
    */
   async getUserStats(userId: string) {
-    const [
-      sessionCount,
-      auditLogCount,
-      organizationCount,
-      teamCount,
-    ] = await Promise.all([
+    const [sessionCount, auditLogCount, organizationCount, teamCount] = await Promise.all([
       this.prisma.userSession.count({
         where: { userId },
       }),
@@ -484,9 +479,12 @@ export class AdminService {
         emails: true,
       },
     })
+    if (!user) {
+      throw new Error(`User ${userId} not found after email verification`)
+    }
 
     this.logger.log(`Admin verified email ${emailId} for user ${userId}`)
-    return user!
+    return user
   }
 
   /**
@@ -548,36 +546,44 @@ export class AdminService {
       totalUsers,
     ] = await Promise.all([
       // DAU - users with sessions in last 24h
-      this.prisma.userSession.groupBy({
-        by: ['userId'],
-        where: {
-          lastActiveAt: { gte: yesterday },
-        },
-      }).then(sessions => sessions.length),
+      this.prisma.userSession
+        .groupBy({
+          by: ['userId'],
+          where: {
+            lastActiveAt: { gte: yesterday },
+          },
+        })
+        .then(sessions => sessions.length),
 
       // Yesterday's DAU for comparison
-      this.prisma.userSession.groupBy({
-        by: ['userId'],
-        where: {
-          lastActiveAt: { gte: twoDaysAgo, lt: yesterday },
-        },
-      }).then(sessions => sessions.length),
+      this.prisma.userSession
+        .groupBy({
+          by: ['userId'],
+          where: {
+            lastActiveAt: { gte: twoDaysAgo, lt: yesterday },
+          },
+        })
+        .then(sessions => sessions.length),
 
       // MAU - users with sessions in last 30 days
-      this.prisma.userSession.groupBy({
-        by: ['userId'],
-        where: {
-          lastActiveAt: { gte: lastMonth },
-        },
-      }).then(sessions => sessions.length),
+      this.prisma.userSession
+        .groupBy({
+          by: ['userId'],
+          where: {
+            lastActiveAt: { gte: lastMonth },
+          },
+        })
+        .then(sessions => sessions.length),
 
       // Last month's MAU for comparison
-      this.prisma.userSession.groupBy({
-        by: ['userId'],
-        where: {
-          lastActiveAt: { gte: twoMonthsAgo, lt: lastMonth },
-        },
-      }).then(sessions => sessions.length),
+      this.prisma.userSession
+        .groupBy({
+          by: ['userId'],
+          where: {
+            lastActiveAt: { gte: twoMonthsAgo, lt: lastMonth },
+          },
+        })
+        .then(sessions => sessions.length),
 
       // New users registered today
       this.prisma.user.count({
@@ -591,12 +597,14 @@ export class AdminService {
     ])
 
     // Calculate percentage changes
-    const dauChange = yesterdayActiveUsers > 0
-      ? ((dailyActiveUsers - yesterdayActiveUsers) / yesterdayActiveUsers) * 100
-      : 0
-    const mauChange = lastMonthActiveUsers > 0
-      ? ((monthlyActiveUsers - lastMonthActiveUsers) / lastMonthActiveUsers) * 100
-      : 0
+    const dauChange =
+      yesterdayActiveUsers > 0
+        ? ((dailyActiveUsers - yesterdayActiveUsers) / yesterdayActiveUsers) * 100
+        : 0
+    const mauChange =
+      lastMonthActiveUsers > 0
+        ? ((monthlyActiveUsers - lastMonthActiveUsers) / lastMonthActiveUsers) * 100
+        : 0
 
     // Average session duration (in milliseconds)
     const sessions = await this.prisma.userSession.findMany({
@@ -610,12 +618,13 @@ export class AdminService {
       },
     })
 
-    const avgSessionDuration = sessions.length > 0
-      ? sessions.reduce((sum, session) => {
-          const duration = session.lastActiveAt.getTime() - session.createdAt.getTime()
-          return sum + duration
-        }, 0) / sessions.length
-      : 0
+    const avgSessionDuration =
+      sessions.length > 0
+        ? sessions.reduce((sum, session) => {
+            const duration = session.lastActiveAt.getTime() - session.createdAt.getTime()
+            return sum + duration
+          }, 0) / sessions.length
+        : 0
 
     // System Performance Metrics
     const totalAuditLogs = await this.prisma.auditLog.count({
@@ -673,13 +682,15 @@ export class AdminService {
 
     const featureUsage = await Promise.all(
       featureData.map(async feature => {
-        const uniqueUsers = await this.prisma.auditLog.groupBy({
-          by: ['userId'],
-          where: {
-            action: feature.action,
-            createdAt: { gte: sevenDaysAgo },
-          },
-        }).then(users => users.length)
+        const uniqueUsers = await this.prisma.auditLog
+          .groupBy({
+            by: ['userId'],
+            where: {
+              action: feature.action,
+              createdAt: { gte: sevenDaysAgo },
+            },
+          })
+          .then(users => users.length)
 
         return {
           featureName: feature.action,

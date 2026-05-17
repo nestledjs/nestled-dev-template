@@ -2,12 +2,30 @@ import { BadRequestException, Injectable, Logger, NotFoundException } from '@nes
 import { JwtService } from '@nestjs/jwt'
 import { ApiCoreDataAccessService } from '@nestled-template/api/core/data-access'
 import { EmailType, User } from '@nestled-template/api/core/models'
-import { ChangePasswordInput, EmulateUserInput, LoginInput, RegisterInput, RegisterWithInvitationInput, UserCreateInput, Disable2FAInput, Enable2FAOutput, Setup2FAOutput } from './dto'
+import {
+  ChangePasswordInput,
+  EmulateUserInput,
+  LoginInput,
+  RegisterInput,
+  RegisterWithInvitationInput,
+  UserCreateInput,
+  Disable2FAInput,
+  Enable2FAOutput,
+  Setup2FAOutput,
+  UserSessionOutput,
+} from './dto'
 import { CookieOptions, Response } from 'express'
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/client'
 import { UserToken } from './models'
 import { EmailService } from '@nestled-template/api/integrations'
-import { generateExpireDate, generateToken, generateUsernameSlug, generateUsernameWithSuffix, hashPassword, validatePassword } from './auth.helper'
+import {
+  generateExpireDate,
+  generateToken,
+  generateUsernameSlug,
+  generateUsernameWithSuffix,
+  hashPassword,
+  validatePassword,
+} from './auth.helper'
 import { ConfigService } from '@nestjs/config'
 import { defaultPermissions, defaultRoles } from '@nestled-template/api/prisma'
 import { SecurityEventsService } from '../security'
@@ -69,7 +87,7 @@ export class AuthService {
 
     // Check if username already exists, add suffix if needed
     const existingUser = await this.data.user.findUnique({
-      where: { displayName }
+      where: { displayName },
     })
 
     if (existingUser) {
@@ -77,7 +95,9 @@ export class AuthService {
       let attempts = 0
       const maxAttempts = 10
       while (attempts < maxAttempts) {
-        displayName = generateUsernameWithSuffix(generateUsernameSlug(input.firstName, input.lastName))
+        displayName = generateUsernameWithSuffix(
+          generateUsernameSlug(input.firstName, input.lastName),
+        )
         const check = await this.data.user.findUnique({ where: { displayName } })
         if (!check) break
         attempts++
@@ -127,8 +147,8 @@ export class AuthService {
       await this.data.passwordHistory.create({
         data: {
           userId: user.id,
-          passwordHash: hashedPassword
-        }
+          passwordHash: hashedPassword,
+        },
       })
     }
 
@@ -152,7 +172,7 @@ export class AuthService {
 
     for (const roleTemplate of defaultRoles) {
       const rolePermissions = allPermissions.filter(p =>
-        roleTemplate.permissions.includes(`${p.subject}:${p.action}`)
+        roleTemplate.permissions.includes(`${p.subject}:${p.action}`),
       )
 
       await this.data.role.create({
@@ -161,9 +181,9 @@ export class AuthService {
           description: roleTemplate.description,
           organizationId,
           permissions: {
-            connect: rolePermissions.map(p => ({ id: p.id }))
-          }
-        }
+            connect: rolePermissions.map(p => ({ id: p.id })),
+          },
+        },
       })
     }
   }
@@ -178,11 +198,12 @@ export class AuthService {
 
       // Create default organization for the user
       const trimmedOrgName = payload.organizationName?.trim()
-      const orgName = (trimmedOrgName && trimmedOrgName.length > 0)
-        ? trimmedOrgName
-        : `${user.firstName}'s Organization`
+      const orgName =
+        trimmedOrgName && trimmedOrgName.length > 0
+          ? trimmedOrgName
+          : `${user.firstName}'s Organization`
       const organization = await this.data.organization.create({
-        data: { name: orgName }
+        data: { name: orgName },
       })
 
       // Create default roles for the organization
@@ -192,8 +213,8 @@ export class AuthService {
       const ownerRole = await this.data.role.findFirst({
         where: {
           name: 'Owner',
-          organizationId: organization.id
-        }
+          organizationId: organization.id,
+        },
       })
 
       if (!ownerRole) {
@@ -205,14 +226,14 @@ export class AuthService {
         data: {
           userId: user.id,
           organizationId: organization.id,
-          roleId: ownerRole.id
-        }
+          roleId: ownerRole.id,
+        },
       })
 
       // Set as active organization
       await this.data.user.update({
         where: { id: user.id },
-        data: { activeOrganizationId: organization.id }
+        data: { activeOrganizationId: organization.id },
       })
 
       // Send verification email
@@ -232,11 +253,13 @@ export class AuthService {
           userName: user?.firstName || 'there',
           verificationUrl,
           appName,
-          expirationHours: 24
-        }
+          expirationHours: 24,
+        },
       })
 
-      Logger.log(`✓ User registered: ${primaryEmail} (SuperAdmin: ${user.isSuperAdmin}, Org: ${organization.name})`)
+      Logger.log(
+        `✓ User registered: ${primaryEmail} (SuperAdmin: ${user.isSuperAdmin}, Org: ${organization.name})`,
+      )
 
       return this.signUser(user, false, undefined, sessionInfo)
     }
@@ -250,7 +273,7 @@ export class AuthService {
     // First, verify the invitation exists and is valid
     const invite = await this.data.invite.findUnique({
       where: { token: payload.invitationToken },
-      include: { organization: true, role: true }
+      include: { organization: true, role: true },
     })
 
     if (!invite) {
@@ -264,7 +287,7 @@ export class AuthService {
     if (invite.expiresAt < new Date()) {
       await this.data.invite.update({
         where: { id: invite.id },
-        data: { status: 'EXPIRED' }
+        data: { status: 'EXPIRED' },
       })
       throw new BadRequestException('This invitation has expired')
     }
@@ -286,25 +309,30 @@ export class AuthService {
     })
 
     if (user) {
+      const roleId = invite.roleId ?? invite.role?.id
+      if (!roleId) {
+        throw new BadRequestException('Invitation is missing a role')
+      }
+
       // Add user to the organization from the invitation
       await this.data.organizationMember.create({
         data: {
           userId: user.id,
           organizationId: invite.organizationId,
-          roleId: invite.roleId!
-        }
+          roleId,
+        },
       })
 
       // Set as active organization
       await this.data.user.update({
         where: { id: user.id },
-        data: { activeOrganizationId: invite.organizationId }
+        data: { activeOrganizationId: invite.organizationId },
       })
 
       // Mark invitation as accepted
       await this.data.invite.update({
         where: { id: invite.id },
-        data: { status: 'ACCEPTED' }
+        data: { status: 'ACCEPTED' },
       })
 
       // Send verification email
@@ -325,11 +353,13 @@ export class AuthService {
           userName: user?.firstName || 'there',
           verificationUrl,
           appName,
-          expirationHours: 24
-        }
+          expirationHours: 24,
+        },
       })
 
-      Logger.log(`✓ User registered via invitation: ${cleanEmail} joined ${invite.organization.name}`)
+      Logger.log(
+        `✓ User registered via invitation: ${cleanEmail} joined ${invite.organization.name}`,
+      )
 
       return this.signUser(user, false, undefined, sessionInfo)
     }
@@ -373,7 +403,9 @@ export class AuthService {
       })
       // Add delay to slow down brute force attacks
       await this.addBruteForceDelay()
-      throw new BadRequestException(`Account is locked. Please try again in ${minutesLeft} minutes.`)
+      throw new BadRequestException(
+        `Account is locked. Please try again in ${minutesLeft} minutes.`,
+      )
     }
 
     // Check if account is disabled
@@ -447,7 +479,7 @@ export class AuthService {
         // Add delay to slow down brute force attacks
         await this.addBruteForceDelay()
         throw new BadRequestException(
-          'Too many failed login attempts. Account locked for 15 minutes.'
+          'Too many failed login attempts. Account locked for 15 minutes.',
         )
       }
 
@@ -526,8 +558,8 @@ export class AuthService {
         userName: user?.firstName || 'there',
         verificationUrl,
         appName,
-        expirationHours: 24
-      }
+        expirationHours: 24,
+      },
     })
     return true
   }
@@ -543,7 +575,7 @@ export class AuthService {
     if (user.validateEmailTokenExpires.valueOf() < new Date(Date.now()).valueOf()) {
       throw new BadRequestException('Your email verification token has expired')
     }
-    
+
     const updatedUser = await this.data.user.update({
       where: { id: user.id },
       data: {
@@ -557,17 +589,17 @@ export class AuthService {
     const appName = this.config.get('app.name')
     const siteUrl = this.config.get('siteUrl')
     const primaryEmail = await this.data.email.findFirst({
-      where: { userId: user.id, primary: true }
+      where: { userId: user.id, primary: true },
     })
-    
+
     if (primaryEmail?.email) {
       await this.emailService.sendTemplate(primaryEmail.email, {
         templateId: 'welcome',
         variables: {
           userName: user?.firstName || 'there',
           appName,
-          dashboardUrl: `${siteUrl}/dashboard`
-        }
+          dashboardUrl: `${siteUrl}/dashboard`,
+        },
       })
     }
 
@@ -579,7 +611,7 @@ export class AuthService {
 
     // Check if email is already in use
     const existingEmail = await this.data.email.findUnique({
-      where: { email: cleanEmail }
+      where: { email: cleanEmail },
     })
 
     if (existingEmail) {
@@ -588,7 +620,7 @@ export class AuthService {
 
     const user = await this.data.user.findUnique({
       where: { id: userId },
-      include: { emails: true }
+      include: { emails: true },
     })
 
     if (!user) {
@@ -613,14 +645,14 @@ export class AuthService {
         email: cleanEmail,
         verified: false,
         verifyToken,
-        verifyExpires
-      }
+        verifyExpires,
+      },
     })
 
     // Mark user as having unvalidated email
     await this.data.user.update({
       where: { id: userId },
-      data: { emailValidated: false }
+      data: { emailValidated: false },
     })
 
     // Log security event with IP context
@@ -640,8 +672,8 @@ export class AuthService {
         userName: user?.firstName || 'there',
         verificationUrl,
         appName,
-        expirationHours: 24
-      }
+        expirationHours: 24,
+      },
     })
 
     Logger.log(`Email change requested for user ${userId}: ${primaryEmail.email} → ${cleanEmail}`)
@@ -652,7 +684,7 @@ export class AuthService {
   async verifyEmailChange(token: string): Promise<User> {
     const email = await this.data.email.findFirst({
       where: { verifyToken: token },
-      include: { user: true }
+      include: { user: true },
     })
 
     if (!email?.user) {
@@ -673,14 +705,19 @@ export class AuthService {
       data: {
         verified: true,
         verifyToken: null,
-        verifyExpires: null
-      }
+        verifyExpires: null,
+      },
     })
 
     // Mark user email as validated
+    const userId = email.userId
+    if (!userId) {
+      throw new BadRequestException('Email verification record is missing a user')
+    }
+
     const updatedUser = await this.data.user.update({
-      where: { id: email.userId! },
-      data: { emailValidated: true }
+      where: { id: userId },
+      data: { emailValidated: true },
     })
 
     Logger.log(`Email change verified for user ${email.userId}: ${email.email}`)
@@ -688,9 +725,13 @@ export class AuthService {
     return updatedUser
   }
 
-  async changePassword(userId: string, input: ChangePasswordInput, sessionInfo?: SessionInfo): Promise<boolean> {
+  async changePassword(
+    userId: string,
+    input: ChangePasswordInput,
+    sessionInfo?: SessionInfo,
+  ): Promise<boolean> {
     const user = await this.data.user.findUnique({
-      where: { id: userId }
+      where: { id: userId },
     })
 
     if (!user) {
@@ -719,27 +760,29 @@ export class AuthService {
     const passwordHistory = await this.data.passwordHistory.findMany({
       where: { userId },
       orderBy: { createdAt: 'desc' },
-      take: 5
+      take: 5,
     })
 
     for (const historicalPassword of passwordHistory) {
       if (validatePassword(input.newPassword, historicalPassword.passwordHash)) {
-        throw new BadRequestException('This password was used recently. Please choose a different password.')
+        throw new BadRequestException(
+          'This password was used recently. Please choose a different password.',
+        )
       }
     }
 
     // Update password
     await this.data.user.update({
       where: { id: userId },
-      data: { password: hashedNewPassword }
+      data: { password: hashedNewPassword },
     })
 
     // Save current password to history
     await this.data.passwordHistory.create({
       data: {
         userId,
-        passwordHash: user.password
-      }
+        passwordHash: user.password,
+      },
     })
 
     // Log security event with IP context
@@ -751,7 +794,7 @@ export class AuthService {
     // Send password changed notification
     const appName = this.config.get('app.name')
     const primaryEmail = await this.data.email.findFirst({
-      where: { userId: user.id, primary: true }
+      where: { userId: user.id, primary: true },
     })
 
     if (primaryEmail?.email) {
@@ -760,8 +803,8 @@ export class AuthService {
         variables: {
           userName: user?.firstName || 'there',
           appName,
-          changeTime: new Date()
-        }
+          changeTime: new Date(),
+        },
       })
     }
 
@@ -777,7 +820,7 @@ export class AuthService {
 
     const user = await this.data.user.findUnique({
       where: { id: input?.userId },
-      include: { emails: true }
+      include: { emails: true },
     })
     if (!user) {
       Logger.error(`❌ EmulateUser failed: No user found for id: ${input?.userId}`)
@@ -878,8 +921,8 @@ export class AuthService {
         userName: user?.firstName || 'there',
         resetUrl,
         appName,
-        expirationMinutes: 30
-      }
+        expirationMinutes: 30,
+      },
     })
     return true
   }
@@ -912,12 +955,14 @@ export class AuthService {
     const passwordHistory = await this.data.passwordHistory.findMany({
       where: { userId: user.id },
       orderBy: { createdAt: 'desc' },
-      take: 5
+      take: 5,
     })
 
     for (const historicalPassword of passwordHistory) {
       if (validatePassword(password, historicalPassword.passwordHash)) {
-        throw new BadRequestException('This password was used recently. Please choose a different password.')
+        throw new BadRequestException(
+          'This password was used recently. Please choose a different password.',
+        )
       }
     }
 
@@ -935,8 +980,8 @@ export class AuthService {
       await this.data.passwordHistory.create({
         data: {
           userId: user.id,
-          passwordHash: user.password
-        }
+          passwordHash: user.password,
+        },
       })
     }
 
@@ -949,7 +994,7 @@ export class AuthService {
     // Send password changed notification
     const appName = this.config.get('app.name')
     const primaryEmail = await this.data.email.findFirst({
-      where: { userId: user.id, primary: true }
+      where: { userId: user.id, primary: true },
     })
 
     if (primaryEmail?.email) {
@@ -958,8 +1003,8 @@ export class AuthService {
         variables: {
           userName: user?.firstName || 'there',
           appName,
-          changeTime: new Date()
-        }
+          changeTime: new Date(),
+        },
       })
     }
 
@@ -970,7 +1015,7 @@ export class AuthService {
     user: User,
     rememberMe: boolean = false,
     emulatingAdminId?: string,
-    sessionInfo?: SessionInfo
+    sessionInfo?: SessionInfo,
   ): Promise<UserToken> {
     // Remember Me: 30 days, otherwise: 7 days
     const expiresIn = rememberMe ? '30d' : '7d'
@@ -992,7 +1037,7 @@ export class AuthService {
       const sessionId = await this.sessionService.createSession(
         user.id,
         sessionInfo,
-        false // 2FA verification status - will be updated later if needed
+        false, // 2FA verification status - will be updated later if needed
       )
       payload.sessionId = sessionId
     }
@@ -1145,10 +1190,14 @@ export class AuthService {
   /**
    * Verify 2FA code and enable 2FA
    */
-  async enable2FA(userId: string, code: string, sessionInfo?: SessionInfo): Promise<Enable2FAOutput> {
+  async enable2FA(
+    userId: string,
+    code: string,
+    sessionInfo?: SessionInfo,
+  ): Promise<Enable2FAOutput> {
     const user = await this.data.user.findUnique({
       where: { id: userId },
-      include: { emails: true }
+      include: { emails: true },
     })
 
     if (!user) {
@@ -1208,7 +1257,7 @@ export class AuthService {
           appName,
           securityUrl,
           backupCodesCount: backupCodes.length,
-        }
+        },
       })
     }
 
@@ -1223,7 +1272,11 @@ export class AuthService {
   /**
    * Disable 2FA
    */
-  async disable2FA(userId: string, input: Disable2FAInput, sessionInfo?: SessionInfo): Promise<boolean> {
+  async disable2FA(
+    userId: string,
+    input: Disable2FAInput,
+    sessionInfo?: SessionInfo,
+  ): Promise<boolean> {
     const user = await this.data.user.findUnique({ where: { id: userId } })
 
     if (!user) {
@@ -1312,7 +1365,11 @@ export class AuthService {
   /**
    * Complete 2FA login - verify code and return full session token
    */
-  async complete2FALogin(tempToken: string, code: string, sessionInfo?: SessionInfo): Promise<UserToken> {
+  async complete2FALogin(
+    tempToken: string,
+    code: string,
+    sessionInfo?: SessionInfo,
+  ): Promise<UserToken> {
     // Decode temp token
     const decoded = this.jwtService.decode(tempToken) as any
 
@@ -1370,13 +1427,15 @@ export class AuthService {
   /**
    * Get all active sessions for current user
    */
-  async getUserSessions(userId: string, currentSessionId?: string) {
+  async getUserSessions(userId: string, currentSessionId?: string): Promise<UserSessionOutput[]> {
     const sessions = await this.sessionService.getUserActiveSessions(userId)
 
     // Map to output format and mark current session
     return sessions.map(session => ({
       ...session,
-      isCurrent: session.id === currentSessionId
+      deviceInfo: session.deviceInfo ?? undefined,
+      ipAddress: session.ipAddress ?? undefined,
+      isCurrent: session.id === currentSessionId,
     }))
   }
 
@@ -1388,8 +1447,8 @@ export class AuthService {
     const session = await this.data.userSession.findFirst({
       where: {
         id: sessionId,
-        userId
-      }
+        userId,
+      },
     })
 
     if (!session) {
@@ -1406,7 +1465,10 @@ export class AuthService {
    */
   async invalidateAllSessions(userId: string, exceptSessionId?: string): Promise<number> {
     const count = await this.sessionService.invalidateAllUserSessions(userId, exceptSessionId)
-    Logger.log(`User ${userId} invalidated ${count} sessions` + (exceptSessionId ? ` (kept current session)` : ''))
+    Logger.log(
+      `User ${userId} invalidated ${count} sessions` +
+        (exceptSessionId ? ` (kept current session)` : ''),
+    )
     return count
   }
 
@@ -1574,12 +1636,12 @@ export class AuthService {
 
     // Check if user is the sole owner of any organizations
     const ownedOrganizations = user.organizations.filter(
-      om => om.role.name === 'Owner' && om.organization.members.length === 1
+      om => om.role.name === 'Owner' && om.organization.members.length === 1,
     )
 
     if (ownedOrganizations.length > 0) {
       throw new BadRequestException(
-        'You are the sole owner of one or more organizations. Please transfer ownership or delete the organizations before deleting your account.'
+        'You are the sole owner of one or more organizations. Please transfer ownership or delete the organizations before deleting your account.',
       )
     }
 
@@ -1610,7 +1672,7 @@ export class AuthService {
   async transferOrganizationOwnership(
     currentOwnerId: string,
     organizationId: string,
-    newOwnerUserId: string
+    newOwnerUserId: string,
   ): Promise<boolean> {
     // Verify current owner
     const currentOwnerMembership = await this.data.organizationMember.findFirst({
@@ -1679,7 +1741,7 @@ export class AuthService {
     ])
 
     Logger.log(
-      `Organization ${organizationId} ownership transferred from ${currentOwnerId} to ${newOwnerUserId}`
+      `Organization ${organizationId} ownership transferred from ${currentOwnerId} to ${newOwnerUserId}`,
     )
 
     return true

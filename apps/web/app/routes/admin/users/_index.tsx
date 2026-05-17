@@ -30,9 +30,7 @@ function formatDate(date: string | null) {
   })
 }
 
-type UserRow = NonNullable<
-  NonNullable<AdminUserManagementQuery['adminUsers']>['users']
->[0]
+type UserRow = NonNullable<NonNullable<AdminUserManagementQuery['adminUsers']>['users']>[0]
 
 function UserStatusBadges({
   emailVerified,
@@ -537,9 +535,7 @@ export default function AdminUsersPage() {
                   {/* Basic Info */}
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <p className="text-sm font-medium text-zinc-500 dark:text-zinc-400">
-                        Name
-                      </p>
+                      <p className="text-sm font-medium text-zinc-500 dark:text-zinc-400">Name</p>
                       <p className="mt-1 text-base font-medium text-zinc-900 dark:text-white">
                         {userDetails.firstName} {userDetails.lastName}
                       </p>
@@ -688,7 +684,11 @@ export default function AdminUsersPage() {
                   {userDetails.activeSessions && userDetails.activeSessions.length > 0 && (
                     <div>
                       <p className="text-sm font-medium text-zinc-500 dark:text-zinc-400">
-                        Active Sessions ({userDetails.activeSessions.some(s => s.isValid) ? userDetails.activeSessions.filter(s => s.isValid).length : 0})
+                        Active Sessions (
+                        {userDetails.activeSessions.some(s => s.isValid)
+                          ? userDetails.activeSessions.filter(s => s.isValid).length
+                          : 0}
+                        )
                       </p>
                       <div className="mt-2 space-y-2">
                         {userDetails.activeSessions

@@ -39,7 +39,13 @@ describe('DateRangeFilter', () => {
         lte: '2024-01-31T23:59:59.999Z',
       }
 
-      render(<DateRangeFilter fieldName="createdAt" currentValue={currentValue} onChange={mockOnChange} />)
+      render(
+        <DateRangeFilter
+          fieldName="createdAt"
+          currentValue={currentValue}
+          onChange={mockOnChange}
+        />,
+      )
 
       const fromInput = screen.getByLabelText('From') as HTMLInputElement
       const toInput = screen.getByLabelText('To') as HTMLInputElement
@@ -66,7 +72,13 @@ describe('DateRangeFilter', () => {
       const user = userEvent.setup()
       const currentValue = { lte: '2024-01-31T23:59:59.999Z' }
 
-      render(<DateRangeFilter fieldName="createdAt" currentValue={currentValue} onChange={mockOnChange} />)
+      render(
+        <DateRangeFilter
+          fieldName="createdAt"
+          currentValue={currentValue}
+          onChange={mockOnChange}
+        />,
+      )
 
       const fromInput = screen.getByLabelText('From')
       await user.type(fromInput, '2024-01-15')
@@ -81,7 +93,13 @@ describe('DateRangeFilter', () => {
       const user = userEvent.setup()
       const currentValue = { gte: '2024-01-01T00:00:00.000Z', lte: '2024-01-31T23:59:59.999Z' }
 
-      render(<DateRangeFilter fieldName="createdAt" currentValue={currentValue} onChange={mockOnChange} />)
+      render(
+        <DateRangeFilter
+          fieldName="createdAt"
+          currentValue={currentValue}
+          onChange={mockOnChange}
+        />,
+      )
 
       const fromInput = screen.getByLabelText('From')
       await user.clear(fromInput)
@@ -95,7 +113,13 @@ describe('DateRangeFilter', () => {
       const user = userEvent.setup()
       const currentValue = { gte: '2024-01-01T00:00:00.000Z' }
 
-      render(<DateRangeFilter fieldName="createdAt" currentValue={currentValue} onChange={mockOnChange} />)
+      render(
+        <DateRangeFilter
+          fieldName="createdAt"
+          currentValue={currentValue}
+          onChange={mockOnChange}
+        />,
+      )
 
       const fromInput = screen.getByLabelText('From')
       await user.clear(fromInput)
@@ -137,7 +161,13 @@ describe('DateRangeFilter', () => {
       const user = userEvent.setup()
       const currentValue = { gte: '2024-01-01T00:00:00.000Z' }
 
-      render(<DateRangeFilter fieldName="createdAt" currentValue={currentValue} onChange={mockOnChange} />)
+      render(
+        <DateRangeFilter
+          fieldName="createdAt"
+          currentValue={currentValue}
+          onChange={mockOnChange}
+        />,
+      )
 
       const toInput = screen.getByLabelText('To')
       await user.type(toInput, '2024-01-31')
@@ -152,7 +182,13 @@ describe('DateRangeFilter', () => {
       const user = userEvent.setup()
       const currentValue = { gte: '2024-01-01T00:00:00.000Z', lte: '2024-01-31T23:59:59.999Z' }
 
-      render(<DateRangeFilter fieldName="createdAt" currentValue={currentValue} onChange={mockOnChange} />)
+      render(
+        <DateRangeFilter
+          fieldName="createdAt"
+          currentValue={currentValue}
+          onChange={mockOnChange}
+        />,
+      )
 
       const toInput = screen.getByLabelText('To')
       await user.clear(toInput)
@@ -179,7 +215,13 @@ describe('DateRangeFilter', () => {
         lte: '2024-01-31T23:59:59.999Z',
       }
 
-      render(<DateRangeFilter fieldName="createdAt" currentValue={currentValue} onChange={mockOnChange} />)
+      render(
+        <DateRangeFilter
+          fieldName="createdAt"
+          currentValue={currentValue}
+          onChange={mockOnChange}
+        />,
+      )
 
       expect(screen.getByText('2024-01-01 to 2024-01-31')).toBeInTheDocument()
     })
@@ -187,7 +229,13 @@ describe('DateRangeFilter', () => {
     it('should show "From" format when only from date is set', () => {
       const currentValue = { gte: '2024-01-01T00:00:00.000Z' }
 
-      render(<DateRangeFilter fieldName="createdAt" currentValue={currentValue} onChange={mockOnChange} />)
+      render(
+        <DateRangeFilter
+          fieldName="createdAt"
+          currentValue={currentValue}
+          onChange={mockOnChange}
+        />,
+      )
 
       expect(screen.getByText('From 2024-01-01')).toBeInTheDocument()
     })
@@ -195,7 +243,13 @@ describe('DateRangeFilter', () => {
     it('should show "Until" format when only to date is set', () => {
       const currentValue = { lte: '2024-01-31T23:59:59.999Z' }
 
-      render(<DateRangeFilter fieldName="createdAt" currentValue={currentValue} onChange={mockOnChange} />)
+      render(
+        <DateRangeFilter
+          fieldName="createdAt"
+          currentValue={currentValue}
+          onChange={mockOnChange}
+        />,
+      )
 
       expect(screen.getByText('Until 2024-01-31')).toBeInTheDocument()
     })
@@ -213,7 +267,9 @@ describe('DateRangeFilter', () => {
     })
 
     it('should capitalize first letter of kebab-case field names', () => {
-      render(<DateRangeFilter fieldName="last-modified" currentValue={{}} onChange={mockOnChange} />)
+      render(
+        <DateRangeFilter fieldName="last-modified" currentValue={{}} onChange={mockOnChange} />,
+      )
       expect(screen.getByText('Last-modified')).toBeInTheDocument()
     })
   })
@@ -246,7 +302,9 @@ describe('DateRangeFilter', () => {
     })
 
     it('should handle undefined currentValue', () => {
-      render(<DateRangeFilter fieldName="createdAt" currentValue={undefined} onChange={mockOnChange} />)
+      render(
+        <DateRangeFilter fieldName="createdAt" currentValue={undefined} onChange={mockOnChange} />,
+      )
 
       const fromInput = screen.getByLabelText('From') as HTMLInputElement
       const toInput = screen.getByLabelText('To') as HTMLInputElement
@@ -261,7 +319,13 @@ describe('DateRangeFilter', () => {
         lte: '2024-01-31',
       }
 
-      render(<DateRangeFilter fieldName="createdAt" currentValue={currentValue} onChange={mockOnChange} />)
+      render(
+        <DateRangeFilter
+          fieldName="createdAt"
+          currentValue={currentValue}
+          onChange={mockOnChange}
+        />,
+      )
 
       const fromInput = screen.getByLabelText('From') as HTMLInputElement
       const toInput = screen.getByLabelText('To') as HTMLInputElement
@@ -287,7 +351,11 @@ describe('DateRangeFilter', () => {
 
       const fromInput = screen.getByLabelText('From')
 
-      expect(fromInput).toHaveClass('focus:ring-1', 'focus:ring-green-web', 'focus:border-green-web')
+      expect(fromInput).toHaveClass(
+        'focus:ring-1',
+        'focus:ring-green-web',
+        'focus:border-green-web',
+      )
     })
   })
 })

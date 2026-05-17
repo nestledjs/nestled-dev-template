@@ -592,9 +592,15 @@ describe('useAdminList', () => {
 
       act(() => {
         // Sort by name ascending
-        result.current.dispatch({ type: 'SET_SORT', payload: { orderBy: 'name', orderDirection: 'asc' } })
+        result.current.dispatch({
+          type: 'SET_SORT',
+          payload: { orderBy: 'name', orderDirection: 'asc' },
+        })
         // Click same column to reverse
-        result.current.dispatch({ type: 'SET_SORT', payload: { orderBy: 'name', orderDirection: 'desc' } })
+        result.current.dispatch({
+          type: 'SET_SORT',
+          payload: { orderBy: 'name', orderDirection: 'desc' },
+        })
         // Reset pagination when sorting
         result.current.dispatch({ type: 'RESET_PAGINATION' })
       })

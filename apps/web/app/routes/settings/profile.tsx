@@ -1,10 +1,6 @@
 import React, { useState } from 'react'
 import { useLoaderData } from 'react-router'
-import {
-  CalendarIcon,
-  CheckCircleIcon,
-  UserCircleIcon,
-} from '@heroicons/react/24/outline'
+import { CalendarIcon, CheckCircleIcon, UserCircleIcon } from '@heroicons/react/24/outline'
 import { apolloLoader } from '@nestled-template/shared/apollo'
 import {
   Me,
@@ -20,12 +16,7 @@ import {
   type UploadUserAvatarMutation,
   type DeleteFileMutation,
 } from '@nestled-template/shared/sdk'
-import {
-  useApolloClient,
-  useReadQuery,
-  type QueryRef,
-  useMutation,
-} from '@apollo/client/react'
+import { useApolloClient, useReadQuery, type QueryRef, useMutation } from '@apollo/client/react'
 import { Form } from '@nestledjs/forms'
 import { FormFieldClass } from '@nestledjs/forms-core'
 import { formTheme } from '@nestled-template/shared/styles'
@@ -88,13 +79,23 @@ type UserAvatar = {
 
 interface AvatarSectionProps {
   readonly userAvatar: UserAvatar | undefined | null
-  readonly user: { firstName?: string | null; lastName?: string | null; displayName?: string | null }
+  readonly user: {
+    firstName?: string | null
+    lastName?: string | null
+    displayName?: string | null
+  }
   readonly onUpload: (file: File) => Promise<void>
   readonly onRemove: (() => Promise<void>) | undefined
   readonly avatarMessage: { type: 'success' | 'error'; text: string } | null
 }
 
-function AvatarSection({ userAvatar, user, onUpload, onRemove, avatarMessage }: AvatarSectionProps) {
+function AvatarSection({
+  userAvatar,
+  user,
+  onUpload,
+  onRemove,
+  avatarMessage,
+}: AvatarSectionProps) {
   return (
     <div className="space-y-3">
       <div className="flex items-center gap-6">
@@ -229,7 +230,6 @@ export default function ProfileSettings() {
       setIsResendingEmail(false)
     }
   }
-
 
   const editProfileFields = [
     FormFieldClass.text('firstName', {

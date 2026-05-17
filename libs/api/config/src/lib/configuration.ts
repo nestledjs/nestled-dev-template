@@ -24,7 +24,10 @@ export const configuration = () => ({
       },
     },
     cors: {
-      origin: (process.env['ALLOWED_ORIGINS'] ?? '').split(',').map(o => o.trim()).filter(o => o.length > 0),
+      origin: (process.env['ALLOWED_ORIGINS'] ?? '')
+        .split(',')
+        .map(o => o.trim())
+        .filter(o => o.length > 0),
     },
   },
   siteUrl: process.env['SITE_URL'] ?? process.env['API_URL']?.replace('/api', ''),
@@ -55,12 +58,16 @@ export const configuration = () => ({
     google: {
       clientId: process.env['GOOGLE_OAUTH_CLIENT_ID'],
       clientSecret: process.env['GOOGLE_OAUTH_CLIENT_SECRET'],
-      enabled: !!(process.env['GOOGLE_OAUTH_CLIENT_ID'] && process.env['GOOGLE_OAUTH_CLIENT_SECRET']),
+      enabled: !!(
+        process.env['GOOGLE_OAUTH_CLIENT_ID'] && process.env['GOOGLE_OAUTH_CLIENT_SECRET']
+      ),
     },
     github: {
       clientId: process.env['GITHUB_OAUTH_CLIENT_ID'],
       clientSecret: process.env['GITHUB_OAUTH_CLIENT_SECRET'],
-      enabled: !!(process.env['GITHUB_OAUTH_CLIENT_ID'] && process.env['GITHUB_OAUTH_CLIENT_SECRET']),
+      enabled: !!(
+        process.env['GITHUB_OAUTH_CLIENT_ID'] && process.env['GITHUB_OAUTH_CLIENT_SECRET']
+      ),
     },
   },
 })

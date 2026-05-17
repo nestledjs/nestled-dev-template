@@ -318,13 +318,17 @@ describe('AdminUserStatus', () => {
 
   describe('custom className', () => {
     it('should apply custom className', () => {
-      const { container } = render(<AdminUserStatus status="online" className="custom-user-status" />)
+      const { container } = render(
+        <AdminUserStatus status="online" className="custom-user-status" />,
+      )
       const wrapper = container.firstChild
       expect(wrapper).toHaveClass('custom-user-status')
     })
 
     it('should preserve base classes with custom className', () => {
-      const { container } = render(<AdminUserStatus status="online" className="custom-user-status" />)
+      const { container } = render(
+        <AdminUserStatus status="online" className="custom-user-status" />,
+      )
       const wrapper = container.firstChild
       expect(wrapper).toHaveClass('inline-flex', 'items-center', 'custom-user-status')
     })
@@ -389,7 +393,7 @@ describe('integration scenarios', () => {
         className="my-status"
         onClick={onClick}
         tooltip="Click to approve"
-      />
+      />,
     )
 
     const button = screen.getByRole('button', { name: 'Awaiting Approval' })
@@ -403,12 +407,7 @@ describe('integration scenarios', () => {
 
   it('should handle AdminUserStatus with all props', () => {
     render(
-      <AdminUserStatus
-        status="away"
-        showLabel={true}
-        size="large"
-        className="my-user-status"
-      />
+      <AdminUserStatus status="away" showLabel={true} size="large" className="my-user-status" />,
     )
 
     expect(screen.getByText('Away')).toBeInTheDocument()

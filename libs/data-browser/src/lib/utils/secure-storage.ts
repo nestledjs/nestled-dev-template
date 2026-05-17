@@ -1,11 +1,14 @@
 // localStorage utilities for admin preferences - designed for easy export/import
 interface AdminConfig {
   version: string
-  models: Record<string, {
-    visibleColumns?: string[]
-    searchFields?: string[]
-    sortPreference?: { orderBy: string; orderDirection: string }
-  }>
+  models: Record<
+    string,
+    {
+      visibleColumns?: string[]
+      searchFields?: string[]
+      sortPreference?: { orderBy: string; orderDirection: string }
+    }
+  >
 }
 
 const ADMIN_CONFIG_KEY = 'mi-admin-config'
@@ -32,13 +35,15 @@ const sanitizeArray = (value: unknown): string[] => {
     .filter(item => item.length > 0)
 }
 
-const sanitizeSortPreference = (value: unknown): { orderBy: string; orderDirection: string } | null => {
+const sanitizeSortPreference = (
+  value: unknown,
+): { orderBy: string; orderDirection: string } | null => {
   if (!value || typeof value !== 'object') return null
   const obj = value as Record<string, unknown>
-  
+
   const orderBy = sanitizeString(obj.orderBy)
   const orderDirection = sanitizeString(obj.orderDirection)
-  
+
   // Validate sort direction
   if (!['asc', 'desc'].includes(orderDirection)) return null
   // Validate field name (alphanumeric + underscore only)
@@ -88,7 +93,7 @@ export const SecureAdminLocalStorage = {
       if (!stored) {
         return { version: ADMIN_CONFIG_VERSION, models: {} }
       }
-      
+
       // Check size limit
       if (stored.length > MAX_CONFIG_SIZE) {
         localStorage.removeItem(ADMIN_CONFIG_KEY)
@@ -101,9 +106,8 @@ export const SecureAdminLocalStorage = {
         localStorage.removeItem(ADMIN_CONFIG_KEY)
         return { version: ADMIN_CONFIG_VERSION, models: {} }
       }
-      
-      return parsed
 
+      return parsed
     } catch {
       // Clear potentially corrupted data
       try {
@@ -132,7 +136,6 @@ export const SecureAdminLocalStorage = {
 
       localStorage.setItem(ADMIN_CONFIG_KEY, serialized)
       return true
-
     } catch (error) {
       console.error('Unexpected error:', error)
       return false
@@ -143,12 +146,12 @@ export const SecureAdminLocalStorage = {
   getColumnVisibility: (modelName: string): string[] | null => {
     const sanitizedModelName = sanitizeString(modelName)
     if (!sanitizedModelName) return null
-    
+
     const config = SecureAdminLocalStorage.getConfig()
     const columns = config.models[sanitizedModelName]?.visibleColumns
     return columns ? sanitizeArray(columns) : null
   },
-  
+
   // Set visible columns for a specific model with validation
   setColumnVisibility: (modelName: string, visibleColumns: string[]): boolean => {
     const sanitizedModelName = sanitizeString(modelName)
@@ -164,24 +167,27 @@ export const SecureAdminLocalStorage = {
     config.models[sanitizedModelName].visibleColumns = sanitizedColumns
     return SecureAdminLocalStorage.setConfig(config)
   },
-  
+
   // Get sort preference for a specific model with validation
   getSortPreference: (modelName: string): { orderBy: string; orderDirection: string } | null => {
     const sanitizedModelName = sanitizeString(modelName)
     if (!sanitizedModelName) return null
-    
+
     const config = SecureAdminLocalStorage.getConfig()
     const sortPref = config.models[sanitizedModelName]?.sortPreference
     return sortPref ? sanitizeSortPreference(sortPref) : null
   },
-  
+
   // Set sort preference for a specific model with validation
-  setSortPreference: (modelName: string, sortPreference: { orderBy: string; orderDirection: string }): boolean => {
+  setSortPreference: (
+    modelName: string,
+    sortPreference: { orderBy: string; orderDirection: string },
+  ): boolean => {
     const sanitizedModelName = sanitizeString(modelName)
     const sanitizedSortPref = sanitizeSortPreference(sortPreference)
-    
+
     if (!sanitizedModelName || !sanitizedSortPref) return false
-    
+
     const config = SecureAdminLocalStorage.getConfig()
     if (!config.models[sanitizedModelName]) {
       config.models[sanitizedModelName] = {}
@@ -189,17 +195,17 @@ export const SecureAdminLocalStorage = {
     config.models[sanitizedModelName].sortPreference = sanitizedSortPref
     return SecureAdminLocalStorage.setConfig(config)
   },
-  
+
   // Get search fields for a specific model with sanitization
   getSearchFields: (modelName: string): string[] | null => {
     const sanitizedModelName = sanitizeString(modelName)
     if (!sanitizedModelName) return null
-    
+
     const config = SecureAdminLocalStorage.getConfig()
     const searchFields = config.models[sanitizedModelName]?.searchFields
     return searchFields ? sanitizeArray(searchFields) : null
   },
-  
+
   // Set search fields for a specific model with validation
   setSearchFields: (modelName: string, searchFields: string[]): boolean => {
     const sanitizedModelName = sanitizeString(modelName)
@@ -254,17 +260,16 @@ export const SecureAdminLocalStorage = {
         /javascript:/i,
         /on\w+\s*=/i,
         /eval\s*\(/i,
-        /function\s*\(/i
+        /function\s*\(/i,
       ]
 
       for (const pattern of suspiciousPatterns) {
         if (pattern.test(serialized)) {
-    return false
-  }
-}
+          return false
+        }
+      }
 
       return SecureAdminLocalStorage.setConfig(config)
-
     } catch (error) {
       console.error('Unexpected error:', error)
       return false
@@ -280,7 +285,7 @@ export const SecureAdminLocalStorage = {
       console.error('Unexpected error:', error)
       return false
     }
-  }
+  },
 }
 
 // Use the secure version for backwards compatibility

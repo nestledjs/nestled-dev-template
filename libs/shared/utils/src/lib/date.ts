@@ -40,5 +40,3 @@ export function toUtcMidnightIso(value: Date | string): string {
   // Fallback
   return new Date().toISOString()
 }
-
-

@@ -21,26 +21,27 @@ export function isViteCacheError(error: unknown): boolean {
     'License expired',
     '.split is not a function', // Form library errors with invalid data types
   ]
-  if (nonViteRenderErrors.some((msg) => errorMessage.includes(msg))) {
+  if (nonViteRenderErrors.some(msg => errorMessage.includes(msg))) {
     return false
   }
 
   // Check for specific patterns that indicate Vite cache issues
   return (
     // React context errors from cached modules
-    (errorMessage.includes('Cannot read properties of null') && errorMessage.includes('useContext')) ||
-    (errorMessage.includes('Cannot read properties of undefined') && errorMessage.includes('useContext')) ||
-    (errorMessage.includes('reading \'useContext\'') && errorStack.includes('@fs/')) ||
-    
+    (errorMessage.includes('Cannot read properties of null') &&
+      errorMessage.includes('useContext')) ||
+    (errorMessage.includes('Cannot read properties of undefined') &&
+      errorMessage.includes('useContext')) ||
+    (errorMessage.includes("reading 'useContext'") && errorStack.includes('@fs/')) ||
     // Vite dev server specific patterns
     (errorStack.includes('useContext') && errorStack.includes('node_modules/.vite/')) ||
     (errorStack.includes('useFrameworkContext') && errorStack.includes('vite/')) ||
     (errorMessage.includes('useContext') && errorStack.includes('chunk-')) ||
-    
     // Other common Vite cache error patterns
     (errorMessage.includes('useFrameworkContext') && errorStack.includes('deps/')) ||
     (errorStack.includes('/@fs/') && errorStack.includes('node_modules/.vite/')) ||
-    (errorMessage.includes('Module externalized for browser compatibility') && errorStack.includes('vite'))
+    (errorMessage.includes('Module externalized for browser compatibility') &&
+      errorStack.includes('vite'))
   )
 }
 
@@ -72,7 +73,9 @@ export function isNetworkError(error: unknown): boolean {
       const hasAuthError = anyErr.graphQLErrors.some((g: any) => {
         const msg = (g?.message || '').toString()
         const code = g?.extensions?.code || ''
-        return msg.includes('Unauthorized') || msg.includes('UNAUTHORIZED') || code === 'UNAUTHENTICATED'
+        return (
+          msg.includes('Unauthorized') || msg.includes('UNAUTHORIZED') || code === 'UNAUTHENTICATED'
+        )
       })
       if (hasAuthError) return false
     }
@@ -105,11 +108,7 @@ export function isNetworkError(error: unknown): boolean {
  * @param autoReload - Whether to automatically reload the page (default: true)
  * @param delay - Delay in milliseconds before reloading (default: 0)
  */
-export function handleViteCacheError(
-  error: unknown,
-  autoReload = true,
-  delay = 0
-): boolean {
+export function handleViteCacheError(error: unknown, autoReload = true, delay = 0): boolean {
   if (isViteCacheError(error)) {
     console.log('[Error Handler] Vite cache error detected:', error)
 
@@ -125,4 +124,4 @@ export function handleViteCacheError(
     return true
   }
   return false
-} 
+}

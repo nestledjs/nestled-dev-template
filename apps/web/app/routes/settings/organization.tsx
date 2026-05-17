@@ -79,7 +79,7 @@ export default function OrganizationSettings() {
     }
   }
 
-  const organizationLogo = activeOrganization?.logo as OrgLogo | undefined | null
+  const organizationLogo = activeOrganization?.logo
 
   const handleLogoUpload = async (file: File) => {
     if (!activeOrganization) return

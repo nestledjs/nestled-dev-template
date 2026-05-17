@@ -8,40 +8,62 @@ export function registerOrganizationTools(
   prisma: PrismaClient,
   auth: McpAuthContext,
 ) {
-  server.tool(
+  server.registerTool(
     'get_organization',
-    'Get the current organization profile including its members and their roles',
-    {},
+    {
+      description: 'Get the current organization profile including its members and their roles',
+      inputSchema: {},
+    },
     async () => {
       if (!auth.organizationId) {
-        return { content: [{ type: 'text' as const, text: 'No organization associated with this token' }], isError: true }
+        return {
+          content: [{ type: 'text' as const, text: 'No organization associated with this token' }],
+          isError: true,
+        }
       }
       const org = await prisma.organization.findUnique({
         where: { id: auth.organizationId },
         include: {
           members: {
             include: {
-              user: { select: { id: true, firstName: true, lastName: true, displayName: true, email: true } },
+              user: {
+                select: {
+                  id: true,
+                  firstName: true,
+                  lastName: true,
+                  displayName: true,
+                  emails: {
+                    where: { primary: true },
+                    select: { email: true },
+                    take: 1,
+                  },
+                },
+              },
               role: { select: { id: true, name: true } },
             },
           },
         },
       })
       if (!org) {
-        return { content: [{ type: 'text' as const, text: 'Organization not found' }], isError: true }
+        return {
+          content: [{ type: 'text' as const, text: 'Organization not found' }],
+          isError: true,
+        }
       }
       return { content: [{ type: 'text' as const, text: JSON.stringify(org, null, 2) }] }
     },
   )
 
   if (auth.isAdmin && !auth.organizationId) {
-    server.tool(
+    server.registerTool(
       'list_organizations',
-      'List all organizations (admin only)',
       {
-        search: z.string().optional().describe('Filter by name'),
-        limit: z.coerce.number().min(1).max(100).default(20),
-        offset: z.coerce.number().min(0).default(0),
+        description: 'List all organizations (admin only)',
+        inputSchema: {
+          search: z.string().optional().describe('Filter by name'),
+          limit: z.coerce.number().min(1).max(100).default(20),
+          offset: z.coerce.number().min(0).default(0),
+        },
       },
       async ({ search, limit, offset }) => {
         const where: any = {}
@@ -59,7 +81,9 @@ export function registerOrganizationTools(
           }),
           prisma.organization.count({ where }),
         ])
-        return { content: [{ type: 'text' as const, text: JSON.stringify({ orgs, total }, null, 2) }] }
+        return {
+          content: [{ type: 'text' as const, text: JSON.stringify({ orgs, total }, null, 2) }],
+        }
       },
     )
   }

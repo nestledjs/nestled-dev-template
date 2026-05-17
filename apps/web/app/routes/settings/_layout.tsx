@@ -12,15 +12,10 @@ import { useGlobalCtx } from '@nestled-template/web'
 import {
   MyOrganizationsWithMembers,
   type MyOrganizationsWithMembersQuery,
-  type MeQuery,
 } from '@nestled-template/shared/sdk'
 import { Avatar } from '@nestled-template/web-ui'
 import { cn } from '@nestled-template/shared/utils'
 import { useQuery } from '@apollo/client/react'
-
-type UserWithActiveOrganization = NonNullable<MeQuery['me']> & {
-  activeOrganizationId?: string | null
-}
 
 interface NavItem {
   name: string
@@ -38,11 +33,8 @@ export default function SettingsLayout() {
   // Fetch user's organizations with member data
   const { data: orgsData } = useQuery<MyOrganizationsWithMembersQuery>(MyOrganizationsWithMembers)
   const organizations = orgsData?.myOrganizations || []
-  const userWithActiveOrganization = user as UserWithActiveOrganization | null | undefined
   const activeOrganization =
-    organizations.find(org => org.id === userWithActiveOrganization?.activeOrganizationId) ||
-    organizations[0] ||
-    null
+    organizations.find(org => org.id === user?.activeOrganizationId) || organizations[0] || null
   const activeOrganizationMember =
     activeOrganization?.members?.find(member => member.userId === user?.id) || null
 
@@ -95,9 +87,6 @@ export default function SettingsLayout() {
     return location.pathname === href || location.pathname.startsWith(`${href}/`)
   }
 
-  type AuthUser = NonNullable<MeQuery['me']>
-  type OrgListItem = MyOrganizationsWithMembersQuery['myOrganizations'][number]
-
   // Simple permission check - make it very permissive for now
   const hasPermission = (permission?: string) => {
     if (!permission) return true
@@ -133,8 +122,8 @@ export default function SettingsLayout() {
     return true
   }
 
-  const userAvatar = (user as AuthUser | null | undefined)?.avatar
-  const organizationLogo = (activeOrganization as OrgListItem | null | undefined)?.logo
+  const userAvatar = user?.avatar
+  const organizationLogo = activeOrganization?.logo
 
   return (
     <div className="flex-1 bg-gradient-to-b from-zinc-50 to-zinc-100 dark:from-zinc-900 dark:to-zinc-950">

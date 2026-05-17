@@ -57,7 +57,9 @@ export class McpOAuthController {
   @HttpCode(201)
   register(@Body() body: Record<string, unknown>) {
     const clientName = typeof body['client_name'] === 'string' ? body['client_name'] : 'MCP Client'
-    const redirectUris = Array.isArray(body['redirect_uris']) ? (body['redirect_uris'] as string[]) : []
+    const redirectUris = Array.isArray(body['redirect_uris'])
+      ? (body['redirect_uris'] as string[])
+      : []
     const client = this.oauth.registerClient(clientName, redirectUris)
     return {
       client_id: client.clientId,
@@ -75,22 +77,30 @@ export class McpOAuthController {
    * If the user belongs to multiple orgs, redirects to /mcp-connect for org selection.
    */
   @Get('authorize')
-  async authorize(
-    @Query() query: AuthorizeQuery,
-    @Req() req: Request,
-    @Res() res: Response,
-  ) {
-    const { client_id: clientId, redirect_uri: redirectUri, state, code_challenge: codeChallenge, code_challenge_method: codeChallengeMethod, scope, org: orgId } = query
+  async authorize(@Query() query: AuthorizeQuery, @Req() req: Request, @Res() res: Response) {
+    const {
+      client_id: clientId,
+      redirect_uri: redirectUri,
+      state,
+      code_challenge: codeChallenge,
+      code_challenge_method: codeChallengeMethod,
+      scope,
+      org: orgId,
+    } = query
     const siteUrl = this.config.get<string>('siteUrl') || 'http://localhost:4200'
     const mcpBase = this.oauth.getMcpBaseUrl(req)
 
     if (!clientId || !redirectUri || !codeChallenge) {
-      return res.status(400).json({ error: 'invalid_request', error_description: 'Missing required parameters' })
+      return res
+        .status(400)
+        .json({ error: 'invalid_request', error_description: 'Missing required parameters' })
     }
 
     const client = this.oauth.getClient(clientId)
     if (!client) {
-      return res.status(400).json({ error: 'invalid_client', error_description: 'Unknown client_id' })
+      return res
+        .status(400)
+        .json({ error: 'invalid_client', error_description: 'Unknown client_id' })
     }
 
     const userId = this.getUserIdFromCookie(req)
@@ -109,7 +119,13 @@ export class McpOAuthController {
       return res.redirect(`${siteUrl}/login?redirect=${encodeURIComponent(authorizeUrl)}`)
     }
 
-    const organizationId = await this.resolveOrganizationId(userId, orgId, siteUrl, authorizeUrl, res)
+    const organizationId = await this.resolveOrganizationId(
+      userId,
+      orgId,
+      siteUrl,
+      authorizeUrl,
+      res,
+    )
     if (organizationId === null) return
 
     const code = this.oauth.createAuthCode({
@@ -137,7 +153,10 @@ export class McpOAuthController {
     if (orgId) {
       const isMember = await this.oauth.validateOrgMembership(userId, orgId)
       if (!isMember) {
-        res.status(400).json({ error: 'invalid_request', error_description: 'Not a member of that organization' })
+        res.status(400).json({
+          error: 'invalid_request',
+          error_description: 'Not a member of that organization',
+        })
         return null
       }
       return orgId
@@ -163,12 +182,17 @@ export class McpOAuthController {
     }
 
     if (!code || !code_verifier || !client_id) {
-      return res.status(400).json({ error: 'invalid_request', error_description: 'Missing required parameters' })
+      return res
+        .status(400)
+        .json({ error: 'invalid_request', error_description: 'Missing required parameters' })
     }
 
     const authCode = this.oauth.consumeAuthCode(code)
     if (!authCode) {
-      return res.status(400).json({ error: 'invalid_grant', error_description: 'Invalid or expired authorization code' })
+      return res.status(400).json({
+        error: 'invalid_grant',
+        error_description: 'Invalid or expired authorization code',
+      })
     }
 
     if (authCode.clientId !== client_id) {
@@ -176,15 +200,23 @@ export class McpOAuthController {
     }
 
     if (authCode.redirectUri !== redirect_uri) {
-      return res.status(400).json({ error: 'invalid_grant', error_description: 'redirect_uri mismatch' })
+      return res
+        .status(400)
+        .json({ error: 'invalid_grant', error_description: 'redirect_uri mismatch' })
     }
 
-    if (!this.oauth.verifyPkce(code_verifier, authCode.codeChallenge, authCode.codeChallengeMethod)) {
-      return res.status(400).json({ error: 'invalid_grant', error_description: 'PKCE verification failed' })
+    if (
+      !this.oauth.verifyPkce(code_verifier, authCode.codeChallenge, authCode.codeChallengeMethod)
+    ) {
+      return res
+        .status(400)
+        .json({ error: 'invalid_grant', error_description: 'PKCE verification failed' })
     }
 
     const accessToken = await this.oauth.createAccessToken(authCode.userId, authCode.organizationId)
-    this.logger.log(`MCP OAuth token issued for user ${authCode.userId} org=${authCode.organizationId}`)
+    this.logger.log(
+      `MCP OAuth token issued for user ${authCode.userId} org=${authCode.organizationId}`,
+    )
 
     return res.json({ access_token: accessToken, token_type: 'bearer', scope: authCode.scope })
   }

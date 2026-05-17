@@ -66,18 +66,14 @@ export function AdminDataProvider({
   databaseModels,
   basePath = '/admin/data',
   formTheme,
-  displayFieldConfig
+  displayFieldConfig,
 }: Readonly<AdminDataProviderProps>) {
   const value = useMemo(
     () => ({ sdk, databaseModels, basePath, formTheme, displayFieldConfig }),
-    [sdk, databaseModels, basePath, formTheme, displayFieldConfig]
+    [sdk, databaseModels, basePath, formTheme, displayFieldConfig],
   )
 
-  return (
-    <AdminDataContext.Provider value={value}>
-      {children}
-    </AdminDataContext.Provider>
-  )
+  return <AdminDataContext.Provider value={value}>{children}</AdminDataContext.Provider>
 }
 
 /**
@@ -89,7 +85,7 @@ export function useAdminDataContext() {
   if (!context) {
     throw new Error(
       'useAdminDataContext must be used within AdminDataProvider. ' +
-      'Make sure to wrap your admin data routes with <AdminDataProvider>.'
+        'Make sure to wrap your admin data routes with <AdminDataProvider>.',
     )
   }
   return context

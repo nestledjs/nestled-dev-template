@@ -84,6 +84,9 @@ describe('AuthService', () => {
       loginAttempt: {
         create: jest.fn(),
       },
+      auditLog: {
+        create: jest.fn(),
+      },
       userSession: {
         findFirst: jest.fn(),
         findMany: jest.fn(),
@@ -376,6 +379,106 @@ describe('AuthService', () => {
             reason: 'INVALID_PASSWORD',
           }),
         }),
+      )
+    })
+    it('should reject login for an unknown email and log the attempt', async () => {
+      mockData.user.findFirst.mockResolvedValue(null)
+      mockData.loginAttempt.create.mockResolvedValue({} as any)
+
+      await expect(
+        service.login({ email: 'missing@example.com', password: 'Password123!' }, {} as any),
+      ).rejects.toThrow(BadRequestException)
+
+      expect(mockData.loginAttempt.create).toHaveBeenCalledWith({
+        data: {
+          email: 'missing@example.com',
+          success: false,
+          reason: 'INVALID_EMAIL',
+        },
+      })
+    })
+    it('should reject disabled accounts', async () => {
+      const mockUser = {
+        id: 'user-123',
+        password: 'hashed-password',
+        failedLoginCount: 0,
+        lockedUntil: null,
+        isActive: false,
+        emails: [{ email: 'disabled@example.com', primary: true }],
+      }
+      mockData.user.findFirst.mockResolvedValue(mockUser as any)
+      mockData.loginAttempt.create.mockResolvedValue({} as any)
+
+      await expect(
+        service.login({ email: 'disabled@example.com', password: 'Password123!' }, {} as any),
+      ).rejects.toThrow('Account has been disabled')
+
+      expect(mockData.loginAttempt.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({
+            userId: 'user-123',
+            success: false,
+            reason: 'ACCOUNT_DISABLED',
+          }),
+        }),
+      )
+    })
+    it('should reject users without a password as invalid credentials', async () => {
+      const mockUser = {
+        id: 'user-123',
+        password: null,
+        failedLoginCount: 0,
+        lockedUntil: null,
+        isActive: true,
+        emails: [{ email: 'oauth@example.com', primary: true }],
+      }
+      mockData.user.findFirst.mockResolvedValue(mockUser as any)
+      mockData.loginAttempt.create.mockResolvedValue({} as any)
+
+      await expect(
+        service.login({ email: 'oauth@example.com', password: 'Password123!' }, {} as any),
+      ).rejects.toThrow(BadRequestException)
+
+      expect(mockData.loginAttempt.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({
+            reason: 'INVALID_PASSWORD',
+          }),
+        }),
+      )
+    })
+    it('should return a temporary token when 2FA is required', async () => {
+      const loginInput = {
+        email: 'test@example.com',
+        password: 'TestPassword123!',
+        remember: true,
+      }
+      const mockUser = {
+        id: 'user-123',
+        password: 'hashed-password',
+        isSuperAdmin: false,
+        lockedUntil: null,
+        failedLoginCount: 0,
+        isActive: true,
+        twoFactorEnabled: true,
+        emails: [{ email: 'test@example.com', primary: true, verified: true }],
+      }
+      ;(validatePassword as jest.Mock).mockReturnValue(true)
+      mockData.user.findFirst.mockResolvedValue(mockUser as any)
+      mockData.user.update.mockResolvedValue(mockUser as any)
+      mockJwtService.sign.mockReturnValue('temp-2fa-token')
+
+      const result = await service.login(loginInput, {} as any)
+
+      expect(result).toEqual({
+        requires2FA: true,
+        tempToken: 'temp-2fa-token',
+        user: null,
+        token: null,
+      })
+      expect(mockJwtService.sign).toHaveBeenCalledWith(
+        { userId: 'user-123', temp2FA: true, remember: true },
+        { expiresIn: '5m' },
       )
     })
     it('should lock account after 5 failed attempts', async () => {
@@ -711,6 +814,13 @@ describe('AuthService', () => {
       expect(result).toBe(true)
       expect(mockEmailService.sendTemplate).toHaveBeenCalled()
     })
+    it('should reject resend verification for unknown users', async () => {
+      mockData.user.findFirst.mockResolvedValue(null)
+
+      await expect(service.resendVerificationEmail('missing@example.com')).rejects.toThrow(
+        'No user found for email: missing@example.com',
+      )
+    })
   })
   describe('Password Reset Flow', () => {
     it('should reset password with valid token', async () => {
@@ -765,6 +875,51 @@ describe('AuthService', () => {
         'Your password reset token has expired.',
       )
     })
+    it('should reject reset when expiration is missing', async () => {
+      const token = 'missing-expiration-token'
+      mockData.user.findFirst.mockResolvedValue({
+        id: 'user-123',
+        passwordResetToken: token,
+        passwordResetExpires: null,
+      } as any)
+
+      await expect(service.resetPassword('NewPassword123!', token, {} as any)).rejects.toThrow(
+        'No password reset expiration date found.',
+      )
+    })
+    it('should reject reset when new password matches the current password', async () => {
+      const token = 'valid-reset-token'
+      ;(hashPassword as jest.Mock).mockReturnValue('hashed-new-password')
+      ;(validatePassword as jest.Mock).mockReturnValue(true)
+      mockData.user.findFirst.mockResolvedValue({
+        id: 'user-123',
+        password: 'hashed-current-password',
+        passwordResetToken: token,
+        passwordResetExpires: new Date(Date.now() + 3600000),
+      } as any)
+
+      await expect(service.resetPassword('SamePassword123!', token, {} as any)).rejects.toThrow(
+        'New password cannot be the same as your current password',
+      )
+    })
+    it('should reject reset when new password was used recently', async () => {
+      const token = 'valid-reset-token'
+      ;(hashPassword as jest.Mock).mockReturnValue('hashed-new-password')
+      ;(validatePassword as jest.Mock).mockReturnValueOnce(false).mockReturnValueOnce(true)
+      mockData.user.findFirst.mockResolvedValue({
+        id: 'user-123',
+        password: 'hashed-current-password',
+        passwordResetToken: token,
+        passwordResetExpires: new Date(Date.now() + 3600000),
+      } as any)
+      mockData.passwordHistory.findMany.mockResolvedValue([
+        { passwordHash: 'hashed-old-password' },
+      ] as any)
+
+      await expect(service.resetPassword('OldPassword123!', token, {} as any)).rejects.toThrow(
+        'This password was used recently',
+      )
+    })
     it('should reject invalid reset token', async () => {
       const token = 'invalid-token'
       const newPassword = 'NewPassword123!'
@@ -775,7 +930,7 @@ describe('AuthService', () => {
     })
   })
   describe('2FA Management', () => {
-    it.skip('should setup 2FA and return secret and QR code', async () => {
+    it('should setup 2FA and return secret and QR code', async () => {
       const userId = 'user-123'
       const mockUser = {
         id: userId,
@@ -783,22 +938,6 @@ describe('AuthService', () => {
         twoFactorEnabled: false,
         emails: [{ email: 'test@example.com', primary: true }],
       }
-      const mockSecret = 'JBSWY3DPEHPK3PXP'
-      const mockQRCode = 'data:image/png;base64,abc123'
-      // Mock 2FA helper functions
-      const generate2FASecretMock = jest.fn().mockReturnValue({
-        secret: mockSecret,
-        otpauthUrl:
-          'otpauth://totp/Test%20App:test@example.com?secret=JBSWY3DPEHPK3PXP&issuer=Test%20App',
-      })
-      const generateQRCodeMock = jest.fn().mockResolvedValue(mockQRCode)
-      const encryptSecretMock = jest.fn().mockReturnValue('encrypted-secret')
-      // Replace the actual imports with mocks
-      jest.mock('./twofa.helper', () => ({
-        generate2FASecret: generate2FASecretMock,
-        generateQRCode: generateQRCodeMock,
-        encryptSecret: encryptSecretMock,
-      }))
       mockData.user.findUnique.mockResolvedValue(mockUser as any)
       mockData.user.update.mockResolvedValue(mockUser as any)
       const result = await service.setup2FA(userId)
@@ -1066,6 +1205,29 @@ describe('AuthService', () => {
       mockData.email.findFirst.mockResolvedValue(mockEmail as any)
       await expect(service.verifyEmailChange(token)).rejects.toThrow()
     })
+    it('should reject email change verification when expiration is missing', async () => {
+      mockData.email.findFirst.mockResolvedValue({
+        id: 'email-123',
+        verifyExpires: null,
+        user: { id: 'user-123' },
+      } as any)
+
+      await expect(service.verifyEmailChange('token-without-expiration')).rejects.toThrow(
+        'No verification expiration found',
+      )
+    })
+    it('should reject email change verification when userId is missing', async () => {
+      mockData.email.findFirst.mockResolvedValue({
+        id: 'email-123',
+        userId: null,
+        verifyExpires: new Date(Date.now() + 3600000),
+        user: { id: 'user-123' },
+      } as any)
+
+      await expect(service.verifyEmailChange('token-without-user-id')).rejects.toThrow(
+        'Email verification record is missing a user',
+      )
+    })
   })
   describe('2FA Setup and Login Flow', () => {
     it('should setup 2FA for user', async () => {
@@ -1108,6 +1270,72 @@ describe('AuthService', () => {
       const result = await service.verify2FALogin(userId, code)
       expect(typeof result).toBe('boolean')
     })
+    it('should reject 2FA setup when user is missing', async () => {
+      mockData.user.findUnique.mockResolvedValue(null)
+
+      await expect(service.setup2FA('missing-user')).rejects.toThrow('User not found')
+    })
+    it('should reject 2FA setup when already enabled', async () => {
+      mockData.user.findUnique.mockResolvedValue({
+        id: 'user-123',
+        twoFactorEnabled: true,
+        emails: [{ email: 'test@example.com', primary: true }],
+      } as any)
+
+      await expect(service.setup2FA('user-123')).rejects.toThrow('2FA is already enabled')
+    })
+    it('should reject enabling 2FA when setup has not been initiated', async () => {
+      mockData.user.findUnique.mockResolvedValue({
+        id: 'user-123',
+        twoFactorSecret: null,
+        twoFactorEnabled: false,
+        emails: [],
+      } as any)
+
+      await expect(service.enable2FA('user-123', '123456', {} as any)).rejects.toThrow(
+        '2FA setup not initiated',
+      )
+    })
+    it('should reject disabling 2FA when it is not enabled', async () => {
+      mockData.user.findUnique.mockResolvedValue({
+        id: 'user-123',
+        twoFactorEnabled: false,
+      } as any)
+
+      await expect(
+        service.disable2FA('user-123', { password: 'Password123!' } as any, {} as any),
+      ).rejects.toThrow('2FA is not enabled')
+    })
+    it('should reject disabling 2FA with an invalid password', async () => {
+      ;(validatePassword as jest.Mock).mockReturnValue(false)
+      mockData.user.findUnique.mockResolvedValue({
+        id: 'user-123',
+        password: 'hashed-password',
+        twoFactorEnabled: true,
+      } as any)
+
+      await expect(
+        service.disable2FA('user-123', { password: 'WrongPassword123!' } as any, {} as any),
+      ).rejects.toThrow('Invalid password')
+    })
+    it('should reject 2FA login when user is missing', async () => {
+      mockData.user.findUnique.mockResolvedValue(null)
+
+      await expect(service.verify2FALogin('missing-user', '123456')).rejects.toThrow(
+        'User not found',
+      )
+    })
+    it('should reject 2FA login when 2FA is not enabled', async () => {
+      mockData.user.findUnique.mockResolvedValue({
+        id: 'user-123',
+        twoFactorEnabled: false,
+        twoFactorSecret: null,
+      } as any)
+
+      await expect(service.verify2FALogin('user-123', '123456')).rejects.toThrow(
+        '2FA is not enabled',
+      )
+    })
     it('should complete 2FA login with valid temp token and code', async () => {
       const tempToken = 'temp-jwt-token'
       const code = '123456'
@@ -1145,6 +1373,21 @@ describe('AuthService', () => {
         throw new Error('Invalid token')
       })
       await expect(service.complete2FALogin(tempToken, code, {} as any)).rejects.toThrow()
+    })
+    it('should reject complete 2FA login when code verification fails', async () => {
+      const tempToken = 'temp-jwt-token'
+      mockJwtService.decode.mockReturnValue({ userId: 'user-123', temp2FA: true } as any)
+      mockData.user.findUnique.mockResolvedValue({
+        id: 'user-123',
+        twoFactorEnabled: true,
+        twoFactorSecret: 'encrypted-secret',
+        twoFactorRecoveryCodes: [],
+      } as any)
+      ;(require('./twofa.helper').verify2FACode as jest.Mock).mockReturnValue(false)
+
+      await expect(service.complete2FALogin(tempToken, 'bad-code', {} as any)).rejects.toThrow(
+        'Invalid 2FA code',
+      )
     })
   })
   describe('User Emulation', () => {
@@ -1232,6 +1475,18 @@ describe('AuthService', () => {
       mockData.auditLog.create.mockResolvedValue({} as any)
       await expect(service.endEmulation(normalToken)).rejects.toThrow()
     })
+    it('should reject end emulation when original admin no longer exists', async () => {
+      mockJwtService.decode.mockReturnValue({
+        userId: 'user-456',
+        isEmulating: true,
+        originalAdminId: 'missing-admin',
+      } as any)
+      mockData.user.findUnique.mockResolvedValue(null)
+
+      await expect(service.endEmulation('emulation-token')).rejects.toThrow(
+        'Original admin user not found',
+      )
+    })
   })
   describe('User Data Export', () => {
     it('should export user data', async () => {
@@ -1301,6 +1556,11 @@ describe('AuthService', () => {
       expect(result.userData.emails).toHaveLength(1)
       expect(result.userData.organizations).toHaveLength(1)
     })
+    it('should reject user data export for missing users', async () => {
+      mockData.user.findUnique.mockResolvedValue(null)
+
+      await expect(service.exportUserData('missing-user')).rejects.toThrow('User not found')
+    })
   })
   describe('Organization Ownership Transfer', () => {
     it('should transfer organization ownership', async () => {
@@ -1368,6 +1628,29 @@ describe('AuthService', () => {
         service.transferOrganizationOwnership(currentOwnerId, organizationId, newOwnerId),
       ).rejects.toThrow()
     })
+    it('should reject ownership transfer when roles are missing', async () => {
+      const currentOwnerId = 'owner-123'
+      const newOwnerId = 'user-456'
+      const organizationId = 'org-789'
+      mockData.organizationMember.findFirst
+        .mockResolvedValueOnce({
+          id: 'member-1',
+          userId: currentOwnerId,
+          organizationId,
+          role: { name: 'Owner' },
+        } as any)
+        .mockResolvedValueOnce({
+          id: 'member-2',
+          userId: newOwnerId,
+          organizationId,
+          role: { name: 'Member' },
+        } as any)
+      mockData.role.findFirst.mockResolvedValueOnce(null)
+
+      await expect(
+        service.transferOrganizationOwnership(currentOwnerId, organizationId, newOwnerId),
+      ).rejects.toThrow('Organization roles not properly configured')
+    })
   })
   describe('Session Validation', () => {
     it('should validate valid session', async () => {
@@ -1391,6 +1674,13 @@ describe('AuthService', () => {
     it('should reject nonexistent session', async () => {
       mockData.userSession.findUnique.mockResolvedValue(null)
       const result = await service.isSessionValid('nonexistent-session')
+      expect(result).toBe(false)
+    })
+    it('should return false when session validation lookup fails', async () => {
+      mockData.userSession.findUnique.mockRejectedValue(new Error('database unavailable'))
+
+      const result = await service.isSessionValid('session-123')
+
       expect(result).toBe(false)
     })
   })

@@ -95,5 +95,4 @@ export class ConfigService {
       currency: this.config.get<string>('STRIPE_CURRENCY') || 'usd',
     }
   }
-
 }

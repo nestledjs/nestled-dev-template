@@ -82,7 +82,12 @@ function AuditLogItem({ log, formatDate }: AuditLogItemProps) {
   return (
     <div className="flex gap-4 p-4 rounded-lg border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-white/5 hover:bg-zinc-100 dark:hover:bg-white/10 transition">
       {/* Icon */}
-      <div className={cn('flex-shrink-0 h-10 w-10 rounded-lg flex items-center justify-center', colorClasses.iconBg)}>
+      <div
+        className={cn(
+          'flex-shrink-0 h-10 w-10 rounded-lg flex items-center justify-center',
+          colorClasses.iconBg,
+        )}
+      >
         <Icon className={cn('h-5 w-5', colorClasses.iconText)} />
       </div>
 
@@ -91,12 +96,15 @@ function AuditLogItem({ log, formatDate }: AuditLogItemProps) {
         <div className="flex items-start justify-between gap-4">
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <span className={cn('inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium', colorClasses.badgeBg)}>
+              <span
+                className={cn(
+                  'inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium',
+                  colorClasses.badgeBg,
+                )}
+              >
                 {config.label}
               </span>
-              <span className="text-xs text-zinc-500 dark:text-zinc-400">
-                {log.entityType}
-              </span>
+              <span className="text-xs text-zinc-500 dark:text-zinc-400">{log.entityType}</span>
             </div>
             <p className="text-sm text-zinc-900 dark:text-white font-medium mb-2">
               Entity ID: {log.entityId}

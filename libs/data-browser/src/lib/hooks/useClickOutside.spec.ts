@@ -129,10 +129,9 @@ describe('useClickOutside', () => {
         value: innerElement,
       })
 
-      const { rerender } = renderHook(
-        ({ isActive }) => useClickOutside(ref, handler, isActive),
-        { initialProps: { isActive: false } },
-      )
+      const { rerender } = renderHook(({ isActive }) => useClickOutside(ref, handler, isActive), {
+        initialProps: { isActive: false },
+      })
 
       // Click outside while inactive
       const outsideElement = document.createElement('div')
@@ -269,10 +268,9 @@ describe('useClickOutside', () => {
         value: innerElement,
       })
 
-      const { rerender } = renderHook(
-        ({ isActive }) => useClickOutside(ref, handler, isActive),
-        { initialProps: { isActive: true } },
-      )
+      const { rerender } = renderHook(({ isActive }) => useClickOutside(ref, handler, isActive), {
+        initialProps: { isActive: true },
+      })
 
       const initialCallCount = addEventListenerSpy.mock.calls.length
 
@@ -299,10 +297,9 @@ describe('useClickOutside', () => {
         value: innerElement,
       })
 
-      const { rerender } = renderHook(
-        ({ handler }) => useClickOutside(ref, handler, true),
-        { initialProps: { handler: handler1 } },
-      )
+      const { rerender } = renderHook(({ handler }) => useClickOutside(ref, handler, true), {
+        initialProps: { handler: handler1 },
+      })
 
       // Update handler
       rerender({ handler: handler2 })

@@ -92,7 +92,7 @@ describe('get-plural-names', () => {
           'wisdom',
         ]
 
-        uncountableWords.forEach((word) => {
+        uncountableWords.forEach(word => {
           expect(getPluralName(word)).toBe(word + 'List')
         })
       })

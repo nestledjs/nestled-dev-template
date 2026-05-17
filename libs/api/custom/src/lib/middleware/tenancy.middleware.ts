@@ -10,24 +10,31 @@ export class TenancyMiddleware implements NestMiddleware {
 
   constructor(
     private readonly data: ApiCoreDataAccessService,
-    @Optional() private readonly authCache?: AuthCacheService
+    @Optional() private readonly authCache?: AuthCacheService,
   ) {}
 
   private async resolveOrganizationId(req: Request & { user?: User }): Promise<string | undefined> {
-    const fromHeader = req.headers['x-organization-id'] as string
+    const rawHeader = req.headers['x-organization-id']
+    const fromHeader = Array.isArray(rawHeader) ? rawHeader[0] : rawHeader
     if (fromHeader) return fromHeader
 
-    if (req.user!.activeOrganizationId) return req.user!.activeOrganizationId
+    if (!req.user) return undefined
+
+    if (req.user.activeOrganizationId) return req.user.activeOrganizationId
 
     if (this.authCache?.isEnabled()) {
-      const cachedOrgId = await this.authCache.getUserActiveOrganization(req.user!.id)
+      const cachedOrgId = await this.authCache.getUserActiveOrganization(req.user.id)
       if (cachedOrgId) return cachedOrgId
     }
 
     return undefined
   }
 
-  async use(req: Request & { user?: User; organizationContext?: OrganizationContext }, res: Response, next: NextFunction) {
+  async use(
+    req: Request & { user?: User; organizationContext?: OrganizationContext },
+    res: Response,
+    next: NextFunction,
+  ) {
     // Skip if no authenticated user
     if (!req.user) {
       return next()
@@ -47,7 +54,7 @@ export class TenancyMiddleware implements NestMiddleware {
       if (cachedContext) {
         req.organizationContext = this.applySuperAdminBoost(cachedContext, req.user)
         this.logger.debug(
-          `Organization context from cache: User ${req.user.id} -> Org ${organizationId} (${cachedContext.roleName})`
+          `Organization context from cache: User ${req.user.id} -> Org ${organizationId} (${cachedContext.roleName})`,
         )
         return next()
       }
@@ -69,7 +76,7 @@ export class TenancyMiddleware implements NestMiddleware {
 
       if (!membership) {
         throw new ForbiddenException(
-          `User ${req.user.id} is not a member of organization ${organizationId}`
+          `User ${req.user.id} is not a member of organization ${organizationId}`,
         )
       }
 
@@ -87,16 +94,18 @@ export class TenancyMiddleware implements NestMiddleware {
 
       // Cache the membership context in Redis
       if (this.authCache?.isEnabled()) {
-        this.authCache.setMembership(req.user.id, organizationId, organizationContext).catch(err => {
-          this.logger.warn(`Failed to cache membership: ${err.message}`)
-        })
+        this.authCache
+          .setMembership(req.user.id, organizationId, organizationContext)
+          .catch(err => {
+            this.logger.warn(`Failed to cache membership: ${err.message}`)
+          })
       }
 
       // Apply super admin boost and attach to request
       req.organizationContext = this.applySuperAdminBoost(organizationContext, req.user)
 
       this.logger.debug(
-        `Organization context set: User ${req.user.id} -> Org ${organizationId} (${membership.role.name})`
+        `Organization context set: User ${req.user.id} -> Org ${organizationId} (${membership.role.name})`,
       )
 
       next()
@@ -110,7 +119,10 @@ export class TenancyMiddleware implements NestMiddleware {
     }
   }
 
-  private async getCachedMembership(userId: string, organizationId: string): Promise<OrganizationContext | null> {
+  private async getCachedMembership(
+    userId: string,
+    organizationId: string,
+  ): Promise<OrganizationContext | null> {
     if (!this.authCache?.isEnabled()) return null
     return (await this.authCache.getMembership(userId, organizationId)) ?? null
   }
@@ -125,9 +137,7 @@ export class TenancyMiddleware implements NestMiddleware {
     }
 
     // Check if already has all:manage
-    const hasAllManage = context.permissions.some(
-      p => p.subject === 'all' && p.action === 'manage'
-    )
+    const hasAllManage = context.permissions.some(p => p.subject === 'all' && p.action === 'manage')
 
     if (hasAllManage) {
       return context

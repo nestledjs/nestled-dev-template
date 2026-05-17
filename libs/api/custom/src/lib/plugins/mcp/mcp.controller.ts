@@ -23,10 +23,10 @@ class JsonRequestTransport implements Transport {
 
   async send(message: JSONRPCMessage): Promise<void> {
     if ('id' in message && message.id !== null && message.id !== undefined) {
-      const resolve = this.pending.get(message.id as string | number)
+      const resolve = this.pending.get(message.id)
       if (resolve) {
         resolve(message)
-        this.pending.delete(message.id as string | number)
+        this.pending.delete(message.id)
       }
     }
   }
@@ -44,10 +44,11 @@ class JsonRequestTransport implements Transport {
 
     const requestMessages = messages.filter(m => isJSONRPCRequest(m))
 
-    const responsePromises = requestMessages.map(req =>
-      new Promise<JSONRPCMessage>(resolve => {
-        this.pending.set((req as any).id, resolve)
-      }),
+    const responsePromises = requestMessages.map(
+      req =>
+        new Promise<JSONRPCMessage>(resolve => {
+          this.pending.set((req as any).id, resolve)
+        }),
     )
 
     for (const msg of messages) {
@@ -60,10 +61,9 @@ class JsonRequestTransport implements Transport {
       setTimeout(() => reject(new Error('MCP response timeout')), 30_000),
     )
     const responses = await Promise.race([Promise.all(responsePromises), timeout])
+    const [firstResponse] = responses
 
-    return (responses as JSONRPCMessage[]).length === 1
-      ? (responses as JSONRPCMessage[])[0]
-      : (responses as JSONRPCMessage[])
+    return responses.length === 1 ? firstResponse : responses
   }
 }
 
@@ -94,8 +94,14 @@ export class McpController {
       const resourceMetadataUrl = `${proto}://${host}/.well-known/oauth-protected-resource/api/mcp`
       res
         .status(401)
-        .header('WWW-Authenticate', `Bearer realm="MCP", resource_metadata="${resourceMetadataUrl}"`)
-        .json({ error: 'Unauthorized', message: 'Authentication required. Use MCP OAuth or provide a Bearer API token.' })
+        .header(
+          'WWW-Authenticate',
+          `Bearer realm="MCP", resource_metadata="${resourceMetadataUrl}"`,
+        )
+        .json({
+          error: 'Unauthorized',
+          message: 'Authentication required. Use MCP OAuth or provide a Bearer API token.',
+        })
       return
     }
 
@@ -124,7 +130,7 @@ export class McpController {
       this.logger.error('MCP request handling error', err)
       if (!res.headersSent) res.status(500).json({ error: 'Internal server error' })
     } finally {
-      server?.close().catch((err) => this.logger.error('MCP close error', err))
+      server?.close().catch(err => this.logger.error('MCP close error', err))
     }
   }
 }

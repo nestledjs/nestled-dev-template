@@ -7,11 +7,7 @@ import { StripeModule } from '@nestled-template/api/integrations'
 import { BillingModule } from '../../plugins/billing'
 
 @Module({
-  imports: [
-    ApiCrudDataAccessModule,
-    StripeModule,
-    BillingModule,
-  ],
+  imports: [ApiCrudDataAccessModule, StripeModule, BillingModule],
   providers: [SubscriptionService, SubscriptionResolver, UserSubscriptionResolver],
   exports: [SubscriptionService, SubscriptionResolver, UserSubscriptionResolver],
 })

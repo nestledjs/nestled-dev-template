@@ -48,14 +48,14 @@ export class GqlOrganizationScopedGuard extends AuthGuard('jwt') {
 
     if (!organizationContext) {
       throw new ForbiddenException(
-        'Organization context is required for this operation. Please set an active organization.'
+        'Organization context is required for this operation. Please set an active organization.',
       )
     }
 
     // Check if organization context is complete
     if (!organizationContext.organizationId || !organizationContext.roleId) {
       throw new ForbiddenException(
-        'Invalid organization context. Please ensure you have a valid membership in the organization.'
+        'Invalid organization context. Please ensure you have a valid membership in the organization.',
       )
     }
 

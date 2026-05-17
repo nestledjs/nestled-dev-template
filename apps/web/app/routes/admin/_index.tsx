@@ -68,8 +68,12 @@ export default function AdminDashboard() {
         <div className="rounded-xl border border-zinc-200 dark:border-white/10 bg-white dark:bg-white/5 p-6 backdrop-blur">
           <div className="text-sm font-medium text-zinc-600 dark:text-zinc-400">Total Users</div>
           <div className="mt-2 text-3xl font-bold text-zinc-900 dark:text-white">
-            {loading && <div className="h-9 w-16 bg-zinc-200 dark:bg-zinc-700 animate-pulse rounded" />}
-            {!loading && error && <span className="text-red-600 dark:text-red-400 text-base">Error</span>}
+            {loading && (
+              <div className="h-9 w-16 bg-zinc-200 dark:bg-zinc-700 animate-pulse rounded" />
+            )}
+            {!loading && error && (
+              <span className="text-red-600 dark:text-red-400 text-base">Error</span>
+            )}
             {!loading && !error && (stats?.totalUsers?.toLocaleString() ?? '0')}
           </div>
           {!loading && !error && (
@@ -79,8 +83,12 @@ export default function AdminDashboard() {
         <div className="rounded-xl border border-zinc-200 dark:border-white/10 bg-white dark:bg-white/5 p-6 backdrop-blur">
           <div className="text-sm font-medium text-zinc-600 dark:text-zinc-400">Organizations</div>
           <div className="mt-2 text-3xl font-bold text-zinc-900 dark:text-white">
-            {loading && <div className="h-9 w-16 bg-zinc-200 dark:bg-zinc-700 animate-pulse rounded" />}
-            {!loading && error && <span className="text-red-600 dark:text-red-400 text-base">Error</span>}
+            {loading && (
+              <div className="h-9 w-16 bg-zinc-200 dark:bg-zinc-700 animate-pulse rounded" />
+            )}
+            {!loading && error && (
+              <span className="text-red-600 dark:text-red-400 text-base">Error</span>
+            )}
             {!loading && !error && (stats?.totalOrganizations?.toLocaleString() ?? '0')}
           </div>
           {!loading && !error && (
@@ -94,8 +102,12 @@ export default function AdminDashboard() {
             Active Sessions
           </div>
           <div className="mt-2 text-3xl font-bold text-zinc-900 dark:text-white">
-            {loading && <div className="h-9 w-16 bg-zinc-200 dark:bg-zinc-700 animate-pulse rounded" />}
-            {!loading && error && <span className="text-red-600 dark:text-red-400 text-base">Error</span>}
+            {loading && (
+              <div className="h-9 w-16 bg-zinc-200 dark:bg-zinc-700 animate-pulse rounded" />
+            )}
+            {!loading && error && (
+              <span className="text-red-600 dark:text-red-400 text-base">Error</span>
+            )}
             {!loading && !error && (stats?.activeSessions?.toLocaleString() ?? '0')}
           </div>
           {!loading && !error && (
@@ -107,8 +119,12 @@ export default function AdminDashboard() {
             Security Events (24h)
           </div>
           <div className="mt-2 text-3xl font-bold text-zinc-900 dark:text-white">
-            {loading && <div className="h-9 w-16 bg-zinc-200 dark:bg-zinc-700 animate-pulse rounded" />}
-            {!loading && error && <span className="text-red-600 dark:text-red-400 text-base">Error</span>}
+            {loading && (
+              <div className="h-9 w-16 bg-zinc-200 dark:bg-zinc-700 animate-pulse rounded" />
+            )}
+            {!loading && error && (
+              <span className="text-red-600 dark:text-red-400 text-base">Error</span>
+            )}
             {!loading && !error && (stats?.recentSecurityEvents?.toLocaleString() ?? '0')}
           </div>
           {!loading && !error && (
@@ -120,8 +136,12 @@ export default function AdminDashboard() {
             Active Subscriptions
           </div>
           <div className="mt-2 text-3xl font-bold text-zinc-900 dark:text-white">
-            {loading && <div className="h-9 w-16 bg-zinc-200 dark:bg-zinc-700 animate-pulse rounded" />}
-            {!loading && error && <span className="text-red-600 dark:text-red-400 text-base">Error</span>}
+            {loading && (
+              <div className="h-9 w-16 bg-zinc-200 dark:bg-zinc-700 animate-pulse rounded" />
+            )}
+            {!loading && error && (
+              <span className="text-red-600 dark:text-red-400 text-base">Error</span>
+            )}
             {!loading && !error && (stats?.activeSubscriptions?.toLocaleString() ?? '0')}
           </div>
           {!loading && !error && (

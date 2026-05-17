@@ -49,7 +49,6 @@ export class ComplexityPlugin implements ApolloServerPlugin {
           Logger.error(message)
           throw new GraphQLError(message)
         }
-
       },
     }
   }

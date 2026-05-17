@@ -25,7 +25,14 @@ import { SecurityEventsModule } from '../security'
     }),
   ],
   exports: [AuthService, OAuthService, SessionService],
-  providers: [AuthService, SessionService, OAuthService, AuthResolver, UserExtensionResolver, JwtStrategy],
+  providers: [
+    AuthService,
+    SessionService,
+    OAuthService,
+    AuthResolver,
+    UserExtensionResolver,
+    JwtStrategy,
+  ],
   controllers: [OAuthController],
 })
 export class AuthModule {}

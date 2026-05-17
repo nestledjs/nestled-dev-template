@@ -1,5 +1,9 @@
 import React, { useState } from 'react'
-import { XMarkIcon, ExclamationTriangleIcon, ArrowsRightLeftIcon } from '@heroicons/react/24/outline'
+import {
+  XMarkIcon,
+  ExclamationTriangleIcon,
+  ArrowsRightLeftIcon,
+} from '@heroicons/react/24/outline'
 import { useQuery, useMutation } from '@apollo/client/react'
 import {
   MyOrganizationsWithMembers,
@@ -7,7 +11,7 @@ import {
   Me,
   type MyOrganizationsWithMembersQuery,
   type TransferOrganizationOwnershipMutation,
-  type MeQuery
+  type MeQuery,
 } from '@nestled-template/shared/sdk'
 
 interface TransferOwnershipModalProps {
@@ -27,8 +31,12 @@ export default function TransferOwnershipModal({
   const [isTransferring, setIsTransferring] = useState(false)
 
   const { data: meData } = useQuery<MeQuery>(Me)
-  const { data: organizationsData, loading } = useQuery<MyOrganizationsWithMembersQuery>(MyOrganizationsWithMembers)
-  const [transferOwnershipMutation] = useMutation<TransferOrganizationOwnershipMutation>(TransferOrganizationOwnership)
+  const { data: organizationsData, loading } = useQuery<MyOrganizationsWithMembersQuery>(
+    MyOrganizationsWithMembers,
+  )
+  const [transferOwnershipMutation] = useMutation<TransferOrganizationOwnershipMutation>(
+    TransferOrganizationOwnership,
+  )
 
   const currentUserId = meData?.me?.id
 
@@ -135,7 +143,10 @@ export default function TransferOwnershipModal({
             <div className="space-y-4">
               {/* Organization Selection */}
               <div>
-                <label htmlFor="transfer-organization" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
+                <label
+                  htmlFor="transfer-organization"
+                  className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2"
+                >
                   Select Organization to Transfer
                 </label>
                 <select
@@ -159,7 +170,10 @@ export default function TransferOwnershipModal({
               {/* New Owner Selection */}
               {selectedOrganization && (
                 <div>
-                  <label htmlFor="transfer-new-owner" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
+                  <label
+                    htmlFor="transfer-new-owner"
+                    className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2"
+                  >
                     Select New Owner
                   </label>
                   {selectedOrgMembers.length === 0 ? (
@@ -205,7 +219,10 @@ export default function TransferOwnershipModal({
               {/* Confirmation */}
               {selectedOrganization && selectedNewOwner && (
                 <div>
-                  <label htmlFor="transfer-confirm" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
+                  <label
+                    htmlFor="transfer-confirm"
+                    className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2"
+                  >
                     Type <strong>TRANSFER</strong> to confirm
                   </label>
                   <input

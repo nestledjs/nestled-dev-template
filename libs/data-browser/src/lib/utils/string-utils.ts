@@ -11,6 +11,18 @@ export function spacedWords(name: string): string {
   return name.replaceAll(/([a-z])([A-Z])/g, '$1 $2').replaceAll(/([A-Z])([A-Z][a-z])/g, '$1 $2')
 }
 
+function isUppercaseLetter(char: string): boolean {
+  return char >= 'A' && char <= 'Z'
+}
+
+function isLowercaseLetter(char: string | undefined): boolean {
+  return char !== undefined && char >= 'a' && char <= 'z'
+}
+
+function titleCaseAcronym(acronym: string): string {
+  return acronym.charAt(0).toUpperCase() + acronym.slice(1).toLowerCase()
+}
+
 // Helper to format field name for display
 export function formatFieldName(fieldName: string): string {
   // Handle dotted field names (e.g., "email.emailType" -> "Email Email Type")
@@ -51,22 +63,34 @@ export function formatFieldName(fieldName: string): string {
 // e.g., "CourseFAQ" -> "CourseFaq", "APIToken" -> "ApiToken"
 // But 2-letter runs like "OAuth" stay as-is: "OAuthAccount" -> "OAuthAccount"
 export function normalizeModelNameForDocument(modelName: string): string {
-  // Convert consecutive uppercase letters (3+) to title case
-  // Handle two cases:
-  // 1. Acronym followed by lowercase: "APIToken" -> match "API", keep "T" -> "ApiToken"
-  // 2. Acronym at end of string: "CourseFAQ" -> "CourseFaq"
-  return modelName
-    // First handle acronyms followed by another capital+lowercase (e.g., APIToken -> ApiToken)
-    .replaceAll(/([A-Z]{2,})([A-Z][a-z])/g, (_, acronym, rest) => {
-      if (acronym.length >= 2) {
-        return acronym.charAt(0).toUpperCase() + acronym.slice(1).toLowerCase() + rest
-      }
-      return acronym + rest
-    })
-    // Then handle acronyms at end of string (e.g., CourseFAQ -> CourseFaq)
-    .replaceAll(/[A-Z]{3,}$/g, match =>
-      match.charAt(0).toUpperCase() + match.slice(1).toLowerCase()
-    )
+  let normalized = ''
+  let index = 0
+
+  while (index < modelName.length) {
+    if (!isUppercaseLetter(modelName[index])) {
+      normalized += modelName[index]
+      index += 1
+      continue
+    }
+
+    const runStart = index
+    while (index < modelName.length && isUppercaseLetter(modelName[index])) {
+      index += 1
+    }
+
+    const run = modelName.slice(runStart, index)
+    const nextIsLowercase = isLowercaseLetter(modelName[index])
+
+    if (run.length >= 4 && nextIsLowercase) {
+      normalized += titleCaseAcronym(run.slice(0, -1)) + run.at(-1)
+    } else if (run.length >= 3 && index === modelName.length) {
+      normalized += titleCaseAcronym(run)
+    } else {
+      normalized += run
+    }
+  }
+
+  return normalized
 }
 
 // Utility function for generating display names
@@ -83,10 +107,10 @@ export function getItemDisplayName(item: any): string {
 export function getSmartSearchFields(availableFields: string[]): string[] {
   const primaryFields = ['name', 'title', 'email', 'firstName', 'lastName', 'subject']
   const primaryMatches = primaryFields.filter(field => availableFields.includes(field))
-  
+
   if (primaryMatches.length >= 1) {
     return primaryMatches.slice(0, 2)
   }
-  
+
   return availableFields.slice(0, Math.min(2, availableFields.length))
 }

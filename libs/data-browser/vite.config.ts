@@ -22,7 +22,7 @@ export default defineConfig({
       fileName: () => 'index.js',
     },
     rollupOptions: {
-      external: (id) => {
+      external: id => {
         // Externalize all non-relative imports (node_modules)
         return !id.startsWith('.') && !id.startsWith('/')
       },

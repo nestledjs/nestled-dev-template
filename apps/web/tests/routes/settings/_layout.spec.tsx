@@ -1,6 +1,6 @@
 import React from 'react'
 import { render, screen, within } from '@testing-library/react'
-import { createTestRouter } from "../../helpers/createTestRouter"
+import { createTestRouter } from '../../helpers/createTestRouter'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import SettingsLayout from '../../../app/routes/settings/_layout'
 
@@ -13,7 +13,6 @@ vi.mock('@apollo/client/react', () => ({
 }))
 
 // Mock SDK
-
 
 // Mock web components
 vi.mock('@nestled-template/web', () => ({
@@ -106,7 +105,9 @@ describe('SettingsLayout Component', () => {
           },
           {
             path: 'organization/edit',
-            Component: () => <div data-testid="organization-edit-content">Organization Edit Content</div>,
+            Component: () => (
+              <div data-testid="organization-edit-content">Organization Edit Content</div>
+            ),
           },
           {
             path: 'members',
@@ -381,7 +382,7 @@ describe('SettingsLayout Component', () => {
       const avatar = screen.getAllByTestId('avatar')[0]
       expect(within(avatar).getByRole('img')).toHaveAttribute(
         'src',
-        'https://example.com/avatar.png'
+        'https://example.com/avatar.png',
       )
     })
 
@@ -407,7 +408,7 @@ describe('SettingsLayout Component', () => {
       const orgAvatar = avatars[1]
       expect(within(orgAvatar).getByRole('img')).toHaveAttribute(
         'src',
-        'https://example.com/logo.png'
+        'https://example.com/logo.png',
       )
     })
 

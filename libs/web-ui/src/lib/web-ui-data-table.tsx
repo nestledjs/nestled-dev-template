@@ -1,4 +1,9 @@
-import { toCount, formatFieldName, getNestedProperty, renderValue } from '@nestled-template/shared/utils'
+import {
+  toCount,
+  formatFieldName,
+  getNestedProperty,
+  renderValue,
+} from '@nestled-template/shared/utils'
 import { CorePaging } from '@nestled-template/shared/sdk'
 
 import React, { Dispatch, ReactElement, SetStateAction, useCallback, useState } from 'react'
@@ -60,7 +65,7 @@ export function WebUiDataTable(props: WebUiDataTableProps) {
   const [copiedId, setCopiedId] = useState<string | null>(null)
 
   const toggleIdVisibility = useCallback((rowId: string) => {
-    setVisibleIds((prev) => {
+    setVisibleIds(prev => {
       const next = new Set(prev)
       if (next.has(rowId)) next.delete(rowId)
       else next.add(rowId)
@@ -141,7 +146,10 @@ export function WebUiDataTable(props: WebUiDataTableProps) {
             <thead className="bg-gray-50">
               <tr>
                 {/* Edit column moved to far left */}
-                <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">
+                <th
+                  scope="col"
+                  className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6"
+                >
                   <span className="sr-only">Edit</span>
                 </th>
                 {props?.fields?.map((field, fieldIndex) => (
@@ -166,12 +174,16 @@ export function WebUiDataTable(props: WebUiDataTableProps) {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200 bg-white">
-              {props?.data?.map((item: typeof props.data[0]) => {
+              {props?.data?.map((item: (typeof props.data)[0]) => {
                 return (
                   <tr key={item.id}>
                     {/* Edit cell moved to far left */}
                     <td className="whitespace-nowrap py-4 pl-4 pr-3 text-left text-sm font-medium sm:pl-6">
-                      <Link to={`${props.path}/${item.id}`} className="text-blue-600 hover:text-blue-900" title="Edit">
+                      <Link
+                        to={`${props.path}/${item.id}`}
+                        className="text-blue-600 hover:text-blue-900"
+                        title="Edit"
+                      >
                         <PencilIcon className="w-5 h-5" />
                         <span className="sr-only">Edit {String(item.id)}</span>
                       </Link>
@@ -233,7 +245,8 @@ export function WebUiDataTable(props: WebUiDataTableProps) {
                   Previous
                 </button>
               ) : null}
-              {(props?.pagination?.skip ?? 0) + (props?.pagination?.take ?? 0) < (props?.pagination?.count ?? 0) ? (
+              {(props?.pagination?.skip ?? 0) + (props?.pagination?.take ?? 0) <
+              (props?.pagination?.count ?? 0) ? (
                 <button
                   type="button"
                   onClick={() => {

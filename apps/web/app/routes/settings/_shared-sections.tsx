@@ -194,8 +194,8 @@ export function DangerZoneSection() {
               Are you absolutely sure?
             </p>
             <p className="text-sm text-rose-700 dark:text-rose-400 mb-3">
-              This action <strong>cannot be undone</strong>. Please type <strong>DELETE</strong>{' '}
-              to confirm.
+              This action <strong>cannot be undone</strong>. Please type <strong>DELETE</strong> to
+              confirm.
             </p>
             <input
               type="text"

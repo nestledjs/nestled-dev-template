@@ -30,7 +30,12 @@ export function createTenantIsolationExtension(organizationId?: string) {
       query: {
         // Apply to all models
         $allModels: {
-          async $allOperations({ model, operation, args, query }: {
+          async $allOperations({
+            model,
+            operation,
+            args,
+            query,
+          }: {
             model: string
             operation: string
             args: any

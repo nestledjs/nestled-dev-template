@@ -37,7 +37,10 @@ function pickNewestJwt(values: string[]): string {
     try {
       const parts = token.split('.')
       if (parts.length !== 3) continue
-      const payload = JSON.parse(Buffer.from(parts[1], 'base64').toString('utf8')) as { iat?: number; exp?: number }
+      const payload = JSON.parse(Buffer.from(parts[1], 'base64').toString('utf8')) as {
+        iat?: number
+        exp?: number
+      }
       let iat: number
       if (typeof payload.iat === 'number') {
         iat = payload.iat
@@ -72,7 +75,10 @@ export function getCookie<T extends string = string>(
 }
 
 // Returns cookie parsed as object or null
-export function getJsonCookie<T extends object>(headers: Headers | Record<string, string>, name: string): T | null {
+export function getJsonCookie<T extends object>(
+  headers: Headers | Record<string, string>,
+  name: string,
+): T | null {
   const values = parseCookies(normalizeHeaders(headers).get('cookie'))[name]
   if (!values || values.length === 0) return null
   const raw = values[values.length - 1]

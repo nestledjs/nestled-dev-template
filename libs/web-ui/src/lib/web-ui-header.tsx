@@ -39,13 +39,12 @@ export function WebUiHeader(props: Readonly<WebUiHeaderProps>) {
 
   const siteName = props.siteName || 'Nova Kit'
   const navigation = props?.navigation?.length
-      ? props.navigation
-      : [
-          { name: 'Features', href: '/features' },
-          { name: 'Pricing', href: '/pricing' },
-          { name: 'Blog', href: '/public/blog' },
-        ]
-
+    ? props.navigation
+    : [
+        { name: 'Features', href: '/features' },
+        { name: 'Pricing', href: '/pricing' },
+        { name: 'Blog', href: '/public/blog' },
+      ]
 
   return (
     <header className="bg-white dark:bg-zinc-950">
@@ -83,7 +82,11 @@ export function WebUiHeader(props: Readonly<WebUiHeaderProps>) {
             onClick={() => setTheme(t => (t === 'dark' ? 'light' : 'dark'))}
             className="hidden lg:inline-flex items-center justify-center rounded-md border border-white/15 bg-white/50 px-3 py-2 text-sm text-zinc-700 shadow-sm backdrop-blur transition hover:bg-white/80 dark:border-white/10 dark:bg-white/5 dark:text-zinc-200 dark:hover:bg-white/10"
           >
-            {theme === 'dark' ? <span aria-hidden="true">☀️</span> : <span aria-hidden="true">🌙</span>}
+            {theme === 'dark' ? (
+              <span aria-hidden="true">☀️</span>
+            ) : (
+              <span aria-hidden="true">🌙</span>
+            )}
           </button>
           {props?.isAuthenticated ? (
             <Link

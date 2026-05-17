@@ -4,7 +4,7 @@ import userEvent from '@testing-library/user-event'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import PricingPage from '../../app/routes/pricing'
 import { useSubscription, useGlobalCtx } from '@nestled-template/web'
-import { createTestRouter } from "../helpers/createTestRouter"
+import { createTestRouter } from '../helpers/createTestRouter'
 
 // Mock Apollo Client
 const mockUseQuery = vi.fn()
@@ -15,7 +15,7 @@ vi.mock('@apollo/client/react', () => ({
 }))
 
 // Mock SDK (for DocumentNode exports)
-vi.mock('@nestled-template/shared/sdk', async (importOriginal) => {
+vi.mock('@nestled-template/shared/sdk', async importOriginal => {
   const actual = await importOriginal<typeof import('@nestled-template/shared/sdk')>()
   return {
     ...actual,
@@ -83,10 +83,7 @@ describe('Pricing Page', () => {
     })
 
     // Mock useMutation for CreateCheckoutSession
-    mockUseMutation.mockReturnValue([
-      mockCreateCheckoutSession,
-      { loading: false },
-    ])
+    mockUseMutation.mockReturnValue([mockCreateCheckoutSession, { loading: false }])
 
     vi.mocked(useGlobalCtx).mockReturnValue({
       user: null,
@@ -316,10 +313,7 @@ describe('Pricing Page', () => {
 
     it('should show loading state when creating checkout', () => {
       mockUseMutation.mockClear()
-      mockUseMutation.mockReturnValue([
-        mockCreateCheckoutSession,
-        { loading: true },
-      ])
+      mockUseMutation.mockReturnValue([mockCreateCheckoutSession, { loading: true }])
 
       renderPricingPage()
 
@@ -434,7 +428,9 @@ describe('Pricing Page', () => {
 
       expect(screen.getByText(/upgrade or downgrade your plan at any time/i)).toBeInTheDocument()
       expect(screen.getByText(/all major credit cards and debit cards/i)).toBeInTheDocument()
-      expect(screen.getByText(/retain access until the end of your billing period/i)).toBeInTheDocument()
+      expect(
+        screen.getByText(/retain access until the end of your billing period/i),
+      ).toBeInTheDocument()
     })
   })
 
@@ -487,7 +483,10 @@ describe('Pricing Page', () => {
       const mainHeading = screen.getByRole('heading', { level: 1 })
       expect(mainHeading).toHaveTextContent('Choose Your Plan')
 
-      const faqHeading = screen.getByRole('heading', { level: 3, name: /Frequently Asked Questions/i })
+      const faqHeading = screen.getByRole('heading', {
+        level: 3,
+        name: /Frequently Asked Questions/i,
+      })
       expect(faqHeading).toBeInTheDocument()
     })
 

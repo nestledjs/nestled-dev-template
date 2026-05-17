@@ -21,7 +21,7 @@ export function ErrorBoundary({
   error,
   autoRefresh = true,
   autoRefreshDelay = 3000,
-  header
+  header,
 }: Readonly<ErrorBoundaryProps>) {
   console.error('[ErrorBoundary] Caught error:', error)
 

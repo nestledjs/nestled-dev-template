@@ -6,7 +6,8 @@ export const formTheme = FormThemeSchema.parse({
       'bg-white dark:bg-white border border-gray-300 dark:border-gray-300 rounded-md shadow-sm placeholder-gray-400 dark:placeholder-gray-500 text-gray-900 dark:text-gray-900 focus:outline-none focus:ring-sky-300 focus:border-sky-300',
     error: '!border-red-600 !focus:border-red-600',
     disabled: 'opacity-50 cursor-not-allowed bg-gray-100 dark:bg-gray-100',
-    readOnly: 'min-h-[2.5rem] flex items-center px-3 text-gray-700 dark:text-gray-100 dark:bg-gray-800',
+    readOnly:
+      'min-h-[2.5rem] flex items-center px-3 text-gray-700 dark:text-gray-100 dark:bg-gray-800',
   },
   button: {
     base: 'inline-flex items-center justify-center rounded-md px-3 py-2 text-sm font-semibold shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 transition-colors',
@@ -22,10 +23,12 @@ export const formTheme = FormThemeSchema.parse({
     requiredIndicator: 'text-red-500 dark:text-red-400 ml-1',
   },
   textField: {
-    input: 'block w-full px-3 py-2 sm:text-sm min-h-[2.5rem] bg-white dark:bg-white text-gray-900 dark:text-gray-900',
+    input:
+      'block w-full px-3 py-2 sm:text-sm min-h-[2.5rem] bg-white dark:bg-white text-gray-900 dark:text-gray-900',
     error: '!outline-red-600 !focus:outline-red-600',
     disabled: 'opacity-50 cursor-not-allowed bg-gray-100 dark:bg-gray-100',
-    readOnly: 'min-h-[2.5rem] flex items-center px-3 text-gray-700 dark:text-gray-100 dark:bg-gray-800',
+    readOnly:
+      'min-h-[2.5rem] flex items-center px-3 text-gray-700 dark:text-gray-100 dark:bg-gray-800',
     helpText: 'text-sm text-gray-600 dark:text-gray-400 mt-1',
   },
   checkbox: {
@@ -44,12 +47,24 @@ export const formTheme = FormThemeSchema.parse({
     errorText: 'text-xs text-red-600 dark:text-red-400',
     indeterminate: 'bg-gray-300 border-gray-400',
     readonlyCheckedIcon: (
-      <svg className="w-5 h-5 text-sky-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+      <svg
+        className="w-5 h-5 text-sky-600"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        strokeWidth={3}
+      >
         <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
       </svg>
     ),
     readonlyUncheckedIcon: (
-      <svg className="w-5 h-5 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+      <svg
+        className="w-5 h-5 text-red-500"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        strokeWidth={3}
+      >
         <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
       </svg>
     ),
@@ -72,18 +87,36 @@ export const formTheme = FormThemeSchema.parse({
     helpText: 'text-xs text-gray-500 dark:text-gray-400',
     errorText: 'text-xs text-red-600 dark:text-red-400',
     checkedIcon: (
-      <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+      <svg
+        className="w-4 h-4 text-white"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        strokeWidth={3}
+      >
         <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
       </svg>
     ),
     uncheckedIcon: null, // No icon when unchecked by default
     readonlyCheckedIcon: (
-      <svg className="w-4 h-4 text-sky-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+      <svg
+        className="w-4 h-4 text-sky-600"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        strokeWidth={3}
+      >
         <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
       </svg>
     ),
     readonlyUncheckedIcon: (
-      <svg className="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+      <svg
+        className="w-4 h-4 text-gray-400"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        strokeWidth={3}
+      >
         <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
       </svg>
     ),
@@ -98,7 +131,8 @@ export const formTheme = FormThemeSchema.parse({
   },
   datePicker: {
     wrapper: '',
-    input: 'block w-full px-3 py-2 sm:text-sm min-h-[2.5rem] bg-white dark:bg-white text-gray-900 dark:text-gray-900',
+    input:
+      'block w-full px-3 py-2 sm:text-sm min-h-[2.5rem] bg-white dark:bg-white text-gray-900 dark:text-gray-900',
     focus: 'focus:ring-2 focus:ring-sky-300 focus:border-sky-300',
     error: '!border-red-600 !focus:border-red-600 !focus:ring-red-600',
     disabled: 'opacity-50 cursor-not-allowed bg-gray-100 dark:bg-gray-100',
@@ -109,7 +143,8 @@ export const formTheme = FormThemeSchema.parse({
   },
   dateTimePicker: {
     wrapper: '',
-    input: 'block w-full px-3 py-2 sm:text-sm min-h-[2.5rem] bg-white dark:bg-white text-gray-900 dark:text-gray-900',
+    input:
+      'block w-full px-3 py-2 sm:text-sm min-h-[2.5rem] bg-white dark:bg-white text-gray-900 dark:text-gray-900',
     focus: 'focus:ring-2 focus:ring-sky-300 focus:border-sky-300',
     error: '!border-red-600 !focus:border-red-600 !focus:ring-red-600',
     disabled: 'opacity-50 cursor-not-allowed bg-gray-100 dark:bg-gray-100',
@@ -120,7 +155,8 @@ export const formTheme = FormThemeSchema.parse({
   },
   emailField: {
     wrapper: '',
-    input: 'block w-full px-3 py-2 sm:text-sm min-h-[2.5rem] bg-white dark:bg-white text-gray-900 dark:text-gray-900',
+    input:
+      'block w-full px-3 py-2 sm:text-sm min-h-[2.5rem] bg-white dark:bg-white text-gray-900 dark:text-gray-900',
     focus: 'focus:ring-2 focus:ring-sky-300 focus:border-sky-300',
     error: '!border-red-600 !focus:border-red-600 !focus:ring-red-600',
     disabled: 'opacity-50 cursor-not-allowed bg-gray-100 dark:bg-gray-100',
@@ -132,9 +168,11 @@ export const formTheme = FormThemeSchema.parse({
   moneyField: {
     wrapper: '',
     container: 'relative flex items-center',
-    currencySymbol: 'absolute left-3 z-10 text-gray-500 dark:text-gray-600 pointer-events-none select-none flex items-center',
+    currencySymbol:
+      'absolute left-3 z-10 text-gray-500 dark:text-gray-600 pointer-events-none select-none flex items-center',
     currencySymbolHidden: 'hidden',
-    input: 'block w-full px-3 py-2 sm:text-sm min-h-[2.5rem] bg-white dark:bg-white text-gray-900 dark:text-gray-900',
+    input:
+      'block w-full px-3 py-2 sm:text-sm min-h-[2.5rem] bg-white dark:bg-white text-gray-900 dark:text-gray-900',
     inputWithSymbol: 'pl-12',
     focus: 'focus:ring-2 focus:ring-sky-300 focus:border-sky-300',
     error: '!border-red-600 !focus:border-red-600 !focus:ring-red-600',
@@ -149,7 +187,8 @@ export const formTheme = FormThemeSchema.parse({
     container: 'relative',
     inputContainer:
       'flex flex-wrap items-center gap-1 rounded-md border border-gray-300 bg-white p-1 pr-10 shadow-sm focus-within:ring-2 focus-within:ring-sky-300 focus-within:border-sky-300',
-    selectedItem: 'flex items-center gap-x-1 whitespace-nowrap rounded-sm bg-sky-100 px-2 py-0.5 text-sm text-sky-700',
+    selectedItem:
+      'flex items-center gap-x-1 whitespace-nowrap rounded-sm bg-sky-100 px-2 py-0.5 text-sm text-sky-700',
     selectedItemLabel: '',
     selectedItemRemoveButton: 'text-sky-500 hover:text-sky-800 transition-colors',
     selectedItemRemoveIcon: 'h-3 w-3',
@@ -171,7 +210,8 @@ export const formTheme = FormThemeSchema.parse({
     readOnlyValue: 'min-h-[2.5rem] flex items-center px-3 text-gray-700',
   },
   numberField: {
-    input: 'block w-full px-3 py-2 sm:text-sm min-h-[2.5rem] bg-white dark:bg-white text-gray-900 dark:text-gray-900',
+    input:
+      'block w-full px-3 py-2 sm:text-sm min-h-[2.5rem] bg-white dark:bg-white text-gray-900 dark:text-gray-900',
     focus: 'focus:ring-2 focus:ring-sky-300 focus:border-sky-300',
     error: '!border-red-600 !focus:border-red-600 !focus:ring-red-600',
     disabled: 'opacity-50 cursor-not-allowed bg-gray-100 dark:bg-gray-100',
@@ -181,18 +221,21 @@ export const formTheme = FormThemeSchema.parse({
     readOnlyValue: 'min-h-[2.5rem] flex items-center px-3 text-gray-700 dark:text-gray-100',
   },
   passwordField: {
-    input: 'block w-full px-3 py-2 sm:text-sm min-h-[2.5rem] bg-white dark:bg-white text-gray-900 dark:text-gray-900',
+    input:
+      'block w-full px-3 py-2 sm:text-sm min-h-[2.5rem] bg-white dark:bg-white text-gray-900 dark:text-gray-900',
     focus: 'focus:ring-2 focus:ring-sky-300 focus:border-sky-300',
     error: '!border-red-600 !focus:border-red-600 !focus:ring-red-600',
     disabled: 'opacity-50 cursor-not-allowed bg-gray-100 dark:bg-gray-100',
     readOnly: 'text-gray-700 dark:text-gray-100 font-medium',
     readOnlyInput:
       'min-h-[2.5rem] flex items-center px-3 text-gray-700 dark:text-gray-100 w-full border border-gray-300 rounded bg-gray-50 dark:bg-gray-800',
-    readOnlyValue: 'min-h-[2.5rem] flex items-center px-3 text-gray-700 dark:text-gray-100 font-mono tracking-wider',
+    readOnlyValue:
+      'min-h-[2.5rem] flex items-center px-3 text-gray-700 dark:text-gray-100 font-mono tracking-wider',
   },
   phoneField: {
     wrapper: '',
-    input: 'block w-full px-3 py-2 sm:text-sm min-h-[2.5rem] bg-white dark:bg-white text-gray-900 dark:text-gray-900',
+    input:
+      'block w-full px-3 py-2 sm:text-sm min-h-[2.5rem] bg-white dark:bg-white text-gray-900 dark:text-gray-900',
     focus: 'focus:ring-2 focus:ring-sky-300 focus:border-sky-300 !outline-none',
     error: '!border-red-600 !focus:border-red-600 !focus:ring-red-600',
     disabled: 'opacity-50 cursor-not-allowed bg-gray-100 dark:bg-gray-100',
@@ -211,7 +254,8 @@ export const formTheme = FormThemeSchema.parse({
     optionContainerFullWidth: 'w-full justify-between',
     optionContainerFancy: 'border rounded-md',
     radioContainer: 'flex flex-row items-center',
-    input: 'size-4 appearance-none rounded-full border-2 border-gray-300 bg-white focus:outline-none cursor-pointer',
+    input:
+      'size-4 appearance-none rounded-full border-2 border-gray-300 bg-white focus:outline-none cursor-pointer',
     inputFullWidth: '!size-6',
     inputChecked: '!bg-sky-600 !border-sky-600 shadow-[inset_0_0_0_3px_white]',
     inputFocus: 'focus:ring-sky-300 focus:ring-2',
@@ -226,12 +270,24 @@ export const formTheme = FormThemeSchema.parse({
     readOnlySelected: 'flex flex-row items-center',
     readOnlyUnselected: 'w-5 h-5 text-red-600',
     readOnlyIcon: (
-      <svg className="w-5 h-5 text-sky-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+      <svg
+        className="w-5 h-5 text-sky-600"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        strokeWidth={3}
+      >
         <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
       </svg>
     ),
     readOnlyUnselectedIcon: (
-      <svg className="w-5 h-5 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+      <svg
+        className="w-5 h-5 text-red-600"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        strokeWidth={2}
+      >
         <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
       </svg>
     ),
@@ -245,7 +301,8 @@ export const formTheme = FormThemeSchema.parse({
     optionContainerFullWidth: 'w-full justify-between',
     optionContainerFancy: 'border rounded-md',
     checkboxContainer: 'flex flex-row items-center',
-    input: 'size-4 appearance-none rounded border-2 border-gray-300 bg-white focus:outline-none cursor-pointer',
+    input:
+      'size-4 appearance-none rounded border-2 border-gray-300 bg-white focus:outline-none cursor-pointer',
     inputFullWidth: '!size-6',
     inputChecked: '!bg-sky-600 !border-sky-600 shadow-[inset_0_0_0_2px_white]',
     inputFocus: 'focus:ring-sky-300 focus:ring-2',
@@ -294,8 +351,10 @@ export const formTheme = FormThemeSchema.parse({
   searchSelectMultiField: {
     wrapper: '',
     container: 'relative',
-    inputContainer: 'flex flex-wrap items-center gap-1 rounded-md border border-gray-300 bg-white p-1 pr-10 shadow-sm',
-    selectedItem: 'flex items-center gap-x-1 whitespace-nowrap rounded-sm bg-sky-100 px-2 py-0.5 text-sm text-sky-700',
+    inputContainer:
+      'flex flex-wrap items-center gap-1 rounded-md border border-gray-300 bg-white p-1 pr-10 shadow-sm',
+    selectedItem:
+      'flex items-center gap-x-1 whitespace-nowrap rounded-sm bg-sky-100 px-2 py-0.5 text-sm text-sky-700',
     selectedItemLabel: '',
     selectedItemRemoveButton: 'text-sky-500 hover:text-sky-800 transition-colors',
     selectedItemRemoveIcon: 'h-3 w-3',
@@ -322,7 +381,8 @@ export const formTheme = FormThemeSchema.parse({
   selectField: {
     wrapper: '',
     container: 'relative',
-    input: 'block w-full px-3 py-2 pr-12 sm:text-sm min-h-[2.5rem] appearance-none bg-white dark:bg-white text-gray-900 dark:text-gray-900 border border-gray-300 dark:border-gray-300',
+    input:
+      'block w-full px-3 py-2 pr-12 sm:text-sm min-h-[2.5rem] appearance-none bg-white dark:bg-white text-gray-900 dark:text-gray-900 border border-gray-300 dark:border-gray-300',
     arrow: 'absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none',
     arrowIcon: 'h-5 w-5 text-gray-400 dark:text-gray-600',
     option: 'py-1 px-3',
@@ -360,7 +420,8 @@ export const formTheme = FormThemeSchema.parse({
     error: '!border-red-600 !focus:border-red-600 !focus:ring-red-600',
     disabled: 'bg-gray-100 dark:bg-gray-100 cursor-not-allowed opacity-50',
     readOnly: 'text-gray-700 dark:text-gray-100 font-medium',
-    readOnlyValue: 'min-h-[2.5rem] flex items-center px-3 text-gray-700 dark:text-gray-100 whitespace-pre-line',
+    readOnlyValue:
+      'min-h-[2.5rem] flex items-center px-3 text-gray-700 dark:text-gray-100 whitespace-pre-line',
     helpText: 'text-sm text-gray-600 dark:text-gray-400 mt-1',
   },
   markdownEditor: {
@@ -372,12 +433,14 @@ export const formTheme = FormThemeSchema.parse({
     error: '!border-red-600 !focus-within:border-red-600 !focus-within:ring-red-600',
     disabled: 'bg-gray-100 cursor-not-allowed opacity-50',
     readOnly: 'text-gray-700 dark:text-gray-100 font-medium',
-    readOnlyValue: 'prose prose-sm max-w-none p-4 min-h-[200px] bg-gray-50 text-gray-700 dark:text-gray-100',
+    readOnlyValue:
+      'prose prose-sm max-w-none p-4 min-h-[200px] bg-gray-50 text-gray-700 dark:text-gray-100',
     helpText: 'text-sm text-gray-600 dark:text-gray-400 mt-1',
   },
   timePickerField: {
     wrapper: '',
-    input: 'block w-full px-3 py-2 sm:text-sm min-h-[2.5rem] bg-white dark:bg-white text-gray-900 dark:text-gray-900',
+    input:
+      'block w-full px-3 py-2 sm:text-sm min-h-[2.5rem] bg-white dark:bg-white text-gray-900 dark:text-gray-900',
     error: '!border-red-600 !focus:border-red-600 !focus:ring-red-600',
     disabled: 'bg-gray-100 dark:bg-gray-100 cursor-not-allowed opacity-50',
     readOnly: 'text-gray-700 dark:text-gray-100 font-medium',
@@ -386,11 +449,13 @@ export const formTheme = FormThemeSchema.parse({
   },
   urlField: {
     wrapper: '',
-    input: 'block w-full px-3 py-2 sm:text-sm min-h-[2.5rem] bg-white dark:bg-white text-gray-900 dark:text-gray-900',
+    input:
+      'block w-full px-3 py-2 sm:text-sm min-h-[2.5rem] bg-white dark:bg-white text-gray-900 dark:text-gray-900',
     error: '!border-red-600 !focus:border-red-600 !focus:ring-red-600',
     disabled: 'bg-gray-100 dark:bg-gray-100 cursor-not-allowed opacity-50',
     readOnly: 'text-gray-700 dark:text-gray-100 font-medium',
-    readOnlyValue: 'min-h-[2.5rem] flex items-center px-3 text-gray-700 dark:text-gray-100 break-all',
+    readOnlyValue:
+      'min-h-[2.5rem] flex items-center px-3 text-gray-700 dark:text-gray-100 break-all',
     helpText: 'text-sm text-gray-600 dark:text-gray-400 mt-1',
   },
 

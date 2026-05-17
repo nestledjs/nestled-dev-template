@@ -22,76 +22,81 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
   const { sdk, databaseModels, basePath = '/admin/data' } = useAdminDataContext()
 
   // Helper function to get enum values from SDK
-  const getEnumValues = useCallback((enumType: string): string[] | null => {
-    try {
-      const enumObject = (sdk as any)[enumType]
+  const getEnumValues = useCallback(
+    (enumType: string): string[] | null => {
+      try {
+        const enumObject = (sdk as Record<string, unknown>)[enumType]
 
-      if (!enumObject || typeof enumObject !== 'object') {
+        if (!enumObject || typeof enumObject !== 'object') {
+          return null
+        }
+
+        const values = Object.values(enumObject).filter(value => typeof value === 'string')
+
+        if (values.length === 0) {
+          const keys = Object.keys(enumObject).filter(key => Number.isNaN(Number(key)))
+          return keys.length > 0 ? keys : null
+        }
+
+        return values.filter((v): v is string => typeof v === 'string')
+      } catch (error) {
+        console.error('Unexpected error:', error)
         return null
       }
-
-      const values = Object.values(enumObject).filter(value => typeof value === 'string')
-
-      if (values.length === 0) {
-        const keys = Object.keys(enumObject).filter(key => Number.isNaN(Number(key)))
-        return keys.length > 0 ? keys : null
-      }
-
-      return values.filter((v): v is string => typeof v === 'string')
-    } catch (error) {
-      console.error('Unexpected error:', error)
-      return null
-    }
-  }, [sdk])
+    },
+    [sdk],
+  )
 
   // Helper functions for filter management
-  const updateRelatedEnumFilter = useCallback((
-    filters: Record<string, any>,
-    relationName: string,
-    enumFieldName: string,
-    value: any
-  ): Record<string, any> => {
-    const newFilters = { ...filters }
+  const updateRelatedEnumFilter = useCallback(
+    (
+      filters: Record<string, any>,
+      relationName: string,
+      enumFieldName: string,
+      value: any,
+    ): Record<string, any> => {
+      const newFilters = { ...filters }
 
-    if (value === undefined || value === null || value === '') {
-      // Remove the enum filter
-      const relationFilter = newFilters[relationName]
-      if (relationFilter && typeof relationFilter === 'object') {
-        delete relationFilter[enumFieldName]
-        // If the relation filter is now empty, remove it entirely
-        if (Object.keys(relationFilter).length === 0) {
-          delete newFilters[relationName]
+      if (value === undefined || value === null || value === '') {
+        // Remove the enum filter
+        const relationFilter = newFilters[relationName]
+        if (relationFilter && typeof relationFilter === 'object') {
+          delete relationFilter[enumFieldName]
+          // If the relation filter is now empty, remove it entirely
+          if (Object.keys(relationFilter).length === 0) {
+            delete newFilters[relationName]
+          }
+        }
+      } else {
+        // Add or update the enum filter
+        if (!newFilters[relationName]) {
+          newFilters[relationName] = {}
+        }
+        const relationFilter = newFilters[relationName]
+        if (relationFilter && typeof relationFilter === 'object') {
+          relationFilter[enumFieldName] = value
         }
       }
-    } else {
-      // Add or update the enum filter
-      if (!newFilters[relationName]) {
-        newFilters[relationName] = {}
+
+      return newFilters
+    },
+    [],
+  )
+
+  const updateSimpleFilter = useCallback(
+    (filters: Record<string, any>, fieldName: string, value: any): Record<string, any> => {
+      const newFilters = { ...filters }
+
+      if (value === undefined || value === null || value === '') {
+        delete newFilters[fieldName]
+      } else {
+        newFilters[fieldName] = value
       }
-      const relationFilter = newFilters[relationName]
-      if (relationFilter && typeof relationFilter === 'object') {
-        relationFilter[enumFieldName] = value
-      }
-    }
 
-    return newFilters
-  }, [])
-
-  const updateSimpleFilter = useCallback((
-    filters: Record<string, any>,
-    fieldName: string,
-    value: any
-  ): Record<string, any> => {
-    const newFilters = { ...filters }
-
-    if (value === undefined || value === null || value === '') {
-      delete newFilters[fieldName]
-    } else {
-      newFilters[fieldName] = value
-    }
-
-    return newFilters
-  }, [])
+      return newFilters
+    },
+    [],
+  )
 
   // Consolidated state management with useReducer for better performance
   const { state, dispatch } = useAdminList()
@@ -180,10 +185,8 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
       if (key !== 'page' && key !== 'search' && key !== 'sort') {
         // Check if this is a foreign key field (e.g., userId)
         // If so, find the corresponding relation field (e.g., user)
-        const relationField = model.fields.find((f: any) =>
-          f.relationName &&
-          !f.isList &&
-          f.relationFromFields?.[0] === key
+        const relationField = model.fields.find(
+          (f: any) => f.relationName && !f.isList && f.relationFromFields?.[0] === key,
         )
 
         if (relationField) {
@@ -324,15 +327,19 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
 
     // Sort (per model); fallback to first field if stored invalid
     const storedSort = AdminLocalStorage.getSortPreference(model.name)
-    const sortFieldValid = storedSort && (storedSort.orderBy === 'id' || fieldNames.includes(storedSort.orderBy))
-    const nextSort = sortFieldValid && storedSort ? storedSort : { orderBy: 'id', orderDirection: 'desc' }
+    const sortFieldValid =
+      storedSort && (storedSort.orderBy === 'id' || fieldNames.includes(storedSort.orderBy))
+    const nextSort =
+      sortFieldValid && storedSort ? storedSort : { orderBy: 'id', orderDirection: 'desc' }
     dispatch({ type: 'SET_SORT', payload: nextSort })
 
     // Search fields (per model), sanitized to valid fields
     const storedSearch = AdminLocalStorage.getSearchFields(model.name)
     const defaults = getDefaultSearchFields(searchableFieldNames)
     // Don't limit stored preferences - user may have selected more than 2 fields
-    const filteredSearch = (storedSearch || defaults).filter((f: string) => searchableFieldNames.includes(f))
+    const filteredSearch = (storedSearch || defaults).filter((f: string) =>
+      searchableFieldNames.includes(f),
+    )
     setSearchFields(filteredSearch)
 
     // Clear per-model transient state
@@ -347,14 +354,33 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
       // Also show the filters panel so user can see what's filtered
       dispatch({ type: 'SET_SHOW_FILTERS', payload: true })
     }
-  }, [model?.name, fieldNames, searchableFieldNames, getDefaultSearchFields, setVisibleColumns, setSearchFields, dispatch, urlFilters])
+  }, [
+    model?.name,
+    fieldNames,
+    searchableFieldNames,
+    getDefaultSearchFields,
+    setVisibleColumns,
+    setSearchFields,
+    dispatch,
+    urlFilters,
+  ])
 
   // Memoized sort handler that prevents unnecessary re-renders
   const setSortSafely = useCallback(
-    (newSort: { orderBy: string; orderDirection: string } | ((prev: { orderBy: string; orderDirection: string }) => { orderBy: string; orderDirection: string })) => {
+    (
+      newSort:
+        | { orderBy: string; orderDirection: string }
+        | ((prev: { orderBy: string; orderDirection: string }) => {
+            orderBy: string
+            orderDirection: string
+          }),
+    ) => {
       const resolvedSort = typeof newSort === 'function' ? newSort(sort) : newSort
       // Only update if something actually changed
-      if (resolvedSort.orderBy !== sort.orderBy || resolvedSort.orderDirection !== sort.orderDirection) {
+      if (
+        resolvedSort.orderBy !== sort.orderBy ||
+        resolvedSort.orderDirection !== sort.orderDirection
+      ) {
         dispatch({ type: 'SET_SORT', payload: resolvedSort })
         if (model) {
           AdminLocalStorage.setSortPreference(model.name, resolvedSort)
@@ -430,7 +456,7 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
 
   // Helper: filter items to valid records
   const filterValidItems = useCallback((items: any[]): any[] => {
-    return items.filter((item) => item && typeof item === 'object' && item.id)
+    return items.filter(item => item && typeof item === 'object' && item.id)
   }, [])
 
   // Main GraphQL query with comprehensive error handling
@@ -601,7 +627,9 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
       {showColumnSelector && (
         <div className="absolute right-0 mt-2 w-80 bg-white dark:bg-gray-800 rounded-md shadow-lg z-50 border border-gray-200 dark:border-gray-700">
           <div className="p-4">
-            <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-3">Visible Columns</h3>
+            <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-3">
+              Visible Columns
+            </h3>
             <div className="space-y-2 max-h-64 overflow-y-auto">
               {fieldNames.map((field: string) => (
                 <label key={field} className="flex items-start gap-2 cursor-pointer">
@@ -617,7 +645,9 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
                     }}
                     className="h-4 w-4 mt-0.5 flex-shrink-0 text-green-web focus:ring-green-web border-gray-300 dark:border-gray-600 rounded"
                   />
-                  <span className="text-sm text-gray-700 dark:text-gray-300 leading-5">{formatFieldName(field)}</span>
+                  <span className="text-sm text-gray-700 dark:text-gray-300 leading-5">
+                    {formatFieldName(field)}
+                  </span>
                 </label>
               ))}
             </div>
@@ -673,7 +703,9 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
       {showSearchFieldSelector && (
         <div className="absolute right-0 mt-2 w-72 bg-white dark:bg-gray-800 rounded-md shadow-lg z-50 border border-gray-200 dark:border-gray-700">
           <div className="p-4">
-            <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-3">Search Fields</h3>
+            <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-3">
+              Search Fields
+            </h3>
             {searchableFieldNames.length > 0 ? (
               <>
                 <div className="space-y-2 max-h-48 overflow-y-auto">
@@ -720,7 +752,9 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
                 </div>
               </>
             ) : (
-              <div className="text-sm text-gray-500 dark:text-gray-400">No searchable text fields available</div>
+              <div className="text-sm text-gray-500 dark:text-gray-400">
+                No searchable text fields available
+              </div>
             )}
           </div>
         </div>

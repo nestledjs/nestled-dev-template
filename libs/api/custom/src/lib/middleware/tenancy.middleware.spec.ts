@@ -51,11 +51,7 @@ describe('TenancyMiddleware (CRITICAL SECURITY)', () => {
     it('should skip middleware if no authenticated user', async () => {
       // No user on request
       mockRequest.user = undefined
-      await middleware.use(
-        mockRequest,
-        mockResponse,
-        mockNext,
-      )
+      await middleware.use(mockRequest, mockResponse, mockNext)
       expect(mockNext).toHaveBeenCalledWith() // Called with no arguments
       expect(mockData.organizationMember.findFirst).not.toHaveBeenCalled()
       expect(mockRequest.organizationContext).toBeUndefined()
@@ -63,11 +59,7 @@ describe('TenancyMiddleware (CRITICAL SECURITY)', () => {
     it('should skip middleware for unauthenticated requests', async () => {
       // Request with no user property at all
       delete mockRequest.user
-      await middleware.use(
-        mockRequest,
-        mockResponse,
-        mockNext,
-      )
+      await middleware.use(mockRequest, mockResponse, mockNext)
       expect(mockNext).toHaveBeenCalledWith()
       expect(mockData.organizationMember.findFirst).not.toHaveBeenCalled()
     })
@@ -94,11 +86,7 @@ describe('TenancyMiddleware (CRITICAL SECURITY)', () => {
         },
       }
       mockData.organizationMember.findFirst.mockResolvedValue(mockMembership)
-      await middleware.use(
-        mockRequest,
-        mockResponse,
-        mockNext,
-      )
+      await middleware.use(mockRequest, mockResponse, mockNext)
       expect(mockData.organizationMember.findFirst).toHaveBeenCalledWith({
         where: {
           userId: 'user-123',
@@ -142,11 +130,7 @@ describe('TenancyMiddleware (CRITICAL SECURITY)', () => {
         },
       }
       mockData.organizationMember.findFirst.mockResolvedValue(mockMembership)
-      await middleware.use(
-        mockRequest,
-        mockResponse,
-        mockNext,
-      )
+      await middleware.use(mockRequest, mockResponse, mockNext)
       // Should use header org ID, not active org ID
       expect(mockData.organizationMember.findFirst).toHaveBeenCalledWith({
         where: {
@@ -181,11 +165,7 @@ describe('TenancyMiddleware (CRITICAL SECURITY)', () => {
         },
       }
       mockData.organizationMember.findFirst.mockResolvedValue(mockMembership)
-      await middleware.use(
-        mockRequest,
-        mockResponse,
-        mockNext,
-      )
+      await middleware.use(mockRequest, mockResponse, mockNext)
       expect(mockData.organizationMember.findFirst).toHaveBeenCalledWith({
         where: {
           userId: 'user-123',
@@ -208,11 +188,7 @@ describe('TenancyMiddleware (CRITICAL SECURITY)', () => {
       }
       mockRequest.user = mockUser as User
       mockRequest.headers = {} // No header
-      await middleware.use(
-        mockRequest,
-        mockResponse,
-        mockNext,
-      )
+      await middleware.use(mockRequest, mockResponse, mockNext)
       expect(mockData.organizationMember.findFirst).not.toHaveBeenCalled()
       expect(mockRequest.organizationContext).toBeUndefined()
       expect(mockNext).toHaveBeenCalledWith()
@@ -224,11 +200,7 @@ describe('TenancyMiddleware (CRITICAL SECURITY)', () => {
       }
       mockRequest.user = mockUser as User
       mockRequest.headers = {}
-      await middleware.use(
-        mockRequest,
-        mockResponse,
-        mockNext,
-      )
+      await middleware.use(mockRequest, mockResponse, mockNext)
       expect(mockNext).toHaveBeenCalledWith()
       expect(mockRequest.organizationContext).toBeUndefined()
     })
@@ -242,20 +214,12 @@ describe('TenancyMiddleware (CRITICAL SECURITY)', () => {
       mockRequest.user = mockUser as User
       // User is NOT a member - findFirst returns null
       mockData.organizationMember.findFirst.mockResolvedValue(null)
-      await expect(
-        middleware.use(
-          mockRequest,
-          mockResponse,
-          mockNext,
-        ),
-      ).rejects.toThrow(ForbiddenException)
-      await expect(
-        middleware.use(
-          mockRequest,
-          mockResponse,
-          mockNext,
-        ),
-      ).rejects.toThrow('User user-123 is not a member of organization org-not-member')
+      await expect(middleware.use(mockRequest, mockResponse, mockNext)).rejects.toThrow(
+        ForbiddenException,
+      )
+      await expect(middleware.use(mockRequest, mockResponse, mockNext)).rejects.toThrow(
+        'User user-123 is not a member of organization org-not-member',
+      )
       expect(mockRequest.organizationContext).toBeUndefined()
     })
     it('should prevent access to organization from header if not a member', async () => {
@@ -269,20 +233,12 @@ describe('TenancyMiddleware (CRITICAL SECURITY)', () => {
       }
       // User is not a member of org-not-mine
       mockData.organizationMember.findFirst.mockResolvedValue(null)
-      await expect(
-        middleware.use(
-          mockRequest,
-          mockResponse,
-          mockNext,
-        ),
-      ).rejects.toThrow(ForbiddenException)
-      await expect(
-        middleware.use(
-          mockRequest,
-          mockResponse,
-          mockNext,
-        ),
-      ).rejects.toThrow('User user-456 is not a member of organization org-not-mine')
+      await expect(middleware.use(mockRequest, mockResponse, mockNext)).rejects.toThrow(
+        ForbiddenException,
+      )
+      await expect(middleware.use(mockRequest, mockResponse, mockNext)).rejects.toThrow(
+        'User user-456 is not a member of organization org-not-mine',
+      )
     })
     it('should validate membership query includes user and organization', async () => {
       const mockUser: Partial<User> = {
@@ -298,11 +254,7 @@ describe('TenancyMiddleware (CRITICAL SECURITY)', () => {
         },
       }
       mockData.organizationMember.findFirst.mockResolvedValue(mockMembership)
-      await middleware.use(
-        mockRequest,
-        mockResponse,
-        mockNext,
-      )
+      await middleware.use(mockRequest, mockResponse, mockNext)
       // Verify BOTH userId and organizationId are checked
       const callArgs = mockData.organizationMember.findFirst.mock.calls[0][0]
       expect(callArgs.where).toEqual({
@@ -332,11 +284,7 @@ describe('TenancyMiddleware (CRITICAL SECURITY)', () => {
         },
       }
       mockData.organizationMember.findFirst.mockResolvedValue(mockMembership)
-      await middleware.use(
-        mockRequest,
-        mockResponse,
-        mockNext,
-      )
+      await middleware.use(mockRequest, mockResponse, mockNext)
       expect(mockRequest.organizationContext?.permissions).toEqual([
         { subject: 'user', action: 'create' },
         { subject: 'user', action: 'read' },
@@ -359,11 +307,7 @@ describe('TenancyMiddleware (CRITICAL SECURITY)', () => {
         },
       }
       mockData.organizationMember.findFirst.mockResolvedValue(mockMembership)
-      await middleware.use(
-        mockRequest,
-        mockResponse,
-        mockNext,
-      )
+      await middleware.use(mockRequest, mockResponse, mockNext)
       expect(mockRequest.organizationContext?.permissions).toEqual([])
       expect(mockRequest.organizationContext?.roleName).toBe('Guest')
     })
@@ -381,11 +325,7 @@ describe('TenancyMiddleware (CRITICAL SECURITY)', () => {
         },
       }
       mockData.organizationMember.findFirst.mockResolvedValue(mockMembership)
-      await middleware.use(
-        mockRequest,
-        mockResponse,
-        mockNext,
-      )
+      await middleware.use(mockRequest, mockResponse, mockNext)
       expect(mockRequest.organizationContext?.roleId).toBe('role-custom')
       expect(mockRequest.organizationContext?.roleName).toBe('Custom Role')
     })
@@ -405,11 +345,7 @@ describe('TenancyMiddleware (CRITICAL SECURITY)', () => {
         },
       }
       mockData.organizationMember.findFirst.mockResolvedValue(mockMembership)
-      await middleware.use(
-        mockRequest,
-        mockResponse,
-        mockNext,
-      )
+      await middleware.use(mockRequest, mockResponse, mockNext)
       const context = mockRequest.organizationContext
       expect(context).toBeDefined()
       expect(context).toHaveProperty('organizationId', 'org-complete')
@@ -435,11 +371,7 @@ describe('TenancyMiddleware (CRITICAL SECURITY)', () => {
       mockData.organizationMember.findFirst.mockResolvedValue(mockMembership)
       // Verify context is undefined before
       expect(mockRequest.organizationContext).toBeUndefined()
-      await middleware.use(
-        mockRequest,
-        mockResponse,
-        mockNext,
-      )
+      await middleware.use(mockRequest, mockResponse, mockNext)
       // Verify context is populated after
       expect(mockRequest.organizationContext).toBeDefined()
       expect(mockRequest.organizationContext).toEqual({
@@ -464,11 +396,7 @@ describe('TenancyMiddleware (CRITICAL SECURITY)', () => {
         },
       }
       mockData.organizationMember.findFirst.mockResolvedValue(mockMembership)
-      await middleware.use(
-        mockRequest,
-        mockResponse,
-        mockNext,
-      )
+      await middleware.use(mockRequest, mockResponse, mockNext)
       // CRITICAL: userId must match the authenticated user, not from client
       expect(mockRequest.organizationContext?.userId).toBe('user-secure-123')
       expect(mockRequest.organizationContext?.userId).toBe(mockRequest.user?.id)
@@ -482,11 +410,7 @@ describe('TenancyMiddleware (CRITICAL SECURITY)', () => {
       }
       mockRequest.user = mockUser as User
       mockData.organizationMember.findFirst.mockResolvedValue(null)
-      const middlewarePromise = middleware.use(
-        mockRequest,
-        mockResponse,
-        mockNext,
-      )
+      const middlewarePromise = middleware.use(mockRequest, mockResponse, mockNext)
       await expect(middlewarePromise).rejects.toThrow(ForbiddenException)
       expect(mockNext).not.toHaveBeenCalled() // Should not call next() when throwing
     })
@@ -498,11 +422,7 @@ describe('TenancyMiddleware (CRITICAL SECURITY)', () => {
       mockRequest.user = mockUser as User
       mockData.organizationMember.findFirst.mockResolvedValue(null)
       try {
-        await middleware.use(
-          mockRequest,
-          mockResponse,
-          mockNext,
-        )
+        await middleware.use(mockRequest, mockResponse, mockNext)
         fail('Should have thrown ForbiddenException')
       } catch (error) {
         expect(error).toBeInstanceOf(ForbiddenException)
@@ -517,11 +437,7 @@ describe('TenancyMiddleware (CRITICAL SECURITY)', () => {
       mockRequest.user = mockUser as User
       const databaseError = new Error('Database connection failed')
       mockData.organizationMember.findFirst.mockRejectedValue(databaseError)
-      await middleware.use(
-        mockRequest,
-        mockResponse,
-        mockNext,
-      )
+      await middleware.use(mockRequest, mockResponse, mockNext)
       // Should call next with the error (not throw)
       expect(mockNext).toHaveBeenCalledWith(databaseError)
     })
@@ -533,11 +449,7 @@ describe('TenancyMiddleware (CRITICAL SECURITY)', () => {
       mockRequest.user = mockUser as User
       const dbError = new Error('Connection timeout')
       mockData.organizationMember.findFirst.mockRejectedValue(dbError)
-      await middleware.use(
-        mockRequest,
-        mockResponse,
-        mockNext,
-      )
+      await middleware.use(mockRequest, mockResponse, mockNext)
       expect(mockNext).toHaveBeenCalledWith(dbError)
       expect(mockRequest.organizationContext).toBeUndefined()
     })
@@ -563,11 +475,7 @@ describe('TenancyMiddleware (CRITICAL SECURITY)', () => {
         },
       }
       mockData.organizationMember.findFirst.mockResolvedValue(mockMembership)
-      await middleware.use(
-        mockRequest,
-        mockResponse,
-        mockNext,
-      )
+      await middleware.use(mockRequest, mockResponse, mockNext)
       // Should use header org, not active org
       expect(mockRequest.organizationContext?.organizationId).toBe('org-tenant-2')
       expect(mockRequest.organizationContext?.userId).toBe('user-multi-tenant')
@@ -590,11 +498,7 @@ describe('TenancyMiddleware (CRITICAL SECURITY)', () => {
       }
       // First request to org-primary
       mockData.organizationMember.findFirst.mockResolvedValueOnce(mockMembershipOrg1)
-      await middleware.use(
-        mockRequest,
-        mockResponse,
-        mockNext,
-      )
+      await middleware.use(mockRequest, mockResponse, mockNext)
       expect(mockRequest.organizationContext?.organizationId).toBe('org-primary')
       expect(mockRequest.organizationContext?.roleName).toBe('Admin')
       // Create new request for second org
@@ -605,11 +509,7 @@ describe('TenancyMiddleware (CRITICAL SECURITY)', () => {
       }
       const mockNext2 = jest.fn()
       mockData.organizationMember.findFirst.mockResolvedValueOnce(mockMembershipOrg2)
-      await middleware.use(
-        mockRequest2,
-        mockResponse,
-        mockNext2,
-      )
+      await middleware.use(mockRequest2, mockResponse, mockNext2)
       expect(mockRequest2.organizationContext?.organizationId).toBe('org-secondary')
       expect(mockRequest2.organizationContext?.roleName).toBe('Member')
     })
@@ -628,11 +528,7 @@ describe('TenancyMiddleware (CRITICAL SECURITY)', () => {
         role: { name: 'Member', permissions: [] },
       }
       mockData.organizationMember.findFirst.mockResolvedValue(mockMembership)
-      await middleware.use(
-        mockRequest,
-        mockResponse,
-        mockNext,
-      )
+      await middleware.use(mockRequest, mockResponse, mockNext)
       // Should still work (Express normalizes to lowercase)
       expect(mockData.organizationMember.findFirst).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -655,11 +551,7 @@ describe('TenancyMiddleware (CRITICAL SECURITY)', () => {
         role: { name: 'Member', permissions: [] },
       }
       mockData.organizationMember.findFirst.mockResolvedValue(mockMembership)
-      await middleware.use(
-        mockRequest,
-        mockResponse,
-        mockNext,
-      )
+      await middleware.use(mockRequest, mockResponse, mockNext)
       expect(mockNext).toHaveBeenCalledTimes(1)
       expect(mockNext).toHaveBeenCalledWith() // No error argument
     })
@@ -671,11 +563,7 @@ describe('TenancyMiddleware (CRITICAL SECURITY)', () => {
       mockRequest.user = mockUser as User
       mockRequest.headers = {} // No header
       mockRequest.organizationContext = undefined
-      await middleware.use(
-        mockRequest,
-        mockResponse,
-        mockNext,
-      )
+      await middleware.use(mockRequest, mockResponse, mockNext)
       expect(mockRequest.organizationContext).toBeUndefined()
       expect(mockNext).toHaveBeenCalledWith()
     })
@@ -687,11 +575,7 @@ describe('TenancyMiddleware (CRITICAL SECURITY)', () => {
       mockRequest.user = mockUser as User
       mockData.organizationMember.findFirst.mockResolvedValue(null)
       try {
-        await middleware.use(
-          mockRequest,
-          mockResponse,
-          mockNext,
-        )
+        await middleware.use(mockRequest, mockResponse, mockNext)
         fail('Should have thrown')
       } catch (error) {
         // Context should NOT be set when membership fails
@@ -707,11 +591,7 @@ describe('TenancyMiddleware (CRITICAL SECURITY)', () => {
         activeOrganizationId: '',
       }
       mockRequest.user = mockUser as User
-      await middleware.use(
-        mockRequest,
-        mockResponse,
-        mockNext,
-      )
+      await middleware.use(mockRequest, mockResponse, mockNext)
       // Empty string is falsy, should skip
       expect(mockData.organizationMember.findFirst).not.toHaveBeenCalled()
       expect(mockNext).toHaveBeenCalledWith()
@@ -727,11 +607,7 @@ describe('TenancyMiddleware (CRITICAL SECURITY)', () => {
         role: { name: 'Member', permissions: [] },
       }
       mockData.organizationMember.findFirst.mockResolvedValue(mockMembership)
-      await middleware.use(
-        mockRequest,
-        mockResponse,
-        mockNext,
-      )
+      await middleware.use(mockRequest, mockResponse, mockNext)
       // Whitespace string is truthy, will attempt lookup
       // This is correct behavior - let DB validation handle invalid IDs
       expect(mockData.organizationMember.findFirst).toHaveBeenCalledWith(
@@ -753,11 +629,7 @@ describe('TenancyMiddleware (CRITICAL SECURITY)', () => {
         role: { name: 'Member', permissions: [] },
       }
       mockData.organizationMember.findFirst.mockResolvedValue(mockMembership)
-      await middleware.use(
-        mockRequest,
-        mockResponse,
-        mockNext,
-      )
+      await middleware.use(mockRequest, mockResponse, mockNext)
       // Verify exact userId is used from authenticated user
       expect(mockData.organizationMember.findFirst).toHaveBeenCalledWith({
         where: {

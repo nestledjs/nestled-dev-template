@@ -91,12 +91,14 @@ export default function DataLayoutRoute() {
 Create these minimal route files:
 
 **`apps/web/app/routes/admin/data/index.tsx`**:
+
 ```typescript
 import { AdminDataIndexPage } from '@nestledjs/data-browser'
 export default AdminDataIndexPage
 ```
 
 **`apps/web/app/routes/admin/data/$dataTypePlural.tsx`**:
+
 ```typescript
 import { AdminDataListPage, AdminDataErrorBoundary } from '@nestledjs/data-browser'
 
@@ -110,6 +112,7 @@ export function ErrorBoundary({ error }: Readonly<{ error: Error }>) {
 ```
 
 **`apps/web/app/routes/admin/data/$dataType.create.tsx`**:
+
 ```typescript
 import { AdminDataCreatePage, AdminDataCreateErrorBoundary } from '@nestledjs/data-browser'
 
@@ -123,6 +126,7 @@ export function ErrorBoundary({ error }: Readonly<{ error: Error }>) {
 ```
 
 **`apps/web/app/routes/admin/data/$dataType.$id.tsx`**:
+
 ```typescript
 import { AdminDataEditPage, AdminDataEditErrorBoundary } from '@nestledjs/data-browser'
 
@@ -186,6 +190,7 @@ Shows all available database models with a searchable list.
 ### Create (`/admin/data/user/create`)
 
 Auto-generated form based on your Prisma model schema with:
+
 - Type-aware inputs (text, number, date, enum, relation dropdowns)
 - Validation based on model requirements
 - Real-time error handling
@@ -269,6 +274,7 @@ The data browser uses Tailwind CSS classes. Customize via your project's Tailwin
 ### "Missing GraphQL documents for model X"
 
 **Solution**: Run GraphQL code generation:
+
 ```bash
 pnpm sdk
 ```
@@ -284,6 +290,7 @@ pnpm sdk
 ### DATABASE_MODELS is undefined
 
 **Solution**: Run the model generator:
+
 ```bash
 pnpm generate:models
 ```
