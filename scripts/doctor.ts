@@ -19,6 +19,7 @@ const notesDir = '.nestled-template/upgrade-notes'
 const guardBaselinePath = '.nestled-template/security/guard-baseline.json'
 const gitBaseRef = process.env.NX_BASE || process.env.GITHUB_BASE_REF || 'develop'
 const shouldUpdateGuardBaseline = process.argv.includes('--update-guard-baseline')
+const sourceTemplateRemotePattern = /github\.com[:/]nestledjs\/nestled-dev-template(?:\.git)?$/
 
 type GuardBaseline = Record<string, Record<string, string[]>>
 
@@ -93,6 +94,45 @@ const review = (check: string, message: string, file?: string, line?: number) =>
   } else {
     warn(check, message, file, line)
   }
+}
+
+const getCommandOutput = (command: string): string => {
+  try {
+    return execSync(command, {
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'ignore'],
+    }).trim()
+  } catch {
+    return ''
+  }
+}
+
+const isSourceTemplateRepository = (): boolean => {
+  if (process.env.NESTLED_TEMPLATE_SOURCE === 'true') return true
+  if (process.env.NESTLED_TEMPLATE_SOURCE === 'false') return false
+
+  const originUrl = getCommandOutput('git remote get-url origin')
+  return sourceTemplateRemotePattern.test(originUrl)
+}
+
+const getChangedFiles = (): string[] => {
+  const files = new Set<string>()
+  const commands = [
+    `git diff --name-only ${gitBaseRef}...HEAD`,
+    'git diff --cached --name-only',
+    'git diff --name-only',
+  ]
+
+  for (const command of commands) {
+    const output = getCommandOutput(command)
+    if (!output) continue
+
+    for (const file of output.split('\n')) {
+      if (file.trim()) files.add(file)
+    }
+  }
+
+  return Array.from(files).sort((left, right) => left.localeCompare(right))
 }
 
 const walkFiles = (dir: string, predicate: (path: string) => boolean): string[] => {
@@ -904,20 +944,6 @@ const checkUnsafeTypeScriptCasts = () => {
   }
 }
 
-const getSensitiveUpgradeImpactFiles = (): string[] => {
-  const changedFilesCommand = `git diff --name-only ${gitBaseRef}...HEAD`
-
-  try {
-    const output = execSync(changedFilesCommand, {
-      encoding: 'utf8',
-      stdio: ['ignore', 'pipe', 'ignore'],
-    }).trim()
-    return output ? output.split('\n') : []
-  } catch {
-    return []
-  }
-}
-
 const isSensitiveUpgradePath = (path: string): boolean =>
   /^libs\/api\/(core|custom|utils|integrations)\//.test(path) ||
   /^apps\/api\//.test(path) ||
@@ -931,10 +957,13 @@ const isSensitiveUpgradePath = (path: string): boolean =>
   path.includes('/admin/')
 
 const checkUpgradeNoteImpactGate = () => {
-  const changedSensitiveFiles = getSensitiveUpgradeImpactFiles().filter(isSensitiveUpgradePath)
+  if (!isSourceTemplateRepository()) return
+
+  const changedFiles = getChangedFiles()
+  const changedSensitiveFiles = changedFiles.filter(isSensitiveUpgradePath)
   if (changedSensitiveFiles.length === 0) return
 
-  const changedNotes = getSensitiveUpgradeImpactFiles().filter(
+  const changedNotes = changedFiles.filter(
     path => path.startsWith(`${notesDir}/`) && path.endsWith('.yaml'),
   )
   if (changedNotes.length === 0) {
