@@ -18,6 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+      NX_DAEMON: false
 
     services:
       postgres:
@@ -66,6 +67,8 @@ jobs:
       - uses: nrwl/nx-set-shas@3e9ad7370203c1e93d109be57f3b72eb0eb511b1 # v4
 
       - run: pnpm template:validate-upgrade-notes
+
+      - run: pnpm run nestled-doctor
 
       # Prepend any command with "nx-cloud record --" to record its logs to Nx Cloud
       # - run: pnpm exec nx-cloud record -- echo Hello World

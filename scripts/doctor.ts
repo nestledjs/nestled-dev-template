@@ -1,10 +1,12 @@
-import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs'
+import { execSync } from 'node:child_process'
+import { existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs'
 import { basename, dirname, join, relative } from 'node:path'
 
 type Finding = {
   check: string
   message: string
   file?: string
+  line?: number
 }
 
 const failures: Finding[] = []
@@ -14,13 +16,83 @@ const routeRoot = 'apps/web/app/routes'
 const routeConfigPath = 'apps/web/app/routes.tsx'
 const schemaPath = 'libs/api/prisma/src/lib/schemas/schema.prisma'
 const notesDir = '.nestled-template/upgrade-notes'
+const guardBaselinePath = '.nestled-template/security/guard-baseline.json'
+const gitBaseRef = process.env.NX_BASE || process.env.GITHUB_BASE_REF || 'develop'
+const shouldUpdateGuardBaseline = process.argv.includes('--update-guard-baseline')
 
-const fail = (check: string, message: string, file?: string) => {
-  failures.push({ check, message, file })
+type GuardBaseline = Record<string, Record<string, string[]>>
+
+const fail = (check: string, message: string, file?: string, line?: number) => {
+  failures.push({ check, message, file, line })
 }
 
-const warn = (check: string, message: string, file?: string) => {
-  warnings.push({ check, message, file })
+const warn = (check: string, message: string, file?: string, line?: number) => {
+  warnings.push({ check, message, file, line })
+}
+
+const getChangedLineMap = (): Map<string, Set<number>> => {
+  const changedLines = new Map<string, Set<number>>()
+
+  const recordDiffLines = (diff: string) => {
+    let currentFile = ''
+
+    for (const line of diff.split('\n')) {
+      const fileMatch = /^\+\+\+ b\/(.+)$/.exec(line)
+      if (fileMatch) {
+        currentFile = fileMatch[1]
+        if (!changedLines.has(currentFile)) changedLines.set(currentFile, new Set())
+        continue
+      }
+
+      const hunkMatch = /^@@ -\d+(?:,\d+)? \+(\d+)(?:,(\d+))? @@/.exec(line)
+      if (!hunkMatch || !currentFile) continue
+
+      const start = Number(hunkMatch[1])
+      const count = Number(hunkMatch[2] ?? '1')
+      const lines = changedLines.get(currentFile)
+      if (!lines) continue
+
+      for (let index = 0; index < count; index += 1) {
+        lines.add(start + index)
+      }
+    }
+  }
+
+  const diffCommands = [
+    `git diff --unified=0 ${gitBaseRef}...HEAD -- '*.ts' '*.tsx'`,
+    `git diff --cached --unified=0 -- '*.ts' '*.tsx'`,
+    `git diff --unified=0 -- '*.ts' '*.tsx'`,
+  ]
+
+  for (const command of diffCommands) {
+    try {
+      recordDiffLines(
+        execSync(command, {
+          encoding: 'utf8',
+          stdio: ['ignore', 'pipe', 'ignore'],
+        }),
+      )
+    } catch {
+      continue
+    }
+  }
+
+  return changedLines
+}
+
+const changedLineMap = getChangedLineMap()
+
+const isChangedLine = (file: string | undefined, line: number | undefined): boolean => {
+  if (!file || !line) return false
+  return changedLineMap.get(file)?.has(line) ?? false
+}
+
+const review = (check: string, message: string, file?: string, line?: number) => {
+  if (isChangedLine(file, line)) {
+    fail(check, `New changed-line finding: ${message}`, file, line)
+  } else {
+    warn(check, message, file, line)
+  }
 }
 
 const walkFiles = (dir: string, predicate: (path: string) => boolean): string[] => {
@@ -362,6 +434,85 @@ const getGraphqlResolverMethods = (source: string): string[] =>
     .map(match => match[1])
     .filter(methodName => methodName !== 'constructor')
 
+const getGraphqlOperationMethods = (
+  source: string,
+): { decorators: string; name: string; body: string; line: number }[] => {
+  const methods: { decorators: string; name: string; body: string; line: number }[] = []
+  const lines = source.split('\n')
+  let offset = 0
+  let decorators = ''
+  let lineNumber = 1
+
+  for (const line of lines) {
+    const methodMatch = /^\s{2}(?:override\s+)?(?:async\s+)?(\w+)\s*\(/.exec(line)
+    if (methodMatch && decorators.includes('@')) {
+      if (/@(?:Query|Mutation|Subscription)\b/.test(decorators)) {
+        const lineIndex = source.indexOf(line, offset)
+        const openingBraceIndex = source.indexOf('{', lineIndex)
+        methods.push({
+          decorators,
+          name: methodMatch[1],
+          body: openingBraceIndex === -1 ? '' : getBlockSource(source, openingBraceIndex),
+          line: lineNumber,
+        })
+      }
+      decorators = ''
+    } else if (/^\s{2}@/.test(line) || (decorators && /^\s{4}/.test(line))) {
+      decorators += `${line}\n`
+    } else if (line.trim() !== '') {
+      decorators = ''
+    }
+
+    offset += line.length + 1
+    lineNumber += 1
+  }
+
+  return methods
+}
+
+const getBlockSource = (source: string, openingBraceIndex: number): string => {
+  let depth = 0
+  for (let index = openingBraceIndex; index < source.length; index += 1) {
+    if (source[index] === '{') {
+      depth += 1
+    } else if (source[index] === '}') {
+      depth -= 1
+      if (depth === 0) return source.slice(openingBraceIndex, index + 1)
+    }
+  }
+
+  return source.slice(openingBraceIndex)
+}
+
+const getGuardNames = (source: string): string[] => {
+  const guards = new Set<string>()
+  for (const match of getRegexMatches(/@UseGuards\s*\(([^)]*)\)/g, source)) {
+    for (const guard of getRegexMatches(/\b[A-Z]\w*Guard\b/g, match[1])) {
+      guards.add(guard[0])
+    }
+  }
+  return [...guards].sort()
+}
+
+const getClassGuardNames = (source: string): string[] => {
+  const classIndex = source.indexOf('export class ')
+  if (classIndex === -1) return []
+
+  const decoratorLines: string[] = []
+  const lines = source.slice(0, classIndex).split('\n')
+  for (let index = lines.length - 1; index >= 0; index -= 1) {
+    const line = lines[index]
+    if (line.trim() === '') continue
+    if (!line.trimStart().startsWith('@')) break
+    decoratorLines.unshift(line)
+  }
+
+  return getGuardNames(decoratorLines.join('\n'))
+}
+
+const getLineNumber = (source: string, index: number): number =>
+  source.slice(0, index).split('\n').length
+
 const getGeneratedCrudMethodNames = (): Set<string> => {
   const generatedResolverFiles = walkFiles('libs/api/generated-crud/feature/src/lib', path =>
     path.endsWith('.resolver.ts'),
@@ -638,18 +789,276 @@ const checkPublishablePackageReadmes = () => {
   }
 }
 
-const checkPreReleaseUpgradeNotes = () => {
-  const rootPackage = JSON.parse(readFileSync('package.json', 'utf8')) as { version?: string }
-  const isPreReleaseTemplate = !rootPackage.version || rootPackage.version === '0.0.0'
-  if (!isPreReleaseTemplate || !existsSync(notesDir)) return
+const readGuardBaseline = (): GuardBaseline | null => {
+  if (!existsSync(guardBaselinePath)) {
+    fail(
+      'guard-regression',
+      'Guard baseline is missing; regenerate it from the current trusted resolver surface',
+      guardBaselinePath,
+    )
+    return null
+  }
 
-  const notes = readdirSync(notesDir).filter(file => file.endsWith('.yaml'))
-  if (notes.length > 0) {
+  return JSON.parse(readFileSync(guardBaselinePath, 'utf8')) as GuardBaseline
+}
+
+const getResolverGuardMap = (): GuardBaseline => {
+  const resolverFiles = walkFiles('libs/api/custom/src/lib', path => path.endsWith('.resolver.ts'))
+  const guardMap: GuardBaseline = {}
+
+  for (const file of resolverFiles) {
+    const source = stripComments(readFileSync(file, 'utf8'))
+    const classGuards = getClassGuardNames(source)
+    const operations = getGraphqlOperationMethods(source)
+    if (operations.length === 0) continue
+
+    guardMap[file] = {}
+    for (const operation of operations) {
+      const methodGuards = getGuardNames(operation.decorators)
+      const effectiveGuards = methodGuards.length > 0 ? methodGuards : classGuards
+      guardMap[file][operation.name] = effectiveGuards
+    }
+  }
+
+  return guardMap
+}
+
+const guardRank = (guards: string[]): number => {
+  if (guards.includes('GqlAuthAdminGuard')) return 3
+  if (guards.some(guard => guard.includes('Scoped') || guard.includes('Owner'))) return 2
+  if (guards.includes('GqlAuthGuard')) return 1
+  return 0
+}
+
+const formatGuardList = (guards: string[]): string =>
+  guards.length > 0 ? guards.join(', ') : 'none'
+
+const checkGuardRegressions = () => {
+  const baseline = readGuardBaseline()
+  if (!baseline) return
+
+  const current = getResolverGuardMap()
+  for (const [file, methods] of Object.entries(baseline)) {
+    if (!existsSync(file)) continue
+
+    for (const [method, expectedGuards] of Object.entries(methods)) {
+      const actualGuards = current[file]?.[method]
+      if (!actualGuards) continue
+
+      if (guardRank(actualGuards) < guardRank(expectedGuards)) {
+        fail(
+          'guard-regression',
+          `Resolver guard for ${method} was downgraded from ${formatGuardList(
+            expectedGuards,
+          )} to ${formatGuardList(actualGuards)}`,
+          file,
+        )
+      }
+    }
+  }
+}
+
+const updateGuardBaseline = () => {
+  mkdirSync(dirname(guardBaselinePath), { recursive: true })
+  writeFileSync(guardBaselinePath, `${JSON.stringify(getResolverGuardMap(), null, 2)}\n`)
+  try {
+    execSync(`pnpm exec prettier --write ${guardBaselinePath}`, { stdio: 'ignore' })
+  } catch {
+    // Formatting is best effort; format:check will catch any remaining drift.
+  }
+}
+
+const isGeneratedOrExternalCode = (path: string): boolean =>
+  path.includes('/node_modules/') ||
+  path.includes('/build/') ||
+  path.includes('/dist/') ||
+  path.includes('/coverage/') ||
+  path.includes('libs/api/generated-crud/') ||
+  path.includes('libs/api/prisma/src/lib/prisma-generated/') ||
+  path.includes('libs/shared/sdk/src/generated/')
+
+const checkUnsafeTypeScriptCasts = () => {
+  const files = walkFiles(
+    '.',
+    path =>
+      /\.(ts|tsx)$/.test(path) &&
+      path !== 'scripts/doctor.ts' &&
+      !path.endsWith('.spec.ts') &&
+      !path.endsWith('.spec.tsx') &&
+      !isGeneratedOrExternalCode(path),
+  )
+
+  const unsafePatterns = [
+    { pattern: /\bas\s+any\b/g, message: 'Avoid as any in non-generated source' },
+    { pattern: /\bas\s+unknown\s+as\b/g, message: 'Avoid double-casting through unknown' },
+    { pattern: /@ts-ignore/g, message: 'Use typed code instead of @ts-ignore' },
+  ]
+
+  for (const file of files) {
+    const source = readFileSync(file, 'utf8')
+    for (const { pattern, message } of unsafePatterns) {
+      for (const match of getRegexMatches(pattern, source)) {
+        review('typescript-safety', message, file, getLineNumber(source, match.index))
+      }
+    }
+  }
+}
+
+const getSensitiveUpgradeImpactFiles = (): string[] => {
+  const changedFilesCommand = `git diff --name-only ${gitBaseRef}...HEAD`
+
+  try {
+    const output = execSync(changedFilesCommand, {
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'ignore'],
+    }).trim()
+    return output ? output.split('\n') : []
+  } catch {
+    return []
+  }
+}
+
+const isSensitiveUpgradePath = (path: string): boolean =>
+  /^libs\/api\/(core|custom|utils|integrations)\//.test(path) ||
+  /^apps\/api\//.test(path) ||
+  /^apps\/web\/app\/routes\//.test(path) ||
+  path === 'apps/web/app/routes.tsx' ||
+  path === schemaPath ||
+  path.includes('/guards/') ||
+  path.includes('/billing/') ||
+  path.includes('/auth/') ||
+  path.includes('/rbac/') ||
+  path.includes('/admin/')
+
+const checkUpgradeNoteImpactGate = () => {
+  const changedSensitiveFiles = getSensitiveUpgradeImpactFiles().filter(isSensitiveUpgradePath)
+  if (changedSensitiveFiles.length === 0) return
+
+  const changedNotes = getSensitiveUpgradeImpactFiles().filter(
+    path => path.startsWith(`${notesDir}/`) && path.endsWith('.yaml'),
+  )
+  if (changedNotes.length === 0) {
     fail(
       'upgrade-notes',
-      'Upgrade notes should stay empty until the first public template release',
-      notes.map(note => join(notesDir, note)).join(', '),
+      'Sensitive template behavior changed without a new upgrade note or priority: ignore note',
+      changedSensitiveFiles[0],
     )
+  }
+}
+
+const hasContextScopeAnchor = (source: string): boolean =>
+  /@CtxUser\s*\(\)|\buser\.(?:id|organizationId|currentOrganizationId)\b|currentUser|organizationScoped/i.test(
+    source,
+  )
+
+const usesInputIdInPrismaWhere = (source: string): boolean =>
+  /\b(?:userId|organizationId|teamId|roleId|memberId|inviteId|subscriptionId|tokenId)\b/.test(
+    source,
+  ) &&
+  /\b(?:findFirst|findUnique|findMany|update|updateMany|delete|deleteMany|create)\s*\(/.test(source)
+
+const checkResolverScopeAnchoring = () => {
+  const resolverFiles = walkFiles('libs/api/custom/src/lib', path => path.endsWith('.resolver.ts'))
+
+  for (const file of resolverFiles) {
+    const source = stripComments(readFileSync(file, 'utf8'))
+    for (const operation of getGraphqlOperationMethods(source)) {
+      const operationSource = `${operation.decorators}\n${operation.body}`
+      if (!/@Args\s*\(/.test(operationSource) || !usesInputIdInPrismaWhere(operationSource))
+        continue
+      if (hasContextScopeAnchor(operationSource)) continue
+
+      review(
+        'resolver-scope',
+        `Review ${operation.name}: resolver uses caller-supplied IDs in data access without an obvious @CtxUser scope anchor`,
+        file,
+        operation.line,
+      )
+    }
+  }
+}
+
+const isSensitiveMutationDomain = (file: string): boolean =>
+  /\/(auth|admin|billing|organization|subscription|user|role|permission|invite)\//.test(file)
+
+const hasAuditMarker = (source: string): boolean =>
+  /\baudit(?:Log)?\b|recordAuditLog|SecurityEvent|securityEvent/i.test(source)
+
+const hasSiblingServiceAuditMarker = (file: string): boolean => {
+  const serviceFiles = directFiles(dirname(file), path => path.endsWith('.service.ts'))
+  return serviceFiles.some(serviceFile =>
+    hasAuditMarker(stripComments(readFileSync(serviceFile, 'utf8'))),
+  )
+}
+
+const checkAuditCoverageHeuristic = () => {
+  const resolverFiles = walkFiles('libs/api/custom/src/lib', path => path.endsWith('.resolver.ts'))
+
+  for (const file of resolverFiles) {
+    if (!isSensitiveMutationDomain(file)) continue
+
+    const source = stripComments(readFileSync(file, 'utf8'))
+    const siblingServiceHasAuditMarker = hasSiblingServiceAuditMarker(file)
+    for (const operation of getGraphqlOperationMethods(source)) {
+      if (!/@Mutation\b/.test(operation.decorators)) continue
+      if (
+        hasAuditMarker(operation.body) ||
+        hasAuditMarker(source) ||
+        siblingServiceHasAuditMarker
+      ) {
+        continue
+      }
+
+      review(
+        'audit-coverage',
+        `Review ${operation.name}: sensitive mutation has no obvious audit log call in its resolver file`,
+        file,
+        operation.line,
+      )
+    }
+  }
+}
+
+const hasPrivilegeCeiling = (source: string): boolean =>
+  /role|permission|privilege|superAdmin|isSuperAdmin|higher|equal|ceiling/i.test(source)
+
+const checkEmulationPrivilegeCeiling = () => {
+  const resolverFiles = walkFiles('libs/api/custom/src/lib', path => path.endsWith('.resolver.ts'))
+  for (const file of resolverFiles) {
+    const source = stripComments(readFileSync(file, 'utf8'))
+    for (const operation of getGraphqlOperationMethods(source)) {
+      const isEmulationMutation =
+        /@Mutation\b/.test(operation.decorators) &&
+        (/\b(emulat|impersonat)/i.test(operation.name) ||
+          /\b\w+\.emulate\w*\s*\(/i.test(operation.body) ||
+          /\b\w+\.impersonate\w*\s*\(/i.test(operation.body))
+      if (!isEmulationMutation) continue
+
+      if (!operation.decorators.includes('GqlAuthAdminGuard')) {
+        fail(
+          'emulation-security',
+          `Emulation/impersonation resolver ${operation.name} must require GqlAuthAdminGuard`,
+          file,
+        )
+      }
+    }
+  }
+
+  const serviceFiles = walkFiles(
+    'libs/api/custom/src/lib',
+    path => path.endsWith('.service.ts') && !path.endsWith('.spec.ts'),
+  )
+
+  for (const file of serviceFiles) {
+    const source = stripComments(readFileSync(file, 'utf8'))
+    if (!/\b(emulat|impersonat)/i.test(source)) continue
+    if (!hasPrivilegeCeiling(source)) {
+      fail(
+        'emulation-security',
+        'Emulation/impersonation service code must enforce an explicit privilege ceiling',
+        file,
+      )
+    }
   }
 }
 
@@ -658,9 +1067,18 @@ const printFindings = (label: string, items: Finding[]) => {
 
   console.log(`\n${label}`)
   for (const item of items) {
-    const suffix = item.file ? ` (${relative(process.cwd(), item.file)})` : ''
+    const location = item.file
+      ? `${relative(process.cwd(), item.file)}${item.line ? `:${item.line}` : ''}`
+      : ''
+    const suffix = location ? ` (${location})` : ''
     console.log(`- [${item.check}] ${item.message}${suffix}`)
   }
+}
+
+if (shouldUpdateGuardBaseline) {
+  updateGuardBaseline()
+  console.log(`Updated ${guardBaselinePath}`)
+  process.exit(0)
 }
 
 checkRoutes()
@@ -674,7 +1092,12 @@ checkPluginExportsAndRegistration()
 checkIntegrationExports()
 checkSkipCrudDocumentation()
 checkPublishablePackageReadmes()
-checkPreReleaseUpgradeNotes()
+checkUpgradeNoteImpactGate()
+checkGuardRegressions()
+checkUnsafeTypeScriptCasts()
+checkResolverScopeAnchoring()
+checkAuditCoverageHeuristic()
+checkEmulationPrivilegeCeiling()
 
 printFindings('Warnings', warnings)
 printFindings('Failures', failures)

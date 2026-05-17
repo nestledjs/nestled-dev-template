@@ -21,11 +21,38 @@ or framework commands such as `pnpm doctor` or `expo doctor`.
 - Integration modules/services are exported through integration barrels.
 - `@skipCrud` includes a nearby security-sensitive internal-model explanation.
 - Publishable packages include a README.
-- Upgrade notes stay empty while the root package version is `0.0.0`.
+- Sensitive auth, billing, admin, API, or route changes include a new upgrade note or an explicit
+  `priority: ignore` note.
+- Custom resolver guard levels do not regress below the committed guard baseline in
+  `.nestled-template/security/guard-baseline.json`.
+- Non-generated TypeScript source avoids `as any`, double-casting through `unknown`, and
+  `@ts-ignore`. Existing findings are warning-only; findings on changed lines fail.
+- Emulation or impersonation code requires `GqlAuthAdminGuard` and an explicit privilege ceiling.
+- Resolver methods that use caller-supplied IDs in data access without an obvious `@CtxUser`
+  scope anchor are flagged for review. Changed-line findings fail.
+- Sensitive auth, organization, billing, admin, RBAC, and user mutations without obvious audit
+  logging in the resolver file or a sibling service are flagged for review. Changed-line findings
+  fail.
 
 Future checks should also validate that normal SDK operation files do not call
 generated CRUD fields directly after the remaining legacy SDK operations are
 retired or moved to `__admin`.
+
+## Guard Baseline
+
+The guard baseline captures the effective guard list for each hand-written GraphQL resolver
+operation under `libs/api/custom/src/lib`. Doctor blocks changes that downgrade an existing
+operation's guard level, such as changing `GqlAuthAdminGuard` to `GqlAuthGuard`.
+
+When a guard change is intentionally stricter, update `.nestled-template/security/guard-baseline.json`
+in the same PR. When a guard change is intentionally less restrictive, treat it as a security review
+item and document the reason in the PR.
+
+Regenerate the baseline after reviewing an intentional guard-contract change:
+
+```bash
+pnpm security:update-guard-baseline
+```
 
 ## Usage
 

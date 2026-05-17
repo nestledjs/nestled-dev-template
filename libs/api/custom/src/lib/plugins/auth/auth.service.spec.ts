@@ -1491,6 +1491,22 @@ describe('AuthService', () => {
       mockData.user.findUnique.mockResolvedValue(null)
       await expect(service.emulateUser({ userId: targetUserId }, adminId)).rejects.toThrow()
     })
+    it('should reject emulation of a super admin user', async () => {
+      const adminId = 'admin-123'
+      const targetUserId = 'admin-456'
+      mockData.user.findUnique.mockResolvedValue({
+        id: targetUserId,
+        username: 'targetadmin',
+        isSuperAdmin: true,
+        emails: [{ email: 'target-admin@example.com', primary: true }],
+      } as any)
+
+      await expect(service.emulateUser({ userId: targetUserId }, adminId)).rejects.toThrow(
+        'Cannot emulate a user with equal or higher privileges',
+      )
+      expect(mockData.auditLog.create).not.toHaveBeenCalled()
+      expect(mockJwtService.sign).not.toHaveBeenCalled()
+    })
     it('should end emulation and restore admin session', async () => {
       const emulationToken = 'emulation-jwt-token'
       const mockDecoded = {

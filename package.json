@@ -27,6 +27,7 @@
     "template:create-upgrade-note": "tsx scripts/create-upgrade-note.ts",
     "template:validate-upgrade-notes": "tsx scripts/validate-upgrade-notes.ts",
     "nestled-doctor": "tsx scripts/doctor.ts",
+    "security:update-guard-baseline": "tsx scripts/doctor.ts --update-guard-baseline",
     "affected": "nx affected",
     "affected:apps": "nx affected:apps",
     "affected:build": "nx affected:build",

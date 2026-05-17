@@ -1,4 +1,10 @@
-import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common'
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
 import { ApiCoreDataAccessService } from '@nestled-template/api/core/data-access'
 import { EmailType, User } from '@nestled-template/api/core/models'
@@ -838,6 +844,11 @@ export class AuthService {
       throw new NotFoundException(`No user found for id: ${input?.userId}`)
     }
 
+    if (user.isSuperAdmin) {
+      Logger.warn(`EmulateUser rejected: admin ${adminId} attempted to emulate admin ${user.id}`)
+      throw new ForbiddenException('Cannot emulate a user with equal or higher privileges')
+    }
+
     Logger.log(`✅ EmulateUser: User found - ${user.firstName} ${user.lastName}`)
 
     // Log emulation start to AuditLog
@@ -1024,7 +1035,7 @@ export class AuthService {
 
   async signUser(
     user: User,
-    rememberMe: boolean = false,
+    rememberMe = false,
     emulatingAdminId?: string,
     sessionInfo?: SessionInfo,
   ): Promise<UserToken> {
