@@ -10,6 +10,7 @@ import {
   ShieldCheckIcon,
   UserMinusIcon,
   UsersIcon,
+  XMarkIcon,
 } from '@heroicons/react/24/outline'
 import { RequirePermission } from '@nestled-template/web'
 import { Form } from '@nestledjs/forms'
@@ -22,6 +23,7 @@ import {
   MyOrganizationsWithMembers,
   type MyOrganizationsWithMembersQuery,
   CreateOrganizationInvitation,
+  CancelOrganizationInvitation,
   ResendOrganizationInvitation,
   RemoveOrganizationMember,
   UpdateOrganizationMemberRole,
@@ -29,6 +31,7 @@ import {
   OrganizationRoles,
   OrganizationInvitations,
   type CreateOrganizationInvitationMutation,
+  type CancelOrganizationInvitationMutation,
   type ResendOrganizationInvitationMutation,
   type RemoveOrganizationMemberMutation,
   type UpdateOrganizationMemberRoleMutation,
@@ -227,6 +230,9 @@ export default function MembersSettings() {
   const [resendInvitation] = useMutation<ResendOrganizationInvitationMutation>(
     ResendOrganizationInvitation,
   )
+  const [cancelInvitation] = useMutation<CancelOrganizationInvitationMutation>(
+    CancelOrganizationInvitation,
+  )
   const [removeMember] = useMutation<RemoveOrganizationMemberMutation>(RemoveOrganizationMember)
   const [updateMemberRole] = useMutation<UpdateOrganizationMemberRoleMutation>(
     UpdateOrganizationMemberRole,
@@ -323,6 +329,34 @@ export default function MembersSettings() {
           refetchInvitations()
         } catch (error) {
           setFormError((error as Error)?.message ?? 'Failed to resend invitation')
+        }
+      },
+    })
+  }
+
+  async function handleCancelInvitation(invitationId: string, email: string) {
+    setConfirmModal({
+      isOpen: true,
+      title: 'Cancel Invitation',
+      message: `Are you sure you want to cancel the pending invitation to ${email}? Their invitation link will stop working.`,
+      onConfirm: async () => {
+        setConfirmModal(null)
+        setFormError(null)
+        setFormSuccess(null)
+
+        try {
+          await cancelInvitation({
+            variables: {
+              input: {
+                invitationId,
+              },
+            },
+          })
+
+          setFormSuccess(`Invitation cancelled for ${email}`)
+          refetchInvitations()
+        } catch (error) {
+          setFormError((error as Error)?.message ?? 'Failed to cancel invitation')
         }
       },
     })
@@ -746,13 +780,22 @@ export default function MembersSettings() {
                     </span>
 
                     <RequirePermission permission="member:invite" fallback={null}>
-                      <button
-                        onClick={() => handleResendInvitation(invitation.id, invitation.email)}
-                        className="p-1.5 rounded text-sky-600 dark:text-sky-400 hover:bg-sky-100 dark:hover:bg-sky-500/10"
-                        title="Resend invitation"
-                      >
-                        <ArrowPathIcon className="h-4 w-4" />
-                      </button>
+                      <div className="flex items-center gap-1">
+                        <button
+                          onClick={() => handleResendInvitation(invitation.id, invitation.email)}
+                          className="p-1.5 rounded text-sky-600 dark:text-sky-400 hover:bg-sky-100 dark:hover:bg-sky-500/10"
+                          title="Resend invitation"
+                        >
+                          <ArrowPathIcon className="h-4 w-4" />
+                        </button>
+                        <button
+                          onClick={() => handleCancelInvitation(invitation.id, invitation.email)}
+                          className="p-1.5 rounded text-rose-600 dark:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-500/10"
+                          title="Cancel invitation"
+                        >
+                          <XMarkIcon className="h-4 w-4" />
+                        </button>
+                      </div>
                     </RequirePermission>
                   </div>
                 </div>

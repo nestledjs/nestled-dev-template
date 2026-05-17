@@ -177,6 +177,10 @@ type AuditLog {
   userId: String!
 }
 
+input CancelInvitationInput {
+  invitationId: String!
+}
+
 input ChangeEmailInput {
   newEmail: String!
 }
@@ -1233,6 +1237,7 @@ type Mutation {
   adminDeactivateUser(userId: String!): User!
   adminForcePasswordReset(userId: String!): User!
   adminVerifyEmail(emailId: String!, userId: String!): User!
+  cancelOrganizationInvitation(input: CancelInvitationInput!): Boolean!
   cancelSubscription: Subscription!
   changeEmail(input: ChangeEmailInput!): Boolean!
   changePassword(input: ChangePasswordInput!): Boolean!

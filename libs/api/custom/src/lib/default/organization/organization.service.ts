@@ -19,6 +19,7 @@ import {
   UpdateMemberRoleInput,
   CreateInvitationInput,
   ResendInvitationInput,
+  CancelInvitationInput,
   AcceptInvitationInput,
   RejectInvitationInput,
   SwitchOrganizationInput,
@@ -690,6 +691,66 @@ export class OrganizationService {
     })
 
     Logger.log(`User ${userId} resent invitation ${invite.id} to ${invite.email}`)
+
+    return true
+  }
+
+  /**
+   * Cancel a pending organization invitation (requires member:invite permission).
+   */
+  async cancelOrganizationInvitation(
+    userId: string,
+    input: CancelInvitationInput,
+  ): Promise<boolean> {
+    const invite = await this.data.invite.findUnique({
+      where: { id: input.invitationId },
+      include: { role: true },
+    })
+
+    if (!invite) {
+      throw new NotFoundException('Invitation not found')
+    }
+
+    const canInvite = await this.hasPermission(userId, invite.organizationId, 'member', 'invite')
+    if (!canInvite) {
+      throw new ForbiddenException(
+        'You do not have permission to cancel invitations for this organization',
+      )
+    }
+
+    if (invite.role?.name === 'Owner') {
+      const userIsOwner = await this.isOwner(userId, invite.organizationId)
+      if (!userIsOwner) {
+        throw new ForbiddenException('Only organization owners can cancel Owner invitations')
+      }
+    }
+
+    if (invite.status !== 'PENDING') {
+      throw new BadRequestException('Can only cancel pending invitations')
+    }
+
+    await this.data.invite.update({
+      where: { id: invite.id },
+      data: { status: 'DECLINED' },
+    })
+
+    await this.recordAuditLog({
+      actorUserId: userId,
+      organizationId: invite.organizationId,
+      entityId: invite.id,
+      entityType: 'Invite',
+      action: 'ORGANIZATION_INVITATION_CANCELLED',
+      changes: {
+        email: invite.email,
+        roleId: invite.roleId ?? null,
+        status: {
+          before: invite.status,
+          after: 'DECLINED',
+        },
+      },
+    })
+
+    Logger.log(`User ${userId} cancelled invitation ${invite.id} to ${invite.email}`)
 
     return true
   }
