@@ -132,6 +132,13 @@ Recent history uses short imperative subjects, often Conventional Commit prefixe
 
 Every meaningful template or published library change must explicitly decide whether it should propagate to downstream Nestled projects.
 
+Upgrade-note creation is a source-template responsibility for this repository
+(`github.com/nestledjs/nestled-dev-template`). Downstream projects may keep the
+`.nestled-template/upgrade-notes` directory so the updater can read inbound notes, but local
+downstream application changes should not be forced to create new template upgrade notes. Doctor
+enforces this gate only when it identifies this source repository, or when
+`NESTLED_TEMPLATE_SOURCE=true` is set.
+
 ### When a Change Should Propagate
 
 Create one upgrade note:

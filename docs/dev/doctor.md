@@ -22,7 +22,7 @@ or framework commands such as `pnpm doctor` or `expo doctor`.
 - `@skipCrud` includes a nearby security-sensitive internal-model explanation.
 - Publishable packages include a README.
 - Sensitive auth, billing, admin, API, or route changes include a new upgrade note or an explicit
-  `priority: ignore` note.
+  `priority: ignore` note when Doctor is running in the source template repository.
 - Custom resolver guard levels do not regress below the committed guard baseline in
   `.nestled-template/security/guard-baseline.json`.
 - Non-generated TypeScript source avoids `as any`, double-casting through `unknown`, and
@@ -59,6 +59,17 @@ pnpm security:update-guard-baseline
 ```bash
 pnpm run nestled-doctor
 ```
+
+## Source Template Mode
+
+Upgrade notes are a source-template responsibility. Doctor only enforces the upgrade-note gate when
+it can identify the repository as `github.com/nestledjs/nestled-dev-template`, or when
+`NESTLED_TEMPLATE_SOURCE=true` is set.
+
+Downstream projects can still keep `.nestled-template/upgrade-notes` so the updater can read
+inbound notes, but they should not be required to create new notes for local application changes.
+Set `NESTLED_TEMPLATE_SOURCE=false` in unusual clone setups where the remote still points at the
+source repository during local downstream work.
 
 Doctor is intentionally fast and local. It does not replace builds, tests, or
 type checks; it catches framework-specific drift before those checks become
