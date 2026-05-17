@@ -6,7 +6,15 @@ import {
 } from '@nestled-template/shared/utils'
 import { CorePaging } from '@nestled-template/shared/sdk'
 
-import React, { Dispatch, ReactElement, SetStateAction, useCallback, useState } from 'react'
+import React, {
+  Dispatch,
+  ReactElement,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
 import { Link } from 'react-router'
 import {
   ChevronDownIcon,
@@ -63,6 +71,13 @@ function getAriaSortValue(
 export function WebUiDataTable(props: WebUiDataTableProps) {
   const [visibleIds, setVisibleIds] = useState<Set<string>>(new Set())
   const [copiedId, setCopiedId] = useState<string | null>(null)
+  const copiedTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  useEffect(() => {
+    return () => {
+      if (copiedTimeoutRef.current) clearTimeout(copiedTimeoutRef.current)
+    }
+  }, [])
 
   const toggleIdVisibility = useCallback((rowId: string) => {
     setVisibleIds(prev => {
@@ -78,7 +93,11 @@ export function WebUiDataTable(props: WebUiDataTableProps) {
       if (typeof navigator !== 'undefined' && navigator?.clipboard?.writeText) {
         await navigator.clipboard.writeText(value)
         setCopiedId(value)
-        setTimeout(() => setCopiedId(null), 2000)
+        if (copiedTimeoutRef.current) clearTimeout(copiedTimeoutRef.current)
+        copiedTimeoutRef.current = setTimeout(() => {
+          setCopiedId(null)
+          copiedTimeoutRef.current = null
+        }, 2000)
       }
     } catch {
       // ignore

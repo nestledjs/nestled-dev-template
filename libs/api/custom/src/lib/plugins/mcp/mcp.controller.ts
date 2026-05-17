@@ -6,6 +6,19 @@ import { JSONRPCMessage, isJSONRPCRequest } from '@modelcontextprotocol/sdk/type
 import { McpServerFactory } from './mcp-server.factory'
 import { McpAuthContext } from './mcp-auth'
 
+interface UnrefableTimer {
+  unref: () => void
+}
+
+function unrefTimer(timer: ReturnType<typeof setTimeout>): void {
+  if (typeof timer !== 'object' || timer === null || !('unref' in timer)) return
+
+  const maybeUnref = (timer as { unref?: unknown }).unref
+  if (typeof maybeUnref === 'function') {
+    ;(timer as UnrefableTimer).unref()
+  }
+}
+
 /**
  * Minimal in-memory transport for a single JSON request/response cycle.
  * Uses POST-only JSON-RPC rather than SSE to work reliably behind CDNs that
@@ -47,7 +60,7 @@ class JsonRequestTransport implements Transport {
     const responsePromises = requestMessages.map(
       req =>
         new Promise<JSONRPCMessage>(resolve => {
-          this.pending.set((req as any).id, resolve)
+          this.pending.set(req.id, resolve)
         }),
     )
 
@@ -57,13 +70,19 @@ class JsonRequestTransport implements Transport {
 
     if (responsePromises.length === 0) return null
 
-    const timeout = new Promise<never>((_, reject) =>
-      setTimeout(() => reject(new Error('MCP response timeout')), 30_000),
-    )
-    const responses = await Promise.race([Promise.all(responsePromises), timeout])
-    const [firstResponse] = responses
+    let timeoutHandle: ReturnType<typeof setTimeout> | undefined
+    try {
+      const timeout = new Promise<never>((_, reject) => {
+        timeoutHandle = setTimeout(() => reject(new Error('MCP response timeout')), 30_000)
+        unrefTimer(timeoutHandle)
+      })
+      const responses = await Promise.race([Promise.all(responsePromises), timeout])
+      const [firstResponse] = responses
 
-    return responses.length === 1 ? firstResponse : responses
+      return responses.length === 1 ? firstResponse : responses
+    } finally {
+      if (timeoutHandle) clearTimeout(timeoutHandle)
+    }
   }
 }
 
