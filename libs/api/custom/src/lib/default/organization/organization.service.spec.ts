@@ -155,16 +155,13 @@ describe('OrganizationService', () => {
     })
   })
   describe('userUpdateOrganization', () => {
-    it('should update organization when user has permission', async () => {
+    it('should update organization when user is owner', async () => {
       const userId = 'user-123'
       const organizationId = 'org-123'
       const input = { name: 'Updated Name' }
-      // Mock permission check - user has organization:update permission
       data.organizationMember.findFirst.mockResolvedValue({
         id: 'member-123',
-        role: {
-          permissions: [{ subject: 'organization', action: 'update' }],
-        },
+        role: { name: 'Owner' },
       } as any)
       data.organization.update.mockResolvedValue({
         id: organizationId,
@@ -186,16 +183,13 @@ describe('OrganizationService', () => {
         }),
       })
     })
-    it('should throw ForbiddenException when user lacks permission', async () => {
+    it('should throw ForbiddenException when user is not owner', async () => {
       const userId = 'user-123'
       const organizationId = 'org-123'
       const input = { name: 'Updated Name' }
-      // Mock permission check - user does NOT have organization:update permission
       data.organizationMember.findFirst.mockResolvedValue({
         id: 'member-123',
-        role: {
-          permissions: [{ subject: 'member', action: 'read' }], // Wrong permission
-        },
+        role: { name: 'Admin' },
       } as any)
       await expect(service.userUpdateOrganization(userId, organizationId, input)).rejects.toThrow(
         ForbiddenException,

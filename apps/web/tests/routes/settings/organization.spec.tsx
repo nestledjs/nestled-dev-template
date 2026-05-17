@@ -118,7 +118,7 @@ describe('OrganizationSettings logo handling', () => {
     mockUseGlobalCtx.mockReturnValue({
       user: { id: 'user-1', activeOrganizationId: 'org-1' },
       activeOrganizationMember: {
-        role: { permissions: [{ subject: 'organization', action: 'update' }] },
+        role: { permissions: [{ subject: 'organization', action: 'delete' }] },
       },
     })
     mockUseRevalidator.mockReturnValue({ revalidate })
@@ -257,7 +257,7 @@ describe('OrganizationSettings logo handling', () => {
     mockUseGlobalCtx.mockReturnValue({
       user: { id: 'user-1', activeOrganizationId: 'org-2' },
       activeOrganizationMember: {
-        role: { permissions: [{ subject: 'organization', action: 'update' }] },
+        role: { permissions: [{ subject: 'organization', action: 'delete' }] },
       },
     })
     mockUseReadQuery.mockReturnValue({ data: cachedOrganizations })
