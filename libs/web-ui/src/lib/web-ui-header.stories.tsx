@@ -37,9 +37,11 @@ export const Default: Story = {
 export const Authenticated: Story = {
   args: {
     isAuthenticated: true,
+    userName: 'Ada Lovelace',
+    userEmail: 'ada@example.com',
   },
   play: async ({ canvasElement }: StoryContext) => {
     const canvas = within(canvasElement)
-    await expect(canvas.getByText('Dashboard')).toBeInTheDocument()
+    await expect(canvas.getByLabelText('Open account menu')).toBeInTheDocument()
   },
 }

@@ -343,6 +343,24 @@ describe('SettingsLayout Component', () => {
       expect(screen.getByText('Billing')).toBeInTheDocument()
     })
 
+    it('should show the admin console entry only to super admins', () => {
+      renderWithRouter()
+      expect(screen.queryByText('Admin Console')).not.toBeInTheDocument()
+
+      vi.mocked(useGlobalCtx).mockReturnValue({
+        user: { ...mockUser, isSuperAdmin: true } as any,
+        organizations: [],
+        activeOrganization: null,
+        activeOrganizationMember: null,
+      })
+
+      renderWithRouter()
+
+      const adminLink = screen.getByRole('link', { name: /Admin Console/ })
+      expect(adminLink).toHaveAttribute('href', '/admin')
+      expect(screen.getByText('Platform setup and operations')).toBeInTheDocument()
+    })
+
     it('should hide organization settings when no organization', () => {
       vi.mocked(useQuery).mockReturnValue({
         data: {

@@ -570,6 +570,55 @@ describe('AuthService', () => {
       )
     })
   })
+
+  describe('Authenticated user hydration', () => {
+    const expectedAuthUserInclude = {
+      emails: true,
+      phoneNumbers: true,
+      avatar: true,
+      images: true,
+    }
+
+    it('should include the dedicated avatar relation when validating the current user', async () => {
+      await service.validateUser('user-123')
+
+      expect(mockData.user.findUnique).toHaveBeenCalledWith({
+        where: { id: 'user-123' },
+        include: expectedAuthUserInclude,
+      })
+    })
+
+    it('should include the dedicated avatar relation when loading a user from a token', async () => {
+      mockJwtService.decode.mockReturnValue({ userId: 'user-123' })
+
+      await service.getUserFromToken('jwt-token')
+
+      expect(mockJwtService.decode).toHaveBeenCalledWith('jwt-token')
+      expect(mockData.user.findUnique).toHaveBeenCalledWith({
+        where: { id: 'user-123' },
+        include: expectedAuthUserInclude,
+      })
+    })
+
+    it('should include the dedicated avatar relation when finding a user by email', async () => {
+      await service.findUserByEmail('ADA@EXAMPLE.COM')
+
+      expect(mockData.user.findFirst).toHaveBeenCalledWith({
+        where: {
+          emails: {
+            some: {
+              email: {
+                equals: 'ada@example.com',
+                mode: 'insensitive',
+              },
+            },
+          },
+        },
+        include: expectedAuthUserInclude,
+      })
+    })
+  })
+
   describe('Password Hashing and Validation', () => {
     it('should hash password during user creation', async () => {
       const registerInput = {
@@ -693,7 +742,12 @@ describe('AuthService', () => {
       mockData.passwordHistory.create.mockResolvedValue({} as any)
       mockData.email.findFirst.mockResolvedValue({ email: 'test@example.com' } as any)
       mockSessionService.invalidateAllUserSessions.mockResolvedValue(5)
-      const result = await service.changePassword(userId, changePasswordInput, {} as any)
+      const result = await service.changePassword(
+        userId,
+        changePasswordInput,
+        {} as any,
+        'session-current',
+      )
       expect(result).toBe(true)
       expect(mockData.user.update).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -702,7 +756,10 @@ describe('AuthService', () => {
           }),
         }),
       )
-      expect(mockSessionService.invalidateAllUserSessions).toHaveBeenCalledWith(userId)
+      expect(mockSessionService.invalidateAllUserSessions).toHaveBeenCalledWith(
+        userId,
+        'session-current',
+      )
       expect(mockSecurityEvents.logPasswordChanged).toHaveBeenCalledWith(userId, expect.any(Object))
     })
     it('should reject password change with invalid current password', async () => {

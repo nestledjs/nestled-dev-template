@@ -50,6 +50,9 @@ describe('OrganizationService', () => {
       email: {
         findFirst: jest.fn(),
       },
+      auditLog: {
+        create: jest.fn(),
+      },
       $transaction: jest.fn((arg: any) => {
         // Handle both callback and array forms
         if (typeof arg === 'function') {
@@ -173,6 +176,15 @@ describe('OrganizationService', () => {
         where: { id: organizationId },
         data: { name: 'Updated Name' },
       })
+      expect(data.auditLog.create).toHaveBeenCalledWith({
+        data: expect.objectContaining({
+          userId,
+          organizationId,
+          entityId: organizationId,
+          entityType: 'Organization',
+          action: 'ORGANIZATION_UPDATED',
+        }),
+      })
     })
     it('should throw ForbiddenException when user lacks permission', async () => {
       const userId = 'user-123'
@@ -294,6 +306,15 @@ describe('OrganizationService', () => {
       expect(data.organizationMember.delete).toHaveBeenCalledWith({
         where: { id: 'member-to-delete' },
       })
+      expect(data.auditLog.create).toHaveBeenCalledWith({
+        data: expect.objectContaining({
+          userId,
+          organizationId: input.organizationId,
+          entityId: input.userId,
+          entityType: 'OrganizationMember',
+          action: 'ORGANIZATION_MEMBER_REMOVED',
+        }),
+      })
     })
     it('should throw BadRequestException when trying to remove self', async () => {
       const userId = 'user-123'
@@ -337,13 +358,25 @@ describe('OrganizationService', () => {
           role: { permissions: [{ subject: 'member', action: 'update' }] },
         } as any)
         .mockResolvedValueOnce({ role: { name: 'Member' } } as any) // Not owner
-        .mockResolvedValueOnce({ id: 'member-to-update' } as any)
+        .mockResolvedValueOnce({ id: 'member-to-update', roleId: 'old-role-id' } as any)
       data.organizationMember.update.mockResolvedValue({} as any)
       const result = await service.updateOrganizationMemberRole(userId, input)
       expect(result).toBe(true)
       expect(data.organizationMember.update).toHaveBeenCalledWith({
         where: { id: 'member-to-update' },
         data: { roleId: 'new-role-id' },
+      })
+      expect(data.auditLog.create).toHaveBeenCalledWith({
+        data: expect.objectContaining({
+          userId,
+          organizationId: input.organizationId,
+          entityId: input.userId,
+          entityType: 'OrganizationMember',
+          action: 'ORGANIZATION_MEMBER_ROLE_UPDATED',
+          changes: expect.objectContaining({
+            roleId: { before: 'old-role-id', after: 'new-role-id' },
+          }),
+        }),
       })
     })
     it('should throw BadRequestException when trying to change owner role', async () => {
@@ -391,6 +424,15 @@ describe('OrganizationService', () => {
       const token = await service.createOrganizationInvitation(userId, input)
       expect(token).toBeTruthy()
       expect(data.invite.create).toHaveBeenCalled()
+      expect(data.auditLog.create).toHaveBeenCalledWith({
+        data: expect.objectContaining({
+          userId,
+          organizationId: input.organizationId,
+          entityId: 'invite-123',
+          entityType: 'Invite',
+          action: 'ORGANIZATION_INVITATION_CREATED',
+        }),
+      })
       expect(emailService.sendTemplate).toHaveBeenCalledWith(
         'newuser@example.com',
         expect.objectContaining({
@@ -420,6 +462,25 @@ describe('OrganizationService', () => {
       await expect(service.createOrganizationInvitation(userId, input)).rejects.toThrow(
         BadRequestException,
       )
+    })
+    it('should reject owner invitations from non-owner admins', async () => {
+      const userId = 'admin-user'
+      const input = {
+        organizationId: 'org-123',
+        email: 'owner@example.com',
+        roleId: 'role-owner',
+      }
+      data.organizationMember.findFirst
+        .mockResolvedValueOnce({
+          role: { permissions: [{ subject: 'member', action: 'invite' }] },
+        } as any)
+        .mockResolvedValueOnce({ role: { name: 'Admin' } } as any)
+      data.role.findFirst.mockResolvedValue({ name: 'Owner' } as any)
+
+      await expect(service.createOrganizationInvitation(userId, input)).rejects.toThrow(
+        ForbiddenException,
+      )
+      expect(data.invite.create).not.toHaveBeenCalled()
     })
   })
   describe('acceptOrganizationInvitation', () => {
@@ -525,18 +586,31 @@ describe('OrganizationService', () => {
       const userId = 'user-123'
       data.organizationMember.findMany.mockResolvedValue([
         {
-          organization: { id: 'org-1', name: 'Org 1', images: [] },
+          organization: { id: 'org-1', name: 'Org 1', logo: { id: 'logo-1' }, images: [] },
           role: { name: 'Owner' },
         },
         {
-          organization: { id: 'org-2', name: 'Org 2', images: [] },
+          organization: { id: 'org-2', name: 'Org 2', logo: null, images: [] },
           role: { name: 'Member' },
         },
       ] as any)
       const result = await service.getUserOrganizations(userId)
       expect(result).toHaveLength(2)
       expect(result[0].name).toBe('Org 1')
+      expect(result[0].logo).toEqual({ id: 'logo-1' })
       expect(result[1].name).toBe('Org 2')
+      expect(data.organizationMember.findMany).toHaveBeenCalledWith({
+        where: { userId },
+        include: {
+          organization: {
+            include: {
+              logo: true,
+              images: true,
+            },
+          },
+          role: true,
+        },
+      })
     })
   })
   describe('transferOrganizationOwnership', () => {

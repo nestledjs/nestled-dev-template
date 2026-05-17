@@ -1,5 +1,5 @@
 import 'dotenv/config' // Load environment variables before anything else
-import { Logger, ValidationPipe } from '@nestjs/common'
+import { BadRequestException, Logger, ValidationError, ValidationPipe } from '@nestjs/common'
 import { NestFactory } from '@nestjs/core'
 import { ConfigService } from '@nestled-template/api/config'
 import cookieParser from 'cookie-parser'
@@ -12,6 +12,14 @@ import { NextFunction, Request, Response } from 'express'
 import { AppModule } from './app.module'
 
 const GLOBAL_PREFIX = 'api'
+
+function getValidationMessages(errors: ValidationError[]): string[] {
+  return errors.flatMap(error => {
+    const ownMessages = Object.values(error.constraints ?? {})
+    const childMessages = getValidationMessages(error.children ?? [])
+    return [...ownMessages, ...childMessages]
+  })
+}
 
 // Known valid API prefixes - only actual REST endpoints
 const VALID_API_PREFIXES = [
@@ -76,6 +84,12 @@ async function bootstrap() {
       transform: true,
       skipMissingProperties: false, // Validate even if properties are present but empty
       forbidUnknownValues: false,
+      exceptionFactory: errors => {
+        const messages = getValidationMessages(errors)
+        const message = messages[0] ?? 'Request validation failed'
+        Logger.warn(`[ValidationPipe] ${messages.join('; ') || message}`)
+        return new BadRequestException(message)
+      },
     }),
   )
 
@@ -109,6 +123,8 @@ async function bootstrap() {
       },
       // Ensure compatibility with GraphQL subscriptions (WebSockets)
       crossOriginEmbedderPolicy: false,
+      // Public uploads are served by the API and embedded by the web app on a different origin.
+      crossOriginResourcePolicy: { policy: 'cross-origin' },
     }),
   )
 

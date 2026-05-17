@@ -26,6 +26,69 @@ import { useQuery, useMutation } from '@apollo/client/react'
 
 type Tab = 'login' | 'signup'
 
+type SignupInput = {
+  firstName: string
+  lastName: string
+  email?: string
+  password: string
+}
+
+export function buildRegisterWithInvitationInput(
+  invitationToken: string,
+  invitationEmail: string,
+  input: SignupInput,
+) {
+  return {
+    invitationToken,
+    email: invitationEmail.trim().toLowerCase(),
+    firstName: input.firstName.trim(),
+    lastName: input.lastName.trim(),
+    password: input.password,
+  }
+}
+
+function extractValidationMessages(value: unknown): string[] {
+  if (!value || typeof value !== 'object') return []
+
+  const maybeError = value as {
+    extensions?: { originalError?: { message?: string | string[] } }
+    graphQLErrors?: Array<{ extensions?: { originalError?: { message?: string | string[] } } }>
+    errors?: Array<{ extensions?: { originalError?: { message?: string | string[] } } }>
+  }
+  const directMessage = maybeError.extensions?.originalError?.message
+  if (Array.isArray(directMessage)) return directMessage
+  if (typeof directMessage === 'string') return [directMessage]
+
+  const graphQLErrors = maybeError.graphQLErrors ?? maybeError.errors ?? []
+
+  return graphQLErrors.flatMap(error => {
+    const message = error.extensions?.originalError?.message
+    if (Array.isArray(message)) return message
+    if (typeof message === 'string') return [message]
+    return []
+  })
+}
+
+export function getInvitationErrorMessage(error: unknown, fallback: string): string {
+  const validationMessages = extractValidationMessages(error)
+  if (validationMessages.length > 0) return capitalizeSentence(validationMessages.join(' '))
+  if (error instanceof Error && error.message) return error.message
+  return fallback
+}
+
+function capitalizeSentence(message: string): string {
+  const trimmed = message.trim()
+  if (!trimmed) return message
+  return `${trimmed.charAt(0).toUpperCase()}${trimmed.slice(1)}`
+}
+
+function getMutationResultErrorMessage(result: unknown, fallback: string): string {
+  if (!result || typeof result !== 'object') return fallback
+
+  const maybeResult = result as { error?: unknown; errors?: unknown }
+  return getInvitationErrorMessage(maybeResult.error ?? maybeResult.errors ?? result, fallback)
+}
+
 export default function AcceptInvitation() {
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
@@ -71,7 +134,9 @@ export default function AcceptInvitation() {
         navigate('/members', { replace: true })
       }, 1500)
     } catch (error) {
-      setFormError((error as Error)?.message || 'Failed to accept invitation. Please try again.')
+      setFormError(
+        getInvitationErrorMessage(error, 'Failed to accept invitation. Please try again.'),
+      )
       setIsProcessing(false)
     }
   }, [acceptInvitation, navigate, token])
@@ -111,46 +176,36 @@ export default function AcceptInvitation() {
         setIsProcessing(false)
       }
     } catch (error) {
-      setFormError((error as Error)?.message || 'Failed to login. Please try again.')
+      setFormError(getInvitationErrorMessage(error, 'Failed to login. Please try again.'))
       setIsProcessing(false)
     }
   }
 
-  async function handleSignup(input: {
-    firstName: string
-    lastName: string
-    email: string
-    password: string
-  }) {
-    if (!token) return
+  async function handleSignup(input: SignupInput) {
+    if (!token || !invitationDetails) return
 
     setFormError(null)
     setIsProcessing(true)
 
     try {
-      const { data } = await registerWithInvitation({
+      const result = await registerWithInvitation({
         variables: {
-          input: {
-            invitationToken: token,
-            email: input.email,
-            firstName: input.firstName,
-            lastName: input.lastName,
-            password: input.password,
-          },
+          input: buildRegisterWithInvitationInput(token, invitationDetails.email, input),
         },
       })
+      const resultErrorMessage = getMutationResultErrorMessage(result, '')
 
-      if (data?.registerWithInvitation?.user?.id) {
+      if (result.data?.registerWithInvitation?.user?.id) {
         // Registration successful, redirect to members area
         setTimeout(() => {
           navigate('/members', { replace: true })
         }, 1500)
       } else {
-        setFormError('Failed to create account')
+        setFormError(resultErrorMessage || 'Failed to create account')
         setIsProcessing(false)
       }
     } catch (error) {
-      setFormError((error as Error)?.message || 'Failed to create account. Please try again.')
+      setFormError(getInvitationErrorMessage(error, 'Failed to create account. Please try again.'))
       setIsProcessing(false)
     }
   }
@@ -192,6 +247,10 @@ export default function AcceptInvitation() {
     FormFieldClass.password('password', {
       label: 'Password',
       required: true,
+      validate: (value: unknown) =>
+        typeof value === 'string' && value.length >= 8
+          ? true
+          : 'Password must be at least 8 characters',
     }),
     FormFieldClass.button('submit', {
       text: isProcessing ? 'Logging in...' : 'Login & Accept Invitation',

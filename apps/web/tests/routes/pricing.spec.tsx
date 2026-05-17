@@ -166,6 +166,9 @@ describe('Pricing Page', () => {
 
       expect(screen.getByText(/No Plans Available/i)).toBeInTheDocument()
       expect(screen.getByText(/Plans are being configured/i)).toBeInTheDocument()
+      expect(screen.getByText(/Site owners: configure Stripe pricing/i)).toBeInTheDocument()
+      expect(screen.getByText(/Create products and recurring prices/i)).toBeInTheDocument()
+      expect(screen.getByText(/stripePriceId/i)).toBeInTheDocument()
     })
   })
 

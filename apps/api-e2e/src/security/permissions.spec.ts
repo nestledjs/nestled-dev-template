@@ -334,15 +334,14 @@ describe('CRITICAL: Permission Enforcement', () => {
   describe('Owner Permissions', () => {
     it('owner can update organization', async () => {
       const updateMutation = `
-        mutation UserUpdateOrganization($organizationId: String!, $input: UpdateOrganizationInput!) {
-          userUpdateOrganization(organizationId: $organizationId, input: $input) {
+        mutation UserUpdateOrganization($input: UpdateOrganizationInput!) {
+          userUpdateOrganization(input: $input) {
             id
             name
           }
         }
       `
       const response = await TestHelpers.authenticatedGraphql(updateMutation, owner, {
-        organizationId: owner.organizationId,
         input: { name: 'Updated Permission Test Org' },
       })
       expect(response.data.errors).toBeUndefined()
@@ -496,15 +495,14 @@ describe('CRITICAL: Permission Enforcement', () => {
   describe('Admin Permissions', () => {
     it('admin cannot update organization settings', async () => {
       const updateMutation = `
-        mutation UserUpdateOrganization($organizationId: String!, $input: UpdateOrganizationInput!) {
-          userUpdateOrganization(organizationId: $organizationId, input: $input) {
+        mutation UserUpdateOrganization($input: UpdateOrganizationInput!) {
+          userUpdateOrganization(input: $input) {
             id
             name
           }
         }
       `
       const response = await TestHelpers.authenticatedGraphql(updateMutation, admin, {
-        organizationId: owner.organizationId,
         input: { name: 'Hacked by Admin' },
       })
       // Should return error - admins cannot update org settings (owner only)
@@ -599,15 +597,14 @@ describe('CRITICAL: Permission Enforcement', () => {
   describe('Member Permissions', () => {
     it('member cannot update organization settings', async () => {
       const updateMutation = `
-        mutation UserUpdateOrganization($organizationId: String!, $input: UpdateOrganizationInput!) {
-          userUpdateOrganization(organizationId: $organizationId, input: $input) {
+        mutation UserUpdateOrganization($input: UpdateOrganizationInput!) {
+          userUpdateOrganization(input: $input) {
             id
             name
           }
         }
       `
       const response = await TestHelpers.authenticatedGraphql(updateMutation, member, {
-        organizationId: owner.organizationId,
         input: { name: 'Hacked by Member' },
       })
       // Should fail
@@ -710,11 +707,10 @@ describe('CRITICAL: Permission Enforcement', () => {
       const mutations = [
         {
           name: 'Update Organization',
-          query: `mutation UserUpdateOrganization($organizationId: String!, $input: UpdateOrganizationInput!) {
-            userUpdateOrganization(organizationId: $organizationId, input: $input) { id }
+          query: `mutation UserUpdateOrganization($input: UpdateOrganizationInput!) {
+            userUpdateOrganization(input: $input) { id }
           }`,
           variables: {
-            organizationId: owner.organizationId,
             input: { name: 'Test' },
           },
         },

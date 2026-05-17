@@ -216,6 +216,19 @@ export default function AdminAuditLogsPage() {
         </p>
       </div>
 
+      <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-5 dark:border-emerald-500/20 dark:bg-emerald-500/10">
+        <h3 className="text-sm font-semibold text-emerald-900 dark:text-emerald-200">
+          Default audit coverage
+        </h3>
+        <p className="mt-2 text-sm text-emerald-800 dark:text-emerald-100">
+          Out of the box, this page records admin user emulation, organization profile updates,
+          organization invitations, member removals, and member role changes. Add more audit
+          coverage by creating AuditLog records in the service methods that perform sensitive
+          business actions such as billing changes, data exports, destructive deletes, or permission
+          changes.
+        </p>
+      </div>
+
       {/* Filters */}
       <div className="rounded-xl border border-zinc-200 dark:border-white/10 bg-white dark:bg-white/5 p-6 backdrop-blur space-y-4">
         {/* Search Filters Row 1 */}

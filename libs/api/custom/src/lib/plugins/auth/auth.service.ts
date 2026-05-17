@@ -40,6 +40,13 @@ import {
   hashBackupCode,
 } from './twofa.helper'
 
+const authUserRelations = {
+  emails: true,
+  phoneNumbers: true,
+  avatar: true,
+  images: true,
+} as const
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -245,7 +252,7 @@ export class AuthService {
       })
       const appName = this.config.get('app.name')
       const siteUrl = this.config.get('siteUrl')
-      const verificationUrl = `${siteUrl}/verify-email?token=${validateEmailToken}`
+      const verificationUrl = `${siteUrl}/verify-email?token=${validateEmailToken}&type=initial`
 
       await this.emailService.sendTemplate(primaryEmail, {
         templateId: 'email-verification',
@@ -345,7 +352,7 @@ export class AuthService {
 
       const appName = this.config.get('app.name')
       const siteUrl = this.config.get('siteUrl')
-      const verificationUrl = `${siteUrl}/verify-email?token=${validateEmailToken}`
+      const verificationUrl = `${siteUrl}/verify-email?token=${validateEmailToken}&type=initial`
 
       await this.emailService.sendTemplate(cleanEmail, {
         templateId: 'email-verification',
@@ -550,7 +557,7 @@ export class AuthService {
     })
     const appName = this.config.get('app.name')
     const siteUrl = this.config.get('siteUrl')
-    const verificationUrl = `${siteUrl}/verify-email?token=${validateEmailToken}`
+    const verificationUrl = `${siteUrl}/verify-email?token=${validateEmailToken}&type=initial`
 
     await this.emailService.sendTemplate(email, {
       templateId: 'email-verification',
@@ -664,7 +671,7 @@ export class AuthService {
     // Send verification email to new address
     const appName = this.config.get('app.name')
     const siteUrl = this.config.get('siteUrl')
-    const verificationUrl = `${siteUrl}/verify-email?token=${verifyToken}`
+    const verificationUrl = `${siteUrl}/verify-email?token=${verifyToken}&type=change`
 
     await this.emailService.sendTemplate(cleanEmail, {
       templateId: 'email-verification',
@@ -729,6 +736,7 @@ export class AuthService {
     userId: string,
     input: ChangePasswordInput,
     sessionInfo?: SessionInfo,
+    currentSessionId?: string,
   ): Promise<boolean> {
     const user = await this.data.user.findUnique({
       where: { id: userId },
@@ -808,9 +816,12 @@ export class AuthService {
       })
     }
 
-    // Invalidate all existing sessions for security (user will need to re-login)
-    await this.sessionService.invalidateAllUserSessions(userId)
-    Logger.log(`Password changed for user ${userId} - all sessions invalidated`)
+    // Keep the password-changing browser session active, but revoke other sessions.
+    await this.sessionService.invalidateAllUserSessions(userId, currentSessionId)
+    Logger.log(
+      `Password changed for user ${userId} - other sessions invalidated` +
+        (currentSessionId ? ` (kept current session ${currentSessionId})` : ''),
+    )
 
     return true
   }
@@ -1050,11 +1061,7 @@ export class AuthService {
   validateUser(userId: string) {
     return this.data.user.findUnique({
       where: { id: userId },
-      include: {
-        emails: true,
-        phoneNumbers: true,
-        images: true,
-      },
+      include: authUserRelations,
     })
   }
 
@@ -1062,11 +1069,7 @@ export class AuthService {
     const userId = this.jwtService.decode(token)['userId']
     return this.data.user.findUnique({
       where: { id: userId },
-      include: {
-        emails: true,
-        phoneNumbers: true,
-        images: true,
-      },
+      include: authUserRelations,
     })
   }
 
@@ -1083,6 +1086,7 @@ export class AuthService {
           },
         },
       },
+      include: authUserRelations,
     })
   }
 
@@ -1390,10 +1394,7 @@ export class AuthService {
     // Get full user data
     const user = await this.data.user.findUnique({
       where: { id: userId },
-      include: {
-        emails: true,
-        phoneNumbers: true,
-      },
+      include: authUserRelations,
     })
 
     if (!user) {

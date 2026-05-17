@@ -3,6 +3,7 @@ import { Link, Outlet, useLocation } from 'react-router'
 import {
   BellIcon,
   BuildingOfficeIcon,
+  Cog6ToothIcon,
   CreditCardIcon,
   ShieldCheckIcon,
   UserCircleIcon,
@@ -11,6 +12,7 @@ import {
 import { useGlobalCtx } from '@nestled-template/web'
 import {
   MyOrganizationsWithMembers,
+  type MeQuery,
   type MyOrganizationsWithMembersQuery,
 } from '@nestled-template/shared/sdk'
 import { Avatar } from '@nestled-template/web-ui'
@@ -26,6 +28,10 @@ interface NavItem {
   description: string
 }
 
+type UserWithActiveOrganization = NonNullable<MeQuery['me']> & {
+  activeOrganizationId?: string | null
+}
+
 export default function SettingsLayout() {
   const location = useLocation()
   const { user } = useGlobalCtx()
@@ -33,8 +39,11 @@ export default function SettingsLayout() {
   // Fetch user's organizations with member data
   const { data: orgsData } = useQuery<MyOrganizationsWithMembersQuery>(MyOrganizationsWithMembers)
   const organizations = orgsData?.myOrganizations || []
+  const userWithActiveOrganization = user as UserWithActiveOrganization | null | undefined
   const activeOrganization =
-    organizations.find(org => org.id === user?.activeOrganizationId) || organizations[0] || null
+    organizations.find(org => org.id === userWithActiveOrganization?.activeOrganizationId) ||
+    organizations[0] ||
+    null
   const activeOrganizationMember =
     activeOrganization?.members?.find(member => member.userId === user?.id) || null
 
@@ -78,7 +87,7 @@ export default function SettingsLayout() {
       name: 'Billing',
       href: '/settings/billing',
       icon: CreditCardIcon,
-      permission: 'organization:update',
+      permission: 'billing:read',
       description: 'Subscription and payment settings',
     },
   ]
@@ -110,6 +119,22 @@ export default function SettingsLayout() {
       )
     }
 
+    if (permission === 'billing:read') {
+      if (user?.isSuperAdmin) return true
+
+      if (!activeOrganizationMember) return false
+      if (
+        activeOrganizationMember.role?.name === 'Owner' ||
+        activeOrganizationMember.role?.name === 'Admin'
+      ) {
+        return true
+      }
+
+      return !!activeOrganizationMember.role?.permissions?.some(
+        p => p.subject === 'billing' && p.action === 'read',
+      )
+    }
+
     // Fallback to the original permission check if role permissions exist
     if (activeOrganizationMember?.role?.permissions) {
       const [subject, action] = permission.split(':')
@@ -124,6 +149,13 @@ export default function SettingsLayout() {
 
   const userAvatar = user?.avatar
   const organizationLogo = activeOrganization?.logo
+  const adminConsoleItem: NavItem = {
+    name: 'Admin Console',
+    href: '/admin',
+    icon: Cog6ToothIcon,
+    superAdminOnly: true,
+    description: 'Platform setup and operations',
+  }
 
   return (
     <div className="flex-1 bg-gradient-to-b from-zinc-50 to-zinc-100 dark:from-zinc-900 dark:to-zinc-950">
@@ -263,6 +295,35 @@ export default function SettingsLayout() {
                   })}
                 </ul>
               </div>
+
+              {user?.isSuperAdmin && (
+                <div className="mt-6 border-t border-zinc-200 pt-4 dark:border-white/10">
+                  <Link
+                    to={adminConsoleItem.href}
+                    className={cn(
+                      'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+                      isActive(adminConsoleItem.href)
+                        ? 'bg-emerald-500 text-white'
+                        : 'text-zinc-700 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-white/10',
+                    )}
+                  >
+                    <adminConsoleItem.icon className="h-5 w-5 flex-shrink-0" />
+                    <div className="min-w-0 flex-1">
+                      <div className="truncate">{adminConsoleItem.name}</div>
+                      <div
+                        className={cn(
+                          'truncate text-xs',
+                          isActive(adminConsoleItem.href)
+                            ? 'text-emerald-100'
+                            : 'text-zinc-500 dark:text-zinc-400',
+                        )}
+                      >
+                        {adminConsoleItem.description}
+                      </div>
+                    </div>
+                  </Link>
+                </div>
+              )}
             </div>
           </nav>
 

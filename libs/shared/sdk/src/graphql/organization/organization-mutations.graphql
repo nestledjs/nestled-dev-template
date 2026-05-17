@@ -8,8 +8,8 @@ mutation userDeleteOrganization($organizationId: String!) {
   userDeleteOrganization(organizationId: $organizationId)
 }
 
-mutation userUpdateOrganization($organizationId: String!, $input: UpdateOrganizationInput!) {
-  userUpdateOrganization(organizationId: $organizationId, input: $input) {
+mutation userUpdateOrganization($input: UpdateOrganizationInput!) {
+  userUpdateOrganization(input: $input) {
     ...OrganizationDetails
   }
 }

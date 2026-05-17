@@ -1679,10 +1679,6 @@ export type MutationRejectOrganizationInvitationArgs = {
   input: RejectInvitationInput
 }
 
-export type MutationRemoveOrganizationLogoArgs = {
-  organizationId: Scalars['String']['input']
-}
-
 export type MutationRemoveOrganizationMemberArgs = {
   input: RemoveOrganizationMemberInput
 }
@@ -1875,7 +1871,6 @@ export type MutationUploadFileArgs = {
 
 export type MutationUploadOrganizationLogoArgs = {
   file: Scalars['Upload']['input']
-  organizationId: Scalars['String']['input']
 }
 
 export type MutationUploadUserAvatarArgs = {
@@ -1900,7 +1895,6 @@ export type MutationUserDeleteUserPreferenceArgs = {
 
 export type MutationUserUpdateOrganizationArgs = {
   input: UpdateOrganizationInput
-  organizationId: Scalars['String']['input']
 }
 
 export type MutationUserUpdateUserPreferenceArgs = {
@@ -9886,7 +9880,6 @@ export type UserDeleteOrganizationMutation = {
 }
 
 export type UserUpdateOrganizationMutationVariables = Exact<{
-  organizationId: Scalars['String']['input']
   input: UpdateOrganizationInput
 }>
 
@@ -11086,7 +11079,6 @@ export type UploadUserAvatarMutation = {
 
 export type UploadOrganizationLogoMutationVariables = Exact<{
   file: Scalars['Upload']['input']
-  organizationId: Scalars['String']['input']
 }>
 
 export type UploadOrganizationLogoMutation = {
@@ -11139,9 +11131,7 @@ export type DeleteFileMutationVariables = Exact<{
 
 export type DeleteFileMutation = { __typename?: 'Mutation'; deleteFile: boolean }
 
-export type RemoveOrganizationLogoMutationVariables = Exact<{
-  organizationId: Scalars['String']['input']
-}>
+export type RemoveOrganizationLogoMutationVariables = Exact<{ [key: string]: never }>
 
 export type RemoveOrganizationLogoMutation = {
   __typename?: 'Mutation'
@@ -11970,13 +11960,13 @@ export type UserPreferenceDetailsFragment = {
   value: string
 }
 
-export type CreateUserPreferenceMutationVariables = Exact<{
-  input: CreateUserPreferenceInput
+export type UserCreateUserPreferenceMutationVariables = Exact<{
+  input: SecureCreateUserPreferenceInput
 }>
 
-export type CreateUserPreferenceMutation = {
+export type UserCreateUserPreferenceMutation = {
   __typename?: 'Mutation'
-  createUserPreference?: {
+  userCreateUserPreference?: {
     __typename?: 'UserPreference'
     id: string
     createdAt: any
@@ -11986,23 +11976,23 @@ export type CreateUserPreferenceMutation = {
   } | null
 }
 
-export type DeleteUserPreferenceMutationVariables = Exact<{
+export type UserDeleteUserPreferenceMutationVariables = Exact<{
   userPreferenceId: Scalars['String']['input']
 }>
 
-export type DeleteUserPreferenceMutation = {
+export type UserDeleteUserPreferenceMutation = {
   __typename?: 'Mutation'
-  deleteUserPreference?: { __typename?: 'UserPreference'; id: string } | null
+  userDeleteUserPreference?: { __typename?: 'UserPreference'; id: string } | null
 }
 
-export type UpdateUserPreferenceMutationVariables = Exact<{
+export type UserUpdateUserPreferenceMutationVariables = Exact<{
   userPreferenceId: Scalars['String']['input']
-  input: UpdateUserPreferenceInput
+  input: SecureUpdateUserPreferenceInput
 }>
 
-export type UpdateUserPreferenceMutation = {
+export type UserUpdateUserPreferenceMutation = {
   __typename?: 'Mutation'
-  updateUserPreference?: {
+  userUpdateUserPreference?: {
     __typename?: 'UserPreference'
     id: string
     createdAt: any
@@ -35448,14 +35438,6 @@ export const UserUpdateOrganization = {
       variableDefinitions: [
         {
           kind: 'VariableDefinition',
-          variable: { kind: 'Variable', name: { kind: 'Name', value: 'organizationId' } },
-          type: {
-            kind: 'NonNullType',
-            type: { kind: 'NamedType', name: { kind: 'Name', value: 'String' } },
-          },
-        },
-        {
-          kind: 'VariableDefinition',
           variable: { kind: 'Variable', name: { kind: 'Name', value: 'input' } },
           type: {
             kind: 'NonNullType',
@@ -35470,11 +35452,6 @@ export const UserUpdateOrganization = {
             kind: 'Field',
             name: { kind: 'Name', value: 'userUpdateOrganization' },
             arguments: [
-              {
-                kind: 'Argument',
-                name: { kind: 'Name', value: 'organizationId' },
-                value: { kind: 'Variable', name: { kind: 'Name', value: 'organizationId' } },
-              },
               {
                 kind: 'Argument',
                 name: { kind: 'Name', value: 'input' },
@@ -39165,14 +39142,6 @@ export const UploadOrganizationLogo = {
             type: { kind: 'NamedType', name: { kind: 'Name', value: 'Upload' } },
           },
         },
-        {
-          kind: 'VariableDefinition',
-          variable: { kind: 'Variable', name: { kind: 'Name', value: 'organizationId' } },
-          type: {
-            kind: 'NonNullType',
-            type: { kind: 'NamedType', name: { kind: 'Name', value: 'String' } },
-          },
-        },
       ],
       selectionSet: {
         kind: 'SelectionSet',
@@ -39185,11 +39154,6 @@ export const UploadOrganizationLogo = {
                 kind: 'Argument',
                 name: { kind: 'Name', value: 'file' },
                 value: { kind: 'Variable', name: { kind: 'Name', value: 'file' } },
-              },
-              {
-                kind: 'Argument',
-                name: { kind: 'Name', value: 'organizationId' },
-                value: { kind: 'Variable', name: { kind: 'Name', value: 'organizationId' } },
               },
             ],
             selectionSet: {
@@ -39325,31 +39289,9 @@ export const RemoveOrganizationLogo = {
       kind: 'OperationDefinition',
       operation: 'mutation',
       name: { kind: 'Name', value: 'RemoveOrganizationLogo' },
-      variableDefinitions: [
-        {
-          kind: 'VariableDefinition',
-          variable: { kind: 'Variable', name: { kind: 'Name', value: 'organizationId' } },
-          type: {
-            kind: 'NonNullType',
-            type: { kind: 'NamedType', name: { kind: 'Name', value: 'String' } },
-          },
-        },
-      ],
       selectionSet: {
         kind: 'SelectionSet',
-        selections: [
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'removeOrganizationLogo' },
-            arguments: [
-              {
-                kind: 'Argument',
-                name: { kind: 'Name', value: 'organizationId' },
-                value: { kind: 'Variable', name: { kind: 'Name', value: 'organizationId' } },
-              },
-            ],
-          },
-        ],
+        selections: [{ kind: 'Field', name: { kind: 'Name', value: 'removeOrganizationLogo' } }],
       },
     },
   ],
@@ -41553,20 +41495,23 @@ export const TeamPagination = {
     },
   ],
 } as unknown as DocumentNode<TeamPaginationQuery, TeamPaginationQueryVariables>
-export const CreateUserPreference = {
+export const UserCreateUserPreference = {
   kind: 'Document',
   definitions: [
     {
       kind: 'OperationDefinition',
       operation: 'mutation',
-      name: { kind: 'Name', value: 'createUserPreference' },
+      name: { kind: 'Name', value: 'UserCreateUserPreference' },
       variableDefinitions: [
         {
           kind: 'VariableDefinition',
           variable: { kind: 'Variable', name: { kind: 'Name', value: 'input' } },
           type: {
             kind: 'NonNullType',
-            type: { kind: 'NamedType', name: { kind: 'Name', value: 'CreateUserPreferenceInput' } },
+            type: {
+              kind: 'NamedType',
+              name: { kind: 'Name', value: 'SecureCreateUserPreferenceInput' },
+            },
           },
         },
       ],
@@ -41575,7 +41520,7 @@ export const CreateUserPreference = {
         selections: [
           {
             kind: 'Field',
-            name: { kind: 'Name', value: 'createUserPreference' },
+            name: { kind: 'Name', value: 'userCreateUserPreference' },
             arguments: [
               {
                 kind: 'Argument',
@@ -41620,14 +41565,17 @@ export const CreateUserPreference = {
       },
     },
   ],
-} as unknown as DocumentNode<CreateUserPreferenceMutation, CreateUserPreferenceMutationVariables>
-export const DeleteUserPreference = {
+} as unknown as DocumentNode<
+  UserCreateUserPreferenceMutation,
+  UserCreateUserPreferenceMutationVariables
+>
+export const UserDeleteUserPreference = {
   kind: 'Document',
   definitions: [
     {
       kind: 'OperationDefinition',
       operation: 'mutation',
-      name: { kind: 'Name', value: 'deleteUserPreference' },
+      name: { kind: 'Name', value: 'UserDeleteUserPreference' },
       variableDefinitions: [
         {
           kind: 'VariableDefinition',
@@ -41643,7 +41591,7 @@ export const DeleteUserPreference = {
         selections: [
           {
             kind: 'Field',
-            name: { kind: 'Name', value: 'deleteUserPreference' },
+            name: { kind: 'Name', value: 'userDeleteUserPreference' },
             arguments: [
               {
                 kind: 'Argument',
@@ -41660,14 +41608,17 @@ export const DeleteUserPreference = {
       },
     },
   ],
-} as unknown as DocumentNode<DeleteUserPreferenceMutation, DeleteUserPreferenceMutationVariables>
-export const UpdateUserPreference = {
+} as unknown as DocumentNode<
+  UserDeleteUserPreferenceMutation,
+  UserDeleteUserPreferenceMutationVariables
+>
+export const UserUpdateUserPreference = {
   kind: 'Document',
   definitions: [
     {
       kind: 'OperationDefinition',
       operation: 'mutation',
-      name: { kind: 'Name', value: 'updateUserPreference' },
+      name: { kind: 'Name', value: 'UserUpdateUserPreference' },
       variableDefinitions: [
         {
           kind: 'VariableDefinition',
@@ -41682,7 +41633,10 @@ export const UpdateUserPreference = {
           variable: { kind: 'Variable', name: { kind: 'Name', value: 'input' } },
           type: {
             kind: 'NonNullType',
-            type: { kind: 'NamedType', name: { kind: 'Name', value: 'UpdateUserPreferenceInput' } },
+            type: {
+              kind: 'NamedType',
+              name: { kind: 'Name', value: 'SecureUpdateUserPreferenceInput' },
+            },
           },
         },
       ],
@@ -41691,7 +41645,7 @@ export const UpdateUserPreference = {
         selections: [
           {
             kind: 'Field',
-            name: { kind: 'Name', value: 'updateUserPreference' },
+            name: { kind: 'Name', value: 'userUpdateUserPreference' },
             arguments: [
               {
                 kind: 'Argument',
@@ -41741,7 +41695,10 @@ export const UpdateUserPreference = {
       },
     },
   ],
-} as unknown as DocumentNode<UpdateUserPreferenceMutation, UpdateUserPreferenceMutationVariables>
+} as unknown as DocumentNode<
+  UserUpdateUserPreferenceMutation,
+  UserUpdateUserPreferenceMutationVariables
+>
 export const UserPreference = {
   kind: 'Document',
   definitions: [
@@ -41764,7 +41721,8 @@ export const UserPreference = {
         selections: [
           {
             kind: 'Field',
-            name: { kind: 'Name', value: 'userPreference' },
+            alias: { kind: 'Name', value: 'userPreference' },
+            name: { kind: 'Name', value: 'userGetUserPreference' },
             arguments: [
               {
                 kind: 'Argument',
@@ -41822,7 +41780,8 @@ export const UserPreferences = {
         selections: [
           {
             kind: 'Field',
-            name: { kind: 'Name', value: 'userPreferences' },
+            alias: { kind: 'Name', value: 'userPreferences' },
+            name: { kind: 'Name', value: 'userGetUserPreferences' },
             selectionSet: {
               kind: 'SelectionSet',
               selections: [

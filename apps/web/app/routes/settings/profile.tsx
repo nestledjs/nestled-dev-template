@@ -9,12 +9,12 @@ import {
   ChangeEmail,
   ResendVerificationEmail,
   UploadUserAvatar,
-  DeleteFile,
+  RemoveUserAvatar,
   type UpdateUserMutation,
   type ChangeEmailMutation,
   type ResendVerificationEmailMutation,
   type UploadUserAvatarMutation,
-  type DeleteFileMutation,
+  type RemoveUserAvatarMutation,
 } from '@nestled-template/shared/sdk'
 import { useApolloClient, useReadQuery, type QueryRef, useMutation } from '@apollo/client/react'
 import { Form } from '@nestledjs/forms'
@@ -71,10 +71,37 @@ function collectUserUpdates(
   return updates
 }
 
-type UserAvatar = {
-  id: string
-  publicUrl?: string | null
-  url?: string | null
+type UserAvatar = NonNullable<NonNullable<MeQuery['me']>['avatar']>
+
+function writeUserAvatarToMeCache(
+  client: ReturnType<typeof useApolloClient>,
+  avatar: UserAvatar | null,
+) {
+  client.cache.updateQuery<MeQuery>({ query: Me }, existing => {
+    if (!existing?.me) {
+      return existing
+    }
+
+    return {
+      ...existing,
+      me: {
+        ...existing.me,
+        avatar,
+      },
+    }
+  })
+}
+
+function uploadedFileToUserAvatar(uploadedFile: UploadUserAvatarMutation['uploadUserAvatar']) {
+  return {
+    __typename: 'StoredFile' as const,
+    id: uploadedFile.id,
+    url: uploadedFile.url,
+    publicUrl: uploadedFile.publicUrl,
+    filename: uploadedFile.filename,
+    mimeType: uploadedFile.mimeType,
+    createdAt: uploadedFile.createdAt,
+  }
 }
 
 interface AvatarSectionProps {
@@ -144,7 +171,7 @@ export default function ProfileSettings() {
   const [resendVerificationEmail] =
     useMutation<ResendVerificationEmailMutation>(ResendVerificationEmail)
   const [uploadUserAvatar] = useMutation<UploadUserAvatarMutation>(UploadUserAvatar)
-  const [deleteFile] = useMutation<DeleteFileMutation>(DeleteFile)
+  const [removeUserAvatar] = useMutation<RemoveUserAvatarMutation>(RemoveUserAvatar)
 
   const [isResendingEmail, setIsResendingEmail] = useState(false)
   const [emailResendSuccess, setEmailResendSuccess] = useState(false)
@@ -170,7 +197,7 @@ export default function ProfileSettings() {
       })
 
       if (result.data?.uploadUserAvatar) {
-        // Refresh user data to show new avatar
+        writeUserAvatarToMeCache(client, uploadedFileToUserAvatar(result.data.uploadUserAvatar))
         await client.refetchQueries({ include: [Me] })
         setAvatarMessage({ type: 'success', text: 'Avatar uploaded successfully!' })
         setTimeout(() => setAvatarMessage(null), 3000)
@@ -193,7 +220,8 @@ export default function ProfileSettings() {
     }
 
     try {
-      await deleteFile({ variables: { uploadId: userAvatar.id } })
+      await removeUserAvatar()
+      writeUserAvatarToMeCache(client, null)
       await client.refetchQueries({ include: [Me] })
       setAvatarMessage({ type: 'success', text: 'Avatar removed' })
     } catch (error) {

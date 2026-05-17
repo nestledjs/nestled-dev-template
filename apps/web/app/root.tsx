@@ -195,8 +195,12 @@ export function ErrorBoundary({ error }: Readonly<{ error: Error }>) {
   const graphQLError = error as ErrorWithGraphQLErrors
   const isUnauthorized =
     error.message?.includes('Unauthorized') ||
+    error.message?.includes('Session has been invalidated') ||
     graphQLError.graphQLErrors?.some(
-      e => (e.message || '').includes('Unauthorized') || e.extensions?.code === 'UNAUTHENTICATED',
+      e =>
+        (e.message || '').includes('Unauthorized') ||
+        (e.message || '').includes('Session has been invalidated') ||
+        e.extensions?.code === 'UNAUTHENTICATED',
     )
 
   if (isUnauthorized && globalThis.window !== undefined) {

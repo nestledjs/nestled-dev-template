@@ -36,6 +36,7 @@ import {
   PasswordHistoryModule,
 } from '@nestled-template/api/custom'
 import { StripeModule } from '@nestled-template/api/integrations'
+import { GuardsModule } from '@nestled-template/api/utils'
 import { ApiCoreFeatureModule } from '@nestled-template/api/core/feature'
 import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common'
 import { LoggerMiddleware } from './applogger.middleware'
@@ -51,6 +52,7 @@ import { StripeWebhookController } from './webhooks/stripe-webhook.controller'
 export const coreModules = [
   // Auto-generated modules with special functions,
   ApiCoreFeatureModule,
+  GuardsModule,
   ApiCoreDataAccessModule,
 ]
 // Auto-generated modules for each data type/model,

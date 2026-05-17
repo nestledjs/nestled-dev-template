@@ -257,7 +257,11 @@ export class AuthResolver {
     @Args('input') input: ChangePasswordInput,
   ): Promise<boolean> {
     const sessionInfo = this.sessionService.extractSessionInfo(context.req)
-    return this.service.changePassword(user.id, input, sessionInfo)
+    const token = context.req.cookies?.[this.service.getCookieName()]
+    const decoded = token ? (this.service as any).jwtService.decode(token) : null
+    const currentSessionId = decoded?.sessionId
+
+    return this.service.changePassword(user.id, input, sessionInfo, currentSessionId)
   }
 
   @Mutation(() => UserToken, { nullable: true })

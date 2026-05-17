@@ -122,7 +122,7 @@ describe('Email Verification Tests', () => {
       })
     })
 
-    const renderVerifyEmail = (token = 'valid-token-123') => {
+    const renderVerifyEmail = (token = 'valid-token-123', type?: 'initial' | 'change') => {
       const ReactRouterStub = createTestRouter([
         {
           path: '/verify-email',
@@ -130,7 +130,9 @@ describe('Email Verification Tests', () => {
         },
       ])
 
-      const url = token ? `/verify-email?token=${token}` : '/verify-email'
+      const url = token
+        ? `/verify-email?token=${token}${type ? `&type=${type}` : ''}`
+        : '/verify-email'
       return render(<ReactRouterStub initialEntries={[url]} />)
     }
 
@@ -163,14 +165,14 @@ describe('Email Verification Tests', () => {
     })
 
     describe('Email Change Verification Flow', () => {
-      it('should attempt email change verification first', async () => {
+      it('should use email change verification for typed email change links', async () => {
         mockVerifyEmailChangeMutation.mockResolvedValue({
           data: {
             verifyEmailChange: { id: 'user-123' },
           },
         })
 
-        renderVerifyEmail('change-token-456')
+        renderVerifyEmail('change-token-456', 'change')
 
         await waitFor(() => {
           expect(mockVerifyEmailChangeMutation).toHaveBeenCalledWith({
@@ -186,7 +188,7 @@ describe('Email Verification Tests', () => {
           },
         })
 
-        renderVerifyEmail()
+        renderVerifyEmail('change-token-456', 'change')
 
         await waitFor(() => {
           expect(screen.getByText(/your email has been verified successfully/i)).toBeInTheDocument()
@@ -196,28 +198,46 @@ describe('Email Verification Tests', () => {
         })
       })
 
-      it('should fall back to initial verification when email change fails', async () => {
-        mockVerifyEmailChangeMutation.mockRejectedValue(new Error('Invalid token'))
+      it('should fall back to email change verification for older untyped links', async () => {
+        mockVerifyEmailMutation.mockRejectedValue(new Error('Invalid token'))
+        mockVerifyEmailChangeMutation.mockResolvedValue({
+          data: {
+            verifyEmailChange: { id: 'user-123' },
+          },
+        })
+
+        renderVerifyEmail('change-token-456')
+
+        await waitFor(() => {
+          expect(mockVerifyEmailMutation).toHaveBeenCalledWith({
+            variables: { input: { token: 'change-token-456' } },
+          })
+          expect(mockVerifyEmailChangeMutation).toHaveBeenCalledWith({
+            variables: { token: 'change-token-456' },
+          })
+        })
+      })
+
+      it('should use initial verification directly for typed initial links', async () => {
         mockVerifyEmailMutation.mockResolvedValue({
           data: {
             verifyEmail: { id: 'user-123' },
           },
         })
 
-        renderVerifyEmail('initial-token-789')
+        renderVerifyEmail('initial-token-789', 'initial')
 
         await waitFor(() => {
-          expect(mockVerifyEmailChangeMutation).toHaveBeenCalled()
           expect(mockVerifyEmailMutation).toHaveBeenCalledWith({
             variables: { input: { token: 'initial-token-789' } },
           })
+          expect(mockVerifyEmailChangeMutation).not.toHaveBeenCalled()
         })
       })
     })
 
     describe('Initial Email Verification Flow', () => {
-      it('should verify initial email when email change fails', async () => {
-        mockVerifyEmailChangeMutation.mockRejectedValue(new Error('Not an email change token'))
+      it('should verify initial email before fallback for untyped links', async () => {
         mockVerifyEmailMutation.mockResolvedValue({
           data: {
             verifyEmail: { id: 'user-456' },
@@ -232,7 +252,6 @@ describe('Email Verification Tests', () => {
       })
 
       it('should display success message for initial email verification', async () => {
-        mockVerifyEmailChangeMutation.mockRejectedValue(new Error('Not an email change token'))
         mockVerifyEmailMutation.mockResolvedValue({
           data: {
             verifyEmail: { id: 'user-456' },
@@ -248,14 +267,13 @@ describe('Email Verification Tests', () => {
       })
 
       it('should display error when initial verification returns no user', async () => {
-        mockVerifyEmailChangeMutation.mockRejectedValue(new Error('Not an email change token'))
         mockVerifyEmailMutation.mockResolvedValue({
           data: {
             verifyEmail: null,
           },
         })
 
-        renderVerifyEmail()
+        renderVerifyEmail('initial-token-789', 'initial')
 
         await waitFor(() => {
           expect(screen.getByText(/invalid or expired verification token/i)).toBeInTheDocument()
@@ -263,10 +281,9 @@ describe('Email Verification Tests', () => {
       })
 
       it('should display error when both verifications fail', async () => {
-        mockVerifyEmailChangeMutation.mockRejectedValue(new Error('Not an email change token'))
         mockVerifyEmailMutation.mockRejectedValue(new Error('Token expired'))
 
-        renderVerifyEmail()
+        renderVerifyEmail('initial-token-789', 'initial')
 
         await waitFor(() => {
           expect(screen.getByText(/token expired/i)).toBeInTheDocument()
@@ -279,7 +296,7 @@ describe('Email Verification Tests', () => {
         mockVerifyEmailChangeMutation.mockRejectedValue(new Error('Token expired'))
         mockVerifyEmailMutation.mockRejectedValue(new Error('Token expired'))
 
-        renderVerifyEmail()
+        renderVerifyEmail('change-token-456', 'change')
 
         await waitFor(() => {
           expect(screen.getByText(/token expired/i)).toBeInTheDocument()
@@ -290,7 +307,7 @@ describe('Email Verification Tests', () => {
         mockVerifyEmailChangeMutation.mockRejectedValue(new Error('Invalid'))
         mockVerifyEmailMutation.mockRejectedValue(new Error('Invalid token'))
 
-        renderVerifyEmail()
+        renderVerifyEmail('initial-token-789', 'initial')
 
         await waitFor(() => {
           expect(screen.getByText(/invalid token/i)).toBeInTheDocument()
@@ -301,7 +318,7 @@ describe('Email Verification Tests', () => {
         mockVerifyEmailChangeMutation.mockRejectedValue({})
         mockVerifyEmailMutation.mockRejectedValue({})
 
-        renderVerifyEmail()
+        renderVerifyEmail('initial-token-789', 'initial')
 
         await waitFor(() => {
           expect(screen.getByText(/invalid or expired verification token/i)).toBeInTheDocument()

@@ -1,6 +1,11 @@
 import { Args, Mutation, Query, ResolveField, Resolver, Parent } from '@nestjs/graphql'
 import { UseGuards, Injectable } from '@nestjs/common'
-import { CtxUser, GqlAuthGuard } from '@nestled-template/api/utils'
+import {
+  CtxOrganizationId,
+  CtxUser,
+  GqlAuthGuard,
+  GqlOrganizationScopedGuard,
+} from '@nestled-template/api/utils'
 import {
   Organization,
   User,
@@ -50,10 +55,10 @@ export class OrganizationResolver extends GeneratedOrganizationResolver {
   }
 
   @Mutation(() => Organization)
-  @UseGuards(GqlAuthGuard)
+  @UseGuards(GqlOrganizationScopedGuard)
   async userUpdateOrganization(
     @CtxUser() user: User,
-    @Args('organizationId') organizationId: string,
+    @CtxOrganizationId() organizationId: string,
     @Args('input') input: UpdateOrganizationInput,
   ): Promise<Organization> {
     return this.customService.userUpdateOrganization(user.id, organizationId, input)

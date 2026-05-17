@@ -4470,13 +4470,6 @@ export const DATABASE_MODELS: DatabaseModel[] = [
     modelPropertyName: 'userPreference',
     pluralModelName: 'UserPreferences',
     pluralModelPropertyName: 'userPreferences',
-    auth: {
-      readOne: 'user',
-      readMany: 'user',
-      create: 'user',
-      update: 'user',
-      delete: 'user',
-    },
     idFieldType: 'String',
   },
   {

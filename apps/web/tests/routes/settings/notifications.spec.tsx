@@ -21,8 +21,8 @@ vi.mock('@nestled-template/shared/sdk', async importOriginal => {
   return {
     ...actual,
     UserPreferences: doc,
-    CreateUserPreference: doc,
-    UpdateUserPreference: doc,
+    UserCreateUserPreference: doc,
+    UserUpdateUserPreference: doc,
   }
 })
 
@@ -67,6 +67,10 @@ describe('NotificationsSettings', () => {
     renderRoute()
 
     expect(screen.getByText('Notification Preferences')).toBeInTheDocument()
+    expect(
+      screen.getByText(/persists these settings to the database, but none of these preferences/i),
+    ).toBeInTheDocument()
+    expect(screen.getByText(/should usually remain mandatory/i)).toBeInTheDocument()
     expect(screen.getByText('Email Notifications')).toBeInTheDocument()
     expect(screen.getByText('Security Notifications')).toBeInTheDocument()
     expect(screen.getByText('Marketing & Updates')).toBeInTheDocument()
@@ -105,7 +109,7 @@ describe('NotificationsSettings', () => {
     }
     options.update(cache, {
       data: {
-        createUserPreference: {
+        userCreateUserPreference: {
           __typename: 'UserPreference',
           id: 'pref-new',
           key: 'notif_product_updates',
@@ -144,7 +148,7 @@ describe('NotificationsSettings', () => {
     }
     options.update(cache, {
       data: {
-        updateUserPreference: {
+        userUpdateUserPreference: {
           __typename: 'UserPreference',
           id: 'pref-1',
           value: 'false',
