@@ -14,6 +14,9 @@ During template preparation:
 4. The adopter-facing docs from `docs/template` replace or seed the public README/docs.
 5. Upgrade notes are ignored until the first public release exists.
 
+For the one-time public template bootstrap, use
+[`public-template-bootstrap.md`](./public-template-bootstrap.md).
+
 The root README in this repo should explain the development workspace. The README
 under `docs/template` should explain the clonable starter.
 
