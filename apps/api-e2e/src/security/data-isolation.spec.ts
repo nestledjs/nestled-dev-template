@@ -215,24 +215,25 @@ describe('CRITICAL: Multi-Tenant Data Isolation', () => {
     })
   })
   describe('Update Isolation', () => {
-    it("should not allow updating another organization's data", async () => {
+    it('should reject direct organization id manipulation for organization updates', async () => {
       const updateOrgMutation = `
-        mutation UserUpdateOrganization($organizationId: String!, $input: UpdateOrganizationInput!) {
-          userUpdateOrganization(organizationId: $organizationId, input: $input) {
+        mutation UserUpdateOrganization($input: UpdateOrganizationInput!) {
+          userUpdateOrganization(input: $input) {
             id
             name
           }
         }
       `
-      // User 1 tries to update User 2's organization
       const response = await TestHelpers.authenticatedGraphql(updateOrgMutation, org1User, {
-        organizationId: org2User.organizationId,
-        input: { name: 'Hacked Organization' },
+        input: {
+          organizationId: org2User.organizationId,
+          name: 'Hacked Organization',
+        },
       })
       // Should return error
       expect(response.data.errors).toBeDefined()
       expect(response.data.errors[0].message).toMatch(
-        /forbidden|unauthorized|not found|permission/i,
+        /field "organizationId" is not defined|bad request|validation/i,
       )
     })
     it("should not allow updating another organization's member roles", async () => {

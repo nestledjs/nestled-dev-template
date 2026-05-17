@@ -3,10 +3,10 @@ import { BellAlertIcon, BellIcon, EnvelopeIcon } from '@heroicons/react/24/outli
 import {
   UserPreferences,
   UserPreferencesQuery,
-  CreateUserPreference,
-  UpdateUserPreference,
-  type CreateUserPreferenceMutation,
-  type UpdateUserPreferenceMutation,
+  UserCreateUserPreference,
+  UserUpdateUserPreference,
+  type UserCreateUserPreferenceMutation,
+  type UserUpdateUserPreferenceMutation,
 } from '@nestled-template/shared/sdk'
 import { gql, type ApolloCache } from '@apollo/client'
 import { useQuery, useMutation } from '@apollo/client/react'
@@ -113,12 +113,12 @@ export const loader = () => ({})
 function handleUpdatePreferenceCache(
   cache: Parameters<typeof updatePreferencesCache>[0],
   data:
-    | { updateUserPreference?: Parameters<typeof updatePreferencesCache>[1] | null }
+    | { userUpdateUserPreference?: Parameters<typeof updatePreferencesCache>[1] | null }
     | null
     | undefined,
 ) {
-  if (data?.updateUserPreference) {
-    updatePreferencesCache(cache, data.updateUserPreference)
+  if (data?.userUpdateUserPreference) {
+    updatePreferencesCache(cache, data.userUpdateUserPreference)
   }
 }
 
@@ -129,8 +129,8 @@ export default function NotificationsSettings() {
   const [formSuccess, setFormSuccess] = useState<string | null>(null)
   const [formError, setFormError] = useState<string | null>(null)
 
-  const [createPreference] = useMutation<CreateUserPreferenceMutation>(CreateUserPreference)
-  const [updatePreference] = useMutation<UpdateUserPreferenceMutation>(UpdateUserPreference)
+  const [createPreference] = useMutation<UserCreateUserPreferenceMutation>(UserCreateUserPreference)
+  const [updatePreference] = useMutation<UserUpdateUserPreferenceMutation>(UserUpdateUserPreference)
 
   const showSuccess = (message: string) => {
     setFormSuccess(message)
@@ -159,7 +159,7 @@ export default function NotificationsSettings() {
         input: { value: String(newValue) },
       },
       optimisticResponse: {
-        updateUserPreference: {
+        userUpdateUserPreference: {
           __typename: 'UserPreference',
           id: existing.id,
           key: existing.key,
@@ -181,7 +181,7 @@ export default function NotificationsSettings() {
         },
       },
       optimisticResponse: {
-        createUserPreference: {
+        userCreateUserPreference: {
           __typename: 'UserPreference',
           id: `temp-${Date.now()}`,
           key,
@@ -191,12 +191,12 @@ export default function NotificationsSettings() {
         },
       },
       update: (cache, { data }) => {
-        if (!data?.createUserPreference) return
+        if (!data?.userCreateUserPreference) return
         cache.modify({
           fields: {
             userPreferences(existingPreferences = []) {
               const newPrefRef = cache.writeFragment({
-                data: data.createUserPreference,
+                data: data.userCreateUserPreference,
                 fragment: gql`
                   fragment NewUserPreference on UserPreference {
                     id
@@ -252,6 +252,20 @@ export default function NotificationsSettings() {
             </p>
           </div>
         </div>
+      </div>
+
+      <div className="rounded-xl border border-sky-200 bg-sky-50 p-5 text-sm text-sky-950 dark:border-sky-400/20 dark:bg-sky-400/10 dark:text-sky-100">
+        <p>
+          This template currently persists these settings to the database, but none of these
+          preferences do anything out-of-the-box. If you build internal notification features, you
+          can tie them to these preferences. If you use a third-party CRM or email platform, sync
+          email preferences through its API so subscription and compliance rules stay in one place.
+        </p>
+        <p className="mt-3">
+          Important account notices, such as password resets, verification emails, and security
+          warnings, should usually remain mandatory and should not be controlled by opt-out
+          switches.
+        </p>
       </div>
 
       {formSuccess && (

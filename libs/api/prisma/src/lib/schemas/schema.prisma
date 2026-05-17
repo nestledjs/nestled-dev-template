@@ -165,7 +165,7 @@ model Organization {
   Team         Team[]
   subscription Subscription?
   roles        Role[]
-  apiTokens    ApiToken[]    @relation("ApiToken_belongsTo_Organization")
+  apiTokens    ApiToken[]           @relation("ApiToken_belongsTo_Organization")
 }
 
 model OrganizationMember {
@@ -387,7 +387,6 @@ model User {
   oAuthAccounts             OAuthAccount[]       @relation("User_hasMany_OAuthAccounts")
 }
 
-/// @crudAuth: { "readOne": "user", "readMany": "user", "create": "user", "update": "user", "delete": "user" }
 model UserPreference {
   id        String   @id @default(uuid())
   createdAt DateTime @default(now())

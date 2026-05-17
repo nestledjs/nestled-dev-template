@@ -8,7 +8,7 @@ import {
 } from '@nestjs/common'
 import { ApiCoreDataAccessService } from '@nestled-template/api/core/data-access'
 import { Organization, User } from '@nestled-template/api/core/models'
-import { defaultRoles } from '@nestled-template/api/prisma'
+import { defaultRoles, type InputJsonValue } from '@nestled-template/api/prisma'
 import {
   CreateOrganizationInput,
   UpdateOrganizationInput,
@@ -37,6 +37,34 @@ export class OrganizationService {
     private readonly config: ConfigService,
     @Optional() private readonly authCache?: AuthCacheService,
   ) {}
+
+  private async recordAuditLog(input: {
+    actorUserId: string
+    organizationId?: string
+    entityId: string
+    entityType: string
+    action: string
+    changes?: InputJsonValue
+  }): Promise<void> {
+    try {
+      await this.data.auditLog.create({
+        data: {
+          userId: input.actorUserId,
+          organizationId: input.organizationId,
+          entityId: input.entityId,
+          entityType: input.entityType,
+          action: input.action,
+          changes: input.changes,
+        },
+      })
+    } catch (error) {
+      Logger.warn(
+        `Failed to record audit log ${input.action} for ${input.entityType} ${input.entityId}: ${
+          error instanceof Error ? error.message : 'Unknown error'
+        }`,
+      )
+    }
+  }
 
   /**
    * Creates default roles for a new organization with proper permissions
@@ -79,6 +107,24 @@ export class OrganizationService {
     })
 
     return member?.role.name === 'Owner'
+  }
+
+  private async assertCanAssignRole(
+    userId: string,
+    organizationId: string,
+    roleId: string,
+  ): Promise<void> {
+    const role = await this.data.role.findFirst({
+      where: { id: roleId, organizationId },
+      select: { name: true },
+    })
+
+    if (role?.name !== 'Owner') return
+
+    const inviterIsOwner = await this.isOwner(userId, organizationId)
+    if (!inviterIsOwner) {
+      throw new ForbiddenException('Only organization owners can assign the Owner role')
+    }
   }
 
   /**
@@ -174,11 +220,30 @@ export class OrganizationService {
       throw new ForbiddenException('You do not have permission to update this organization')
     }
 
+    const existingOrganization = await this.data.organization.findUnique({
+      where: { id: organizationId },
+      select: { name: true },
+    })
+
     // Update the organization
     const organization = await this.data.organization.update({
       where: { id: organizationId },
       data: {
         ...(input.name && { name: input.name }),
+      },
+    })
+
+    await this.recordAuditLog({
+      actorUserId: userId,
+      organizationId,
+      entityId: organizationId,
+      entityType: 'Organization',
+      action: 'ORGANIZATION_UPDATED',
+      changes: {
+        name: {
+          before: existingOrganization?.name ?? null,
+          after: organization.name,
+        },
       },
     })
 
@@ -317,6 +382,18 @@ export class OrganizationService {
       where: { id: member.id },
     })
 
+    await this.recordAuditLog({
+      actorUserId: userId,
+      organizationId: input.organizationId,
+      entityId: input.userId,
+      entityType: 'OrganizationMember',
+      action: 'ORGANIZATION_MEMBER_REMOVED',
+      changes: {
+        removedUserId: input.userId,
+        membershipId: member.id,
+      },
+    })
+
     // Invalidate cached membership for the removed user
     if (this.authCache?.isEnabled()) {
       await this.authCache.invalidateMembership(input.userId, input.organizationId)
@@ -346,6 +423,8 @@ export class OrganizationService {
       )
     }
 
+    await this.assertCanAssignRole(userId, input.organizationId, input.roleId)
+
     // Cannot change owner's role
     const targetIsOwner = await this.isOwner(input.userId, input.organizationId)
     if (targetIsOwner) {
@@ -367,6 +446,22 @@ export class OrganizationService {
     await this.data.organizationMember.update({
       where: { id: member.id },
       data: { roleId: input.roleId },
+    })
+
+    await this.recordAuditLog({
+      actorUserId: userId,
+      organizationId: input.organizationId,
+      entityId: input.userId,
+      entityType: 'OrganizationMember',
+      action: 'ORGANIZATION_MEMBER_ROLE_UPDATED',
+      changes: {
+        targetUserId: input.userId,
+        membershipId: member.id,
+        roleId: {
+          before: member.roleId ?? null,
+          after: input.roleId,
+        },
+      },
     })
 
     // Invalidate cached membership for the affected user
@@ -397,6 +492,8 @@ export class OrganizationService {
       )
     }
 
+    await this.assertCanAssignRole(userId, input.organizationId, input.roleId)
+
     // Check if email already has a pending invitation
     const existingInvite = await this.data.invite.findFirst({
       where: {
@@ -417,7 +514,7 @@ export class OrganizationService {
     const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 days
 
     // Create invitation
-    await this.data.invite.create({
+    const invitation = await this.data.invite.create({
       data: {
         email: input.email.toLowerCase().trim(),
         token,
@@ -426,6 +523,19 @@ export class OrganizationService {
         organizationId: input.organizationId,
         roleId: input.roleId,
         status: 'PENDING',
+      },
+    })
+
+    await this.recordAuditLog({
+      actorUserId: userId,
+      organizationId: input.organizationId,
+      entityId: invitation.id,
+      entityType: 'Invite',
+      action: 'ORGANIZATION_INVITATION_CREATED',
+      changes: {
+        email: input.email.toLowerCase().trim(),
+        roleId: input.roleId,
+        expiresAt: expiresAt.toISOString(),
       },
     })
 
@@ -753,6 +863,7 @@ export class OrganizationService {
       include: {
         organization: {
           include: {
+            logo: true,
             images: true,
           },
         },

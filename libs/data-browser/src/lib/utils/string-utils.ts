@@ -82,7 +82,7 @@ export function normalizeModelNameForDocument(modelName: string): string {
     const nextIsLowercase = isLowercaseLetter(modelName[index])
 
     if (run.length >= 4 && nextIsLowercase) {
-      normalized += titleCaseAcronym(run.slice(0, -1)) + run.at(-1)
+      normalized += titleCaseAcronym(run.slice(0, -1)) + run[run.length - 1]
     } else if (run.length >= 3 && index === modelName.length) {
       normalized += titleCaseAcronym(run)
     } else {

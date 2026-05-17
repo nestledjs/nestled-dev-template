@@ -23,11 +23,11 @@ Object.defineProperty(globalThis, 'matchMedia', {
 })
 
 // Optional: Polyfill ResizeObserver if used in layouts
-globalThis.ResizeObserver = vi.fn().mockImplementation(() => ({
-  observe: vi.fn(),
-  unobserve: vi.fn(),
-  disconnect: vi.fn(),
-}))
+globalThis.ResizeObserver = class ResizeObserver {
+  observe = vi.fn()
+  unobserve = vi.fn()
+  disconnect = vi.fn()
+}
 
 Object.defineProperty(globalThis, 'scrollTo', { value: vi.fn(), writable: true })
 

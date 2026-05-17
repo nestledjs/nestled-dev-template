@@ -17,6 +17,7 @@ const refetchMembers = vi.fn()
 const refetchInvitations = vi.fn()
 let mutationIndex = 0
 let queryIndex = 0
+let mockLastFormFields: any[] = []
 
 vi.mock('react-router', async importOriginal => {
   const actual = await importOriginal<typeof import('react-router')>()
@@ -41,14 +42,17 @@ vi.mock('@nestled-template/web', () => ({
 }))
 
 vi.mock('@nestledjs/forms', () => ({
-  Form: ({ submit }: any) => (
-    <button
-      type="button"
-      onClick={() => submit({ email: 'new@example.com', roleId: 'role-member' })}
-    >
-      Submit Invite Form
-    </button>
-  ),
+  Form: ({ fields, submit }: any) => {
+    mockLastFormFields = fields
+    return (
+      <button
+        type="button"
+        onClick={() => submit({ email: 'new@example.com', roleId: 'role-member' })}
+      >
+        Submit Invite Form
+      </button>
+    )
+  },
 }))
 
 vi.mock('@nestled-template/shared/sdk', async importOriginal => {
@@ -72,7 +76,7 @@ describe('MembersSettings', () => {
   const organization = {
     id: 'org-1',
     name: 'Acme',
-    members: [{ id: 'member-current', userId: 'user-current' }],
+    members: [{ id: 'member-current', userId: 'user-current', role: { name: 'Owner' } }],
   }
   const roles = [
     {
@@ -80,6 +84,12 @@ describe('MembersSettings', () => {
       name: 'Owner',
       description: null,
       permissions: [{ id: 'perm-1', subject: 'member', action: 'read' }],
+    },
+    {
+      id: 'role-admin',
+      name: 'Admin',
+      description: 'Admin access',
+      permissions: [],
     },
     {
       id: 'role-member',
@@ -117,6 +127,7 @@ describe('MembersSettings', () => {
     vi.clearAllMocks()
     mutationIndex = 0
     queryIndex = 0
+    mockLastFormFields = []
     Object.values(mutationMocks).forEach(mock => mock.mockResolvedValue({ data: {} }))
 
     mockUseReadQuery.mockImplementation((queryRef: any) => {
@@ -215,6 +226,36 @@ describe('MembersSettings', () => {
     expect(refetchMembers).toHaveBeenCalled()
     expect(refetchInvitations).toHaveBeenCalled()
     expect(screen.getByText('Invitation sent successfully!')).toBeInTheDocument()
+  })
+
+  it('does not offer the Owner role to admins when inviting members', () => {
+    mockUseReadQuery.mockImplementation((queryRef: any) => {
+      if (queryRef.query === 'orgs') {
+        return {
+          data: {
+            myOrganizations: [
+              {
+                ...organization,
+                members: [
+                  { id: 'member-current', userId: 'user-current', role: { name: 'Admin' } },
+                ],
+              },
+            ],
+          },
+        }
+      }
+      return { data: { me: { id: 'user-current' } } }
+    })
+
+    renderRoute()
+
+    fireEvent.click(screen.getByRole('button', { name: /Invite Member/i }))
+
+    const roleField = mockLastFormFields.find(field => field.key === 'roleId')
+    const roleLabels = roleField.options.options.map((option: { label: string }) => option.label)
+    expect(roleLabels).toContain('Admin')
+    expect(roleLabels).toContain('Member')
+    expect(roleLabels).not.toContain('Owner')
   })
 
   it('resends invitations after confirmation', async () => {

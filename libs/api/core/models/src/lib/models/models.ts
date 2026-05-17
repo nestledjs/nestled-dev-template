@@ -1,4 +1,4 @@
-import { Field, ObjectType, GraphQLISODateTime, Int } from '@nestjs/graphql'
+import { Field, ObjectType, Int, GraphQLISODateTime } from '@nestjs/graphql'
 import { GraphQLJSONObject } from 'graphql-type-json'
 import Decimal from 'decimal.js'
 import { GraphQLDecimal } from 'prisma-graphql-type-decimal'
@@ -7,6 +7,7 @@ import {
   AddressType,
   EmailType,
   FailureReason,
+  ImageType,
   InviteStatus,
   PhoneType,
   SecurityEventType,

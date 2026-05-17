@@ -1304,7 +1304,7 @@ type Mutation {
   register(input: RegisterInput!): UserToken
   registerWithInvitation(input: RegisterWithInvitationInput!): UserToken
   rejectOrganizationInvitation(input: RejectInvitationInput!): Boolean!
-  removeOrganizationLogo(organizationId: String!): Boolean!
+  removeOrganizationLogo: Boolean!
   removeOrganizationMember(input: RemoveOrganizationMemberInput!): Boolean!
   removeUserAvatar: Boolean!
   resendOrganizationInvitation(input: ResendInvitationInput!): Boolean!
@@ -1350,13 +1350,13 @@ type Mutation {
   updateUserPreference(input: UpdateUserPreferenceInput!, userPreferenceId: String!): UserPreference
   updateUserSession(input: UpdateUserSessionInput!, userSessionId: String!): UserSession
   uploadFile(file: Upload!, folder: String): UploadedFile!
-  uploadOrganizationLogo(file: Upload!, organizationId: String!): UploadedFile!
+  uploadOrganizationLogo(file: Upload!): UploadedFile!
   uploadUserAvatar(file: Upload!): UploadedFile!
   userCreateOrganization(input: CreateOrganizationInput!): Organization!
   userCreateUserPreference(input: SecureCreateUserPreferenceInput!): UserPreference
   userDeleteOrganization(organizationId: String!): Boolean!
   userDeleteUserPreference(userPreferenceId: String!): UserPreference
-  userUpdateOrganization(input: UpdateOrganizationInput!, organizationId: String!): Organization!
+  userUpdateOrganization(input: UpdateOrganizationInput!): Organization!
   userUpdateUserPreference(input: SecureUpdateUserPreferenceInput!, userPreferenceId: String!): UserPreference
   verify2FACode(input: Verify2FAInput!): Boolean!
   verifyEmail(input: VerifyEmailInput!): User!

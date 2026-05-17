@@ -3,7 +3,10 @@ import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { createTestRouter } from '../helpers/createTestRouter'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import AcceptInvitation from '../../app/routes/accept-invitation'
+import AcceptInvitation, {
+  buildRegisterWithInvitationInput,
+  getInvitationErrorMessage,
+} from '../../app/routes/accept-invitation'
 import { GlobalContextProvider, useGlobalCtx } from '@nestled-template/web'
 
 // Mock Apollo Client
@@ -313,6 +316,56 @@ describe('AcceptInvitation Component', () => {
   })
 
   describe('Signup Flow', () => {
+    it('builds invitation registration input from the invitation email', () => {
+      expect(
+        buildRegisterWithInvitationInput('test-token', ' Invitee@Example.COM ', {
+          firstName: ' Invited ',
+          lastName: ' User ',
+          password: 'password123',
+        }),
+      ).toEqual({
+        invitationToken: 'test-token',
+        email: 'invitee@example.com',
+        firstName: 'Invited',
+        lastName: 'User',
+        password: 'password123',
+      })
+    })
+
+    it('extracts backend validation messages from GraphQL errors', () => {
+      expect(
+        getInvitationErrorMessage(
+          {
+            graphQLErrors: [
+              {
+                extensions: {
+                  originalError: {
+                    message: ['Password must be at least 8 characters'],
+                  },
+                },
+              },
+            ],
+          },
+          'Fallback message',
+        ),
+      ).toBe('Password must be at least 8 characters')
+    })
+
+    it('extracts backend validation messages from direct GraphQL errors', () => {
+      expect(
+        getInvitationErrorMessage(
+          {
+            extensions: {
+              originalError: {
+                message: 'password must be longer than or equal to 8 characters',
+              },
+            },
+          },
+          'Fallback message',
+        ),
+      ).toBe('Password must be longer than or equal to 8 characters')
+    })
+
     it('should pre-fill email field from invitation', () => {
       renderWithRouter()
 

@@ -13,14 +13,12 @@ export default [
       route('resend-verification', './routes/_public/resend-verification.tsx'),
       route('reset-password', './routes/_public/reset-password.tsx'),
       route('verify-email', './routes/_public/verify-email.tsx'),
+      route('features', './routes/_public/features.tsx'),
       route('pricing', './routes/pricing.tsx'),
-      // route('blog', './routes/_public/blog.tsx'),
+      route('blog', './routes/_public/blog.tsx'),
       // route('contact', './routes/_public/contact.tsx'),
       // route('privacy-policy', './routes/_public/privacy-policy.tsx'),
       // route('terms-and-conditions', './routes/_public/terms-and-conditions.tsx'),
-      // route('blog/:slug', './routes/_public/blog/_layout.tsx', [
-      //   index('./routes/_public/blog/$slug.tsx'),
-      // ]),
     ]),
 
     // Standalone unauthorized page (outside of public layout to avoid conflicts)

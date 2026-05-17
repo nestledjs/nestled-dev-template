@@ -93,6 +93,10 @@ const subjectDisplayNames: Record<string, string> = {
 }
 
 type OrganizationMemberRow = UserOrganizationMembersQuery['userOrganizationMembers'][number]
+type OrganizationRole = OrganizationRolesQuery['organizationRoles'][number]
+type ActiveOrganizationMember = NonNullable<
+  NonNullable<MyOrganizationsWithMembersQuery['myOrganizations'][number]['members']>[number]
+>
 
 interface RolePermissionsCardProps {
   role: {
@@ -174,6 +178,18 @@ function RolePermissionsCard({ role }: Readonly<RolePermissionsCardProps>) {
   )
 }
 
+function isOwnerRole(roleName: string | null | undefined): boolean {
+  return roleName === 'Owner'
+}
+
+function getAssignableRoles(
+  roles: readonly OrganizationRole[],
+  activeOrganizationMember: ActiveOrganizationMember | null | undefined,
+) {
+  if (isOwnerRole(activeOrganizationMember?.role?.name)) return roles
+  return roles.filter(role => !isOwnerRole(role.name))
+}
+
 export const loader = apolloLoader()(({ preloadQuery }) => {
   const myOrganizationsQueryRef = preloadQuery<MyOrganizationsWithMembersQuery>(
     MyOrganizationsWithMembers,
@@ -246,6 +262,7 @@ export default function MembersSettings() {
 
   const members = data?.userOrganizationMembers || []
   const roles = rolesData?.organizationRoles || []
+  const assignableRoles = getAssignableRoles(roles, activeOrganizationMember)
   const invitations =
     invitationsData?.organizationInvitations?.filter(inv => inv.status === 'PENDING') || []
 
@@ -389,7 +406,7 @@ export default function MembersSettings() {
       required: true,
       options: [
         { value: '', label: 'Select a role...' },
-        ...roles.map(role => ({
+        ...assignableRoles.map(role => ({
           value: role.id,
           label: role.name,
         })),
@@ -535,7 +552,7 @@ export default function MembersSettings() {
                   className="w-full px-3 py-2 bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 rounded-lg text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-sky-500"
                 >
                   <option value="">Select a role...</option>
-                  {roles.map(role => (
+                  {assignableRoles.map(role => (
                     <option key={role.id} value={role.id}>
                       {role.name}
                     </option>

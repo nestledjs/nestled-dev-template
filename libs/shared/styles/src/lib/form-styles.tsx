@@ -3,7 +3,7 @@ import { FormThemeSchema } from '@nestledjs/forms-core'
 export const formTheme = FormThemeSchema.parse({
   global: {
     input:
-      'bg-white dark:bg-white border border-gray-300 dark:border-gray-300 rounded-md shadow-sm placeholder-gray-400 dark:placeholder-gray-500 text-gray-900 dark:text-gray-900 focus:outline-none focus:ring-sky-300 focus:border-sky-300',
+      'bg-white dark:bg-white border border-gray-300 dark:border-gray-300 rounded-md shadow-sm placeholder-gray-400 dark:placeholder-gray-500 text-gray-900 dark:text-gray-900 focus:outline-none focus:ring-emerald-300 focus:border-emerald-300',
     error: '!border-red-600 !focus:border-red-600',
     disabled: 'opacity-50 cursor-not-allowed bg-gray-100 dark:bg-gray-100',
     readOnly:
@@ -11,7 +11,7 @@ export const formTheme = FormThemeSchema.parse({
   },
   button: {
     base: 'inline-flex items-center justify-center rounded-md px-3 py-2 text-sm font-semibold shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 transition-colors',
-    primary: 'bg-sky-600 text-white hover:bg-sky-500 focus-visible:outline-sky-600',
+    primary: 'bg-emerald-500 text-zinc-950 hover:bg-emerald-400 focus-visible:outline-emerald-500',
     secondary: 'bg-white text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50',
     danger: 'bg-red-600 text-white hover:bg-red-500 focus-visible:outline-red-600',
     disabled: 'opacity-50 cursor-not-allowed',
@@ -35,9 +35,9 @@ export const formTheme = FormThemeSchema.parse({
     wrapper: '',
     row: 'flex items-center gap-2',
     rowFullWidth: 'flex items-center justify-between',
-    input: 'h-4 w-4 text-sky-600 rounded cursor-pointer',
-    focus: 'focus:ring-2 focus:ring-sky-300 focus:border-sky-300',
-    checked: 'bg-sky-600 border-sky-600',
+    input: 'h-4 w-4 text-emerald-600 rounded cursor-pointer',
+    focus: 'focus:ring-2 focus:ring-emerald-300 focus:border-emerald-300',
+    checked: 'bg-emerald-600 border-emerald-600',
     error: '!border-red-600 !focus:border-red-600',
     disabled: 'opacity-50 cursor-not-allowed',
     readOnly: 'text-gray-700 font-medium',
@@ -48,7 +48,7 @@ export const formTheme = FormThemeSchema.parse({
     indeterminate: 'bg-gray-300 border-gray-400',
     readonlyCheckedIcon: (
       <svg
-        className="w-5 h-5 text-sky-600"
+        className="w-5 h-5 text-emerald-600"
         fill="none"
         viewBox="0 0 24 24"
         stroke="currentColor"
@@ -76,9 +76,9 @@ export const formTheme = FormThemeSchema.parse({
     checkboxContainer: 'relative inline-flex items-center cursor-pointer select-none',
     hiddenInput: 'peer absolute opacity-0 w-5 h-5 cursor-pointer',
     customCheckbox:
-      'inline-flex items-center justify-center w-5 h-5 rounded border border-gray-300 transition-colors bg-white mr-2 peer-focus:ring-2 peer-focus:ring-sky-300 peer-focus:ring-offset-2',
+      'inline-flex items-center justify-center w-5 h-5 rounded border border-gray-300 transition-colors bg-white mr-2 peer-focus:ring-2 peer-focus:ring-emerald-300 peer-focus:ring-offset-2',
     focus: '', // Empty since focus styles are now in customCheckbox
-    checked: '!bg-sky-600 border-sky-600',
+    checked: '!bg-emerald-600 border-emerald-600',
     error: '!border-red-600',
     disabled: 'opacity-50 cursor-not-allowed',
     readOnly: 'text-gray-700 font-medium',
@@ -100,7 +100,7 @@ export const formTheme = FormThemeSchema.parse({
     uncheckedIcon: null, // No icon when unchecked by default
     readonlyCheckedIcon: (
       <svg
-        className="w-4 h-4 text-sky-600"
+        className="w-4 h-4 text-emerald-600"
         fill="none"
         viewBox="0 0 24 24"
         stroke="currentColor"
@@ -133,7 +133,7 @@ export const formTheme = FormThemeSchema.parse({
     wrapper: '',
     input:
       'block w-full px-3 py-2 sm:text-sm min-h-[2.5rem] bg-white dark:bg-white text-gray-900 dark:text-gray-900',
-    focus: 'focus:ring-2 focus:ring-sky-300 focus:border-sky-300',
+    focus: 'focus:ring-2 focus:ring-emerald-300 focus:border-emerald-300',
     error: '!border-red-600 !focus:border-red-600 !focus:ring-red-600',
     disabled: 'opacity-50 cursor-not-allowed bg-gray-100 dark:bg-gray-100',
     readOnly: 'text-gray-700 dark:text-gray-100 font-medium',
@@ -145,7 +145,7 @@ export const formTheme = FormThemeSchema.parse({
     wrapper: '',
     input:
       'block w-full px-3 py-2 sm:text-sm min-h-[2.5rem] bg-white dark:bg-white text-gray-900 dark:text-gray-900',
-    focus: 'focus:ring-2 focus:ring-sky-300 focus:border-sky-300',
+    focus: 'focus:ring-2 focus:ring-emerald-300 focus:border-emerald-300',
     error: '!border-red-600 !focus:border-red-600 !focus:ring-red-600',
     disabled: 'opacity-50 cursor-not-allowed bg-gray-100 dark:bg-gray-100',
     readOnly: 'text-gray-700 dark:text-gray-100 font-medium',
@@ -157,7 +157,7 @@ export const formTheme = FormThemeSchema.parse({
     wrapper: '',
     input:
       'block w-full px-3 py-2 sm:text-sm min-h-[2.5rem] bg-white dark:bg-white text-gray-900 dark:text-gray-900',
-    focus: 'focus:ring-2 focus:ring-sky-300 focus:border-sky-300',
+    focus: 'focus:ring-2 focus:ring-emerald-300 focus:border-emerald-300',
     error: '!border-red-600 !focus:border-red-600 !focus:ring-red-600',
     disabled: 'opacity-50 cursor-not-allowed bg-gray-100 dark:bg-gray-100',
     readOnly: 'text-gray-700 dark:text-gray-100 font-medium',
@@ -174,7 +174,7 @@ export const formTheme = FormThemeSchema.parse({
     input:
       'block w-full px-3 py-2 sm:text-sm min-h-[2.5rem] bg-white dark:bg-white text-gray-900 dark:text-gray-900',
     inputWithSymbol: 'pl-12',
-    focus: 'focus:ring-2 focus:ring-sky-300 focus:border-sky-300',
+    focus: 'focus:ring-2 focus:ring-emerald-300 focus:border-emerald-300',
     error: '!border-red-600 !focus:border-red-600 !focus:ring-red-600',
     disabled: 'opacity-50 cursor-not-allowed bg-gray-100 dark:bg-gray-100',
     readOnly: 'text-gray-700 dark:text-gray-100 font-medium',
@@ -186,11 +186,11 @@ export const formTheme = FormThemeSchema.parse({
     wrapper: '',
     container: 'relative',
     inputContainer:
-      'flex flex-wrap items-center gap-1 rounded-md border border-gray-300 bg-white p-1 pr-10 shadow-sm focus-within:ring-2 focus-within:ring-sky-300 focus-within:border-sky-300',
+      'flex flex-wrap items-center gap-1 rounded-md border border-gray-300 bg-white p-1 pr-10 shadow-sm focus-within:ring-2 focus-within:ring-emerald-300 focus-within:border-emerald-300',
     selectedItem:
-      'flex items-center gap-x-1 whitespace-nowrap rounded-sm bg-sky-100 px-2 py-0.5 text-sm text-sky-700',
+      'flex items-center gap-x-1 whitespace-nowrap rounded-sm bg-emerald-100 px-2 py-0.5 text-sm text-emerald-700',
     selectedItemLabel: '',
-    selectedItemRemoveButton: 'text-sky-500 hover:text-sky-800 transition-colors',
+    selectedItemRemoveButton: 'text-emerald-500 hover:text-emerald-800 transition-colors',
     selectedItemRemoveIcon: 'h-3 w-3',
     input: 'min-w-[6rem] flex-grow bg-transparent p-1 focus:ring-0 border-none focus:outline-none',
     button: 'absolute inset-y-0 right-0 flex items-center pr-2',
@@ -198,10 +198,10 @@ export const formTheme = FormThemeSchema.parse({
     dropdown:
       'absolute z-10 mt-1 w-fit min-w-[12rem] bg-white shadow-lg max-h-60 rounded-md py-1 text-base border border-gray-300 overflow-auto focus:outline-none sm:text-sm',
     option: 'cursor-pointer select-none relative py-2 pl-10 pr-4',
-    optionActive: 'bg-sky-100 text-sky-900',
+    optionActive: 'bg-emerald-100 text-emerald-900',
     optionSelected: 'font-medium',
     optionLabel: 'block truncate',
-    optionCheckIcon: 'absolute inset-y-0 left-0 flex items-center pl-3 text-sky-600',
+    optionCheckIcon: 'absolute inset-y-0 left-0 flex items-center pl-3 text-emerald-600',
     error: '!border-red-600 !focus-within:border-red-600 !focus-within:ring-red-600',
     disabled: 'opacity-50 cursor-not-allowed bg-gray-100',
     readOnly: 'text-gray-700 font-medium',
@@ -212,7 +212,7 @@ export const formTheme = FormThemeSchema.parse({
   numberField: {
     input:
       'block w-full px-3 py-2 sm:text-sm min-h-[2.5rem] bg-white dark:bg-white text-gray-900 dark:text-gray-900',
-    focus: 'focus:ring-2 focus:ring-sky-300 focus:border-sky-300',
+    focus: 'focus:ring-2 focus:ring-emerald-300 focus:border-emerald-300',
     error: '!border-red-600 !focus:border-red-600 !focus:ring-red-600',
     disabled: 'opacity-50 cursor-not-allowed bg-gray-100 dark:bg-gray-100',
     readOnly: 'text-gray-700 dark:text-gray-100 font-medium',
@@ -223,7 +223,7 @@ export const formTheme = FormThemeSchema.parse({
   passwordField: {
     input:
       'block w-full px-3 py-2 sm:text-sm min-h-[2.5rem] bg-white dark:bg-white text-gray-900 dark:text-gray-900',
-    focus: 'focus:ring-2 focus:ring-sky-300 focus:border-sky-300',
+    focus: 'focus:ring-2 focus:ring-emerald-300 focus:border-emerald-300',
     error: '!border-red-600 !focus:border-red-600 !focus:ring-red-600',
     disabled: 'opacity-50 cursor-not-allowed bg-gray-100 dark:bg-gray-100',
     readOnly: 'text-gray-700 dark:text-gray-100 font-medium',
@@ -236,7 +236,7 @@ export const formTheme = FormThemeSchema.parse({
     wrapper: '',
     input:
       'block w-full px-3 py-2 sm:text-sm min-h-[2.5rem] bg-white dark:bg-white text-gray-900 dark:text-gray-900',
-    focus: 'focus:ring-2 focus:ring-sky-300 focus:border-sky-300 !outline-none',
+    focus: 'focus:ring-2 focus:ring-emerald-300 focus:border-emerald-300 !outline-none',
     error: '!border-red-600 !focus:border-red-600 !focus:ring-red-600',
     disabled: 'opacity-50 cursor-not-allowed bg-gray-100 dark:bg-gray-100',
     readOnly: 'text-gray-700 dark:text-gray-100 font-medium',
@@ -257,8 +257,8 @@ export const formTheme = FormThemeSchema.parse({
     input:
       'size-4 appearance-none rounded-full border-2 border-gray-300 bg-white focus:outline-none cursor-pointer',
     inputFullWidth: '!size-6',
-    inputChecked: '!bg-sky-600 !border-sky-600 shadow-[inset_0_0_0_3px_white]',
-    inputFocus: 'focus:ring-sky-300 focus:ring-2',
+    inputChecked: '!bg-emerald-600 !border-emerald-600 shadow-[inset_0_0_0_3px_white]',
+    inputFocus: 'focus:ring-emerald-300 focus:ring-2',
     inputDisabled: 'opacity-50 cursor-not-allowed',
     label: 'text-sm grow cursor-pointer text-gray-900 dark:text-gray-100',
     labelFullWidth: 'text-sm ml-2 grow',
@@ -271,7 +271,7 @@ export const formTheme = FormThemeSchema.parse({
     readOnlyUnselected: 'w-5 h-5 text-red-600',
     readOnlyIcon: (
       <svg
-        className="w-5 h-5 text-sky-600"
+        className="w-5 h-5 text-emerald-600"
         fill="none"
         viewBox="0 0 24 24"
         stroke="currentColor"
@@ -304,8 +304,8 @@ export const formTheme = FormThemeSchema.parse({
     input:
       'size-4 appearance-none rounded border-2 border-gray-300 bg-white focus:outline-none cursor-pointer',
     inputFullWidth: '!size-6',
-    inputChecked: '!bg-sky-600 !border-sky-600 shadow-[inset_0_0_0_2px_white]',
-    inputFocus: 'focus:ring-sky-300 focus:ring-2',
+    inputChecked: '!bg-emerald-600 !border-emerald-600 shadow-[inset_0_0_0_2px_white]',
+    inputFocus: 'focus:ring-emerald-300 focus:ring-2',
     inputDisabled: 'opacity-50 cursor-not-allowed',
     error: '!border-red-600 !focus:border-red-600',
     disabled: 'opacity-50 cursor-not-allowed bg-gray-100',
@@ -335,10 +335,10 @@ export const formTheme = FormThemeSchema.parse({
     dropdown:
       'absolute z-10 mt-1 w-fit min-w-[12rem] bg-white shadow-lg max-h-60 rounded-md py-1 text-base border border-gray-300 overflow-auto focus:outline-none sm:text-sm',
     option: 'cursor-default select-none relative py-2 pl-10 pr-4',
-    optionActive: 'text-white bg-sky-600',
+    optionActive: 'text-white bg-emerald-600',
     optionSelected: 'font-medium',
     optionLabel: 'block truncate',
-    optionCheckIcon: 'absolute inset-y-0 left-0 flex items-center pl-3 text-sky-600',
+    optionCheckIcon: 'absolute inset-y-0 left-0 flex items-center pl-3 text-emerald-600',
     loadingText: 'p-2 text-sm text-gray-500',
     error: '!border-red-600 !focus:border-red-600',
     disabled: 'opacity-50 cursor-not-allowed bg-gray-100',
@@ -354,9 +354,9 @@ export const formTheme = FormThemeSchema.parse({
     inputContainer:
       'flex flex-wrap items-center gap-1 rounded-md border border-gray-300 bg-white p-1 pr-10 shadow-sm',
     selectedItem:
-      'flex items-center gap-x-1 whitespace-nowrap rounded-sm bg-sky-100 px-2 py-0.5 text-sm text-sky-700',
+      'flex items-center gap-x-1 whitespace-nowrap rounded-sm bg-emerald-100 px-2 py-0.5 text-sm text-emerald-700',
     selectedItemLabel: '',
-    selectedItemRemoveButton: 'text-sky-500 hover:text-sky-800 transition-colors',
+    selectedItemRemoveButton: 'text-emerald-500 hover:text-emerald-800 transition-colors',
     selectedItemRemoveIcon: 'h-3 w-3',
     input: 'min-w-[6rem] flex-grow bg-transparent p-1 focus:ring-0 border-none focus:outline-none',
     button: 'absolute inset-y-0 right-0 flex items-center pr-2',
@@ -364,10 +364,10 @@ export const formTheme = FormThemeSchema.parse({
     dropdown:
       'absolute z-10 mt-1 w-fit min-w-[12rem] bg-white shadow-lg max-h-60 rounded-md py-1 text-base border border-gray-300 overflow-auto focus:outline-none sm:text-sm',
     option: 'cursor-default select-none relative py-2 pl-10 pr-4',
-    optionActive: 'text-white bg-sky-600',
+    optionActive: 'text-white bg-emerald-600',
     optionSelected: 'font-medium',
     optionLabel: 'block truncate',
-    optionCheckIcon: 'absolute inset-y-0 left-0 flex items-center pl-3 text-sky-600',
+    optionCheckIcon: 'absolute inset-y-0 left-0 flex items-center pl-3 text-emerald-600',
     loadingText: 'p-2 text-sm text-gray-500',
     noResultsText: 'p-2 text-sm text-gray-500',
     error: '!border-red-600 !focus:border-red-600',
@@ -401,8 +401,8 @@ export const formTheme = FormThemeSchema.parse({
     label: 'ml-3 text-md text-gray-700 dark:text-gray-100',
     switchTrack:
       'relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2',
-    switchTrackOn: 'bg-sky-600 focus:ring-sky-300',
-    switchTrackOff: 'bg-gray-200 focus:ring-sky-300',
+    switchTrackOn: 'bg-emerald-600 focus:ring-emerald-300',
+    switchTrackOff: 'bg-gray-200 focus:ring-emerald-300',
     switchThumb:
       'pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 transition ease-in-out duration-200',
     switchThumbOn: 'translate-x-5',
@@ -416,7 +416,7 @@ export const formTheme = FormThemeSchema.parse({
   textAreaField: {
     wrapper: '',
     textarea:
-      'block w-full resize-none px-3 py-2 min-h-[2.5rem] border border-gray-300 dark:border-gray-300 rounded-md shadow-sm placeholder-gray-400 dark:placeholder-gray-500 bg-white dark:bg-white text-gray-900 dark:text-gray-900 focus:outline-none focus:ring-sky-300 focus:border-sky-300',
+      'block w-full resize-none px-3 py-2 min-h-[2.5rem] border border-gray-300 dark:border-gray-300 rounded-md shadow-sm placeholder-gray-400 dark:placeholder-gray-500 bg-white dark:bg-white text-gray-900 dark:text-gray-900 focus:outline-none focus:ring-emerald-300 focus:border-emerald-300',
     error: '!border-red-600 !focus:border-red-600 !focus:ring-red-600',
     disabled: 'bg-gray-100 dark:bg-gray-100 cursor-not-allowed opacity-50',
     readOnly: 'text-gray-700 dark:text-gray-100 font-medium',
@@ -427,7 +427,7 @@ export const formTheme = FormThemeSchema.parse({
   markdownEditor: {
     wrapper: '',
     editor:
-      'border border-gray-300 rounded-md focus-within:ring-sky-300 focus-within:border-sky-300 prose prose-sm max-w-none p-4',
+      'border border-gray-300 rounded-md focus-within:ring-emerald-300 focus-within:border-emerald-300 prose prose-sm max-w-none p-4',
     toolbar: 'bg-gray-50 border-b border-gray-200 px-3 py-2 rounded-t-md',
     preview: 'prose prose-sm max-w-none p-4 min-h-[200px] bg-white',
     error: '!border-red-600 !focus-within:border-red-600 !focus-within:ring-red-600',

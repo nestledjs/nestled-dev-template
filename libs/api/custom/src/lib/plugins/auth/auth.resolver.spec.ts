@@ -169,6 +169,7 @@ describe('AuthResolver', () => {
       'user-1',
       { currentPassword: 'old' },
       sessionInfo,
+      'session-1',
     )
   })
 
@@ -236,10 +237,25 @@ describe('AuthResolver', () => {
 
   it('uses the current session when listing or invalidating sessions', async () => {
     await expect(resolver.getUserSessions(context, user)).resolves.toEqual([{ id: 'session-1' }])
+    await expect(
+      resolver.changePassword(context, user, {
+        currentPassword: 'OldPassword123!',
+        newPassword: 'NewPassword123!',
+      }),
+    ).resolves.toBe(true)
     await expect(resolver.invalidateSession(user, 'session-2')).resolves.toBe(true)
     await expect(resolver.invalidateAllSessions(context, user)).resolves.toBe(2)
 
     expect(authService.getUserSessions).toHaveBeenCalledWith('user-1', 'session-1')
+    expect(authService.changePassword).toHaveBeenCalledWith(
+      'user-1',
+      {
+        currentPassword: 'OldPassword123!',
+        newPassword: 'NewPassword123!',
+      },
+      sessionInfo,
+      'session-1',
+    )
     expect(authService.invalidateSession).toHaveBeenCalledWith('user-1', 'session-2')
     expect(authService.invalidateAllSessions).toHaveBeenCalledWith('user-1', 'session-1')
   })

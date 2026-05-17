@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import JSON5 from 'json5'
 
 function findJsonBounds(str: string, braceStart: number): number {
@@ -133,6 +133,12 @@ function renderPretty(obj: any): React.ReactNode {
 }
 
 export function ErrorBoundaryUi({ error }: { readonly error: Error }) {
+  const [showDetails, setShowDetails] = useState(false)
+
+  useEffect(() => {
+    setShowDetails(true)
+  }, [])
+
   // Log the full error object for debugging
   console.error('Route ErrorBoundary caught:', error)
 
@@ -160,37 +166,41 @@ export function ErrorBoundaryUi({ error }: { readonly error: Error }) {
           <h1 className="text-2xl font-bold text-red-600">Something went wrong</h1>
         </div>
         <p className="mt-2 text-gray-700 text-base">{renderPretty(error.message)}</p>
-        <div className="mt-6">
-          <h2 className="font-semibold text-gray-800 mb-2">Details:</h2>
-          <ul className="list-disc list-inside space-y-4">
-            {errors.map((err: any) => {
-              const errKey = err?.message?.slice(0, 40) ?? err?.name ?? String(err)
-              return (
-                <li key={errKey} className="mb-2">
-                  <div className="font-medium text-gray-900">
-                    {renderPretty(err?.message || String(err))}
-                  </div>
-                  {/* Show stack if available - always render to prevent hydration mismatch */}
-                  <details className="mt-2" style={{ display: err?.stack ? 'block' : 'none' }}>
-                    <summary className="cursor-pointer text-xs text-gray-500">Stack trace</summary>
-                    <pre className="bg-gray-100 rounded p-2 overflow-x-auto text-left text-xs font-mono max-h-40 whitespace-pre-wrap">
-                      {err?.stack || ''}
-                    </pre>
-                  </details>
-                  {/* Show extra fields prettily if present */}
-                  {Object.keys(err || {})
-                    .filter(k => !['message', 'stack', 'name'].includes(k))
-                    .map(k => (
-                      <div key={k} className="mt-1">
-                        <span className="font-mono text-xs text-gray-600">{k}:</span>
-                        {renderPretty(err[k])}
-                      </div>
-                    ))}
-                </li>
-              )
-            })}
-          </ul>
-        </div>
+        {showDetails && (
+          <div className="mt-6">
+            <h2 className="font-semibold text-gray-800 mb-2">Details:</h2>
+            <ul className="list-disc list-inside space-y-4">
+              {errors.map((err: any) => {
+                const errKey = err?.message?.slice(0, 40) ?? err?.name ?? String(err)
+                return (
+                  <li key={errKey} className="mb-2">
+                    <div className="font-medium text-gray-900">
+                      {renderPretty(err?.message || String(err))}
+                    </div>
+                    {/* Show stack if available - always render to prevent hydration mismatch */}
+                    <details className="mt-2" style={{ display: err?.stack ? 'block' : 'none' }}>
+                      <summary className="cursor-pointer text-xs text-gray-500">
+                        Stack trace
+                      </summary>
+                      <pre className="bg-gray-100 rounded p-2 overflow-x-auto text-left text-xs font-mono max-h-40 whitespace-pre-wrap">
+                        {err?.stack || ''}
+                      </pre>
+                    </details>
+                    {/* Show extra fields prettily if present */}
+                    {Object.keys(err || {})
+                      .filter(k => !['message', 'stack', 'name'].includes(k))
+                      .map(k => (
+                        <div key={k} className="mt-1">
+                          <span className="font-mono text-xs text-gray-600">{k}:</span>
+                          {renderPretty(err[k])}
+                        </div>
+                      ))}
+                  </li>
+                )
+              })}
+            </ul>
+          </div>
+        )}
       </div>
     </div>
   )

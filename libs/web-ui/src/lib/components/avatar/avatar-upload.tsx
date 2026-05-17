@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { CameraIcon, TrashIcon } from '@heroicons/react/24/outline'
 
 interface AvatarUploadProps {
@@ -44,6 +44,12 @@ export function AvatarUpload({
   const [isUploading, setIsUploading] = useState(false)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    if (currentImageUrl) {
+      setPreviewUrl(null)
+    }
+  }, [currentImageUrl])
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
