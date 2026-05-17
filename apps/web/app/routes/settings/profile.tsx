@@ -188,7 +188,7 @@ export default function ProfileSettings() {
 
   const primaryEmail = user.emails?.find(e => e.primary)
 
-  const userAvatar = user.avatar as UserAvatar | undefined | null
+  const userAvatar = user.avatar
 
   const handleAvatarUpload = async (file: File) => {
     try {

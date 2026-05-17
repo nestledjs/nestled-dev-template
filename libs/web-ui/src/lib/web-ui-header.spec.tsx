@@ -102,4 +102,36 @@ describe('WebUiHeader', () => {
     expect(await screen.findByRole('menuitem', { name: /Dashboard/ })).toBeInTheDocument()
     expect(screen.queryByRole('menuitem', { name: /Billing/ })).not.toBeInTheDocument()
   })
+
+  it('renders authenticated mobile account links and avatar image', async () => {
+    render(
+      <WebUiHeader
+        logo="/logo.png"
+        icon="/icon.png"
+        siteName="Demo Site"
+        navigation={[]}
+        isAuthenticated={true}
+        userName="Mobile User"
+        userEmail="mobile@example.com"
+        userAvatarUrl="/avatar.png"
+        canViewBilling={true}
+      />,
+    )
+
+    fireEvent.click(screen.getByText('Open main menu'))
+
+    expect(await screen.findByText('Mobile User')).toBeInTheDocument()
+    expect(document.querySelector('img[src="/avatar.png"]')).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /Billing/ })).toHaveAttribute(
+      'href',
+      '/settings/billing',
+    )
+    expect(screen.getByRole('link', { name: /Logout/ })).toHaveAttribute('href', '/logout')
+
+    fireEvent.click(screen.getByRole('button', { name: /Switch to Light Mode/ }))
+
+    await waitFor(() => {
+      expect(localStorage.getItem('theme')).toBe('light')
+    })
+  })
 })

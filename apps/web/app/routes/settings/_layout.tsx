@@ -32,6 +32,42 @@ type UserWithActiveOrganization = NonNullable<MeQuery['me']> & {
   activeOrganizationId?: string | null
 }
 
+type ActiveOrganizationMember = NonNullable<
+  NonNullable<MyOrganizationsWithMembersQuery['myOrganizations'][number]['members']>[number]
+>
+
+function hasBillingAccess(
+  user: MeQuery['me'] | null | undefined,
+  member: ActiveOrganizationMember | null,
+) {
+  if (user?.isSuperAdmin) return true
+  if (!member) return false
+
+  const roleName = member.role?.name
+  if (roleName === 'Owner' || roleName === 'Admin') return true
+
+  return !!member.role?.permissions?.some(p => p.subject === 'billing' && p.action === 'read')
+}
+
+function hasRolePermission(member: ActiveOrganizationMember | null, permission: string) {
+  const [subject, action] = permission.split(':')
+  return !!member?.role?.permissions?.some(p => p.subject === subject && p.action === action)
+}
+
+function canViewSetting(
+  permission: string | undefined,
+  user: MeQuery['me'] | null | undefined,
+  hasActiveOrganization: boolean,
+  activeOrganizationMember: ActiveOrganizationMember | null,
+) {
+  if (!permission) return true
+  if (!hasActiveOrganization) return false
+  if (permission === 'organization:read' || permission === 'member:read') return true
+  if (permission === 'billing:read') return hasBillingAccess(user, activeOrganizationMember)
+
+  return hasRolePermission(activeOrganizationMember, permission)
+}
+
 export default function SettingsLayout() {
   const location = useLocation()
   const { user } = useGlobalCtx()
@@ -39,7 +75,7 @@ export default function SettingsLayout() {
   // Fetch user's organizations with member data
   const { data: orgsData } = useQuery<MyOrganizationsWithMembersQuery>(MyOrganizationsWithMembers)
   const organizations = orgsData?.myOrganizations || []
-  const userWithActiveOrganization = user as UserWithActiveOrganization | null | undefined
+  const userWithActiveOrganization: UserWithActiveOrganization | null | undefined = user
   const activeOrganization =
     organizations.find(org => org.id === userWithActiveOrganization?.activeOrganizationId) ||
     organizations[0] ||
@@ -96,55 +132,8 @@ export default function SettingsLayout() {
     return location.pathname === href || location.pathname.startsWith(`${href}/`)
   }
 
-  // Simple permission check - make it very permissive for now
   const hasPermission = (permission?: string) => {
-    if (!permission) return true
-
-    // If user has an active organization, they can see basic settings
-    if (!activeOrganization) return false
-
-    // Very permissive - if they have an organization, they can see these
-    if (permission === 'organization:read') return true
-    if (permission === 'member:read') return true
-
-    // Only restrict update permissions if we have member data
-    if (permission === 'organization:update') {
-      // Super admins can always update (bypass role check)
-      if (user?.isSuperAdmin) return true
-
-      if (!activeOrganizationMember) return false // Need member data for update permissions
-      return (
-        activeOrganizationMember?.role?.name === 'Owner' ||
-        activeOrganizationMember?.role?.name === 'Admin'
-      )
-    }
-
-    if (permission === 'billing:read') {
-      if (user?.isSuperAdmin) return true
-
-      if (!activeOrganizationMember) return false
-      if (
-        activeOrganizationMember.role?.name === 'Owner' ||
-        activeOrganizationMember.role?.name === 'Admin'
-      ) {
-        return true
-      }
-
-      return !!activeOrganizationMember.role?.permissions?.some(
-        p => p.subject === 'billing' && p.action === 'read',
-      )
-    }
-
-    // Fallback to the original permission check if role permissions exist
-    if (activeOrganizationMember?.role?.permissions) {
-      const [subject, action] = permission.split(':')
-      return activeOrganizationMember.role.permissions.some(
-        p => p.subject === subject && p.action === action,
-      )
-    }
-
-    // Default to true for basic organization access
-    return true
+    return canViewSetting(permission, user, !!activeOrganization, activeOrganizationMember)
   }
 
   const userAvatar = user?.avatar
