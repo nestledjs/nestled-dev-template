@@ -26,6 +26,7 @@ import {
   UpdateMemberRoleInput,
   CreateInvitationInput,
   ResendInvitationInput,
+  CancelInvitationInput,
   AcceptInvitationInput,
   RejectInvitationInput,
   SwitchOrganizationInput,
@@ -120,6 +121,15 @@ export class OrganizationResolver extends GeneratedOrganizationResolver {
     @Args('input') input: ResendInvitationInput,
   ): Promise<boolean> {
     return this.customService.resendOrganizationInvitation(user.id, input)
+  }
+
+  @Mutation(() => Boolean)
+  @UseGuards(GqlAuthGuard)
+  async cancelOrganizationInvitation(
+    @CtxUser() user: User,
+    @Args('input') input: CancelInvitationInput,
+  ): Promise<boolean> {
+    return this.customService.cancelOrganizationInvitation(user.id, input)
   }
 
   @Mutation(() => Organization)

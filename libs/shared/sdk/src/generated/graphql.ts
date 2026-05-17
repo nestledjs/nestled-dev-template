@@ -215,6 +215,10 @@ export type AuditLog = {
   userId: Scalars['String']['output']
 }
 
+export type CancelInvitationInput = {
+  invitationId: Scalars['String']['input']
+}
+
 export type ChangeEmailInput = {
   newEmail: Scalars['String']['input']
 }
@@ -1263,6 +1267,7 @@ export type Mutation = {
   adminDeactivateUser: User
   adminForcePasswordReset: User
   adminVerifyEmail: User
+  cancelOrganizationInvitation: Scalars['Boolean']['output']
   cancelSubscription: Subscription
   changeEmail: Scalars['Boolean']['output']
   changePassword: Scalars['Boolean']['output']
@@ -1416,6 +1421,10 @@ export type MutationAdminForcePasswordResetArgs = {
 export type MutationAdminVerifyEmailArgs = {
   emailId: Scalars['String']['input']
   userId: Scalars['String']['input']
+}
+
+export type MutationCancelOrganizationInvitationArgs = {
+  input: CancelInvitationInput
 }
 
 export type MutationChangeEmailArgs = {
@@ -9960,6 +9969,15 @@ export type ResendOrganizationInvitationMutationVariables = Exact<{
 export type ResendOrganizationInvitationMutation = {
   __typename?: 'Mutation'
   resendOrganizationInvitation: boolean
+}
+
+export type CancelOrganizationInvitationMutationVariables = Exact<{
+  input: CancelInvitationInput
+}>
+
+export type CancelOrganizationInvitationMutation = {
+  __typename?: 'Mutation'
+  cancelOrganizationInvitation: boolean
 }
 
 export type AcceptOrganizationInvitationMutationVariables = Exact<{
@@ -35667,6 +35685,45 @@ export const ResendOrganizationInvitation = {
 } as unknown as DocumentNode<
   ResendOrganizationInvitationMutation,
   ResendOrganizationInvitationMutationVariables
+>
+export const CancelOrganizationInvitation = {
+  kind: 'Document',
+  definitions: [
+    {
+      kind: 'OperationDefinition',
+      operation: 'mutation',
+      name: { kind: 'Name', value: 'cancelOrganizationInvitation' },
+      variableDefinitions: [
+        {
+          kind: 'VariableDefinition',
+          variable: { kind: 'Variable', name: { kind: 'Name', value: 'input' } },
+          type: {
+            kind: 'NonNullType',
+            type: { kind: 'NamedType', name: { kind: 'Name', value: 'CancelInvitationInput' } },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'cancelOrganizationInvitation' },
+            arguments: [
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'input' },
+                value: { kind: 'Variable', name: { kind: 'Name', value: 'input' } },
+              },
+            ],
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  CancelOrganizationInvitationMutation,
+  CancelOrganizationInvitationMutationVariables
 >
 export const AcceptOrganizationInvitation = {
   kind: 'Document',

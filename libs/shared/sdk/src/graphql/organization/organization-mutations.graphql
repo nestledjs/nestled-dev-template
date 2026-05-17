@@ -22,6 +22,10 @@ mutation resendOrganizationInvitation($input: ResendInvitationInput!) {
   resendOrganizationInvitation(input: $input)
 }
 
+mutation cancelOrganizationInvitation($input: CancelInvitationInput!) {
+  cancelOrganizationInvitation(input: $input)
+}
+
 mutation acceptOrganizationInvitation($input: AcceptInvitationInput!) {
   acceptOrganizationInvitation(input: $input) {
     ...OrganizationDetails

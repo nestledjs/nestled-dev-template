@@ -1048,6 +1048,111 @@ describe('OrganizationService', () => {
       )
     })
   })
+  describe('cancelOrganizationInvitation', () => {
+    it('should cancel pending invitation and record audit log', async () => {
+      const userId = 'user-123'
+      const input = { invitationId: 'invite-123' }
+      data.invite.findUnique.mockResolvedValue({
+        id: 'invite-123',
+        email: 'invited@example.com',
+        status: 'PENDING',
+        organizationId: 'org-123',
+        roleId: 'role-member',
+        role: { name: 'Member' },
+      } as any)
+      data.organizationMember.findFirst.mockResolvedValue({
+        role: { permissions: [{ subject: 'member', action: 'invite' }] },
+      } as any)
+      data.invite.update.mockResolvedValue({} as any)
+
+      const result = await service.cancelOrganizationInvitation(userId, input)
+
+      expect(result).toBe(true)
+      expect(data.invite.update).toHaveBeenCalledWith({
+        where: { id: 'invite-123' },
+        data: { status: 'DECLINED' },
+      })
+      expect(data.auditLog.create).toHaveBeenCalledWith({
+        data: expect.objectContaining({
+          userId,
+          organizationId: 'org-123',
+          entityId: 'invite-123',
+          entityType: 'Invite',
+          action: 'ORGANIZATION_INVITATION_CANCELLED',
+          changes: expect.objectContaining({
+            email: 'invited@example.com',
+            status: { before: 'PENDING', after: 'DECLINED' },
+          }),
+        }),
+      })
+    })
+
+    it('should throw NotFoundException when invitation not found', async () => {
+      const userId = 'user-123'
+      const input = { invitationId: 'missing-invite' }
+      data.invite.findUnique.mockResolvedValue(null)
+
+      await expect(service.cancelOrganizationInvitation(userId, input)).rejects.toThrow(
+        NotFoundException,
+      )
+    })
+
+    it('should throw ForbiddenException when user lacks invite permission', async () => {
+      const userId = 'user-123'
+      const input = { invitationId: 'invite-123' }
+      data.invite.findUnique.mockResolvedValue({
+        id: 'invite-123',
+        organizationId: 'org-123',
+        status: 'PENDING',
+        role: { name: 'Member' },
+      } as any)
+      data.organizationMember.findFirst.mockResolvedValue({
+        role: { permissions: [{ subject: 'member', action: 'read' }] },
+      } as any)
+
+      await expect(service.cancelOrganizationInvitation(userId, input)).rejects.toThrow(
+        ForbiddenException,
+      )
+    })
+
+    it('should require owner to cancel Owner invitations', async () => {
+      const userId = 'admin-user'
+      const input = { invitationId: 'invite-123' }
+      data.invite.findUnique.mockResolvedValue({
+        id: 'invite-123',
+        organizationId: 'org-123',
+        status: 'PENDING',
+        role: { name: 'Owner' },
+      } as any)
+      data.organizationMember.findFirst
+        .mockResolvedValueOnce({
+          role: { permissions: [{ subject: 'member', action: 'invite' }] },
+        } as any)
+        .mockResolvedValueOnce({ role: { name: 'Admin' } } as any)
+
+      await expect(service.cancelOrganizationInvitation(userId, input)).rejects.toThrow(
+        ForbiddenException,
+      )
+    })
+
+    it('should throw BadRequestException when invitation is not PENDING', async () => {
+      const userId = 'user-123'
+      const input = { invitationId: 'invite-123' }
+      data.invite.findUnique.mockResolvedValue({
+        id: 'invite-123',
+        organizationId: 'org-123',
+        status: 'ACCEPTED',
+        role: { name: 'Member' },
+      } as any)
+      data.organizationMember.findFirst.mockResolvedValue({
+        role: { permissions: [{ subject: 'member', action: 'invite' }] },
+      } as any)
+
+      await expect(service.cancelOrganizationInvitation(userId, input)).rejects.toThrow(
+        'Can only cancel pending invitations',
+      )
+    })
+  })
   describe('rejectOrganizationInvitation', () => {
     it('should reject invitation and mark as DECLINED', async () => {
       const userId = 'user-123'

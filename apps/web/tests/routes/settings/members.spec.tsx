@@ -10,6 +10,7 @@ const mockUseMutation = vi.fn()
 const mutationMocks = {
   invite: vi.fn(),
   resend: vi.fn(),
+  cancel: vi.fn(),
   remove: vi.fn(),
   updateRole: vi.fn(),
 }
@@ -63,6 +64,7 @@ vi.mock('@nestled-template/shared/sdk', async importOriginal => {
     Me: doc,
     MyOrganizationsWithMembers: doc,
     CreateOrganizationInvitation: doc,
+    CancelOrganizationInvitation: doc,
     ResendOrganizationInvitation: doc,
     RemoveOrganizationMember: doc,
     UpdateOrganizationMemberRole: doc,
@@ -139,6 +141,7 @@ describe('MembersSettings', () => {
       const mutations = [
         mutationMocks.invite,
         mutationMocks.resend,
+        mutationMocks.cancel,
         mutationMocks.remove,
         mutationMocks.updateRole,
       ]
@@ -271,6 +274,22 @@ describe('MembersSettings', () => {
       })
     })
     expect(screen.getByText('Invitation resent to pending@example.com')).toBeInTheDocument()
+  })
+
+  it('cancels invitations after confirmation', async () => {
+    renderRoute()
+
+    fireEvent.click(screen.getByTitle('Cancel invitation'))
+    expect(screen.getByText('Cancel Invitation')).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: /Confirm/i }))
+
+    await waitFor(() => {
+      expect(mutationMocks.cancel).toHaveBeenCalledWith({
+        variables: { input: { invitationId: 'inv-1' } },
+      })
+    })
+    expect(refetchInvitations).toHaveBeenCalled()
+    expect(screen.getByText('Invitation cancelled for pending@example.com')).toBeInTheDocument()
   })
 
   it('removes members after confirmation', async () => {
