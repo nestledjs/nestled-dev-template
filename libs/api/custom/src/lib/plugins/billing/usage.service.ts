@@ -96,10 +96,7 @@ export class UsageService {
   /**
    * Check if organization has exceeded a specific limit
    */
-  async hasExceededLimit(
-    organizationId: string,
-    metric: keyof UsageData,
-  ): Promise<boolean> {
+  async hasExceededLimit(organizationId: string, metric: keyof UsageData): Promise<boolean> {
     const usage = await this.getCurrentUsage(organizationId)
     const limits = await this.getPlanLimits(organizationId)
 
@@ -133,10 +130,7 @@ export class UsageService {
   /**
    * Get usage percentage for a metric (0-100)
    */
-  async getUsagePercentage(
-    organizationId: string,
-    metric: keyof UsageData,
-  ): Promise<number> {
+  async getUsagePercentage(organizationId: string, metric: keyof UsageData): Promise<number> {
     const usage = await this.getCurrentUsage(organizationId)
     const limits = await this.getPlanLimits(organizationId)
 
@@ -161,16 +155,10 @@ export class UsageService {
       usage,
       limits: limits || {},
       percentages: Object.fromEntries(
-        metrics.map(metric => [
-          metric,
-          this.calculatePercentage(usage[metric], limits?.[metric]),
-        ]),
+        metrics.map(metric => [metric, this.calculatePercentage(usage[metric], limits?.[metric])]),
       ),
       exceeded: Object.fromEntries(
-        metrics.map(metric => [
-          metric,
-          this.isExceeded(usage[metric], limits?.[metric]),
-        ]),
+        metrics.map(metric => [metric, this.isExceeded(usage[metric], limits?.[metric])]),
       ),
     }
   }

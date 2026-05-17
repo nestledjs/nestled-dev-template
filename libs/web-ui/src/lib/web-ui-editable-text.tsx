@@ -63,8 +63,8 @@ export function WebUiEditableText({
             }
           }}
           autoFocus
-        />
-        {' '}Save
+        />{' '}
+        Save
       </>
     )
   }

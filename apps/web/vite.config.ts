@@ -18,9 +18,7 @@ export default defineConfig(() => ({
     'import.meta.env.VITE_API_URL': JSON.stringify(
       process.env.VITE_API_URL || 'http://localhost:3000',
     ),
-    'process.env.VITE_COOKIE_NAME': JSON.stringify(
-      process.env.VITE_COOKIE_NAME || '__session',
-    ),
+    'process.env.VITE_COOKIE_NAME': JSON.stringify(process.env.VITE_COOKIE_NAME || '__session'),
   },
   resolve: {
     alias: {
@@ -53,10 +51,7 @@ export default defineConfig(() => ({
     include: ['@apollo/client', '@apollo/client/react'],
   },
   ssr: {
-    noExternal: [
-      '@nestledjs/forms',
-      /^@apollo\/client/,
-    ],
+    noExternal: ['@nestledjs/forms', /^@apollo\/client/],
     // Keep data-browser external
     external: ['@nestledjs/data-browser'],
   },

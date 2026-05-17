@@ -1,5 +1,9 @@
 import React from 'react'
-import { ExclamationTriangleIcon, ExclamationCircleIcon, XCircleIcon } from '@heroicons/react/24/outline'
+import {
+  ExclamationTriangleIcon,
+  ExclamationCircleIcon,
+  XCircleIcon,
+} from '@heroicons/react/24/outline'
 
 export type ErrorSeverity = 'warning' | 'error' | 'critical'
 
@@ -83,9 +87,7 @@ export function AdminErrorState({
           </div>
         )}
         <div className={showIcon ? 'ml-3' : ''}>
-          <h3 className={`text-sm font-medium ${config.titleColor}`}>
-            {title}
-          </h3>
+          <h3 className={`text-sm font-medium ${config.titleColor}`}>{title}</h3>
           {message && (
             <div className={`mt-2 text-sm ${config.messageColor}`}>
               <p>{message}</p>
@@ -131,13 +133,9 @@ export function AdminEmptyState({
 }: Readonly<AdminEmptyStateProps>) {
   return (
     <div className={`text-center ${className}`}>
-      {IconComponent && (
-        <IconComponent className="mx-auto h-12 w-12 text-gray-400" />
-      )}
+      {IconComponent && <IconComponent className="mx-auto h-12 w-12 text-gray-400" />}
       <h3 className="mt-2 text-sm font-medium text-gray-900">{title}</h3>
-      {message && (
-        <p className="mt-1 text-sm text-gray-500">{message}</p>
-      )}
+      {message && <p className="mt-1 text-sm text-gray-500">{message}</p>}
       {actionLabel && onAction && (
         <div className="mt-6">
           <button
@@ -170,11 +168,11 @@ export function AdminLoadingState({
 
   return (
     <div className={`flex flex-col items-center justify-center p-8 ${className}`}>
-      <div className={`animate-spin rounded-full border-b-2 border-green-web ${getSizeClasses()}`}></div>
+      <div
+        className={`animate-spin rounded-full border-b-2 border-green-web ${getSizeClasses()}`}
+      ></div>
       <h3 className="mt-4 text-sm font-medium text-gray-900">{title}</h3>
-      {message && (
-        <p className="mt-1 text-sm text-gray-500">{message}</p>
-      )}
+      {message && <p className="mt-1 text-sm text-gray-500">{message}</p>}
     </div>
   )
 }

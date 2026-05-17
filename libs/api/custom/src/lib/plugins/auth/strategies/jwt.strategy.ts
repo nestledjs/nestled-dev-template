@@ -37,7 +37,12 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     })
   }
 
-  async validate(payload: { userId: string; sessionId?: string; isEmulating?: boolean; originalAdminId?: string }): Promise<User> {
+  async validate(payload: {
+    userId: string
+    sessionId?: string
+    isEmulating?: boolean
+    originalAdminId?: string
+  }): Promise<User> {
     if (!payload?.userId) {
       throw new UnauthorizedException('Invalid JWT payload.')
     }

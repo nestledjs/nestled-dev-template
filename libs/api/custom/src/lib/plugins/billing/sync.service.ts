@@ -3,6 +3,42 @@ import { ApiCoreDataAccessService } from '@nestled-template/api/core/data-access
 import { StripeService } from '@nestled-template/api/integrations'
 import type { Stripe } from 'stripe/cjs/stripe.core'
 
+function errorMessage(error: unknown): string {
+  if (error instanceof Error) {
+    return error.message
+  }
+
+  if (typeof error === 'string') {
+    return error
+  }
+
+  if (typeof error === 'number' || typeof error === 'boolean' || typeof error === 'bigint') {
+    return error.toString()
+  }
+
+  if (typeof error === 'symbol') {
+    return error.description ?? 'symbol'
+  }
+
+  if (error === undefined) {
+    return 'undefined'
+  }
+
+  if (typeof error === 'function') {
+    return error.name || 'anonymous function'
+  }
+
+  if (typeof error === 'object' && error !== null) {
+    try {
+      return JSON.stringify(error)
+    } catch {
+      return error.constructor.name || 'object'
+    }
+  }
+
+  return 'null'
+}
+
 /**
  * Stripe Sync Service
  *
@@ -35,7 +71,7 @@ export class SyncService {
           await this.syncProductFromStripe(product.id)
           synced++
         } catch (error) {
-          this.logger.error(`Failed to sync product ${product.id}: ${error.message}`)
+          this.logger.error(`Failed to sync product ${product.id}: ${errorMessage(error)}`)
           errors++
         }
       }
@@ -43,7 +79,7 @@ export class SyncService {
       this.logger.log(`Product sync complete: ${synced} synced, ${errors} errors`)
       return { synced, errors }
     } catch (error) {
-      this.logger.error(`Failed to list products from Stripe: ${error.message}`)
+      this.logger.error(`Failed to list products from Stripe: ${errorMessage(error)}`)
       throw error
     }
   }
@@ -61,7 +97,9 @@ export class SyncService {
       let defaultPrice: Stripe.Price | null = null
       if (product.default_price) {
         const priceId =
-          typeof product.default_price === 'string' ? product.default_price : product.default_price.id
+          typeof product.default_price === 'string'
+            ? product.default_price
+            : product.default_price.id
         defaultPrice = await this.stripe.getPrice(priceId)
       }
 
@@ -87,7 +125,9 @@ export class SyncService {
           stripeProductId,
           stripePriceId: defaultPrice.id,
           active: product.active,
-          features: product.metadata?.['features'] ? JSON.parse(product.metadata['features']) : null,
+          features: product.metadata?.['features']
+            ? JSON.parse(product.metadata['features'])
+            : null,
           limits: product.metadata?.['limits'] ? JSON.parse(product.metadata['limits']) : null,
           trialPeriodDays: defaultPrice.recurring?.trial_period_days || undefined,
         },
@@ -98,7 +138,9 @@ export class SyncService {
           interval,
           stripePriceId: defaultPrice.id,
           active: product.active,
-          features: product.metadata?.['features'] ? JSON.parse(product.metadata['features']) : null,
+          features: product.metadata?.['features']
+            ? JSON.parse(product.metadata['features'])
+            : null,
           limits: product.metadata?.['limits'] ? JSON.parse(product.metadata['limits']) : null,
           trialPeriodDays: defaultPrice.recurring?.trial_period_days || undefined,
         },
@@ -106,7 +148,7 @@ export class SyncService {
 
       this.logger.log(`Successfully synced product: ${product.name}`)
     } catch (error) {
-      this.logger.error(`Failed to sync product ${stripeProductId}: ${error.message}`)
+      this.logger.error(`Failed to sync product ${stripeProductId}: ${errorMessage(error)}`)
       throw error
     }
   }
@@ -128,7 +170,7 @@ export class SyncService {
           await this.syncPriceFromStripe(price.id)
           synced++
         } catch (error) {
-          this.logger.error(`Failed to sync price ${price.id}: ${error.message}`)
+          this.logger.error(`Failed to sync price ${price.id}: ${errorMessage(error)}`)
           errors++
         }
       }
@@ -136,7 +178,7 @@ export class SyncService {
       this.logger.log(`Price sync complete: ${synced} synced, ${errors} errors`)
       return { synced, errors }
     } catch (error) {
-      this.logger.error(`Failed to list prices from Stripe: ${error.message}`)
+      this.logger.error(`Failed to list prices from Stripe: ${errorMessage(error)}`)
       throw error
     }
   }
@@ -171,7 +213,9 @@ export class SyncService {
           stripeProductId: productId,
           stripePriceId,
           active: price.active && product.active,
-          features: product.metadata?.['features'] ? JSON.parse(product.metadata['features']) : null,
+          features: product.metadata?.['features']
+            ? JSON.parse(product.metadata['features'])
+            : null,
           limits: product.metadata?.['limits'] ? JSON.parse(product.metadata['limits']) : null,
           trialPeriodDays: price.recurring?.trial_period_days || undefined,
         },
@@ -185,7 +229,7 @@ export class SyncService {
 
       this.logger.log(`Successfully synced price: ${stripePriceId}`)
     } catch (error) {
-      this.logger.error(`Failed to sync price ${stripePriceId}: ${error.message}`)
+      this.logger.error(`Failed to sync price ${stripePriceId}: ${errorMessage(error)}`)
       throw error
     }
   }
@@ -198,16 +242,18 @@ export class SyncService {
 
     try {
       const stripeSubscription = await this.stripe.getSubscription(stripeSubscriptionId)
+      const stripeCustomerId =
+        typeof stripeSubscription.customer === 'string'
+          ? stripeSubscription.customer
+          : stripeSubscription.customer.id
 
       // Find the organization by customer ID
       const dbSubscription = await this.prisma.subscription.findFirst({
-        where: { stripeCustomerId: stripeSubscription.customer as string },
+        where: { stripeCustomerId },
       })
 
       if (!dbSubscription) {
-        this.logger.error(
-          `No subscription found for customer ${stripeSubscription.customer}`,
-        )
+        this.logger.error(`No subscription found for customer ${stripeCustomerId}`)
         return
       }
 
@@ -251,7 +297,9 @@ export class SyncService {
 
       this.logger.log(`Successfully synced subscription: ${stripeSubscriptionId}`)
     } catch (error) {
-      this.logger.error(`Failed to sync subscription ${stripeSubscriptionId}: ${error.message}`)
+      this.logger.error(
+        `Failed to sync subscription ${stripeSubscriptionId}: ${errorMessage(error)}`,
+      )
       throw error
     }
   }
@@ -276,7 +324,7 @@ export class SyncService {
         this.logger.warn(`No subscription found for customer ${stripeCustomerId}`)
       }
     } catch (error) {
-      this.logger.error(`Failed to sync customer ${stripeCustomerId}: ${error.message}`)
+      this.logger.error(`Failed to sync customer ${stripeCustomerId}: ${errorMessage(error)}`)
       throw error
     }
   }

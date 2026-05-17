@@ -238,10 +238,8 @@ describe('WebhookService', () => {
         await service.handleWebhookEvent(event)
       }
       // Process a duplicate of the first event
-      // Should NOT skip because it was cleaned up
-      await service.handleWebhookEvent(events[0])
-      // If memory cleanup works, the first event should be reprocessed
-      // This is indicated by not throwing an error for duplicate
+      // Should NOT skip because it was cleaned up from memory
+      await expect(service.handleWebhookEvent(events[0])).resolves.toBeUndefined()
     })
   })
   describe('Edge Cases', () => {

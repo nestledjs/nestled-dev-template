@@ -2,7 +2,7 @@ import { Maybe } from 'graphql/jsutils/Maybe'
 import { FormField } from '@nestledjs/forms-core'
 
 function isValidDate(d: any) {
-  return d instanceof Date && !Number.isNaN(d as any)
+  return d instanceof Date && !Number.isNaN(d.getTime())
 }
 
 function normalizeDateValue(v: unknown): string {
@@ -40,7 +40,9 @@ export function cleanFormInput(
     ?.filter(field => field.type === 'SearchSelectApollo')
     .map(field => field.key)
   const multiSelectFields = fields
-    ?.filter(field => field.type === 'SearchSelectMultiApollo' || field.type === 'SearchSelectMulti')
+    ?.filter(
+      field => field.type === 'SearchSelectMultiApollo' || field.type === 'SearchSelectMulti',
+    )
     .map(field => field.key)
   return Object.fromEntries(
     Object.entries(obj)
@@ -49,14 +51,12 @@ export function cleanFormInput(
         return (
           validKeys.includes(k) &&
           !(
-            (
-              (Array.isArray(v) && !v.length) ||
-              k === 'createdAt' ||
-              k === 'updatedAt' ||
-              k === '__typename' ||
-              (!keepId && k === 'id') ||
-              (v instanceof Date && !isValidDate(v))
-            )
+            (Array.isArray(v) && !v.length) ||
+            k === 'createdAt' ||
+            k === 'updatedAt' ||
+            k === '__typename' ||
+            (!keepId && k === 'id') ||
+            (v instanceof Date && !isValidDate(v))
           )
         )
       })

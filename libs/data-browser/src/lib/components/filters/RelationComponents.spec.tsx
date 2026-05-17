@@ -19,7 +19,7 @@ describe('RelationComponents', () => {
           relatedModelName="User"
           isOpen={false}
           onClick={onClick}
-        />
+        />,
       )
 
       expect(screen.getByText('Select user...')).toBeInTheDocument()
@@ -35,7 +35,7 @@ describe('RelationComponents', () => {
           relatedModelName="User"
           isOpen={false}
           onClick={onClick}
-        />
+        />,
       )
 
       expect(screen.getByText('John Doe')).toBeInTheDocument()
@@ -51,7 +51,7 @@ describe('RelationComponents', () => {
           relatedModelName="User"
           isOpen={false}
           onClick={onClick}
-        />
+        />,
       )
 
       const button = screen.getByRole('button')
@@ -68,7 +68,7 @@ describe('RelationComponents', () => {
           relatedModelName="User"
           isOpen={true}
           onClick={onClick}
-        />
+        />,
       )
 
       const svg = container.querySelector('svg')
@@ -83,7 +83,7 @@ describe('RelationComponents', () => {
           relatedModelName="User"
           isOpen={false}
           onClick={onClick}
-        />
+        />,
       )
 
       const svg = container.querySelector('svg')
@@ -99,7 +99,7 @@ describe('RelationComponents', () => {
           relatedModelName="User"
           isOpen={false}
           onClick={onClick}
-        />
+        />,
       )
 
       const placeholderSpan = container.querySelector('span')
@@ -112,7 +112,7 @@ describe('RelationComponents', () => {
           relatedModelName="User"
           isOpen={false}
           onClick={onClick}
-        />
+        />,
       )
 
       const selectedSpan = container.querySelector('span')
@@ -127,7 +127,7 @@ describe('RelationComponents', () => {
           relatedModelName="Organization"
           isOpen={false}
           onClick={onClick}
-        />
+        />,
       )
 
       expect(screen.getByText('Select organization...')).toBeInTheDocument()
@@ -143,7 +143,7 @@ describe('RelationComponents', () => {
           searchTerm=""
           onSearchChange={onSearchChange}
           relatedModelName="User"
-        />
+        />,
       )
 
       expect(screen.getByPlaceholderText('Search user...')).toBeInTheDocument()
@@ -157,7 +157,7 @@ describe('RelationComponents', () => {
           searchTerm="John"
           onSearchChange={onSearchChange}
           relatedModelName="User"
-        />
+        />,
       )
 
       const input = screen.getByPlaceholderText('Search user...') as HTMLInputElement
@@ -173,7 +173,7 @@ describe('RelationComponents', () => {
           searchTerm=""
           onSearchChange={onSearchChange}
           relatedModelName="User"
-        />
+        />,
       )
 
       const input = screen.getByPlaceholderText('Search user...')
@@ -190,7 +190,7 @@ describe('RelationComponents', () => {
           searchTerm=""
           onSearchChange={onSearchChange}
           relatedModelName="Organization"
-        />
+        />,
       )
 
       expect(screen.getByPlaceholderText('Search organization...')).toBeInTheDocument()
@@ -257,7 +257,7 @@ describe('RelationComponents', () => {
           loading={false}
           onSelect={mockOnSelect}
           onClear={mockOnClear}
-        />
+        />,
       )
 
       expect(screen.getByText('Clear selection')).toBeInTheDocument()
@@ -271,7 +271,7 @@ describe('RelationComponents', () => {
           loading={false}
           onSelect={mockOnSelect}
           onClear={mockOnClear}
-        />
+        />,
       )
 
       const clearButton = screen.getByText('Clear selection')
@@ -287,7 +287,7 @@ describe('RelationComponents', () => {
           loading={true}
           onSelect={mockOnSelect}
           onClear={mockOnClear}
-        />
+        />,
       )
 
       expect(screen.getByText('Loading...')).toBeInTheDocument()
@@ -303,7 +303,7 @@ describe('RelationComponents', () => {
           error={error}
           onSelect={mockOnSelect}
           onClear={mockOnClear}
-        />
+        />,
       )
 
       expect(screen.getByText('Failed to load options')).toBeInTheDocument()
@@ -320,7 +320,7 @@ describe('RelationComponents', () => {
           error={error}
           onSelect={mockOnSelect}
           onClear={mockOnClear}
-        />
+        />,
       )
 
       expect(screen.getByText('Failed to load options')).toBeInTheDocument()
@@ -334,7 +334,7 @@ describe('RelationComponents', () => {
           loading={false}
           onSelect={mockOnSelect}
           onClear={mockOnClear}
-        />
+        />,
       )
 
       expect(screen.getByText('No items found')).toBeInTheDocument()
@@ -353,7 +353,7 @@ describe('RelationComponents', () => {
           loading={false}
           onSelect={mockOnSelect}
           onClear={mockOnClear}
-        />
+        />,
       )
 
       expect(screen.getByText('John Doe')).toBeInTheDocument()
@@ -371,7 +371,7 @@ describe('RelationComponents', () => {
           error={error}
           onSelect={mockOnSelect}
           onClear={mockOnClear}
-        />
+        />,
       )
 
       expect(screen.queryByText('Loading...')).not.toBeInTheDocument()
@@ -385,7 +385,7 @@ describe('RelationComponents', () => {
           loading={true}
           onSelect={mockOnSelect}
           onClear={mockOnClear}
-        />
+        />,
       )
 
       expect(screen.queryByText('No items found')).not.toBeInTheDocument()
@@ -399,7 +399,7 @@ describe('RelationComponents', () => {
           loading={false}
           onSelect={mockOnSelect}
           onClear={mockOnClear}
-        />
+        />,
       )
 
       const listContainer = container.firstChild
@@ -413,7 +413,7 @@ describe('RelationComponents', () => {
           loading={true}
           onSelect={mockOnSelect}
           onClear={mockOnClear}
-        />
+        />,
       )
 
       const spinner = container.querySelector('.animate-spin')
@@ -429,7 +429,7 @@ describe('RelationComponents', () => {
           error={error}
           onSelect={mockOnSelect}
           onClear={mockOnClear}
-        />
+        />,
       )
 
       // Error section should have an SVG icon
@@ -461,7 +461,7 @@ describe('RelationComponents', () => {
           loading={false}
           onSelect={mockOnSelect}
           onClear={mockOnClear}
-        />
+        />,
       )
 
       expect(screen.getByPlaceholderText('Search user...')).toBeInTheDocument()
@@ -477,7 +477,7 @@ describe('RelationComponents', () => {
           loading={false}
           onSelect={mockOnSelect}
           onClear={mockOnClear}
-        />
+        />,
       )
 
       expect(screen.getByText('Clear selection')).toBeInTheDocument()
@@ -493,7 +493,7 @@ describe('RelationComponents', () => {
           loading={false}
           onSelect={mockOnSelect}
           onClear={mockOnClear}
-        />
+        />,
       )
 
       const input = screen.getByPlaceholderText('Search user...') as HTMLInputElement
@@ -515,7 +515,7 @@ describe('RelationComponents', () => {
           loading={false}
           onSelect={mockOnSelect}
           onClear={mockOnClear}
-        />
+        />,
       )
 
       expect(screen.getByText('John Doe')).toBeInTheDocument()
@@ -532,7 +532,7 @@ describe('RelationComponents', () => {
           loading={true}
           onSelect={mockOnSelect}
           onClear={mockOnClear}
-        />
+        />,
       )
 
       expect(screen.getByText('Loading...')).toBeInTheDocument()
@@ -551,7 +551,7 @@ describe('RelationComponents', () => {
           error={error}
           onSelect={mockOnSelect}
           onClear={mockOnClear}
-        />
+        />,
       )
 
       expect(screen.getByText('Failed to load options')).toBeInTheDocument()
@@ -567,11 +567,19 @@ describe('RelationComponents', () => {
           loading={false}
           onSelect={mockOnSelect}
           onClear={mockOnClear}
-        />
+        />,
       )
 
       const dropdown = container.firstChild
-      expect(dropdown).toHaveClass('absolute', 'z-10', 'w-full', 'bg-white', 'border', 'rounded-md', 'shadow-lg')
+      expect(dropdown).toHaveClass(
+        'absolute',
+        'z-10',
+        'w-full',
+        'bg-white',
+        'border',
+        'rounded-md',
+        'shadow-lg',
+      )
     })
 
     it('should position dropdown with mt-1', () => {
@@ -584,7 +592,7 @@ describe('RelationComponents', () => {
           loading={false}
           onSelect={mockOnSelect}
           onClear={mockOnClear}
-        />
+        />,
       )
 
       const dropdown = container.firstChild
@@ -613,7 +621,7 @@ describe('RelationComponents', () => {
           loading={false}
           onSelect={mockOnSelect}
           onClear={mockOnClear}
-        />
+        />,
       )
 
       // Search for a user
@@ -641,7 +649,7 @@ describe('RelationComponents', () => {
           relatedModelName="User"
           isOpen={false}
           onClick={onClick}
-        />
+        />,
       )
 
       expect(screen.getByText('Select user...')).toBeInTheDocument()
@@ -653,7 +661,7 @@ describe('RelationComponents', () => {
           relatedModelName="User"
           isOpen={false}
           onClick={onClick}
-        />
+        />,
       )
 
       expect(screen.getByText('John Doe')).toBeInTheDocument()
@@ -666,7 +674,7 @@ describe('RelationComponents', () => {
           relatedModelName="User"
           isOpen={true}
           onClick={onClick}
-        />
+        />,
       )
 
       const svg = document.querySelector('svg')

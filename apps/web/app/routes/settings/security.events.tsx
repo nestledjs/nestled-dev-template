@@ -1,9 +1,6 @@
 import { Link, useLoaderData } from 'react-router'
 import { apolloLoader } from '@nestled-template/shared/apollo'
-import {
-  MySecurityEvents,
-  type MySecurityEventsQuery,
-} from '@nestled-template/shared/sdk'
+import { MySecurityEvents, type MySecurityEventsQuery } from '@nestled-template/shared/sdk'
 import { useReadQuery, type QueryRef } from '@apollo/client/react'
 import { ChevronRightIcon, ShieldCheckIcon } from '@heroicons/react/24/outline'
 

@@ -30,7 +30,12 @@ function checkAccess(dataType: string): boolean {
 
 export function AdminDataCreatePage() {
   const { dataType } = useParams()
-  const { databaseModels, basePath = '/admin/data', formTheme, displayFieldConfig } = useAdminDataContext()
+  const {
+    databaseModels,
+    basePath = '/admin/data',
+    formTheme,
+    displayFieldConfig,
+  } = useAdminDataContext()
 
   // Helper function to find model by name
   const findModelByName = (name: string) => {
@@ -70,7 +75,9 @@ export function AdminDataCreatePage() {
           <div className="bg-white dark:bg-gray-800 py-8 px-4 shadow sm:rounded-lg sm:px-10">
             <div className="text-center">
               <ExclamationCircleIcon className="mx-auto h-12 w-12 text-red-400" />
-              <h2 className="mt-4 text-lg font-medium text-gray-900 dark:text-gray-100">Unauthorized</h2>
+              <h2 className="mt-4 text-lg font-medium text-gray-900 dark:text-gray-100">
+                Unauthorized
+              </h2>
               <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
                 Invalid data type or insufficient permissions.
               </p>
@@ -96,9 +103,12 @@ export function AdminDataCreatePage() {
           <div className="bg-white dark:bg-gray-800 py-8 px-4 shadow sm:rounded-lg sm:px-10">
             <div className="text-center">
               <ExclamationCircleIcon className="mx-auto h-12 w-12 text-red-400" />
-              <h2 className="mt-4 text-lg font-medium text-gray-900 dark:text-gray-100">Access Denied</h2>
+              <h2 className="mt-4 text-lg font-medium text-gray-900 dark:text-gray-100">
+                Access Denied
+              </h2>
               <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                You don't have permission to create {toReadableText(validatedDataType ?? '')} records.
+                You don't have permission to create {toReadableText(validatedDataType ?? '')}{' '}
+                records.
               </p>
               <div className="mt-6">
                 <Link
@@ -122,7 +132,9 @@ export function AdminDataCreatePage() {
           <div className="bg-white dark:bg-gray-800 py-8 px-4 shadow sm:rounded-lg sm:px-10">
             <div className="text-center">
               <ExclamationCircleIcon className="mx-auto h-12 w-12 text-yellow-400" />
-              <h2 className="mt-4 text-lg font-medium text-gray-900 dark:text-gray-100">Model Not Found</h2>
+              <h2 className="mt-4 text-lg font-medium text-gray-900 dark:text-gray-100">
+                Model Not Found
+              </h2>
               <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
                 The data model for "{validatedDataType}" could not be found.
               </p>
@@ -143,14 +155,26 @@ export function AdminDataCreatePage() {
 
   // At this point we know model exists and is valid
   if (!model) return null
-  return <AdminDataCreatePageContent model={model} basePath={basePath} formTheme={formTheme} displayFieldConfig={displayFieldConfig} />
+  return (
+    <AdminDataCreatePageContent
+      model={model}
+      basePath={basePath}
+      formTheme={formTheme}
+      displayFieldConfig={displayFieldConfig}
+    />
+  )
 }
 
 // =================================
 // CONTENT COMPONENT
 // =================================
 
-function AdminDataCreatePageContent({ model, basePath, formTheme, displayFieldConfig }: Readonly<{ model: any; basePath: string; formTheme: any; displayFieldConfig?: any }>) {
+function AdminDataCreatePageContent({
+  model,
+  basePath,
+  formTheme,
+  displayFieldConfig,
+}: Readonly<{ model: any; basePath: string; formTheme: any; displayFieldConfig?: any }>) {
   const navigate = useNavigate()
   const { sdk, databaseModels } = useAdminDataContext()
 
@@ -222,7 +246,9 @@ function AdminDataCreatePageContent({ model, basePath, formTheme, displayFieldCo
           <div className="bg-white dark:bg-gray-800 py-8 px-4 shadow sm:rounded-lg sm:px-10">
             <div className="text-center">
               <ExclamationCircleIcon className="mx-auto h-12 w-12 text-red-400" />
-              <h2 className="mt-4 text-lg font-medium text-gray-900 dark:text-gray-100">GraphQL Schema Error</h2>
+              <h2 className="mt-4 text-lg font-medium text-gray-900 dark:text-gray-100">
+                GraphQL Schema Error
+              </h2>
               <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
                 Unable to load GraphQL documents for this model. Please ensure the API server is
                 running and the GraphQL schema is up to date.
@@ -289,59 +315,63 @@ function AdminDataCreatePageContent({ model, basePath, formTheme, displayFieldCo
     <div className="space-y-6">
       {/* Header */}
       <div className="mb-8">
-          <nav className="flex mb-6" aria-label="Breadcrumb">
-            <ol className="flex items-center space-x-4">
-              <li>
-                <Link to={basePath} className="text-gray-400 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-400">
-                  Data Browser
+        <nav className="flex mb-6" aria-label="Breadcrumb">
+          <ol className="flex items-center space-x-4">
+            <li>
+              <Link
+                to={basePath}
+                className="text-gray-400 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-400"
+              >
+                Data Browser
+              </Link>
+            </li>
+            <li>
+              <div className="flex items-center">
+                <svg
+                  className="flex-shrink-0 h-5 w-5 text-gray-300 dark:text-gray-600"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 111.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+                <Link
+                  to={`${basePath}/${toKebabCase(model.pluralName)}`}
+                  className="ml-4 text-gray-400 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-400"
+                >
+                  {toReadableText(model.pluralName)}
                 </Link>
-              </li>
-              <li>
-                <div className="flex items-center">
-                  <svg
-                    className="flex-shrink-0 h-5 w-5 text-gray-300 dark:text-gray-600"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 111.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  <Link
-                    to={`${basePath}/${toKebabCase(model.pluralName)}`}
-                    className="ml-4 text-gray-400 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-400"
-                  >
-                    {toReadableText(model.pluralName)}
-                  </Link>
-                </div>
-              </li>
-              <li>
-                <div className="flex items-center">
-                  <svg
-                    className="flex-shrink-0 h-5 w-5 text-gray-300 dark:text-gray-600"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 111.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  <span className="ml-4 text-gray-500 dark:text-gray-400">Create New</span>
-                </div>
-              </li>
-            </ol>
-          </nav>
-          <h1 className="mt-4 text-3xl font-bold text-gray-900 dark:text-gray-100">
-            Create {toReadableText(model.name)}
-          </h1>
-        </div>
+              </div>
+            </li>
+            <li>
+              <div className="flex items-center">
+                <svg
+                  className="flex-shrink-0 h-5 w-5 text-gray-300 dark:text-gray-600"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 111.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+                <span className="ml-4 text-gray-500 dark:text-gray-400">Create New</span>
+              </div>
+            </li>
+          </ol>
+        </nav>
+        <h1 className="mt-4 text-3xl font-bold text-gray-900 dark:text-gray-100">
+          Create {toReadableText(model.name)}
+        </h1>
+      </div>
 
-        {/* Submission Status */}
-        {submissionState.status !== 'idle' && (() => {
+      {/* Submission Status */}
+      {submissionState.status !== 'idle' &&
+        (() => {
           const isSuccess = submissionState.status === 'success'
           const isError = submissionState.status === 'error'
           let bgClass = 'bg-blue-50 border border-blue-200'
@@ -350,12 +380,15 @@ function AdminDataCreatePageContent({ model, basePath, formTheme, displayFieldCo
           let textClass = 'text-blue-800'
           if (isSuccess) textClass = 'text-green-800'
           else if (isError) textClass = 'text-red-800'
-          let icon = <div className="h-5 w-5 border-2 border-blue-400 border-t-transparent rounded-full animate-spin" />
+          let icon = (
+            <div className="h-5 w-5 border-2 border-blue-400 border-t-transparent rounded-full animate-spin" />
+          )
           if (isSuccess) icon = <CheckCircleIcon className="h-5 w-5 text-green-400" />
           else if (isError) icon = <ExclamationCircleIcon className="h-5 w-5 text-red-400" />
-          const message = submissionState.status === 'loading'
-            ? `Creating ${toReadableText(model.name)}...`
-            : submissionState.message
+          const message =
+            submissionState.status === 'loading'
+              ? `Creating ${toReadableText(model.name)}...`
+              : submissionState.message
           return (
             <div className={`mb-6 rounded-md p-4 ${bgClass}`}>
               <div className="flex">
@@ -368,18 +401,18 @@ function AdminDataCreatePageContent({ model, basePath, formTheme, displayFieldCo
           )
         })()}
 
-        {/* Form */}
-        <div className="bg-white dark:bg-gray-800 shadow-sm rounded-lg">
-          <div className="px-6 py-8">
-            <Form
-              id={`create-${model.name.toLowerCase()}-form`}
-              fields={formFields}
-              submit={handleSubmit}
-              disabled={submissionState.status === 'loading'}
-              theme={formTheme}
-            />
-          </div>
+      {/* Form */}
+      <div className="bg-white dark:bg-gray-800 shadow-sm rounded-lg">
+        <div className="px-6 py-8">
+          <Form
+            id={`create-${model.name.toLowerCase()}-form`}
+            fields={formFields}
+            submit={handleSubmit}
+            disabled={submissionState.status === 'loading'}
+            theme={formTheme}
+          />
         </div>
+      </div>
     </div>
   )
 }

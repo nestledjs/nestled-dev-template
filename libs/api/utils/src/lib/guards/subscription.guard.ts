@@ -1,4 +1,10 @@
-import { Injectable, CanActivate, ExecutionContext, HttpException, HttpStatus } from '@nestjs/common'
+import {
+  Injectable,
+  CanActivate,
+  ExecutionContext,
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common'
 import { GqlExecutionContext } from '@nestjs/graphql'
 import { SubscriptionStatus } from '@nestled-template/api/prisma'
 import { ApiCoreDataAccessService } from '@nestled-template/api/core/data-access'
@@ -64,7 +70,10 @@ export class SubscriptionGuard implements CanActivate {
     ]
 
     if (!validStatuses.includes(subscription.status)) {
-      if (subscription.status === SubscriptionStatus.PAST_DUE && this.isWithinGracePeriod(subscription)) {
+      if (
+        subscription.status === SubscriptionStatus.PAST_DUE &&
+        this.isWithinGracePeriod(subscription)
+      ) {
         return true
       }
 

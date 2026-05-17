@@ -11,7 +11,7 @@ export class UserFactory {
 
   static create(overrides: CreateUserData = {}): Required<CreateUserData> {
     UserFactory.counter++
-    
+
     return {
       firstName: overrides.firstName ?? `FirstName${UserFactory.counter}`,
       lastName: overrides.lastName ?? `LastName${UserFactory.counter}`,

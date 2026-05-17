@@ -25,14 +25,10 @@ export function AdminBreadcrumbs({
   // Extract nested ternary logic into clear helper functions
   const renderHomeLink = () => {
     if (!showHome) return null
-    
+
     return (
       <li key="home" className="flex items-center">
-        <Link 
-          to={homeHref} 
-          className="text-gray-400 hover:text-gray-500"
-          aria-label="Home"
-        >
+        <Link to={homeHref} className="text-gray-400 hover:text-gray-500" aria-label="Home">
           <HomeIcon className="h-5 w-5 flex-shrink-0" />
         </Link>
       </li>
@@ -40,29 +36,25 @@ export function AdminBreadcrumbs({
   }
 
   const renderBreadcrumbItem = (item: BreadcrumbItem, index: number, isLast: boolean) => {
-    const content = item.href && !item.isActive ? (
-      <Link
-        to={item.href}
-        className="text-sm font-medium text-gray-500 hover:text-gray-700"
-      >
-        {item.label}
-      </Link>
-    ) : (
-      <span 
-        className={`text-sm font-medium ${
-          item.isActive ? 'text-gray-900' : 'text-gray-500'
-        }`}
-      >
-        {item.label}
-      </span>
-    )
+    const content =
+      item.href && !item.isActive ? (
+        <Link to={item.href} className="text-sm font-medium text-gray-500 hover:text-gray-700">
+          {item.label}
+        </Link>
+      ) : (
+        <span
+          className={`text-sm font-medium ${item.isActive ? 'text-gray-900' : 'text-gray-500'}`}
+        >
+          {item.label}
+        </span>
+      )
 
     return (
       <li key={item.id} className="flex items-center">
         {(showHome || index > 0) && (
-          <ChevronRightIcon 
-            className="h-5 w-5 flex-shrink-0 text-gray-400 mr-4" 
-            aria-hidden="true" 
+          <ChevronRightIcon
+            className="h-5 w-5 flex-shrink-0 text-gray-400 mr-4"
+            aria-hidden="true"
           />
         )}
         {content}

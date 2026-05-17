@@ -2,7 +2,7 @@ import React from 'react'
 import { render, screen } from '@testing-library/react'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import AdminLayout from '../../../app/routes/admin/_layout'
-import { createTestRouter } from "../../helpers/createTestRouter"
+import { createTestRouter } from '../../helpers/createTestRouter'
 
 // Mock the GlobalContext
 const mockUseGlobalCtx = vi.fn()
@@ -178,7 +178,7 @@ describe('Admin Layout', () => {
       expect(navItems.length).toBeGreaterThan(0)
 
       // Check that each link contains an SVG
-      navItems.forEach((link) => {
+      navItems.forEach(link => {
         const svg = link.querySelector('svg')
         expect(svg).toBeInTheDocument()
       })

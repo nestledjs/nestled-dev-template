@@ -10,12 +10,12 @@ interface DateRangeFilterProps {
 export function DateRangeFilter({
   fieldName,
   currentValue,
-  onChange
+  onChange,
 }: Readonly<DateRangeFilterProps>) {
   // Parse current value if it's a range object
   const fromDate = currentValue?.gte ? new Date(currentValue.gte).toISOString().split('T')[0] : ''
   const toDate = currentValue?.lte ? new Date(currentValue.lte).toISOString().split('T')[0] : ''
-  
+
   const handleFromChange = (date: string) => {
     const newValue = { ...currentValue }
     if (date) {
@@ -23,7 +23,7 @@ export function DateRangeFilter({
     } else {
       delete newValue.gte
     }
-    
+
     // If no from or to date, clear the filter entirely
     if (!newValue.gte && !newValue.lte) {
       onChange(undefined)
@@ -31,7 +31,7 @@ export function DateRangeFilter({
       onChange(newValue)
     }
   }
-  
+
   const handleToChange = (date: string) => {
     const newValue = { ...currentValue }
     if (date) {
@@ -42,7 +42,7 @@ export function DateRangeFilter({
     } else {
       delete newValue.lte
     }
-    
+
     // If no from or to date, clear the filter entirely
     if (!newValue.gte && !newValue.lte) {
       onChange(undefined)
@@ -50,7 +50,7 @@ export function DateRangeFilter({
       onChange(newValue)
     }
   }
-  
+
   return (
     <div className="space-y-1">
       <label className="block text-sm font-medium text-gray-700">
@@ -58,22 +58,26 @@ export function DateRangeFilter({
       </label>
       <div className="grid grid-cols-2 gap-2">
         <div>
-          <label htmlFor={`${fieldName}-from`} className="block text-xs text-gray-500 mb-1">From</label>
+          <label htmlFor={`${fieldName}-from`} className="block text-xs text-gray-500 mb-1">
+            From
+          </label>
           <input
             id={`${fieldName}-from`}
             type="date"
             value={fromDate}
-            onChange={(e) => handleFromChange(e.target.value)}
+            onChange={e => handleFromChange(e.target.value)}
             className="w-full px-2 py-1 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-web focus:border-green-web"
           />
         </div>
         <div>
-          <label htmlFor={`${fieldName}-to`} className="block text-xs text-gray-500 mb-1">To</label>
+          <label htmlFor={`${fieldName}-to`} className="block text-xs text-gray-500 mb-1">
+            To
+          </label>
           <input
             id={`${fieldName}-to`}
             type="date"
             value={toDate}
-            onChange={(e) => handleToChange(e.target.value)}
+            onChange={e => handleToChange(e.target.value)}
             className="w-full px-2 py-1 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-web focus:border-green-web"
           />
         </div>

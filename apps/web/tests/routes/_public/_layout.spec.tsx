@@ -1,6 +1,6 @@
 import React from 'react'
 import { render, screen, waitFor } from '@testing-library/react'
-import { createTestRouter } from "../../helpers/createTestRouter"
+import { createTestRouter } from '../../helpers/createTestRouter'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { getCookie } from '@nestled-template/shared/utils'
 
@@ -22,7 +22,9 @@ vi.mock('@nestled-template/web-ui', () => ({
       <div data-testid="auth-status">{isAuthenticated ? 'authenticated' : 'unauthenticated'}</div>
       <nav data-testid="navigation">
         {navigation?.map((item: any) => (
-          <a key={item.href} href={item.href}>{item.name}</a>
+          <a key={item.href} href={item.href}>
+            {item.name}
+          </a>
         ))}
       </nav>
     </header>

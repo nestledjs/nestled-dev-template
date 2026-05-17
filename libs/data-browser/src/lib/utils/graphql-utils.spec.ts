@@ -1,5 +1,13 @@
-import { describe, it, expect } from 'vitest'
-import { getAdminDocuments, getMutationName, buildFormFields, cleanFormInput } from './graphql-utils'
+import { describe, it, expect, vi } from 'vitest'
+import {
+  getAdminDocuments,
+  getMutationName,
+  buildFormFields,
+  cleanFormInput,
+  toKebabCase,
+  toReadableText,
+  sanitizeInput,
+} from './graphql-utils'
 import type { DatabaseModel } from '../types'
 
 describe('graphql-utils', () => {
@@ -52,13 +60,17 @@ describe('graphql-utils', () => {
     it('should throw error when model is invalid', () => {
       const invalidModel = null as any
 
-      expect(() => getAdminDocuments({}, invalidModel)).toThrow('Invalid model provided to getAdminDocuments')
+      expect(() => getAdminDocuments({}, invalidModel)).toThrow(
+        'Invalid model provided to getAdminDocuments',
+      )
     })
 
     it('should throw error when model name is missing', () => {
       const mockModel = { fields: [] } as any
 
-      expect(() => getAdminDocuments({}, mockModel)).toThrow('Invalid model provided to getAdminDocuments')
+      expect(() => getAdminDocuments({}, mockModel)).toThrow(
+        'Invalid model provided to getAdminDocuments',
+      )
     })
 
     it('should throw error when required documents are missing', () => {
@@ -156,6 +168,32 @@ describe('graphql-utils', () => {
       }
 
       expect(getMutationName(mockModel, 'create')).toBe('createA')
+    })
+
+    it('falls back to lower camel case for unknown operations', () => {
+      const mockModel: DatabaseModel = {
+        name: 'TeamMember',
+        fields: [],
+      }
+
+      expect(getMutationName(mockModel, 'archive' as any)).toBe('teamMember')
+    })
+  })
+
+  describe('name and input helpers', () => {
+    it('converts PascalCase names to kebab case', () => {
+      expect(toKebabCase('TeamMember')).toBe('team-member')
+    })
+
+    it('converts camel case names to readable labels', () => {
+      expect(toReadableText('primaryContactEmail')).toBe('Primary Contact Email')
+    })
+
+    it('sanitizes script-like input and bounds length', () => {
+      const longInput = `${'a'.repeat(120)}<script onload=alert(1)>javascript:alert(1)</script>`
+
+      expect(sanitizeInput(longInput)).toBe('a'.repeat(100))
+      expect(sanitizeInput(undefined)).toBe('')
     })
   })
 
@@ -257,7 +295,9 @@ describe('graphql-utils', () => {
           ],
         }
 
-        const result = buildFormFields({}, mockModel, 'update', { currentItem: { id: '123', name: 'John' } })
+        const result = buildFormFields({}, mockModel, 'update', {
+          currentItem: { id: '123', name: 'John' },
+        })
 
         const fieldNames = result.map(f => f.key)
         expect(fieldNames).toContain('id')
@@ -330,7 +370,11 @@ describe('graphql-utils', () => {
 
         expect(result[0].type).toBe('Select')
         expect((result[0].options as any).options).toHaveLength(3)
-        expect((result[0].options as any).options?.map((o: any) => o.value)).toEqual(['ADMIN', 'USER', 'GUEST'])
+        expect((result[0].options as any).options?.map((o: any) => o.value)).toEqual([
+          'ADMIN',
+          'USER',
+          'GUEST',
+        ])
       })
 
       it('should format enum labels nicely', () => {
@@ -348,7 +392,10 @@ describe('graphql-utils', () => {
 
         const result = buildFormFields(mockSdk, mockModel, 'create')
 
-        expect((result[0].options as any).options?.map((o: any) => o.label)).toEqual(['Pending payment', 'Payment received'])
+        expect((result[0].options as any).options?.map((o: any) => o.label)).toEqual([
+          'Pending payment',
+          'Payment received',
+        ])
       })
 
       it('should handle legacy enum fields with enumValues property', () => {
@@ -369,6 +416,61 @@ describe('graphql-utils', () => {
 
         expect(result[0].type).toBe('Select')
         expect((result[0].options as any).options).toHaveLength(3)
+      })
+
+      it('should ignore GraphQL document values when checking SDK enums', () => {
+        const mockSdk = {
+          UserStatus: { kind: 'Document', definitions: [] },
+        }
+        const mockModel: DatabaseModel = {
+          name: 'User',
+          fields: [{ name: 'status', type: 'UserStatus', isOptional: true }],
+        }
+
+        const result = buildFormFields(mockSdk, mockModel, 'create')
+
+        expect(result[0].type).toBe('Text')
+      })
+
+      it('should build enum options from enum-like object keys when values are numeric', () => {
+        const mockSdk = {
+          Priority: {
+            LOW: 0,
+            HIGH: 1,
+          },
+        }
+        const mockModel: DatabaseModel = {
+          name: 'Task',
+          fields: [{ name: 'priority', type: 'Priority', isOptional: false }],
+        }
+
+        const result = buildFormFields(mockSdk, mockModel, 'create')
+
+        expect(result[0].type).toBe('Select')
+        expect((result[0].options as any).options.map((option: any) => option.value)).toEqual([
+          'LOW',
+          'HIGH',
+        ])
+      })
+
+      it('should create checkbox groups for list enum fields', () => {
+        const mockSdk = {
+          DayOfWeek: {
+            MONDAY: 'MONDAY',
+            TUESDAY: 'TUESDAY',
+          },
+        }
+        const mockModel: DatabaseModel = {
+          name: 'Schedule',
+          fields: [{ name: 'days', type: 'DayOfWeek', kind: 'enum', isList: true }],
+        }
+
+        const result = buildFormFields(mockSdk, mockModel, 'update', {
+          currentItem: { days: ['MONDAY'] },
+        })
+
+        expect(result[0].type).toBe('CheckboxGroup')
+        expect((result[0].options as any).checkboxOptions).toHaveLength(2)
       })
     })
 
@@ -413,6 +515,79 @@ describe('graphql-utils', () => {
         const result = buildFormFields(mockSdk, mockModel, 'create')
 
         expect(result[0].type).toBe('SearchSelectApollo')
+      })
+
+      it('should merge current relation option with sorted query options', () => {
+        const mockSdk = {
+          __AdminUsers: 'users-doc',
+        }
+        const mockModel: DatabaseModel = {
+          name: 'Post',
+          fields: [
+            {
+              name: 'author',
+              type: 'User',
+              relationName: 'PostToUser',
+              relationFromFields: ['authorId'],
+              isOptional: true,
+            },
+          ],
+        }
+
+        const result = buildFormFields(mockSdk, mockModel, 'update', {
+          currentItem: {
+            authorId: 'user-1',
+            author: { id: 'user-1', firstName: 'Current', lastName: 'User' },
+          },
+          displayFieldConfig: {
+            User: {
+              display: ['firstName', 'lastName'],
+              search: ['email'],
+            },
+          },
+        })
+        const fieldOptions = result[0].options as any
+
+        expect(fieldOptions.initialOptions).toEqual([{ value: 'user-1', label: 'Current User' }])
+        expect(fieldOptions.searchFields).toEqual(['email'])
+        expect(
+          fieldOptions.selectOptionsFunction([
+            { id: 'user-2', firstName: 'Another', lastName: 'User' },
+            { id: 'user-1', firstName: 'Current', lastName: 'User' },
+          ]),
+        ).toEqual([
+          { value: 'user-2', label: 'Another User' },
+          { value: 'user-1', label: 'Current User' },
+        ])
+      })
+
+      it('should fall back to relation object IDs and ID labels when display fields are missing', () => {
+        const mockSdk = {
+          Users: 'users-doc',
+        }
+        const mockModel: DatabaseModel = {
+          name: 'Post',
+          fields: [
+            {
+              name: 'author',
+              type: 'User',
+              relationName: 'PostToUser',
+              isOptional: true,
+            },
+          ],
+        }
+
+        const result = buildFormFields(mockSdk, mockModel, 'update', {
+          currentItem: {
+            author: { id: 'user-1' },
+          },
+        })
+        const fieldOptions = result[0].options as any
+
+        expect(result[0].key).toBe('authorId')
+        expect(fieldOptions.value).toBe('user-1')
+        expect(fieldOptions.initialOptions).toEqual([{ value: 'user-1', label: 'user-1' }])
+        expect(fieldOptions.customWrapper('field')).toBeTruthy()
       })
 
       it('should fallback to text input when relation document not found', () => {
@@ -649,6 +824,27 @@ describe('graphql-utils', () => {
 
         const fieldNames = result.map(f => f.key)
         expect(fieldNames).toContain('posts')
+      })
+
+      it('should fall back to current model foreign key naming without database metadata', () => {
+        const mockModel: DatabaseModel = {
+          name: 'APIKey',
+          fields: [
+            { name: 'id', type: 'String', isId: true },
+            { name: 'tokens', type: 'Token', isList: true, relationName: 'TokenToApiKey' },
+          ],
+        }
+
+        const result = buildFormFields({}, mockModel, 'update', {
+          currentItem: { id: 'key-1', _count: { tokens: 2 } },
+          basePath: '/admin/data',
+        })
+        const contentField = result.find(field => field.key === 'tokens') as any
+        const content = contentField.options.content
+        const link = content.props.children[1]
+
+        expect(link.props.to).toBe('/admin/data/tokens?aPIKeyId=key-1')
+        expect(link.props.children[1]).toBe('See Related Tokens (2)')
       })
     })
 
@@ -916,6 +1112,21 @@ describe('graphql-utils', () => {
 
         expect(result.startTime).toBe('invalid-date')
       })
+
+      it('should keep invalid existing date values empty in update fields', () => {
+        const consoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined)
+        const mockModel: DatabaseModel = {
+          name: 'Event',
+          fields: [{ name: 'eventDate', type: 'Date', isOptional: true }],
+        }
+
+        const result = buildFormFields({}, mockModel, 'update', {
+          currentItem: { eventDate: 'not-a-date' },
+        })
+
+        expect(result[0].options?.value).toBe('')
+        expect(consoleError).toHaveBeenCalled()
+      })
     })
 
     describe('boolean field handling', () => {
@@ -1167,6 +1378,26 @@ describe('graphql-utils', () => {
           content: 'Post content',
           authorId: 'user-123',
         })
+      })
+
+      it('should split comma-delimited enum array values and drop empty entries', () => {
+        const mockModel: DatabaseModel = {
+          name: 'Schedule',
+          fields: [{ name: 'days', type: 'DayOfWeek', kind: 'enum', isList: true }],
+        }
+
+        expect(cleanFormInput({ days: 'MONDAY,,TUESDAY,' }, mockModel)).toEqual({
+          days: ['MONDAY', 'TUESDAY'],
+        })
+      })
+
+      it('should use an empty array for non-array enum list values', () => {
+        const mockModel: DatabaseModel = {
+          name: 'Schedule',
+          fields: [{ name: 'days', type: 'DayOfWeek', kind: 'enum', isList: true }],
+        }
+
+        expect(cleanFormInput({ days: 1 }, mockModel)).toEqual({ days: [] })
       })
     })
   })

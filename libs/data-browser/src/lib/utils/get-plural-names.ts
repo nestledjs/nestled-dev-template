@@ -27,7 +27,7 @@ const UNCOUNTABLE_OVERRIDES = new Set([
   'software',
   'traffic',
   'weather',
-  'wisdom'
+  'wisdom',
 ])
 
 /**
@@ -53,7 +53,7 @@ const UNCOUNTABLE_OVERRIDES = new Set([
 export function getPluralName(name: string): string {
   if (!name || typeof name !== 'string') {
     throw new Error(
-      `getPluralName: name must be a non-empty string, received type: ${typeof name}, value: ${String(name)}`
+      `getPluralName: name must be a non-empty string, received type: ${typeof name}, value: ${String(name)}`,
     )
   }
 

@@ -210,7 +210,11 @@ describe('secure-storage', () => {
     })
 
     it('should store column names after sanitization attempt', () => {
-      SecureAdminLocalStorage.setColumnVisibility('User', ['id<script>alert(1)</script>', 'name', 'email'])
+      SecureAdminLocalStorage.setColumnVisibility('User', [
+        'id<script>alert(1)</script>',
+        'name',
+        'email',
+      ])
       const columns = SecureAdminLocalStorage.getColumnVisibility('User')
       // Storage validates and sanitizes on input
       expect(columns).toBeDefined()
@@ -266,7 +270,10 @@ describe('secure-storage', () => {
 
     it('should update sort preference for existing model', () => {
       SecureAdminLocalStorage.setSortPreference('User', { orderBy: 'name', orderDirection: 'asc' })
-      SecureAdminLocalStorage.setSortPreference('User', { orderBy: 'email', orderDirection: 'desc' })
+      SecureAdminLocalStorage.setSortPreference('User', {
+        orderBy: 'email',
+        orderDirection: 'desc',
+      })
 
       const sortPref = SecureAdminLocalStorage.getSortPreference('User')
       expect(sortPref).toEqual({ orderBy: 'email', orderDirection: 'desc' })
@@ -289,8 +296,18 @@ describe('secure-storage', () => {
     })
 
     it('should accept valid asc and desc directions', () => {
-      expect(SecureAdminLocalStorage.setSortPreference('User', { orderBy: 'name', orderDirection: 'asc' })).toBe(true)
-      expect(SecureAdminLocalStorage.setSortPreference('User', { orderBy: 'name', orderDirection: 'desc' })).toBe(true)
+      expect(
+        SecureAdminLocalStorage.setSortPreference('User', {
+          orderBy: 'name',
+          orderDirection: 'asc',
+        }),
+      ).toBe(true)
+      expect(
+        SecureAdminLocalStorage.setSortPreference('User', {
+          orderBy: 'name',
+          orderDirection: 'desc',
+        }),
+      ).toBe(true)
     })
 
     it('should reject field names with special characters', () => {
@@ -533,7 +550,7 @@ describe('secure-storage', () => {
     it('should sanitize XSS attempts in column names', () => {
       SecureAdminLocalStorage.setColumnVisibility('User', ['<script>alert("xss")</script>', 'name'])
       const columns = SecureAdminLocalStorage.getColumnVisibility('User')
-      expect(columns?.some((col) => col.includes('<script>'))).toBe(false)
+      expect(columns?.some(col => col.includes('<script>'))).toBe(false)
     })
 
     it('should limit array sizes', () => {
@@ -553,13 +570,13 @@ describe('secure-storage', () => {
     it('should remove javascript: protocols', () => {
       SecureAdminLocalStorage.setColumnVisibility('User', ['javascript:alert(1)', 'name'])
       const columns = SecureAdminLocalStorage.getColumnVisibility('User')
-      expect(columns?.some((col) => col.includes('javascript:'))).toBe(false)
+      expect(columns?.some(col => col.includes('javascript:'))).toBe(false)
     })
 
     it('should remove event handlers', () => {
       SecureAdminLocalStorage.setColumnVisibility('User', ['onclick=alert(1)', 'name'])
       const columns = SecureAdminLocalStorage.getColumnVisibility('User')
-      expect(columns?.some((col) => col.includes('onclick='))).toBe(false)
+      expect(columns?.some(col => col.includes('onclick='))).toBe(false)
     })
   })
 })

@@ -90,7 +90,13 @@ export function RequireSubscription({
 /**
  * Inline variant that renders nothing if no subscription
  */
-export function RequireSubscriptionInline({ children, allowTrial = true }: { readonly children: ReactNode; readonly allowTrial?: boolean }) {
+export function RequireSubscriptionInline({
+  children,
+  allowTrial = true,
+}: {
+  readonly children: ReactNode
+  readonly allowTrial?: boolean
+}) {
   const { hasActiveSubscription, isTrialing, isLoading } = useSubscription()
 
   if (isLoading) return null

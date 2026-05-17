@@ -24,10 +24,10 @@ This document captures best practices for writing and maintaining Storybook stor
 ## Example Template
 
 ```tsx
-import type { Meta, StoryObj } from '@storybook/react';
-import { expect, within } from 'storybook/test';
-import { MyComponent } from './my-component';
-import type { StoryContext } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react'
+import { expect, within } from 'storybook/test'
+import { MyComponent } from './my-component'
+import type { StoryContext } from '@storybook/react'
 
 const meta = {
   component: MyComponent,
@@ -36,24 +36,24 @@ const meta = {
   args: {
     /* default props */
   },
-} satisfies Meta<typeof MyComponent>;
-export default meta;
+} satisfies Meta<typeof MyComponent>
+export default meta
 
-type Story = StoryObj<typeof meta>;
+type Story = StoryObj<typeof meta>
 
-export const Default: Story = {};
+export const Default: Story = {}
 
 export const WithInteraction: Story = {
   args: {
     /* custom props */
   },
   play: async ({ canvasElement }: StoryContext) => {
-    const canvas = within(canvasElement);
-    await expect(canvas.getByText('Some text')).toBeInTheDocument();
+    const canvas = within(canvasElement)
+    await expect(canvas.getByText('Some text')).toBeInTheDocument()
   },
-};
+}
 ```
 
 ---
 
-**Please update this file with any new best practices or lessons learned as you work on stories!** 
+**Please update this file with any new best practices or lessons learned as you work on stories!**

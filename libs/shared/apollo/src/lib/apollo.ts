@@ -9,8 +9,12 @@ if (globalThis !== undefined && globalThis.crypto === undefined) {
     // Final fallback: fail explicitly rather than provide insecure crypto
     const error = e as Error
     console.error('[Apollo] CRITICAL: Failed to load Node.js crypto module:', error.message)
-    console.error('[Apollo] This environment lacks both globalThis.crypto and Node.js crypto module')
-    throw new Error('Cryptographically secure random number generation is not available in this environment. Please use a newer Node.js version or ensure crypto APIs are available.')
+    console.error(
+      '[Apollo] This environment lacks both globalThis.crypto and Node.js crypto module',
+    )
+    throw new Error(
+      'Cryptographically secure random number generation is not available in this environment. Please use a newer Node.js version or ensure crypto APIs are available.',
+    )
   }
 
   if (cryptoModule) {
@@ -25,36 +29,40 @@ if (globalThis !== undefined && globalThis.crypto === undefined) {
         randomUUID: () => {
           // Generate cryptographically secure UUID v4 using Node.js crypto
           const bytes = cryptoModule.randomBytes(16)
-          bytes[6] = (bytes[6] & 0x0f) | 0x40  // Version 4
-          bytes[8] = (bytes[8] & 0x3f) | 0x80  // Variant bits
+          bytes[6] = (bytes[6] & 0x0f) | 0x40 // Version 4
+          bytes[8] = (bytes[8] & 0x3f) | 0x80 // Variant bits
           const hex = bytes.toString('hex')
           return [
             hex.slice(0, 8),
             hex.slice(8, 12),
             hex.slice(12, 16),
             hex.slice(16, 20),
-            hex.slice(20, 32)
+            hex.slice(20, 32),
           ].join('-') as `${string}-${string}-${string}-${string}-${string}`
         },
         getRandomValues: <T extends ArrayBufferView>(array: T): T => {
           // Generate cryptographically secure random values using Node.js crypto
           const byteLength = (array as any).byteLength || (array as any).length || 0
           const bytes = cryptoModule.randomBytes(byteLength)
-          const uint8Array = new Uint8Array((array as any).buffer || array, (array as any).byteOffset || 0, byteLength)
+          const uint8Array = new Uint8Array(
+            (array as any).buffer || array,
+            (array as any).byteOffset || 0,
+            byteLength,
+          )
           for (let i = 0; i < uint8Array.length; i++) {
             uint8Array[i] = bytes[i]
           }
           return array
-        }
+        },
       } as Crypto
     }
   }
 }
 
-import { ApolloLink, Observable, Operation } from '@apollo/client'
+import { ApolloLink, CombinedGraphQLErrors, Observable } from '@apollo/client'
 import { ApolloClient } from '@apollo/client-integration-react-router'
-import { setContext } from '@apollo/client/link/context'
-import { onError } from '@apollo/client/link/error'
+import { SetContextLink } from '@apollo/client/link/context'
+import { ErrorLink } from '@apollo/client/link/error'
 import { GraphQLWsLink } from '@apollo/client/link/subscriptions'
 import { getMainDefinition } from '@apollo/client/utilities'
 import { createClient } from 'graphql-ws'
@@ -95,7 +103,10 @@ function pickNewestJwt(values: string[]): string {
     try {
       const parts = token.split('.')
       if (parts.length !== 3) continue
-      const payload = JSON.parse(Buffer.from(parts[1], 'base64').toString('utf8')) as { iat?: number; exp?: number }
+      const payload = JSON.parse(Buffer.from(parts[1], 'base64').toString('utf8')) as {
+        iat?: number
+        exp?: number
+      }
       let iat: number
       if (typeof payload.iat === 'number') {
         iat = payload.iat
@@ -188,9 +199,7 @@ function handleAuthenticationError(): void {
 
   const currentPath = globalThis.window.location.pathname
   const shouldRedirectWithReturnUrl =
-    currentPath &&
-    currentPath !== '/login' &&
-    !currentPath.startsWith('/logout')
+    currentPath && currentPath !== '/login' && !currentPath.startsWith('/logout')
 
   if (shouldRedirectWithReturnUrl) {
     globalThis.window.location.href = `/logout?return_url=${encodeURIComponent(currentPath)}`
@@ -200,19 +209,26 @@ function handleAuthenticationError(): void {
 }
 
 function logDevelopmentExtensions(extensions: any): void {
-  if (
-    extensions &&
-    typeof process !== 'undefined' &&
-    process.env.NODE_ENV === 'development'
-  ) {
+  if (extensions && typeof process !== 'undefined' && process.env.NODE_ENV === 'development') {
     console.error(`[GraphQL error]: Extensions:`, extensions)
   }
 }
 
+function errorFromUnknown(value: unknown): Error {
+  if (value instanceof Error) return value
+  if (typeof value === 'string') return new Error(value)
+
+  try {
+    return new Error(JSON.stringify(value))
+  } catch {
+    return new Error('Unknown Apollo network error')
+  }
+}
+
 function createErrorLink(): ApolloLink {
-  return onError(({ graphQLErrors, networkError, operation }: any) => {
-    if (graphQLErrors) {
-      for (const { message, path, extensions } of graphQLErrors) {
+  return new ErrorLink(({ error, operation }) => {
+    if (CombinedGraphQLErrors.is(error)) {
+      for (const { message, path, extensions } of error.errors) {
         console.error(`[GraphQL error]: Message: ${message}, Path: ${path}`)
 
         if (isAuthenticationError(message, extensions)) {
@@ -223,14 +239,15 @@ function createErrorLink(): ApolloLink {
       }
     }
 
-    if (networkError) {
+    if (!CombinedGraphQLErrors.is(error)) {
+      const networkError = errorFromUnknown(error)
       console.error(`[Apollo Error Link] Network error for operation: ${operation.operationName}`)
       handleNetworkError(networkError, operation)
     }
   })
 }
 
-function handleNetworkError(networkError: Error, operation: Operation): void {
+function handleNetworkError(networkError: Error, operation: ApolloLink.Operation): void {
   console.error(`[Network error]: ${networkError}`)
 
   if (isNetworkConnectivityError(networkError) && shouldShowServiceUnavailableMessage()) {
@@ -265,7 +282,10 @@ function shouldShowServiceUnavailableMessage(): boolean {
   return globalThis.window !== undefined && !hasShownServiceUnavailableMessage
 }
 
-function dispatchServiceUnavailableEvent(networkError: Error, operation: Operation): void {
+function dispatchServiceUnavailableEvent(
+  networkError: Error,
+  operation: ApolloLink.Operation,
+): void {
   hasShownServiceUnavailableMessage = true
 
   const serviceUnavailableEvent = new CustomEvent('apollo-service-unavailable', {
@@ -293,7 +313,7 @@ function getActiveOrganizationId(): string | null {
 }
 
 function createAuthLink(token: string | null): ApolloLink {
-  return setContext((_, { headers }) => {
+  return new SetContextLink(({ headers }) => {
     const newHeaders: Record<string, string> = { ...headers }
 
     // Add authorization header if token exists
@@ -315,13 +335,13 @@ function createLogLink(): ApolloLink {
   return new ApolloLink((operation, forward) => {
     console.log(`[Apollo] ${operation.operationName}`, operation.variables)
     const observable = forward(operation)
-    return new Observable((observer) => {
+    return new Observable(observer => {
       const subscription = observable.subscribe({
-        next: (result) => {
+        next: result => {
           console.log(`[Apollo][Result] ${operation.operationName}`, result)
           observer.next(result)
         },
-        error: (error) => observer.error(error),
+        error: error => observer.error(error),
         complete: () => observer.complete(),
       })
       return () => subscription.unsubscribe()

@@ -136,9 +136,10 @@ function performFinalSafetyChecks(initialValues: Record<string, any>, model: any
       initialValues[key] = value.id
     } else if (value instanceof Date) {
       const field = model.fields.find((f: any) => f.name === key)
-      initialValues[key] = field?.type.toLowerCase() === 'date'
-        ? value.toISOString().split('T')[0]
-        : value.toISOString()
+      initialValues[key] =
+        field?.type.toLowerCase() === 'date'
+          ? value.toISOString().split('T')[0]
+          : value.toISOString()
     } else {
       initialValues[key] = ''
     }
@@ -220,7 +221,12 @@ const validateId = (id: string | undefined): string | null => {
 
 export function AdminDataEditPage() {
   const { dataType, id } = useParams()
-  const { databaseModels, basePath = '/admin/data', formTheme, displayFieldConfig } = useAdminDataContext()
+  const {
+    databaseModels,
+    basePath = '/admin/data',
+    formTheme,
+    displayFieldConfig,
+  } = useAdminDataContext()
 
   // Helper function to find model by name
   const findModelByName = (name: string) => {
@@ -266,7 +272,9 @@ export function AdminDataEditPage() {
           <div className="bg-white dark:bg-gray-800 py-8 px-4 shadow sm:rounded-lg sm:px-10">
             <div className="text-center">
               <ExclamationCircleIcon className="mx-auto h-12 w-12 text-red-400" />
-              <h2 className="mt-4 text-lg font-medium text-gray-900 dark:text-gray-100">Unauthorized</h2>
+              <h2 className="mt-4 text-lg font-medium text-gray-900 dark:text-gray-100">
+                Unauthorized
+              </h2>
               <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
                 Invalid data type, ID, or insufficient permissions.
               </p>
@@ -292,7 +300,9 @@ export function AdminDataEditPage() {
           <div className="bg-white dark:bg-gray-800 py-8 px-4 shadow sm:rounded-lg sm:px-10">
             <div className="text-center">
               <ExclamationCircleIcon className="mx-auto h-12 w-12 text-yellow-400" />
-              <h2 className="mt-4 text-lg font-medium text-gray-900 dark:text-gray-100">Model Not Found</h2>
+              <h2 className="mt-4 text-lg font-medium text-gray-900 dark:text-gray-100">
+                Model Not Found
+              </h2>
               <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
                 The data model for "{validatedDataType}" could not be found.
               </p>
@@ -312,7 +322,15 @@ export function AdminDataEditPage() {
   }
 
   // At this point we know model exists and is valid
-  return <AdminDataEditPageContent model={model} id={validatedId} basePath={basePath} formTheme={formTheme} displayFieldConfig={displayFieldConfig} />
+  return (
+    <AdminDataEditPageContent
+      model={model}
+      id={validatedId}
+      basePath={basePath}
+      formTheme={formTheme}
+      displayFieldConfig={displayFieldConfig}
+    />
+  )
 }
 
 // =================================
@@ -327,7 +345,13 @@ interface DeleteConfirmModalProps {
   readonly onCancel: () => void
 }
 
-function DeleteConfirmModal({ show, modelName, isDeleting, onConfirm, onCancel }: DeleteConfirmModalProps) {
+function DeleteConfirmModal({
+  show,
+  modelName,
+  isDeleting,
+  onConfirm,
+  onCancel,
+}: DeleteConfirmModalProps) {
   if (!show) return null
 
   return (
@@ -343,8 +367,8 @@ function DeleteConfirmModal({ show, modelName, isDeleting, onConfirm, onCancel }
             </h3>
             <div className="mt-2">
               <p className="text-sm text-gray-500 dark:text-gray-400">
-                Are you sure you want to delete this {toReadableText(modelName).toLowerCase()}? This action
-                cannot be undone.
+                Are you sure you want to delete this {toReadableText(modelName).toLowerCase()}? This
+                action cannot be undone.
               </p>
             </div>
           </div>
@@ -380,7 +404,10 @@ interface StatusMessageProps {
   readonly modelName: string
 }
 
-function getStatusColors(isSuccess: boolean, isError: boolean): { bgColor: string; textColor: string } {
+function getStatusColors(
+  isSuccess: boolean,
+  isError: boolean,
+): { bgColor: string; textColor: string } {
   if (isSuccess) {
     return {
       bgColor: 'bg-green-50 border border-green-200',
@@ -406,10 +433,18 @@ function getStatusIcon(isSuccess: boolean, isError: boolean): React.ReactElement
   if (isError) {
     return <ExclamationCircleIcon className="h-5 w-5 text-red-400" />
   }
-  return <div className="h-5 w-5 border-2 border-blue-400 border-t-transparent rounded-full animate-spin" />
+  return (
+    <div className="h-5 w-5 border-2 border-blue-400 border-t-transparent rounded-full animate-spin" />
+  )
 }
 
-function StatusMessage({ submissionStatus, deleteStatus, submissionMessage, deleteMessage, modelName }: StatusMessageProps) {
+function StatusMessage({
+  submissionStatus,
+  deleteStatus,
+  submissionMessage,
+  deleteMessage,
+  modelName,
+}: StatusMessageProps) {
   if (submissionStatus === 'idle' && deleteStatus === 'idle') return null
 
   const isSuccess = submissionStatus === 'success' || deleteStatus === 'success'
@@ -418,15 +453,16 @@ function StatusMessage({ submissionStatus, deleteStatus, submissionMessage, dele
 
   const { bgColor, textColor } = getStatusColors(isSuccess, isError)
 
-  const loadingMessage = submissionStatus === 'loading' ? `Updating ${toReadableText(modelName)}...` : `Deleting ${toReadableText(modelName)}...`
+  const loadingMessage =
+    submissionStatus === 'loading'
+      ? `Updating ${toReadableText(modelName)}...`
+      : `Deleting ${toReadableText(modelName)}...`
   const message = isLoading ? loadingMessage : submissionMessage || deleteMessage
 
   return (
     <div className={`mb-6 rounded-md p-4 ${bgColor}`}>
       <div className="flex">
-        <div className="flex-shrink-0">
-          {getStatusIcon(isSuccess, isError)}
-        </div>
+        <div className="flex-shrink-0">{getStatusIcon(isSuccess, isError)}</div>
         <div className="ml-3">
           <p className={`text-sm font-medium ${textColor}`}>{message}</p>
         </div>
@@ -510,7 +546,19 @@ async function executeDeleteMutation(
 // CONTENT COMPONENT
 // =================================
 
-function AdminDataEditPageContent({ model, id, basePath, formTheme, displayFieldConfig }: Readonly<{ model: any; id: string; basePath: string; formTheme: any; displayFieldConfig?: any }>) {
+function AdminDataEditPageContent({
+  model,
+  id,
+  basePath,
+  formTheme,
+  displayFieldConfig,
+}: Readonly<{
+  model: any
+  id: string
+  basePath: string
+  formTheme: any
+  displayFieldConfig?: any
+}>) {
   const navigate = useNavigate()
   const { sdk, databaseModels } = useAdminDataContext()
 
@@ -742,103 +790,107 @@ function AdminDataEditPageContent({ model, id, basePath, formTheme, displayField
       status: result.success ? 'success' : 'error',
       message: result.message,
     })
-
   }
 
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="mb-8">
-          <nav className="flex mb-6" aria-label="Breadcrumb">
-            <ol className="flex items-center space-x-4">
-              <li>
-                <Link to={basePath} className="text-gray-400 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-400">
-                  Data Browser
+        <nav className="flex mb-6" aria-label="Breadcrumb">
+          <ol className="flex items-center space-x-4">
+            <li>
+              <Link
+                to={basePath}
+                className="text-gray-400 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-400"
+              >
+                Data Browser
+              </Link>
+            </li>
+            <li>
+              <div className="flex items-center">
+                <svg
+                  className="flex-shrink-0 h-5 w-5 text-gray-300 dark:text-gray-600"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 111.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+                <Link
+                  to={`${basePath}/${toKebabCase(model.pluralName)}`}
+                  className="ml-4 text-gray-400 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-400"
+                >
+                  {toReadableText(model.pluralName)}
                 </Link>
-              </li>
-              <li>
-                <div className="flex items-center">
-                  <svg
-                    className="flex-shrink-0 h-5 w-5 text-gray-300 dark:text-gray-600"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 111.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  <Link
-                    to={`${basePath}/${toKebabCase(model.pluralName)}`}
-                    className="ml-4 text-gray-400 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-400"
-                  >
-                    {toReadableText(model.pluralName)}
-                  </Link>
-                </div>
-              </li>
-              <li>
-                <div className="flex items-center">
-                  <svg
-                    className="flex-shrink-0 h-5 w-5 text-gray-300 dark:text-gray-600"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 111.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  <span className="ml-4 text-gray-500 dark:text-gray-400">Edit</span>
-                </div>
-              </li>
-            </ol>
-          </nav>
-          <div className="flex items-center justify-between">
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Edit {toReadableText(model.name)}</h1>
-            <button
-              onClick={() => setShowDeleteConfirm(true)}
-              disabled={deleteState.status === 'loading'}
-              className="inline-flex items-center px-3 py-2 border border-red-300 shadow-sm text-sm leading-4 font-medium rounded-md text-red-700 bg-white hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <TrashIcon className="h-4 w-4 mr-2" />
-              Delete
-            </button>
-          </div>
+              </div>
+            </li>
+            <li>
+              <div className="flex items-center">
+                <svg
+                  className="flex-shrink-0 h-5 w-5 text-gray-300 dark:text-gray-600"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 111.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+                <span className="ml-4 text-gray-500 dark:text-gray-400">Edit</span>
+              </div>
+            </li>
+          </ol>
+        </nav>
+        <div className="flex items-center justify-between">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+            Edit {toReadableText(model.name)}
+          </h1>
+          <button
+            onClick={() => setShowDeleteConfirm(true)}
+            disabled={deleteState.status === 'loading'}
+            className="inline-flex items-center px-3 py-2 border border-red-300 shadow-sm text-sm leading-4 font-medium rounded-md text-red-700 bg-white hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <TrashIcon className="h-4 w-4 mr-2" />
+            Delete
+          </button>
         </div>
+      </div>
 
-        {/* Delete Confirmation Modal */}
-        <DeleteConfirmModal
-          show={showDeleteConfirm}
-          modelName={model.name}
-          isDeleting={deleteState.status === 'loading'}
-          onConfirm={handleDelete}
-          onCancel={() => setShowDeleteConfirm(false)}
-        />
+      {/* Delete Confirmation Modal */}
+      <DeleteConfirmModal
+        show={showDeleteConfirm}
+        modelName={model.name}
+        isDeleting={deleteState.status === 'loading'}
+        onConfirm={handleDelete}
+        onCancel={() => setShowDeleteConfirm(false)}
+      />
 
-        {/* Submission Status */}
-        <StatusMessage
-          submissionStatus={submissionState.status}
-          deleteStatus={deleteState.status}
-          submissionMessage={submissionState.message}
-          deleteMessage={deleteState.message}
-          modelName={model.name}
-        />
+      {/* Submission Status */}
+      <StatusMessage
+        submissionStatus={submissionState.status}
+        deleteStatus={deleteState.status}
+        submissionMessage={submissionState.message}
+        deleteMessage={deleteState.message}
+        modelName={model.name}
+      />
 
-        {/* Form */}
-        <div className="bg-white dark:bg-gray-800 shadow-sm rounded-lg">
-          <div className="px-6 py-8">
-            <Form
-              id={`edit-${model.name.toLowerCase()}-form`}
-              fields={formFields}
-              submit={handleSubmit}
-              disabled={submissionState.status === 'loading' || deleteState.status === 'loading'}
-              defaultValues={initialValues}
-              theme={formTheme}
-            />
-          </div>
+      {/* Form */}
+      <div className="bg-white dark:bg-gray-800 shadow-sm rounded-lg">
+        <div className="px-6 py-8">
+          <Form
+            id={`edit-${model.name.toLowerCase()}-form`}
+            fields={formFields}
+            submit={handleSubmit}
+            disabled={submissionState.status === 'loading' || deleteState.status === 'loading'}
+            defaultValues={initialValues}
+            theme={formTheme}
+          />
         </div>
+      </div>
     </div>
   )
 }

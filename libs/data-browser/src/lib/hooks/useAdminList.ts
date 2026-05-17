@@ -39,6 +39,6 @@ function adminListReducer(state: AdminListState, action: AdminListAction): Admin
 
 export function useAdminList() {
   const [state, dispatch] = useReducer(adminListReducer, initialState)
-  
+
   return { state, dispatch }
 }

@@ -13,13 +13,17 @@ export function AdminDataIndexPage() {
   return (
     <div className="text-center py-12">
       <div className="max-w-2xl mx-auto">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-4">Database Administration</h1>
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-4">
+          Database Administration
+        </h1>
         <p className="text-lg text-gray-600 dark:text-gray-300 mb-8">
           Choose a data model from the sidebar to get started with managing your database records.
         </p>
 
         <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 rounded-lg p-6 mb-8">
-          <h2 className="text-lg font-semibold text-blue-900 dark:text-blue-200 mb-2">Available Models</h2>
+          <h2 className="text-lg font-semibold text-blue-900 dark:text-blue-200 mb-2">
+            Available Models
+          </h2>
           <p className="text-blue-700 dark:text-blue-300 mb-4">
             You can manage {databaseModels.length} different data models in your database:
           </p>
@@ -34,7 +38,9 @@ export function AdminDataIndexPage() {
               </Link>
             ))}
             {databaseModels.length > 12 && (
-              <span className="text-blue-600 dark:text-blue-400 italic">+{databaseModels.length - 12} more...</span>
+              <span className="text-blue-600 dark:text-blue-400 italic">
+                +{databaseModels.length - 12} more...
+              </span>
             )}
           </div>
         </div>

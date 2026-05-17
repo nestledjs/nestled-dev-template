@@ -6,8 +6,8 @@ export default function PublicIndex() {
     <div className="flex-1 w-full bg-gradient-to-b from-zinc-900 to-zinc-950 text-white flex items-center justify-center px-4 py-16">
       <div className="w-full max-w-3xl text-center">
         <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-medium text-zinc-300">
-          <span className="inline-block h-2 w-2 animate-pulse rounded-full bg-emerald-400" />{' '}
-          Fresh install vibes
+          <span className="inline-block h-2 w-2 animate-pulse rounded-full bg-emerald-400" /> Fresh
+          install vibes
         </span>
 
         <h1 className="mt-6 text-4xl sm:text-5xl font-extrabold tracking-tight">

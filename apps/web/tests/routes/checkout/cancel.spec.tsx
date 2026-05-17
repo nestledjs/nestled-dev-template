@@ -2,7 +2,7 @@ import React from 'react'
 import { render, screen } from '@testing-library/react'
 import { describe, it, expect, beforeEach } from 'vitest'
 import CheckoutCancel from '../../../app/routes/checkout/cancel'
-import { createTestRouter } from "../../helpers/createTestRouter"
+import { createTestRouter } from '../../helpers/createTestRouter'
 
 describe('Checkout Cancel Page', () => {
   beforeEach(() => {
@@ -48,7 +48,9 @@ describe('Checkout Cancel Page', () => {
       renderCheckoutCancel()
 
       expect(screen.getByText('What happened?')).toBeInTheDocument()
-      expect(screen.getByText(/You closed the checkout page before completing your purchase/i)).toBeInTheDocument()
+      expect(
+        screen.getByText(/You closed the checkout page before completing your purchase/i),
+      ).toBeInTheDocument()
     })
 
     it('should list possible reasons for cancellation', () => {
@@ -79,7 +81,9 @@ describe('Checkout Cancel Page', () => {
       renderCheckoutCancel()
 
       expect(screen.getByRole('heading', { level: 4, name: 'Need Help?' })).toBeInTheDocument()
-      expect(screen.getByText(/Have questions about our plans or payment options?/i)).toBeInTheDocument()
+      expect(
+        screen.getByText(/Have questions about our plans or payment options?/i),
+      ).toBeInTheDocument()
     })
 
     it('should have link to view plans', () => {
@@ -153,7 +157,9 @@ describe('Checkout Cancel Page', () => {
     it('should have orange/red gradient background', () => {
       const { container } = renderCheckoutCancel()
 
-      const background = container.querySelector('.bg-gradient-to-br.from-gray-50.via-orange-50.to-red-50')
+      const background = container.querySelector(
+        '.bg-gradient-to-br.from-gray-50.via-orange-50.to-red-50',
+      )
       expect(background).toBeInTheDocument()
     })
 

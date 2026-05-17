@@ -18,9 +18,10 @@ export function ListHeaderCount({
   if (loading) {
     text = 'Loading...'
   } else if (total !== undefined && showing !== undefined) {
-    text = total === showing
-      ? `${total} ${title ?? ''}`.trim()
-      : `Showing ${showing} of ${total} ${title ?? ''}`.trim()
+    text =
+      total === showing
+        ? `${total} ${title ?? ''}`.trim()
+        : `Showing ${showing} of ${total} ${title ?? ''}`.trim()
   } else {
     text = title ?? ''
   }

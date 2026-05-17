@@ -247,9 +247,12 @@ describe('useDebounce', () => {
 
   describe('cleanup behavior', () => {
     it('should cleanup timer on unmount', async () => {
-      const { unmount, rerender } = renderHook(({ value, delay }) => useDebounce(value, delay), {
-        initialProps: { value: 'initial', delay: 100 },
-      })
+      const { unmount, rerender, result } = renderHook(
+        ({ value, delay }) => useDebounce(value, delay),
+        {
+          initialProps: { value: 'initial', delay: 100 },
+        },
+      )
 
       rerender({ value: 'updated', delay: 100 })
       unmount()
@@ -258,13 +261,16 @@ describe('useDebounce', () => {
       await wait(150)
 
       // No error should be thrown - cleanup worked
-      expect(true).toBe(true)
+      expect(result.error).toBeUndefined()
     })
 
     it('should not cause errors after unmount', async () => {
-      const { result, rerender, unmount } = renderHook(({ value, delay }) => useDebounce(value, delay), {
-        initialProps: { value: 'initial', delay: 100 },
-      })
+      const { result, rerender, unmount } = renderHook(
+        ({ value, delay }) => useDebounce(value, delay),
+        {
+          initialProps: { value: 'initial', delay: 100 },
+        },
+      )
 
       rerender({ value: 'updated', delay: 100 })
 

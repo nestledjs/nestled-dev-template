@@ -11,7 +11,7 @@ vi.mock('@apollo/client/react', () => ({
 }))
 
 vi.mock('./useDebounce', () => ({
-  useDebounce: vi.fn((value) => value),
+  useDebounce: vi.fn(value => value),
 }))
 
 vi.mock('../utils/graphql-utils', () => ({
@@ -19,7 +19,8 @@ vi.mock('../utils/graphql-utils', () => ({
 }))
 
 vi.mock('../utils/string-utils', async () => {
-  const actual = await vi.importActual<typeof import('../utils/string-utils')>('../utils/string-utils')
+  const actual =
+    await vi.importActual<typeof import('../utils/string-utils')>('../utils/string-utils')
   return {
     ...actual,
     getSmartSearchFields: actual.getSmartSearchFields,
@@ -72,7 +73,7 @@ describe('useRelationData', () => {
 
   beforeEach(() => {
     vi.clearAllMocks()
-    mockUseDebounce.mockImplementation((value) => value)
+    mockUseDebounce.mockImplementation(value => value)
     mockGetAdminDocuments.mockReturnValue({ listQuery: mockListQuery } as any)
   })
 
@@ -164,7 +165,7 @@ describe('useRelationData', () => {
               searchFields: ['name', 'email'],
             },
           },
-        })
+        }),
       )
     })
 
@@ -185,7 +186,7 @@ describe('useRelationData', () => {
               take: 20,
             },
           },
-        })
+        }),
       )
     })
 
@@ -206,7 +207,7 @@ describe('useRelationData', () => {
               take: 20,
             },
           },
-        })
+        }),
       )
     })
   })
@@ -231,7 +232,7 @@ describe('useRelationData', () => {
               searchFields: ['name', 'email'],
             },
           },
-        })
+        }),
       )
     })
 
@@ -254,7 +255,7 @@ describe('useRelationData', () => {
               searchFields: ['name'],
             },
           },
-        })
+        }),
       )
     })
 
@@ -300,7 +301,7 @@ describe('useRelationData', () => {
               searchFields: expect.not.arrayContaining(['organization']),
             },
           },
-        })
+        }),
       )
     })
 
@@ -323,7 +324,7 @@ describe('useRelationData', () => {
               searchFields: expect.not.arrayContaining(['age']),
             },
           },
-        })
+        }),
       )
     })
   })
@@ -342,7 +343,7 @@ describe('useRelationData', () => {
         mockListQuery,
         expect.objectContaining({
           skip: true,
-        })
+        }),
       )
     })
 
@@ -359,7 +360,7 @@ describe('useRelationData', () => {
         mockListQuery,
         expect.objectContaining({
           skip: false,
-        })
+        }),
       )
     })
 
@@ -376,7 +377,7 @@ describe('useRelationData', () => {
         mockListQuery,
         expect.objectContaining({
           skip: false,
-        })
+        }),
       )
     })
 
@@ -393,7 +394,7 @@ describe('useRelationData', () => {
         undefined,
         expect.objectContaining({
           skip: true,
-        })
+        }),
       )
     })
   })
@@ -619,7 +620,7 @@ describe('useRelationData', () => {
         mockListQuery,
         expect.objectContaining({
           fetchPolicy: 'cache-first',
-        })
+        }),
       )
     })
 
@@ -636,7 +637,7 @@ describe('useRelationData', () => {
         mockListQuery,
         expect.objectContaining({
           errorPolicy: 'all',
-        })
+        }),
       )
     })
 
@@ -653,7 +654,7 @@ describe('useRelationData', () => {
         mockListQuery,
         expect.objectContaining({
           notifyOnNetworkStatusChange: true,
-        })
+        }),
       )
     })
 
@@ -674,7 +675,7 @@ describe('useRelationData', () => {
               take: 20,
             },
           },
-        })
+        }),
       )
     })
   })
@@ -713,7 +714,9 @@ describe('useRelationData', () => {
         error: undefined,
       } as any)
 
-      const { result } = renderHook(() => useRelationData('Product', '', true), { wrapper: customWrapper })
+      const { result } = renderHook(() => useRelationData('Product', '', true), {
+        wrapper: customWrapper,
+      })
 
       expect(result.current.relatedItems).toEqual(mockData.products)
     })
@@ -729,7 +732,7 @@ describe('useRelationData', () => {
 
       const { rerender } = renderHook(
         ({ searchTerm }) => useRelationData('User', searchTerm, true),
-        { wrapper, initialProps: { searchTerm: '' } }
+        { wrapper, initialProps: { searchTerm: '' } },
       )
 
       expect(mockUseDebounce).toHaveBeenCalledWith('', 300)
@@ -746,16 +749,16 @@ describe('useRelationData', () => {
         error: undefined,
       } as any)
 
-      const { rerender } = renderHook(
-        ({ isOpen }) => useRelationData('User', '', isOpen),
-        { wrapper, initialProps: { isOpen: false } }
-      )
+      const { rerender } = renderHook(({ isOpen }) => useRelationData('User', '', isOpen), {
+        wrapper,
+        initialProps: { isOpen: false },
+      })
 
       expect(mockUseQuery).toHaveBeenCalledWith(
         mockListQuery,
         expect.objectContaining({
           skip: true,
-        })
+        }),
       )
 
       rerender({ isOpen: true })
@@ -764,7 +767,7 @@ describe('useRelationData', () => {
         mockListQuery,
         expect.objectContaining({
           skip: false,
-        })
+        }),
       )
     })
   })

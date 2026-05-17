@@ -291,7 +291,7 @@ describe('AdminErrorStates', () => {
           onDismiss={onDismiss}
           showIcon={true}
           className="my-error"
-        />
+        />,
       )
 
       expect(screen.getByText('Connection Error')).toBeInTheDocument()
@@ -318,7 +318,7 @@ describe('AdminErrorStates', () => {
           onAction={onAction}
           icon={FolderIcon}
           className="my-empty"
-        />
+        />,
       )
 
       expect(screen.getByText('No Users')).toBeInTheDocument()
@@ -336,7 +336,7 @@ describe('AdminErrorStates', () => {
           message="This may take a few seconds"
           size="large"
           className="my-loading"
-        />
+        />,
       )
 
       expect(screen.getByText('Loading users...')).toBeInTheDocument()

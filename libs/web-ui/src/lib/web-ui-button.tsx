@@ -3,17 +3,32 @@ import { Link } from 'react-router'
 import { cn } from '@nestled-template/shared/utils'
 
 function getButtonStyles(
-  buttonType: 'Primary' | 'Secondary' | 'SecondaryDark' | 'Soft' | 'Transparent' | 'TransparentLight',
+  buttonType:
+    | 'Primary'
+    | 'Secondary'
+    | 'SecondaryDark'
+    | 'Soft'
+    | 'Transparent'
+    | 'TransparentLight',
   disabled: boolean,
 ): string {
   const disabledClass = 'opacity-50 cursor-not-allowed'
   const styles: Record<string, string> = {
-    Primary: cn('bg-orange-500 text-white', disabled ? disabledClass : 'hover:bg-orange-400 focus-visible:outline-orange-500'),
-    Secondary: cn('ring-1 ring-inset ring-zinc-300 bg-white text-zinc-900', disabled ? disabledClass : 'hover:bg-zinc-50'),
+    Primary: cn(
+      'bg-orange-500 text-white',
+      disabled ? disabledClass : 'hover:bg-orange-400 focus-visible:outline-orange-500',
+    ),
+    Secondary: cn(
+      'ring-1 ring-inset ring-zinc-300 bg-white text-zinc-900',
+      disabled ? disabledClass : 'hover:bg-zinc-50',
+    ),
     SecondaryDark: cn('bg-white/10 text-white', disabled ? disabledClass : 'hover:bg-white/20'),
     Soft: cn('bg-sky-50 text-sky-600', disabled ? disabledClass : 'hover:bg-sky-100'),
     Transparent: cn('bg-transparent text-zinc-900', disabled ? disabledClass : 'hover:bg-gray-100'),
-    TransparentLight: cn('bg-transparent text-white', disabled ? disabledClass : 'hover:bg-gray-100'),
+    TransparentLight: cn(
+      'bg-transparent text-white',
+      disabled ? disabledClass : 'hover:bg-gray-100',
+    ),
   }
   return styles[buttonType]
 }

@@ -2,9 +2,9 @@ import React, { useEffect } from 'react'
 
 // Custom hook for click outside detection
 export function useClickOutside(
-  ref: React.RefObject<HTMLDivElement | null>, 
-  handler: () => void, 
-  isActive = true
+  ref: React.RefObject<HTMLDivElement | null>,
+  handler: () => void,
+  isActive = true,
 ) {
   useEffect(() => {
     if (!isActive) return

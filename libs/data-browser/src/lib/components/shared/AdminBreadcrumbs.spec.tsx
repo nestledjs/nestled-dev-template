@@ -20,7 +20,7 @@ describe('AdminBreadcrumbs', () => {
       render(
         <RouterWrapper>
           <AdminBreadcrumbs items={mockItems} />
-        </RouterWrapper>
+        </RouterWrapper>,
       )
 
       expect(screen.getByText('Dashboard')).toBeInTheDocument()
@@ -32,7 +32,7 @@ describe('AdminBreadcrumbs', () => {
       render(
         <RouterWrapper>
           <AdminBreadcrumbs items={mockItems} />
-        </RouterWrapper>
+        </RouterWrapper>,
       )
 
       const homeLink = screen.getByLabelText('Home')
@@ -44,7 +44,7 @@ describe('AdminBreadcrumbs', () => {
       render(
         <RouterWrapper>
           <AdminBreadcrumbs items={mockItems} />
-        </RouterWrapper>
+        </RouterWrapper>,
       )
 
       const nav = screen.getByRole('navigation', { name: 'Breadcrumb' })
@@ -57,7 +57,7 @@ describe('AdminBreadcrumbs', () => {
       render(
         <RouterWrapper>
           <AdminBreadcrumbs items={mockItems} showHome={false} />
-        </RouterWrapper>
+        </RouterWrapper>,
       )
 
       expect(screen.queryByLabelText('Home')).not.toBeInTheDocument()
@@ -67,7 +67,7 @@ describe('AdminBreadcrumbs', () => {
       render(
         <RouterWrapper>
           <AdminBreadcrumbs items={mockItems} homeHref="/dashboard" />
-        </RouterWrapper>
+        </RouterWrapper>,
       )
 
       const homeLink = screen.getByLabelText('Home')
@@ -78,7 +78,7 @@ describe('AdminBreadcrumbs', () => {
       render(
         <RouterWrapper>
           <AdminBreadcrumbs items={mockItems} />
-        </RouterWrapper>
+        </RouterWrapper>,
       )
 
       const homeLink = screen.getByLabelText('Home')
@@ -96,7 +96,7 @@ describe('AdminBreadcrumbs', () => {
       render(
         <RouterWrapper>
           <AdminBreadcrumbs items={items} />
-        </RouterWrapper>
+        </RouterWrapper>,
       )
 
       const dashboardLink = screen.getByRole('link', { name: 'Dashboard' })
@@ -115,7 +115,7 @@ describe('AdminBreadcrumbs', () => {
       render(
         <RouterWrapper>
           <AdminBreadcrumbs items={items} />
-        </RouterWrapper>
+        </RouterWrapper>,
       )
 
       // Active item should not be a link
@@ -134,7 +134,7 @@ describe('AdminBreadcrumbs', () => {
       render(
         <RouterWrapper>
           <AdminBreadcrumbs items={items} />
-        </RouterWrapper>
+        </RouterWrapper>,
       )
 
       expect(screen.queryByRole('link', { name: 'No Link' })).not.toBeInTheDocument()
@@ -150,7 +150,7 @@ describe('AdminBreadcrumbs', () => {
       render(
         <RouterWrapper>
           <AdminBreadcrumbs items={items} />
-        </RouterWrapper>
+        </RouterWrapper>,
       )
 
       const activeElement = screen.getByText('Active')
@@ -158,14 +158,12 @@ describe('AdminBreadcrumbs', () => {
     })
 
     it('should apply correct styling to non-active items without links', () => {
-      const items: BreadcrumbItem[] = [
-        { id: '1', label: 'Non-Active' },
-      ]
+      const items: BreadcrumbItem[] = [{ id: '1', label: 'Non-Active' }]
 
       render(
         <RouterWrapper>
           <AdminBreadcrumbs items={items} />
-        </RouterWrapper>
+        </RouterWrapper>,
       )
 
       const element = screen.getByText('Non-Active')
@@ -178,7 +176,7 @@ describe('AdminBreadcrumbs', () => {
       render(
         <RouterWrapper>
           <AdminBreadcrumbs items={mockItems} />
-        </RouterWrapper>
+        </RouterWrapper>,
       )
 
       // Check for chevron icons (they have aria-hidden="true")
@@ -197,7 +195,7 @@ describe('AdminBreadcrumbs', () => {
       render(
         <RouterWrapper>
           <AdminBreadcrumbs items={items} showHome={false} />
-        </RouterWrapper>
+        </RouterWrapper>,
       )
 
       // Even without home, there should still be a chevron between items
@@ -211,7 +209,7 @@ describe('AdminBreadcrumbs', () => {
       const { container } = render(
         <RouterWrapper>
           <AdminBreadcrumbs items={mockItems} className="custom-class" />
-        </RouterWrapper>
+        </RouterWrapper>,
       )
 
       const nav = container.querySelector('nav')
@@ -222,7 +220,7 @@ describe('AdminBreadcrumbs', () => {
       const { container } = render(
         <RouterWrapper>
           <AdminBreadcrumbs items={mockItems} className="custom-class" />
-        </RouterWrapper>
+        </RouterWrapper>,
       )
 
       const nav = container.querySelector('nav')
@@ -235,7 +233,7 @@ describe('AdminBreadcrumbs', () => {
       render(
         <RouterWrapper>
           <AdminBreadcrumbs items={[]} />
-        </RouterWrapper>
+        </RouterWrapper>,
       )
 
       // Should still render the nav element with home
@@ -250,7 +248,7 @@ describe('AdminBreadcrumbs', () => {
       render(
         <RouterWrapper>
           <AdminBreadcrumbs items={items} />
-        </RouterWrapper>
+        </RouterWrapper>,
       )
 
       expect(screen.getByText('Only Item')).toBeInTheDocument()
@@ -265,39 +263,39 @@ describe('AdminBreadcrumbs', () => {
       render(
         <RouterWrapper>
           <AdminBreadcrumbs items={items} />
-        </RouterWrapper>
+        </RouterWrapper>,
       )
 
-      expect(screen.getByText('This is a very long breadcrumb label that might wrap')).toBeInTheDocument()
+      expect(
+        screen.getByText('This is a very long breadcrumb label that might wrap'),
+      ).toBeInTheDocument()
     })
 
     it('should handle special characters in labels', () => {
       const items: BreadcrumbItem[] = [
         { id: '1', label: 'Users & Groups', href: '/users' },
-        { id: '2', label: 'John\'s Profile', href: '/profile' },
+        { id: '2', label: "John's Profile", href: '/profile' },
       ]
 
       render(
         <RouterWrapper>
           <AdminBreadcrumbs items={items} />
-        </RouterWrapper>
+        </RouterWrapper>,
       )
 
       expect(screen.getByText('Users & Groups')).toBeInTheDocument()
-      expect(screen.getByText('John\'s Profile')).toBeInTheDocument()
+      expect(screen.getByText("John's Profile")).toBeInTheDocument()
     })
   })
 
   describe('link styling', () => {
     it('should apply correct styling to links', () => {
-      const items: BreadcrumbItem[] = [
-        { id: '1', label: 'Link Item', href: '/link' },
-      ]
+      const items: BreadcrumbItem[] = [{ id: '1', label: 'Link Item', href: '/link' }]
 
       render(
         <RouterWrapper>
           <AdminBreadcrumbs items={items} />
-        </RouterWrapper>
+        </RouterWrapper>,
       )
 
       const link = screen.getByRole('link', { name: 'Link Item' })
@@ -310,7 +308,7 @@ describe('AdminBreadcrumbs', () => {
       render(
         <RouterWrapper>
           <AdminBreadcrumbs items={mockItems} />
-        </RouterWrapper>
+        </RouterWrapper>,
       )
 
       expect(screen.getByLabelText('Home')).toBeInTheDocument()
@@ -321,7 +319,7 @@ describe('AdminBreadcrumbs', () => {
       render(
         <RouterWrapper>
           <AdminBreadcrumbs items={mockItems} />
-        </RouterWrapper>
+        </RouterWrapper>,
       )
 
       const chevrons = document.querySelectorAll('[aria-hidden="true"]')

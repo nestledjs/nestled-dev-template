@@ -34,11 +34,7 @@ import { DataTable } from '@nestledjs/shared-components'
 
 export function UsersTable({ rows }) {
   return (
-    <DataTable
-      data={rows}
-      path="/admin/users"
-      fields={['id', 'firstName', 'lastName', 'email']}
-    />
+    <DataTable data={rows} path="/admin/users" fields={['id', 'firstName', 'lastName', 'email']} />
   )
 }
 ```

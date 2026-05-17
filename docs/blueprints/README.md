@@ -107,11 +107,18 @@ Each blueprint should eventually use this structure:
 # Blueprint Name
 
 ## Intent
+
 ## When To Use
+
 ## Files Touched
+
 ## Steps
+
 ## Security Checks
+
 ## Generation Commands
+
 ## Verification
+
 ## Common Mistakes
 ```

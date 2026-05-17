@@ -8,11 +8,19 @@ module.exports = withNx(
     outputPath: '../../dist/libs/shared-components',
     tsConfig: './tsconfig.lib.json',
     compiler: 'swc',
-    external: ['react', 'react-dom', 'react/jsx-runtime', 'react-router', '@heroicons/react/24/outline', 'dayjs', 'json5'],
+    external: [
+      'react',
+      'react-dom',
+      'react/jsx-runtime',
+      'react-router',
+      '@heroicons/react/24/outline',
+      'dayjs',
+      'json5',
+    ],
     format: ['esm', 'cjs'],
     assets: [
       { input: '.', output: '.', glob: 'README.md' },
-      { input: '.', output: '.', glob: 'LICENSE' }
+      { input: '.', output: '.', glob: 'LICENSE' },
     ],
   },
   {

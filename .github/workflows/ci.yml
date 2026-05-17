@@ -57,11 +57,11 @@ jobs:
           node-version: 22
           cache: 'pnpm'
 
-      - run: pnpm install --frozen-lockfile
+      - run: pnpm install --frozen-lockfile --ignore-scripts
 
       # Install Playwright browsers for web-ui tests
       - name: Install Playwright Browsers
-        run: pnpm exec playwright install --with-deps chromium
+        run: ./node_modules/.bin/playwright install --with-deps chromium --no-shell
 
       - uses: nrwl/nx-set-shas@3e9ad7370203c1e93d109be57f3b72eb0eb511b1 # v4
 
@@ -79,6 +79,9 @@ jobs:
           NODE_ENV: test
           JWT_SECRET: test-jwt-secret-for-ci-only-not-production
           EMAIL_PROVIDER: mock
+
+      - name: Normalize coverage paths
+        run: pnpm coverage:normalize-lcov
 
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@383f7e52eae3ab0510c3cb0e7d9d150bbaeab838 # v3

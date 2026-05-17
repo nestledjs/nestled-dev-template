@@ -1,7 +1,13 @@
 import { Args, Mutation, Query, ResolveField, Resolver, Parent } from '@nestjs/graphql'
 import { UseGuards, Injectable } from '@nestjs/common'
 import { CtxUser, GqlAuthGuard } from '@nestled-template/api/utils'
-import { Organization, User, OrganizationMember, Invite, Role } from '@nestled-template/api/core/models'
+import {
+  Organization,
+  User,
+  OrganizationMember,
+  Invite,
+  Role,
+} from '@nestled-template/api/core/models'
 import { OrganizationService } from './organization.service'
 import {
   ApiCrudDataAccessService,
@@ -19,7 +25,7 @@ import {
   RejectInvitationInput,
   SwitchOrganizationInput,
   TransferOrganizationOwnershipInput,
-  InvitationDetails
+  InvitationDetails,
 } from './dto'
 
 @Resolver(() => Organization)
@@ -38,7 +44,7 @@ export class OrganizationResolver extends GeneratedOrganizationResolver {
   @UseGuards(GqlAuthGuard)
   async userCreateOrganization(
     @CtxUser() user: User,
-    @Args('input') input: CreateOrganizationInput
+    @Args('input') input: CreateOrganizationInput,
   ): Promise<Organization> {
     return this.customService.userCreateOrganization(user.id, input)
   }
@@ -48,7 +54,7 @@ export class OrganizationResolver extends GeneratedOrganizationResolver {
   async userUpdateOrganization(
     @CtxUser() user: User,
     @Args('organizationId') organizationId: string,
-    @Args('input') input: UpdateOrganizationInput
+    @Args('input') input: UpdateOrganizationInput,
   ): Promise<Organization> {
     return this.customService.userUpdateOrganization(user.id, organizationId, input)
   }
@@ -57,7 +63,7 @@ export class OrganizationResolver extends GeneratedOrganizationResolver {
   @UseGuards(GqlAuthGuard)
   async userDeleteOrganization(
     @CtxUser() user: User,
-    @Args('organizationId') organizationId: string
+    @Args('organizationId') organizationId: string,
   ): Promise<boolean> {
     return this.customService.userDeleteOrganization(user.id, organizationId)
   }
@@ -68,7 +74,7 @@ export class OrganizationResolver extends GeneratedOrganizationResolver {
   @UseGuards(GqlAuthGuard)
   async addOrganizationMember(
     @CtxUser() user: User,
-    @Args('input') input: AddOrganizationMemberInput
+    @Args('input') input: AddOrganizationMemberInput,
   ): Promise<boolean> {
     return this.customService.addOrganizationMember(user.id, input)
   }
@@ -77,7 +83,7 @@ export class OrganizationResolver extends GeneratedOrganizationResolver {
   @UseGuards(GqlAuthGuard)
   async removeOrganizationMember(
     @CtxUser() user: User,
-    @Args('input') input: RemoveOrganizationMemberInput
+    @Args('input') input: RemoveOrganizationMemberInput,
   ): Promise<boolean> {
     return this.customService.removeOrganizationMember(user.id, input)
   }
@@ -86,7 +92,7 @@ export class OrganizationResolver extends GeneratedOrganizationResolver {
   @UseGuards(GqlAuthGuard)
   async updateOrganizationMemberRole(
     @CtxUser() user: User,
-    @Args('input') input: UpdateMemberRoleInput
+    @Args('input') input: UpdateMemberRoleInput,
   ): Promise<boolean> {
     return this.customService.updateOrganizationMemberRole(user.id, input)
   }
@@ -97,7 +103,7 @@ export class OrganizationResolver extends GeneratedOrganizationResolver {
   @UseGuards(GqlAuthGuard)
   async createOrganizationInvitation(
     @CtxUser() user: User,
-    @Args('input') input: CreateInvitationInput
+    @Args('input') input: CreateInvitationInput,
   ): Promise<string> {
     return this.customService.createOrganizationInvitation(user.id, input)
   }
@@ -106,7 +112,7 @@ export class OrganizationResolver extends GeneratedOrganizationResolver {
   @UseGuards(GqlAuthGuard)
   async resendOrganizationInvitation(
     @CtxUser() user: User,
-    @Args('input') input: ResendInvitationInput
+    @Args('input') input: ResendInvitationInput,
   ): Promise<boolean> {
     return this.customService.resendOrganizationInvitation(user.id, input)
   }
@@ -115,7 +121,7 @@ export class OrganizationResolver extends GeneratedOrganizationResolver {
   @UseGuards(GqlAuthGuard)
   async acceptOrganizationInvitation(
     @CtxUser() user: User,
-    @Args('input') input: AcceptInvitationInput
+    @Args('input') input: AcceptInvitationInput,
   ): Promise<Organization> {
     return this.customService.acceptOrganizationInvitation(user.id, input)
   }
@@ -124,7 +130,7 @@ export class OrganizationResolver extends GeneratedOrganizationResolver {
   @UseGuards(GqlAuthGuard)
   async rejectOrganizationInvitation(
     @CtxUser() user: User,
-    @Args('input') input: RejectInvitationInput
+    @Args('input') input: RejectInvitationInput,
   ): Promise<boolean> {
     return this.customService.rejectOrganizationInvitation(user.id, input)
   }
@@ -135,7 +141,7 @@ export class OrganizationResolver extends GeneratedOrganizationResolver {
   @UseGuards(GqlAuthGuard)
   async switchActiveOrganization(
     @CtxUser() user: User,
-    @Args('input') input: SwitchOrganizationInput
+    @Args('input') input: SwitchOrganizationInput,
   ): Promise<User> {
     return this.customService.switchActiveOrganization(user.id, input)
   }
@@ -146,7 +152,7 @@ export class OrganizationResolver extends GeneratedOrganizationResolver {
   @UseGuards(GqlAuthGuard)
   async transferOrganizationOwnership(
     @CtxUser() user: User,
-    @Args('input') input: TransferOrganizationOwnershipInput
+    @Args('input') input: TransferOrganizationOwnershipInput,
   ): Promise<boolean> {
     return this.customService.transferOrganizationOwnership(user.id, input)
   }
@@ -163,7 +169,7 @@ export class OrganizationResolver extends GeneratedOrganizationResolver {
   @UseGuards(GqlAuthGuard)
   async userOrganizationMembers(
     @CtxUser() user: User,
-    @Args('organizationId') organizationId: string
+    @Args('organizationId') organizationId: string,
   ) {
     return this.customService.getOrganizationMembers(user.id, organizationId)
   }
@@ -172,17 +178,14 @@ export class OrganizationResolver extends GeneratedOrganizationResolver {
   @UseGuards(GqlAuthGuard)
   async organizationInvitations(
     @CtxUser() user: User,
-    @Args('organizationId') organizationId: string
+    @Args('organizationId') organizationId: string,
   ) {
     return this.customService.getOrganizationInvitations(user.id, organizationId)
   }
 
   @Query(() => [Role])
   @UseGuards(GqlAuthGuard)
-  async organizationRoles(
-    @CtxUser() user: User,
-    @Args('organizationId') organizationId: string
-  ) {
+  async organizationRoles(@CtxUser() user: User, @Args('organizationId') organizationId: string) {
     return this.customService.getOrganizationRoles(user.id, organizationId)
   }
 
@@ -199,7 +202,7 @@ export class OrganizationResolver extends GeneratedOrganizationResolver {
   @UseGuards(GqlAuthGuard)
   async members(
     @Parent() organization: Organization,
-    @CtxUser() user: User
+    @CtxUser() user: User,
   ): Promise<OrganizationMember[]> {
     return this.customService.getOrganizationMembers(user.id, organization.id)
   }

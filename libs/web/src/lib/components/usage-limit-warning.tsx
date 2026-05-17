@@ -27,7 +27,10 @@ function usageBarClass(isAtLimit: boolean, shouldWarn: boolean) {
   return 'bg-blue-500'
 }
 
-function UsageIcon({ isAtLimit, shouldWarn }: Readonly<{ isAtLimit: boolean; shouldWarn: boolean }>) {
+function UsageIcon({
+  isAtLimit,
+  shouldWarn,
+}: Readonly<{ isAtLimit: boolean; shouldWarn: boolean }>) {
   if (isAtLimit) return <ExclamationTriangleIcon className="mr-3 h-5 w-5 text-red-500" />
   if (shouldWarn) return <ExclamationTriangleIcon className="mr-3 h-5 w-5 text-yellow-500" />
   return <InformationCircleIcon className="mr-3 h-5 w-5 text-gray-400" />
@@ -160,7 +163,9 @@ export function MultiUsageLimitWarning({
   const limitData = useLimits(limits)
 
   // Filter to only show limits that exist and are being tracked
-  const trackedLimits = Object.entries(limitData).filter(([_, data]) => data.hasLimit && data.limit !== -1)
+  const trackedLimits = Object.entries(limitData).filter(
+    ([_, data]) => data.hasLimit && data.limit !== -1,
+  )
 
   if (trackedLimits.length === 0) {
     return null
@@ -189,7 +194,13 @@ export function MultiUsageLimitWarning({
  * <UsageBadge limitKey="max_api_calls" currentValue={apiCallCount} />
  * ```
  */
-export function UsageBadge({ limitKey, currentValue }: { readonly limitKey: string; readonly currentValue: number }) {
+export function UsageBadge({
+  limitKey,
+  currentValue,
+}: {
+  readonly limitKey: string
+  readonly currentValue: number
+}) {
   const { limit, hasLimit, isAtLimit, percentUsed } = useLimit(limitKey, currentValue)
 
   if (!hasLimit || limit === -1) {

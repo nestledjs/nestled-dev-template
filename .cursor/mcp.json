@@ -2,11 +2,14 @@
   "mcpServers": {
     "nx-mcp": {
       "command": "npx",
-      "args": [
-        "-y",
-        "nx-mcp@latest",
-        "."
-      ]
+      "args": ["-y", "nx-mcp@latest", "."]
+    },
+    "nestled-dev-template-sonar": {
+      "url": "https://api.sonarcloud.io/mcp",
+      "headers": {
+        "Authorization": "Bearer 2837ef2779a2faab161cdde1ba3f0bdd32f4d02f",
+        "SONARQUBE_ORG": "nestledjs"
+      }
     }
   }
 }

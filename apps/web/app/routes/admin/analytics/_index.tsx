@@ -148,9 +148,7 @@ export default function AdminAnalyticsPage() {
                 formatNumber(analytics?.dailyActiveUsers)
               )}
             </div>
-            {!loading && (
-              <MetricChange change={analytics?.dauChange} suffix="vs yesterday" />
-            )}
+            {!loading && <MetricChange change={analytics?.dauChange} suffix="vs yesterday" />}
           </div>
 
           {/* MAU */}
@@ -168,9 +166,7 @@ export default function AdminAnalyticsPage() {
                 formatNumber(analytics?.monthlyActiveUsers)
               )}
             </div>
-            {!loading && (
-              <MetricChange change={analytics?.mauChange} suffix="vs last month" />
-            )}
+            {!loading && <MetricChange change={analytics?.mauChange} suffix="vs last month" />}
           </div>
 
           {/* New Users (Today) */}
@@ -299,63 +295,67 @@ export default function AdminAnalyticsPage() {
         <div className="rounded-xl border border-zinc-200 dark:border-white/10 bg-white dark:bg-white/5 shadow-sm overflow-hidden backdrop-blur">
           {(() => {
             if (loading) return <TableLoadingState message="Loading endpoints..." />
-            if (!analytics?.topEndpoints || analytics.topEndpoints.length === 0) return (
-              <div className="p-12 text-center text-zinc-500 dark:text-zinc-400">
-                No endpoint data available
-              </div>
-            )
+            if (!analytics?.topEndpoints || analytics.topEndpoints.length === 0)
+              return (
+                <div className="p-12 text-center text-zinc-500 dark:text-zinc-400">
+                  No endpoint data available
+                </div>
+              )
             return (
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-zinc-200 dark:divide-white/10">
-                <thead className="bg-zinc-50 dark:bg-white/5">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
-                      Endpoint
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
-                      Requests
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
-                      Avg Response Time
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
-                      Error Rate
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-zinc-200 dark:divide-white/10 bg-white dark:bg-white/5">
-                  {analytics.topEndpoints.map(endpoint => (
-                    <tr key={endpoint.name} className="hover:bg-zinc-50 dark:hover:bg-white/5 transition">
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-zinc-900 dark:text-white font-mono">
-                          {endpoint.name}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-zinc-900 dark:text-white">
-                          {formatNumber(endpoint.requests)}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-zinc-900 dark:text-white">
-                          {formatDuration(endpoint.avgResponseTime)}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div
-                          className={cn(
-                            'text-sm font-medium',
-                            getEndpointErrorRateColor(endpoint.errorRate),
-                          )}
-                        >
-                          {formatPercent(endpoint.errorRate)}
-                        </div>
-                      </td>
+              <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-zinc-200 dark:divide-white/10">
+                  <thead className="bg-zinc-50 dark:bg-white/5">
+                    <tr>
+                      <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+                        Endpoint
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+                        Requests
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+                        Avg Response Time
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+                        Error Rate
+                      </th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                  </thead>
+                  <tbody className="divide-y divide-zinc-200 dark:divide-white/10 bg-white dark:bg-white/5">
+                    {analytics.topEndpoints.map(endpoint => (
+                      <tr
+                        key={endpoint.name}
+                        className="hover:bg-zinc-50 dark:hover:bg-white/5 transition"
+                      >
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm font-medium text-zinc-900 dark:text-white font-mono">
+                            {endpoint.name}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm text-zinc-900 dark:text-white">
+                            {formatNumber(endpoint.requests)}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm text-zinc-900 dark:text-white">
+                            {formatDuration(endpoint.avgResponseTime)}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div
+                            className={cn(
+                              'text-sm font-medium',
+                              getEndpointErrorRateColor(endpoint.errorRate),
+                            )}
+                          >
+                            {formatPercent(endpoint.errorRate)}
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             )
           })()}
         </div>
@@ -369,66 +369,70 @@ export default function AdminAnalyticsPage() {
         <div className="rounded-xl border border-zinc-200 dark:border-white/10 bg-white dark:bg-white/5 shadow-sm overflow-hidden backdrop-blur">
           {(() => {
             if (loading) return <TableLoadingState message="Loading feature usage..." />
-            if (!analytics?.featureUsage || analytics.featureUsage.length === 0) return (
-              <div className="p-12 text-center text-zinc-500 dark:text-zinc-400">
-                No feature usage data available
-              </div>
-            )
+            if (!analytics?.featureUsage || analytics.featureUsage.length === 0)
+              return (
+                <div className="p-12 text-center text-zinc-500 dark:text-zinc-400">
+                  No feature usage data available
+                </div>
+              )
             return (
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-zinc-200 dark:divide-white/10">
-                <thead className="bg-zinc-50 dark:bg-white/5">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
-                      Feature
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
-                      Unique Users
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
-                      Total Uses
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
-                      Adoption Rate
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-zinc-200 dark:divide-white/10 bg-white dark:bg-white/5">
-                  {analytics.featureUsage.map(feature => (
-                    <tr key={feature.featureName} className="hover:bg-zinc-50 dark:hover:bg-white/5 transition">
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-zinc-900 dark:text-white">
-                          {feature.featureName}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-zinc-900 dark:text-white">
-                          {formatNumber(feature.uniqueUsers)}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-zinc-900 dark:text-white">
-                          {formatNumber(feature.totalUses)}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center gap-2">
-                          <div className="flex-1 bg-zinc-200 dark:bg-zinc-700 rounded-full h-2 max-w-[100px]">
-                            <div
-                              className="bg-emerald-600 dark:bg-emerald-400 h-2 rounded-full transition-all"
-                              style={{ width: `${Math.min(feature.adoptionRate, 100)}%` }}
-                            />
-                          </div>
-                          <span className="text-sm text-zinc-900 dark:text-white">
-                            {formatPercent(feature.adoptionRate)}
-                          </span>
-                        </div>
-                      </td>
+              <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-zinc-200 dark:divide-white/10">
+                  <thead className="bg-zinc-50 dark:bg-white/5">
+                    <tr>
+                      <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+                        Feature
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+                        Unique Users
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+                        Total Uses
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+                        Adoption Rate
+                      </th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                  </thead>
+                  <tbody className="divide-y divide-zinc-200 dark:divide-white/10 bg-white dark:bg-white/5">
+                    {analytics.featureUsage.map(feature => (
+                      <tr
+                        key={feature.featureName}
+                        className="hover:bg-zinc-50 dark:hover:bg-white/5 transition"
+                      >
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm font-medium text-zinc-900 dark:text-white">
+                            {feature.featureName}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm text-zinc-900 dark:text-white">
+                            {formatNumber(feature.uniqueUsers)}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm text-zinc-900 dark:text-white">
+                            {formatNumber(feature.totalUses)}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="flex items-center gap-2">
+                            <div className="flex-1 bg-zinc-200 dark:bg-zinc-700 rounded-full h-2 max-w-[100px]">
+                              <div
+                                className="bg-emerald-600 dark:bg-emerald-400 h-2 rounded-full transition-all"
+                                style={{ width: `${Math.min(feature.adoptionRate, 100)}%` }}
+                              />
+                            </div>
+                            <span className="text-sm text-zinc-900 dark:text-white">
+                              {formatPercent(feature.adoptionRate)}
+                            </span>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             )
           })()}
         </div>

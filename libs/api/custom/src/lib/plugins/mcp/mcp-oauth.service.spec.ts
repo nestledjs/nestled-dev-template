@@ -128,7 +128,9 @@ describe('McpOAuthService', () => {
       mockData.organizationMember.count.mockResolvedValue(3)
       const count = await service.countUserOrganizations('user-1')
       expect(count).toBe(3)
-      expect(mockData.organizationMember.count).toHaveBeenCalledWith({ where: { userId: 'user-1' } })
+      expect(mockData.organizationMember.count).toHaveBeenCalledWith({
+        where: { userId: 'user-1' },
+      })
     })
 
     it('should resolve organization id for single-org user', async () => {

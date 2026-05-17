@@ -143,21 +143,28 @@ describe('string-utils', () => {
     })
 
     it('should return title if name is not present', () => {
-      expect(getItemDisplayName({ title: 'Software Engineer', email: 'test@example.com', id: '123' })).toBe(
-        'Software Engineer',
-      )
+      expect(
+        getItemDisplayName({ title: 'Software Engineer', email: 'test@example.com', id: '123' }),
+      ).toBe('Software Engineer')
       expect(getItemDisplayName({ title: 'CEO', id: '456' })).toBe('CEO')
     })
 
     it('should combine firstName and lastName if both present', () => {
       expect(getItemDisplayName({ firstName: 'John', lastName: 'Doe', id: '123' })).toBe('John Doe')
-      expect(getItemDisplayName({ firstName: 'Jane', lastName: 'Smith', email: 'jane@example.com', id: '456' })).toBe(
-        'Jane Smith',
-      )
+      expect(
+        getItemDisplayName({
+          firstName: 'Jane',
+          lastName: 'Smith',
+          email: 'jane@example.com',
+          id: '456',
+        }),
+      ).toBe('Jane Smith')
     })
 
     it('should return firstName only if lastName is not present', () => {
-      expect(getItemDisplayName({ firstName: 'John', email: 'john@example.com', id: '123' })).toBe('John')
+      expect(getItemDisplayName({ firstName: 'John', email: 'john@example.com', id: '123' })).toBe(
+        'John',
+      )
       expect(getItemDisplayName({ firstName: 'Jane', id: '456' })).toBe('Jane')
     })
 
@@ -195,16 +202,28 @@ describe('string-utils', () => {
     it('should return primary fields when available', () => {
       expect(getSmartSearchFields(['name', 'email', 'description'])).toEqual(['name', 'email'])
       expect(getSmartSearchFields(['title', 'content', 'author'])).toEqual(['title'])
-      expect(getSmartSearchFields(['firstName', 'lastName', 'age'])).toEqual(['firstName', 'lastName'])
+      expect(getSmartSearchFields(['firstName', 'lastName', 'age'])).toEqual([
+        'firstName',
+        'lastName',
+      ])
     })
 
     it('should limit to 2 primary fields', () => {
-      expect(getSmartSearchFields(['name', 'title', 'email', 'firstName', 'lastName'])).toEqual(['name', 'title'])
-      expect(getSmartSearchFields(['email', 'firstName', 'lastName', 'name'])).toEqual(['name', 'email'])
+      expect(getSmartSearchFields(['name', 'title', 'email', 'firstName', 'lastName'])).toEqual([
+        'name',
+        'title',
+      ])
+      expect(getSmartSearchFields(['email', 'firstName', 'lastName', 'name'])).toEqual([
+        'name',
+        'email',
+      ])
     })
 
     it('should use first available fields when no primary fields exist', () => {
-      expect(getSmartSearchFields(['description', 'content', 'author'])).toEqual(['description', 'content'])
+      expect(getSmartSearchFields(['description', 'content', 'author'])).toEqual([
+        'description',
+        'content',
+      ])
       expect(getSmartSearchFields(['field1', 'field2', 'field3'])).toEqual(['field1', 'field2'])
     })
 
@@ -220,11 +239,17 @@ describe('string-utils', () => {
     it('should respect primary field priority order', () => {
       // Primary fields: ['name', 'title', 'email', 'firstName', 'lastName', 'subject']
       expect(getSmartSearchFields(['subject', 'email', 'name'])).toEqual(['name', 'email'])
-      expect(getSmartSearchFields(['lastName', 'firstName', 'title'])).toEqual(['title', 'firstName'])
+      expect(getSmartSearchFields(['lastName', 'firstName', 'title'])).toEqual([
+        'title',
+        'firstName',
+      ])
     })
 
     it('should handle arrays with more than 2 non-primary fields', () => {
-      expect(getSmartSearchFields(['field1', 'field2', 'field3', 'field4', 'field5'])).toEqual(['field1', 'field2'])
+      expect(getSmartSearchFields(['field1', 'field2', 'field3', 'field4', 'field5'])).toEqual([
+        'field1',
+        'field2',
+      ])
     })
 
     it('should include subject as a primary field', () => {

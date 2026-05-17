@@ -36,6 +36,14 @@
       "options": {
         "packageRoot": "dist/{projectRoot}"
       }
+    },
+    "test": {
+      "executor": "@nx/vitest:test",
+      "outputs": ["{workspaceRoot}/coverage/libs/shared-components"],
+      "options": {
+        "configFile": "libs/shared-components/vitest.config.ts",
+        "reportsDirectory": "libs/shared-components/../../coverage/libs/shared-components"
+      }
     }
   }
 }

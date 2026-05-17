@@ -1,4 +1,9 @@
-import { Injectable, UnauthorizedException, BadRequestException, ConflictException } from '@nestjs/common'
+import {
+  Injectable,
+  UnauthorizedException,
+  BadRequestException,
+  ConflictException,
+} from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { OAuth2Client } from 'google-auth-library'
 import { OAuthApp } from '@octokit/oauth-app'
@@ -127,7 +132,7 @@ export class OAuthService {
             primary: boolean
             verified: boolean
           }>
-          const primaryEmail = emails.find((e) => e.primary && e.verified)
+          const primaryEmail = emails.find(e => e.primary && e.verified)
           email = primaryEmail?.email || emails[0]?.email
         }
       }
@@ -215,7 +220,7 @@ export class OAuthService {
       )
     }
 
-    const account = user.oAuthAccounts.find((acc) => acc.provider === provider)
+    const account = user.oAuthAccounts.find(acc => acc.provider === provider)
     if (!account) {
       throw new BadRequestException('OAuth account not linked')
     }

@@ -1,23 +1,23 @@
 import React from 'react'
-import { 
-  CheckCircleIcon, 
-  XCircleIcon, 
-  ExclamationTriangleIcon, 
+import {
+  CheckCircleIcon,
+  XCircleIcon,
+  ExclamationTriangleIcon,
   ClockIcon,
   QuestionMarkCircleIcon,
   PauseCircleIcon,
 } from '@heroicons/react/24/solid'
 
-export type StatusType = 
-  | 'active' 
-  | 'inactive' 
-  | 'pending' 
-  | 'approved' 
-  | 'rejected' 
-  | 'warning' 
-  | 'error' 
-  | 'success' 
-  | 'paused' 
+export type StatusType =
+  | 'active'
+  | 'inactive'
+  | 'pending'
+  | 'approved'
+  | 'rejected'
+  | 'warning'
+  | 'error'
+  | 'success'
+  | 'paused'
   | 'unknown'
 
 export type StatusSize = 'small' | 'medium' | 'large'
@@ -203,31 +203,31 @@ export function AdminStatusDisplay({
   const sizeClasses = getSizeClasses(size)
   const variantClasses = getVariantClasses(variant)
   const IconComponent = config.icon
-  
+
   const displayLabel = label || config.defaultLabel
-  
+
   const shouldShowDot = variant === 'dot'
   const shouldShowIcon = showIcon && !shouldShowDot
   const isClickable = !!onClick
-  
+
   const baseClasses = `${variantClasses} ${sizeClasses.text} ${sizeClasses.padding} ${config.bgColor} ${config.textColor} ${config.borderColor}`
   const interactiveClasses = isClickable ? 'cursor-pointer hover:opacity-80' : ''
   const finalClasses = `${baseClasses} ${interactiveClasses} ${className}`.trim()
 
   const renderDot = () => {
     if (!shouldShowDot) return null
-    
+
     return (
-      <span className={`inline-block rounded-full mr-2 ${config.bgColor.replace('bg-', 'bg-').replace('-100', '-400')} ${sizeClasses.dot}`} />
+      <span
+        className={`inline-block rounded-full mr-2 ${config.bgColor.replace('bg-', 'bg-').replace('-100', '-400')} ${sizeClasses.dot}`}
+      />
     )
   }
 
   const renderIcon = () => {
     if (!shouldShowIcon) return null
-    
-    return (
-      <IconComponent className={`${sizeClasses.icon} ${displayLabel ? 'mr-1.5' : ''}`} />
-    )
+
+    return <IconComponent className={`${sizeClasses.icon} ${displayLabel ? 'mr-1.5' : ''}`} />
   }
 
   const content = (
@@ -246,12 +246,7 @@ export function AdminStatusDisplay({
 
   if (isClickable) {
     return (
-      <button
-        type="button"
-        onClick={handleClick}
-        className={finalClasses}
-        title={tooltip}
-      >
+      <button type="button" onClick={handleClick} className={finalClasses} title={tooltip}>
         {content}
       </button>
     )
@@ -275,18 +270,14 @@ export function AdminUserStatus({
 
   const dotSizeClass = sizeClasses.dot
   const textSizeClass = showLabel ? sizeClasses.text : ''
-  
+
   return (
     <div className={`inline-flex items-center ${className}`}>
-      <span 
+      <span
         className={`inline-block rounded-full ${config.color} ${dotSizeClass}`}
         aria-label={config.label}
       />
-      {showLabel && (
-        <span className={`ml-2 text-gray-700 ${textSizeClass}`}>
-          {config.label}
-        </span>
-      )}
+      {showLabel && <span className={`ml-2 text-gray-700 ${textSizeClass}`}>{config.label}</span>}
     </div>
   )
 }

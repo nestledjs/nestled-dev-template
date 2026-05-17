@@ -49,10 +49,14 @@ export class GcsStorageService implements IStorageService, OnModuleInit {
       return
     }
 
+    if (!projectId || !bucketName) {
+      throw new Error('Google Cloud Storage not configured. Required: GCS_PROJECT_ID, GCS_BUCKET')
+    }
+
     // After validation, we know these values are defined
-    this.bucketName = bucketName!
+    this.bucketName = bucketName
     this.storage = new Storage({
-      projectId: projectId!,
+      projectId,
       ...(keyFilename && { keyFilename }),
     })
 
@@ -70,9 +74,7 @@ export class GcsStorageService implements IStorageService, OnModuleInit {
     const uniqueFilename = `${name}-${uuidv4().split('-')[0]}${ext}`
 
     // Build the GCS blob name (path in bucket)
-    const blobName = options.folder
-      ? `${options.folder}/${uniqueFilename}`
-      : uniqueFilename
+    const blobName = options.folder ? `${options.folder}/${uniqueFilename}` : uniqueFilename
 
     const blob = this.bucket.file(blobName)
 
@@ -92,7 +94,9 @@ export class GcsStorageService implements IStorageService, OnModuleInit {
       })
 
       const url = await this.getUrl(blobName)
-      const publicUrl = options.isPublic ? `https://storage.googleapis.com/${this.bucketName}/${blobName}` : undefined
+      const publicUrl = options.isPublic
+        ? `https://storage.googleapis.com/${this.bucketName}/${blobName}`
+        : undefined
 
       return {
         id: uuidv4(),

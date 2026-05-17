@@ -42,7 +42,8 @@ function parseSchemaPathSettingFromConfigContent(content: string): string | null
     const parts = extractQuotedStrings(joinArgs)
     if (parts.length) return parts.join('/')
   }
-  return content.match(/schema\s*:\s*['"`]([^'"`]+)['"`]/)?.[1] ?? null
+  const schemaMatch = /schema\s*:\s*['"`]([^'"`]+)['"`]/.exec(content)
+  return schemaMatch?.[1] ?? null
 }
 
 // Resolve schema setting from prisma.config.ts or package.json
@@ -194,14 +195,28 @@ async function main() {
 }
 
 const SCALAR_TS_TYPE: Record<string, string> = {
-  Int: 'number', Float: 'number', Decimal: 'Decimal', String: 'string', ID: 'string',
-  Boolean: 'boolean', DateTime: 'Date', Json: 'JsonValue', BigInt: 'bigint', Bytes: 'Buffer',
+  Int: 'number',
+  Float: 'number',
+  Decimal: 'Decimal',
+  String: 'string',
+  ID: 'string',
+  Boolean: 'boolean',
+  DateTime: 'Date',
+  Json: 'JsonValue',
+  BigInt: 'bigint',
+  Bytes: 'Buffer',
 }
 
 const SCALAR_GQL_TYPE: Record<string, string> = {
-  Int: 'Int', Float: 'Float', Decimal: 'GraphQLDecimal', BigInt: 'GraphQLBigInt',
-  Json: 'GraphQLJSONObject', DateTime: 'GraphQLISODateTime', Boolean: 'Boolean',
-  String: 'String', ID: 'String',
+  Int: 'Int',
+  Float: 'Float',
+  Decimal: 'GraphQLDecimal',
+  BigInt: 'GraphQLBigInt',
+  Json: 'GraphQLJSONObject',
+  DateTime: 'GraphQLISODateTime',
+  Boolean: 'Boolean',
+  String: 'String',
+  ID: 'String',
 }
 
 function resolveGraphQLType(originalType: string, kind: string): string {
@@ -250,7 +265,8 @@ function generateModels(models: readonly any[], enums: readonly any[]): string {
     output += `import { GraphQLDecimal } from 'prisma-graphql-type-decimal';\n`
   }
   if (usesType(models, 'BigInt')) output += `import { GraphQLBigInt } from 'graphql-scalars';\n`
-  if (usesType(models, 'Json')) output += `import type { JsonValue } from '@prisma/client/runtime/client';\n`
+  if (usesType(models, 'Json'))
+    output += `import type { JsonValue } from '@prisma/client/runtime/client';\n`
 
   const enumNames = enums.map((e: { name: string }) => e.name)
   if (enumNames.length > 0) output += `import { ${enumNames.join(', ')} } from './enums';\n`

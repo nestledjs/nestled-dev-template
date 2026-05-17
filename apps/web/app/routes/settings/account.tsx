@@ -1,10 +1,6 @@
 import React, { useState } from 'react'
 import { useLoaderData } from 'react-router'
-import {
-  CalendarIcon,
-  CheckCircleIcon,
-  UserCircleIcon,
-} from '@heroicons/react/24/outline'
+import { CalendarIcon, CheckCircleIcon, UserCircleIcon } from '@heroicons/react/24/outline'
 import { apolloLoader } from '@nestled-template/shared/apollo'
 import {
   Me,

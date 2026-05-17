@@ -43,9 +43,7 @@ export class BillingResolver {
   }
 
   @Mutation(() => Boolean)
-  async syncStripeSubscription(
-    @Args('subscriptionId') subscriptionId: string,
-  ): Promise<boolean> {
+  async syncStripeSubscription(@Args('subscriptionId') subscriptionId: string): Promise<boolean> {
     await this.syncService.syncSubscriptionFromStripe(subscriptionId)
     return true
   }

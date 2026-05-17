@@ -19,7 +19,12 @@ export class OAuthController {
    * URL: /api/auth/google/callback?code=...&state=...
    */
   @Get('google/callback')
-  async googleCallback(@Query('code') code: string, @Query('error') error: string, @Req() req: Request, @Res() res: Response) {
+  async googleCallback(
+    @Query('code') code: string,
+    @Query('error') error: string,
+    @Req() req: Request,
+    @Res() res: Response,
+  ) {
     const siteUrl = this.config.get<string>('siteUrl') || 'http://localhost:4200'
 
     try {
@@ -70,7 +75,12 @@ export class OAuthController {
    * URL: /api/auth/github/callback?code=...&state=...
    */
   @Get('github/callback')
-  async githubCallback(@Query('code') code: string, @Query('error') error: string, @Req() req: Request, @Res() res: Response) {
+  async githubCallback(
+    @Query('code') code: string,
+    @Query('error') error: string,
+    @Req() req: Request,
+    @Res() res: Response,
+  ) {
     const siteUrl = this.config.get<string>('siteUrl') || 'http://localhost:4200'
 
     try {

@@ -42,7 +42,7 @@ describe('RelationFilterField', () => {
           relatedModelName="User"
           currentValue={null}
           onChange={mockOnChange}
-        />
+        />,
       )
 
       expect(screen.getByText('User Id')).toBeInTheDocument()
@@ -55,7 +55,7 @@ describe('RelationFilterField', () => {
           relatedModelName="User"
           currentValue={null}
           onChange={mockOnChange}
-        />
+        />,
       )
 
       expect(screen.getByText('Select user...')).toBeInTheDocument()
@@ -78,7 +78,7 @@ describe('RelationFilterField', () => {
           relatedModelName="User"
           currentValue={currentValue}
           onChange={mockOnChange}
-        />
+        />,
       )
 
       expect(screen.getByText('John Doe')).toBeInTheDocument()
@@ -91,7 +91,7 @@ describe('RelationFilterField', () => {
           relatedModelName="User"
           currentValue={null}
           onChange={mockOnChange}
-        />
+        />,
       )
 
       expect(screen.queryByPlaceholderText('Search user...')).not.toBeInTheDocument()
@@ -108,7 +108,7 @@ describe('RelationFilterField', () => {
           relatedModelName="User"
           currentValue={null}
           onChange={mockOnChange}
-        />
+        />,
       )
 
       const button = screen.getByText('Select user...')
@@ -128,7 +128,7 @@ describe('RelationFilterField', () => {
           relatedModelName="User"
           currentValue={null}
           onChange={mockOnChange}
-        />
+        />,
       )
 
       const button = screen.getByText('Select user...')
@@ -155,7 +155,7 @@ describe('RelationFilterField', () => {
           relatedModelName="User"
           currentValue={null}
           onChange={mockOnChange}
-        />
+        />,
       )
 
       const button = screen.getByText('Select user...')
@@ -196,7 +196,7 @@ describe('RelationFilterField', () => {
           relatedModelName="User"
           currentValue={null}
           onChange={mockOnChange}
-        />
+        />,
       )
 
       // Open dropdown
@@ -227,7 +227,7 @@ describe('RelationFilterField', () => {
           relatedModelName="User"
           currentValue={null}
           onChange={mockOnChange}
-        />
+        />,
       )
 
       // Open dropdown
@@ -261,7 +261,7 @@ describe('RelationFilterField', () => {
           relatedModelName="User"
           currentValue={null}
           onChange={mockOnChange}
-        />
+        />,
       )
 
       // Open dropdown
@@ -293,7 +293,7 @@ describe('RelationFilterField', () => {
           relatedModelName="User"
           currentValue={{ id: '1' }}
           onChange={mockOnChange}
-        />
+        />,
       )
 
       // Open dropdown
@@ -316,7 +316,7 @@ describe('RelationFilterField', () => {
           relatedModelName="User"
           currentValue={{ id: '1' }}
           onChange={mockOnChange}
-        />
+        />,
       )
 
       // Open dropdown
@@ -342,7 +342,7 @@ describe('RelationFilterField', () => {
           relatedModelName="User"
           currentValue={{ id: '1' }}
           onChange={mockOnChange}
-        />
+        />,
       )
 
       // Open dropdown
@@ -374,7 +374,7 @@ describe('RelationFilterField', () => {
           relatedModelName="User"
           currentValue={null}
           onChange={mockOnChange}
-        />
+        />,
       )
 
       // Open dropdown
@@ -397,7 +397,7 @@ describe('RelationFilterField', () => {
           relatedModelName="User"
           currentValue={null}
           onChange={mockOnChange}
-        />
+        />,
       )
 
       // Initially closed - should pass empty string and false
@@ -414,7 +414,7 @@ describe('RelationFilterField', () => {
           relatedModelName="User"
           currentValue={null}
           onChange={mockOnChange}
-        />
+        />,
       )
 
       // Should pass true for isOpen
@@ -442,7 +442,7 @@ describe('RelationFilterField', () => {
           relatedModelName="User"
           currentValue={null}
           onChange={mockOnChange}
-        />
+        />,
       )
 
       // Open dropdown
@@ -467,7 +467,7 @@ describe('RelationFilterField', () => {
           relatedModelName="User"
           currentValue={null}
           onChange={mockOnChange}
-        />
+        />,
       )
 
       // Open dropdown
@@ -492,7 +492,7 @@ describe('RelationFilterField', () => {
           relatedModelName="User"
           currentValue={null}
           onChange={mockOnChange}
-        />
+        />,
       )
 
       // Open dropdown
@@ -518,7 +518,7 @@ describe('RelationFilterField', () => {
           relatedModelName="User"
           currentValue={null}
           onChange={mockOnChange}
-        />
+        />,
       )
 
       expect(screen.getByPlaceholderText('Enter ID...')).toBeInTheDocument()
@@ -539,7 +539,7 @@ describe('RelationFilterField', () => {
           relatedModelName="User"
           currentValue={null}
           onChange={mockOnChange}
-        />
+        />,
       )
 
       expect(screen.getByText('User Id ID')).toBeInTheDocument()
@@ -561,7 +561,7 @@ describe('RelationFilterField', () => {
           relatedModelName="User"
           currentValue={currentValue}
           onChange={mockOnChange}
-        />
+        />,
       )
 
       const input = screen.getByPlaceholderText('Enter ID...') as HTMLInputElement
@@ -582,7 +582,7 @@ describe('RelationFilterField', () => {
           relatedModelName="User"
           currentValue={null}
           onChange={mockOnChange}
-        />
+        />,
       )
 
       const input = screen.getByPlaceholderText('Enter ID...')
@@ -606,7 +606,7 @@ describe('RelationFilterField', () => {
           relatedModelName="User"
           currentValue={{ id: 'test' }}
           onChange={mockOnChange}
-        />
+        />,
       )
 
       const input = screen.getByPlaceholderText('Enter ID...')
@@ -624,7 +624,7 @@ describe('RelationFilterField', () => {
           relatedModelName="User"
           currentValue={null}
           onChange={mockOnChange}
-        />
+        />,
       )
 
       expect(mockUseClickOutside).toHaveBeenCalled()
@@ -644,7 +644,7 @@ describe('RelationFilterField', () => {
           relatedModelName="User"
           currentValue={null}
           onChange={mockOnChange}
-        />
+        />,
       )
 
       // Open dropdown
@@ -658,7 +658,7 @@ describe('RelationFilterField', () => {
           relatedModelName="User"
           currentValue={null}
           onChange={mockOnChange}
-        />
+        />,
       )
 
       // Check last call to useClickOutside
@@ -680,7 +680,7 @@ describe('RelationFilterField', () => {
           relatedModelName="User"
           currentValue={currentValue}
           onChange={mockOnChange}
-        />
+        />,
       )
 
       expect(mockUseRelationData).toHaveBeenCalledWith('User', '', false, '123')
@@ -693,7 +693,7 @@ describe('RelationFilterField', () => {
           relatedModelName="User"
           currentValue={null}
           onChange={mockOnChange}
-        />
+        />,
       )
 
       expect(mockUseRelationData).toHaveBeenCalledWith('User', '', false, undefined)
@@ -720,7 +720,7 @@ describe('RelationFilterField', () => {
           relatedModelName="User"
           currentValue={currentValue}
           onChange={mockOnChange}
-        />
+        />,
       )
 
       expect(screen.getByText('Jane Smith')).toBeInTheDocument()
@@ -746,7 +746,7 @@ describe('RelationFilterField', () => {
           relatedModelName="User"
           currentValue={currentValue}
           onChange={mockOnChange}
-        />
+        />,
       )
 
       // Should still show placeholder since item not found
@@ -762,7 +762,7 @@ describe('RelationFilterField', () => {
           relatedModelName="Organization"
           currentValue={null}
           onChange={mockOnChange}
-        />
+        />,
       )
 
       expect(screen.getByText('Organization Id')).toBeInTheDocument()
@@ -782,7 +782,7 @@ describe('RelationFilterField', () => {
           relatedModelName="User"
           currentValue={null}
           onChange={mockOnChange}
-        />
+        />,
       )
 
       expect(screen.getByText('User_id ID')).toBeInTheDocument()

@@ -12,7 +12,7 @@ export function EnumFilter({
   fieldName,
   currentValue,
   onChange,
-  enumValues
+  enumValues,
 }: Readonly<EnumFilterProps>) {
   const handleChange = (value: string) => {
     if (value === '') {
@@ -30,20 +30,18 @@ export function EnumFilter({
       <select
         id={fieldName}
         value={currentValue ?? ''}
-        onChange={(e) => handleChange(e.target.value)}
+        onChange={e => handleChange(e.target.value)}
         className="w-full px-2 py-1 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-web focus:border-green-web"
       >
         <option value="">All values</option>
-        {enumValues.map((value) => (
+        {enumValues.map(value => (
           <option key={value} value={value}>
             {formatFieldName(value)}
           </option>
         ))}
       </select>
       {currentValue && (
-        <div className="text-xs text-gray-500">
-          Filtered by: {formatFieldName(currentValue)}
-        </div>
+        <div className="text-xs text-gray-500">Filtered by: {formatFieldName(currentValue)}</div>
       )}
     </div>
   )

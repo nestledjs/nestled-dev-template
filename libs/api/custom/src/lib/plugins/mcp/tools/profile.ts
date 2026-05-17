@@ -7,10 +7,12 @@ export function registerProfileTools(
   prisma: PrismaClient,
   auth: McpAuthContext,
 ) {
-  server.tool(
+  server.registerTool(
     'get_profile',
-    'Get the current authenticated user profile',
-    {},
+    {
+      description: 'Get the current authenticated user profile',
+      inputSchema: {},
+    },
     async () => {
       const user = await prisma.user.findUnique({
         where: { id: auth.userId },
@@ -19,7 +21,11 @@ export function registerProfileTools(
           firstName: true,
           lastName: true,
           displayName: true,
-          email: true,
+          emails: {
+            where: { primary: true },
+            select: { email: true },
+            take: 1,
+          },
           createdAt: true,
           organizations: {
             select: {

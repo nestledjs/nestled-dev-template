@@ -21,7 +21,7 @@ export function RelationFieldWrapper({
   relationType,
   initialValue,
   fieldName,
-  basePath = '/admin/data'
+  basePath = '/admin/data',
 }: RelationFieldWrapperProps) {
   const [currentValue, setCurrentValue] = useState(initialValue || '')
 
