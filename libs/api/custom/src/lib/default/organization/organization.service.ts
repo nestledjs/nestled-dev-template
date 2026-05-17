@@ -213,8 +213,8 @@ export class OrganizationService {
     organizationId: string,
     input: UpdateOrganizationInput,
   ): Promise<Organization> {
-    // Check if user has permission to update organization
-    const canUpdate = await this.hasPermission(userId, organizationId, 'organization', 'update')
+    // Organization identity and branding are owner-managed by default.
+    const canUpdate = await this.isOwner(userId, organizationId)
 
     if (!canUpdate) {
       throw new ForbiddenException('You do not have permission to update this organization')

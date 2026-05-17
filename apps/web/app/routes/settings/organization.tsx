@@ -127,7 +127,7 @@ export default function OrganizationSettings() {
   const client = useApolloClient()
   const canUpdateOrganization = hasPermission(
     activeOrganizationMember?.role?.permissions,
-    'organization:update',
+    'organization:delete',
   )
 
   async function handleUpdateOrganization(input: { name: string }) {
