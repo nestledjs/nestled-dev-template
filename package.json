@@ -2,6 +2,11 @@
   "name": "@nestled-template/source",
   "version": "0.0.0",
   "license": "MIT",
+  "packageManager": "pnpm@10.33.0",
+  "engines": {
+    "node": "22.14.0",
+    "pnpm": "10.33.0"
+  },
   "scripts": {
     "pre-publish": "pnpm exec nx affected -t lint build test:unit --base=develop",
     "pub-build": "nx run-many -t build -p shared-components,data-browser",
