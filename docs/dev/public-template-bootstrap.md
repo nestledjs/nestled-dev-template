@@ -62,7 +62,7 @@ Copy the template runtime and shared infrastructure:
 - `libs/web-ui`
 - `scripts`
 - `.github`
-- `.nestled-template`
+- `.nestled-updates`
 - root config files such as `package.json`, `pnpm-lock.yaml`, `nx.json`, `tsconfig*.json`,
   `eslint.config.*`, `prettier` config, Prisma config, Docker/dev-service config, and CI config.
 
@@ -77,7 +77,7 @@ Remove or rewrite dev-only material before committing `nestled-template`:
 - Remove or relocate internal planning docs that are not useful to adopters.
 - Keep security model docs that help adopters understand auth, RBAC, tenancy, audit logging, and
   Doctor.
-- Keep `.nestled-template/UPGRADER-CONTRACT.md` and public upgrade-note docs.
+- Keep `.nestled-updates/UPGRADER-CONTRACT.md` and public upgrade-note docs.
 - Remove any source-only notes that are not downstream actions, unless they are `priority: ignore`
   and useful as historical context.
 - Confirm no local secrets, private URLs, personal paths, or internal-only task notes are present.
@@ -115,7 +115,7 @@ In those repos, Doctor requires sensitive template changes to include an upgrade
 `priority: ignore` note.
 
 Downstream apps should not be forced to create outbound template notes for local app changes.
-Downstream clones can keep `.nestled-template/upgrade-notes` so the updater can read inbound notes,
+Downstream clones can keep `.nestled-updates/upgrade-notes` so the updater can read inbound notes,
 but Doctor should skip the upgrade-note gate there. If a temporary remote setup confuses detection,
 use:
 
