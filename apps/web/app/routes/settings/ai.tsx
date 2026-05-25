@@ -1,5 +1,4 @@
 import { useCallback, useState } from 'react'
-import type { FormEvent } from 'react'
 import { useLoaderData } from 'react-router'
 import { KeyIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline'
 import { apolloLoader } from '@nestled-template/shared/apollo'
@@ -15,105 +14,17 @@ import {
 } from '@nestled-template/shared/sdk'
 import { useGlobalCtx } from '@nestled-template/web'
 import { useMutation, useReadQuery, type QueryRef } from '@apollo/client/react'
-import { MCP_SERVER_URL, NewTokenDisplay, TokenMeta, formatDate } from './_mcp-shared'
+import { CreateTokenModal, McpSetupCards, NewTokenDisplay, TokenMeta } from './_mcp-shared'
 
 const AVAILABLE_TOOLS = [
   { name: 'get_profile', description: 'Read the authenticated user profile' },
   { name: 'get_organization', description: 'Read the scoped organization profile and members' },
-]
+] as const
 
 export const loader = apolloLoader()(({ preloadQuery }) => {
   const tokensQueryRef = preloadQuery<ListApiTokensQuery>(ListApiTokens)
   return { tokensQueryRef }
 })
-
-type ApiTokenListItem = ListApiTokensQuery['listApiTokens'][number]
-
-
-function CreateTokenModal({
-  isOpen,
-  onClose,
-  onSubmit,
-  generating,
-  error,
-}: Readonly<{
-  isOpen: boolean
-  onClose: () => void
-  onSubmit: (name: string) => void
-  generating: boolean
-  error: string | null
-}>) {
-  const [name, setName] = useState('')
-
-  function handleSubmit(event: FormEvent) {
-    event.preventDefault()
-    const trimmed = name.trim()
-    if (!trimmed) return
-
-    onSubmit(trimmed)
-    setName('')
-  }
-
-  function handleClose() {
-    setName('')
-    onClose()
-  }
-
-  if (!isOpen) return null
-
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
-      <div className="w-full max-w-md rounded-xl border border-zinc-200 bg-white p-6 shadow-2xl dark:border-white/10 dark:bg-zinc-900">
-        <h3 className="mb-1 text-lg font-semibold text-zinc-900 dark:text-white">
-          Generate MCP Token
-        </h3>
-        <p className="mb-4 text-sm text-zinc-500 dark:text-zinc-400">
-          This token gives AI assistants access to the selected organization as your user account.
-        </p>
-        <form onSubmit={handleSubmit}>
-          {error && (
-            <div className="mb-4 rounded-lg border border-rose-200 bg-rose-50 p-3 text-sm text-rose-700 dark:border-rose-500/20 dark:bg-rose-500/10 dark:text-rose-300">
-              {error}
-            </div>
-          )}
-          <label
-            htmlFor="mcp-token-name"
-            className="mb-2 block text-sm font-medium text-zinc-700 dark:text-zinc-300"
-          >
-            Token Name
-          </label>
-          <input
-            id="mcp-token-name"
-            type="text"
-            value={name}
-            onChange={event => setName(event.target.value)}
-            placeholder="Claude Desktop"
-            required
-            autoFocus
-            className="w-full rounded-lg border border-zinc-300 bg-white px-4 py-2 text-zinc-900 focus:ring-2 focus:ring-emerald-500 dark:border-white/10 dark:bg-zinc-800 dark:text-white"
-          />
-          <div className="mt-6 flex gap-3">
-            <button
-              type="submit"
-              disabled={generating || !name.trim()}
-              className="flex-1 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-emerald-700 disabled:bg-emerald-300"
-            >
-              {generating ? 'Generating...' : 'Generate Token'}
-            </button>
-            <button
-              type="button"
-              onClick={handleClose}
-              disabled={generating}
-              className="rounded-lg bg-zinc-200 px-4 py-2 text-sm font-medium text-zinc-900 transition-colors hover:bg-zinc-300 dark:bg-zinc-700 dark:text-white dark:hover:bg-zinc-600"
-            >
-              Cancel
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
-  )
-}
 
 export default function AiSettingsPage() {
   const loaderData = useLoaderData() as {
@@ -288,50 +199,7 @@ export default function AiSettingsPage() {
             </div>
           </div>
 
-          <div className="grid gap-6 lg:grid-cols-[minmax(0,1.2fr)_minmax(260px,0.8fr)]">
-            <div className="rounded-xl border border-zinc-200 bg-white p-6 dark:border-white/10 dark:bg-white/5">
-              <h3 className="mb-3 text-base font-semibold text-zinc-900 dark:text-white">
-                Claude Desktop Template
-              </h3>
-              <pre className="overflow-x-auto whitespace-pre rounded-lg bg-zinc-900 p-4 text-xs text-emerald-300">
-                {JSON.stringify(
-                  {
-                    mcpServers: {
-                      nestled: {
-                        type: 'http',
-                        url: MCP_SERVER_URL,
-                        headers: { Authorization: 'Bearer YOUR_TOKEN' },
-                      },
-                    },
-                  },
-                  null,
-                  2,
-                )}
-              </pre>
-              <p className="mt-3 text-xs text-zinc-500 dark:text-zinc-400">
-                MCP server URL:{' '}
-                <code className="rounded bg-zinc-100 px-1 dark:bg-zinc-800">{MCP_SERVER_URL}</code>
-              </p>
-            </div>
-
-            <div className="rounded-xl border border-zinc-200 bg-white p-6 dark:border-white/10 dark:bg-white/5">
-              <h3 className="mb-4 text-base font-semibold text-zinc-900 dark:text-white">
-                Available Tools
-              </h3>
-              <div className="space-y-3">
-                {AVAILABLE_TOOLS.map(tool => (
-                  <div key={tool.name} className="flex gap-3">
-                    <code className="self-start whitespace-nowrap rounded bg-emerald-50 px-2 py-1 font-mono text-xs text-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-300">
-                      {tool.name}
-                    </code>
-                    <span className="text-sm text-zinc-600 dark:text-zinc-400">
-                      {tool.description}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
+          <McpSetupCards tools={AVAILABLE_TOOLS} />
         </>
       ) : (
         <div className="rounded-lg border border-zinc-200 bg-zinc-50 p-6 text-sm text-zinc-600 dark:border-white/10 dark:bg-white/5 dark:text-zinc-400">
@@ -345,6 +213,11 @@ export default function AiSettingsPage() {
         onSubmit={handleGenerate}
         generating={generating}
         error={error}
+        title="Generate MCP Token"
+        description="This token gives AI assistants access to the selected organization as your user account."
+        placeholder="Claude Desktop"
+        submitLabel="Generate Token"
+        loadingLabel="Generating..."
       />
     </section>
   )
