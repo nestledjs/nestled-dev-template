@@ -23,7 +23,11 @@ export class ApiTokenAuthMiddleware implements NestMiddleware {
     const authHeader = req.headers['authorization'] as string | undefined
 
     if (authHeader?.startsWith('Bearer ')) {
-      const token = authHeader.substring(7) // Remove 'Bearer ' prefix
+      const token = authHeader.substring(7)
+
+      if (!/^[a-f0-9]{64}$/i.test(token)) {
+        return next()
+      }
 
       try {
         // Validate the token
@@ -49,7 +53,6 @@ export class ApiTokenAuthMiddleware implements NestMiddleware {
 
           if (user) {
             const apiTokenReq = req as ApiTokenRequest
-            // Attach user to request object for downstream guards/resolvers
             apiTokenReq.user = user
             apiTokenReq.apiTokenId = result.tokenId
             apiTokenReq.apiTokenOrganizationId = result.organizationId
