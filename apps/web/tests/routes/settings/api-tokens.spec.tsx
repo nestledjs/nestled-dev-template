@@ -31,19 +31,22 @@ vi.mock('@nestled-template/shared/sdk', async importOriginal => {
   }
 })
 
-vi.mock('../../../app/routes/settings/_mcp-shared', () => ({
-  MCP_SERVER_URL: 'http://localhost:3000/api/mcp',
-  buildClaudeConfig: (token: string) =>
-    JSON.stringify({ mcpServers: { nestled: { headers: { Authorization: `Bearer ${token}` } } } }),
-  formatDate: (v: string | null | undefined) => (v ? new Date(v).toLocaleDateString() : null),
-  TokenMeta: ({ token }: any) => <span data-testid="token-meta">{token.createdAt}</span>,
-  NewTokenDisplay: ({ name, onDismiss }: any) => (
-    <div data-testid="new-token-display">
-      <span>Token Created: {name}</span>
-      <button onClick={onDismiss}>Dismiss</button>
-    </div>
-  ),
-}))
+vi.mock('../../../app/routes/settings/_mcp-shared', async importOriginal => {
+  const actual = await importOriginal<typeof import('../../../app/routes/settings/_mcp-shared')>()
+  return {
+    ...actual,
+    MCP_SERVER_URL: 'http://localhost:3000/api/mcp',
+    buildClaudeConfig: (token: string) =>
+      JSON.stringify({ mcpServers: { nestled: { headers: { Authorization: `Bearer ${token}` } } } }),
+    TokenMeta: ({ token }: any) => <span data-testid="token-meta">{token.createdAt}</span>,
+    NewTokenDisplay: ({ name, onDismiss }: any) => (
+      <div data-testid="new-token-display">
+        <span>Token Created: {name}</span>
+        <button onClick={onDismiss}>Dismiss</button>
+      </div>
+    ),
+  }
+})
 
 const mockGenerateToken = vi.fn()
 const mockRevokeToken = vi.fn()
