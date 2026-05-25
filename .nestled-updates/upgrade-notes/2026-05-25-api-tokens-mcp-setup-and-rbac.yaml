@@ -1,0 +1,37 @@
+id: 2026-05-25-api-tokens-mcp-setup-and-rbac
+title: Restrict AI & MCP nav to admins; add MCP setup to personal tokens page
+priority: normal
+area: web
+type: correctness
+delivery: code-patch
+
+intent: >
+  Limit the AI & MCP settings nav item to organization Owners and Admins, and bring the
+  personal API Tokens page to feature parity with the AI & MCP page by adding inline token
+  display with Claude Desktop config, a template snippet, and an available-tools reference.
+
+why: >
+  The AI & MCP page creates organization-scoped tokens. Allowing any Member to generate
+  org-scoped tokens is overly permissive — that capability should be gated behind
+  organization:update (Owner/Admin only). Members can still use personal tokens, and the
+  personal tokens page now provides the same MCP setup guidance so no information is lost.
+
+affectedPaths:
+  - apps/web/app/routes/settings/_layout.tsx
+  - apps/web/app/routes/settings/api-tokens.tsx
+
+packageReleases: []
+
+skipIf:
+  - The downstream project has already restricted AI & MCP to organization:update or higher.
+  - The downstream project has removed or significantly customised either settings page.
+
+verification:
+  - pnpm nx typecheck web
+  - pnpm nx lint web
+
+agentHints:
+  - "In apps/web/app/routes/settings/_layout.tsx: change the AI & MCP nav item permission from 'organization:read' to 'organization:update'."
+  - "In apps/web/app/routes/settings/api-tokens.tsx: add MCP_SERVER_URL constant (same derivation as ai.tsx), buildClaudeConfig helper, NewTokenDisplay inline component (shows token + Claude Desktop config with copy buttons), and refactor the page to use a CreateTokenModal + inline display pattern matching ai.tsx."
+  - "Personal AVAILABLE_TOOLS should be get_profile and list_organizations (no get_organization since there is no org scope)."
+  - "Remove the cross-reference to 'AI & MCP settings' from the personal tokens page description."
