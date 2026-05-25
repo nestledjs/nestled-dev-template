@@ -1,37 +1,47 @@
 id: 2026-05-25-api-tokens-mcp-setup-and-rbac
-title: Restrict AI & MCP nav to admins; add MCP setup to personal tokens page
+title: Restrict AI & MCP nav to admins; fix list_organizations for personal tokens; add MCP setup to personal tokens page
 priority: normal
 area: web
 type: correctness
 delivery: code-patch
 
 intent: >
-  Limit the AI & MCP settings nav item to organization Owners and Admins, and bring the
-  personal API Tokens page to feature parity with the AI & MCP page by adding inline token
-  display with Claude Desktop config, a template snippet, and an available-tools reference.
+  Limit the AI & MCP settings nav item to organization Owners and Admins. Fix
+  list_organizations on the MCP server so personal tokens return the user's own
+  organization memberships (not admin-only all-orgs). Bring the personal API Tokens page
+  to feature parity with the AI & MCP page by adding inline token display with Claude
+  Desktop config, a template snippet, and an available-tools reference.
 
 why: >
   The AI & MCP page creates organization-scoped tokens. Allowing any Member to generate
-  org-scoped tokens is overly permissive — that capability should be gated behind
-  organization:update (Owner/Admin only). Members can still use personal tokens, and the
-  personal tokens page now provides the same MCP setup guidance so no information is lost.
+  org-scoped tokens is overly permissive — gated behind organization:update (Owner/Admin
+  only). The MCP server's list_organizations tool was gated admin-only, meaning regular
+  users with personal tokens could not discover their own organizations via MCP despite
+  being able to see them in the app. The fix applies the principle that MCP access mirrors
+  app access: any data a user can see logged in, they can access via their personal token.
 
 affectedPaths:
   - apps/web/app/routes/settings/_layout.tsx
   - apps/web/app/routes/settings/api-tokens.tsx
+  - apps/web/app/routes/settings/ai.tsx
+  - libs/api/custom/src/lib/plugins/mcp/tools/organization.ts
+  - libs/api/custom/src/lib/plugins/mcp/tools/organization.spec.ts
 
 packageReleases: []
 
 skipIf:
   - The downstream project has already restricted AI & MCP to organization:update or higher.
   - The downstream project has removed or significantly customised either settings page.
+  - The downstream project has replaced the MCP organization tools entirely.
 
 verification:
+  - pnpm nx test api-custom --testPathPattern="organization.spec"
   - pnpm nx typecheck web
   - pnpm nx lint web
 
 agentHints:
   - "In apps/web/app/routes/settings/_layout.tsx: change the AI & MCP nav item permission from 'organization:read' to 'organization:update'."
-  - "In apps/web/app/routes/settings/api-tokens.tsx: add MCP_SERVER_URL constant (same derivation as ai.tsx), buildClaudeConfig helper, NewTokenDisplay inline component (shows token + Claude Desktop config with copy buttons), and refactor the page to use a CreateTokenModal + inline display pattern matching ai.tsx."
-  - "Personal AVAILABLE_TOOLS should be get_profile and list_organizations (no get_organization since there is no org scope)."
-  - "Remove the cross-reference to 'AI & MCP settings' from the personal tokens page description."
+  - "In libs/api/custom/src/lib/plugins/mcp/tools/organization.ts: change the list_organizations registration condition from 'auth.isAdmin && !auth.organizationId' to '!auth.organizationId'. Inside the handler, branch on auth.isAdmin — admins get all orgs (existing query), regular users get prisma.organizationMember.findMany({ where: { userId: auth.userId } }) with organization and role included."
+  - "In apps/web/app/routes/settings/ai.tsx: remove list_organizations from AVAILABLE_TOOLS — org-scoped tokens never have that tool registered."
+  - "In apps/web/app/routes/settings/api-tokens.tsx: add MCP_SERVER_URL constant (same derivation as ai.tsx), buildClaudeConfig helper, NewTokenDisplay inline component (shows token + Claude Desktop config with copy buttons), and CreateTokenModal component. AVAILABLE_TOOLS should be get_profile and list_organizations only."
+  - "Personal tokens do not register get_organization — omit it from personal page AVAILABLE_TOOLS."

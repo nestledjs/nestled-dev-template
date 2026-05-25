@@ -27,7 +27,6 @@ const MCP_SERVER_URL = `${apiBase}/api/mcp`
 const AVAILABLE_TOOLS = [
   { name: 'get_profile', description: 'Read the authenticated user profile' },
   { name: 'get_organization', description: 'Read the scoped organization profile and members' },
-  { name: 'list_organizations', description: 'List organizations when the token owner is admin' },
 ]
 
 export const loader = apolloLoader()(({ preloadQuery }) => {
