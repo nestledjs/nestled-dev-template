@@ -345,11 +345,7 @@ export default function AiSettingsPage() {
         </button>
       </div>
 
-      {!activeOrganization ? (
-        <div className="rounded-lg border border-zinc-200 bg-zinc-50 p-6 text-sm text-zinc-600 dark:border-white/10 dark:bg-white/5 dark:text-zinc-400">
-          Join or create an organization before generating organization-scoped MCP tokens.
-        </div>
-      ) : (
+      {activeOrganization ? (
         <>
           <div className="mb-6 rounded-xl border border-emerald-200 bg-emerald-50 p-4 dark:border-emerald-800/40 dark:bg-emerald-950/20">
             <h3 className="mb-1 text-sm font-semibold text-emerald-900 dark:text-emerald-300">
@@ -453,6 +449,10 @@ export default function AiSettingsPage() {
             </div>
           </div>
         </>
+      ) : (
+        <div className="rounded-lg border border-zinc-200 bg-zinc-50 p-6 text-sm text-zinc-600 dark:border-white/10 dark:bg-white/5 dark:text-zinc-400">
+          Join or create an organization before generating organization-scoped MCP tokens.
+        </div>
       )}
 
       <CreateTokenModal
