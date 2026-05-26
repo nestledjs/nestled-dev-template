@@ -31,26 +31,7 @@ export default function AiSettingsPage() {
     tokensQueryRef: QueryRef<ListApiTokensQuery>
   }
   const { user, activeOrganization, activeOrganizationMember } = useGlobalCtx()
-
-  const canManageAi =
-    user?.isSuperAdmin ||
-    !!activeOrganizationMember?.role?.permissions?.some(
-      p => p.subject === 'organization' && p.action === 'update',
-    )
-
-  if (!canManageAi) {
-    return (
-      <section>
-        <div className="rounded-xl border border-zinc-200 bg-zinc-50 p-8 text-center dark:border-white/10 dark:bg-white/5">
-          <p className="text-sm text-zinc-600 dark:text-zinc-400">
-            You don't have permission to manage AI &amp; MCP settings. Contact an Owner or Admin.
-          </p>
-        </div>
-      </section>
-    )
-  }
   const { data } = useReadQuery(loaderData.tokensQueryRef)
-  const tokens = data?.listApiTokens || []
 
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [newToken, setNewToken] = useState<{ token: string; name: string } | null>(null)
@@ -64,6 +45,13 @@ export default function AiSettingsPage() {
     RevokeApiToken,
   )
 
+  const canManageAi =
+    user?.isSuperAdmin ||
+    !!activeOrganizationMember?.role?.permissions?.some(
+      p => p.subject === 'organization' && p.action === 'update',
+    )
+
+  const tokens = data?.listApiTokens || []
   const orgTokens = tokens.filter(token => token.organizationId === activeOrganization?.id)
   const activeTokens = orgTokens.filter(token => !token.revoked)
 
@@ -113,6 +101,18 @@ export default function AiSettingsPage() {
     },
     [revokeApiToken],
   )
+
+  if (!canManageAi) {
+    return (
+      <section>
+        <div className="rounded-xl border border-zinc-200 bg-zinc-50 p-8 text-center dark:border-white/10 dark:bg-white/5">
+          <p className="text-sm text-zinc-600 dark:text-zinc-400">
+            You don't have permission to manage AI &amp; MCP settings. Contact an Owner or Admin.
+          </p>
+        </div>
+      </section>
+    )
+  }
 
   return (
     <section>
