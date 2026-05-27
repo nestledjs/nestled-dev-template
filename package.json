@@ -291,7 +291,10 @@
     "overrides": {
       "baseline-browser-mapping": "2.10.30",
       "stylus": "github:stylus/stylus#0.64.0",
-      "sha.js": "^2.4.12"
+      "sha.js": "^2.4.12",
+      "@nestledjs/api": "2.9.5",
+      "@nestledjs/shared": "1.0.2",
+      "@nestledjs/utils": "1.0.2"
     },
     "onlyBuiltDependencies": [
       "@apollo/protobufjs",
