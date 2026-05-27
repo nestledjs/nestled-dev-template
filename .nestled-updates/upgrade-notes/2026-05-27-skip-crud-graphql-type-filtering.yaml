@@ -1,0 +1,39 @@
+id: 2026-05-27-skip-crud-graphql-type-filtering
+title: "@skipCrud models excluded from generated GraphQL ObjectTypes"
+priority: high
+area: api
+type: security
+delivery: code-patch
+
+intent: >
+  Models annotated with @skipCrud must not appear as GraphQL ObjectType classes in the generated
+  models file, and relation fields on other models that point to a @skipCrud model must also be
+  removed. This prevents security-sensitive types from appearing in GraphQL schema introspection
+  even when all CRUD operations and SDK operations for those models are already suppressed.
+
+why: >
+  The generate-models script previously iterated dmmf.datamodel.models without filtering,
+  so every model — including @skipCrud ones such as PasswordHistory — was emitted as an
+  @ObjectType() class. NestJS/GraphQL registers these types at startup and they appear in
+  introspection. A non-skipped model with a back-relation to a @skipCrud model would also pull
+  that type into the schema via its relation field. The net effect was that @skipCrud only
+  blocked CRUD resolver and SDK operation generation, but the type itself and its fields were
+  still fully visible to any client that ran an introspection query.
+
+affectedPaths:
+  - libs/api/core/models/src/lib/generate-models.ts
+
+skipIf:
+  - Your project has no models annotated with @skipCrud.
+  - You have already applied equivalent @skipCrud filtering in your generate-models.ts.
+
+agentHints:
+  - In the main() function, after getDMMF resolves, replace `const models = dmmf.datamodel.models` with filtering logic that computes skippedModelNames as a Set of model names whose documentation includes '@skipCrud', filters allModels to exclude skipped models, and for each remaining model removes relation fields (kind === 'object') whose type is in skippedModelNames.
+  - The enums variable and generateModels() signature are unaffected.
+  - Run `pnpm generate:models` after applying and confirm @skipCrud model classes are absent from the generated output.
+
+verification:
+  - "pnpm generate:models"
+  - "pnpm nx build api"
+  - Confirm no @ObjectType class exists in libs/api/core/models/src/lib/models/models.ts for any @skipCrud model (e.g. PasswordHistory).
+  - Confirm no other generated model class contains a relation field typed to a @skipCrud model.
