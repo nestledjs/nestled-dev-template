@@ -41,7 +41,7 @@
       "executor": "@nx/vitest:test",
       "outputs": ["{workspaceRoot}/coverage/libs/shared-components"],
       "options": {
-        "configFile": "libs/shared-components/vitest.config.ts",
+        "configFile": "libs/shared-components/vitest.config.mts",
         "reportsDirectory": "libs/shared-components/../../coverage/libs/shared-components"
       }
     }

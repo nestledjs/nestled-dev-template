@@ -29,7 +29,7 @@ skipIf:
 
 verification:
   - pnpm nx test web --skipNxCache
-  - pnpm exec vitest --project unit --run --config libs/web-ui/vitest.config.ts src/lib/web-ui-header.spec.tsx --reporter verbose
+  - pnpm exec vitest --project unit --run --config libs/web-ui/vitest.config.mts src/lib/web-ui-header.spec.tsx --reporter verbose
   - pnpm template:validate-upgrade-notes
 
 agentHints:

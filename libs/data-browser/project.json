@@ -11,7 +11,7 @@
       "options": {
         "passWithNoTests": false,
         "reportsDirectory": "{projectRoot}/../../coverage/libs/data-browser",
-        "configFile": "libs/data-browser/vitest.config.ts"
+        "configFile": "libs/data-browser/vitest.config.mts"
       }
     },
     "build": {
