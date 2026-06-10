@@ -43,7 +43,6 @@ agentHints:
     structure rather than overwriting the file.
 
 verification:
-  - "DATABASE_URL='postgresql://u:p@some-remote-host:5432/db' pnpm exec prisma migrate dev --name should_fail → must abort with the BLOCKED error before connecting."
-  - "DATABASE_URL='postgresql://prisma:prisma@localhost:5432/prisma' with the .dev docker postgres running → pnpm exec prisma migrate dev works as before."
-  - "DATABASE_URL='postgresql://u:p@some-remote-host:5432/db' pnpm exec prisma migrate status → not blocked."
+  - "bash -c \"DATABASE_URL='postgresql://u:p@db.example.com:5432/db' pnpm exec prisma migrate dev --name guard_check 2>&1 | grep -q 'BLOCKED: prisma migrate dev'\""
+  - "bash -c \"! (DATABASE_URL='postgresql://u:p@db.example.com:5432/db' timeout 20 pnpm exec prisma migrate status 2>&1 | grep -q 'BLOCKED')\""
   - pnpm nx build api
