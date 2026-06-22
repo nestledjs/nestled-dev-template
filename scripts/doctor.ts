@@ -1095,11 +1095,17 @@ const checkCookieDomainConfig = () => {
   if (!existsSync('.env')) return
   const env = readFileSync('.env', 'utf8')
   const read = (key: string) => {
-    const raw = new RegExp(`^${key}=(.*)$`, 'm').exec(env)?.[1]?.trim() ?? ''
+    const line = env.split('\n').find((l) => l.startsWith(`${key}=`))
+    const raw = line ? line.slice(key.length + 1).trim() : ''
     // Quoted value: strip the surrounding quotes and keep it verbatim. Unquoted
     // value: drop a dotenv-style inline ` # comment` so the parsed value matches
-    // what dotenv actually loads.
-    return /^(['"]).*\1$/.test(raw) ? raw.slice(1, -1) : raw.replace(/\s+#.*$/, '').trim()
+    // what dotenv actually loads. (String ops, not regex — avoids backtracking.)
+    const quote = raw[0]
+    if ((quote === '"' || quote === "'") && raw.length >= 2 && raw[raw.length - 1] === quote) {
+      return raw.slice(1, -1)
+    }
+    const commentAt = raw.indexOf(' #')
+    return (commentAt === -1 ? raw : raw.slice(0, commentAt)).trim()
   }
   const apiDomain = read('API_COOKIE_DOMAIN')
   const webDomain = read('VITE_COOKIE_DOMAIN')
