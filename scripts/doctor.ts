@@ -1091,6 +1091,34 @@ const checkEmulationPrivilegeCeiling = () => {
   }
 }
 
+const checkCookieDomainConfig = () => {
+  if (!existsSync('.env')) return
+  const env = readFileSync('.env', 'utf8')
+  const read = (key: string) =>
+    new RegExp(`^${key}=(.*)$`, 'm')
+      .exec(env)?.[1]
+      ?.trim()
+      .replace(/^['"]|['"]$/g, '') ?? ''
+  const apiDomain = read('API_COOKIE_DOMAIN')
+  const webDomain = read('VITE_COOKIE_DOMAIN')
+  const isLocal = (v: string) => !v || v === 'localhost' || v.startsWith('127.')
+  if (!isLocal(apiDomain) && isLocal(webDomain)) {
+    warn(
+      'cookie-domain',
+      `API_COOKIE_DOMAIN=${apiDomain} is domain-scoped but VITE_COOKIE_DOMAIN is unset/localhost; ` +
+        `the web app cannot clear the session cookie (PIR-173 redirect-loop risk). ` +
+        `Set VITE_COOKIE_DOMAIN to match.`,
+      '.env',
+    )
+  } else if (!isLocal(apiDomain) && !isLocal(webDomain) && apiDomain !== webDomain) {
+    warn(
+      'cookie-domain',
+      `VITE_COOKIE_DOMAIN (${webDomain}) does not match API_COOKIE_DOMAIN (${apiDomain}).`,
+      '.env',
+    )
+  }
+}
+
 const printFindings = (label: string, items: Finding[]) => {
   if (items.length === 0) return
 
@@ -1153,6 +1181,7 @@ checkIntegrationExports()
 checkSkipCrudDocumentation()
 checkPublishablePackageReadmes()
 checkUpgradeNoteImpactGate()
+checkCookieDomainConfig()
 checkGuardRegressions()
 checkUnsafeTypeScriptCasts()
 checkResolverScopeAnchoring()
