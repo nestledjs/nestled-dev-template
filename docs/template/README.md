@@ -106,6 +106,32 @@ opt out with a documented `@skipCrud` annotation.
 Stripe billing is optional. If Stripe environment variables are not configured,
 billing features should remain disabled rather than blocking local development.
 
+## Session Cookies & Split-Subdomain Deploys
+
+The API sets the session cookie's `Domain` attribute from `API_COOKIE_DOMAIN`.
+For local development leave it as `localhost` (host-only). When the web app and
+API are deployed on different subdomains (e.g. `app.example.com` +
+`api.example.com`), set it to the shared registrable domain with a leading dot:
+
+```bash
+API_COOKIE_DOMAIN=.example.com
+```
+
+On such a split-subdomain deploy you **must** also set `VITE_COOKIE_DOMAIN` on
+the web service to the same value:
+
+```bash
+VITE_COOKIE_DOMAIN=.example.com
+```
+
+The web app can only clear a domain-scoped cookie when `VITE_COOKIE_DOMAIN`
+matches `API_COOKIE_DOMAIN`. If they diverge, a rejected/stale session cookie
+becomes un-clearable by the web app and can trigger a login↔dashboard redirect
+loop (PIR-173). The `expired=1` circuit breaker in the login/root/force-logout
+loaders prevents the loop from sustaining itself even when the cookie cannot be
+cleared, but matching the domains is required for a clean logout. Leave both
+unset/`localhost` for single-host or local deploys.
+
 Common variables:
 
 ```bash

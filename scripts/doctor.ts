@@ -1091,6 +1091,46 @@ const checkEmulationPrivilegeCeiling = () => {
   }
 }
 
+const checkCookieDomainConfig = () => {
+  if (!existsSync('.env')) return
+  const env = readFileSync('.env', 'utf8')
+  const read = (key: string) => {
+    const line = env.split('\n').find((l) => l.startsWith(`${key}=`))
+    const raw = line ? line.slice(key.length + 1).trim() : ''
+    // Quoted value: strip the surrounding quotes and keep it verbatim. Unquoted
+    // value: drop a dotenv-style inline ` # comment` so the parsed value matches
+    // what dotenv actually loads. (String ops, not regex — avoids backtracking.)
+    const quote = raw[0]
+    if ((quote === '"' || quote === "'") && raw.length >= 2 && raw[raw.length - 1] === quote) {
+      return raw.slice(1, -1)
+    }
+    const commentAt = raw.indexOf(' #')
+    return (commentAt === -1 ? raw : raw.slice(0, commentAt)).trim()
+  }
+  const apiDomain = read('API_COOKIE_DOMAIN')
+  const webDomain = read('VITE_COOKIE_DOMAIN')
+  const isLocal = (v: string) => !v || v === 'localhost' || v.startsWith('127.')
+  // Cookie scope ignores a single leading dot and case, so `.example.com` and
+  // `example.com` are equivalent — normalize before comparing to avoid false warnings.
+  const sameDomain = (a: string, b: string) =>
+    a.replace(/^\./, '').toLowerCase() === b.replace(/^\./, '').toLowerCase()
+  if (!isLocal(apiDomain) && isLocal(webDomain)) {
+    warn(
+      'cookie-domain',
+      `API_COOKIE_DOMAIN=${apiDomain} is domain-scoped but VITE_COOKIE_DOMAIN is unset/localhost; ` +
+        `the web app cannot clear the session cookie (PIR-173 redirect-loop risk). ` +
+        `Set VITE_COOKIE_DOMAIN to match.`,
+      '.env',
+    )
+  } else if (!isLocal(apiDomain) && !isLocal(webDomain) && !sameDomain(apiDomain, webDomain)) {
+    warn(
+      'cookie-domain',
+      `VITE_COOKIE_DOMAIN (${webDomain}) does not match API_COOKIE_DOMAIN (${apiDomain}).`,
+      '.env',
+    )
+  }
+}
+
 const printFindings = (label: string, items: Finding[]) => {
   if (items.length === 0) return
 
@@ -1153,6 +1193,7 @@ checkIntegrationExports()
 checkSkipCrudDocumentation()
 checkPublishablePackageReadmes()
 checkUpgradeNoteImpactGate()
+checkCookieDomainConfig()
 checkGuardRegressions()
 checkUnsafeTypeScriptCasts()
 checkResolverScopeAnchoring()
