@@ -337,6 +337,19 @@ function buildRelationFormField(
 }
 
 /**
+ * Split a camelCase / snake_case / kebab field name into lowercased word segments.
+ * Used to match input-type heuristics on whole words rather than substrings, so
+ * `validateEmailToken` is not treated as an email field (PIR-175).
+ */
+function fieldNameWords(name: string): string[] {
+  return name
+    .replaceAll(/([a-z0-9])([A-Z])/g, '$1 $2')
+    .toLowerCase()
+    .split(/[\s_-]+/)
+    .filter(Boolean)
+}
+
+/**
  * Build a FormField for a single regular (non-list-relation) field
  */
 function buildRegularFormField(
@@ -361,16 +374,27 @@ function buildRegularFormField(
   }
 
   switch (field.type.toLowerCase()) {
-    case 'string':
-      if (field.name.toLowerCase().includes('email'))
-        return FormFieldClass.email(field.name, options)
-      if (
-        field.name.toLowerCase().includes('description') ||
-        field.name.toLowerCase().includes('content') ||
-        field.name.toLowerCase().includes('notes')
-      )
+    case 'string': {
+      const words = fieldNameWords(field.name)
+      const last = words[words.length - 1]
+      const secondLast = words[words.length - 2]
+
+      // Email input only when the field name's last word IS the email field —
+      // e.g. `email`, `userEmail`, `emailAddress` — never when "email" is merely a
+      // prefix of a larger word like `emailToken` / `validateEmailToken` (PIR-175).
+      const isEmailField =
+        last === 'email' ||
+        last === 'emailaddress' ||
+        (secondLast === 'email' && last === 'address')
+      if (isEmailField) return FormFieldClass.email(field.name, options)
+
+      // Multi-line textarea only when the last word is description/content/notes —
+      // so `contentType`, `descriptionId`, `notesCount`, etc. stay single-line text.
+      if (last === 'description' || last === 'content' || last === 'notes')
         return FormFieldClass.textArea(field.name, options)
+
       return FormFieldClass.text(field.name, options)
+    }
 
     case 'int':
     case 'bigint':
