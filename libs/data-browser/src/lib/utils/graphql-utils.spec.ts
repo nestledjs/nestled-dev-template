@@ -224,6 +224,50 @@ describe('graphql-utils', () => {
         expect(result[0].type).toBe('Email')
       })
 
+      it('should create email field for userEmail string fields', () => {
+        const mockModel: DatabaseModel = {
+          name: 'User',
+          fields: [{ name: 'userEmail', type: 'String', isOptional: false }],
+        }
+
+        const result = buildFormFields({}, mockModel, 'create')
+
+        expect(result[0].type).toBe('Email')
+      })
+
+      it('should create email field for emailAddress string fields', () => {
+        const mockModel: DatabaseModel = {
+          name: 'User',
+          fields: [{ name: 'emailAddress', type: 'String', isOptional: false }],
+        }
+
+        const result = buildFormFields({}, mockModel, 'create')
+
+        expect(result[0].type).toBe('Email')
+      })
+
+      it('should create plain text (not email) for validateEmailToken (PIR-175)', () => {
+        const mockModel: DatabaseModel = {
+          name: 'User',
+          fields: [{ name: 'validateEmailToken', type: 'String', isOptional: true }],
+        }
+
+        const result = buildFormFields({}, mockModel, 'create')
+
+        expect(result[0].type).toBe('Text')
+      })
+
+      it('should create plain text (not email) for emailVerificationToken (PIR-175)', () => {
+        const mockModel: DatabaseModel = {
+          name: 'User',
+          fields: [{ name: 'emailVerificationToken', type: 'String', isOptional: true }],
+        }
+
+        const result = buildFormFields({}, mockModel, 'create')
+
+        expect(result[0].type).toBe('Text')
+      })
+
       it('should create textarea for description fields', () => {
         const mockModel: DatabaseModel = {
           name: 'Post',
@@ -233,6 +277,39 @@ describe('graphql-utils', () => {
         const result = buildFormFields({}, mockModel, 'create')
 
         expect(result[0].type).toBe('TextArea')
+      })
+
+      it('should create textarea for internalNotes fields', () => {
+        const mockModel: DatabaseModel = {
+          name: 'Post',
+          fields: [{ name: 'internalNotes', type: 'String', isOptional: true }],
+        }
+
+        const result = buildFormFields({}, mockModel, 'create')
+
+        expect(result[0].type).toBe('TextArea')
+      })
+
+      it('should create plain text (not textarea) for contentType (PIR-175)', () => {
+        const mockModel: DatabaseModel = {
+          name: 'Upload',
+          fields: [{ name: 'contentType', type: 'String', isOptional: true }],
+        }
+
+        const result = buildFormFields({}, mockModel, 'create')
+
+        expect(result[0].type).toBe('Text')
+      })
+
+      it('should create plain text (not textarea) for notesCount (PIR-175)', () => {
+        const mockModel: DatabaseModel = {
+          name: 'Post',
+          fields: [{ name: 'notesCount', type: 'String', isOptional: true }],
+        }
+
+        const result = buildFormFields({}, mockModel, 'create')
+
+        expect(result[0].type).toBe('Text')
       })
 
       it('should create checkbox for boolean type', () => {
