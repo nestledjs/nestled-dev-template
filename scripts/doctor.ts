@@ -1094,14 +1094,20 @@ const checkEmulationPrivilegeCeiling = () => {
 const checkCookieDomainConfig = () => {
   if (!existsSync('.env')) return
   const env = readFileSync('.env', 'utf8')
-  const read = (key: string) =>
-    new RegExp(`^${key}=(.*)$`, 'm')
-      .exec(env)?.[1]
-      ?.trim()
-      .replace(/^['"]|['"]$/g, '') ?? ''
+  const read = (key: string) => {
+    const raw = new RegExp(`^${key}=(.*)$`, 'm').exec(env)?.[1]?.trim() ?? ''
+    // Quoted value: strip the surrounding quotes and keep it verbatim. Unquoted
+    // value: drop a dotenv-style inline ` # comment` so the parsed value matches
+    // what dotenv actually loads.
+    return /^(['"]).*\1$/.test(raw) ? raw.slice(1, -1) : raw.replace(/\s+#.*$/, '').trim()
+  }
   const apiDomain = read('API_COOKIE_DOMAIN')
   const webDomain = read('VITE_COOKIE_DOMAIN')
   const isLocal = (v: string) => !v || v === 'localhost' || v.startsWith('127.')
+  // Cookie scope ignores a single leading dot and case, so `.example.com` and
+  // `example.com` are equivalent — normalize before comparing to avoid false warnings.
+  const sameDomain = (a: string, b: string) =>
+    a.replace(/^\./, '').toLowerCase() === b.replace(/^\./, '').toLowerCase()
   if (!isLocal(apiDomain) && isLocal(webDomain)) {
     warn(
       'cookie-domain',
@@ -1110,7 +1116,7 @@ const checkCookieDomainConfig = () => {
         `Set VITE_COOKIE_DOMAIN to match.`,
       '.env',
     )
-  } else if (!isLocal(apiDomain) && !isLocal(webDomain) && apiDomain !== webDomain) {
+  } else if (!isLocal(apiDomain) && !isLocal(webDomain) && !sameDomain(apiDomain, webDomain)) {
     warn(
       'cookie-domain',
       `VITE_COOKIE_DOMAIN (${webDomain}) does not match API_COOKIE_DOMAIN (${apiDomain}).`,

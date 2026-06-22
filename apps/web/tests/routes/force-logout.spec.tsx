@@ -40,8 +40,10 @@ describe('Force Logout Loader', () => {
     const request = new Request('http://localhost/force-logout')
     const response = await loader({ request })
 
-    const setCookie = response.headers.get('Set-Cookie') ?? ''
-    expect(setCookie).toContain('__session=')
-    expect(setCookie).toContain('Expires=Thu, 01 Jan 1970 00:00:00 GMT')
+    // The loader can set multiple Set-Cookie headers (host-only + domain-scoped),
+    // so read them all via getSetCookie() and assert on the __session clear.
+    const sessionClear = response.headers.getSetCookie().find((c) => c.startsWith('__session='))
+    expect(sessionClear).toBeTruthy()
+    expect(sessionClear).toContain('Expires=Thu, 01 Jan 1970 00:00:00 GMT')
   })
 })
