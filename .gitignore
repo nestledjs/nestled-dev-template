@@ -65,3 +65,7 @@ uploads
 .claude/settings.local.json
 .nx/polygraph
 .nx/self-healing
+
+# yalc local package linking (dev-only)
+.yalc/
+yalc.lock
