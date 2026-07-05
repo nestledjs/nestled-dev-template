@@ -1,9 +1,9 @@
 import { Field, ObjectType } from '@nestjs/graphql'
-import { GraphQLJSON } from 'graphql-type-json'
+import { GraphQLJSONObject } from 'graphql-type-json'
 
 @ObjectType()
 export class ExportUserDataOutput {
-  @Field(() => GraphQLJSON)
+  @Field(() => GraphQLJSONObject)
   userData!: Record<string, any>
 
   @Field()
