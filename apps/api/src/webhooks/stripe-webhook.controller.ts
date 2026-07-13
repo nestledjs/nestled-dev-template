@@ -26,7 +26,9 @@ export class StripeWebhookController {
     @Req() request: RawBodyRequest<Request>,
     @Res() response: Response,
   ): Promise<Response> {
-    const signature = request.headers['stripe-signature']
+    // `stripe-signature` can arrive as a string[] (repeated header); normalize to one value.
+    const signatureHeader = request.headers['stripe-signature']
+    const signature = Array.isArray(signatureHeader) ? signatureHeader[0] : signatureHeader
 
     if (!signature) {
       this.logger.error('Missing stripe-signature header')
@@ -44,10 +46,11 @@ export class StripeWebhookController {
     // error (bad signature or secret) — return 400 so Stripe does NOT retry.
     let event: Awaited<ReturnType<StripeService['constructWebhookEvent']>>
     try {
-      event = this.stripe.constructWebhookEvent(rawBody, signature as string)
+      event = this.stripe.constructWebhookEvent(rawBody, signature)
     } catch (error) {
-      this.logger.error(`Webhook signature verification failed: ${error.message}`)
-      return response.status(HttpStatus.BAD_REQUEST).send(`Webhook Error: ${error.message}`)
+      const message = error instanceof Error ? error.message : String(error)
+      this.logger.error(`Webhook signature verification failed: ${message}`)
+      return response.status(HttpStatus.BAD_REQUEST).send(`Webhook Error: ${message}`)
     }
 
     this.logger.log(`Received webhook event: ${event.type} (${event.id})`)
@@ -61,10 +64,11 @@ export class StripeWebhookController {
       await this.webhookService.handleWebhookEvent(event)
       return response.status(HttpStatus.OK).json({ received: true })
     } catch (error) {
-      this.logger.error(`Error processing webhook event ${event.id}: ${error.message}`)
+      const message = error instanceof Error ? error.message : String(error)
+      this.logger.error(`Error processing webhook event ${event.id}: ${message}`)
       return response
         .status(HttpStatus.INTERNAL_SERVER_ERROR)
-        .send(`Webhook processing error: ${error.message}`)
+        .send(`Webhook processing error: ${message}`)
     }
   }
 }
