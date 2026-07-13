@@ -43,7 +43,7 @@ DATABASE_URL=postgresql://prisma:prisma@localhost:5432/prisma
 JWT_SECRET=replace-with-a-real-secret
 API_COOKIE_SECRET=replace-with-a-real-cookie-secret
 SITE_URL=http://localhost:4200
-API_URL=http://localhost:3000/api
+API_URL=http://localhost:3000
 ```
 
 Generate Prisma and seed:
