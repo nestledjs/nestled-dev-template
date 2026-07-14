@@ -31,7 +31,7 @@ describe('ContactMailerService', () => {
         lastName: 'Doe',
         email: 'john@example.com',
         phone: '555-1234',
-        questions: 'I am interested in joining BizToBiz',
+        questions: 'I am interested in joining nestled-template',
       }
       await service.sendContactFormNotification(formData)
       // Should send to all 4 admin emails
@@ -160,7 +160,7 @@ describe('ContactMailerService', () => {
       expect(mockEmailService.send).toHaveBeenCalledWith(
         expect.objectContaining({
           to: 'sarah@example.com',
-          subject: 'Thank you for your interest in BizToBiz!',
+          subject: 'Thank you for your interest in nestled-template!',
         }),
       )
     })

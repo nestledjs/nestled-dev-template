@@ -40,7 +40,7 @@ export class ContactMailerService {
       <p><strong>Message:</strong></p>
       <p>${questions}</p>
       <hr>
-      <p><em>This email was sent from the BizToBiz contact form.</em></p>
+      <p><em>This email was sent from the nestled-template contact form.</em></p>
     `
 
     const text = `
@@ -55,7 +55,7 @@ export class ContactMailerService {
       Message:
       ${questions}
 
-      This email was sent from the BizToBiz contact form.
+      This email was sent from the nestled-template contact form.
     `
 
     // Send to all admin emails
@@ -84,7 +84,7 @@ export class ContactMailerService {
   async sendGuestConfirmationEmail(data: ContactFormData) {
     const { firstName, email, chapterName, chapterLocation } = data
 
-    const subject = `Thank you for your interest in BizToBiz!`
+    const subject = `Thank you for your interest in nestled-template!`
 
     const chapterLocationSuffix = chapterLocation ? ` in ${chapterLocation}` : ''
     const chapterHtmlLine = chapterName
@@ -95,30 +95,30 @@ export class ContactMailerService {
       : ''
 
     const html = `
-      <h2>Thank you for contacting BizToBiz!</h2>
+      <h2>Thank you for contacting nestled-template!</h2>
       <p>Dear ${firstName},</p>
-      <p>Thank you for your interest in BizToBiz. We have received your inquiry and one of our team members will be in touch with you soon.</p>
+      <p>Thank you for your interest in nestled-template. We have received your inquiry and one of our team members will be in touch with you soon.</p>
       ${chapterHtmlLine}
       <p>In the meantime, feel free to browse our website to learn more about our networking community and the benefits of membership.</p>
       <p>Best regards,<br>
-      The BizToBiz Team</p>
+      The nestled-template Team</p>
       <hr>
       <p><em>This is an automated response. Please do not reply to this email.</em></p>
     `
 
     const text = `
-      Thank you for contacting BizToBiz!
+      Thank you for contacting nestled-template!
 
       Dear ${firstName},
 
-      Thank you for your interest in BizToBiz. We have received your inquiry and one of our team members will be in touch with you soon.
+      Thank you for your interest in nestled-template. We have received your inquiry and one of our team members will be in touch with you soon.
 
       ${chapterTextLine}
 
       In the meantime, feel free to browse our website to learn more about our networking community and the benefits of membership.
 
       Best regards,
-      The BizToBiz Team
+      The nestled-template Team
 
       This is an automated response. Please do not reply to this email.
     `

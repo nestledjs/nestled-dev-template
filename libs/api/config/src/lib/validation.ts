@@ -44,7 +44,7 @@ export const validationSchema = Joi.object({
         'query, or hash (e.g. "http://localhost:3000" or "https://api.example.com"). Do NOT include ' +
         'the `/api` global prefix; URL-building code appends it. Received {{:#value}}.',
     }),
-  APP_NAME: Joi.string().default('BizToBiz'), // Made optional with default
+  APP_NAME: Joi.string().default('nestled-template'), // Made optional with default
   APP_EMAIL: Joi.string().email().default('admin@example.com'), // Made optional with default
   APP_SUPPORT_EMAIL: Joi.string().email().default('support@example.com'), // Made optional with default
   APP_ADMIN_EMAILS: Joi.string().default('admin@example.com'), // Made optional with default
