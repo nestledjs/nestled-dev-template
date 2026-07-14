@@ -15,13 +15,11 @@ export interface ContactFormData {
 export class ContactMailerService {
   private readonly logger = new Logger('ContactMailerService')
 
-  // Hardcoded admin emails from original nestled-templatenow
-  private readonly adminEmails = [
-    'jennifer@nestled-templatenow.com',
-    'tami@nestled-templatenow.com',
-    'justin@pirateandfox.com',
-    'memberservices@nestled-templatenow.com',
-  ]
+  // Placeholder notification recipient. Clone-identity rewrites the `nestled-template` token
+  // wherever it appears, so real addresses hardcoded here get mangled into plausible-but-fake
+  // domains in every clone (e.g. `jennifer@<project>now.com`) and notifications silently vanish.
+  // Set the real recipients per deployment via APP_ADMIN_EMAILS instead of editing this list.
+  private readonly adminEmails = ['test@test.com']
 
   constructor(private readonly emailService: EmailService) {}
 
