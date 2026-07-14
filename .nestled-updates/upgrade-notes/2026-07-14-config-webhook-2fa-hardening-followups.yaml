@@ -1,7 +1,7 @@
 id: 2026-07-14-config-webhook-2fa-hardening-followups
 title: Hardening follow-ups — origin-only API_URL, generic webhook error bodies, checkout Plan-FK validation, 2FA updatedAt
-priority: medium
-area: config
+priority: normal
+area: api
 type: correctness
 delivery: code-patch
 
