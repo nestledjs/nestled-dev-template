@@ -34,7 +34,9 @@ export const validationSchema = Joi.object({
         host: process.env['HOST'],
         port: process.env['PORT'],
       })
-      return isHttpOrigin(normalized) ? normalized : helpers.error('string.apiOrigin', { value })
+      // No local context needed: `{:#value}` in the message below already resolves to the received
+      // value from Joi's built-in context. Passing `{ value }` here would shadow it for no gain.
+      return isHttpOrigin(normalized) ? normalized : helpers.error('string.apiOrigin')
     }, 'origin-only API_URL')
     .messages({
       'string.apiOrigin':
