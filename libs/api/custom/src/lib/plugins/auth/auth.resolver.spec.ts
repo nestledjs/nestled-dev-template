@@ -279,7 +279,7 @@ describe('AuthResolver', () => {
       newOwnerUserId: 'user-2',
     } as any)
 
-    expect(authService.resendVerificationEmail).toHaveBeenCalledWith('ada@example.com')
+    expect(authService.resendVerificationEmail).toHaveBeenCalledWith('ada@example.com', undefined)
     expect(authService.verifyEmail).toHaveBeenCalledWith('verify-token')
     expect(authService.verifyEmailChange).toHaveBeenCalledWith('change-token')
     expect(authService.exportUserData).toHaveBeenCalledWith('user-1')

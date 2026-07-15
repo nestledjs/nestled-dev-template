@@ -40,6 +40,7 @@ import { ConfigService } from '@nestjs/config'
 import { randomInt } from 'node:crypto'
 import { SecurityEventsService } from '../security'
 import { SessionService, SessionInfo } from './session.service'
+import { EmailHygieneService, TurnstileService } from './signup-protection'
 import {
   generate2FASecret,
   verify2FACode,
@@ -66,7 +67,22 @@ export class AuthService {
     private readonly config: ConfigService,
     private readonly securityEvents: SecurityEventsService,
     private readonly sessionService: SessionService,
+    private readonly turnstile: TurnstileService,
+    private readonly emailHygiene: EmailHygieneService,
   ) {}
+
+  /**
+   * Every abuse check for the unauthenticated signup surface, in one place.
+   *
+   * Call this before touching the database or the mailer. Ordering is deliberate: the captcha is
+   * the cheapest way to establish there is a human present, and the DNS lookup inside the hygiene
+   * check is the only step that costs a network round trip, so it runs last and only for callers
+   * that already cleared the captcha.
+   */
+  private async assertSignupAllowed(email: string, captchaToken?: string): Promise<void> {
+    await this.turnstile.assertValid(captchaToken)
+    await this.emailHygiene.assertUsableForSignup(email)
+  }
 
   /**
    * Adds a delay to slow down brute force attacks
@@ -206,6 +222,10 @@ export class AuthService {
   }
 
   async register(payload: RegisterInput, sessionInfo?: SessionInfo) {
+    // Gate first: nothing below this line should run for a bot. Both the user row and the
+    // verification email are side effects we cannot take back.
+    await this.assertSignupAllowed(payload?.email?.trim()?.toLowerCase(), payload.captchaToken)
+
     const user = await this.createUser({
       ...payload,
     })
@@ -554,7 +574,13 @@ export class AuthService {
     return this.signUser(user, input.remember, undefined, sessionInfo)
   }
 
-  async resendVerificationEmail(email: string): Promise<boolean> {
+  async resendVerificationEmail(email: string, captchaToken?: string): Promise<boolean> {
+    // Unauthenticated and mails an arbitrary address, so it is a mail-bombing primitive aimed at
+    // any address an attacker knows. The captcha (plus the rate limit on the resolver) is what
+    // makes each send cost something. No hygiene check here: this address already cleared one at
+    // registration, and a flaky DNS lookup should not lock an existing user out of verifying.
+    await this.turnstile.assertValid(captchaToken)
+
     const user = await this.findUserByEmail(email)
     if (!user) {
       throw new NotFoundException(`No user found for email: ${email}`)

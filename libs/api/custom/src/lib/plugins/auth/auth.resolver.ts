@@ -13,7 +13,12 @@ import {
 } from '@nestjs/graphql'
 import { Logger, UseGuards } from '@nestjs/common'
 import { GraphQLResolveInfo } from 'graphql/type'
-import { CtxUser, GqlAuthGuard, GqlAuthAdminGuard } from '@nestled-template/api/utils'
+import {
+  CtxUser,
+  GqlAuthGuard,
+  GqlAuthAdminGuard,
+  GqlThrottlerGuard,
+} from '@nestled-template/api/utils'
 import type { NestContextType } from '@nestled-template/api/utils'
 import { UserToken } from './models'
 import { User } from '@nestled-template/api/core/models'
@@ -161,7 +166,10 @@ export class AuthResolver {
     return true
   }
 
+  // Unauthenticated and sends mail on every call, so it is rate limited per client IP. See
+  // GqlThrottlerGuard for why this depends on TRUST_PROXY_HOPS being set correctly.
   @Mutation(() => UserToken, { nullable: true })
+  @UseGuards(GqlThrottlerGuard)
   async register(@Context() context: NestContextType, @Args('input') input: RegisterInput) {
     // Extract session info from request
     const sessionInfo = this.sessionService.extractSessionInfo(context.req)
@@ -209,8 +217,12 @@ export class AuthResolver {
   }
 
   @Mutation(() => Boolean)
-  resendVerificationEmail(@Args('email') email: string) {
-    return this.service.resendVerificationEmail(email)
+  @UseGuards(GqlThrottlerGuard)
+  resendVerificationEmail(
+    @Args('email') email: string,
+    @Args('captchaToken', { nullable: true }) captchaToken?: string,
+  ) {
+    return this.service.resendVerificationEmail(email, captchaToken)
   }
 
   @Mutation(() => User)

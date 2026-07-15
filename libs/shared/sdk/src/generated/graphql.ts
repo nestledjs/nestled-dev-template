@@ -1663,6 +1663,7 @@ export type MutationResendOrganizationInvitationArgs = {
 }
 
 export type MutationResendVerificationEmailArgs = {
+  captchaToken?: InputMaybe<Scalars['String']['input']>
   email: Scalars['String']['input']
 }
 
@@ -2442,6 +2443,7 @@ export type QueryUsersCountArgs = {
 
 export type RegisterInput = {
   avatarUrl?: InputMaybe<Scalars['String']['input']>
+  captchaToken?: InputMaybe<Scalars['String']['input']>
   email: Scalars['String']['input']
   firstName?: InputMaybe<Scalars['String']['input']>
   lastName?: InputMaybe<Scalars['String']['input']>
@@ -8080,6 +8082,7 @@ export type VerifyEmailMutation = {
 
 export type ResendVerificationEmailMutationVariables = Exact<{
   email: Scalars['String']['input']
+  captchaToken?: InputMaybe<Scalars['String']['input']>
 }>
 
 export type ResendVerificationEmailMutation = {
@@ -30264,6 +30267,11 @@ export const ResendVerificationEmail = {
             type: { kind: 'NamedType', name: { kind: 'Name', value: 'String' } },
           },
         },
+        {
+          kind: 'VariableDefinition',
+          variable: { kind: 'Variable', name: { kind: 'Name', value: 'captchaToken' } },
+          type: { kind: 'NamedType', name: { kind: 'Name', value: 'String' } },
+        },
       ],
       selectionSet: {
         kind: 'SelectionSet',
@@ -30276,6 +30284,11 @@ export const ResendVerificationEmail = {
                 kind: 'Argument',
                 name: { kind: 'Name', value: 'email' },
                 value: { kind: 'Variable', name: { kind: 'Name', value: 'email' } },
+              },
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'captchaToken' },
+                value: { kind: 'Variable', name: { kind: 'Name', value: 'captchaToken' } },
               },
             ],
           },

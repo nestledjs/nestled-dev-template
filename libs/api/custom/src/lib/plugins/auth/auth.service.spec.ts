@@ -7,6 +7,7 @@ import { ApiCoreDataAccessService } from '@nestled-template/api/core/data-access
 import { EmailService } from '@nestled-template/api/integrations'
 import { SecurityEventsService } from '../security'
 import { SessionService } from './session.service'
+import { EmailHygieneService, TurnstileService } from './signup-protection'
 import { hashPassword, validatePassword } from './auth.helper'
 // Mock the helper functions
 jest.mock('./auth.helper', () => ({
@@ -38,6 +39,8 @@ describe('AuthService', () => {
   let mockConfigService: jest.Mocked<ConfigService>
   let mockSecurityEvents: jest.Mocked<SecurityEventsService>
   let mockSessionService: jest.Mocked<SessionService>
+  let mockTurnstile: jest.Mocked<TurnstileService>
+  let mockEmailHygiene: jest.Mocked<EmailHygieneService>
   beforeEach(async () => {
     // Create mock Prisma data access service - cast to any to avoid TypeScript strictness
     mockData = {
@@ -159,6 +162,10 @@ describe('AuthService', () => {
       getUserActiveSessions: jest.fn(),
       invalidateSession: jest.fn(),
     } as any
+    // Signup protection passes by default here; the checks themselves are covered in
+    // signup-protection/*.spec.ts. Individual tests override these to assert the gate is applied.
+    mockTurnstile = { assertValid: jest.fn().mockResolvedValue(undefined), enabled: false } as any
+    mockEmailHygiene = { assertUsableForSignup: jest.fn().mockResolvedValue(undefined) } as any
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         AuthService,
@@ -168,12 +175,71 @@ describe('AuthService', () => {
         { provide: ConfigService, useValue: mockConfigService },
         { provide: SecurityEventsService, useValue: mockSecurityEvents },
         { provide: SessionService, useValue: mockSessionService },
+        { provide: TurnstileService, useValue: mockTurnstile },
+        { provide: EmailHygieneService, useValue: mockEmailHygiene },
       ],
     }).compile()
     service = module.get<AuthService>(AuthService)
     // Reset all mocks before each test
     jest.clearAllMocks()
   })
+  describe('signup abuse gate', () => {
+    const input = {
+      email: 'Bot@Mailinator.com',
+      password: 'TestPassword123!',
+      firstName: 'Test',
+      lastName: 'User',
+    } as any
+
+    it('rejects a failed captcha without writing a user or sending mail', async () => {
+      mockTurnstile.assertValid.mockRejectedValue(new BadRequestException('Captcha failed'))
+
+      await expect(service.register(input)).rejects.toThrow(BadRequestException)
+      expect(mockData.user.create).not.toHaveBeenCalled()
+      expect(mockEmailService.sendTemplate).not.toHaveBeenCalled()
+    })
+
+    it('rejects a disposable address without writing a user or sending mail', async () => {
+      mockEmailHygiene.assertUsableForSignup.mockRejectedValue(
+        new BadRequestException('Disposable email addresses are not accepted.'),
+      )
+
+      await expect(service.register(input)).rejects.toThrow(BadRequestException)
+      expect(mockData.user.create).not.toHaveBeenCalled()
+      expect(mockEmailService.sendTemplate).not.toHaveBeenCalled()
+    })
+
+    it('checks the captcha before spending a DNS lookup', async () => {
+      mockTurnstile.assertValid.mockRejectedValue(new BadRequestException('Captcha failed'))
+
+      await expect(service.register(input)).rejects.toThrow(BadRequestException)
+      expect(mockEmailHygiene.assertUsableForSignup).not.toHaveBeenCalled()
+    })
+
+    it('hygiene-checks the normalised address, not the raw input', async () => {
+      mockEmailHygiene.assertUsableForSignup.mockRejectedValue(new BadRequestException('nope'))
+
+      await expect(service.register(input)).rejects.toThrow(BadRequestException)
+      expect(mockEmailHygiene.assertUsableForSignup).toHaveBeenCalledWith('bot@mailinator.com')
+    })
+
+    it('passes the captcha token from the input through to verification', async () => {
+      mockEmailHygiene.assertUsableForSignup.mockRejectedValue(new BadRequestException('stop here'))
+
+      await expect(service.register({ ...input, captchaToken: 'tok-123' })).rejects.toThrow()
+      expect(mockTurnstile.assertValid).toHaveBeenCalledWith('tok-123')
+    })
+
+    it('gates resendVerificationEmail on the captcha before looking the user up', async () => {
+      mockTurnstile.assertValid.mockRejectedValue(new BadRequestException('Captcha failed'))
+
+      await expect(service.resendVerificationEmail('victim@example.com', 'bad')).rejects.toThrow(
+        BadRequestException,
+      )
+      expect(mockEmailService.sendTemplate).not.toHaveBeenCalled()
+    })
+  })
+
   describe('User Registration', () => {
     it('should register a new user successfully', async () => {
       const registerInput = {
