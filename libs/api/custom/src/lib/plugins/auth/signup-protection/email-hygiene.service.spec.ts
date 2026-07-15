@@ -8,11 +8,13 @@ jest.mock('node:dns', () => ({
   promises: {
     resolveMx: jest.fn(),
     resolve4: jest.fn(),
+    resolve6: jest.fn(),
   },
 }))
 
 const resolveMx = dns.resolveMx as jest.MockedFunction<typeof dns.resolveMx>
 const resolve4 = dns.resolve4 as jest.MockedFunction<typeof dns.resolve4>
+const resolve6 = dns.resolve6 as jest.MockedFunction<typeof dns.resolve6>
 
 const dnsError = (code: string) => Object.assign(new Error(code), { code })
 
@@ -36,7 +38,12 @@ describe('EmailHygieneService', () => {
     }).compile()
 
     service = module.get(EmailHygieneService)
+    // Default to a domain that resolves cleanly; individual tests narrow this. Both address
+    // lookups need an explicit default or an unstubbed one returns undefined and blows up the
+    // fallback path rather than the assertion under test.
     resolveMx.mockResolvedValue([{ exchange: 'mx.example.net', priority: 10 }])
+    resolve4.mockResolvedValue([])
+    resolve6.mockResolvedValue([])
   })
 
   describe('disposable domains', () => {
@@ -80,9 +87,18 @@ describe('EmailHygieneService', () => {
       expect(resolve4).toHaveBeenCalledWith('example.net')
     })
 
-    it('rejects a domain with neither MX nor A records', async () => {
+    it('falls back to an AAAA record for an IPv6-only domain', async () => {
       resolveMx.mockResolvedValue([])
       resolve4.mockResolvedValue([])
+      resolve6.mockResolvedValue(['2001:db8::1'])
+
+      await expect(service.assertUsableForSignup('user@example.net')).resolves.toBeUndefined()
+    })
+
+    it('rejects a domain with no MX and no address records', async () => {
+      resolveMx.mockResolvedValue([])
+      resolve4.mockResolvedValue([])
+      resolve6.mockResolvedValue([])
 
       await expect(service.assertUsableForSignup('user@typo.example')).rejects.toThrow(
         /could not find a mail server/i,
@@ -92,6 +108,7 @@ describe('EmailHygieneService', () => {
     it('rejects a domain that does not exist', async () => {
       resolveMx.mockRejectedValue(dnsError('ENOTFOUND'))
       resolve4.mockRejectedValue(dnsError('ENOTFOUND'))
+      resolve6.mockRejectedValue(dnsError('ENOTFOUND'))
 
       await expect(service.assertUsableForSignup('user@nope.invalid')).rejects.toThrow(
         BadRequestException,

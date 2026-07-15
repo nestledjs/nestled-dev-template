@@ -84,19 +84,22 @@ const extractDomain = (email: string): string | null => {
     .toLowerCase()
 }
 
-const resolveAcceptsMail = async (domain: string): Promise<boolean> => {
-  const mx = await dns.resolveMx(domain).catch(error => {
+/** Runs a DNS lookup, treating an authoritative "no such records" as an empty result. */
+const lookup = <T>(work: Promise<T[]>): Promise<T[]> =>
+  work.catch(error => {
     if (isNoSuchDomain(error)) return []
     throw error
   })
+
+const resolveAcceptsMail = async (domain: string): Promise<boolean> => {
+  const mx = await lookup(dns.resolveMx(domain))
   if (mx.some(record => record.exchange?.trim())) return true
 
-  // No usable MX — fall back to the implicit-MX address lookup before rejecting.
-  const addresses = await dns.resolve4(domain).catch(error => {
-    if (isNoSuchDomain(error)) return []
-    throw error
-  })
-  return addresses.length > 0
+  // No usable MX — fall back to the implicit-MX address lookup before rejecting. Check AAAA as
+  // well as A: an IPv6-only domain is rare, but rejecting one turns a real customer away at the
+  // door, and the lookup is cheap next to the round trip already spent.
+  const [v4, v6] = await Promise.all([lookup(dns.resolve4(domain)), lookup(dns.resolve6(domain))])
+  return v4.length > 0 || v6.length > 0
 }
 
 const withTimeout = async <T>(work: Promise<T>, ms: number): Promise<T> => {

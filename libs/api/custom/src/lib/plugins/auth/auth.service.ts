@@ -34,6 +34,7 @@ import {
   generateUsernameSlug,
   generateUsernameWithSuffix,
   hashPassword,
+  normalizeEmail,
   validatePassword,
 } from './auth.helper'
 import { ConfigService } from '@nestjs/config'
@@ -222,17 +223,19 @@ export class AuthService {
   }
 
   async register(payload: RegisterInput, sessionInfo?: SessionInfo) {
+    // Normalize once and reuse. ValidationPipe guarantees a non-empty email by the time we get
+    // here, so the gate always receives a real string rather than an optional-chained undefined.
+    const primaryEmail = normalizeEmail(payload.email)
+
     // Gate first: nothing below this line should run for a bot. Both the user row and the
     // verification email are side effects we cannot take back.
-    await this.assertSignupAllowed(payload?.email?.trim()?.toLowerCase(), payload.captchaToken)
+    await this.assertSignupAllowed(primaryEmail, payload.captchaToken)
 
     const user = await this.createUser({
       ...payload,
     })
 
     if (user) {
-      const primaryEmail = payload.email?.trim()?.toLowerCase()
-
       // Create default organization for the user
       const trimmedOrgName = payload.organizationName?.trim()
       const orgName =
@@ -581,9 +584,13 @@ export class AuthService {
     // registration, and a flaky DNS lookup should not lock an existing user out of verifying.
     await this.turnstile.assertValid(captchaToken)
 
-    const user = await this.findUserByEmail(email)
+    // findUserByEmail normalizes internally, so a raw address with stray whitespace or mixed case
+    // still finds the user — but the send below must use the SAME normalized value, or we look up
+    // " User@Example.com " successfully and then hand that literal string to the mailer.
+    const normalizedEmail = normalizeEmail(email)
+    const user = await this.findUserByEmail(normalizedEmail)
     if (!user) {
-      throw new NotFoundException(`No user found for email: ${email}`)
+      throw new NotFoundException(`No user found for email: ${normalizedEmail}`)
     }
     const validateEmailToken = generateToken()
     const validateEmailTokenExpires = generateExpireDate()
@@ -595,7 +602,7 @@ export class AuthService {
     const siteUrl = this.config.get('siteUrl')
     const verificationUrl = `${siteUrl}/verify-email?token=${validateEmailToken}&type=initial`
 
-    await this.emailService.sendTemplate(email, {
+    await this.emailService.sendTemplate(normalizedEmail, {
       templateId: 'email-verification',
       variables: {
         userName: user?.firstName || 'there',

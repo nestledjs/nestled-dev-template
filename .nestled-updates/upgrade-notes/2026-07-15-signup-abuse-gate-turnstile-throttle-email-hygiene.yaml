@@ -19,8 +19,9 @@ intent: >
   list) and, in production, domains publishing neither an MX nor an A record.
   (4) New `TRUST_PROXY_HOPS` config, wired to Express `trust proxy` in main.ts. The rate limit keys
   on `req.ip`, which is only correct when Express knows how many proxy hops to trust.
-  `RegisterInput` also gains length caps and `@IsUrl` on fields that previously had NO validation
-  at all (username, firstName, lastName, phone, avatarUrl, organizationName).
+  `RegisterInput` also gains validation on fields that previously had NONE at all: `@IsString` +
+  length caps on username, firstName, lastName, phone and organizationName, and `@IsUrl` +
+  a length cap on avatarUrl.
 
 why: >
   `register` was an open, unthrottled endpoint that sent an email on every call and returned a live

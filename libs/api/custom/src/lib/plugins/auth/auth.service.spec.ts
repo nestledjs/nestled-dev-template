@@ -238,6 +238,24 @@ describe('AuthService', () => {
       )
       expect(mockEmailService.sendTemplate).not.toHaveBeenCalled()
     })
+
+    it('resends to the normalized address, not the raw argument', async () => {
+      // Looking up a normalized address but mailing the raw one finds the user and then hands the
+      // mailer a string with stray whitespace.
+      mockData.user.findFirst.mockResolvedValue({
+        id: 'user-1',
+        firstName: 'Ada',
+        emails: [{ email: 'ada@example.com', primary: true }],
+      })
+      mockData.user.update.mockResolvedValue({ id: 'user-1' })
+
+      await service.resendVerificationEmail('  Ada@Example.com  ')
+
+      expect(mockEmailService.sendTemplate).toHaveBeenCalledWith(
+        'ada@example.com',
+        expect.anything(),
+      )
+    })
   })
 
   describe('User Registration', () => {

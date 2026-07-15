@@ -18,6 +18,15 @@ const envBool = (value: string | undefined, fallback: boolean): boolean => {
   return trimmed === 'true' || trimmed === '1'
 }
 
+// Parse a non-negative integer env var, falling back on anything unparseable. Plain
+// `Number.parseInt` yields NaN for a typo'd value, and NaN survives `??`, so a fat-fingered
+// TRUST_PROXY_HOPS would otherwise reach `app.set('trust proxy', NaN)` and silently misconfigure
+// the client-IP derivation the signup rate limit depends on.
+const envInt = (value: string | undefined, fallback: number): number => {
+  const parsed = Number.parseInt(value?.trim() ?? '', 10)
+  return Number.isFinite(parsed) && parsed >= 0 ? parsed : fallback
+}
+
 // Origin-only, self-healing API URL (see api-url.ts). configuration() reads process.env directly
 // rather than the Joi-validated value, so normalize here too — not just in validation.ts.
 const apiOrigin = () =>
@@ -39,7 +48,7 @@ export const configuration = () => ({
   //   too high => clients can forge `X-Forwarded-For` and mint a fresh bucket per request
   // Defaults to 0 (no proxy, correct for local dev). Railway/Heroku/Fly put exactly one hop in
   // front, so those deployments want 1. main.ts warns at boot if this is 0 in production.
-  trustProxyHops: Number.parseInt(process.env['TRUST_PROXY_HOPS'] ?? '0', 10),
+  trustProxyHops: envInt(process.env['TRUST_PROXY_HOPS'], 0),
   api: {
     cookie: {
       name: process.env['VITE_COOKIE_NAME'] ?? '__session',
@@ -118,13 +127,13 @@ export const configuration = () => ({
     throttle: {
       // Off under test so api-e2e can register many users from one IP without tripping the limit.
       enabled: envBool(process.env['SIGNUP_THROTTLE_ENABLED'], process.env['NODE_ENV'] !== 'test'),
-      ttlSeconds: Number.parseInt(process.env['SIGNUP_THROTTLE_TTL'] ?? '3600', 10),
-      limit: Number.parseInt(process.env['SIGNUP_THROTTLE_LIMIT'] ?? '3', 10),
+      ttlSeconds: envInt(process.env['SIGNUP_THROTTLE_TTL'], 3600),
+      limit: envInt(process.env['SIGNUP_THROTTLE_LIMIT'], 3),
     },
     // MX lookup costs a DNS round trip and fails for the fake domains dev/test fixtures use
     // (example.com publishes no MX record), so it defaults on only in production.
     requireMx: envBool(process.env['SIGNUP_REQUIRE_MX'], process.env['NODE_ENV'] === 'production'),
-    mxTimeoutMs: Number.parseInt(process.env['SIGNUP_MX_TIMEOUT_MS'] ?? '3000', 10),
+    mxTimeoutMs: envInt(process.env['SIGNUP_MX_TIMEOUT_MS'], 3000),
     // Static list, no network, no false positives on fixture domains — safe to default on.
     blockDisposable: envBool(process.env['SIGNUP_BLOCK_DISPOSABLE'], true),
   },
