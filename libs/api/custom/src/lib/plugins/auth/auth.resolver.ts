@@ -45,6 +45,7 @@ import {
   TransferOwnershipInput,
 } from './dto'
 import { ConfigService } from '@nestjs/config'
+import { normalizeEmail } from './auth.helper'
 
 @Resolver(() => UserToken)
 export class AuthResolver {
@@ -198,13 +199,19 @@ export class AuthResolver {
     return userToken
   }
 
+  // Unauthenticated and mails an attacker-chosen address, exactly like register — same gate.
   @Mutation(() => Boolean, { nullable: true })
+  @UseGuards(GqlThrottlerGuard)
   forgotPassword(
     @Context() context: NestContextType,
     @Args('input') input: ForgotPasswordInput,
   ): Promise<boolean> {
     const sessionInfo = this.sessionService.extractSessionInfo(context.req)
-    return this.service.forgotPassword(input?.email?.trim()?.toLowerCase(), sessionInfo)
+    return this.service.forgotPassword(
+      normalizeEmail(input?.email),
+      sessionInfo,
+      input?.captchaToken,
+    )
   }
 
   @Mutation(() => User, { nullable: true })
@@ -216,6 +223,8 @@ export class AuthResolver {
     return this.service.resetPassword(input.password, input.token, sessionInfo)
   }
 
+  // Public resend for someone who is not signed in. Captcha'd and throttled because it mails an
+  // arbitrary address. Signed-in users should use resendMyVerificationEmail below instead.
   @Mutation(() => Boolean)
   @UseGuards(GqlThrottlerGuard)
   resendVerificationEmail(
@@ -223,6 +232,14 @@ export class AuthResolver {
     @Args('captchaToken', { nullable: true }) captchaToken?: string,
   ) {
     return this.service.resendVerificationEmail(email, captchaToken)
+  }
+
+  // Resend to the signed-in user's own primary address. No captcha and no rate limit: the caller
+  // is authenticated and cannot choose the recipient, so it is not a mail-bombing primitive.
+  @Mutation(() => Boolean)
+  @UseGuards(GqlAuthGuard)
+  resendMyVerificationEmail(@CtxUser() user: User) {
+    return this.service.resendMyVerificationEmail(user.id)
   }
 
   @Mutation(() => User)

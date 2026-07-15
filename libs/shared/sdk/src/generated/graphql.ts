@@ -654,6 +654,7 @@ export enum FailureReason {
 }
 
 export type ForgotPasswordInput = {
+  captchaToken?: InputMaybe<Scalars['String']['input']>
   email: Scalars['String']['input']
 }
 
@@ -1317,6 +1318,7 @@ export type Mutation = {
   removeOrganizationLogo: Scalars['Boolean']['output']
   removeOrganizationMember: Scalars['Boolean']['output']
   removeUserAvatar: Scalars['Boolean']['output']
+  resendMyVerificationEmail: Scalars['Boolean']['output']
   resendOrganizationInvitation: Scalars['Boolean']['output']
   resendVerificationEmail: Scalars['Boolean']['output']
   resetPassword?: Maybe<User>
@@ -8088,6 +8090,13 @@ export type ResendVerificationEmailMutationVariables = Exact<{
 export type ResendVerificationEmailMutation = {
   __typename?: 'Mutation'
   resendVerificationEmail: boolean
+}
+
+export type ResendMyVerificationEmailMutationVariables = Exact<{ [key: string]: never }>
+
+export type ResendMyVerificationEmailMutation = {
+  __typename?: 'Mutation'
+  resendMyVerificationEmail: boolean
 }
 
 export type EmulateUserMutationVariables = Exact<{
@@ -30299,6 +30308,23 @@ export const ResendVerificationEmail = {
 } as unknown as DocumentNode<
   ResendVerificationEmailMutation,
   ResendVerificationEmailMutationVariables
+>
+export const ResendMyVerificationEmail = {
+  kind: 'Document',
+  definitions: [
+    {
+      kind: 'OperationDefinition',
+      operation: 'mutation',
+      name: { kind: 'Name', value: 'ResendMyVerificationEmail' },
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [{ kind: 'Field', name: { kind: 'Name', value: 'resendMyVerificationEmail' } }],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  ResendMyVerificationEmailMutation,
+  ResendMyVerificationEmailMutationVariables
 >
 export const EmulateUser = {
   kind: 'Document',

@@ -162,7 +162,11 @@ describe('AuthResolver', () => {
     await resolver.changeEmail(context, user, { newEmail: 'new@example.com' } as any)
     await resolver.changePassword(context, user, { currentPassword: 'old' } as any)
 
-    expect(authService.forgotPassword).toHaveBeenCalledWith('ada@example.com', sessionInfo)
+    expect(authService.forgotPassword).toHaveBeenCalledWith(
+      'ada@example.com',
+      sessionInfo,
+      undefined,
+    )
     expect(authService.resetPassword).toHaveBeenCalledWith('new-secret', 'reset-token', sessionInfo)
     expect(authService.changeEmail).toHaveBeenCalledWith('user-1', 'new@example.com', sessionInfo)
     expect(authService.changePassword).toHaveBeenCalledWith(

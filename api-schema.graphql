@@ -619,6 +619,7 @@ enum FailureReason {
 }
 
 input ForgotPasswordInput {
+  captchaToken: String
   email: String!
 }
 
@@ -1287,6 +1288,7 @@ type Mutation {
   removeOrganizationLogo: Boolean!
   removeOrganizationMember(input: RemoveOrganizationMemberInput!): Boolean!
   removeUserAvatar: Boolean!
+  resendMyVerificationEmail: Boolean!
   resendOrganizationInvitation(input: ResendInvitationInput!): Boolean!
   resendVerificationEmail(captchaToken: String, email: String!): Boolean!
   resetPassword(input: ResetPasswordInput!): User
