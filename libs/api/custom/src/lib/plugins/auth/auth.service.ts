@@ -586,7 +586,8 @@ export class AuthService {
    * who can trip the mail provider's rate limit can bring that state about on purpose.
    *
    * The cost is real and accepted: a genuine delivery failure looks like success to the user. It is
-   * logged at error level so it is still visible to operators, who are the ones who can act on it.
+   * logged at error level WITH the stack so it is still fully diagnosable by operators, who are the
+   * ones who can act on it — swallowing the response must not mean swallowing the evidence.
    */
   private async sendWithoutRevealing(send: () => Promise<unknown>, context: string): Promise<void> {
     try {
@@ -594,6 +595,7 @@ export class AuthService {
     } catch (error) {
       Logger.error(
         `${context} failed to send: ${error instanceof Error ? error.message : 'unknown error'}`,
+        error instanceof Error ? error.stack : undefined,
       )
     }
   }
@@ -702,7 +704,7 @@ export class AuthService {
     // promotion, deletion validation, and admin filtering by verified email.
     //
     // verifyEmailChange() already does both; this is the same pairing for the registration path.
-    const [updatedUser] = await this.data.$transaction([
+    const [updatedUser, verifiedEmails] = await this.data.$transaction([
       this.data.user.update({
         where: { id: user.id },
         data: {
@@ -716,6 +718,22 @@ export class AuthService {
         data: { verified: true },
       }),
     ])
+
+    // A zero match means the account has no primary Email row at all — the flag now describes
+    // something that does not exist. validateEmailDeletion refuses to delete a primary without
+    // promoting a replacement, so reaching this needs corrupt data or a delete made through
+    // generated admin CRUD, which bypasses that check.
+    //
+    // Deliberately logged rather than rolled back: verifyEmail neither caused this state nor can
+    // repair it, and failing here would only deny verification to a user who cannot fix their own
+    // data — while a concurrent primary-email change would trip the same assertion for someone
+    // whose request was perfectly legitimate.
+    if (verifiedEmails.count === 0) {
+      Logger.error(
+        `verifyEmail marked user ${user.id} validated but found no primary Email row to verify. ` +
+          `This account's email records are inconsistent and need manual repair.`,
+      )
+    }
 
     // Send welcome email after successful verification
     const appName = this.config.get('app.name')

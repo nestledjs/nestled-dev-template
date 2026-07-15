@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing'
-import { BadRequestException } from '@nestjs/common'
+import { BadRequestException, Logger } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
 import { ConfigService } from '@nestjs/config'
 import { AuthService } from './auth.service'
@@ -1026,6 +1026,25 @@ describe('AuthService', () => {
         where: { userId: 'user-1', primary: true },
         data: { verified: true },
       })
+    })
+
+    it('logs an error when there is no primary Email row to verify', async () => {
+      // A 0-row match means the User flag now describes an Email row that does not exist. We
+      // deliberately still commit (verifyEmail cannot repair corrupt data, and failing would only
+      // block a user who cannot fix it) — but it must never pass silently.
+      const logSpy = jest.spyOn(Logger, 'error').mockImplementation(() => undefined)
+      mockData.user.findFirst.mockResolvedValue({
+        id: 'user-1',
+        validateEmailToken: 'tok',
+        validateEmailTokenExpires: new Date(Date.now() + 60_000),
+      })
+      mockData.user.update.mockResolvedValue({ id: 'user-1', emailValidated: true })
+      mockData.email.updateMany.mockResolvedValue({ count: 0 })
+
+      await service.verifyEmail('tok')
+
+      expect(logSpy).toHaveBeenCalledWith(expect.stringMatching(/no primary Email row/i))
+      logSpy.mockRestore()
     })
 
     it('writes both verification flags in a single transaction', async () => {
