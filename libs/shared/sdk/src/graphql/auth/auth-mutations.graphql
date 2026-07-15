@@ -36,8 +36,8 @@ mutation VerifyEmail($input: VerifyEmailInput!) {
   }
 }
 
-mutation ResendVerificationEmail($email: String!) {
-  resendVerificationEmail(email: $email)
+mutation ResendVerificationEmail($email: String!, $captchaToken: String) {
+  resendVerificationEmail(email: $email, captchaToken: $captchaToken)
 }
 
 mutation EmulateUser($input: EmulateUserInput!) {
