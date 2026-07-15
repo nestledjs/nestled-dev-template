@@ -62,7 +62,7 @@ interface TurnstileWidgetProps {
  * Renders nothing when VITE_TURNSTILE_SITE_KEY is unset, mirroring the API: with no secret key
  * configured the server does not ask for a token, so the widget would be dead weight.
  */
-export function TurnstileWidget({ onToken, theme = 'auto' }: TurnstileWidgetProps) {
+export function TurnstileWidget({ onToken, theme = 'auto' }: Readonly<TurnstileWidgetProps>) {
   const containerRef = useRef<HTMLDivElement>(null)
   const [failed, setFailed] = useState(false)
   const siteKey = turnstileSiteKey()
