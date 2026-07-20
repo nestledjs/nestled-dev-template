@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Link } from 'react-router'
 import { Form } from '@nestledjs/forms'
 import { FormFieldClass } from '@nestledjs/forms-core'
-import { AuthLayout } from '@nestled-template/web'
+import { AuthLayout, TurnstileWidget, turnstileSiteKey } from '@nestled-template/web'
 import {
   ResendVerificationEmail,
   type ResendVerificationEmailMutation,
@@ -15,13 +15,29 @@ export default function ResendVerification() {
     type: 'success' | 'error'
     text: string
   } | null>(null)
+  const [captchaToken, setCaptchaToken] = useState<string | undefined>()
+  // Bumping this remounts the widget for a fresh challenge — a Turnstile token is single-use, so any
+  // failed/retried resend must not reuse a spent token. See register.tsx for the same pattern.
+  const [captchaKey, setCaptchaKey] = useState(0)
   const [resendMutation, { loading }] =
     useMutation<ResendVerificationEmailMutation>(ResendVerificationEmail)
+  const captchaRequired = Boolean(turnstileSiteKey())
+
+  function resetCaptcha() {
+    setCaptchaToken(undefined)
+    setCaptchaKey(key => key + 1)
+  }
 
   async function handleResend({ email }: { email: string }) {
     setFormMessage(null)
+
+    if (captchaRequired && !captchaToken) {
+      setFormMessage({ type: 'error', text: 'Please complete the verification challenge below.' })
+      return
+    }
+
     try {
-      const { data } = await resendMutation({ variables: { email } })
+      const { data } = await resendMutation({ variables: { email, captchaToken } })
       if (data?.resendVerificationEmail) {
         setFormMessage({
           type: 'success',
@@ -32,9 +48,11 @@ export default function ResendVerification() {
           type: 'error',
           text: 'Unable to send verification email. Please try again.',
         })
+        resetCaptcha()
       }
     } catch (error) {
       setFormMessage({ type: 'error', text: (error as Error).message || 'Something went wrong' })
+      resetCaptcha()
     }
   }
 
@@ -76,6 +94,7 @@ export default function ResendVerification() {
           fields={fields}
           submit={handleResend}
         />
+        <TurnstileWidget key={captchaKey} onToken={setCaptchaToken} />
       </div>
     </AuthLayout>
   )
