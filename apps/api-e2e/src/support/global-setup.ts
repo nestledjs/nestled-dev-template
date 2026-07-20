@@ -114,6 +114,15 @@ module.exports = async function globalSetup() {
   // Set test environment variables
   process.env.NODE_ENV = 'test'
 
+  // Disable the signup abuse gate for E2E. The gate keys off NODE_ENV to turn its throttle/MX checks
+  // off under test, but a production webpack build inlines process.env.NODE_ENV to "production", so
+  // a clone that serves the built dist (rather than `nx serve`) never sees NODE_ENV=test and the
+  // 3/hour throttle then fails every spec that registers >3 users. These keys are read at runtime
+  // (not inlined), so setting them here restores the intended test config regardless of how the API
+  // is served. Leave SIGNUP_BLOCK_DISPOSABLE at its default (on in every env, including test).
+  process.env.SIGNUP_THROTTLE_ENABLED = process.env.SIGNUP_THROTTLE_ENABLED ?? 'false'
+  process.env.SIGNUP_REQUIRE_MX = process.env.SIGNUP_REQUIRE_MX ?? 'false'
+
   // Always use TEST_DATABASE_URL for E2E tests
   const testDatabaseUrl =
     process.env.TEST_DATABASE_URL ||
