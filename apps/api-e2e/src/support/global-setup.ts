@@ -119,9 +119,11 @@ module.exports = async function globalSetup() {
   // a clone that serves the built dist (rather than `nx serve`) never sees NODE_ENV=test and the
   // 3/hour throttle then fails every spec that registers >3 users. These keys are read at runtime
   // (not inlined), so setting them here restores the intended test config regardless of how the API
-  // is served. Leave SIGNUP_BLOCK_DISPOSABLE at its default (on in every env, including test).
-  process.env.SIGNUP_THROTTLE_ENABLED = process.env.SIGNUP_THROTTLE_ENABLED ?? 'false'
-  process.env.SIGNUP_REQUIRE_MX = process.env.SIGNUP_REQUIRE_MX ?? 'false'
+  // is served. Forced (not defaulted) so a stray SIGNUP_THROTTLE_ENABLED=true in a dev shell or CI
+  // cannot silently reintroduce the failure — E2E always runs with the gate off, deterministically.
+  // Leave SIGNUP_BLOCK_DISPOSABLE at its default (on in every env, including test).
+  process.env.SIGNUP_THROTTLE_ENABLED = 'false'
+  process.env.SIGNUP_REQUIRE_MX = 'false'
 
   // Always use TEST_DATABASE_URL for E2E tests
   const testDatabaseUrl =
