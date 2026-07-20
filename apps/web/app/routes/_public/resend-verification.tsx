@@ -48,10 +48,13 @@ export default function ResendVerification() {
           type: 'error',
           text: 'Unable to send verification email. Please try again.',
         })
-        resetCaptcha()
       }
     } catch (error) {
       setFormMessage({ type: 'error', text: (error as Error).message || 'Something went wrong' })
+    } finally {
+      // The page stays put after a resend (unlike register, which navigates away), and a Turnstile
+      // token is single-use — so reset the widget on every outcome, including success, or a second
+      // resend would send a spent token and fail the captcha.
       resetCaptcha()
     }
   }
