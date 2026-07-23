@@ -80,6 +80,8 @@ input AdminAuditLogFiltersInput {
 }
 
 type AdminAuditLogsResponse {
+  actions: [String!]!
+  entityTypes: [String!]!
   logs: [AuditLog!]!
   skip: Int!
   take: Int!

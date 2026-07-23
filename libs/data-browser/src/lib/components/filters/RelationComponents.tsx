@@ -16,9 +16,13 @@ export function RelationDropdownButton({
     <button
       type="button"
       onClick={onClick}
-      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-web focus:border-green-web text-sm text-left bg-white flex items-center justify-between"
+      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-green-web focus:border-green-web text-sm text-left bg-white dark:bg-gray-800 flex items-center justify-between"
     >
-      <span className={currentItem ? 'text-gray-900' : 'text-gray-500'}>
+      <span
+        className={
+          currentItem ? 'text-gray-900 dark:text-gray-100' : 'text-gray-500 dark:text-gray-400'
+        }
+      >
         {currentItem
           ? getItemDisplayName(currentItem)
           : `Select ${relatedModelName.toLowerCase()}...`}
@@ -52,7 +56,7 @@ export function RelationSearchInput({
         placeholder={`Search ${relatedModelName.toLowerCase()}...`}
         value={searchTerm}
         onChange={e => onSearchChange(e.target.value)}
-        className="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-green-web"
+        className="w-full px-2 py-1 text-sm text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-green-web"
         autoFocus
       />
     </div>
@@ -71,7 +75,7 @@ export function RelationItem({
     <button
       type="button"
       onClick={() => onSelect(item)}
-      className="w-full px-3 py-2 text-left text-sm hover:bg-gray-100 focus:bg-gray-100 transition-colors"
+      className="w-full px-3 py-2 text-left text-sm text-gray-900 dark:text-gray-100 hover:bg-gray-100 focus:bg-gray-100 dark:hover:bg-gray-700 dark:focus:bg-gray-700 transition-colors"
     >
       {getItemDisplayName(item)}
     </button>
@@ -97,7 +101,7 @@ export function RelationItemList({
       <button
         type="button"
         onClick={onClear}
-        className="w-full px-3 py-2 text-left text-sm hover:bg-gray-100 text-gray-500 border-b border-gray-200"
+        className="w-full px-3 py-2 text-left text-sm text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 border-b border-gray-200 dark:border-gray-700"
       >
         Clear selection
       </button>
@@ -179,7 +183,7 @@ export function RelationDropdownContent({
   onClear: () => void
 }>) {
   return (
-    <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg">
+    <div className="absolute z-10 w-full mt-1 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md shadow-lg">
       <RelationSearchInput
         searchTerm={searchTerm}
         onSearchChange={onSearchChange}
