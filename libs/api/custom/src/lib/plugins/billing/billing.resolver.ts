@@ -1,10 +1,10 @@
 import { Resolver, Mutation, Args } from '@nestjs/graphql'
-import { Logger, UseGuards } from '@nestjs/common'
+import { UseGuards } from '@nestjs/common'
 import { GqlAuthAdminGuard, CtxUser } from '@nestled-template/api/utils'
 import { SyncService } from './sync.service'
 import { User } from '@nestled-template/api/core/models'
 import { ApiCoreDataAccessService } from '@nestled-template/api/core/data-access'
-import type { InputJsonValue } from '@nestled-template/api/prisma'
+import { recordBillingAuditLog } from './audit-log'
 
 /**
  * Billing Resolver
@@ -20,36 +20,10 @@ export class BillingResolver {
     private readonly data: ApiCoreDataAccessService,
   ) {}
 
-  private async recordAuditLog(input: {
-    actorUserId: string
-    entityId: string
-    entityType: string
-    action: string
-    changes?: InputJsonValue
-  }): Promise<void> {
-    try {
-      await this.data.auditLog.create({
-        data: {
-          userId: input.actorUserId,
-          entityId: input.entityId,
-          entityType: input.entityType,
-          action: input.action,
-          changes: input.changes,
-        },
-      })
-    } catch (error) {
-      Logger.warn(
-        `Failed to record audit log ${input.action} for ${input.entityType} ${input.entityId}: ${
-          error instanceof Error ? error.message : 'Unknown error'
-        }`,
-      )
-    }
-  }
-
   @Mutation(() => Boolean)
   async syncStripeProducts(@CtxUser() user: User): Promise<boolean> {
     const result = await this.syncService.syncAllProducts()
-    await this.recordAuditLog({
+    await recordBillingAuditLog(this.data, {
       actorUserId: user.id,
       entityId: 'stripe-products',
       entityType: 'StripeProduct',
@@ -62,7 +36,7 @@ export class BillingResolver {
   @Mutation(() => Boolean)
   async syncStripePrices(@CtxUser() user: User): Promise<boolean> {
     const result = await this.syncService.syncAllPrices()
-    await this.recordAuditLog({
+    await recordBillingAuditLog(this.data, {
       actorUserId: user.id,
       entityId: 'stripe-prices',
       entityType: 'StripePrice',
@@ -78,7 +52,7 @@ export class BillingResolver {
     @CtxUser() user: User,
   ): Promise<boolean> {
     await this.syncService.syncProductFromStripe(productId)
-    await this.recordAuditLog({
+    await recordBillingAuditLog(this.data, {
       actorUserId: user.id,
       entityId: productId,
       entityType: 'StripeProduct',
@@ -91,7 +65,7 @@ export class BillingResolver {
   @Mutation(() => Boolean)
   async syncStripePrice(@Args('priceId') priceId: string, @CtxUser() user: User): Promise<boolean> {
     await this.syncService.syncPriceFromStripe(priceId)
-    await this.recordAuditLog({
+    await recordBillingAuditLog(this.data, {
       actorUserId: user.id,
       entityId: priceId,
       entityType: 'StripePrice',
@@ -107,7 +81,7 @@ export class BillingResolver {
     @CtxUser() user: User,
   ): Promise<boolean> {
     await this.syncService.syncSubscriptionFromStripe(subscriptionId)
-    await this.recordAuditLog({
+    await recordBillingAuditLog(this.data, {
       actorUserId: user.id,
       entityId: subscriptionId,
       entityType: 'StripeSubscription',

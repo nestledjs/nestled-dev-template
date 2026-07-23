@@ -1,12 +1,12 @@
 import { Resolver, Query, Mutation, Args } from '@nestjs/graphql'
-import { Logger, UseGuards } from '@nestjs/common'
+import { UseGuards } from '@nestjs/common'
 import { GqlAuthGuard, CtxUser } from '@nestled-template/api/utils'
 import { Subscription, User } from '@nestled-template/api/core/models'
 import { ApiCoreDataAccessService } from '@nestled-template/api/core/data-access'
 import { StripeService } from '@nestled-template/api/integrations'
 import { ConfigService } from '@nestled-template/api/config'
-import type { InputJsonValue } from '@nestled-template/api/prisma'
 import { UsageService } from '../../plugins/billing/usage.service'
+import { recordBillingAuditLog } from '../../plugins/billing/audit-log'
 
 /**
  * User Subscription Resolver
@@ -23,34 +23,6 @@ export class UserSubscriptionResolver {
     private readonly usage: UsageService,
     private readonly config: ConfigService,
   ) {}
-
-  private async recordAuditLog(input: {
-    actorUserId: string
-    organizationId: string
-    entityId: string
-    entityType: string
-    action: string
-    changes?: InputJsonValue
-  }): Promise<void> {
-    try {
-      await this.prisma.auditLog.create({
-        data: {
-          userId: input.actorUserId,
-          organizationId: input.organizationId,
-          entityId: input.entityId,
-          entityType: input.entityType,
-          action: input.action,
-          changes: input.changes,
-        },
-      })
-    } catch (error) {
-      Logger.warn(
-        `Failed to record audit log ${input.action} for ${input.entityType} ${input.entityId}: ${
-          error instanceof Error ? error.message : 'Unknown error'
-        }`,
-      )
-    }
-  }
 
   /**
    * Get current user's organization subscription
@@ -125,7 +97,7 @@ export class UserSubscriptionResolver {
       },
     })
 
-    await this.recordAuditLog({
+    await recordBillingAuditLog(this.prisma, {
       actorUserId: user.id,
       organizationId: organization.id,
       entityId: organization.id,
@@ -165,7 +137,7 @@ export class UserSubscriptionResolver {
       returnUrl: `${siteUrl}/settings/billing`,
     })
 
-    await this.recordAuditLog({
+    await recordBillingAuditLog(this.prisma, {
       actorUserId: user.id,
       organizationId: user.activeOrganizationId,
       entityId: subscription.id,
@@ -207,7 +179,7 @@ export class UserSubscriptionResolver {
       },
     })
 
-    await this.recordAuditLog({
+    await recordBillingAuditLog(this.prisma, {
       actorUserId: user.id,
       organizationId: user.activeOrganizationId,
       entityId: subscription.id,
