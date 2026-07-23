@@ -72,6 +72,10 @@ describe('Admin Audit Logs Page', () => {
         },
       ],
       total: 2,
+    },
+    // Facet dropdown values are served by a separate query; the shared useQuery
+    // mock returns this object for that call too.
+    adminAuditLogFacets: {
       actions: ['create', 'update'],
       entityTypes: ['User', 'Organization'],
     },
@@ -546,6 +550,8 @@ describe('Admin Audit Logs Page', () => {
           adminAuditLogs: {
             logs: [],
             total: 0,
+          },
+          adminAuditLogFacets: {
             actions: ['create'],
             entityTypes: ['User'],
           },

@@ -1,6 +1,11 @@
 import { useState } from 'react'
 import { useQuery } from '@apollo/client/react'
-import { AdminPlatformAuditLogs, AdminPlatformAuditLogsQuery } from '@nestled-template/shared/sdk'
+import {
+  AdminPlatformAuditLogFacets,
+  AdminPlatformAuditLogFacetsQuery,
+  AdminPlatformAuditLogs,
+  AdminPlatformAuditLogsQuery,
+} from '@nestled-template/shared/sdk'
 import {
   DocumentMagnifyingGlassIcon,
   EyeIcon,
@@ -179,13 +184,17 @@ export default function AdminAuditLogsPage() {
     fetchPolicy: 'network-only',
   })
 
+  // Filter dropdown values come from a dedicated query fetched once (cache-first),
+  // not from the paged list — the distinct values are stable across pages/filters.
+  const { data: facetData } = useQuery<AdminPlatformAuditLogFacetsQuery>(
+    AdminPlatformAuditLogFacets,
+  )
+
   const logs = data?.adminAuditLogs?.logs || []
   const total = data?.adminAuditLogs?.total || 0
   const totalPages = Math.ceil(total / pageSize)
-  // Facets are computed server-side over the whole table, so these stay stable
-  // regardless of the active filter.
-  const actionOptions = data?.adminAuditLogs?.actions || []
-  const entityTypeOptions = data?.adminAuditLogs?.entityTypes || []
+  const actionOptions = facetData?.adminAuditLogFacets?.actions || []
+  const entityTypeOptions = facetData?.adminAuditLogFacets?.entityTypes || []
 
   const formatDate = (date: string) => {
     return new Date(date).toLocaleString('en-US', {

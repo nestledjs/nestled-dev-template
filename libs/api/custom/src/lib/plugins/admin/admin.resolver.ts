@@ -90,12 +90,15 @@ export class AdminAuditLogsResponse {
 
   @Field(() => Int)
   take!: number
+}
 
-  // Distinct action values present across all audit logs, for filter dropdowns.
+@ObjectType()
+export class AdminAuditLogFacets {
+  // Distinct action values across all audit logs, for filter dropdowns.
   @Field(() => [String])
   actions!: string[]
 
-  // Distinct entityType values present across all audit logs, for filter dropdowns.
+  // Distinct entityType values across all audit logs, for filter dropdowns.
   @Field(() => [String])
   entityTypes!: string[]
 }
@@ -282,6 +285,18 @@ export class AdminResolver {
     filters?: AdminAuditLogFiltersInput,
   ): Promise<AdminAuditLogsResponse> {
     return this.service.getAuditLogs(filters || {})
+  }
+
+  /**
+   * Distinct action/entityType values for the audit-log filter dropdowns.
+   * Kept separate from the paged adminAuditLogs query so the UI can fetch it
+   * once (cache-first) instead of recomputing the DISTINCT scans on every page
+   * or filter change. Super admin only.
+   */
+  @Query(() => AdminAuditLogFacets)
+  @UseGuards(GqlAuthAdminGuard)
+  async adminAuditLogFacets(): Promise<AdminAuditLogFacets> {
+    return this.service.getAuditLogFacets()
   }
 
   /**

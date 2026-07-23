@@ -79,9 +79,12 @@ input AdminAuditLogFiltersInput {
   userId: String
 }
 
-type AdminAuditLogsResponse {
+type AdminAuditLogFacets {
   actions: [String!]!
   entityTypes: [String!]!
+}
+
+type AdminAuditLogsResponse {
   logs: [AuditLog!]!
   skip: Int!
   take: Int!
@@ -1451,6 +1454,7 @@ type Query {
   addresses(input: ListAddressInput): [Address!]
   addressesCount(input: ListAddressInput): CorePaging
   adminAnalytics: AdminAnalytics!
+  adminAuditLogFacets: AdminAuditLogFacets!
   adminAuditLogs(filters: AdminAuditLogFiltersInput): AdminAuditLogsResponse!
   adminDashboardStats: AdminDashboardStats!
   adminOrganizations(filters: AdminOrganizationFiltersInput): AdminOrganizationsResponse!
