@@ -27,7 +27,7 @@ This package requires a Nestled framework project with:
 
 - **Apollo Client v4+** for GraphQL operations
 - **React Router v7+** for routing
-- **@nestledjs/forms** for form generation
+- **@nestledjs/forms 0.8+** for form generation
 - **Prisma** for database models
 - **Generated GraphQL SDK** with admin CRUD operations
 - **A form theme** compatible with `@nestledjs/forms`
@@ -37,7 +37,8 @@ This package requires a Nestled framework project with:
 ```json
 {
   "@apollo/client": "^4.0.0",
-  "@nestledjs/forms": "^0.5.0",
+  "@nestledjs/forms": "0.8.0",
+  "@nestledjs/forms-core": "0.8.0",
   "react": "^19.0.0",
   "react-router": "^7.0.0"
 }
@@ -62,7 +63,24 @@ Your Nestled project must also export:
 pnpm add @nestledjs/data-browser
 ```
 
-### Step 2: Create Route Wrapper
+### Step 2: Wrap Apollo Search
+
+`@nestledjs/data-browser` renders relation fields with `searchSelectApollo`. With
+`@nestledjs/forms@0.8.0`, your app must provide the search adapter inside your existing
+Apollo provider:
+
+```typescript
+import { ApolloProvider } from '@apollo/client/react'
+import { ApolloSearchProvider } from '@nestledjs/forms/apollo'
+
+<ApolloProvider client={client}>
+  <ApolloSearchProvider>
+    <App />
+  </ApolloSearchProvider>
+</ApolloProvider>
+```
+
+### Step 3: Create Route Wrapper
 
 Create `apps/web/app/routes/admin/data/_layout.tsx`:
 
@@ -86,7 +104,7 @@ export default function DataLayoutRoute() {
 }
 ```
 
-### Step 3: Create Page Routes
+### Step 4: Create Page Routes
 
 Create these minimal route files:
 
