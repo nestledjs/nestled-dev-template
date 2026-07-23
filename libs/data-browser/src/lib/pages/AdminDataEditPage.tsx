@@ -251,8 +251,7 @@ export function AdminDataEditPage() {
       .join('')
 
     // Check if this data type exists in our models
-    const model = databaseModels.find(m => m.name === properCaseDataType)
-    if (!model) {
+    if (!databaseModels.some(m => m.name === properCaseDataType)) {
       return null
     }
 
@@ -379,6 +378,7 @@ function DeleteConfirmModal({
         </div>
         <div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
           <button
+            type="button"
             onClick={onConfirm}
             disabled={isDeleting}
             className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm disabled:opacity-50 disabled:cursor-not-allowed"
@@ -386,6 +386,7 @@ function DeleteConfirmModal({
             {isDeleting ? 'Deleting...' : 'Delete'}
           </button>
           <button
+            type="button"
             onClick={onCancel}
             disabled={isDeleting}
             className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-web sm:mt-0 sm:w-auto sm:text-sm disabled:opacity-50 disabled:cursor-not-allowed"
@@ -854,6 +855,7 @@ function AdminDataEditPageContent({
             Edit {toReadableText(model.name)}
           </h1>
           <button
+            type="button"
             onClick={() => setShowDeleteConfirm(true)}
             disabled={deleteState.status === 'loading'}
             className="inline-flex items-center px-3 py-2 border border-red-300 shadow-sm text-sm leading-4 font-medium rounded-md text-red-700 bg-white hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50 disabled:cursor-not-allowed"

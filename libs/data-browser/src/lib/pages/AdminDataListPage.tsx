@@ -205,8 +205,8 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
           filters[relationField.name] = { id: value }
         } else {
           // Check if this is a regular scalar field that exists on the model
-          const scalarField = model.fields.find((f: any) => f.name === key && !f.relationName)
-          if (scalarField) {
+          const hasScalarField = model.fields.some((f: any) => f.name === key && !f.relationName)
+          if (hasScalarField) {
             // Regular scalar field that exists on the model
             filters[key] = value
           }
@@ -591,6 +591,7 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
               </p>
               <div className="mt-6 space-y-3">
                 <button
+                  type="button"
                   onClick={() => globalThis.location.reload()}
                   className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-web hover:bg-green-web-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-web"
                 >
@@ -617,6 +618,7 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
   const columnSelector = (
     <div className="relative" data-dropdown="column-selector">
       <button
+        type="button"
         onClick={() => setShowColumnSelector(!showColumnSelector)}
         className="inline-flex items-center px-3 py-2 border border-gray-300 dark:border-gray-600 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-web"
       >
@@ -664,6 +666,7 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
             </div>
             <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700 flex justify-between">
               <button
+                type="button"
                 onClick={() => {
                   setVisibleColumns(fieldNames)
                   AdminLocalStorage.setColumnVisibility(model.name, fieldNames)
@@ -673,6 +676,7 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
                 Select All
               </button>
               <button
+                type="button"
                 onClick={() => {
                   const defaults = fieldNames.slice(0, 8)
                   setVisibleColumns(defaults)
@@ -693,6 +697,7 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
   const searchFieldSelector = (
     <div className="relative" data-dropdown="search-field-selector">
       <button
+        type="button"
         onClick={() => setShowSearchFieldSelector(!showSearchFieldSelector)}
         className="h-full px-3 border-l border-gray-300 dark:border-gray-600 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 focus:outline-none focus:text-gray-600 dark:focus:text-gray-300"
         aria-label="Configure search fields"
@@ -742,6 +747,7 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
                 </div>
                 <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700 flex justify-between">
                   <button
+                    type="button"
                     onClick={() => {
                       setSearchFields(searchableFieldNames)
                       AdminLocalStorage.setSearchFields(model.name, searchableFieldNames)
@@ -751,6 +757,7 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
                     Select All
                   </button>
                   <button
+                    type="button"
                     onClick={() => {
                       const defaults = getDefaultSearchFields(searchableFieldNames)
                       setSearchFields(defaults)
@@ -780,6 +787,7 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
         <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100">Filters</h3>
         <div className="flex items-center space-x-2">
           <button
+            type="button"
             onClick={() => {
               setFilters({})
               dispatch({ type: 'RESET_PAGINATION' })
@@ -789,6 +797,7 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
             Clear All
           </button>
           <button
+            type="button"
             onClick={() => setShowFilters(false)}
             className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
           >
@@ -905,6 +914,7 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
       </div>
       <div className="ml-4 flex space-x-2">
         <button
+          type="button"
           onClick={() => setShowFilters(!showFilters)}
           className={`inline-flex items-center px-3 py-2 border text-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-web ${
             showFilters || Object.keys(filters).length > 0
