@@ -90,6 +90,14 @@ export class AdminAuditLogsResponse {
 
   @Field(() => Int)
   take!: number
+
+  // Distinct action values present across all audit logs, for filter dropdowns.
+  @Field(() => [String])
+  actions!: string[]
+
+  // Distinct entityType values present across all audit logs, for filter dropdowns.
+  @Field(() => [String])
+  entityTypes!: string[]
 }
 
 @ObjectType()

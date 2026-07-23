@@ -4,7 +4,6 @@ import { AdminPlatformAuditLogs, AdminPlatformAuditLogsQuery } from '@nestled-te
 import {
   DocumentMagnifyingGlassIcon,
   EyeIcon,
-  MagnifyingGlassIcon,
   PencilSquareIcon,
   PlusCircleIcon,
   TrashIcon,
@@ -12,6 +11,14 @@ import {
 } from '@heroicons/react/24/outline'
 import { cn } from '@nestled-template/shared/utils'
 import { getColorClasses } from '../_color-utils'
+import {
+  EntityOption,
+  OrganizationFilterCombobox,
+  UserFilterCombobox,
+} from '../../../components/audit-log-entity-filters'
+
+const selectClasses =
+  'block w-full rounded-lg border border-zinc-300 dark:border-white/10 bg-white dark:bg-white/5 py-2 px-3 text-zinc-900 dark:text-white focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500'
 
 // Action type configurations for badge styling
 const getActionConfig = (action: string) => {
@@ -146,8 +153,8 @@ function AuditLogItem({ log, formatDate }: AuditLogItemProps) {
 
 export default function AdminAuditLogsPage() {
   const [filters, setFilters] = useState({
-    userId: '',
-    organizationId: '',
+    user: null as EntityOption | null,
+    organization: null as EntityOption | null,
     action: '',
     entityType: '',
     startDate: undefined as Date | undefined,
@@ -159,8 +166,8 @@ export default function AdminAuditLogsPage() {
   const { data, loading, error } = useQuery<AdminPlatformAuditLogsQuery>(AdminPlatformAuditLogs, {
     variables: {
       filters: {
-        userId: filters.userId || undefined,
-        organizationId: filters.organizationId || undefined,
+        userId: filters.user?.id || undefined,
+        organizationId: filters.organization?.id || undefined,
         action: filters.action || undefined,
         entityType: filters.entityType || undefined,
         startDate: filters.startDate,
@@ -175,6 +182,10 @@ export default function AdminAuditLogsPage() {
   const logs = data?.adminAuditLogs?.logs || []
   const total = data?.adminAuditLogs?.total || 0
   const totalPages = Math.ceil(total / pageSize)
+  // Facets are computed server-side over the whole table, so these stay stable
+  // regardless of the active filter.
+  const actionOptions = data?.adminAuditLogs?.actions || []
+  const entityTypeOptions = data?.adminAuditLogs?.entityTypes || []
 
   const formatDate = (date: string) => {
     return new Date(date).toLocaleString('en-US', {
@@ -188,8 +199,8 @@ export default function AdminAuditLogsPage() {
 
   const clearFilters = () => {
     setFilters({
-      userId: '',
-      organizationId: '',
+      user: null,
+      organization: null,
       action: '',
       entityType: '',
       startDate: undefined,
@@ -199,8 +210,8 @@ export default function AdminAuditLogsPage() {
   }
 
   const hasActiveFilters =
-    filters.userId ||
-    filters.organizationId ||
+    filters.user ||
+    filters.organization ||
     filters.action ||
     filters.entityType ||
     filters.startDate ||
@@ -231,95 +242,76 @@ export default function AdminAuditLogsPage() {
 
       {/* Filters */}
       <div className="rounded-xl border border-zinc-200 dark:border-white/10 bg-white dark:bg-white/5 p-6 backdrop-blur space-y-4">
-        {/* Search Filters Row 1 */}
+        {/* Search Filters Row 1 — facet dropdowns from real audit values */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label
               htmlFor="action"
-              className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2"
+              className="block text-sm font-medium text-zinc-700 dark:text-zinc-200 mb-2"
             >
               Action
             </label>
-            <input
+            <select
               id="action"
-              type="text"
               value={filters.action}
               onChange={e => {
                 setFilters(f => ({ ...f, action: e.target.value }))
                 setPage(0)
               }}
-              placeholder="Search by action (e.g., create, update, delete)..."
-              className="block w-full rounded-lg border border-zinc-300 dark:border-white/10 bg-white dark:bg-white/5 py-2 px-3 text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
-            />
+              className={selectClasses}
+            >
+              <option value="">All actions</option>
+              {actionOptions.map(action => (
+                <option key={action} value={action}>
+                  {action}
+                </option>
+              ))}
+            </select>
           </div>
 
           <div>
             <label
               htmlFor="entityType"
-              className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2"
+              className="block text-sm font-medium text-zinc-700 dark:text-zinc-200 mb-2"
             >
               Entity Type
             </label>
-            <input
+            <select
               id="entityType"
-              type="text"
               value={filters.entityType}
               onChange={e => {
                 setFilters(f => ({ ...f, entityType: e.target.value }))
                 setPage(0)
               }}
-              placeholder="Search by entity type (e.g., User, Organization)..."
-              className="block w-full rounded-lg border border-zinc-300 dark:border-white/10 bg-white dark:bg-white/5 py-2 px-3 text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
-            />
+              className={selectClasses}
+            >
+              <option value="">All entity types</option>
+              {entityTypeOptions.map(entityType => (
+                <option key={entityType} value={entityType}>
+                  {entityType}
+                </option>
+              ))}
+            </select>
           </div>
         </div>
 
-        {/* Search Filters Row 2 */}
+        {/* Search Filters Row 2 — searchable pickers for real users/orgs */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label
-              htmlFor="userId"
-              className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2"
-            >
-              User ID
-            </label>
-            <div className="relative">
-              <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                <MagnifyingGlassIcon className="h-5 w-5 text-zinc-400 dark:text-zinc-500" />
-              </div>
-              <input
-                id="userId"
-                type="text"
-                value={filters.userId}
-                onChange={e => {
-                  setFilters(f => ({ ...f, userId: e.target.value }))
-                  setPage(0)
-                }}
-                placeholder="Search by user ID..."
-                className="block w-full rounded-lg border border-zinc-300 dark:border-white/10 bg-white dark:bg-white/5 py-2 pl-10 pr-3 text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
-              />
-            </div>
-          </div>
+          <UserFilterCombobox
+            value={filters.user}
+            onChange={user => {
+              setFilters(f => ({ ...f, user }))
+              setPage(0)
+            }}
+          />
 
-          <div>
-            <label
-              htmlFor="organizationId"
-              className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2"
-            >
-              Organization ID
-            </label>
-            <input
-              id="organizationId"
-              type="text"
-              value={filters.organizationId}
-              onChange={e => {
-                setFilters(f => ({ ...f, organizationId: e.target.value }))
-                setPage(0)
-              }}
-              placeholder="Search by organization ID..."
-              className="block w-full rounded-lg border border-zinc-300 dark:border-white/10 bg-white dark:bg-white/5 py-2 px-3 text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
-            />
-          </div>
+          <OrganizationFilterCombobox
+            value={filters.organization}
+            onChange={organization => {
+              setFilters(f => ({ ...f, organization }))
+              setPage(0)
+            }}
+          />
         </div>
 
         {/* Date Range Filters */}
@@ -327,7 +319,7 @@ export default function AdminAuditLogsPage() {
           <div>
             <label
               htmlFor="startDate"
-              className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2"
+              className="block text-sm font-medium text-zinc-700 dark:text-zinc-200 mb-2"
             >
               Start Date
             </label>
@@ -351,7 +343,7 @@ export default function AdminAuditLogsPage() {
           <div>
             <label
               htmlFor="endDate"
-              className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2"
+              className="block text-sm font-medium text-zinc-700 dark:text-zinc-200 mb-2"
             >
               End Date
             </label>

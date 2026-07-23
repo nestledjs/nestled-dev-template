@@ -326,8 +326,8 @@ export class AdminService {
 
     const where: any = {}
 
-    if (userId) where.userId = userId
-    if (organizationId) where.organizationId = organizationId
+    if (userId?.trim()) where.userId = userId.trim()
+    if (organizationId?.trim()) where.organizationId = organizationId.trim()
     if (action) where.action = { contains: action, mode: 'insensitive' }
     if (entityType) where.entityType = { contains: entityType, mode: 'insensitive' }
     if (startDate || endDate) {
@@ -336,7 +336,7 @@ export class AdminService {
       if (endDate) where.createdAt.lte = endDate
     }
 
-    const [logs, total] = await Promise.all([
+    const [logs, total, facets] = await Promise.all([
       this.prisma.auditLog.findMany({
         where,
         skip,
@@ -360,11 +360,37 @@ export class AdminService {
         },
       }),
       this.prisma.auditLog.count({ where }),
+      this.getAuditLogFacets(),
     ])
 
     this.logger.log(`Admin audit logs query returned ${logs.length} of ${total} logs`)
 
-    return { logs, total, skip, take }
+    return { logs, total, skip, take, ...facets }
+  }
+
+  /**
+   * Distinct action and entityType values across all audit logs, used to
+   * populate the admin filter dropdowns. Computed over the whole table (not the
+   * current filter) so every real value is always offered as an option.
+   */
+  private async getAuditLogFacets(): Promise<{ actions: string[]; entityTypes: string[] }> {
+    const [actionRows, entityTypeRows] = await Promise.all([
+      this.prisma.auditLog.findMany({
+        distinct: ['action'],
+        select: { action: true },
+        orderBy: { action: 'asc' },
+      }),
+      this.prisma.auditLog.findMany({
+        distinct: ['entityType'],
+        select: { entityType: true },
+        orderBy: { entityType: 'asc' },
+      }),
+    ])
+
+    return {
+      actions: actionRows.map(row => row.action),
+      entityTypes: entityTypeRows.map(row => row.entityType),
+    }
   }
 
   /**

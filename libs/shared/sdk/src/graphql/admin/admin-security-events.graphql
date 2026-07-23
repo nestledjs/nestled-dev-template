@@ -47,6 +47,8 @@ query AdminPlatformAuditLogs($filters: AdminAuditLogFiltersInput) {
     total
     skip
     take
+    actions
+    entityTypes
   }
 }
 

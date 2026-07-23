@@ -112,6 +112,8 @@ export type AdminAuditLogFiltersInput = {
 
 export type AdminAuditLogsResponse = {
   __typename?: 'AdminAuditLogsResponse'
+  actions: Array<Scalars['String']['output']>
+  entityTypes: Array<Scalars['String']['output']>
   logs: Array<AuditLog>
   skip: Scalars['Int']['output']
   take: Scalars['Int']['output']
@@ -7303,6 +7305,8 @@ export type AdminPlatformAuditLogsQuery = {
     total: number
     skip: number
     take: number
+    actions: Array<string>
+    entityTypes: Array<string>
     logs: Array<{
       __typename?: 'AuditLog'
       id: string
@@ -28523,6 +28527,8 @@ export const AdminPlatformAuditLogs = {
                 { kind: 'Field', name: { kind: 'Name', value: 'total' } },
                 { kind: 'Field', name: { kind: 'Name', value: 'skip' } },
                 { kind: 'Field', name: { kind: 'Name', value: 'take' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'actions' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'entityTypes' } },
               ],
             },
           },
