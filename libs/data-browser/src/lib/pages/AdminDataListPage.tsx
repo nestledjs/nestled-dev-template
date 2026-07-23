@@ -16,6 +16,16 @@ interface AdminDataListPageProps {
   modelName?: string
 }
 
+type DataItem = Record<string, unknown> & { id: unknown }
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null
+}
+
+function isDataItem(value: unknown): value is DataItem {
+  return isRecord(value) && Boolean(value.id)
+}
+
 export function AdminDataListPage({ modelName: propModelName }: AdminDataListPageProps = {}) {
   const params = useParams()
   const [searchParams] = useSearchParams()
@@ -441,11 +451,12 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
   }
 
   // Helper: extract items array from GraphQL response data
-  const extractItems = useCallback((anyData: any, dataPath: string): any[] => {
-    let processedItems = dataPath && anyData[dataPath] ? anyData[dataPath] : []
-    if (!processedItems || processedItems.length === 0) {
-      for (const [, value] of Object.entries(anyData)) {
-        if (Array.isArray(value) && value.length > 0 && (value[0] as Record<string, unknown>)?.id) {
+  const extractItems = useCallback((responseData: Record<string, unknown>, dataPath: string) => {
+    const directItems = dataPath ? responseData[dataPath] : undefined
+    let processedItems: unknown[] = Array.isArray(directItems) ? directItems : []
+    if (processedItems.length === 0) {
+      for (const [, value] of Object.entries(responseData)) {
+        if (Array.isArray(value) && value.length > 0 && isDataItem(value[0])) {
           processedItems = value
           break
         }
@@ -455,8 +466,8 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
   }, [])
 
   // Helper: filter items to valid records
-  const filterValidItems = useCallback((items: any[]): any[] => {
-    return items.filter(item => item && typeof item === 'object' && item.id)
+  const filterValidItems = useCallback((items: unknown[]): DataItem[] => {
+    return items.filter(isDataItem)
   }, [])
 
   // Main GraphQL query with comprehensive error handling
@@ -483,10 +494,10 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
     }
 
     try {
-      const anyData = data as any
+      const responseData = isRecord(data) ? data : {}
       const processedPagination =
-        paginationPath && anyData[paginationPath] ? anyData[paginationPath] : undefined
-      const processedItems = extractItems(anyData, dataPath)
+        paginationPath && responseData[paginationPath] ? responseData[paginationPath] : undefined
+      const processedItems = extractItems(responseData, dataPath)
 
       if (!Array.isArray(processedItems)) {
         return {

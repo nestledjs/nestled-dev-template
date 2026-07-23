@@ -5,6 +5,42 @@ import { getAdminDocuments } from '../utils/graphql-utils'
 import { getSmartSearchFields } from '../utils/string-utils'
 import { useDebounce } from './useDebounce'
 
+type RelationField = {
+  name: string
+  type: string
+  relationName?: string | null
+}
+
+type RelationModel = {
+  name: string
+  fields: RelationField[]
+  pluralModelPropertyName?: string
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null
+}
+
+function isRelationField(value: unknown): value is RelationField {
+  return (
+    isRecord(value) &&
+    typeof value.name === 'string' &&
+    typeof value.type === 'string' &&
+    (value.relationName === undefined ||
+      value.relationName === null ||
+      typeof value.relationName === 'string')
+  )
+}
+
+function isRelationModel(value: unknown): value is RelationModel {
+  return (
+    isRecord(value) &&
+    typeof value.name === 'string' &&
+    Array.isArray(value.fields) &&
+    value.fields.every(isRelationField)
+  )
+}
+
 // Custom hook for relation data fetching and management
 export function useRelationData(
   relatedModelName: string,
@@ -17,7 +53,11 @@ export function useRelationData(
 
   // Get the related model and its GraphQL documents
   const relatedModel = useMemo(
-    () => databaseModels.find((m: any) => m.name === relatedModelName),
+    () =>
+      databaseModels.find(
+        (modelCandidate: unknown): modelCandidate is RelationModel =>
+          isRelationModel(modelCandidate) && modelCandidate.name === relatedModelName,
+      ),
     [databaseModels, relatedModelName],
   )
 
@@ -38,14 +78,14 @@ export function useRelationData(
     if (!relatedModel) return []
 
     return relatedModel.fields
-      .filter((f: any) => {
+      .filter(f => {
         const fieldType = f.type.toLowerCase()
         return (
           !f.relationName &&
           (fieldType === 'string' || fieldType.includes('text') || fieldType === 'boolean')
         )
       })
-      .map((f: any) => f.name)
+      .map(f => f.name)
   }, [relatedModel])
 
   const searchFields = useMemo(() => getSmartSearchFields(searchableFields), [searchableFields])
@@ -89,7 +129,7 @@ export function useRelationData(
     if (!relatedData) return []
 
     try {
-      const items = (relatedData as any)[relatedDataPath] || []
+      const items = isRecord(relatedData) ? relatedData[relatedDataPath] || [] : []
 
       // Validate that items is an array
       if (!Array.isArray(items)) {
@@ -97,11 +137,9 @@ export function useRelationData(
       }
 
       // Validate each item has required properties
-      return items.filter(item => {
-        if (!item || typeof item !== 'object') return false
-        if (!item.id) return false // Require ID field
-        return true
-      })
+      return items.filter(
+        (item): item is Record<string, unknown> => isRecord(item) && Boolean(item.id),
+      )
     } catch (error) {
       console.error('Unexpected error:', error)
       return []
