@@ -1,6 +1,6 @@
 {
   "name": "@nestledjs/data-browser",
-  "version": "1.0.16",
+  "version": "1.0.17",
   "description": "Universal admin data browser for Nestled framework projects with full CRUD operations",
   "main": "./index.js",
   "module": "./index.js",
@@ -37,7 +37,8 @@
   "peerDependencies": {
     "@apollo/client": "^4.0.0",
     "@heroicons/react": "^2.0.0",
-    "@nestledjs/forms": "0.7.7",
+    "@nestledjs/forms": "0.8.0",
+    "@nestledjs/forms-core": "0.8.0",
     "@nestledjs/shared-components": "^1.0.14",
     "react": "^19.0.0",
     "react-router": "^7.0.0"
@@ -47,10 +48,13 @@
       "optional": false
     }
   },
-  "dependencies": {},
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org/"
   },
-  "type": "module"
+  "type": "module",
+  "devDependencies": {
+    "@nestledjs/forms": "0.8.0",
+    "@nestledjs/forms-core": "0.8.0"
+  }
 }
