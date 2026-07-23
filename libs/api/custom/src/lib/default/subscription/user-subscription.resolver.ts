@@ -1,11 +1,12 @@
 import { Resolver, Query, Mutation, Args } from '@nestjs/graphql'
-import { UseGuards } from '@nestjs/common'
+import { Logger, UseGuards } from '@nestjs/common'
 import { GqlAuthGuard, CtxUser } from '@nestled-template/api/utils'
 import { Subscription, User } from '@nestled-template/api/core/models'
 import { ApiCoreDataAccessService } from '@nestled-template/api/core/data-access'
 import { StripeService } from '@nestled-template/api/integrations'
-import { UsageService } from '@nestled-template/api/custom'
 import { ConfigService } from '@nestled-template/api/config'
+import type { InputJsonValue } from '@nestled-template/api/prisma'
+import { UsageService } from '../../plugins/billing/usage.service'
 
 /**
  * User Subscription Resolver
@@ -22,6 +23,34 @@ export class UserSubscriptionResolver {
     private readonly usage: UsageService,
     private readonly config: ConfigService,
   ) {}
+
+  private async recordAuditLog(input: {
+    actorUserId: string
+    organizationId: string
+    entityId: string
+    entityType: string
+    action: string
+    changes?: InputJsonValue
+  }): Promise<void> {
+    try {
+      await this.prisma.auditLog.create({
+        data: {
+          userId: input.actorUserId,
+          organizationId: input.organizationId,
+          entityId: input.entityId,
+          entityType: input.entityType,
+          action: input.action,
+          changes: input.changes,
+        },
+      })
+    } catch (error) {
+      Logger.warn(
+        `Failed to record audit log ${input.action} for ${input.entityType} ${input.entityId}: ${
+          error instanceof Error ? error.message : 'Unknown error'
+        }`,
+      )
+    }
+  }
 
   /**
    * Get current user's organization subscription
@@ -67,7 +96,7 @@ export class UserSubscriptionResolver {
 
     if (!customerId) {
       const customer = await this.stripe.createCustomer({
-        email: organization.emails[0]?.email || user.emails[0]?.email || 'unknown@example.com',
+        email: organization.emails?.[0]?.email ?? user.emails?.[0]?.email ?? 'unknown@example.com',
         name: organization.name,
         metadata: {
           organizationId: organization.id,
@@ -93,6 +122,19 @@ export class UserSubscriptionResolver {
       metadata: {
         organizationId: organization.id,
         planId: plan?.id || '',
+      },
+    })
+
+    await this.recordAuditLog({
+      actorUserId: user.id,
+      organizationId: organization.id,
+      entityId: organization.id,
+      entityType: 'Organization',
+      action: 'BILLING_CHECKOUT_SESSION_CREATED',
+      changes: {
+        priceId,
+        planId: plan?.id ?? null,
+        checkoutSessionId: session.id ?? null,
       },
     })
 
@@ -123,6 +165,17 @@ export class UserSubscriptionResolver {
       returnUrl: `${siteUrl}/settings/billing`,
     })
 
+    await this.recordAuditLog({
+      actorUserId: user.id,
+      organizationId: user.activeOrganizationId,
+      entityId: subscription.id,
+      entityType: 'Subscription',
+      action: 'BILLING_PORTAL_SESSION_CREATED',
+      changes: {
+        portalSessionId: session.id ?? null,
+      },
+    })
+
     return session.url
   }
 
@@ -147,12 +200,25 @@ export class UserSubscriptionResolver {
     await this.stripe.cancelSubscription(subscription.stripeSubscriptionId, false)
 
     // Update local record
-    return this.prisma.subscription.update({
+    const updatedSubscription = await this.prisma.subscription.update({
       where: { id: subscription.id },
       data: {
         cancelAtPeriodEnd: true,
       },
     })
+
+    await this.recordAuditLog({
+      actorUserId: user.id,
+      organizationId: user.activeOrganizationId,
+      entityId: subscription.id,
+      entityType: 'Subscription',
+      action: 'SUBSCRIPTION_CANCEL_AT_PERIOD_END',
+      changes: {
+        stripeSubscriptionId: subscription.stripeSubscriptionId,
+      },
+    })
+
+    return updatedSubscription
   }
 
   /**
