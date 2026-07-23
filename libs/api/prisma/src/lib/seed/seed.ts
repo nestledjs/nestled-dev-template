@@ -59,8 +59,20 @@ async function reconnectOrgRolePermissions(prisma: PrismaClient): Promise<number
   return fixedCount
 }
 
-async function main() {
-  // Seed countries
+function isDuplicateDisplayNameError(error: unknown): boolean {
+  const errorRecord = isRecord(error) ? error : {}
+  const errorMeta = isRecord(errorRecord.meta) ? errorRecord.meta : {}
+  const isPrismaError = errorRecord.code === 'P2002'
+
+  return (
+    isPrismaError &&
+    (valueIncludes(errorMeta.target, 'displayName') ||
+      valueIncludes(errorRecord.message, 'displayName') ||
+      valueIncludes(errorMeta.driverAdapterError, 'UniqueConstraintViolation'))
+  )
+}
+
+async function seedCountries(): Promise<void> {
   console.log('Seeding countries...')
   for (const country of countries) {
     await prisma.country.upsert({
@@ -82,8 +94,9 @@ async function main() {
     })
   }
   console.log('✓ Countries seeded')
+}
 
-  // Seed global permissions (no organizationId = available to all organizations)
+async function seedGlobalPermissions(): Promise<void> {
   console.log('Seeding permissions...')
   for (const permission of defaultPermissions) {
     await prisma.permission.upsert({
@@ -93,16 +106,9 @@ async function main() {
     })
   }
   console.log(`✓ ${defaultPermissions.length} permissions seeded`)
+}
 
-  // Fix any existing org roles that were created before permissions were seeded
-  console.log('Reconnecting permissions to existing org roles...')
-  const fixedCount = await reconnectOrgRolePermissions(prisma)
-  console.log(`✓ Fixed ${fixedCount} org role(s) with missing permissions`)
-
-  // Note: Roles are organization-specific and will be created when organizations are created
-  // See the auth service register function for automatic role creation
-
-  // Seed users (without role field - using isSuperAdmin instead)
+async function seedInitialUsers(): Promise<void> {
   console.log('Seeding users...')
   for (const user of seedUsers) {
     try {
@@ -120,28 +126,33 @@ async function main() {
             },
           },
           password: hashSync(user.password, 10),
-          isSuperAdmin: user.email === 'admin@example.com', // Make default admin a super admin
+          isSuperAdmin: user.email === 'admin@example.com',
         },
       })
       console.log(`✓ User ${user.displayName} seeded`)
     } catch (e) {
-      // Handle Prisma v7 unique constraint violations (P2002)
-      // The error format changed in v7 with driver adapters
-      const errorRecord = isRecord(e) ? e : {}
-      const errorMeta = isRecord(errorRecord.meta) ? errorRecord.meta : {}
-      const isPrismaError = errorRecord.code === 'P2002'
-      const isDisplayNameViolation =
-        valueIncludes(errorMeta.target, 'displayName') ||
-        valueIncludes(errorRecord.message, 'displayName') ||
-        valueIncludes(errorMeta.driverAdapterError, 'UniqueConstraintViolation')
-
-      if (isPrismaError && isDisplayNameViolation) {
+      if (isDuplicateDisplayNameError(e)) {
         console.log(`  User with displayName "${user.displayName}" already exists. Skipping.`)
-      } else {
-        throw e
+        continue
       }
+
+      throw e
     }
   }
+}
+
+async function main() {
+  await seedCountries()
+  await seedGlobalPermissions()
+
+  console.log('Reconnecting permissions to existing org roles...')
+  const fixedCount = await reconnectOrgRolePermissions(prisma)
+  console.log(`✓ Fixed ${fixedCount} org role(s) with missing permissions`)
+
+  // Note: Roles are organization-specific and will be created when organizations are created
+  // See the auth service register function for automatic role creation
+
+  await seedInitialUsers()
 }
 
 // Export for use in other modules

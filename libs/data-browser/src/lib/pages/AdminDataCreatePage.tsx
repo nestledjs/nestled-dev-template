@@ -77,8 +77,7 @@ export function AdminDataCreatePage() {
       .join('')
 
     // Check if this data type exists in our models
-    const model = databaseModels.find(m => m.name === properCaseDataType)
-    return model ? properCaseDataType : null
+    return databaseModels.some(m => m.name === properCaseDataType) ? properCaseDataType : null
   }
 
   // Security validation

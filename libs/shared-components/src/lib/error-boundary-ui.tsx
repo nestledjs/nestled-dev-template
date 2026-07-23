@@ -156,7 +156,15 @@ function errorDetailKey(error: unknown): string {
 
   const message = typeof error.message === 'string' ? error.message.slice(0, 40) : undefined
   const name = typeof error.name === 'string' ? error.name : undefined
-  return message ?? name ?? String(error)
+  if (message ?? name) {
+    return message ?? name ?? 'Error'
+  }
+
+  try {
+    return JSON.stringify(error) ?? 'Error'
+  } catch {
+    return 'Unserializable error'
+  }
 }
 
 function extraErrorEntries(error: unknown): [string, unknown][] {
