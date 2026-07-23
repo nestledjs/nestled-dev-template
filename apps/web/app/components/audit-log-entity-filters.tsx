@@ -8,10 +8,10 @@ import {
   ComboboxOptions,
 } from '@headlessui/react'
 import {
-  AdminPlatformOrganizations,
-  AdminPlatformOrganizationsQuery,
-  AdminUserManagement,
-  AdminUserManagementQuery,
+  AdminOrganizationPicker,
+  AdminOrganizationPickerQuery,
+  AdminUserPicker,
+  AdminUserPickerQuery,
 } from '@nestled-template/shared/sdk'
 import { ChevronUpDownIcon, XMarkIcon } from '@heroicons/react/20/solid'
 import { cn } from '@nestled-template/shared/utils'
@@ -135,10 +135,18 @@ interface FilterProps {
   readonly onChange: (value: EntityOption | null) => void
 }
 
-type AdminUser = NonNullable<AdminUserManagementQuery['adminUsers']['users'][number]>
+type AdminUser = NonNullable<AdminUserPickerQuery['adminUsers']['users'][number]>
 type AdminOrganization = NonNullable<
-  AdminPlatformOrganizationsQuery['adminOrganizations']['organizations'][number]
+  AdminOrganizationPickerQuery['adminOrganizations']['organizations'][number]
 >
+
+// Reset the local search term whenever the parent clears the selection, so a
+// page-level "Clear Filters" does not leave the dropdown filtering on stale text.
+function useResetQueryOnClear(value: EntityOption | null, setQuery: (query: string) => void) {
+  useEffect(() => {
+    if (!value) setQuery('')
+  }, [value, setQuery])
+}
 
 function userToOption(user: AdminUser): EntityOption {
   const name = `${user.firstName} ${user.lastName}`.trim()
@@ -154,8 +162,9 @@ function userToOption(user: AdminUser): EntityOption {
 export function UserFilterCombobox({ value, onChange }: FilterProps) {
   const [query, setQuery] = useState('')
   const debouncedQuery = useDebouncedValue(query, 250)
+  useResetQueryOnClear(value, setQuery)
 
-  const { data, loading } = useQuery<AdminUserManagementQuery>(AdminUserManagement, {
+  const { data, loading } = useQuery<AdminUserPickerQuery>(AdminUserPicker, {
     variables: { filters: { search: debouncedQuery || undefined, take: 20 } },
   })
 
@@ -184,8 +193,9 @@ function organizationToOption(org: AdminOrganization): EntityOption {
 export function OrganizationFilterCombobox({ value, onChange }: FilterProps) {
   const [query, setQuery] = useState('')
   const debouncedQuery = useDebouncedValue(query, 250)
+  useResetQueryOnClear(value, setQuery)
 
-  const { data, loading } = useQuery<AdminPlatformOrganizationsQuery>(AdminPlatformOrganizations, {
+  const { data, loading } = useQuery<AdminOrganizationPickerQuery>(AdminOrganizationPicker, {
     variables: { filters: { search: debouncedQuery || undefined, take: 20 } },
   })
 

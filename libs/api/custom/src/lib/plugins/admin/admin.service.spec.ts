@@ -431,7 +431,9 @@ describe('AdminService', () => {
         }),
       )
     })
-    it('should return distinct action and entityType facets over the whole table', async () => {
+  })
+  describe('getAuditLogFacets', () => {
+    it('should return distinct action and entityType values over the whole table', async () => {
       mockData.auditLog.findMany.mockImplementation((args: any) => {
         if (args?.distinct?.includes('action')) {
           return Promise.resolve([{ action: 'CREATE' }, { action: 'UPDATE' }])
@@ -441,11 +443,9 @@ describe('AdminService', () => {
         }
         return Promise.resolve([])
       })
-      mockData.auditLog.count.mockResolvedValue(0)
-      const result = await service.getAuditLogs({ action: 'CREATE' })
+      const result = await service.getAuditLogFacets()
       expect(result.actions).toEqual(['CREATE', 'UPDATE'])
       expect(result.entityTypes).toEqual(['Organization', 'User'])
-      // Facets ignore the active filter so every real value stays selectable.
       expect(mockData.auditLog.findMany).toHaveBeenCalledWith(
         expect.objectContaining({ distinct: ['action'], orderBy: { action: 'asc' } }),
       )

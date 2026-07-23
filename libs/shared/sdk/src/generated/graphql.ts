@@ -99,6 +99,12 @@ export type AdminAnalyticsFeature = {
   uniqueUsers: Scalars['Int']['output']
 }
 
+export type AdminAuditLogFacets = {
+  __typename?: 'AdminAuditLogFacets'
+  actions: Array<Scalars['String']['output']>
+  entityTypes: Array<Scalars['String']['output']>
+}
+
 export type AdminAuditLogFiltersInput = {
   action?: InputMaybe<Scalars['String']['input']>
   endDate?: InputMaybe<Scalars['DateTime']['input']>
@@ -112,8 +118,6 @@ export type AdminAuditLogFiltersInput = {
 
 export type AdminAuditLogsResponse = {
   __typename?: 'AdminAuditLogsResponse'
-  actions: Array<Scalars['String']['output']>
-  entityTypes: Array<Scalars['String']['output']>
   logs: Array<AuditLog>
   skip: Scalars['Int']['output']
   take: Scalars['Int']['output']
@@ -2002,6 +2006,7 @@ export type Query = {
   addresses?: Maybe<Array<Address>>
   addressesCount?: Maybe<CorePaging>
   adminAnalytics: AdminAnalytics
+  adminAuditLogFacets: AdminAuditLogFacets
   adminAuditLogs: AdminAuditLogsResponse
   adminDashboardStats: AdminDashboardStats
   adminOrganizations: AdminOrganizationsResponse
@@ -7114,6 +7119,38 @@ export type AdminPlatformOrganizationsQuery = {
   }
 }
 
+export type AdminUserPickerQueryVariables = Exact<{
+  filters?: InputMaybe<AdminUserFiltersInput>
+}>
+
+export type AdminUserPickerQuery = {
+  __typename?: 'Query'
+  adminUsers: {
+    __typename?: 'AdminUsersResponse'
+    total: number
+    users: Array<{
+      __typename?: 'User'
+      id: string
+      firstName?: string | null
+      lastName?: string | null
+      emails?: Array<{ __typename?: 'Email'; email: string; primary: boolean }> | null
+    }>
+  }
+}
+
+export type AdminOrganizationPickerQueryVariables = Exact<{
+  filters?: InputMaybe<AdminOrganizationFiltersInput>
+}>
+
+export type AdminOrganizationPickerQuery = {
+  __typename?: 'Query'
+  adminOrganizations: {
+    __typename?: 'AdminOrganizationsResponse'
+    total: number
+    organizations: Array<{ __typename?: 'Organization'; id: string; name: string }>
+  }
+}
+
 export type AdminUserManagementQueryVariables = Exact<{
   filters?: InputMaybe<AdminUserFiltersInput>
 }>
@@ -7305,8 +7342,6 @@ export type AdminPlatformAuditLogsQuery = {
     total: number
     skip: number
     take: number
-    actions: Array<string>
-    entityTypes: Array<string>
     logs: Array<{
       __typename?: 'AuditLog'
       id: string
@@ -7324,6 +7359,17 @@ export type AdminPlatformAuditLogsQuery = {
       } | null
       organization?: { __typename?: 'Organization'; id: string; name: string } | null
     }>
+  }
+}
+
+export type AdminPlatformAuditLogFacetsQueryVariables = Exact<{ [key: string]: never }>
+
+export type AdminPlatformAuditLogFacetsQuery = {
+  __typename?: 'Query'
+  adminAuditLogFacets: {
+    __typename?: 'AdminAuditLogFacets'
+    actions: Array<string>
+    entityTypes: Array<string>
   }
 }
 
@@ -28004,6 +28050,121 @@ export const AdminPlatformOrganizations = {
   AdminPlatformOrganizationsQuery,
   AdminPlatformOrganizationsQueryVariables
 >
+export const AdminUserPicker = {
+  kind: 'Document',
+  definitions: [
+    {
+      kind: 'OperationDefinition',
+      operation: 'query',
+      name: { kind: 'Name', value: 'AdminUserPicker' },
+      variableDefinitions: [
+        {
+          kind: 'VariableDefinition',
+          variable: { kind: 'Variable', name: { kind: 'Name', value: 'filters' } },
+          type: { kind: 'NamedType', name: { kind: 'Name', value: 'AdminUserFiltersInput' } },
+        },
+      ],
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'adminUsers' },
+            arguments: [
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'filters' },
+                value: { kind: 'Variable', name: { kind: 'Name', value: 'filters' } },
+              },
+            ],
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [
+                {
+                  kind: 'Field',
+                  name: { kind: 'Name', value: 'users' },
+                  selectionSet: {
+                    kind: 'SelectionSet',
+                    selections: [
+                      { kind: 'Field', name: { kind: 'Name', value: 'id' } },
+                      { kind: 'Field', name: { kind: 'Name', value: 'firstName' } },
+                      { kind: 'Field', name: { kind: 'Name', value: 'lastName' } },
+                      {
+                        kind: 'Field',
+                        name: { kind: 'Name', value: 'emails' },
+                        selectionSet: {
+                          kind: 'SelectionSet',
+                          selections: [
+                            { kind: 'Field', name: { kind: 'Name', value: 'email' } },
+                            { kind: 'Field', name: { kind: 'Name', value: 'primary' } },
+                          ],
+                        },
+                      },
+                    ],
+                  },
+                },
+                { kind: 'Field', name: { kind: 'Name', value: 'total' } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<AdminUserPickerQuery, AdminUserPickerQueryVariables>
+export const AdminOrganizationPicker = {
+  kind: 'Document',
+  definitions: [
+    {
+      kind: 'OperationDefinition',
+      operation: 'query',
+      name: { kind: 'Name', value: 'AdminOrganizationPicker' },
+      variableDefinitions: [
+        {
+          kind: 'VariableDefinition',
+          variable: { kind: 'Variable', name: { kind: 'Name', value: 'filters' } },
+          type: {
+            kind: 'NamedType',
+            name: { kind: 'Name', value: 'AdminOrganizationFiltersInput' },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'adminOrganizations' },
+            arguments: [
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'filters' },
+                value: { kind: 'Variable', name: { kind: 'Name', value: 'filters' } },
+              },
+            ],
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [
+                {
+                  kind: 'Field',
+                  name: { kind: 'Name', value: 'organizations' },
+                  selectionSet: {
+                    kind: 'SelectionSet',
+                    selections: [
+                      { kind: 'Field', name: { kind: 'Name', value: 'id' } },
+                      { kind: 'Field', name: { kind: 'Name', value: 'name' } },
+                    ],
+                  },
+                },
+                { kind: 'Field', name: { kind: 'Name', value: 'total' } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<AdminOrganizationPickerQuery, AdminOrganizationPickerQueryVariables>
 export const AdminUserManagement = {
   kind: 'Document',
   definitions: [
@@ -28527,6 +28688,30 @@ export const AdminPlatformAuditLogs = {
                 { kind: 'Field', name: { kind: 'Name', value: 'total' } },
                 { kind: 'Field', name: { kind: 'Name', value: 'skip' } },
                 { kind: 'Field', name: { kind: 'Name', value: 'take' } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<AdminPlatformAuditLogsQuery, AdminPlatformAuditLogsQueryVariables>
+export const AdminPlatformAuditLogFacets = {
+  kind: 'Document',
+  definitions: [
+    {
+      kind: 'OperationDefinition',
+      operation: 'query',
+      name: { kind: 'Name', value: 'AdminPlatformAuditLogFacets' },
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'adminAuditLogFacets' },
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [
                 { kind: 'Field', name: { kind: 'Name', value: 'actions' } },
                 { kind: 'Field', name: { kind: 'Name', value: 'entityTypes' } },
               ],
@@ -28536,7 +28721,10 @@ export const AdminPlatformAuditLogs = {
       },
     },
   ],
-} as unknown as DocumentNode<AdminPlatformAuditLogsQuery, AdminPlatformAuditLogsQueryVariables>
+} as unknown as DocumentNode<
+  AdminPlatformAuditLogFacetsQuery,
+  AdminPlatformAuditLogFacetsQueryVariables
+>
 export const GenerateApiToken = {
   kind: 'Document',
   definitions: [
