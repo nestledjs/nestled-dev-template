@@ -8,6 +8,31 @@ import { hashSync } from 'bcryptjs'
 
 const adapter = new PrismaPg({ connectionString: process.env['DATABASE_URL']! })
 const prisma = new PrismaClient({ adapter })
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null
+}
+
+function valueIncludes(value: unknown, search: string): boolean {
+  if (typeof value === 'string') {
+    return value.includes(search)
+  }
+
+  if (Array.isArray(value)) {
+    return value.some(item => item === search || valueIncludes(item, search))
+  }
+
+  if (isRecord(value)) {
+    try {
+      return JSON.stringify(value).includes(search)
+    } catch {
+      return false
+    }
+  }
+
+  return false
+}
+
 async function reconnectOrgRolePermissions(prisma: PrismaClient): Promise<number> {
   const allPermissions = await prisma.permission.findMany()
   const existingOrgRoles = await prisma.role.findMany({
@@ -102,11 +127,13 @@ async function main() {
     } catch (e) {
       // Handle Prisma v7 unique constraint violations (P2002)
       // The error format changed in v7 with driver adapters
-      const isPrismaError = (e as any).code === 'P2002'
+      const errorRecord = isRecord(e) ? e : {}
+      const errorMeta = isRecord(errorRecord.meta) ? errorRecord.meta : {}
+      const isPrismaError = errorRecord.code === 'P2002'
       const isDisplayNameViolation =
-        (e as any).meta?.target?.includes?.('displayName') ||
-        String((e as any).message).includes('displayName') ||
-        String((e as any).meta?.driverAdapterError).includes('UniqueConstraintViolation')
+        valueIncludes(errorMeta.target, 'displayName') ||
+        valueIncludes(errorRecord.message, 'displayName') ||
+        valueIncludes(errorMeta.driverAdapterError, 'UniqueConstraintViolation')
 
       if (isPrismaError && isDisplayNameViolation) {
         console.log(`  User with displayName "${user.displayName}" already exists. Skipping.`)

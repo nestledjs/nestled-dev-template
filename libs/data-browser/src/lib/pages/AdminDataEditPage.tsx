@@ -22,6 +22,10 @@ function getModelResponseFieldName(modelName: string): string {
   return toLowerCamelCase(modelName)
 }
 
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null
+}
+
 import { Link, useNavigate, useParams } from 'react-router'
 import {
   buildFormFields,
@@ -733,9 +737,9 @@ function AdminDataEditPageContent({
   }
 
   // Get the item data
-  const item = (data as any)?.[responseFieldName]
+  const item = isRecord(data) ? data[responseFieldName] : undefined
 
-  if (!item) {
+  if (!isRecord(item)) {
     return (
       <AdminDataStateMessage
         type="not-found"

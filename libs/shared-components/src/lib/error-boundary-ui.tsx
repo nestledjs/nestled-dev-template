@@ -106,7 +106,11 @@ function renderStringWithEmbeddedJson(str: string) {
   )
 }
 
-function renderPretty(obj: any): React.ReactNode {
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null
+}
+
+function renderPretty(obj: unknown): React.ReactNode {
   if (typeof obj === 'object' && obj !== null) {
     return (
       <pre className="bg-gray-50 rounded border border-gray-200 p-3 overflow-x-auto text-left text-xs font-mono mt-2 max-h-64 whitespace-pre-wrap">
@@ -132,6 +136,37 @@ function renderPretty(obj: any): React.ReactNode {
   return <span className="font-mono text-xs text-gray-700">{String(obj)}</span>
 }
 
+function aggregateErrors(error: Error): unknown[] {
+  const errorRecord: Record<string, unknown> = isRecord(error) ? error : {}
+  return Array.isArray(errorRecord.errors) ? errorRecord.errors : [error]
+}
+
+function errorMessage(error: unknown): string {
+  return isRecord(error) && typeof error.message === 'string' ? error.message : String(error)
+}
+
+function errorStack(error: unknown): string {
+  return isRecord(error) && typeof error.stack === 'string' ? error.stack : ''
+}
+
+function errorDetailKey(error: unknown): string {
+  if (!isRecord(error)) {
+    return String(error)
+  }
+
+  const message = typeof error.message === 'string' ? error.message.slice(0, 40) : undefined
+  const name = typeof error.name === 'string' ? error.name : undefined
+  return message ?? name ?? String(error)
+}
+
+function extraErrorEntries(error: unknown): [string, unknown][] {
+  if (!isRecord(error)) {
+    return []
+  }
+
+  return Object.entries(error).filter(([key]) => !['message', 'stack', 'name'].includes(key))
+}
+
 export function ErrorBoundaryUi({ error }: { readonly error: Error }) {
   const [showDetails, setShowDetails] = useState(false)
 
@@ -142,9 +177,7 @@ export function ErrorBoundaryUi({ error }: { readonly error: Error }) {
   // Log the full error object for debugging
   console.error('Route ErrorBoundary caught:', error)
 
-  // Detect aggregate error by checking for an 'errors' array
-  const isAggregate = Array.isArray((error as any).errors)
-  const errors = isAggregate ? (error as any).errors : [error]
+  const errors = aggregateErrors(error)
 
   return (
     <div className="flex justify-center items-center min-h-[60vh]">
@@ -170,31 +203,30 @@ export function ErrorBoundaryUi({ error }: { readonly error: Error }) {
           <div className="mt-6">
             <h2 className="font-semibold text-gray-800 mb-2">Details:</h2>
             <ul className="list-disc list-inside space-y-4">
-              {errors.map((err: any) => {
-                const errKey = err?.message?.slice(0, 40) ?? err?.name ?? String(err)
+              {errors.map(err => {
+                const errKey = errorDetailKey(err)
+                const stack = errorStack(err)
                 return (
                   <li key={errKey} className="mb-2">
                     <div className="font-medium text-gray-900">
-                      {renderPretty(err?.message || String(err))}
+                      {renderPretty(errorMessage(err))}
                     </div>
                     {/* Show stack if available - always render to prevent hydration mismatch */}
-                    <details className="mt-2" style={{ display: err?.stack ? 'block' : 'none' }}>
+                    <details className="mt-2" style={{ display: stack ? 'block' : 'none' }}>
                       <summary className="cursor-pointer text-xs text-gray-500">
                         Stack trace
                       </summary>
                       <pre className="bg-gray-100 rounded p-2 overflow-x-auto text-left text-xs font-mono max-h-40 whitespace-pre-wrap">
-                        {err?.stack || ''}
+                        {stack}
                       </pre>
                     </details>
                     {/* Show extra fields prettily if present */}
-                    {Object.keys(err || {})
-                      .filter(k => !['message', 'stack', 'name'].includes(k))
-                      .map(k => (
-                        <div key={k} className="mt-1">
-                          <span className="font-mono text-xs text-gray-600">{k}:</span>
-                          {renderPretty(err[k])}
-                        </div>
-                      ))}
+                    {extraErrorEntries(err).map(([key, value]) => (
+                      <div key={key} className="mt-1">
+                        <span className="font-mono text-xs text-gray-600">{key}:</span>
+                        {renderPretty(value)}
+                      </div>
+                    ))}
                   </li>
                 )
               })}

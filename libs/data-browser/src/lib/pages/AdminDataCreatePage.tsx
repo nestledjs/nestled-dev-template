@@ -15,6 +15,29 @@ import {
   toReadableText,
 } from '../utils/graphql-utils'
 
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null
+}
+
+function mutationErrorMessage(result: unknown): string | null {
+  if (!isRecord(result)) {
+    return null
+  }
+
+  if (isRecord(result.error) && typeof result.error.message === 'string') {
+    return result.error.message
+  }
+
+  if (!Array.isArray(result.errors) || result.errors.length === 0) {
+    return null
+  }
+
+  return result.errors
+    .map(error => (isRecord(error) && typeof error.message === 'string' ? error.message : null))
+    .filter((message): message is string => message !== null)
+    .join(', ')
+}
+
 // Validation functions moved into component to access databaseModels from context
 
 // Check if user has access to this data type (basic implementation)
@@ -291,10 +314,11 @@ function AdminDataCreatePageContent({
         },
       })
 
-      if ((result as any).errors) {
+      const mutationError = mutationErrorMessage(result)
+      if (mutationError) {
         setSubmissionState({
           status: 'error',
-          message: (result as any).errors.map((err: any) => err.message).join(', '),
+          message: mutationError,
         })
         return
       }
