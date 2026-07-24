@@ -1,4 +1,5 @@
 import { getItemDisplayName } from '../../utils/string-utils'
+import { FilterChevron, filterControlClasses } from './filter-styles'
 
 // Dropdown button component
 export function RelationDropdownButton({
@@ -16,7 +17,7 @@ export function RelationDropdownButton({
     <button
       type="button"
       onClick={onClick}
-      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-green-web focus:border-green-web text-sm text-left bg-white dark:bg-gray-800 flex items-center justify-between"
+      className={`${filterControlClasses} text-left flex items-center justify-between`}
     >
       <span
         className={
@@ -27,14 +28,7 @@ export function RelationDropdownButton({
           ? getItemDisplayName(currentItem)
           : `Select ${relatedModelName.toLowerCase()}...`}
       </span>
-      <svg
-        className={`w-4 h-4 text-gray-400 transition-transform ${isOpen ? 'rotate-180' : ''}`}
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
-      >
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-      </svg>
+      <FilterChevron isOpen={isOpen} />
     </button>
   )
 }
@@ -107,7 +101,7 @@ export function RelationItemList({
       </button>
 
       {error && (
-        <div className="px-3 py-2 text-sm text-red-600">
+        <div className="px-3 py-2 text-sm text-red-600 dark:text-red-400">
           <div className="flex items-center">
             <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
@@ -119,16 +113,16 @@ export function RelationItemList({
             </svg>
             Failed to load options
           </div>
-          <div className="text-xs text-gray-500 mt-1">
+          <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
             {error.networkError ? 'Network error' : 'Please try again'}
           </div>
         </div>
       )}
       {!error && loading && (
-        <div className="px-3 py-2 text-sm text-gray-500">
+        <div className="px-3 py-2 text-sm text-gray-500 dark:text-gray-400">
           <div className="flex items-center">
             <svg
-              className="animate-spin -ml-1 mr-2 h-4 w-4 text-gray-500"
+              className="animate-spin -ml-1 mr-2 h-4 w-4 text-gray-500 dark:text-gray-400"
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
@@ -152,7 +146,7 @@ export function RelationItemList({
         </div>
       )}
       {!error && !loading && items.length === 0 && (
-        <div className="px-3 py-2 text-sm text-gray-500">No items found</div>
+        <div className="px-3 py-2 text-sm text-gray-500 dark:text-gray-400">No items found</div>
       )}
       {!error &&
         !loading &&

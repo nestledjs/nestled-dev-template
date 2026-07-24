@@ -1,4 +1,5 @@
 import { formatFieldName } from '../../utils/string-utils'
+import { filterControlClasses, filterHelpTextClasses, filterLabelClasses } from './filter-styles'
 
 interface DateRangeFilterProps {
   fieldName: string
@@ -53,12 +54,10 @@ export function DateRangeFilter({
 
   return (
     <div className="space-y-1">
-      <label className="block text-sm font-medium text-gray-700">
-        {formatFieldName(fieldName)}
-      </label>
+      <label className={filterLabelClasses}>{formatFieldName(fieldName)}</label>
       <div className="grid grid-cols-2 gap-2">
         <div>
-          <label htmlFor={`${fieldName}-from`} className="block text-xs text-gray-500 mb-1">
+          <label htmlFor={`${fieldName}-from`} className={`${filterHelpTextClasses} block mb-1`}>
             From
           </label>
           <input
@@ -66,11 +65,11 @@ export function DateRangeFilter({
             type="date"
             value={fromDate}
             onChange={e => handleFromChange(e.target.value)}
-            className="w-full px-2 py-1 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-web focus:border-green-web"
+            className={filterControlClasses}
           />
         </div>
         <div>
-          <label htmlFor={`${fieldName}-to`} className="block text-xs text-gray-500 mb-1">
+          <label htmlFor={`${fieldName}-to`} className={`${filterHelpTextClasses} block mb-1`}>
             To
           </label>
           <input
@@ -78,12 +77,12 @@ export function DateRangeFilter({
             type="date"
             value={toDate}
             onChange={e => handleToChange(e.target.value)}
-            className="w-full px-2 py-1 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-web focus:border-green-web"
+            className={filterControlClasses}
           />
         </div>
       </div>
       {(fromDate || toDate) && (
-        <div className="text-xs text-gray-500">
+        <div className={filterHelpTextClasses}>
           {fromDate && toDate && `${fromDate} to ${toDate}`}
           {fromDate && !toDate && `From ${fromDate}`}
           {!fromDate && toDate && `Until ${toDate}`}

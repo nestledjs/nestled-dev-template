@@ -1,4 +1,5 @@
 import { formatFieldName } from '../../utils/string-utils'
+import { filterControlClasses, filterHelpTextClasses, filterLabelClasses } from './filter-styles'
 
 interface NumberRangeFilterProps {
   fieldName: string
@@ -72,12 +73,10 @@ export function NumberRangeFilter({
 
   return (
     <div className="space-y-1">
-      <label className="block text-sm font-medium text-gray-700">
-        {formatFieldName(fieldName)}
-      </label>
+      <label className={filterLabelClasses}>{formatFieldName(fieldName)}</label>
       <div className="grid grid-cols-2 gap-2">
         <div>
-          <label htmlFor={`${fieldName}-min`} className="block text-xs text-gray-500 mb-1">
+          <label htmlFor={`${fieldName}-min`} className={`${filterHelpTextClasses} block mb-1`}>
             Min
           </label>
           <input
@@ -87,11 +86,11 @@ export function NumberRangeFilter({
             value={minValue}
             onChange={e => handleMinChange(e.target.value)}
             placeholder="No minimum"
-            className="w-full px-2 py-1 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-web focus:border-green-web"
+            className={filterControlClasses}
           />
         </div>
         <div>
-          <label htmlFor={`${fieldName}-max`} className="block text-xs text-gray-500 mb-1">
+          <label htmlFor={`${fieldName}-max`} className={`${filterHelpTextClasses} block mb-1`}>
             Max
           </label>
           <input
@@ -101,12 +100,12 @@ export function NumberRangeFilter({
             value={maxValue}
             onChange={e => handleMaxChange(e.target.value)}
             placeholder="No maximum"
-            className="w-full px-2 py-1 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-web focus:border-green-web"
+            className={filterControlClasses}
           />
         </div>
       </div>
       {(minValue || maxValue) && (
-        <div className="text-xs text-gray-500">
+        <div className={filterHelpTextClasses}>
           {minValue && maxValue && `${minValue} to ${maxValue}`}
           {minValue && !maxValue && `≥ ${minValue}`}
           {!minValue && maxValue && `≤ ${maxValue}`}

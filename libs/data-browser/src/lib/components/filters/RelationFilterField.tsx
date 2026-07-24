@@ -3,6 +3,7 @@ import { useClickOutside } from '../../hooks/useClickOutside'
 import { useRelationData } from '../../hooks/useRelationData'
 import { formatFieldName } from '../../utils/string-utils'
 import { RelationDropdownButton, RelationDropdownContent } from './RelationComponents'
+import { filterControlClasses, filterLabelClasses } from './filter-styles'
 
 interface RelationFilterFieldProps {
   fieldName: string
@@ -74,15 +75,13 @@ export function RelationFilterField({
   if (!hasDocument) {
     return (
       <div className="space-y-1">
-        <label className="block text-sm font-medium text-gray-700">
-          {formatFieldName(fieldName)} ID
-        </label>
+        <label className={filterLabelClasses}>{formatFieldName(fieldName)} ID</label>
         <input
           type="text"
           value={currentValue?.id || ''}
           onChange={e => onChange(e.target.value ? { id: e.target.value } : undefined)}
           placeholder="Enter ID..."
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-web focus:border-green-web text-sm"
+          className={filterControlClasses}
         />
       </div>
     )
@@ -90,9 +89,7 @@ export function RelationFilterField({
 
   return (
     <div className="space-y-1" ref={dropdownRef}>
-      <label className="block text-sm font-medium text-gray-700">
-        {formatFieldName(fieldName)}
-      </label>
+      <label className={filterLabelClasses}>{formatFieldName(fieldName)}</label>
       <div className="relative">
         <RelationDropdownButton
           currentItem={currentItem}

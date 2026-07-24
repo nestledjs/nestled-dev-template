@@ -1,5 +1,6 @@
 import React from 'react'
 import { DateRangeFilter, EnumFilter, NumberRangeFilter, RelationFilterField } from './filters'
+import { filterControlClasses, filterLabelClasses, FilterSelect } from './filters/filter-styles'
 import { formatFieldName } from '../utils/string-utils'
 
 interface FilterFieldProps {
@@ -71,21 +72,21 @@ interface BooleanFilterProps {
 function BooleanFilter({ fieldName, currentValue, onChange }: BooleanFilterProps) {
   return (
     <div key={fieldName} className="space-y-1">
-      <label className="block text-sm font-medium text-gray-700">
+      <label htmlFor={fieldName} className={filterLabelClasses}>
         {formatFieldName(fieldName)}
       </label>
-      <select
+      <FilterSelect
+        id={fieldName}
         value={currentValue === undefined || currentValue === null ? '' : currentValue.toString()}
         onChange={e => {
           const value = e.target.value
           onChange(value === '' ? undefined : value === 'true')
         }}
-        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-web focus:border-green-web text-sm"
       >
         <option value="">All</option>
         <option value="true">Yes</option>
         <option value="false">No</option>
-      </select>
+      </FilterSelect>
     </div>
   )
 }
@@ -102,15 +103,16 @@ interface StringFilterProps {
 function StringFilter({ fieldName, currentValue, onChange }: StringFilterProps) {
   return (
     <div key={fieldName} className="space-y-1">
-      <label className="block text-sm font-medium text-gray-700">
+      <label htmlFor={fieldName} className={filterLabelClasses}>
         {formatFieldName(fieldName)}
       </label>
       <input
+        id={fieldName}
         type="text"
         value={typeof currentValue === 'string' ? currentValue : ''}
         onChange={e => onChange(e.target.value || undefined)}
         placeholder={`Filter by ${formatFieldName(fieldName).toLowerCase()}...`}
-        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-web focus:border-green-web text-sm"
+        className={filterControlClasses}
       />
     </div>
   )
