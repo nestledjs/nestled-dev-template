@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react'
+import { act, fireEvent, render, screen } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { WebUiDataTable } from './web-ui-data-table'
 
@@ -19,7 +19,7 @@ describe('WebUiDataTable', () => {
     })
   })
 
-  it('renders rows, sorting, id controls, filters, and pagination', () => {
+  it('renders rows, sorting, id controls, filters, and pagination', async () => {
     const setSort = vi.fn()
     const setSkip = vi.fn()
 
@@ -49,7 +49,11 @@ describe('WebUiDataTable', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Show ID' }))
     expect(screen.getByText('user-1')).toBeTruthy()
 
-    fireEvent.click(screen.getByRole('button', { name: 'Copy ID' }))
+    // copyToClipboard awaits navigator.clipboard.writeText and then sets state, so the
+    // update lands after the click resolves — flush it inside act() to avoid the warning.
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: 'Copy ID' }))
+    })
     expect(navigator.clipboard.writeText).toHaveBeenCalledWith('user-1')
 
     fireEvent.click(screen.getByRole('button', { name: 'Previous' }))

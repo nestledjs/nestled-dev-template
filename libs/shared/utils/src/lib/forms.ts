@@ -18,6 +18,12 @@ function isSelectOption(value: unknown): value is SelectOption {
   return isRecord(value) && 'value' in value
 }
 
+// A select option that actually carries a usable (non-nullish) value. Used to
+// drop invalid multi-select entries instead of emitting { id: undefined }.
+function isSelectOptionWithValue(value: unknown): value is { value: string | number } {
+  return isSelectOption(value) && value.value != null
+}
+
 function isRelationItem(value: unknown): value is RelationItem {
   return isRecord(value) && typeof value['id'] === 'string'
 }
@@ -87,7 +93,7 @@ export function cleanFormInput(
           return [
             k,
             Array.isArray(v)
-              ? v.map(item => ({ id: isSelectOption(item) ? item.value : undefined }))
+              ? v.filter(isSelectOptionWithValue).map(item => ({ id: String(item.value) }))
               : undefined,
           ]
         }
