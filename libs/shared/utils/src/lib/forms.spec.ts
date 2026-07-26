@@ -46,6 +46,8 @@ describe('form utilities', () => {
             { value: 'tag-1', label: 'One' },
             { label: 'missing-value' }, // not a valid option → dropped
             null, // not an option → dropped
+            { value: { nested: true }, label: 'Object' }, // non-string/number value → dropped
+            { value: true, label: 'Boolean' }, // non-string/number value → dropped
             { value: 42, label: 'Numeric' }, // coerced to a string id
           ],
         },

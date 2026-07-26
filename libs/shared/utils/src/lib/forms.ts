@@ -18,10 +18,13 @@ function isSelectOption(value: unknown): value is SelectOption {
   return isRecord(value) && 'value' in value
 }
 
-// A select option that actually carries a usable (non-nullish) value. Used to
-// drop invalid multi-select entries instead of emitting { id: undefined }.
+// A select option that actually carries a usable string/number value. Used to
+// drop invalid multi-select entries instead of emitting { id: undefined } (or a
+// nonsense id like "[object Object]" from String()-ing an object/boolean value).
 function isSelectOptionWithValue(value: unknown): value is { value: string | number } {
-  return isSelectOption(value) && value.value != null
+  if (!isSelectOption(value)) return false
+  const optionValue = value.value
+  return typeof optionValue === 'string' || typeof optionValue === 'number'
 }
 
 function isRelationItem(value: unknown): value is RelationItem {
