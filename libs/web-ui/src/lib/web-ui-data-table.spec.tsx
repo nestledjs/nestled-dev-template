@@ -49,12 +49,12 @@ describe('WebUiDataTable', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Show ID' }))
     expect(screen.getByText('user-1')).toBeTruthy()
 
-    // copyToClipboard awaits navigator.clipboard.writeText and then sets state, so the
-    // update lands after the click resolves — flush it inside act() to avoid the warning.
-    await act(async () => {
-      fireEvent.click(screen.getByRole('button', { name: 'Copy ID' }))
-    })
+    fireEvent.click(screen.getByRole('button', { name: 'Copy ID' }))
     expect(navigator.clipboard.writeText).toHaveBeenCalledWith('user-1')
+    // copyToClipboard awaits navigator.clipboard.writeText and then sets state, so the
+    // update lands on a later microtask. Flush it inside act() to avoid a "not wrapped in
+    // act(...)" warning — the click itself already self-flushes, so it stays outside act().
+    await act(async () => {})
 
     fireEvent.click(screen.getByRole('button', { name: 'Previous' }))
     fireEvent.click(screen.getByRole('button', { name: 'Next' }))
