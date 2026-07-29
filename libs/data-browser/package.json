@@ -54,7 +54,7 @@
   },
   "type": "module",
   "devDependencies": {
-    "@nestledjs/forms": "0.8.1",
+    "@nestledjs/forms": "0.8.2",
     "@nestledjs/forms-core": "0.8.0"
   }
 }
