@@ -80,11 +80,10 @@ jobs:
       # webpack, which does not enforce strict. A passing build was never a passing typecheck, and
       # for the API no typecheck ran at all.
       #
-      # Explicitly scoped to api,web for now. Nx also infers typecheck targets for several libs
-      # (apollo, web-components, web-ui) from their tsconfig.lib.json, and those have never been
-      # run — they fail today on pre-existing Vite `import.meta.env` typing and a dangling .d.ts
-      # reference. Drop the `-p` once those are fixed.
-      - run: pnpm exec nx run-many -t typecheck -p api,web
+      # Unscoped: this covers every project with a typecheck target, including the ones Nx infers
+      # from a tsconfig.lib.json. Keep it that way — a scoped list silently stops covering new
+      # projects as they are added.
+      - run: pnpm exec nx run-many -t typecheck
 
       - name: Run tests with coverage
         run: pnpm test:coverage

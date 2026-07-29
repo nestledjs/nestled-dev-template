@@ -28,7 +28,7 @@
         }
       ],
       "options": {
-        "command": "tsc -p apps/api/tsconfig.app.json --noEmit"
+        "command": "tsc -p apps/api/tsconfig.typecheck.json"
       }
     },
     "serve": {
