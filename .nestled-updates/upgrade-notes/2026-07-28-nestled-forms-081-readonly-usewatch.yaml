@@ -1,0 +1,81 @@
+id: 2026-07-28-nestled-forms-081-readonly-usewatch
+title: Nestled Forms 0.8.1 read-only stale-value fix and data-browser 1.0.19 peer widening
+priority: normal
+area: web
+type: correctness
+delivery: hybrid
+
+intent: >
+  Upgrade @nestledjs/forms from 0.8.0 to 0.8.1 to pick up the read-only stale-value fix in
+  PhoneField and MarkdownEditor, and publish @nestledjs/data-browser 1.0.19 with its
+  @nestledjs/forms peer widened from exact "0.8.0" to "^0.8.0" so future 0.8.x patch
+  releases can be adopted without republishing data-browser.
+
+why: >
+  In 0.8.0 the read-only branches of PhoneField and MarkdownEditor read their value with
+  form.getValues(field.key). getValues() is a one-shot read that creates no subscription, so a
+  read-only phone or markdown field renders whatever the value was at mount and then goes stale
+  the moment anything else calls setValue on that field — a reset(), a server-driven refill, or a
+  sibling field writing to it. The rendered text silently disagrees with the form state that will
+  actually be submitted. 0.8.1 reads through useWatch({ control, name }) instead, which subscribes
+  and re-renders. There is no API change: same exports, same props, same field definitions.
+
+  The peer widening is the second half. @nestledjs/data-browser 1.0.18 declared an exact peer
+  "@nestledjs/forms": "0.8.0", so downstream projects that install data-browser from npm could not
+  move to forms 0.8.1 without a peer violation — a pure bugfix was gated behind a package
+  republish. 1.0.19 relaxes that single peer to ^0.8.0. Note this deliberately reverses part of
+  2026-07-25-pin-forms-core-exact-080 for @nestledjs/forms only; @nestledjs/forms-core stays pinned
+  exact at 0.8.0, because forms 0.8.1 itself depends on forms-core exactly 0.8.0 and no 0.8.1 of
+  forms-core was published.
+
+affectedPaths:
+  - package.json
+  - pnpm-lock.yaml
+  - libs/data-browser/package.json
+
+packageReleases:
+  - name: '@nestledjs/data-browser'
+    sourcePath: libs/data-browser
+    targetVersion: 1.0.19
+    versionRange: '>=1.0.19'
+
+skipIf:
+  - The downstream project does not use @nestledjs/forms.
+  - The downstream project already runs @nestledjs/forms 0.8.1 or later in the 0.8.x line.
+  - The project renders no read-only PhoneField or MarkdownEditor and does not consume
+    @nestledjs/data-browser from npm; the upgrade is then optional housekeeping, not a fix.
+
+verification:
+  - pnpm install
+  - pnpm typecheck
+  - pnpm nx run web:build --skip-nx-cache --output-style=stream
+  - pnpm nx run web:test --skip-nx-cache --output-style=stream
+  - pnpm nx run data-browser:typecheck --skip-nx-cache --output-style=stream
+  - pnpm nx run data-browser:test --skip-nx-cache --output-style=stream
+  - pnpm template:validate-upgrade-notes
+  - pnpm format:check
+  - pnpm run nestled-doctor
+
+agentHints:
+  - 'Bump only @nestledjs/forms to 0.8.1. Do NOT bump @nestledjs/forms-core: 0.8.1 was never
+    published for forms-core, and forms 0.8.1 declares a hard dependency on forms-core exactly
+    0.8.0. Leave forms-core at exact 0.8.0.'
+  - 'If the project also uses @nestledjs/forms-native, check the registry for a matching 0.8.1
+    before bumping it; do not assume the version exists.'
+  - 'Downstream projects that consume @nestledjs/data-browser should bump it to >=1.0.19. Do not
+    copy libs/data-browser source into the downstream project.'
+  - 'A downstream project that pins data-browser at 1.0.18 or earlier must upgrade data-browser in
+    the same change, otherwise its exact "@nestledjs/forms": "0.8.0" peer conflicts with forms
+    0.8.1 and the install fails or warns depending on package manager strictness.'
+  - 'No source changes are required in app code. The template needed none — there were no
+    form.getValues() call sites outside the library.'
+  - 'If the project defines its own custom form fields, apply the same pattern the library adopted:
+    read field values with useWatch({ control: form.control, name: field.key }) rather than
+    form.getValues(field.key), and call the hook unconditionally above any read-only early return
+    so it is not sitting behind a condition. The upstream guidance is in the packages
+    CREATING_NEW_FIELDS.md.'
+  - 'Worth a quick manual check of any read-only phone or markdown field that is populated after
+    mount (via reset, a server refill, or a sibling field), since that is exactly the case 0.8.0
+    rendered stale.'
+
+sourceRepo: nestled-dev-template
