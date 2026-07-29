@@ -7,7 +7,7 @@ delivery: hybrid
 
 intent: >
   Move @nestledjs/forms and @nestledjs/forms-core together from the 0.8.x line to 0.9.0, and
-  publish @nestledjs/data-browser 1.0.20 with both forms peers set to ^0.9.0. Go directly from
+  publish @nestledjs/data-browser with both forms peers set to ^0.9.0. Go directly from
   whatever 0.8.x a project is on to 0.9.0; there is no reason to stop at 0.8.1 or 0.8.2.
 
 why: >
@@ -45,15 +45,17 @@ affectedPaths:
   - libs/data-browser/package.json
 
 packageReleases:
+  # targetVersion/versionRange are intentionally omitted until the release exists. The next
+  # data-browser patch carries the ^0.9.0 peers; fill both fields in as part of that release,
+  # before this note is applied downstream. Per UPGRADER-CONTRACT.md the upgrader must block
+  # this note until they identify a published version, which is the desired behaviour here.
   - name: '@nestledjs/data-browser'
     sourcePath: libs/data-browser
-    targetVersion: 1.0.20
-    versionRange: '>=1.0.20'
 
 skipIf:
   - The downstream project does not use @nestledjs/forms.
   - The downstream project already runs @nestledjs/forms and @nestledjs/forms-core at 0.9.x and,
-    if it consumes @nestledjs/data-browser from npm, is on >=1.0.20.
+    if it consumes @nestledjs/data-browser from npm, is on a version whose forms peers are ^0.9.0.
 
 verification:
   - pnpm install
@@ -74,9 +76,9 @@ agentHints:
     change so the three stay aligned.'
   - 'Do not write ^0.8.0 anywhere expecting it to admit 0.9.0. npm caret ranges on 0.x versions
     only move the patch component: ^0.8.0 is >=0.8.0 <0.9.0. Use ^0.9.0.'
-  - 'Downstream projects consuming @nestledjs/data-browser must move to >=1.0.20 in the same
-    change. Earlier versions pin forms-core to exact 0.8.0 or cap forms below 0.9.0, so they
-    conflict with this upgrade and will warn or fail depending on package manager strictness.'
+  - 'Downstream projects consuming @nestledjs/data-browser must move to the first release carrying the
+    ^0.9.0 peers, in the same change. Earlier versions pin forms-core to exact 0.8.0 or cap forms
+    below 0.9.0, so they conflict with this upgrade and will warn or fail depending on strictness.'
   - 'No application source changes are required. The template needed none: it has no form.watch()
     or form.getValues() call sites outside the library.'
   - 'Adopting useFormValue is optional, not part of this upgrade. If a project does read form
