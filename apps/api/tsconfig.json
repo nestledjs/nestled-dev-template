@@ -41,16 +41,11 @@
     }
   ],
   "compilerOptions": {
-    "esModuleInterop": true,
-    // Every lib under libs/api sets strict: true, but this app is what actually compiles them —
-    // lib sources are pulled in through the path mappings in tsconfig.base.json, under THIS
-    // config. Leaving it non-strict made the single compilation unit covering the whole API the
-    // laxest one, so strict lib code was only ever checked incidentally, via whatever a spec
-    // happened to import.
-    "strict": true,
-    // Required by the source as it already stands: email-hygiene.service.ts imports
-    // disposable-email-domains/wildcard.json. webpack resolves that natively, so the build never
-    // needed it and `tsc -p` could not even start without it.
-    "resolveJsonModule": true
+    "esModuleInterop": true
+    // Do not enable strict or strictNullChecks in this emit config. The API webpack build uses this
+    // file through ts-loader, and strictNullChecks changes emitDecoratorMetadata for nullable
+    // GraphQL fields such as `token?: string | null` from String to Object. Nest GraphQL then
+    // cannot infer schema field types at bootstrap. Strict checking belongs in
+    // tsconfig.typecheck.json, which runs with noEmit.
   }
 }
