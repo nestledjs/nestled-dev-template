@@ -128,6 +128,95 @@ Unit and component tests use Jest and Vitest through Nx project targets. Place t
 
 Recent history uses short imperative subjects, often Conventional Commit prefixes such as `feat:` and `chore:`. Keep commits scoped and descriptive, e.g. `feat: add billing webhook validation`. Before opening a PR, run relevant lint, test, typecheck, and build commands. PRs should include a concise summary, linked issue or task when available, screenshots for UI changes, and notes for migrations, environment variables, or deployment steps.
 
+**All changes land through a pull request against `develop`. Never push directly to `develop`.**
+The branch rule requiring PRs can be bypassed by maintainer permissions — a direct push succeeds
+and only prints `remote: Bypassed rule violations for refs/heads/develop`. Treat that message as a
+mistake that needs undoing, not as a normal outcome.
+
+```bash
+git checkout develop && git pull
+git checkout -b fix/short-slug
+# ... commit work ...
+git push -u origin fix/short-slug
+gh pr create --base develop
+```
+
+## Release Process
+
+Applies to the two published packages, `@nestledjs/data-browser` (`libs/data-browser`) and
+`@nestledjs/shared-components` (`libs/shared-components`). "Release it" means exactly the
+procedure below.
+
+### Rules
+
+- **Never hand-edit a `version` field.** `nx release version` owns it. A manual bump is what
+  produced `shared-components@1.0.15` with no matching git tag.
+- **Never run `pnpm pub-release` or `pnpm pub-version`.** They are unscoped and act on both
+  packages at once. Always scope with `-p <project>`.
+- **Tag only commits that exist on `develop`.** `nx.json` sets
+  `version.currentVersionResolver: git-tag`, so the newest tag _is_ the source of truth for the
+  next version. The repo allows squash, rebase, and merge commits, so a tag created on a feature
+  branch can point at a commit that never lands on `develop`. Version on a branch, tag after merge.
+- **A published version and its git tag must always both exist.** If either step fails, fix it
+  before doing anything else — divergence here silently breaks the next release.
+- **Publishing requires an npm OTP**, which only a human can supply. Expect to hand the publish
+  command to the user.
+- **Releasing `shared-components` cascades into `data-browser`**, because data-browser peers on
+  it; nx bumps both. Expect two versions and two tags. Releasing `data-browser` alone does not
+  cascade.
+
+### Phase 1 — version bump, via PR
+
+```bash
+git checkout develop && git pull
+git checkout -b release/<project>-<version>
+pnpm nx release version -p <project> --specifier <patch|minor|major> --git-commit --no-git-tag
+git push -u origin release/<project>-<version>
+gh pr create --base develop
+```
+
+`--no-git-tag` is essential: the tag is created in Phase 2, after the commit is on `develop`.
+Confirm the version nx computed matches expectations before opening the PR — `--dry-run` first if
+unsure.
+
+### Phase 2 — publish, after the PR merges
+
+```bash
+git checkout develop && git pull
+pnpm nx run <project>:build --skip-nx-cache
+node -p "require('./dist/libs/<project>/package.json').version"   # sanity-check the built artifact
+cd dist/libs/<project> && npm pack --dry-run                      # inspect what will ship
+```
+
+Then publish (the user runs this — the OTP is interactive and single-use):
+
+```bash
+pnpm nx release publish --projects=<project> --otp=<CODE>
+```
+
+Immediately after a successful publish, tag the released commit and push it:
+
+```bash
+git tag -a <project>@<version> -m "<project>@<version>"
+git push origin <project>@<version>
+```
+
+### Phase 3 — verify
+
+```bash
+npm view @nestledjs/<project> version                                   # matches the release
+git tag --list '<project>@*' --sort=-v:refname | head -1                # matches npm
+git status --porcelain                                                  # clean
+```
+
+The newest git tag and the npm `latest` version must agree. If they do not, resolve it
+immediately — either push the missing tag, or backfill it against the commit that was published.
+
+Changelog generation is deliberately not part of this process. `nx.json` configures
+`changelog.projectChangelogs.createRelease: github`, but no `CHANGELOG.md` exists in either package
+and no GitHub release has ever been cut, so `nx release changelog` has never run here. Do not
+introduce it as part of a routine release; make it a deliberate separate change if wanted.
+
 ## @crudAuth System for Declarative Security
 
 This project uses a custom `@crudAuth` annotation system in the Prisma schema to declaratively configure CRUD authorization at the model level.
