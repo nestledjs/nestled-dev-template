@@ -191,7 +191,7 @@ cd dist/libs/<project> && npm pack --dry-run                      # inspect what
 Then publish (the user runs this — the OTP is interactive and single-use):
 
 ```bash
-pnpm nx release publish --projects=<project> --otp=<CODE>
+pnpm nx release publish -p <project> --otp=<CODE>
 ```
 
 Immediately after a successful publish, tag the released commit and push it:
