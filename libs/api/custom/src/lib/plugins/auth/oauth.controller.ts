@@ -67,9 +67,17 @@ export class OAuthController {
   ) {
     const siteUrl = this.config.get<string>('siteUrl') || 'http://localhost:4200'
 
+    // `error` arrives from the provider redirect and is attacker-influenceable. Build the query
+    // string with URLSearchParams so an `&`, `#` or `?` in it cannot append or truncate
+    // parameters on the URL we hand back to the browser.
+    const errorRedirect = (reason: string) =>
+      res.redirect(
+        `${siteUrl}/auth/oauth-error?${new URLSearchParams({ provider, error: reason })}`,
+      )
+
     try {
       if (error) {
-        return res.redirect(`${siteUrl}/auth/oauth-error?provider=${provider}&error=${error}`)
+        return errorRedirect(error)
       }
 
       if (!code) {
@@ -109,9 +117,7 @@ export class OAuthController {
       return res.redirect(`${siteUrl}/auth/oauth-success`)
     } catch (err) {
       console.error(`${provider} OAuth error:`, err)
-      return res.redirect(
-        `${siteUrl}/auth/oauth-error?provider=${provider}&error=authentication_failed`,
-      )
+      return errorRedirect('authentication_failed')
     }
   }
 
