@@ -19,6 +19,15 @@ intent: >
   other. On the web side, `login.tsx` reads `oauth_2fa` from the query string, opens directly into
   its existing 2FA step, and strips the parameter from the address bar via `setSearchParams(...,
   { replace: true })`.
+  Two further fixes in the same flow. The `error` query value from the provider redirect was
+  interpolated straight into the oauth-error URL, letting an `&`, `#` or `?` in it append or
+  truncate parameters on the URL handed back to the browser; it now goes through URLSearchParams.
+  And the two callback landing routes the API has always redirected to were never registered in
+  apps/web/app/routes.tsx — `/auth/oauth-success` (a loader that checks the session cookie and
+  bounces to the dashboard, or back to login if the sign-in did not actually complete) and
+  `/auth/oauth-error` (maps provider and error codes to friendly copy through a known-value
+  lookup, never echoing the raw values). Without them a non-2FA OAuth login landed on a 404 with a
+  valid session cookie already set.
 
 why: >
   Any user who had enabled 2FA could skip their second factor entirely by signing in with Google
@@ -33,7 +42,13 @@ affectedPaths:
   - libs/api/custom/src/lib/plugins/auth/oauth.controller.spec.ts
   - libs/api/custom/src/lib/plugins/auth/oauth.service.ts
   - libs/api/custom/src/lib/plugins/auth/auth.service.ts
+  - libs/api/custom/src/lib/plugins/auth/auth.service.spec.ts
   - apps/web/app/routes/_public/login.tsx
+  - apps/web/app/routes/auth/oauth-success.tsx
+  - apps/web/app/routes/auth/oauth-error.tsx
+  - apps/web/tests/routes/auth/oauth-success.spec.tsx
+  - apps/web/tests/routes/auth/oauth-error.spec.tsx
+  - apps/web/app/routes.tsx
 
 skipIf:
   - The project does not enable Google or GitHub OAuth login.
@@ -59,7 +74,10 @@ agentHints:
     requires a valid TOTP or backup code, but if a project is stricter about credentials in URLs,
     the alternative is a short-lived HttpOnly cookie read by a dedicated mutation — a larger change
     to the complete2FALogin contract, which takes the token as an argument today.
-  - There is an unrelated pre-existing gap in the same flow, worth checking downstream. The
-    callbacks redirect to `/auth/oauth-success` and `/auth/oauth-error`, and neither route is
-    registered in apps/web/app/routes.tsx. Non-2FA OAuth logins land on a 404 with a valid session
-    cookie already set.
+  - Routes in this app are not filesystem-discovered. Both new pages must be registered in
+    apps/web/app/routes.tsx or they 404 even though the files exist. A downstream project that
+    already built its own OAuth landing pages should keep them and take only the controller-side
+    changes.
+  - Keep the oauth-error page's provider and error lookups as known-value maps. Both values arrive
+    from an untrusted redirect, so an unrecognised code must fall back to generic copy rather than
+    be rendered.

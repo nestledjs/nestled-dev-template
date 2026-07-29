@@ -32,13 +32,16 @@ describe('OAuthController', () => {
   let res: jest.Mocked<Pick<Response, 'redirect'>>
   let req: Request
 
-  const profile = { provider: 'google', providerUserId: 'p-1', email: 'a@example.com' }
+  // Each provider resolves its own profile, so a provider-specific bug in
+  // findOrCreateUserFromOAuth cannot hide behind a shared fixture.
+  const googleProfile = { provider: 'google', providerUserId: 'g-1', email: 'a@example.com' }
+  const githubProfile = { provider: 'github', providerUserId: 'h-1', email: 'a@example.com' }
 
   beforeEach(() => {
     oauthService = {
       exchangeGoogleCodeForIdToken: jest.fn().mockResolvedValue('id-token'),
-      verifyGoogleToken: jest.fn().mockResolvedValue(profile),
-      verifyGitHubCode: jest.fn().mockResolvedValue(profile),
+      verifyGoogleToken: jest.fn().mockResolvedValue(googleProfile),
+      verifyGitHubCode: jest.fn().mockResolvedValue(githubProfile),
       findOrCreateUserFromOAuth: jest.fn(),
     } as any
 
@@ -72,6 +75,36 @@ describe('OAuthController', () => {
       (c: OAuthController, r: Response, q: Request) => c.githubCallback('code-1', '', q, r),
     ],
   ])('%s callback', (provider, invoke) => {
+    it('resolves the profile from its own provider', async () => {
+      oauthService.findOrCreateUserFromOAuth.mockResolvedValue({
+        id: 'u-1',
+        twoFactorEnabled: false,
+      } as never)
+
+      await invoke(controller, res as unknown as Response, req)
+
+      expect(oauthService.findOrCreateUserFromOAuth).toHaveBeenCalledWith(
+        expect.objectContaining({ provider }),
+      )
+    })
+
+    it('encodes a hostile error value instead of letting it inject query parameters', async () => {
+      // The provider controls `error`; an unencoded `&`/`#` would let it append or truncate
+      // parameters on the URL handed back to the browser.
+      const hostile = 'bad&oauth_2fa=forged#x'
+      const call =
+        provider === 'google'
+          ? controller.googleCallback('', hostile, req, res as unknown as Response)
+          : controller.githubCallback('', hostile, req, res as unknown as Response)
+      await call
+
+      // Express's redirect() is overloaded as (status, url), so the first arg types as number.
+      const target = new URL(res.redirect.mock.calls[0][0] as unknown as string)
+      expect(target.searchParams.get('error')).toBe(hostile)
+      expect(target.searchParams.get('oauth_2fa')).toBeNull()
+      expect(target.hash).toBe('')
+    })
+
     it('challenges for 2FA instead of issuing a session when the user has 2FA enabled', async () => {
       oauthService.findOrCreateUserFromOAuth.mockResolvedValue({
         id: 'u-1',
