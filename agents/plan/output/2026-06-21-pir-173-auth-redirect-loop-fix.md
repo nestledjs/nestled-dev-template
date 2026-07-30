@@ -27,7 +27,7 @@ User logs in fresh (cleared cookies/cache) → gets redirected to the dashboard 
 
 Three pieces combine:
 
-1. `apps/web/app/routes/_public/login.tsx` **loader** auto-redirects away from `/login` whenever a session cookie is *present* (original template: `if (token)`, with no expiry/validity check at all). A cookie the API rejects still triggers the redirect.
+1. `apps/web/app/routes/_public/login.tsx` **loader** auto-redirects away from `/login` whenever a session cookie is _present_ (original template: `if (token)`, with no expiry/validity check at all). A cookie the API rejects still triggers the redirect.
 2. `apps/web/app/routes/_authenticated/_layout.tsx` redirects to `/login` whenever the resolved user is null — **without clearing the cookie**. So login (sees cookie → dashboard) and the authenticated layout (sees no user → login) ping-pong forever.
 3. `apps/web/app/root.tsx` `clearSessionCookieHeaders` only emits a `Domain=`-scoped clear when `VITE_COOKIE_DOMAIN` is set on the **web** service. The API sets the cookie with `Domain=.example.com` (`API_COOKIE_DOMAIN`), but the web service usually has no `VITE_COOKIE_DOMAIN`, so the web's clear is host-only and the browser keeps the domain-scoped cookie. The cookie is therefore **un-clearable by the web app**, so the loop can never self-heal.
 
@@ -35,11 +35,11 @@ Three pieces combine:
 
 Reference commit (travel-outlook repo): `29219b1` — "fix(auth): break login↔billing redirect loop on rejected sessions". Changes:
 
-* **Circuit breaker via an** `expired=1` **query param.**
-  * `force-logout` and the root loader's auth-error redirect append `expired=1` to the `/login` URL.
-  * The **login loader** treats `expired=1` as "do not auto-redirect even if a cookie is present" → always renders the form, so the loop cannot sustain itself even when the cookie is un-clearable.
-  * The **root loader** treats `expired=1` as unauthenticated, so it won't re-preload `Me` with a rejected token (that preload otherwise 500s the login page and restarts the loop).
-* **Authenticated layout** routes the null-user case through `/force-logout` (which clears the cookie) instead of `/login`, so the cookie is actually cleared on the normal path.
+- **Circuit breaker via an** `expired=1` **query param.**
+  - `force-logout` and the root loader's auth-error redirect append `expired=1` to the `/login` URL.
+  - The **login loader** treats `expired=1` as "do not auto-redirect even if a cookie is present" → always renders the form, so the loop cannot sustain itself even when the cookie is un-clearable.
+  - The **root loader** treats `expired=1` as unauthenticated, so it won't re-preload `Me` with a rejected token (that preload otherwise 500s the login page and restarts the loop).
+- **Authenticated layout** routes the null-user case through `/force-logout` (which clears the cookie) instead of `/login`, so the cookie is actually cleared on the normal path.
 
 Files touched: `apps/web/app/routes/_public/login.tsx`, `apps/web/app/routes/_authenticated/_layout.tsx`, `apps/web/app/routes/force-logout.tsx`, `apps/web/app/root.tsx`.
 
@@ -47,14 +47,14 @@ Files touched: `apps/web/app/routes/_public/login.tsx`, `apps/web/app/routes/_au
 
 For any split web/API subdomain deploy, the **web** service must set `VITE_COOKIE_DOMAIN` to the same registrable domain the API uses for `API_COOKIE_DOMAIN` (e.g. `.example.com`) so the web app can actually clear the cookie. This should be:
 
-* documented in `.env.example` / README deployment notes, and
-* ideally validated by `nestled-doctor` (warn when `API_COOKIE_DOMAIN` is set on the API but `VITE_COOKIE_DOMAIN` is missing on the web service, or when they don't match).
+- documented in `.env.example` / README deployment notes, and
+- ideally validated by `nestled-doctor` (warn when `API_COOKIE_DOMAIN` is set on the API but `VITE_COOKIE_DOMAIN` is missing on the web service, or when they don't match).
 
 The code circuit-breaker (above) is the real safety net; the env var is belt-and-suspenders for clean logout.
 
 ## Acceptance criteria
 
-- [ ] Forced logout / rejected session always lands on a usable login form (cookie-cleared *and* cookie-not-cleared cases).
+- [ ] Forced logout / rejected session always lands on a usable login form (cookie-cleared _and_ cookie-not-cleared cases).
 - [ ] Normal "already logged in" `/login` visit still redirects to the dashboard.
 - [ ] `.env.example` documents `VITE_COOKIE_DOMAIN` and its relationship to `API_COOKIE_DOMAIN`.
 - [ ] (Optional) doctor check for the web/API cookie-domain mismatch.
