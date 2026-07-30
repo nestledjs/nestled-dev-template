@@ -7,7 +7,7 @@
 
 ## Task
 
-`@nestledjs/data-browser`'s auto-generated admin edit/create forms infer a field's **input type** from a **substring match on the field name**. In `buildRegularFormField()` (`libs/data-browser/src/lib/utils/graphql-utils.ts`, lines 363–373), any `String` field whose name merely *contains* `"email"` is rendered as an email-format-validated input — so token/secret fields like `User.validateEmailToken` (a `String?` holding a non-email value) render as email inputs. Because the form validates the whole record on save, the stored non-email value fails validation and **the record cannot be saved at all**, even when editing an unrelated field. The same substring logic over-matches `description`/`content`/`notes` → forced `textArea` (lower severity, no blocking validation). Fix: tighten both matches from "name contains X" to a **word-boundary** match (last word segment), so only genuine email fields get email validation and only genuine long-text fields get a textarea. This is the issue's endorsed Option 1.
+`@nestledjs/data-browser`'s auto-generated admin edit/create forms infer a field's **input type** from a **substring match on the field name**. In `buildRegularFormField()` (`libs/data-browser/src/lib/utils/graphql-utils.ts`, lines 363–373), any `String` field whose name merely _contains_ `"email"` is rendered as an email-format-validated input — so token/secret fields like `User.validateEmailToken` (a `String?` holding a non-email value) render as email inputs. Because the form validates the whole record on save, the stored non-email value fails validation and **the record cannot be saved at all**, even when editing an unrelated field. The same substring logic over-matches `description`/`content`/`notes` → forced `textArea` (lower severity, no blocking validation). Fix: tighten both matches from "name contains X" to a **word-boundary** match (last word segment), so only genuine email fields get email validation and only genuine long-text fields get a textarea. This is the issue's endorsed Option 1.
 
 ## Root cause (current code, lines 363–373)
 
@@ -75,6 +75,7 @@ case 'string': {
 ```
 
 Notes:
+
 - Keep the rest of the `switch` (`int`/`bigint`/`float`/`decimal`/`boolean`/`datetime`/`date`/`default`) unchanged.
 - Wrapping `case 'string':` in a block `{ … }` is required because it now declares `const`s (avoids lexical-scope lint errors).
 - This is the **only** site of the heuristic — confirmed via grep across `libs/data-browser/src/lib` (no sibling occurrences in table/column rendering).
@@ -88,12 +89,14 @@ In `libs/data-browser/package.json`, bump `"version": "1.0.15"` → `"1.0.16"`. 
 In `libs/data-browser/src/lib/utils/graphql-utils.spec.ts`, inside `describe('buildFormFields')` → `describe('basic field types')` (next to the existing email/description tests at lines 216–236), add cases. Tests exercise the public `buildFormFields(sdk, model, operation)` and assert `result[0].type`:
 
 Regression cases (must now be `'Text'`, previously wrongly `'Email'`/`'TextArea'`):
+
 - `{ name: 'validateEmailToken', type: 'String', isOptional: true }` → `'Text'`
 - `{ name: 'emailVerificationToken', type: 'String', isOptional: true }` → `'Text'`
 - `{ name: 'contentType', type: 'String', isOptional: true }` → `'Text'`
 - `{ name: 'notesCount', type: 'String', isOptional: true }` → `'Text'`
 
 Must-still-work cases:
+
 - `{ name: 'email', type: 'String', isOptional: false }` → `'Email'` (existing test, line 216 — keep)
 - `{ name: 'userEmail', type: 'String', isOptional: false }` → `'Email'`
 - `{ name: 'emailAddress', type: 'String', isOptional: false }` → `'Email'`
@@ -114,7 +117,7 @@ Then edit `.nestled-updates/upgrade-notes/2026-06-22-data-browser-email-field-ov
 
 ```yaml
 id: 2026-06-22-data-browser-email-field-overmatch
-title: "data-browser: email/textarea input inference matches whole words, not substrings"
+title: 'data-browser: email/textarea input inference matches whole words, not substrings'
 priority: high
 area: admin
 type: correctness
@@ -136,15 +139,15 @@ why: >
   blocking all edits to affected models (found editing a User in moceanic-ai, 2026-06-22).
 
 packageReleases:
-  - "@nestledjs/data-browser@1.0.16"
+  - '@nestledjs/data-browser@1.0.16'
 
 skipIf:
   - The project does not use @nestledjs/data-browser auto-generated admin forms.
   - The project already runs @nestledjs/data-browser>=1.0.16.
 
 agentHints:
-  - "Downstream: bump @nestledjs/data-browser to >=1.0.16 (do not copy libs/data-browser source)."
-  - "The fix is in buildRegularFormField() in graphql-utils.ts — input-type heuristics now match the last camelCase/snake word, not a substring."
+  - 'Downstream: bump @nestledjs/data-browser to >=1.0.16 (do not copy libs/data-browser source).'
+  - 'The fix is in buildRegularFormField() in graphql-utils.ts — input-type heuristics now match the last camelCase/snake word, not a substring.'
 
 verification:
   - pnpm template:validate-upgrade-notes

@@ -11,7 +11,7 @@ When the web app and API are deployed on different subdomains (e.g. `app.example
 
 Three template behaviors combine to cause it:
 
-1. **`_public/login.tsx` loader** redirects away from `/login` whenever a session cookie is merely *present* (`if (token)` — no expiry check, no escape hatch). A cookie the API rejects still triggers the redirect to the dashboard.
+1. **`_public/login.tsx` loader** redirects away from `/login` whenever a session cookie is merely _present_ (`if (token)` — no expiry check, no escape hatch). A cookie the API rejects still triggers the redirect to the dashboard.
 2. **`_authenticated/_layout.tsx`** redirects to `/login` whenever the resolved user is `null` — **without clearing the cookie**. Login (sees cookie → dashboard) and the authenticated layout (sees no user → login) ping-pong forever.
 3. **`root.tsx` `clearSessionCookieHeaders`** only emits a `Domain=`-scoped clear when `VITE_COOKIE_DOMAIN` is set on the **web** service. When web has no `VITE_COOKIE_DOMAIN` (the common case), the web's clear is host-only and the browser keeps the API's domain-scoped cookie — so the cookie is **un-clearable by the web app** and the loop can never self-heal.
 
@@ -67,6 +67,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 ```
 
 Notes:
+
 - Keep the redirect target `/members/dashboard` (the template default). Do **not** import travel-outlook's `/billing` target or its `normalizeRedirectPath`/`redirectAfterLogin` helpers — those are app-specific and out of scope.
 - Leave the component body unchanged.
 
@@ -155,6 +156,7 @@ if (!user) {
 ```
 
 Notes:
+
 - `force-logout` is a server-loader route returning a 302; client-side `<Navigate>` will run its loader and follow the redirect to `/login?...&expired=1`. If the executor finds `<Navigate>` to a loader route does not follow the 302 reliably in this React Router version, fall back to a document navigation (`globalThis.location.assign('/force-logout?return_url=...')`) inside an effect. Verify with the layout/E2E test.
 - The template's `_layout.tsx` is the simple single-component version; only the `if (!user)` branch changes. Do not import travel-outlook's multi-component refactor.
 
@@ -239,7 +241,10 @@ const checkCookieDomainConfig = () => {
   if (!existsSync('.env')) return
   const env = readFileSync('.env', 'utf8')
   const read = (key: string) =>
-    new RegExp(`^${key}=(.*)$`, 'm').exec(env)?.[1]?.trim().replace(/^['"]|['"]$/g, '') ?? ''
+    new RegExp(`^${key}=(.*)$`, 'm')
+      .exec(env)?.[1]
+      ?.trim()
+      .replace(/^['"]|['"]$/g, '') ?? ''
   const apiDomain = read('API_COOKIE_DOMAIN')
   const webDomain = read('VITE_COOKIE_DOMAIN')
   const isLocal = (v: string) => !v || v === 'localhost' || v.startsWith('127.')
