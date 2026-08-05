@@ -155,9 +155,6 @@ export class CreateApiTokenInput {
   userId!: string
 
   @Field({ nullable: false })
-  tokenHash!: string
-
-  @Field({ nullable: false })
   name!: string
 
   @Field(() => GraphQLISODateTime, { nullable: true })
@@ -188,9 +185,6 @@ export class UpdateApiTokenInput {
   userId?: string
 
   @Field({ nullable: true })
-  tokenHash?: string
-
-  @Field({ nullable: true })
   name?: string
 
   @Field(() => GraphQLISODateTime, { nullable: true })
@@ -219,9 +213,6 @@ export class ListApiTokenInput extends CorePagingInput {
 
   @Field({ nullable: true })
   userId?: string
-
-  @Field({ nullable: true })
-  tokenHash?: string
 
   @Field({ nullable: true })
   name?: string
@@ -496,9 +487,6 @@ export class CreateEmailInput {
   @Field({ nullable: true })
   verified?: boolean
 
-  @Field({ nullable: true })
-  verifyToken?: string
-
   @Field(() => GraphQLISODateTime, { nullable: true })
   verifyExpires?: Date
 
@@ -535,9 +523,6 @@ export class UpdateEmailInput {
   @Field({ nullable: true })
   verified?: boolean
 
-  @Field({ nullable: true })
-  verifyToken?: string
-
   @Field(() => GraphQLISODateTime, { nullable: true })
   verifyExpires?: Date
 
@@ -573,9 +558,6 @@ export class ListEmailInput extends CorePagingInput {
 
   @Field({ nullable: true })
   verified?: boolean
-
-  @Field({ nullable: true })
-  verifyToken?: string
 
   @Field(() => GraphQLISODateTime, { nullable: true })
   verifyExpires?: Date
@@ -2066,22 +2048,7 @@ export class CreateUserInput {
   displayName?: string
 
   @Field({ nullable: true })
-  password?: string
-
-  @Field({ nullable: true })
-  passwordResetToken?: string
-
-  @Field(() => GraphQLISODateTime, { nullable: true })
-  passwordResetExpires?: Date
-
-  @Field({ nullable: true })
   emailValidated?: boolean
-
-  @Field({ nullable: true })
-  validateEmailToken?: string
-
-  @Field(() => GraphQLISODateTime, { nullable: true })
-  validateEmailTokenExpires?: Date
 
   @Field({ nullable: true })
   avatarId?: string
@@ -2091,12 +2058,6 @@ export class CreateUserInput {
 
   @Field({ nullable: true })
   twoFactorEnabled?: boolean
-
-  @Field({ nullable: true })
-  twoFactorSecret?: string
-
-  @Field(() => [String], { nullable: false })
-  twoFactorRecoveryCodes!: string[]
 
   @Field(() => TwoFactorMethod, { nullable: true })
   twoFactorMethod?: TwoFactorMethod
@@ -2198,22 +2159,7 @@ export class UpdateUserInput {
   displayName?: string
 
   @Field({ nullable: true })
-  password?: string
-
-  @Field({ nullable: true })
-  passwordResetToken?: string
-
-  @Field(() => GraphQLISODateTime, { nullable: true })
-  passwordResetExpires?: Date
-
-  @Field({ nullable: true })
   emailValidated?: boolean
-
-  @Field({ nullable: true })
-  validateEmailToken?: string
-
-  @Field(() => GraphQLISODateTime, { nullable: true })
-  validateEmailTokenExpires?: Date
 
   @Field({ nullable: true })
   avatarId?: string
@@ -2223,12 +2169,6 @@ export class UpdateUserInput {
 
   @Field({ nullable: true })
   twoFactorEnabled?: boolean
-
-  @Field({ nullable: true })
-  twoFactorSecret?: string
-
-  @Field(() => [String], { nullable: true })
-  twoFactorRecoveryCodes?: string[]
 
   @Field(() => TwoFactorMethod, { nullable: true })
   twoFactorMethod?: TwoFactorMethod
@@ -2330,22 +2270,7 @@ export class ListUserInput extends CorePagingInput {
   displayName?: string
 
   @Field({ nullable: true })
-  password?: string
-
-  @Field({ nullable: true })
-  passwordResetToken?: string
-
-  @Field(() => GraphQLISODateTime, { nullable: true })
-  passwordResetExpires?: Date
-
-  @Field({ nullable: true })
   emailValidated?: boolean
-
-  @Field({ nullable: true })
-  validateEmailToken?: string
-
-  @Field(() => GraphQLISODateTime, { nullable: true })
-  validateEmailTokenExpires?: Date
 
   @Field({ nullable: true })
   avatarId?: string
@@ -2355,12 +2280,6 @@ export class ListUserInput extends CorePagingInput {
 
   @Field({ nullable: true })
   twoFactorEnabled?: boolean
-
-  @Field({ nullable: true })
-  twoFactorSecret?: string
-
-  @Field(() => [String], { nullable: true })
-  twoFactorRecoveryCodes?: string[]
 
   @Field(() => TwoFactorMethod, { nullable: true })
   twoFactorMethod?: TwoFactorMethod
