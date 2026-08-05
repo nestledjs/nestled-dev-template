@@ -200,7 +200,6 @@ export type ApiToken = {
   organization?: Maybe<Organization>
   organizationId?: Maybe<Scalars['String']['output']>
   revoked: Scalars['Boolean']['output']
-  tokenHash: Scalars['String']['output']
   updatedAt: Scalars['DateTime']['output']
   user?: Maybe<User>
   userId: Scalars['String']['output']
@@ -290,7 +289,6 @@ export type CreateApiTokenInput = {
   name: Scalars['String']['input']
   organizationId?: InputMaybe<Scalars['String']['input']>
   revoked?: InputMaybe<Scalars['Boolean']['input']>
-  tokenHash: Scalars['String']['input']
   updatedAt?: InputMaybe<Scalars['DateTime']['input']>
   userId: Scalars['String']['input']
 }
@@ -337,7 +335,6 @@ export type CreateEmailInput = {
   userId?: InputMaybe<Scalars['String']['input']>
   verified?: InputMaybe<Scalars['Boolean']['input']>
   verifyExpires?: InputMaybe<Scalars['DateTime']['input']>
-  verifyToken?: InputMaybe<Scalars['String']['input']>
 }
 
 export type CreateInvitationInput = {
@@ -568,19 +565,12 @@ export type CreateUserInput = {
   loginAttemptsIds?: InputMaybe<Array<Scalars['String']['input']>>
   oAuthAccountsIds?: InputMaybe<Array<Scalars['String']['input']>>
   organizationsIds?: InputMaybe<Array<Scalars['String']['input']>>
-  password?: InputMaybe<Scalars['String']['input']>
-  passwordResetExpires?: InputMaybe<Scalars['DateTime']['input']>
-  passwordResetToken?: InputMaybe<Scalars['String']['input']>
   phoneNumbersIds?: InputMaybe<Array<Scalars['String']['input']>>
   privacyPolicyAcceptedAt?: InputMaybe<Scalars['DateTime']['input']>
   termsAcceptedAt?: InputMaybe<Scalars['DateTime']['input']>
   twoFactorEnabled?: InputMaybe<Scalars['Boolean']['input']>
   twoFactorMethod?: InputMaybe<TwoFactorMethod>
-  twoFactorRecoveryCodes: Array<Scalars['String']['input']>
-  twoFactorSecret?: InputMaybe<Scalars['String']['input']>
   updatedAt?: InputMaybe<Scalars['DateTime']['input']>
-  validateEmailToken?: InputMaybe<Scalars['String']['input']>
-  validateEmailTokenExpires?: InputMaybe<Scalars['DateTime']['input']>
 }
 
 export type CreateUserPreferenceInput = {
@@ -623,7 +613,6 @@ export type Email = {
   userId?: Maybe<Scalars['String']['output']>
   verified: Scalars['Boolean']['output']
   verifyExpires?: Maybe<Scalars['DateTime']['output']>
-  verifyToken?: Maybe<Scalars['String']['output']>
 }
 
 export enum EmailType {
@@ -767,7 +756,6 @@ export type ListApiTokenInput = {
   searchFields?: InputMaybe<Array<Scalars['String']['input']>>
   skip?: InputMaybe<Scalars['Float']['input']>
   take?: InputMaybe<Scalars['Float']['input']>
-  tokenHash?: InputMaybe<Scalars['String']['input']>
   updatedAt?: InputMaybe<Scalars['DateTime']['input']>
   userId?: InputMaybe<Scalars['String']['input']>
 }
@@ -835,7 +823,6 @@ export type ListEmailInput = {
   userId?: InputMaybe<Scalars['String']['input']>
   verified?: InputMaybe<Scalars['Boolean']['input']>
   verifyExpires?: InputMaybe<Scalars['DateTime']['input']>
-  verifyToken?: InputMaybe<Scalars['String']['input']>
 }
 
 export type ListInviteInput = {
@@ -1168,9 +1155,6 @@ export type ListUserInput = {
   orderBy?: InputMaybe<Scalars['String']['input']>
   orderDirection?: InputMaybe<Scalars['String']['input']>
   organizationsIds?: InputMaybe<Array<Scalars['String']['input']>>
-  password?: InputMaybe<Scalars['String']['input']>
-  passwordResetExpires?: InputMaybe<Scalars['DateTime']['input']>
-  passwordResetToken?: InputMaybe<Scalars['String']['input']>
   phoneNumbersIds?: InputMaybe<Array<Scalars['String']['input']>>
   privacyPolicyAcceptedAt?: InputMaybe<Scalars['DateTime']['input']>
   search?: InputMaybe<Scalars['String']['input']>
@@ -1180,11 +1164,7 @@ export type ListUserInput = {
   termsAcceptedAt?: InputMaybe<Scalars['DateTime']['input']>
   twoFactorEnabled?: InputMaybe<Scalars['Boolean']['input']>
   twoFactorMethod?: InputMaybe<TwoFactorMethod>
-  twoFactorRecoveryCodes?: InputMaybe<Array<Scalars['String']['input']>>
-  twoFactorSecret?: InputMaybe<Scalars['String']['input']>
   updatedAt?: InputMaybe<Scalars['DateTime']['input']>
-  validateEmailToken?: InputMaybe<Scalars['String']['input']>
-  validateEmailTokenExpires?: InputMaybe<Scalars['DateTime']['input']>
 }
 
 export type ListUserPreferenceInput = {
@@ -2694,7 +2674,6 @@ export type UpdateApiTokenInput = {
   name?: InputMaybe<Scalars['String']['input']>
   organizationId?: InputMaybe<Scalars['String']['input']>
   revoked?: InputMaybe<Scalars['Boolean']['input']>
-  tokenHash?: InputMaybe<Scalars['String']['input']>
   updatedAt?: InputMaybe<Scalars['DateTime']['input']>
   userId?: InputMaybe<Scalars['String']['input']>
 }
@@ -2741,7 +2720,6 @@ export type UpdateEmailInput = {
   userId?: InputMaybe<Scalars['String']['input']>
   verified?: InputMaybe<Scalars['Boolean']['input']>
   verifyExpires?: InputMaybe<Scalars['DateTime']['input']>
-  verifyToken?: InputMaybe<Scalars['String']['input']>
 }
 
 export type UpdateInviteInput = {
@@ -2972,19 +2950,12 @@ export type UpdateUserInput = {
   loginAttemptsIds?: InputMaybe<Array<Scalars['String']['input']>>
   oAuthAccountsIds?: InputMaybe<Array<Scalars['String']['input']>>
   organizationsIds?: InputMaybe<Array<Scalars['String']['input']>>
-  password?: InputMaybe<Scalars['String']['input']>
-  passwordResetExpires?: InputMaybe<Scalars['DateTime']['input']>
-  passwordResetToken?: InputMaybe<Scalars['String']['input']>
   phoneNumbersIds?: InputMaybe<Array<Scalars['String']['input']>>
   privacyPolicyAcceptedAt?: InputMaybe<Scalars['DateTime']['input']>
   termsAcceptedAt?: InputMaybe<Scalars['DateTime']['input']>
   twoFactorEnabled?: InputMaybe<Scalars['Boolean']['input']>
   twoFactorMethod?: InputMaybe<TwoFactorMethod>
-  twoFactorRecoveryCodes?: InputMaybe<Array<Scalars['String']['input']>>
-  twoFactorSecret?: InputMaybe<Scalars['String']['input']>
   updatedAt?: InputMaybe<Scalars['DateTime']['input']>
-  validateEmailToken?: InputMaybe<Scalars['String']['input']>
-  validateEmailTokenExpires?: InputMaybe<Scalars['DateTime']['input']>
 }
 
 export type UpdateUserPreferenceInput = {
@@ -3064,19 +3035,12 @@ export type User = {
   oAuthAccounts?: Maybe<Array<OAuthAccount>>
   organizations?: Maybe<Array<OrganizationMember>>
   originalAdminId?: Maybe<Scalars['String']['output']>
-  password?: Maybe<Scalars['String']['output']>
-  passwordResetExpires?: Maybe<Scalars['DateTime']['output']>
-  passwordResetToken?: Maybe<Scalars['String']['output']>
   phoneNumbers?: Maybe<Array<PhoneNumber>>
   privacyPolicyAcceptedAt?: Maybe<Scalars['DateTime']['output']>
   termsAcceptedAt?: Maybe<Scalars['DateTime']['output']>
   twoFactorEnabled: Scalars['Boolean']['output']
   twoFactorMethod: TwoFactorMethod
-  twoFactorRecoveryCodes: Array<Scalars['String']['output']>
-  twoFactorSecret?: Maybe<Scalars['String']['output']>
   updatedAt: Scalars['DateTime']['output']
-  validateEmailToken?: Maybe<Scalars['String']['output']>
-  validateEmailTokenExpires?: Maybe<Scalars['DateTime']['output']>
 }
 
 export type UserPreference = {
@@ -3331,7 +3295,6 @@ export type __AdminApiTokenSummaryFragment = {
   createdAt: any
   updatedAt: any
   userId: string
-  tokenHash: string
   name: string
   expiresAt?: any | null
   lastUsedAt?: any | null
@@ -3347,7 +3310,6 @@ export type __AdminApiTokenDetailsFragment = {
   createdAt: any
   updatedAt: any
   userId: string
-  tokenHash: string
   name: string
   expiresAt?: any | null
   lastUsedAt?: any | null
@@ -3369,7 +3331,6 @@ export type __AdminCreateApiTokenMutation = {
     createdAt: any
     updatedAt: any
     userId: string
-    tokenHash: string
     name: string
     expiresAt?: any | null
     lastUsedAt?: any | null
@@ -3402,7 +3363,6 @@ export type __AdminUpdateApiTokenMutation = {
     createdAt: any
     updatedAt: any
     userId: string
-    tokenHash: string
     name: string
     expiresAt?: any | null
     lastUsedAt?: any | null
@@ -3425,7 +3385,6 @@ export type __AdminApiTokenQuery = {
     createdAt: any
     updatedAt: any
     userId: string
-    tokenHash: string
     name: string
     expiresAt?: any | null
     lastUsedAt?: any | null
@@ -3448,7 +3407,6 @@ export type __AdminApiTokensQuery = {
     createdAt: any
     updatedAt: any
     userId: string
-    tokenHash: string
     name: string
     expiresAt?: any | null
     lastUsedAt?: any | null
@@ -3838,7 +3796,6 @@ export type __AdminEmailSummaryFragment = {
   public: boolean
   primary: boolean
   verified: boolean
-  verifyToken?: string | null
   verifyExpires?: any | null
   userId?: string | null
   emailType: EmailType
@@ -3856,7 +3813,6 @@ export type __AdminEmailDetailsFragment = {
   public: boolean
   primary: boolean
   verified: boolean
-  verifyToken?: string | null
   verifyExpires?: any | null
   userId?: string | null
   emailType: EmailType
@@ -3880,7 +3836,6 @@ export type __AdminCreateEmailMutation = {
     public: boolean
     primary: boolean
     verified: boolean
-    verifyToken?: string | null
     verifyExpires?: any | null
     userId?: string | null
     emailType: EmailType
@@ -3915,7 +3870,6 @@ export type __AdminUpdateEmailMutation = {
     public: boolean
     primary: boolean
     verified: boolean
-    verifyToken?: string | null
     verifyExpires?: any | null
     userId?: string | null
     emailType: EmailType
@@ -3940,7 +3894,6 @@ export type __AdminEmailQuery = {
     public: boolean
     primary: boolean
     verified: boolean
-    verifyToken?: string | null
     verifyExpires?: any | null
     userId?: string | null
     emailType: EmailType
@@ -3965,7 +3918,6 @@ export type __AdminEmailsQuery = {
     public: boolean
     primary: boolean
     verified: boolean
-    verifyToken?: string | null
     verifyExpires?: any | null
     userId?: string | null
     emailType: EmailType
@@ -6623,16 +6575,10 @@ export type __AdminUserSummaryFragment = {
   isSuperAdmin: boolean
   bio?: string | null
   displayName?: string | null
-  password?: string | null
-  passwordResetToken?: string | null
-  passwordResetExpires?: any | null
   emailValidated: boolean
-  validateEmailToken?: string | null
-  validateEmailTokenExpires?: any | null
   avatarId?: string | null
   activeOrganizationId?: string | null
   twoFactorEnabled: boolean
-  twoFactorSecret?: string | null
   twoFactorMethod: TwoFactorMethod
   lastSuccessfulLogin?: any | null
   lastFailedLogin?: any | null
@@ -6655,16 +6601,10 @@ export type __AdminUserDetailsFragment = {
   isSuperAdmin: boolean
   bio?: string | null
   displayName?: string | null
-  password?: string | null
-  passwordResetToken?: string | null
-  passwordResetExpires?: any | null
   emailValidated: boolean
-  validateEmailToken?: string | null
-  validateEmailTokenExpires?: any | null
   avatarId?: string | null
   activeOrganizationId?: string | null
   twoFactorEnabled: boolean
-  twoFactorSecret?: string | null
   twoFactorMethod: TwoFactorMethod
   lastSuccessfulLogin?: any | null
   lastFailedLogin?: any | null
@@ -6693,16 +6633,10 @@ export type __AdminCreateUserMutation = {
     isSuperAdmin: boolean
     bio?: string | null
     displayName?: string | null
-    password?: string | null
-    passwordResetToken?: string | null
-    passwordResetExpires?: any | null
     emailValidated: boolean
-    validateEmailToken?: string | null
-    validateEmailTokenExpires?: any | null
     avatarId?: string | null
     activeOrganizationId?: string | null
     twoFactorEnabled: boolean
-    twoFactorSecret?: string | null
     twoFactorMethod: TwoFactorMethod
     lastSuccessfulLogin?: any | null
     lastFailedLogin?: any | null
@@ -6742,16 +6676,10 @@ export type __AdminUpdateUserMutation = {
     isSuperAdmin: boolean
     bio?: string | null
     displayName?: string | null
-    password?: string | null
-    passwordResetToken?: string | null
-    passwordResetExpires?: any | null
     emailValidated: boolean
-    validateEmailToken?: string | null
-    validateEmailTokenExpires?: any | null
     avatarId?: string | null
     activeOrganizationId?: string | null
     twoFactorEnabled: boolean
-    twoFactorSecret?: string | null
     twoFactorMethod: TwoFactorMethod
     lastSuccessfulLogin?: any | null
     lastFailedLogin?: any | null
@@ -6781,16 +6709,10 @@ export type __AdminUserQuery = {
     isSuperAdmin: boolean
     bio?: string | null
     displayName?: string | null
-    password?: string | null
-    passwordResetToken?: string | null
-    passwordResetExpires?: any | null
     emailValidated: boolean
-    validateEmailToken?: string | null
-    validateEmailTokenExpires?: any | null
     avatarId?: string | null
     activeOrganizationId?: string | null
     twoFactorEnabled: boolean
-    twoFactorSecret?: string | null
     twoFactorMethod: TwoFactorMethod
     lastSuccessfulLogin?: any | null
     lastFailedLogin?: any | null
@@ -6820,16 +6742,10 @@ export type __AdminUsersQuery = {
     isSuperAdmin: boolean
     bio?: string | null
     displayName?: string | null
-    password?: string | null
-    passwordResetToken?: string | null
-    passwordResetExpires?: any | null
     emailValidated: boolean
-    validateEmailToken?: string | null
-    validateEmailTokenExpires?: any | null
     avatarId?: string | null
     activeOrganizationId?: string | null
     twoFactorEnabled: boolean
-    twoFactorSecret?: string | null
     twoFactorMethod: TwoFactorMethod
     lastSuccessfulLogin?: any | null
     lastFailedLogin?: any | null
@@ -7078,12 +6994,7 @@ export type AdminForcePasswordResetMutationVariables = Exact<{
 
 export type AdminForcePasswordResetMutation = {
   __typename?: 'Mutation'
-  adminForcePasswordReset: {
-    __typename?: 'User'
-    id: string
-    passwordResetToken?: string | null
-    passwordResetExpires?: any | null
-  }
+  adminForcePasswordReset: { __typename?: 'User'; id: string }
 }
 
 export type AdminPlatformOrganizationsQueryVariables = Exact<{
@@ -8754,7 +8665,6 @@ export type EmailListFragment = {
   public: boolean
   primary: boolean
   verified: boolean
-  verifyToken?: string | null
   verifyExpires?: any | null
 }
 
@@ -8767,7 +8677,6 @@ export type EmailDetailsFragment = {
   public: boolean
   primary: boolean
   verified: boolean
-  verifyToken?: string | null
   verifyExpires?: any | null
 }
 
@@ -8786,7 +8695,6 @@ export type CreateEmailMutation = {
     public: boolean
     primary: boolean
     verified: boolean
-    verifyToken?: string | null
     verifyExpires?: any | null
   } | null
 }
@@ -8816,7 +8724,6 @@ export type UpdateEmailMutation = {
     public: boolean
     primary: boolean
     verified: boolean
-    verifyToken?: string | null
     verifyExpires?: any | null
   } | null
 }
@@ -8836,7 +8743,6 @@ export type EmailQuery = {
     public: boolean
     primary: boolean
     verified: boolean
-    verifyToken?: string | null
     verifyExpires?: any | null
   } | null
 }
@@ -8856,7 +8762,6 @@ export type EmailsQuery = {
     public: boolean
     primary: boolean
     verified: boolean
-    verifyToken?: string | null
     verifyExpires?: any | null
   }> | null
   counters?: {
@@ -11964,14 +11869,8 @@ export type UserListFragment = {
   lastName?: string | null
   bio?: string | null
   displayName?: string | null
-  password?: string | null
-  passwordResetToken?: string | null
-  passwordResetExpires?: any | null
   emailValidated: boolean
-  validateEmailToken?: string | null
-  validateEmailTokenExpires?: any | null
   twoFactorEnabled: boolean
-  twoFactorSecret?: string | null
   lastSuccessfulLogin?: any | null
   lastFailedLogin?: any | null
   failedLoginCount: number
@@ -11991,14 +11890,8 @@ export type UserDetailsFragment = {
   lastName?: string | null
   bio?: string | null
   displayName?: string | null
-  password?: string | null
-  passwordResetToken?: string | null
-  passwordResetExpires?: any | null
   emailValidated: boolean
-  validateEmailToken?: string | null
-  validateEmailTokenExpires?: any | null
   twoFactorEnabled: boolean
-  twoFactorSecret?: string | null
   lastSuccessfulLogin?: any | null
   lastFailedLogin?: any | null
   failedLoginCount: number
@@ -12024,14 +11917,8 @@ export type CreateUserMutation = {
     lastName?: string | null
     bio?: string | null
     displayName?: string | null
-    password?: string | null
-    passwordResetToken?: string | null
-    passwordResetExpires?: any | null
     emailValidated: boolean
-    validateEmailToken?: string | null
-    validateEmailTokenExpires?: any | null
     twoFactorEnabled: boolean
-    twoFactorSecret?: string | null
     lastSuccessfulLogin?: any | null
     lastFailedLogin?: any | null
     failedLoginCount: number
@@ -12068,14 +11955,8 @@ export type UpdateUserMutation = {
     lastName?: string | null
     bio?: string | null
     displayName?: string | null
-    password?: string | null
-    passwordResetToken?: string | null
-    passwordResetExpires?: any | null
     emailValidated: boolean
-    validateEmailToken?: string | null
-    validateEmailTokenExpires?: any | null
     twoFactorEnabled: boolean
-    twoFactorSecret?: string | null
     lastSuccessfulLogin?: any | null
     lastFailedLogin?: any | null
     failedLoginCount: number
@@ -12102,14 +11983,8 @@ export type UserQuery = {
     lastName?: string | null
     bio?: string | null
     displayName?: string | null
-    password?: string | null
-    passwordResetToken?: string | null
-    passwordResetExpires?: any | null
     emailValidated: boolean
-    validateEmailToken?: string | null
-    validateEmailTokenExpires?: any | null
     twoFactorEnabled: boolean
-    twoFactorSecret?: string | null
     lastSuccessfulLogin?: any | null
     lastFailedLogin?: any | null
     failedLoginCount: number
@@ -12136,14 +12011,8 @@ export type UsersQuery = {
     lastName?: string | null
     bio?: string | null
     displayName?: string | null
-    password?: string | null
-    passwordResetToken?: string | null
-    passwordResetExpires?: any | null
     emailValidated: boolean
-    validateEmailToken?: string | null
-    validateEmailTokenExpires?: any | null
     twoFactorEnabled: boolean
-    twoFactorSecret?: string | null
     lastSuccessfulLogin?: any | null
     lastFailedLogin?: any | null
     failedLoginCount: number
@@ -12316,7 +12185,6 @@ export const __AdminApiTokenSummaryFragmentDoc = {
           { kind: 'Field', name: { kind: 'Name', value: 'createdAt' } },
           { kind: 'Field', name: { kind: 'Name', value: 'updatedAt' } },
           { kind: 'Field', name: { kind: 'Name', value: 'userId' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'tokenHash' } },
           { kind: 'Field', name: { kind: 'Name', value: 'name' } },
           { kind: 'Field', name: { kind: 'Name', value: 'expiresAt' } },
           { kind: 'Field', name: { kind: 'Name', value: 'lastUsedAt' } },
@@ -12368,7 +12236,6 @@ export const __AdminApiTokenDetailsFragmentDoc = {
           { kind: 'Field', name: { kind: 'Name', value: 'createdAt' } },
           { kind: 'Field', name: { kind: 'Name', value: 'updatedAt' } },
           { kind: 'Field', name: { kind: 'Name', value: 'userId' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'tokenHash' } },
           { kind: 'Field', name: { kind: 'Name', value: 'name' } },
           { kind: 'Field', name: { kind: 'Name', value: 'expiresAt' } },
           { kind: 'Field', name: { kind: 'Name', value: 'lastUsedAt' } },
@@ -12572,7 +12439,6 @@ export const __AdminEmailSummaryFragmentDoc = {
           { kind: 'Field', name: { kind: 'Name', value: 'public' } },
           { kind: 'Field', name: { kind: 'Name', value: 'primary' } },
           { kind: 'Field', name: { kind: 'Name', value: 'verified' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'verifyToken' } },
           { kind: 'Field', name: { kind: 'Name', value: 'verifyExpires' } },
           { kind: 'Field', name: { kind: 'Name', value: 'userId' } },
           { kind: 'Field', name: { kind: 'Name', value: 'emailType' } },
@@ -12626,7 +12492,6 @@ export const __AdminEmailDetailsFragmentDoc = {
           { kind: 'Field', name: { kind: 'Name', value: 'public' } },
           { kind: 'Field', name: { kind: 'Name', value: 'primary' } },
           { kind: 'Field', name: { kind: 'Name', value: 'verified' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'verifyToken' } },
           { kind: 'Field', name: { kind: 'Name', value: 'verifyExpires' } },
           { kind: 'Field', name: { kind: 'Name', value: 'userId' } },
           { kind: 'Field', name: { kind: 'Name', value: 'emailType' } },
@@ -14098,16 +13963,10 @@ export const __AdminUserSummaryFragmentDoc = {
           { kind: 'Field', name: { kind: 'Name', value: 'isSuperAdmin' } },
           { kind: 'Field', name: { kind: 'Name', value: 'bio' } },
           { kind: 'Field', name: { kind: 'Name', value: 'displayName' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'password' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'passwordResetToken' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'passwordResetExpires' } },
           { kind: 'Field', name: { kind: 'Name', value: 'emailValidated' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'validateEmailToken' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'validateEmailTokenExpires' } },
           { kind: 'Field', name: { kind: 'Name', value: 'avatarId' } },
           { kind: 'Field', name: { kind: 'Name', value: 'activeOrganizationId' } },
           { kind: 'Field', name: { kind: 'Name', value: 'twoFactorEnabled' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'twoFactorSecret' } },
           { kind: 'Field', name: { kind: 'Name', value: 'twoFactorMethod' } },
           { kind: 'Field', name: { kind: 'Name', value: 'lastSuccessfulLogin' } },
           { kind: 'Field', name: { kind: 'Name', value: 'lastFailedLogin' } },
@@ -14159,16 +14018,10 @@ export const __AdminUserDetailsFragmentDoc = {
           { kind: 'Field', name: { kind: 'Name', value: 'isSuperAdmin' } },
           { kind: 'Field', name: { kind: 'Name', value: 'bio' } },
           { kind: 'Field', name: { kind: 'Name', value: 'displayName' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'password' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'passwordResetToken' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'passwordResetExpires' } },
           { kind: 'Field', name: { kind: 'Name', value: 'emailValidated' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'validateEmailToken' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'validateEmailTokenExpires' } },
           { kind: 'Field', name: { kind: 'Name', value: 'avatarId' } },
           { kind: 'Field', name: { kind: 'Name', value: 'activeOrganizationId' } },
           { kind: 'Field', name: { kind: 'Name', value: 'twoFactorEnabled' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'twoFactorSecret' } },
           { kind: 'Field', name: { kind: 'Name', value: 'twoFactorMethod' } },
           { kind: 'Field', name: { kind: 'Name', value: 'lastSuccessfulLogin' } },
           { kind: 'Field', name: { kind: 'Name', value: 'lastFailedLogin' } },
@@ -14729,7 +14582,6 @@ export const EmailListFragmentDoc = {
           { kind: 'Field', name: { kind: 'Name', value: 'public' } },
           { kind: 'Field', name: { kind: 'Name', value: 'primary' } },
           { kind: 'Field', name: { kind: 'Name', value: 'verified' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'verifyToken' } },
           { kind: 'Field', name: { kind: 'Name', value: 'verifyExpires' } },
         ],
       },
@@ -14762,7 +14614,6 @@ export const EmailDetailsFragmentDoc = {
           { kind: 'Field', name: { kind: 'Name', value: 'public' } },
           { kind: 'Field', name: { kind: 'Name', value: 'primary' } },
           { kind: 'Field', name: { kind: 'Name', value: 'verified' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'verifyToken' } },
           { kind: 'Field', name: { kind: 'Name', value: 'verifyExpires' } },
         ],
       },
@@ -15926,14 +15777,8 @@ export const UserListFragmentDoc = {
           { kind: 'Field', name: { kind: 'Name', value: 'lastName' } },
           { kind: 'Field', name: { kind: 'Name', value: 'bio' } },
           { kind: 'Field', name: { kind: 'Name', value: 'displayName' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'password' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'passwordResetToken' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'passwordResetExpires' } },
           { kind: 'Field', name: { kind: 'Name', value: 'emailValidated' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'validateEmailToken' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'validateEmailTokenExpires' } },
           { kind: 'Field', name: { kind: 'Name', value: 'twoFactorEnabled' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'twoFactorSecret' } },
           { kind: 'Field', name: { kind: 'Name', value: 'lastSuccessfulLogin' } },
           { kind: 'Field', name: { kind: 'Name', value: 'lastFailedLogin' } },
           { kind: 'Field', name: { kind: 'Name', value: 'failedLoginCount' } },
@@ -15973,14 +15818,8 @@ export const UserDetailsFragmentDoc = {
           { kind: 'Field', name: { kind: 'Name', value: 'lastName' } },
           { kind: 'Field', name: { kind: 'Name', value: 'bio' } },
           { kind: 'Field', name: { kind: 'Name', value: 'displayName' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'password' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'passwordResetToken' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'passwordResetExpires' } },
           { kind: 'Field', name: { kind: 'Name', value: 'emailValidated' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'validateEmailToken' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'validateEmailTokenExpires' } },
           { kind: 'Field', name: { kind: 'Name', value: 'twoFactorEnabled' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'twoFactorSecret' } },
           { kind: 'Field', name: { kind: 'Name', value: 'lastSuccessfulLogin' } },
           { kind: 'Field', name: { kind: 'Name', value: 'lastFailedLogin' } },
           { kind: 'Field', name: { kind: 'Name', value: 'failedLoginCount' } },
@@ -16580,7 +16419,6 @@ export const __AdminCreateApiToken = {
           { kind: 'Field', name: { kind: 'Name', value: 'createdAt' } },
           { kind: 'Field', name: { kind: 'Name', value: 'updatedAt' } },
           { kind: 'Field', name: { kind: 'Name', value: 'userId' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'tokenHash' } },
           { kind: 'Field', name: { kind: 'Name', value: 'name' } },
           { kind: 'Field', name: { kind: 'Name', value: 'expiresAt' } },
           { kind: 'Field', name: { kind: 'Name', value: 'lastUsedAt' } },
@@ -16722,7 +16560,6 @@ export const __AdminUpdateApiToken = {
           { kind: 'Field', name: { kind: 'Name', value: 'createdAt' } },
           { kind: 'Field', name: { kind: 'Name', value: 'updatedAt' } },
           { kind: 'Field', name: { kind: 'Name', value: 'userId' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'tokenHash' } },
           { kind: 'Field', name: { kind: 'Name', value: 'name' } },
           { kind: 'Field', name: { kind: 'Name', value: 'expiresAt' } },
           { kind: 'Field', name: { kind: 'Name', value: 'lastUsedAt' } },
@@ -16811,7 +16648,6 @@ export const __AdminApiToken = {
           { kind: 'Field', name: { kind: 'Name', value: 'createdAt' } },
           { kind: 'Field', name: { kind: 'Name', value: 'updatedAt' } },
           { kind: 'Field', name: { kind: 'Name', value: 'userId' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'tokenHash' } },
           { kind: 'Field', name: { kind: 'Name', value: 'name' } },
           { kind: 'Field', name: { kind: 'Name', value: 'expiresAt' } },
           { kind: 'Field', name: { kind: 'Name', value: 'lastUsedAt' } },
@@ -16915,7 +16751,6 @@ export const __AdminApiTokens = {
           { kind: 'Field', name: { kind: 'Name', value: 'createdAt' } },
           { kind: 'Field', name: { kind: 'Name', value: 'updatedAt' } },
           { kind: 'Field', name: { kind: 'Name', value: 'userId' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'tokenHash' } },
           { kind: 'Field', name: { kind: 'Name', value: 'name' } },
           { kind: 'Field', name: { kind: 'Name', value: 'expiresAt' } },
           { kind: 'Field', name: { kind: 'Name', value: 'lastUsedAt' } },
@@ -18010,7 +17845,6 @@ export const __AdminCreateEmail = {
           { kind: 'Field', name: { kind: 'Name', value: 'public' } },
           { kind: 'Field', name: { kind: 'Name', value: 'primary' } },
           { kind: 'Field', name: { kind: 'Name', value: 'verified' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'verifyToken' } },
           { kind: 'Field', name: { kind: 'Name', value: 'verifyExpires' } },
           { kind: 'Field', name: { kind: 'Name', value: 'userId' } },
           { kind: 'Field', name: { kind: 'Name', value: 'emailType' } },
@@ -18154,7 +17988,6 @@ export const __AdminUpdateEmail = {
           { kind: 'Field', name: { kind: 'Name', value: 'public' } },
           { kind: 'Field', name: { kind: 'Name', value: 'primary' } },
           { kind: 'Field', name: { kind: 'Name', value: 'verified' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'verifyToken' } },
           { kind: 'Field', name: { kind: 'Name', value: 'verifyExpires' } },
           { kind: 'Field', name: { kind: 'Name', value: 'userId' } },
           { kind: 'Field', name: { kind: 'Name', value: 'emailType' } },
@@ -18245,7 +18078,6 @@ export const __AdminEmail = {
           { kind: 'Field', name: { kind: 'Name', value: 'public' } },
           { kind: 'Field', name: { kind: 'Name', value: 'primary' } },
           { kind: 'Field', name: { kind: 'Name', value: 'verified' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'verifyToken' } },
           { kind: 'Field', name: { kind: 'Name', value: 'verifyExpires' } },
           { kind: 'Field', name: { kind: 'Name', value: 'userId' } },
           { kind: 'Field', name: { kind: 'Name', value: 'emailType' } },
@@ -18351,7 +18183,6 @@ export const __AdminEmails = {
           { kind: 'Field', name: { kind: 'Name', value: 'public' } },
           { kind: 'Field', name: { kind: 'Name', value: 'primary' } },
           { kind: 'Field', name: { kind: 'Name', value: 'verified' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'verifyToken' } },
           { kind: 'Field', name: { kind: 'Name', value: 'verifyExpires' } },
           { kind: 'Field', name: { kind: 'Name', value: 'userId' } },
           { kind: 'Field', name: { kind: 'Name', value: 'emailType' } },
@@ -26854,16 +26685,10 @@ export const __AdminCreateUser = {
           { kind: 'Field', name: { kind: 'Name', value: 'isSuperAdmin' } },
           { kind: 'Field', name: { kind: 'Name', value: 'bio' } },
           { kind: 'Field', name: { kind: 'Name', value: 'displayName' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'password' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'passwordResetToken' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'passwordResetExpires' } },
           { kind: 'Field', name: { kind: 'Name', value: 'emailValidated' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'validateEmailToken' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'validateEmailTokenExpires' } },
           { kind: 'Field', name: { kind: 'Name', value: 'avatarId' } },
           { kind: 'Field', name: { kind: 'Name', value: 'activeOrganizationId' } },
           { kind: 'Field', name: { kind: 'Name', value: 'twoFactorEnabled' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'twoFactorSecret' } },
           { kind: 'Field', name: { kind: 'Name', value: 'twoFactorMethod' } },
           { kind: 'Field', name: { kind: 'Name', value: 'lastSuccessfulLogin' } },
           { kind: 'Field', name: { kind: 'Name', value: 'lastFailedLogin' } },
@@ -27005,16 +26830,10 @@ export const __AdminUpdateUser = {
           { kind: 'Field', name: { kind: 'Name', value: 'isSuperAdmin' } },
           { kind: 'Field', name: { kind: 'Name', value: 'bio' } },
           { kind: 'Field', name: { kind: 'Name', value: 'displayName' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'password' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'passwordResetToken' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'passwordResetExpires' } },
           { kind: 'Field', name: { kind: 'Name', value: 'emailValidated' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'validateEmailToken' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'validateEmailTokenExpires' } },
           { kind: 'Field', name: { kind: 'Name', value: 'avatarId' } },
           { kind: 'Field', name: { kind: 'Name', value: 'activeOrganizationId' } },
           { kind: 'Field', name: { kind: 'Name', value: 'twoFactorEnabled' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'twoFactorSecret' } },
           { kind: 'Field', name: { kind: 'Name', value: 'twoFactorMethod' } },
           { kind: 'Field', name: { kind: 'Name', value: 'lastSuccessfulLogin' } },
           { kind: 'Field', name: { kind: 'Name', value: 'lastFailedLogin' } },
@@ -27103,16 +26922,10 @@ export const __AdminUser = {
           { kind: 'Field', name: { kind: 'Name', value: 'isSuperAdmin' } },
           { kind: 'Field', name: { kind: 'Name', value: 'bio' } },
           { kind: 'Field', name: { kind: 'Name', value: 'displayName' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'password' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'passwordResetToken' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'passwordResetExpires' } },
           { kind: 'Field', name: { kind: 'Name', value: 'emailValidated' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'validateEmailToken' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'validateEmailTokenExpires' } },
           { kind: 'Field', name: { kind: 'Name', value: 'avatarId' } },
           { kind: 'Field', name: { kind: 'Name', value: 'activeOrganizationId' } },
           { kind: 'Field', name: { kind: 'Name', value: 'twoFactorEnabled' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'twoFactorSecret' } },
           { kind: 'Field', name: { kind: 'Name', value: 'twoFactorMethod' } },
           { kind: 'Field', name: { kind: 'Name', value: 'lastSuccessfulLogin' } },
           { kind: 'Field', name: { kind: 'Name', value: 'lastFailedLogin' } },
@@ -27216,16 +27029,10 @@ export const __AdminUsers = {
           { kind: 'Field', name: { kind: 'Name', value: 'isSuperAdmin' } },
           { kind: 'Field', name: { kind: 'Name', value: 'bio' } },
           { kind: 'Field', name: { kind: 'Name', value: 'displayName' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'password' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'passwordResetToken' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'passwordResetExpires' } },
           { kind: 'Field', name: { kind: 'Name', value: 'emailValidated' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'validateEmailToken' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'validateEmailTokenExpires' } },
           { kind: 'Field', name: { kind: 'Name', value: 'avatarId' } },
           { kind: 'Field', name: { kind: 'Name', value: 'activeOrganizationId' } },
           { kind: 'Field', name: { kind: 'Name', value: 'twoFactorEnabled' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'twoFactorSecret' } },
           { kind: 'Field', name: { kind: 'Name', value: 'twoFactorMethod' } },
           { kind: 'Field', name: { kind: 'Name', value: 'lastSuccessfulLogin' } },
           { kind: 'Field', name: { kind: 'Name', value: 'lastFailedLogin' } },
@@ -27932,11 +27739,7 @@ export const AdminForcePasswordReset = {
             ],
             selectionSet: {
               kind: 'SelectionSet',
-              selections: [
-                { kind: 'Field', name: { kind: 'Name', value: 'id' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'passwordResetToken' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'passwordResetExpires' } },
-              ],
+              selections: [{ kind: 'Field', name: { kind: 'Name', value: 'id' } }],
             },
           },
         ],
@@ -32084,7 +31887,6 @@ export const CreateEmail = {
           { kind: 'Field', name: { kind: 'Name', value: 'public' } },
           { kind: 'Field', name: { kind: 'Name', value: 'primary' } },
           { kind: 'Field', name: { kind: 'Name', value: 'verified' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'verifyToken' } },
           { kind: 'Field', name: { kind: 'Name', value: 'verifyExpires' } },
         ],
       },
@@ -32207,7 +32009,6 @@ export const UpdateEmail = {
           { kind: 'Field', name: { kind: 'Name', value: 'public' } },
           { kind: 'Field', name: { kind: 'Name', value: 'primary' } },
           { kind: 'Field', name: { kind: 'Name', value: 'verified' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'verifyToken' } },
           { kind: 'Field', name: { kind: 'Name', value: 'verifyExpires' } },
         ],
       },
@@ -32277,7 +32078,6 @@ export const Email = {
           { kind: 'Field', name: { kind: 'Name', value: 'public' } },
           { kind: 'Field', name: { kind: 'Name', value: 'primary' } },
           { kind: 'Field', name: { kind: 'Name', value: 'verified' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'verifyToken' } },
           { kind: 'Field', name: { kind: 'Name', value: 'verifyExpires' } },
         ],
       },
@@ -32379,7 +32179,6 @@ export const Emails = {
           { kind: 'Field', name: { kind: 'Name', value: 'public' } },
           { kind: 'Field', name: { kind: 'Name', value: 'primary' } },
           { kind: 'Field', name: { kind: 'Name', value: 'verified' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'verifyToken' } },
           { kind: 'Field', name: { kind: 'Name', value: 'verifyExpires' } },
         ],
       },
@@ -41279,14 +41078,8 @@ export const CreateUser = {
           { kind: 'Field', name: { kind: 'Name', value: 'lastName' } },
           { kind: 'Field', name: { kind: 'Name', value: 'bio' } },
           { kind: 'Field', name: { kind: 'Name', value: 'displayName' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'password' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'passwordResetToken' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'passwordResetExpires' } },
           { kind: 'Field', name: { kind: 'Name', value: 'emailValidated' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'validateEmailToken' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'validateEmailTokenExpires' } },
           { kind: 'Field', name: { kind: 'Name', value: 'twoFactorEnabled' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'twoFactorSecret' } },
           { kind: 'Field', name: { kind: 'Name', value: 'lastSuccessfulLogin' } },
           { kind: 'Field', name: { kind: 'Name', value: 'lastFailedLogin' } },
           { kind: 'Field', name: { kind: 'Name', value: 'failedLoginCount' } },
@@ -41416,14 +41209,8 @@ export const UpdateUser = {
           { kind: 'Field', name: { kind: 'Name', value: 'lastName' } },
           { kind: 'Field', name: { kind: 'Name', value: 'bio' } },
           { kind: 'Field', name: { kind: 'Name', value: 'displayName' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'password' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'passwordResetToken' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'passwordResetExpires' } },
           { kind: 'Field', name: { kind: 'Name', value: 'emailValidated' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'validateEmailToken' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'validateEmailTokenExpires' } },
           { kind: 'Field', name: { kind: 'Name', value: 'twoFactorEnabled' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'twoFactorSecret' } },
           { kind: 'Field', name: { kind: 'Name', value: 'lastSuccessfulLogin' } },
           { kind: 'Field', name: { kind: 'Name', value: 'lastFailedLogin' } },
           { kind: 'Field', name: { kind: 'Name', value: 'failedLoginCount' } },
@@ -41500,14 +41287,8 @@ export const User = {
           { kind: 'Field', name: { kind: 'Name', value: 'lastName' } },
           { kind: 'Field', name: { kind: 'Name', value: 'bio' } },
           { kind: 'Field', name: { kind: 'Name', value: 'displayName' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'password' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'passwordResetToken' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'passwordResetExpires' } },
           { kind: 'Field', name: { kind: 'Name', value: 'emailValidated' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'validateEmailToken' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'validateEmailTokenExpires' } },
           { kind: 'Field', name: { kind: 'Name', value: 'twoFactorEnabled' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'twoFactorSecret' } },
           { kind: 'Field', name: { kind: 'Name', value: 'lastSuccessfulLogin' } },
           { kind: 'Field', name: { kind: 'Name', value: 'lastFailedLogin' } },
           { kind: 'Field', name: { kind: 'Name', value: 'failedLoginCount' } },
@@ -41616,14 +41397,8 @@ export const Users = {
           { kind: 'Field', name: { kind: 'Name', value: 'lastName' } },
           { kind: 'Field', name: { kind: 'Name', value: 'bio' } },
           { kind: 'Field', name: { kind: 'Name', value: 'displayName' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'password' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'passwordResetToken' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'passwordResetExpires' } },
           { kind: 'Field', name: { kind: 'Name', value: 'emailValidated' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'validateEmailToken' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'validateEmailTokenExpires' } },
           { kind: 'Field', name: { kind: 'Name', value: 'twoFactorEnabled' } },
-          { kind: 'Field', name: { kind: 'Name', value: 'twoFactorSecret' } },
           { kind: 'Field', name: { kind: 'Name', value: 'lastSuccessfulLogin' } },
           { kind: 'Field', name: { kind: 'Name', value: 'lastFailedLogin' } },
           { kind: 'Field', name: { kind: 'Name', value: 'failedLoginCount' } },

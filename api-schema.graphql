@@ -162,7 +162,6 @@ type ApiToken {
   organization: Organization
   organizationId: String
   revoked: Boolean!
-  tokenHash: String!
   updatedAt: DateTime!
   user: User
   userId: String!
@@ -249,7 +248,6 @@ input CreateApiTokenInput {
   name: String!
   organizationId: String
   revoked: Boolean
-  tokenHash: String!
   updatedAt: DateTime
   userId: String!
 }
@@ -296,7 +294,6 @@ input CreateEmailInput {
   userId: String
   verified: Boolean
   verifyExpires: DateTime
-  verifyToken: String
 }
 
 input CreateInvitationInput {
@@ -527,19 +524,12 @@ input CreateUserInput {
   loginAttemptsIds: [String!]
   oAuthAccountsIds: [String!]
   organizationsIds: [String!]
-  password: String
-  passwordResetExpires: DateTime
-  passwordResetToken: String
   phoneNumbersIds: [String!]
   privacyPolicyAcceptedAt: DateTime
   termsAcceptedAt: DateTime
   twoFactorEnabled: Boolean
   twoFactorMethod: TwoFactorMethod
-  twoFactorRecoveryCodes: [String!]!
-  twoFactorSecret: String
   updatedAt: DateTime
-  validateEmailToken: String
-  validateEmailTokenExpires: DateTime
 }
 
 input CreateUserPreferenceInput {
@@ -589,7 +579,6 @@ type Email {
   userId: String
   verified: Boolean!
   verifyExpires: DateTime
-  verifyToken: String
 }
 
 enum EmailType {
@@ -738,7 +727,6 @@ input ListApiTokenInput {
   searchFields: [String!]
   skip: Float = 0
   take: Float = 20
-  tokenHash: String
   updatedAt: DateTime
   userId: String
 }
@@ -806,7 +794,6 @@ input ListEmailInput {
   userId: String
   verified: Boolean
   verifyExpires: DateTime
-  verifyToken: String
 }
 
 input ListInviteInput {
@@ -1139,9 +1126,6 @@ input ListUserInput {
   orderBy: String
   orderDirection: String
   organizationsIds: [String!]
-  password: String
-  passwordResetExpires: DateTime
-  passwordResetToken: String
   phoneNumbersIds: [String!]
   privacyPolicyAcceptedAt: DateTime
   search: String
@@ -1151,11 +1135,7 @@ input ListUserInput {
   termsAcceptedAt: DateTime
   twoFactorEnabled: Boolean
   twoFactorMethod: TwoFactorMethod
-  twoFactorRecoveryCodes: [String!]
-  twoFactorSecret: String
   updatedAt: DateTime
-  validateEmailToken: String
-  validateEmailTokenExpires: DateTime
 }
 
 input ListUserPreferenceInput {
@@ -1789,7 +1769,6 @@ input UpdateApiTokenInput {
   name: String
   organizationId: String
   revoked: Boolean
-  tokenHash: String
   updatedAt: DateTime
   userId: String
 }
@@ -1836,7 +1815,6 @@ input UpdateEmailInput {
   userId: String
   verified: Boolean
   verifyExpires: DateTime
-  verifyToken: String
 }
 
 input UpdateInviteInput {
@@ -2067,19 +2045,12 @@ input UpdateUserInput {
   loginAttemptsIds: [String!]
   oAuthAccountsIds: [String!]
   organizationsIds: [String!]
-  password: String
-  passwordResetExpires: DateTime
-  passwordResetToken: String
   phoneNumbersIds: [String!]
   privacyPolicyAcceptedAt: DateTime
   termsAcceptedAt: DateTime
   twoFactorEnabled: Boolean
   twoFactorMethod: TwoFactorMethod
-  twoFactorRecoveryCodes: [String!]
-  twoFactorSecret: String
   updatedAt: DateTime
-  validateEmailToken: String
-  validateEmailTokenExpires: DateTime
 }
 
 input UpdateUserPreferenceInput {
@@ -2160,19 +2131,12 @@ type User {
   oAuthAccounts: [OAuthAccount!]
   organizations: [OrganizationMember!]
   originalAdminId: String
-  password: String
-  passwordResetExpires: DateTime
-  passwordResetToken: String
   phoneNumbers: [PhoneNumber!]
   privacyPolicyAcceptedAt: DateTime
   termsAcceptedAt: DateTime
   twoFactorEnabled: Boolean!
   twoFactorMethod: TwoFactorMethod!
-  twoFactorRecoveryCodes: [String!]!
-  twoFactorSecret: String
   updatedAt: DateTime!
-  validateEmailToken: String
-  validateEmailTokenExpires: DateTime
 }
 
 type UserPreference {
