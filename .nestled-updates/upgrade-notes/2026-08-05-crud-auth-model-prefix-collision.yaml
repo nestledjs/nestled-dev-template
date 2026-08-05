@@ -54,8 +54,8 @@ affectedPaths:
   - docs/security/auth-invariants.md
 
 skipIf:
-  - The project does not use the Nestled CRUD generator and has no generated-crud library.
-  - The project already runs @nestledjs/generators 1.1.4 or newer and has regenerated since.
+  - Both halves are already in place, meaning the project runs @nestledjs/generators 1.1.4 or newer
+    and has regenerated since, and its doctor already fails an unguarded root operation.
 
 verification:
   - node -p "require('./node_modules/@nestledjs/generators/package.json').version"
@@ -64,6 +64,9 @@ verification:
   - pnpm run nestled-doctor
 
 agentHints:
+  - The two halves are independent and a version check does not cover both. A project already on
+    1.1.4 still needs the doctor check, and a project that already has the doctor check still needs
+    the generator bump. Skip a half only when that specific half is verified present.
   - Audit before regenerating, so the blast radius is known. List every model name in declaration
     order across all schema files sorted alphabetically by filename, then flag any model whose name
     is a strict prefix of an earlier-declared model. Each flag is a model whose guards may be wrong
