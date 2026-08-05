@@ -17,11 +17,16 @@ const routeConfigPath = 'apps/web/app/routes.tsx'
 const schemaPath = 'libs/api/prisma/src/lib/schemas/schema.prisma'
 const notesDir = '.nestled-updates/upgrade-notes'
 const guardBaselinePath = '.nestled-updates/security/guard-baseline.json'
+const publicOperationsPath = '.nestled-updates/security/public-operations.json'
+const resolverSourceRoots = ['libs/api', 'apps/api/src']
 const gitBaseRef = process.env.NX_BASE || process.env.GITHUB_BASE_REF || 'develop'
 const shouldUpdateGuardBaseline = process.argv.includes('--update-guard-baseline')
 const sourceTemplateRemotePattern = /github\.com[:/]nestledjs\/nestled-(?:dev-)?template(?:\.git)?$/
 
 type GuardBaseline = Record<string, Record<string, string[]>>
+
+// file -> operation name -> reason the operation is intentionally reachable without a guard.
+type PublicOperationAllowlist = Record<string, Record<string, string>>
 
 const fail = (check: string, message: string, file?: string, line?: number) => {
   failures.push({ check, message, file, line })
@@ -959,6 +964,119 @@ const checkGuardRegressions = () => {
   }
 }
 
+// `getClassGuardNames` only inspects the first class in a file, which is not safe here: a second
+// resolver class further down would silently inherit the first class's guards and an unguarded
+// operation inside it would go unreported. Collect every resolver class with its own guards and the
+// line it starts on, so each operation can be matched to the class that actually encloses it.
+const getResolverClassRegions = (source: string): { guards: string[]; startLine: number }[] => {
+  const regions: { guards: string[]; startLine: number }[] = []
+  let decorators: string[] = []
+
+  source.split('\n').forEach((rawLine, index) => {
+    const line = rawLine.trim()
+    if (line.startsWith('@')) {
+      decorators.push(line)
+      return
+    }
+
+    if (line.startsWith('export class ') || line.startsWith('class ')) {
+      if (decorators.some(decorator => decorator.startsWith('@Resolver'))) {
+        regions.push({ guards: getGuardNames(decorators.join('\n')), startLine: index + 1 })
+      }
+      decorators = []
+      return
+    }
+
+    if (line !== '') decorators = []
+  })
+
+  return regions
+}
+
+const getEnclosingClassGuards = (
+  regions: { guards: string[]; startLine: number }[],
+  line: number,
+): string[] => {
+  let guards: string[] = []
+  for (const region of regions) {
+    if (region.startLine > line) break
+    guards = region.guards
+  }
+  return guards
+}
+
+// Rate limiting is not authentication. `getGuardNames` returns every `*Guard`, so without this an
+// operation carrying only `@UseGuards(GqlThrottlerGuard)` would read as protected while still being
+// reachable by anyone. Unknown/custom guard names stay trusted so downstream auth guards don't trip.
+const nonAuthGuardPattern = /Throttler|RateLimit/
+
+const hasAuthGuard = (guards: string[]): boolean =>
+  guards.some(guard => !nonAuthGuardPattern.test(guard))
+
+const readPublicOperationAllowlist = (): PublicOperationAllowlist => {
+  if (!existsSync(publicOperationsPath)) {
+    fail(
+      'unguarded-operation',
+      'Public operation allowlist is missing; every intentionally public root operation must be declared there',
+      publicOperationsPath,
+    )
+    return {}
+  }
+
+  return JSON.parse(readFileSync(publicOperationsPath, 'utf8')) as PublicOperationAllowlist
+}
+
+const reportStalePublicOperations = (
+  allowlist: PublicOperationAllowlist,
+  unguarded: Set<string>,
+) => {
+  for (const [file, operations] of Object.entries(allowlist)) {
+    for (const name of Object.keys(operations)) {
+      if (unguarded.has(`${file}::${name}`)) continue
+      warn(
+        'unguarded-operation',
+        `Allowlisted public operation ${name} is now guarded or no longer exists; remove the stale entry`,
+        publicOperationsPath,
+      )
+    }
+  }
+}
+
+// `checkGuardRegressions` only walks the baseline, so it can catch a guard being *downgraded* but
+// never a brand-new operation that shipped with no guard at all. NestJS registers no global guard,
+// so an undecorated resolver method is fully public. Fail closed instead: every root operation must
+// either carry a guard or be declared public on purpose.
+const checkUnguardedRootOperations = () => {
+  const allowlist = readPublicOperationAllowlist()
+  const unguarded = new Set<string>()
+  const resolverFiles = resolverSourceRoots.flatMap(root =>
+    walkFiles(root, path => path.endsWith('.resolver.ts') && !path.endsWith('.spec.ts')),
+  )
+
+  for (const file of resolverFiles) {
+    const source = stripComments(readFileSync(file, 'utf8'))
+    const regions = getResolverClassRegions(source)
+
+    for (const operation of getGraphqlOperationMethods(source)) {
+      const methodGuards = getGuardNames(operation.decorators)
+      const classGuards = getEnclosingClassGuards(regions, operation.line)
+      if (hasAuthGuard(methodGuards) || hasAuthGuard(classGuards)) continue
+
+      unguarded.add(`${file}::${operation.name}`)
+      if (allowlist[file]?.[operation.name]) continue
+
+      fail(
+        'unguarded-operation',
+        `Root operation ${operation.name} has no auth guard and is reachable unauthenticated; add @UseGuards(...) or declare it in ${publicOperationsPath} with a reason`,
+        file,
+        operation.line,
+      )
+    }
+  }
+
+  reportStalePublicOperations(allowlist, unguarded)
+}
+
 const updateGuardBaseline = () => {
   mkdirSync(dirname(guardBaselinePath), { recursive: true })
   writeFileSync(guardBaselinePath, `${JSON.stringify(getResolverGuardMap(), null, 2)}\n`)
@@ -1261,6 +1379,7 @@ checkPublishedPackageVersions()
 checkUpgradeNoteImpactGate()
 checkCookieDomainConfig()
 checkGuardRegressions()
+checkUnguardedRootOperations()
 checkUnsafeTypeScriptCasts()
 checkResolverScopeAnchoring()
 checkAuditCoverageHeuristic()
