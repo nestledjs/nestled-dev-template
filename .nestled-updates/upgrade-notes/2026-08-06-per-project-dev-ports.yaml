@@ -14,6 +14,18 @@ intent: >
   honor POSTGRES_TEST_PORT / TEST_DATABASE_URL; and an empty ALLOWED_ORIGINS now falls back to
   WEB_URL, and failing that to http://localhost:${WEB_PORT}, instead of yielding [].
 
+  That CORS fallback engages only when ALLOWED_ORIGINS is empty or absent. .env.example ships it
+  SET, so for anyone who runs `cp .env.example .env` the explicit list always wins and WEB_PORT
+  and ALLOWED_ORIGINS must be moved together by hand — the doctor's dev-ports check is the guard
+  there, not the fallback.
+
+  When the fallback does run it refuses a WEB_URL whose host is a wildcard BIND address
+  (0.0.0.0, ::) and uses the WEB_PORT-derived localhost origin instead. This matters because
+  validation.ts defaults WEB_URL to defaultOrigin(HOST, WEB_PORT, 4200) and ConfigModule writes
+  validated defaults into process.env BEFORE resolving the load factories — so on a HOST=0.0.0.0
+  deployment WEB_URL arrives as http://0.0.0.0:4200, an Origin no browser ever sends. Without the
+  refusal such a deployment would reject every browser request.
+
   Defaults are unchanged everywhere. With an untouched .env every port, URL, and CORS origin is
   byte-identical to before — libs/api/config/src/lib/configuration.spec.ts pins the no-vars-set
   CORS case at ['http://localhost:4200'] specifically to guard that.
@@ -93,6 +105,11 @@ agentHints:
   - Do not `source` .env from a shell script; grep the single key (scripts/test-db.sh shows the
     pattern).
   - The CORS fallback derives from WEB_PORT only, never HOST. HOST is the API's bind address, and
-    `http://0.0.0.0:4200` is never a browser Origin.
+    `http://0.0.0.0:4200` is never a browser Origin. Because ConfigModule injects validation.ts's
+    HOST-derived WEB_URL default into process.env before the load factory runs, enforcing this
+    means actively refusing a wildcard-bind WEB_URL — not merely omitting HOST from the fallback.
+  - Test this through the real startup order (validate, assign validated values into process.env,
+    then call configuration()). Calling configuration() directly makes WEB_URL look unset, which
+    silently passes a guard that production would fail.
   - Do not derive VITE_API_URL from PORT. vite.config.ts also runs at build time, where a
     platform-set PORT belongs to the web service, not the API.

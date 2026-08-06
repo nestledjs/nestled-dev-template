@@ -35,12 +35,38 @@ const apiOrigin = () =>
     port: process.env['PORT'],
   })
 
+// Wildcard BIND addresses, as `new URL(...).hostname` reports them (Node normalizes `[::0]` to
+// `[::]`). A server binds to these; a browser never sends one as an Origin.
+const WILDCARD_BIND_HOSTS = new Set(['0.0.0.0', '[::]'])
+
+const isWildcardBindOrigin = (value: string): boolean => {
+  try {
+    return WILDCARD_BIND_HOSTS.has(new URL(value).hostname)
+  } catch {
+    // Not a parseable absolute URL — not something this guard can judge. Leave it to the caller.
+    return false
+  }
+}
+
 // The browser origin the web app is served from. Explicit WEB_URL wins; otherwise derive from
-// WEB_PORT so moving the web port alone does not silently break CORS. Deliberately does NOT use
-// HOST — that is the API's bind address, and `http://0.0.0.0:4200` is never a browser Origin.
+// WEB_PORT so moving the web port alone does not silently break CORS.
+//
+// WEB_URL is almost never actually unset here. validation.ts defaults it to
+// `defaultOrigin(HOST, WEB_PORT, 4200)`, and ConfigModule validates and writes that default into
+// process.env BEFORE it resolves the `load` factories — so by the time this runs, WEB_URL holds a
+// HOST-derived value. On a `HOST=0.0.0.0` deployment that is `http://0.0.0.0:4200`, an Origin no
+// browser can ever match, which would reject every request: precisely the silent CORS break this
+// change exists to remove, and what D3 forbids. So refuse a wildcard bind address and fall back to
+// the port-derived localhost origin. (validation.ts's own default is deliberately left alone —
+// that divergence is out of scope here.)
+//
+// Refusing it also un-freezes the port: validation.ts computes its default at module-import time,
+// before dotenv has loaded `.env`, so a `.env`-supplied WEB_PORT is missing from that string but
+// present in process.env by the time the fallback below reads it.
 const webOrigin = () => {
   const explicit = (process.env['WEB_URL'] ?? '').trim()
-  return explicit.length > 0 ? explicit : defaultOrigin(undefined, process.env['WEB_PORT'], 4200)
+  if (explicit.length > 0 && !isWildcardBindOrigin(explicit)) return explicit
+  return defaultOrigin(undefined, process.env['WEB_PORT'], 4200)
 }
 
 export const configuration = () => ({

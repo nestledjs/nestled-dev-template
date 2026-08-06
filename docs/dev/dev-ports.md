@@ -83,9 +83,15 @@ quietly talking to the wrong database.
 | 5   | `REDIS_PORT` ↔ `REDIS_URL`                          | The API talks to whichever Redis is on the old port.                                                   |
 | 6   | `MAILHOG_SMTP_PORT` ↔ `SMTP_PORT`                   | Outbound dev mail fails to connect.                                                                    |
 
-`ALLOWED_ORIGINS` has one safety net: when it is empty the API derives the browser origin from
-`WEB_URL`, and failing that from `WEB_PORT`. Setting `WEB_PORT` alone therefore still yields
-correct CORS. Every other pair must be moved by hand.
+Move all six pairs by hand. `ALLOWED_ORIGINS` does have a fallback, but **it does not engage for
+the setup this repo ships**: `.env.example` sets `ALLOWED_ORIGINS`, so after the documented
+`cp .env.example .env` the explicit list always wins. Moving `WEB_PORT` and leaving
+`ALLOWED_ORIGINS` on the old port CORS-blocks every request — `pnpm nestled-doctor` warns about
+exactly that, which is the guard you actually rely on here.
+
+The fallback applies only when `ALLOWED_ORIGINS` is empty or absent. Then the API uses `WEB_URL`,
+and failing that `http://localhost:${WEB_PORT}`. A `WEB_URL` pointing at a wildcard bind address
+(`0.0.0.0`, `::`) is refused and treated as absent, since a browser never sends one as an Origin.
 
 ## How the values reach each process
 
