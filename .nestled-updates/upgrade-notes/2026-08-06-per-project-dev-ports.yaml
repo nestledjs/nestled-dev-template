@@ -19,12 +19,19 @@ intent: >
   and ALLOWED_ORIGINS must be moved together by hand — the doctor's dev-ports check is the guard
   there, not the fallback.
 
-  When the fallback does run it refuses a WEB_URL whose host is a wildcard BIND address
-  (0.0.0.0, ::) and uses the WEB_PORT-derived localhost origin instead. This matters because
-  validation.ts defaults WEB_URL to defaultOrigin(HOST, WEB_PORT, 4200) and ConfigModule writes
-  validated defaults into process.env BEFORE resolving the load factories — so on a HOST=0.0.0.0
-  deployment WEB_URL arrives as http://0.0.0.0:4200, an Origin no browser ever sends. Without the
-  refusal such a deployment would reject every browser request.
+  When the fallback does run it honours WEB_URL only if the environment genuinely supplied it,
+  and otherwise derives from WEB_PORT alone. configuration.ts records `'WEB_URL' in process.env`
+  at MODULE SCOPE to tell those apart: validation.ts defaults WEB_URL to
+  defaultOrigin(HOST, WEB_PORT, 4200), and ConfigModule writes validated defaults into
+  process.env BEFORE resolving the load factories, so by the time the factory runs an injected
+  value is indistinguishable from a real one. app.module.ts resolves its `import { configuration }`
+  before the ConfigModule.forRoot({...}) argument is evaluated, so the constant is initialised
+  first. A hand-written WEB_URL naming a wildcard bind address (0.0.0.0, ::) is refused too.
+
+  Without this, HOST leaks into the CORS origin for EVERY value it can take — http://0.0.0.0:4200,
+  http://127.0.0.1:4200 (a different origin to a browser on localhost:4200), or the incoherent
+  http://api.internal:4200, which pairs the API's bind host with the WEB port. Each silently
+  rejects browser requests that the previous default allowed.
 
   Defaults are unchanged everywhere. With an untouched .env every port, URL, and CORS origin is
   byte-identical to before — libs/api/config/src/lib/configuration.spec.ts pins the no-vars-set
@@ -104,10 +111,12 @@ agentHints:
     the repo root.
   - Do not `source` .env from a shell script; grep the single key (scripts/test-db.sh shows the
     pattern).
-  - The CORS fallback derives from WEB_PORT only, never HOST. HOST is the API's bind address, and
-    `http://0.0.0.0:4200` is never a browser Origin. Because ConfigModule injects validation.ts's
-    HOST-derived WEB_URL default into process.env before the load factory runs, enforcing this
-    means actively refusing a wildcard-bind WEB_URL — not merely omitting HOST from the fallback.
+  - The CORS fallback derives from WEB_PORT only, never HOST, for EVERY value of HOST — not just
+    wildcards. Because ConfigModule injects validation.ts's HOST-derived WEB_URL default into
+    process.env before the load factory runs, enforcing this means distinguishing a supplied
+    WEB_URL from an injected one, which can only be done by capturing `'WEB_URL' in process.env`
+    at module scope. Filtering the VALUE cannot work — an injected `http://127.0.0.1:4200` is
+    indistinguishable from one somebody typed.
   - Test this through the real startup order (validate, assign validated values into process.env,
     then call configuration()). Calling configuration() directly makes WEB_URL look unset, which
     silently passes a guard that production would fail.

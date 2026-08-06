@@ -1343,10 +1343,29 @@ const DEV_PORT_DEFAULTS: Record<string, string> = {
   MAILHOG_SMTP_PORT: '1025',
 }
 
-/** A URL's host port, or '' when the value is unparseable — that is not this check's problem. */
+// A URL with no explicit port still connects to a concrete one, and that is exactly where the
+// nastiest case hides: `postgresql://prisma:prisma@localhost/prisma` alongside POSTGRES_PORT=5442
+// silently reaches 5432 — a DIFFERENT repo's database. Treating "no port written down" as
+// "unknown, skip it" left that unwarned, so resolve the scheme's implicit port instead.
+const DEFAULT_SCHEME_PORTS: Record<string, string> = {
+  'postgres:': '5432',
+  'postgresql:': '5432',
+  'redis:': '6379',
+  'rediss:': '6380',
+  'http:': '80',
+  'https:': '443',
+}
+
+/**
+ * A URL's effective host port: the explicit one, else the scheme's default. '' only when the value
+ * is unparseable or its scheme has no known default — genuinely unknown, and not this check's
+ * problem. (`new URL` also drops a port that equals the scheme default, so `http://host:80` and
+ * `http://host` both resolve to 80 here.)
+ */
 const urlPort = (value: string): string => {
   try {
-    return new URL(value).port
+    const url = new URL(value)
+    return url.port || DEFAULT_SCHEME_PORTS[url.protocol] || ''
   } catch {
     return ''
   }

@@ -35,8 +35,26 @@ const apiOrigin = () =>
     port: process.env['PORT'],
   })
 
+// Was WEB_URL supplied by the environment, or is ConfigModule about to manufacture one?
+//
+// validation.ts defaults WEB_URL to `defaultOrigin(HOST, WEB_PORT, 4200)`, and ConfigModule writes
+// that default into process.env BEFORE it resolves the `load` factories. By the time
+// `configuration()` runs, an injected value is indistinguishable from a user-supplied one by
+// inspection — so the answer has to be captured HERE, at module scope. app.module.ts resolves
+// `import { configuration }` before the `ConfigModule.forRoot({...})` argument in its decorator is
+// evaluated, so this initialises before assignVariablesToProcess can blur it. Same
+// import-time-freeze idiom validation.ts already uses for its own defaults.
+//
+// This is what keeps HOST out of the CORS origin. HOST is the API's BIND address: folding it in
+// yields `http://0.0.0.0:4200`, or `http://127.0.0.1:4200` (a different origin to a browser sitting
+// on `http://localhost:4200`), or the incoherent `http://api.internal:4200` — pairing the API's
+// host with the WEB port. Every one of those silently rejects requests that today's default allows.
+const WEB_URL_WAS_EXPLICIT = 'WEB_URL' in process.env
+
 // Wildcard BIND addresses, as `new URL(...).hostname` reports them (Node normalizes `[::0]` to
-// `[::]`). A server binds to these; a browser never sends one as an Origin.
+// `[::]`). A server binds to these; a browser never sends one as an Origin. Only reachable via a
+// hand-written WEB_URL now that injected values are ignored, but honouring one would still mean
+// allowing an origin no browser can match.
 const WILDCARD_BIND_HOSTS = new Set(['0.0.0.0', '[::]'])
 
 const isWildcardBindOrigin = (value: string): boolean => {
@@ -48,24 +66,17 @@ const isWildcardBindOrigin = (value: string): boolean => {
   }
 }
 
-// The browser origin the web app is served from. Explicit WEB_URL wins; otherwise derive from
-// WEB_PORT so moving the web port alone does not silently break CORS.
+// The browser origin the web app is served from. A genuinely user-supplied WEB_URL wins; otherwise
+// derive from WEB_PORT alone, so moving the web port does not silently break CORS and HOST never
+// leaks in. (validation.ts's own HOST-derived default is deliberately left alone — that
+// divergence is out of scope here; this just declines to consume it.)
 //
-// WEB_URL is almost never actually unset here. validation.ts defaults it to
-// `defaultOrigin(HOST, WEB_PORT, 4200)`, and ConfigModule validates and writes that default into
-// process.env BEFORE it resolves the `load` factories — so by the time this runs, WEB_URL holds a
-// HOST-derived value. On a `HOST=0.0.0.0` deployment that is `http://0.0.0.0:4200`, an Origin no
-// browser can ever match, which would reject every request: precisely the silent CORS break this
-// change exists to remove, and what D3 forbids. So refuse a wildcard bind address and fall back to
-// the port-derived localhost origin. (validation.ts's own default is deliberately left alone —
-// that divergence is out of scope here.)
-//
-// Refusing it also un-freezes the port: validation.ts computes its default at module-import time,
-// before dotenv has loaded `.env`, so a `.env`-supplied WEB_PORT is missing from that string but
-// present in process.env by the time the fallback below reads it.
+// Ignoring the injected value also un-freezes the port: validation.ts computes its default at
+// module-import time, before dotenv has loaded `.env`, so a `.env`-supplied WEB_PORT is missing
+// from that string but present in process.env by the time the fallback below reads it.
 const webOrigin = () => {
-  const explicit = (process.env['WEB_URL'] ?? '').trim()
-  if (explicit.length > 0 && !isWildcardBindOrigin(explicit)) return explicit
+  const raw = WEB_URL_WAS_EXPLICIT ? (process.env['WEB_URL'] ?? '').trim() : ''
+  if (raw.length > 0 && !isWildcardBindOrigin(raw)) return raw
   return defaultOrigin(undefined, process.env['WEB_PORT'], 4200)
 }
 

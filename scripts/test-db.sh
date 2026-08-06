@@ -10,12 +10,32 @@ ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 COMPOSE="$SCRIPT_DIR/dev-docker.sh"
 
 # Read a single key from the repo-root .env. Deliberately NOT `source` — that would execute the
-# file as shell. Same conservative single-key grep the doctor uses. Returns empty (never
-# non-zero) when the file or the key is absent, so `set -e` does not kill the script on a fresh
-# clone that has no .env yet.
+# file as shell. Returns empty (never non-zero) when the file or the key is absent, so `set -e`
+# does not kill the script on a fresh clone that has no .env yet.
+#
+# MUST STAY IN STEP with readEnvValue() in scripts/doctor.ts — the two parse the same file, and a
+# disagreement means the doctor blesses a .env this script then misreads. Same rules as there:
+# strip quotes only when they wrap the WHOLE value (keeping it verbatim), otherwise drop a
+# dotenv-style inline ` # comment` and trim. A blanket quote-strip would also eat quotes from
+# inside a value, and leaving the comment in produced URLs like `localhost:5443 # block 1/db`.
 read_env() {
   [ -f "$ROOT/.env" ] || return 0
-  grep -m1 "^$1=" "$ROOT/.env" | cut -d= -f2- | tr -d "\"'"
+
+  local raw
+  raw="$(grep -m1 "^$1=" "$ROOT/.env" | cut -d= -f2-)"
+  raw="${raw#"${raw%%[![:space:]]*}"}"
+  raw="${raw%"${raw##*[![:space:]]}"}"
+
+  local first="${raw:0:1}" last="${raw: -1}"
+  if [ ${#raw} -ge 2 ] && [ "$first" = "$last" ] && { [ "$first" = '"' ] || [ "$first" = "'" ]; }; then
+    printf '%s\n' "${raw:1:${#raw}-2}"
+    return 0
+  fi
+
+  case "$raw" in
+    *" #"*) raw="${raw%%" #"*}" ;;
+  esac
+  printf '%s\n' "${raw%"${raw##*[![:space:]]}"}"
 }
 
 # An exported var wins over .env, which wins over the default. Keeping the port and the URL

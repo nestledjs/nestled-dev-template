@@ -89,9 +89,15 @@ the setup this repo ships**: `.env.example` sets `ALLOWED_ORIGINS`, so after the
 `ALLOWED_ORIGINS` on the old port CORS-blocks every request — `pnpm nestled-doctor` warns about
 exactly that, which is the guard you actually rely on here.
 
-The fallback applies only when `ALLOWED_ORIGINS` is empty or absent. Then the API uses `WEB_URL`,
-and failing that `http://localhost:${WEB_PORT}`. A `WEB_URL` pointing at a wildcard bind address
-(`0.0.0.0`, `::`) is refused and treated as absent, since a browser never sends one as an Origin.
+The fallback applies only when `ALLOWED_ORIGINS` is empty or absent. Then the API uses `WEB_URL`
+if you actually set it, and otherwise `http://localhost:${WEB_PORT}`.
+
+`HOST` never contributes to that origin, whatever its value. `HOST` is the address the API *binds*
+to, and the config validator defaults `WEB_URL` from it — so letting it through would allow
+`http://0.0.0.0:4200`, or `http://127.0.0.1:4200` (a different origin to a browser on
+`http://localhost:4200`), or `http://api.internal:4200`, which pairs the API's host with the web
+port. The API distinguishes a `WEB_URL` you set from one the validator manufactured, and only
+honours yours. A hand-written `WEB_URL` naming a wildcard bind address is refused as well.
 
 ## How the values reach each process
 
