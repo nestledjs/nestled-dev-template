@@ -18,6 +18,7 @@ import {
   GqlAuthGuard,
   GqlAuthAdminGuard,
   GqlThrottlerGuard,
+  Public,
 } from '@nestled-template/api/utils'
 import type { NestContextType } from '@nestled-template/api/utils'
 import { UserToken } from './models'
@@ -88,6 +89,7 @@ export class AuthResolver {
   }
 
   @Mutation(() => UserToken, { nullable: true })
+  @Public()
   async login(
     @Context() context: NestContextType,
     @Args('input') input: LoginInput,
@@ -122,6 +124,7 @@ export class AuthResolver {
   }
 
   @Mutation(() => UserToken, { nullable: true })
+  @Public()
   async complete2FALogin(
     @Context() context: NestContextType,
     @Args('tempToken') tempToken: string,
@@ -148,6 +151,7 @@ export class AuthResolver {
   }
 
   @Mutation(() => Boolean, { nullable: true })
+  @Public()
   async logout(@Context() context: NestContextType) {
     Logger.log('LOGOUT ++++++++')
 
@@ -179,6 +183,7 @@ export class AuthResolver {
   // GqlThrottlerGuard for why this depends on TRUST_PROXY_HOPS being set correctly.
   @Mutation(() => UserToken, { nullable: true })
   @UseGuards(GqlThrottlerGuard)
+  @Public()
   async register(@Context() context: NestContextType, @Args('input') input: RegisterInput) {
     // Extract session info from request
     const sessionInfo = this.sessionService.extractSessionInfo(context.req)
@@ -192,6 +197,7 @@ export class AuthResolver {
   }
 
   @Mutation(() => UserToken, { nullable: true })
+  @Public()
   async registerWithInvitation(
     @Context() context: NestContextType,
     @Args('input') input: RegisterWithInvitationInput,
@@ -210,6 +216,7 @@ export class AuthResolver {
   // Unauthenticated and mails an attacker-chosen address, exactly like register — same gate.
   @Mutation(() => Boolean, { nullable: true })
   @UseGuards(GqlThrottlerGuard)
+  @Public()
   forgotPassword(
     @Context() context: NestContextType,
     @Args('input') input: ForgotPasswordInput,
@@ -223,6 +230,7 @@ export class AuthResolver {
   }
 
   @Mutation(() => User, { nullable: true })
+  @Public()
   resetPassword(
     @Context() context: NestContextType,
     @Args('input') input: ResetPasswordInput,
@@ -235,6 +243,7 @@ export class AuthResolver {
   // arbitrary address. Signed-in users should use resendMyVerificationEmail below instead.
   @Mutation(() => Boolean)
   @UseGuards(GqlThrottlerGuard)
+  @Public()
   resendVerificationEmail(
     @Args('email') email: string,
     @Args('captchaToken', { nullable: true }) captchaToken?: string,
@@ -251,6 +260,7 @@ export class AuthResolver {
   }
 
   @Mutation(() => User)
+  @Public()
   verifyEmail(@Args('input') input: VerifyEmailInput) {
     return this.service.verifyEmail(input.token)
   }
@@ -282,6 +292,7 @@ export class AuthResolver {
   }
 
   @Mutation(() => User)
+  @Public()
   async verifyEmailChange(@Args('token') token: string): Promise<User> {
     return this.service.verifyEmailChange(token)
   }
@@ -385,6 +396,7 @@ export class AuthResolver {
   }
 
   @Query(() => [OAuthProviderInfo])
+  @Public()
   availableOAuthProviders(): OAuthProviderInfo[] {
     const providers: OAuthProviderInfo[] = []
 
