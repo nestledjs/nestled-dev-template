@@ -36,6 +36,7 @@ why: >
 affectedPaths:
   - package.json
   - libs/api/core/helpers/src/lib/viewer-context.ts
+  - libs/api/core/helpers/src/lib/viewer-context.spec.ts
   - libs/api/core/helpers/src/lib/graphql-select.ts
   - libs/api/core/helpers/src/lib/graphql-select.spec.ts
   - libs/api/core/helpers/src/index.ts
