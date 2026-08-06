@@ -14,8 +14,10 @@ or framework commands such as `pnpm doctor` or `expo doctor`.
 - Stale legacy frontend URL config names are absent.
 - MCP plugin registration matches API endpoint filtering.
 - Registered Nest API controller routes are covered by `VALID_API_PREFIXES`.
-- Default model resolvers keep generated admin CRUD registered and avoid generated
-  field-name collisions.
+- Generated CRUD has one populated, registered feature module whose provider list
+  matches the generated resolver files.
+- Default model resolvers are additive, do not inherit generated resolvers, and
+  avoid generated field-name collisions.
 - Hand-written `__Admin*` SDK operations stay out of normal SDK operation folders.
 - Plugin modules are exported and registered in the API app module.
 - Integration modules/services are exported through integration barrels.

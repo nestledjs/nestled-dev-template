@@ -9,7 +9,7 @@ GraphQL resolvers.
 | Surface                        | Expected Guard                                 | Scope Source                              | Notes                                                                               |
 | ------------------------------ | ---------------------------------------------- | ----------------------------------------- | ----------------------------------------------------------------------------------- |
 | Generated CRUD resolvers       | `GqlAuthAdminGuard` by default                 | Admin role                                | Generated CRUD is the super-admin management surface.                               |
-| Custom default model resolvers | Operation-specific                             | `@CtxUser()` plus service checks          | Must extend the generated resolver and only add non-colliding methods.              |
+| Custom default model resolvers | Operation-specific                             | `@CtxUser()` plus service checks          | Independent additive resolvers; never inherit or collide with generated CRUD.       |
 | User organization workflows    | `GqlAuthGuard` or `GqlOrganizationScopedGuard` | `@CtxUser()` membership and role checks   | Caller-supplied organization IDs require membership verification before use.        |
 | Billing admin sync             | `GqlAuthAdminGuard`                            | Admin role and Stripe IDs                 | Provider IDs are untrusted until fetched/validated with Stripe.                     |
 | User billing workflows         | `GqlAuthGuard`                                 | Current user's active organization        | Price IDs are provider references; organization scope comes from the user.          |

@@ -256,16 +256,16 @@ Generated CRUD methods and generated SDK admin operation names are reserved. Do 
 operations that reuse generated names such as `create<Model>`, `update<Model>`, `delete<Model>`,
 `<model>`, `<models>`, `<models>Count`, or `__Admin*`.
 
-Default model resolver classes under `libs/api/custom/src/lib/default/<model>` must extend
-`Generated<Model>Resolver`. This inheritance is the required pass-through adapter that keeps
-generated admin CRUD registered for the model. Custom operations in these classes must be additive
-only; never override inherited generated methods.
+`ApiGeneratedCrudFeatureModule` is the sole registration point for generated CRUD resolver
+providers. Default model resolvers under `libs/api/custom/src/lib/default/<model>` are independent,
+additive resolvers and must not extend `Generated<Model>Resolver`. Never duplicate or override a
+generated operation name.
 
 For custom user-facing operations, use names that cannot collide with generated admin CRUD:
 
 ```typescript
 @Resolver(() => Organization)
-export class OrganizationResolver extends GeneratedOrganizationResolver {
+export class OrganizationResolver {
   @Mutation(() => Organization)
   userCreateOrganization(@CtxUser() user: User, @Args('input') input: CreateOrganizationInput) {
     // Custom model-specific workflow.
@@ -281,7 +281,7 @@ For cross-model features, create a separate plugin resolver under
 1. Every model gets generated admin CRUD (organization, createOrganization, updateOrganization, etc.)
 2. User-specific operations get custom resolvers (myOrganizations, userCreateOrganization, etc.)
 3. Avoid `@skipCrud` except for documented security-sensitive internal models
-4. Default model resolvers must extend generated resolvers and only add non-colliding custom methods
+4. Default model resolvers are independent and only add non-colliding custom methods
 5. Admin operations are admin-only by default
 6. User operations are in separate resolvers with clear naming
 

@@ -245,8 +245,8 @@ Note `nx build` alone does not typecheck test/spec surfaces — run the test tar
 13. **Do not commit editor MCP config** — `.cursor/mcp.json` is gitignored because it carries
     secrets (`42970f6`).
 14. **Do not override generated CRUD methods or reuse reserved names**
-    (`create<Model>`, `update<Model>`, `<models>Count`, `__Admin*`); custom default resolvers must
-    extend `Generated<Model>Resolver` additively (AGENTS.md).
+    (`create<Model>`, `update<Model>`, `<models>Count`, `__Admin*`); generated CRUD is registered by
+    `ApiGeneratedCrudFeatureModule`, and custom default resolvers stay independent (AGENTS.md).
 15. **Do not add a parallel redirect-validation path** — extend `safeReturnUrl`/`isSafeLocalPath`
     and add a regression test in `login.spec.tsx`; the `//evil.com`-via-pathname bypass existed
     precisely because two branches validated differently (`ab7c164`).
