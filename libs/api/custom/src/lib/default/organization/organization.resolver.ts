@@ -5,6 +5,7 @@ import {
   CtxUser,
   GqlAuthGuard,
   GqlOrganizationScopedGuard,
+  Public,
 } from '@nestled-template/api/utils'
 import {
   Organization,
@@ -207,6 +208,7 @@ export class OrganizationResolver extends GeneratedOrganizationResolver {
   // Public queries (no authentication required)
 
   @Query(() => InvitationDetails)
+  @Public()
   async getInvitationDetails(@Args('token') token: string): Promise<InvitationDetails> {
     return this.customService.getInvitationDetails(token)
   }
