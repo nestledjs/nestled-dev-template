@@ -15,8 +15,17 @@ The FlightDesk task is the issue's `FlightDesk` attachment. Qalatra is not used 
 
 ## Per status
 
-- **In Progress** → monitor FD/session (branch recovery per canonical), create the PR when the session is ready (merge develop in first if behind), attach `Preview` and `Pull Request` URLs to the issue, run quality gates (see config) → set `In Review`.
-- **Changes Requested** → read the latest human comment(s), inject into the live session (re-dispatch on the existing branch if it died), comment back when pushed, set `In Review`. Never merge or re-plan here.
-- **Approved** → merge per config (`merge_command`) — merging to develop IS the deploy — then archive session + FD task and set `Done` last. On failure: inbox alert, leave at `Approved` for retry.
+This repo is `auto_merge: true` (see `../pipeline-config.md`), so the adversarial verifier's `MERGE`
+verdict **is** the approval. ⛔ **Never write `In Review` on an issue here.** That state is excluded
+from the discovery query above, so an issue parked there is orphaned — nothing picks it back up to
+merge.
+
+- **In Progress** → monitor FD/session (branch recovery per canonical), create the PR when the session is ready (merge develop in first if behind), attach `Preview` and `Pull Request` URLs to the issue, run quality gates (see config), reconcile review threads, then run the adversarial verifier.
+  - Verifier `MERGE` → merge per config (`merge_command`) — merging to develop IS the deploy — then archive session + FD task, write the ship-log entry, and set `Done` last.
+  - Verifier `NEEDS_WORK` → inject the blocking items into the session and **stay at `In Progress`**. New commits re-trigger the checks and the verifier re-runs on the new head.
+  - PR not `MERGEABLE` this pass (checks running / `UNKNOWN`) → leave at `In Progress` and retry next pass. `CONFLICTING` → `Blocked` + inbox alert.
+- **Changes Requested** → read the latest human comment(s), inject into the live session (re-dispatch on the existing branch if it died), comment back when pushed, return to `In Progress`. Never merge or re-plan here.
+- **Approved** → only reachable when a human sets it by hand. Merge per config, then archive session + FD task, ship-log, and set `Done` last. On failure: inbox alert, leave at `Approved` for retry.
+- **Blocked** → only for decisions the pipeline genuinely cannot make. Comment the specific question + fire the inbox alert. Never auto-merge from here.
 
 Issue comments are the human-facing surface — concise, plain language.
