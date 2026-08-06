@@ -492,7 +492,10 @@ export class AuthResolver {
     return this.service.invalidateAllSessions(user.id, currentSessionId)
   }
 
+  // Resolved as part of the login response, which is itself public. Reaching this field at all
+  // requires already holding the UserToken that a successful login just issued.
   @ResolveField('user')
+  @Public()
   user(@Parent() auth: UserToken) {
     // If 2FA is required, user field should be null until 2FA is completed
     if (auth?.requires2FA && !auth?.token) {
