@@ -40,6 +40,8 @@ import { StripeModule } from '@nestled-template/api/integrations'
 import { GuardsModule } from '@nestled-template/api/utils'
 import { ApiCoreFeatureModule } from '@nestled-template/api/core/feature'
 import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common'
+import { APP_INTERCEPTOR } from '@nestjs/core'
+import { ViewerContextInterceptor } from '@nestled-template/api/core/helpers'
 import { LoggerMiddleware } from './applogger.middleware'
 import { ConfigModule } from '@nestjs/config'
 import {
@@ -115,6 +117,12 @@ export const appModules = [...coreModules, ...defaultModules, ...pluginModules]
     ...appModules,
   ],
   controllers: [StripeWebhookController],
+  providers: [
+    // Publishes the authenticated user for the duration of each request so the nested-select
+    // builder can authorize relation traversal. Interceptors run after guards, so req.user is
+    // already populated. Registered globally because generated resolvers cannot be edited.
+    { provide: APP_INTERCEPTOR, useClass: ViewerContextInterceptor },
+  ],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer): void {
