@@ -281,6 +281,14 @@ export const DATABASE_MODELS: DatabaseModel[] = [
     modelPropertyName: 'address',
     pluralModelName: 'Addresses',
     pluralModelPropertyName: 'addresses',
+    auth: {
+      readOne: 'admin',
+      readMany: 'admin',
+      count: 'admin',
+      create: 'admin',
+      update: 'admin',
+      delete: 'admin',
+    },
     idFieldType: 'String',
   },
   {
@@ -452,6 +460,14 @@ export const DATABASE_MODELS: DatabaseModel[] = [
     modelPropertyName: 'apiToken',
     pluralModelName: 'ApiTokens',
     pluralModelPropertyName: 'apiTokens',
+    auth: {
+      readOne: 'admin',
+      readMany: 'admin',
+      count: 'admin',
+      create: 'admin',
+      update: 'admin',
+      delete: 'admin',
+    },
     idFieldType: 'String',
   },
   {
@@ -621,6 +637,14 @@ export const DATABASE_MODELS: DatabaseModel[] = [
     modelPropertyName: 'auditLog',
     pluralModelName: 'AuditLogs',
     pluralModelPropertyName: 'auditLogs',
+    auth: {
+      readOne: 'admin',
+      readMany: 'admin',
+      count: 'admin',
+      create: 'admin',
+      update: 'admin',
+      delete: 'admin',
+    },
     idFieldType: 'String',
   },
   {
@@ -839,6 +863,14 @@ export const DATABASE_MODELS: DatabaseModel[] = [
     modelPropertyName: 'country',
     pluralModelName: 'Countries',
     pluralModelPropertyName: 'countries',
+    auth: {
+      readOne: 'admin',
+      readMany: 'admin',
+      count: 'admin',
+      create: 'admin',
+      update: 'admin',
+      delete: 'admin',
+    },
     idFieldType: 'String',
   },
   {
@@ -1038,6 +1070,14 @@ export const DATABASE_MODELS: DatabaseModel[] = [
     modelPropertyName: 'email',
     pluralModelName: 'Emails',
     pluralModelPropertyName: 'emails',
+    auth: {
+      readOne: 'admin',
+      readMany: 'admin',
+      count: 'admin',
+      create: 'admin',
+      update: 'admin',
+      delete: 'admin',
+    },
     idFieldType: 'String',
   },
   {
@@ -1237,6 +1277,14 @@ export const DATABASE_MODELS: DatabaseModel[] = [
     modelPropertyName: 'invite',
     pluralModelName: 'Invites',
     pluralModelPropertyName: 'invites',
+    auth: {
+      readOne: 'admin',
+      readMany: 'admin',
+      count: 'admin',
+      create: 'admin',
+      update: 'admin',
+      delete: 'admin',
+    },
     idFieldType: 'String',
   },
   {
@@ -1380,6 +1428,14 @@ export const DATABASE_MODELS: DatabaseModel[] = [
     modelPropertyName: 'link',
     pluralModelName: 'Links',
     pluralModelPropertyName: 'links',
+    auth: {
+      readOne: 'admin',
+      readMany: 'admin',
+      count: 'admin',
+      create: 'admin',
+      update: 'admin',
+      delete: 'admin',
+    },
     idFieldType: 'String',
   },
   {
@@ -1547,6 +1603,14 @@ export const DATABASE_MODELS: DatabaseModel[] = [
     modelPropertyName: 'loginAttempt',
     pluralModelName: 'LoginAttempts',
     pluralModelPropertyName: 'loginAttempts',
+    auth: {
+      readOne: 'admin',
+      readMany: 'admin',
+      count: 'admin',
+      create: 'admin',
+      update: 'admin',
+      delete: 'admin',
+    },
     idFieldType: 'String',
   },
   {
@@ -1661,6 +1725,14 @@ export const DATABASE_MODELS: DatabaseModel[] = [
     modelPropertyName: 'oAuthAccount',
     pluralModelName: 'OAuthAccounts',
     pluralModelPropertyName: 'oAuthAccounts',
+    auth: {
+      readOne: 'admin',
+      readMany: 'admin',
+      count: 'admin',
+      create: 'admin',
+      update: 'admin',
+      delete: 'admin',
+    },
     idFieldType: 'String',
   },
   {
@@ -1955,6 +2027,14 @@ export const DATABASE_MODELS: DatabaseModel[] = [
     modelPropertyName: 'organization',
     pluralModelName: 'Organizations',
     pluralModelPropertyName: 'organizations',
+    auth: {
+      readOne: 'admin',
+      readMany: 'admin',
+      count: 'admin',
+      create: 'admin',
+      update: 'admin',
+      delete: 'admin',
+    },
     idFieldType: 'String',
   },
   {
@@ -2101,6 +2181,14 @@ export const DATABASE_MODELS: DatabaseModel[] = [
     modelPropertyName: 'organizationMember',
     pluralModelName: 'OrganizationMembers',
     pluralModelPropertyName: 'organizationMembers',
+    auth: {
+      readOne: 'admin',
+      readMany: 'admin',
+      count: 'admin',
+      create: 'admin',
+      update: 'admin',
+      delete: 'admin',
+    },
     idFieldType: 'String',
   },
   {
@@ -2185,6 +2273,14 @@ export const DATABASE_MODELS: DatabaseModel[] = [
     modelPropertyName: 'permission',
     pluralModelName: 'Permissions',
     pluralModelPropertyName: 'permissions',
+    auth: {
+      readOne: 'admin',
+      readMany: 'admin',
+      count: 'admin',
+      create: 'admin',
+      update: 'admin',
+      delete: 'admin',
+    },
     idFieldType: 'String',
   },
   {
@@ -2343,6 +2439,14 @@ export const DATABASE_MODELS: DatabaseModel[] = [
     modelPropertyName: 'phoneNumber',
     pluralModelName: 'PhoneNumbers',
     pluralModelPropertyName: 'phoneNumbers',
+    auth: {
+      readOne: 'admin',
+      readMany: 'admin',
+      count: 'admin',
+      create: 'admin',
+      update: 'admin',
+      delete: 'admin',
+    },
     idFieldType: 'String',
   },
   {
@@ -2549,6 +2653,14 @@ export const DATABASE_MODELS: DatabaseModel[] = [
     modelPropertyName: 'plan',
     pluralModelName: 'Plans',
     pluralModelPropertyName: 'plans',
+    auth: {
+      readOne: 'admin',
+      readMany: 'admin',
+      count: 'admin',
+      create: 'admin',
+      update: 'admin',
+      delete: 'admin',
+    },
     idFieldType: 'String',
   },
   {
@@ -2697,6 +2809,14 @@ export const DATABASE_MODELS: DatabaseModel[] = [
     modelPropertyName: 'role',
     pluralModelName: 'Roles',
     pluralModelPropertyName: 'roles',
+    auth: {
+      readOne: 'admin',
+      readMany: 'admin',
+      count: 'admin',
+      create: 'admin',
+      update: 'admin',
+      delete: 'admin',
+    },
     idFieldType: 'String',
   },
   {
@@ -2837,6 +2957,14 @@ export const DATABASE_MODELS: DatabaseModel[] = [
     modelPropertyName: 'securityEvent',
     pluralModelName: 'SecurityEvents',
     pluralModelPropertyName: 'securityEvents',
+    auth: {
+      readOne: 'admin',
+      readMany: 'admin',
+      count: 'admin',
+      create: 'admin',
+      update: 'admin',
+      delete: 'admin',
+    },
     idFieldType: 'String',
   },
   {
@@ -3086,6 +3214,14 @@ export const DATABASE_MODELS: DatabaseModel[] = [
     modelPropertyName: 'subscription',
     pluralModelName: 'Subscriptions',
     pluralModelPropertyName: 'subscriptions',
+    auth: {
+      readOne: 'admin',
+      readMany: 'admin',
+      count: 'admin',
+      create: 'admin',
+      update: 'admin',
+      delete: 'admin',
+    },
     idFieldType: 'String',
   },
   {
@@ -3216,6 +3352,14 @@ export const DATABASE_MODELS: DatabaseModel[] = [
     modelPropertyName: 'team',
     pluralModelName: 'Teams',
     pluralModelPropertyName: 'teams',
+    auth: {
+      readOne: 'admin',
+      readMany: 'admin',
+      count: 'admin',
+      create: 'admin',
+      update: 'admin',
+      delete: 'admin',
+    },
     idFieldType: 'String',
   },
   {
@@ -3362,6 +3506,14 @@ export const DATABASE_MODELS: DatabaseModel[] = [
     modelPropertyName: 'teamMember',
     pluralModelName: 'TeamMembers',
     pluralModelPropertyName: 'teamMembers',
+    auth: {
+      readOne: 'admin',
+      readMany: 'admin',
+      count: 'admin',
+      create: 'admin',
+      update: 'admin',
+      delete: 'admin',
+    },
     idFieldType: 'String',
   },
   {
@@ -3667,6 +3819,14 @@ export const DATABASE_MODELS: DatabaseModel[] = [
     modelPropertyName: 'storedFile',
     pluralModelName: 'StoredFiles',
     pluralModelPropertyName: 'storedFiles',
+    auth: {
+      readOne: 'admin',
+      readMany: 'admin',
+      count: 'admin',
+      create: 'admin',
+      update: 'admin',
+      delete: 'admin',
+    },
     idFieldType: 'String',
   },
   {
@@ -4223,6 +4383,14 @@ export const DATABASE_MODELS: DatabaseModel[] = [
     modelPropertyName: 'user',
     pluralModelName: 'Users',
     pluralModelPropertyName: 'users',
+    auth: {
+      readOne: 'admin',
+      readMany: 'admin',
+      count: 'admin',
+      create: 'admin',
+      update: 'admin',
+      delete: 'admin',
+    },
     idFieldType: 'String',
   },
   {
@@ -4337,6 +4505,14 @@ export const DATABASE_MODELS: DatabaseModel[] = [
     modelPropertyName: 'userPreference',
     pluralModelName: 'UserPreferences',
     pluralModelPropertyName: 'userPreferences',
+    auth: {
+      readOne: 'admin',
+      readMany: 'admin',
+      count: 'admin',
+      create: 'admin',
+      update: 'admin',
+      delete: 'admin',
+    },
     idFieldType: 'String',
   },
   {
@@ -4496,6 +4672,14 @@ export const DATABASE_MODELS: DatabaseModel[] = [
     modelPropertyName: 'userSession',
     pluralModelName: 'UserSessions',
     pluralModelPropertyName: 'userSessions',
+    auth: {
+      readOne: 'admin',
+      readMany: 'admin',
+      count: 'admin',
+      create: 'admin',
+      update: 'admin',
+      delete: 'admin',
+    },
     idFieldType: 'String',
   },
 ]

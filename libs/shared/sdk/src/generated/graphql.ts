@@ -59,12 +59,83 @@ export type Address = {
   userId?: Maybe<Scalars['String']['output']>
 }
 
+export type AddressFilterInput = {
+  address1?: InputMaybe<StringFilterInput>
+  address2?: InputMaybe<StringFilterInput>
+  addressType?: InputMaybe<AddressTypeFilterInput>
+  city?: InputMaybe<StringFilterInput>
+  country?: InputMaybe<CountryFilterInput2>
+  countryId?: InputMaybe<StringFilterInput>
+  createdAt?: InputMaybe<DateTimeFilterInput>
+  id?: InputMaybe<StringFilterInput>
+  isPrimary?: InputMaybe<BooleanFilterInput>
+  organization?: InputMaybe<OrganizationFilterInput2>
+  organizationId?: InputMaybe<StringFilterInput>
+  postalCode?: InputMaybe<StringFilterInput>
+  region?: InputMaybe<StringFilterInput>
+  updatedAt?: InputMaybe<DateTimeFilterInput>
+  user?: InputMaybe<UserFilterInput2>
+  userId?: InputMaybe<StringFilterInput>
+}
+
+export type AddressFilterInput2 = {
+  address1?: InputMaybe<StringFilterInput>
+  address2?: InputMaybe<StringFilterInput>
+  addressType?: InputMaybe<AddressTypeFilterInput>
+  city?: InputMaybe<StringFilterInput>
+  country?: InputMaybe<CountryFilterInput3>
+  countryId?: InputMaybe<StringFilterInput>
+  createdAt?: InputMaybe<DateTimeFilterInput>
+  id?: InputMaybe<StringFilterInput>
+  isPrimary?: InputMaybe<BooleanFilterInput>
+  organization?: InputMaybe<OrganizationFilterInput3>
+  organizationId?: InputMaybe<StringFilterInput>
+  postalCode?: InputMaybe<StringFilterInput>
+  region?: InputMaybe<StringFilterInput>
+  updatedAt?: InputMaybe<DateTimeFilterInput>
+  user?: InputMaybe<UserFilterInput3>
+  userId?: InputMaybe<StringFilterInput>
+}
+
+export type AddressFilterInput3 = {
+  address1?: InputMaybe<StringFilterInput>
+  address2?: InputMaybe<StringFilterInput>
+  addressType?: InputMaybe<AddressTypeFilterInput>
+  city?: InputMaybe<StringFilterInput>
+  countryId?: InputMaybe<StringFilterInput>
+  createdAt?: InputMaybe<DateTimeFilterInput>
+  id?: InputMaybe<StringFilterInput>
+  isPrimary?: InputMaybe<BooleanFilterInput>
+  organizationId?: InputMaybe<StringFilterInput>
+  postalCode?: InputMaybe<StringFilterInput>
+  region?: InputMaybe<StringFilterInput>
+  updatedAt?: InputMaybe<DateTimeFilterInput>
+  userId?: InputMaybe<StringFilterInput>
+}
+
+export type AddressListRelationFilterInput = {
+  every?: InputMaybe<AddressFilterInput2>
+  none?: InputMaybe<AddressFilterInput2>
+  some?: InputMaybe<AddressFilterInput2>
+}
+
+export type AddressListRelationFilterInput2 = {
+  every?: InputMaybe<AddressFilterInput3>
+  none?: InputMaybe<AddressFilterInput3>
+  some?: InputMaybe<AddressFilterInput3>
+}
+
 export enum AddressType {
   Event = 'EVENT',
   Home = 'HOME',
   Other = 'OTHER',
   Venue = 'VENUE',
   Work = 'WORK',
+}
+
+export type AddressTypeFilterInput = {
+  equals?: InputMaybe<AddressType>
+  in?: InputMaybe<Array<AddressType>>
 }
 
 export type AdminAnalytics = {
@@ -205,6 +276,58 @@ export type ApiToken = {
   userId: Scalars['String']['output']
 }
 
+export type ApiTokenFilterInput = {
+  createdAt?: InputMaybe<DateTimeFilterInput>
+  expiresAt?: InputMaybe<DateTimeFilterInput>
+  id?: InputMaybe<StringFilterInput>
+  lastUsedAt?: InputMaybe<DateTimeFilterInput>
+  name?: InputMaybe<StringFilterInput>
+  organization?: InputMaybe<OrganizationFilterInput2>
+  organizationId?: InputMaybe<StringFilterInput>
+  revoked?: InputMaybe<BooleanFilterInput>
+  updatedAt?: InputMaybe<DateTimeFilterInput>
+  user?: InputMaybe<UserFilterInput2>
+  userId?: InputMaybe<StringFilterInput>
+}
+
+export type ApiTokenFilterInput2 = {
+  createdAt?: InputMaybe<DateTimeFilterInput>
+  expiresAt?: InputMaybe<DateTimeFilterInput>
+  id?: InputMaybe<StringFilterInput>
+  lastUsedAt?: InputMaybe<DateTimeFilterInput>
+  name?: InputMaybe<StringFilterInput>
+  organization?: InputMaybe<OrganizationFilterInput3>
+  organizationId?: InputMaybe<StringFilterInput>
+  revoked?: InputMaybe<BooleanFilterInput>
+  updatedAt?: InputMaybe<DateTimeFilterInput>
+  user?: InputMaybe<UserFilterInput3>
+  userId?: InputMaybe<StringFilterInput>
+}
+
+export type ApiTokenFilterInput3 = {
+  createdAt?: InputMaybe<DateTimeFilterInput>
+  expiresAt?: InputMaybe<DateTimeFilterInput>
+  id?: InputMaybe<StringFilterInput>
+  lastUsedAt?: InputMaybe<DateTimeFilterInput>
+  name?: InputMaybe<StringFilterInput>
+  organizationId?: InputMaybe<StringFilterInput>
+  revoked?: InputMaybe<BooleanFilterInput>
+  updatedAt?: InputMaybe<DateTimeFilterInput>
+  userId?: InputMaybe<StringFilterInput>
+}
+
+export type ApiTokenListRelationFilterInput = {
+  every?: InputMaybe<ApiTokenFilterInput2>
+  none?: InputMaybe<ApiTokenFilterInput2>
+  some?: InputMaybe<ApiTokenFilterInput2>
+}
+
+export type ApiTokenListRelationFilterInput2 = {
+  every?: InputMaybe<ApiTokenFilterInput3>
+  none?: InputMaybe<ApiTokenFilterInput3>
+  some?: InputMaybe<ApiTokenFilterInput3>
+}
+
 export type AuditLog = {
   __typename?: 'AuditLog'
   action: Scalars['String']['output']
@@ -218,6 +341,60 @@ export type AuditLog = {
   updatedAt: Scalars['DateTime']['output']
   user?: Maybe<User>
   userId: Scalars['String']['output']
+}
+
+export type AuditLogFilterInput = {
+  action?: InputMaybe<StringFilterInput>
+  createdAt?: InputMaybe<DateTimeFilterInput>
+  entityId?: InputMaybe<StringFilterInput>
+  entityType?: InputMaybe<StringFilterInput>
+  id?: InputMaybe<StringFilterInput>
+  organization?: InputMaybe<OrganizationFilterInput2>
+  organizationId?: InputMaybe<StringFilterInput>
+  updatedAt?: InputMaybe<DateTimeFilterInput>
+  user?: InputMaybe<UserFilterInput2>
+  userId?: InputMaybe<StringFilterInput>
+}
+
+export type AuditLogFilterInput2 = {
+  action?: InputMaybe<StringFilterInput>
+  createdAt?: InputMaybe<DateTimeFilterInput>
+  entityId?: InputMaybe<StringFilterInput>
+  entityType?: InputMaybe<StringFilterInput>
+  id?: InputMaybe<StringFilterInput>
+  organization?: InputMaybe<OrganizationFilterInput3>
+  organizationId?: InputMaybe<StringFilterInput>
+  updatedAt?: InputMaybe<DateTimeFilterInput>
+  user?: InputMaybe<UserFilterInput3>
+  userId?: InputMaybe<StringFilterInput>
+}
+
+export type AuditLogFilterInput3 = {
+  action?: InputMaybe<StringFilterInput>
+  createdAt?: InputMaybe<DateTimeFilterInput>
+  entityId?: InputMaybe<StringFilterInput>
+  entityType?: InputMaybe<StringFilterInput>
+  id?: InputMaybe<StringFilterInput>
+  organizationId?: InputMaybe<StringFilterInput>
+  updatedAt?: InputMaybe<DateTimeFilterInput>
+  userId?: InputMaybe<StringFilterInput>
+}
+
+export type AuditLogListRelationFilterInput = {
+  every?: InputMaybe<AuditLogFilterInput2>
+  none?: InputMaybe<AuditLogFilterInput2>
+  some?: InputMaybe<AuditLogFilterInput2>
+}
+
+export type AuditLogListRelationFilterInput2 = {
+  every?: InputMaybe<AuditLogFilterInput3>
+  none?: InputMaybe<AuditLogFilterInput3>
+  some?: InputMaybe<AuditLogFilterInput3>
+}
+
+export type BooleanFilterInput = {
+  equals?: InputMaybe<Scalars['Boolean']['input']>
+  in?: InputMaybe<Array<Scalars['Boolean']['input']>>
 }
 
 export type CancelInvitationInput = {
@@ -263,6 +440,59 @@ export type Country = {
   subRegion: Scalars['String']['output']
   subRegionCode: Scalars['String']['output']
   updatedAt: Scalars['DateTime']['output']
+}
+
+export type CountryFilterInput = {
+  addresses?: InputMaybe<AddressListRelationFilterInput>
+  alpha2?: InputMaybe<StringFilterInput>
+  alpha3?: InputMaybe<StringFilterInput>
+  countryCode?: InputMaybe<StringFilterInput>
+  createdAt?: InputMaybe<DateTimeFilterInput>
+  id?: InputMaybe<StringFilterInput>
+  intermediateRegion?: InputMaybe<StringFilterInput>
+  intermediateRegionCode?: InputMaybe<StringFilterInput>
+  iso3166_2?: InputMaybe<StringFilterInput>
+  name?: InputMaybe<StringFilterInput>
+  region?: InputMaybe<StringFilterInput>
+  regionCode?: InputMaybe<StringFilterInput>
+  subRegion?: InputMaybe<StringFilterInput>
+  subRegionCode?: InputMaybe<StringFilterInput>
+  updatedAt?: InputMaybe<DateTimeFilterInput>
+}
+
+export type CountryFilterInput2 = {
+  addresses?: InputMaybe<AddressListRelationFilterInput2>
+  alpha2?: InputMaybe<StringFilterInput>
+  alpha3?: InputMaybe<StringFilterInput>
+  countryCode?: InputMaybe<StringFilterInput>
+  createdAt?: InputMaybe<DateTimeFilterInput>
+  id?: InputMaybe<StringFilterInput>
+  intermediateRegion?: InputMaybe<StringFilterInput>
+  intermediateRegionCode?: InputMaybe<StringFilterInput>
+  iso3166_2?: InputMaybe<StringFilterInput>
+  name?: InputMaybe<StringFilterInput>
+  region?: InputMaybe<StringFilterInput>
+  regionCode?: InputMaybe<StringFilterInput>
+  subRegion?: InputMaybe<StringFilterInput>
+  subRegionCode?: InputMaybe<StringFilterInput>
+  updatedAt?: InputMaybe<DateTimeFilterInput>
+}
+
+export type CountryFilterInput3 = {
+  alpha2?: InputMaybe<StringFilterInput>
+  alpha3?: InputMaybe<StringFilterInput>
+  countryCode?: InputMaybe<StringFilterInput>
+  createdAt?: InputMaybe<DateTimeFilterInput>
+  id?: InputMaybe<StringFilterInput>
+  intermediateRegion?: InputMaybe<StringFilterInput>
+  intermediateRegionCode?: InputMaybe<StringFilterInput>
+  iso3166_2?: InputMaybe<StringFilterInput>
+  name?: InputMaybe<StringFilterInput>
+  region?: InputMaybe<StringFilterInput>
+  regionCode?: InputMaybe<StringFilterInput>
+  subRegion?: InputMaybe<StringFilterInput>
+  subRegionCode?: InputMaybe<StringFilterInput>
+  updatedAt?: InputMaybe<DateTimeFilterInput>
 }
 
 export type CreateAddressInput = {
@@ -594,6 +824,15 @@ export type CreateUserSessionInput = {
   userId: Scalars['String']['input']
 }
 
+export type DateTimeFilterInput = {
+  equals?: InputMaybe<Scalars['DateTime']['input']>
+  gt?: InputMaybe<Scalars['DateTime']['input']>
+  gte?: InputMaybe<Scalars['DateTime']['input']>
+  in?: InputMaybe<Array<Scalars['DateTime']['input']>>
+  lt?: InputMaybe<Scalars['DateTime']['input']>
+  lte?: InputMaybe<Scalars['DateTime']['input']>
+}
+
 export type Disable2FaInput = {
   password: Scalars['String']['input']
 }
@@ -615,10 +854,73 @@ export type Email = {
   verifyExpires?: Maybe<Scalars['DateTime']['output']>
 }
 
+export type EmailFilterInput = {
+  createdAt?: InputMaybe<DateTimeFilterInput>
+  email?: InputMaybe<StringFilterInput>
+  emailType?: InputMaybe<EmailTypeFilterInput>
+  id?: InputMaybe<StringFilterInput>
+  organization?: InputMaybe<OrganizationFilterInput2>
+  organizationId?: InputMaybe<StringFilterInput>
+  primary?: InputMaybe<BooleanFilterInput>
+  public?: InputMaybe<BooleanFilterInput>
+  updatedAt?: InputMaybe<DateTimeFilterInput>
+  user?: InputMaybe<UserFilterInput2>
+  userId?: InputMaybe<StringFilterInput>
+  verified?: InputMaybe<BooleanFilterInput>
+  verifyExpires?: InputMaybe<DateTimeFilterInput>
+}
+
+export type EmailFilterInput2 = {
+  createdAt?: InputMaybe<DateTimeFilterInput>
+  email?: InputMaybe<StringFilterInput>
+  emailType?: InputMaybe<EmailTypeFilterInput>
+  id?: InputMaybe<StringFilterInput>
+  organization?: InputMaybe<OrganizationFilterInput3>
+  organizationId?: InputMaybe<StringFilterInput>
+  primary?: InputMaybe<BooleanFilterInput>
+  public?: InputMaybe<BooleanFilterInput>
+  updatedAt?: InputMaybe<DateTimeFilterInput>
+  user?: InputMaybe<UserFilterInput3>
+  userId?: InputMaybe<StringFilterInput>
+  verified?: InputMaybe<BooleanFilterInput>
+  verifyExpires?: InputMaybe<DateTimeFilterInput>
+}
+
+export type EmailFilterInput3 = {
+  createdAt?: InputMaybe<DateTimeFilterInput>
+  email?: InputMaybe<StringFilterInput>
+  emailType?: InputMaybe<EmailTypeFilterInput>
+  id?: InputMaybe<StringFilterInput>
+  organizationId?: InputMaybe<StringFilterInput>
+  primary?: InputMaybe<BooleanFilterInput>
+  public?: InputMaybe<BooleanFilterInput>
+  updatedAt?: InputMaybe<DateTimeFilterInput>
+  userId?: InputMaybe<StringFilterInput>
+  verified?: InputMaybe<BooleanFilterInput>
+  verifyExpires?: InputMaybe<DateTimeFilterInput>
+}
+
+export type EmailListRelationFilterInput = {
+  every?: InputMaybe<EmailFilterInput2>
+  none?: InputMaybe<EmailFilterInput2>
+  some?: InputMaybe<EmailFilterInput2>
+}
+
+export type EmailListRelationFilterInput2 = {
+  every?: InputMaybe<EmailFilterInput3>
+  none?: InputMaybe<EmailFilterInput3>
+  some?: InputMaybe<EmailFilterInput3>
+}
+
 export enum EmailType {
   Other = 'OTHER',
   Personal = 'PERSONAL',
   Work = 'WORK',
+}
+
+export type EmailTypeFilterInput = {
+  equals?: InputMaybe<EmailType>
+  in?: InputMaybe<Array<EmailType>>
 }
 
 export type EmulateUserInput = {
@@ -648,6 +950,20 @@ export enum FailureReason {
   TooManyAttempts = 'TOO_MANY_ATTEMPTS',
 }
 
+export type FailureReasonFilterInput = {
+  equals?: InputMaybe<FailureReason>
+  in?: InputMaybe<Array<FailureReason>>
+}
+
+export type FloatFilterInput = {
+  equals?: InputMaybe<Scalars['Float']['input']>
+  gt?: InputMaybe<Scalars['Float']['input']>
+  gte?: InputMaybe<Scalars['Float']['input']>
+  in?: InputMaybe<Array<Scalars['Float']['input']>>
+  lt?: InputMaybe<Scalars['Float']['input']>
+  lte?: InputMaybe<Scalars['Float']['input']>
+}
+
 export type ForgotPasswordInput = {
   captchaToken?: InputMaybe<Scalars['String']['input']>
   email: Scalars['String']['input']
@@ -663,6 +979,15 @@ export type GenerateApiTokenOutput = {
   __typename?: 'GenerateApiTokenOutput'
   apiToken: ApiToken
   token: Scalars['String']['output']
+}
+
+export type IntFilterInput = {
+  equals?: InputMaybe<Scalars['Int']['input']>
+  gt?: InputMaybe<Scalars['Int']['input']>
+  gte?: InputMaybe<Scalars['Int']['input']>
+  in?: InputMaybe<Array<Scalars['Int']['input']>>
+  lt?: InputMaybe<Scalars['Int']['input']>
+  lte?: InputMaybe<Scalars['Int']['input']>
 }
 
 export type InvitationDetails = {
@@ -692,11 +1017,73 @@ export type Invite = {
   updatedAt: Scalars['DateTime']['output']
 }
 
+export type InviteFilterInput = {
+  createdAt?: InputMaybe<DateTimeFilterInput>
+  email?: InputMaybe<StringFilterInput>
+  expiresAt?: InputMaybe<DateTimeFilterInput>
+  id?: InputMaybe<StringFilterInput>
+  inviter?: InputMaybe<UserFilterInput2>
+  inviterId?: InputMaybe<StringFilterInput>
+  organization?: InputMaybe<OrganizationFilterInput2>
+  organizationId?: InputMaybe<StringFilterInput>
+  role?: InputMaybe<RoleFilterInput2>
+  roleId?: InputMaybe<StringFilterInput>
+  status?: InputMaybe<InviteStatusFilterInput>
+  token?: InputMaybe<StringFilterInput>
+  updatedAt?: InputMaybe<DateTimeFilterInput>
+}
+
+export type InviteFilterInput2 = {
+  createdAt?: InputMaybe<DateTimeFilterInput>
+  email?: InputMaybe<StringFilterInput>
+  expiresAt?: InputMaybe<DateTimeFilterInput>
+  id?: InputMaybe<StringFilterInput>
+  inviter?: InputMaybe<UserFilterInput3>
+  inviterId?: InputMaybe<StringFilterInput>
+  organization?: InputMaybe<OrganizationFilterInput3>
+  organizationId?: InputMaybe<StringFilterInput>
+  role?: InputMaybe<RoleFilterInput3>
+  roleId?: InputMaybe<StringFilterInput>
+  status?: InputMaybe<InviteStatusFilterInput>
+  token?: InputMaybe<StringFilterInput>
+  updatedAt?: InputMaybe<DateTimeFilterInput>
+}
+
+export type InviteFilterInput3 = {
+  createdAt?: InputMaybe<DateTimeFilterInput>
+  email?: InputMaybe<StringFilterInput>
+  expiresAt?: InputMaybe<DateTimeFilterInput>
+  id?: InputMaybe<StringFilterInput>
+  inviterId?: InputMaybe<StringFilterInput>
+  organizationId?: InputMaybe<StringFilterInput>
+  roleId?: InputMaybe<StringFilterInput>
+  status?: InputMaybe<InviteStatusFilterInput>
+  token?: InputMaybe<StringFilterInput>
+  updatedAt?: InputMaybe<DateTimeFilterInput>
+}
+
+export type InviteListRelationFilterInput = {
+  every?: InputMaybe<InviteFilterInput2>
+  none?: InputMaybe<InviteFilterInput2>
+  some?: InputMaybe<InviteFilterInput2>
+}
+
+export type InviteListRelationFilterInput2 = {
+  every?: InputMaybe<InviteFilterInput3>
+  none?: InputMaybe<InviteFilterInput3>
+  some?: InputMaybe<InviteFilterInput3>
+}
+
 export enum InviteStatus {
   Accepted = 'ACCEPTED',
   Declined = 'DECLINED',
   Expired = 'EXPIRED',
   Pending = 'PENDING',
+}
+
+export type InviteStatusFilterInput = {
+  equals?: InputMaybe<InviteStatus>
+  in?: InputMaybe<Array<InviteStatus>>
 }
 
 export type Link = {
@@ -712,6 +1099,52 @@ export type Link = {
   userId?: Maybe<Scalars['String']['output']>
 }
 
+export type LinkFilterInput = {
+  createdAt?: InputMaybe<DateTimeFilterInput>
+  id?: InputMaybe<StringFilterInput>
+  name?: InputMaybe<StringFilterInput>
+  organization?: InputMaybe<OrganizationFilterInput2>
+  organizationId?: InputMaybe<StringFilterInput>
+  updatedAt?: InputMaybe<DateTimeFilterInput>
+  url?: InputMaybe<StringFilterInput>
+  user?: InputMaybe<UserFilterInput2>
+  userId?: InputMaybe<StringFilterInput>
+}
+
+export type LinkFilterInput2 = {
+  createdAt?: InputMaybe<DateTimeFilterInput>
+  id?: InputMaybe<StringFilterInput>
+  name?: InputMaybe<StringFilterInput>
+  organization?: InputMaybe<OrganizationFilterInput3>
+  organizationId?: InputMaybe<StringFilterInput>
+  updatedAt?: InputMaybe<DateTimeFilterInput>
+  url?: InputMaybe<StringFilterInput>
+  user?: InputMaybe<UserFilterInput3>
+  userId?: InputMaybe<StringFilterInput>
+}
+
+export type LinkFilterInput3 = {
+  createdAt?: InputMaybe<DateTimeFilterInput>
+  id?: InputMaybe<StringFilterInput>
+  name?: InputMaybe<StringFilterInput>
+  organizationId?: InputMaybe<StringFilterInput>
+  updatedAt?: InputMaybe<DateTimeFilterInput>
+  url?: InputMaybe<StringFilterInput>
+  userId?: InputMaybe<StringFilterInput>
+}
+
+export type LinkListRelationFilterInput = {
+  every?: InputMaybe<LinkFilterInput2>
+  none?: InputMaybe<LinkFilterInput2>
+  some?: InputMaybe<LinkFilterInput2>
+}
+
+export type LinkListRelationFilterInput2 = {
+  every?: InputMaybe<LinkFilterInput3>
+  none?: InputMaybe<LinkFilterInput3>
+  some?: InputMaybe<LinkFilterInput3>
+}
+
 export type LinkOAuthInput = {
   provider: OAuthProvider
   /** OAuth access token or authorization code */
@@ -725,7 +1158,7 @@ export type ListAddressInput = {
   city?: InputMaybe<Scalars['String']['input']>
   countryId?: InputMaybe<Scalars['String']['input']>
   createdAt?: InputMaybe<Scalars['DateTime']['input']>
-  filters?: InputMaybe<Scalars['JSONObject']['input']>
+  filters?: InputMaybe<AddressFilterInput>
   id?: InputMaybe<Scalars['String']['input']>
   isPrimary?: InputMaybe<Scalars['Boolean']['input']>
   orderBy?: InputMaybe<Scalars['String']['input']>
@@ -744,7 +1177,7 @@ export type ListAddressInput = {
 export type ListApiTokenInput = {
   createdAt?: InputMaybe<Scalars['DateTime']['input']>
   expiresAt?: InputMaybe<Scalars['DateTime']['input']>
-  filters?: InputMaybe<Scalars['JSONObject']['input']>
+  filters?: InputMaybe<ApiTokenFilterInput>
   id?: InputMaybe<Scalars['String']['input']>
   lastUsedAt?: InputMaybe<Scalars['DateTime']['input']>
   name?: InputMaybe<Scalars['String']['input']>
@@ -766,7 +1199,7 @@ export type ListAuditLogInput = {
   createdAt?: InputMaybe<Scalars['DateTime']['input']>
   entityId?: InputMaybe<Scalars['String']['input']>
   entityType?: InputMaybe<Scalars['String']['input']>
-  filters?: InputMaybe<Scalars['JSONObject']['input']>
+  filters?: InputMaybe<AuditLogFilterInput>
   id?: InputMaybe<Scalars['String']['input']>
   orderBy?: InputMaybe<Scalars['String']['input']>
   orderDirection?: InputMaybe<Scalars['String']['input']>
@@ -785,7 +1218,7 @@ export type ListCountryInput = {
   alpha3?: InputMaybe<Scalars['String']['input']>
   countryCode?: InputMaybe<Scalars['String']['input']>
   createdAt?: InputMaybe<Scalars['DateTime']['input']>
-  filters?: InputMaybe<Scalars['JSONObject']['input']>
+  filters?: InputMaybe<CountryFilterInput>
   id?: InputMaybe<Scalars['String']['input']>
   intermediateRegion?: InputMaybe<Scalars['String']['input']>
   intermediateRegionCode?: InputMaybe<Scalars['String']['input']>
@@ -808,7 +1241,7 @@ export type ListEmailInput = {
   createdAt?: InputMaybe<Scalars['DateTime']['input']>
   email?: InputMaybe<Scalars['String']['input']>
   emailType?: InputMaybe<EmailType>
-  filters?: InputMaybe<Scalars['JSONObject']['input']>
+  filters?: InputMaybe<EmailFilterInput>
   id?: InputMaybe<Scalars['String']['input']>
   orderBy?: InputMaybe<Scalars['String']['input']>
   orderDirection?: InputMaybe<Scalars['String']['input']>
@@ -829,7 +1262,7 @@ export type ListInviteInput = {
   createdAt?: InputMaybe<Scalars['DateTime']['input']>
   email?: InputMaybe<Scalars['String']['input']>
   expiresAt?: InputMaybe<Scalars['DateTime']['input']>
-  filters?: InputMaybe<Scalars['JSONObject']['input']>
+  filters?: InputMaybe<InviteFilterInput>
   id?: InputMaybe<Scalars['String']['input']>
   inviterId?: InputMaybe<Scalars['String']['input']>
   orderBy?: InputMaybe<Scalars['String']['input']>
@@ -847,7 +1280,7 @@ export type ListInviteInput = {
 
 export type ListLinkInput = {
   createdAt?: InputMaybe<Scalars['DateTime']['input']>
-  filters?: InputMaybe<Scalars['JSONObject']['input']>
+  filters?: InputMaybe<LinkFilterInput>
   id?: InputMaybe<Scalars['String']['input']>
   name?: InputMaybe<Scalars['String']['input']>
   orderBy?: InputMaybe<Scalars['String']['input']>
@@ -865,7 +1298,7 @@ export type ListLinkInput = {
 export type ListLoginAttemptInput = {
   createdAt?: InputMaybe<Scalars['DateTime']['input']>
   email?: InputMaybe<Scalars['String']['input']>
-  filters?: InputMaybe<Scalars['JSONObject']['input']>
+  filters?: InputMaybe<LoginAttemptFilterInput>
   id?: InputMaybe<Scalars['String']['input']>
   ipAddress?: InputMaybe<Scalars['String']['input']>
   location?: InputMaybe<Scalars['String']['input']>
@@ -884,7 +1317,7 @@ export type ListLoginAttemptInput = {
 
 export type ListOAuthAccountInput = {
   createdAt?: InputMaybe<Scalars['DateTime']['input']>
-  filters?: InputMaybe<Scalars['JSONObject']['input']>
+  filters?: InputMaybe<OAuthAccountFilterInput>
   id?: InputMaybe<Scalars['String']['input']>
   orderBy?: InputMaybe<Scalars['String']['input']>
   orderDirection?: InputMaybe<Scalars['String']['input']>
@@ -905,7 +1338,7 @@ export type ListOrganizationInput = {
   apiTokensIds?: InputMaybe<Array<Scalars['String']['input']>>
   createdAt?: InputMaybe<Scalars['DateTime']['input']>
   emailsIds?: InputMaybe<Array<Scalars['String']['input']>>
-  filters?: InputMaybe<Scalars['JSONObject']['input']>
+  filters?: InputMaybe<OrganizationFilterInput>
   id?: InputMaybe<Scalars['String']['input']>
   imagesIds?: InputMaybe<Array<Scalars['String']['input']>>
   invitesIds?: InputMaybe<Array<Scalars['String']['input']>>
@@ -927,7 +1360,7 @@ export type ListOrganizationInput = {
 
 export type ListOrganizationMemberInput = {
   createdAt?: InputMaybe<Scalars['DateTime']['input']>
-  filters?: InputMaybe<Scalars['JSONObject']['input']>
+  filters?: InputMaybe<OrganizationMemberFilterInput>
   id?: InputMaybe<Scalars['String']['input']>
   orderBy?: InputMaybe<Scalars['String']['input']>
   orderDirection?: InputMaybe<Scalars['String']['input']>
@@ -944,7 +1377,7 @@ export type ListOrganizationMemberInput = {
 export type ListPermissionInput = {
   action?: InputMaybe<Scalars['String']['input']>
   description?: InputMaybe<Scalars['String']['input']>
-  filters?: InputMaybe<Scalars['JSONObject']['input']>
+  filters?: InputMaybe<PermissionFilterInput>
   id?: InputMaybe<Scalars['String']['input']>
   orderBy?: InputMaybe<Scalars['String']['input']>
   orderDirection?: InputMaybe<Scalars['String']['input']>
@@ -958,7 +1391,7 @@ export type ListPermissionInput = {
 
 export type ListPhoneNumberInput = {
   createdAt?: InputMaybe<Scalars['DateTime']['input']>
-  filters?: InputMaybe<Scalars['JSONObject']['input']>
+  filters?: InputMaybe<PhoneNumberFilterInput>
   id?: InputMaybe<Scalars['String']['input']>
   orderBy?: InputMaybe<Scalars['String']['input']>
   orderDirection?: InputMaybe<Scalars['String']['input']>
@@ -979,7 +1412,7 @@ export type ListPlanInput = {
   createdAt?: InputMaybe<Scalars['DateTime']['input']>
   description?: InputMaybe<Scalars['String']['input']>
   features?: InputMaybe<Scalars['JSON']['input']>
-  filters?: InputMaybe<Scalars['JSONObject']['input']>
+  filters?: InputMaybe<PlanFilterInput>
   id?: InputMaybe<Scalars['String']['input']>
   interval?: InputMaybe<Scalars['String']['input']>
   limits?: InputMaybe<Scalars['JSON']['input']>
@@ -1000,7 +1433,7 @@ export type ListPlanInput = {
 
 export type ListRoleInput = {
   description?: InputMaybe<Scalars['String']['input']>
-  filters?: InputMaybe<Scalars['JSONObject']['input']>
+  filters?: InputMaybe<RoleFilterInput>
   id?: InputMaybe<Scalars['String']['input']>
   invitesIds?: InputMaybe<Array<Scalars['String']['input']>>
   membersIds?: InputMaybe<Array<Scalars['String']['input']>>
@@ -1019,7 +1452,7 @@ export type ListRoleInput = {
 export type ListSecurityEventInput = {
   createdAt?: InputMaybe<Scalars['DateTime']['input']>
   eventType?: InputMaybe<SecurityEventType>
-  filters?: InputMaybe<Scalars['JSONObject']['input']>
+  filters?: InputMaybe<SecurityEventFilterInput>
   id?: InputMaybe<Scalars['String']['input']>
   ipAddress?: InputMaybe<Scalars['String']['input']>
   metadata?: InputMaybe<Scalars['JSON']['input']>
@@ -1037,7 +1470,7 @@ export type ListSecurityEventInput = {
 export type ListStoredFileInput = {
   createdAt?: InputMaybe<Scalars['DateTime']['input']>
   filename?: InputMaybe<Scalars['String']['input']>
-  filters?: InputMaybe<Scalars['JSONObject']['input']>
+  filters?: InputMaybe<StoredFileFilterInput>
   folder?: InputMaybe<Scalars['String']['input']>
   height?: InputMaybe<Scalars['Int']['input']>
   id?: InputMaybe<Scalars['String']['input']>
@@ -1068,7 +1501,7 @@ export type ListSubscriptionInput = {
   cancelAtPeriodEnd?: InputMaybe<Scalars['Boolean']['input']>
   canceledAt?: InputMaybe<Scalars['DateTime']['input']>
   createdAt?: InputMaybe<Scalars['DateTime']['input']>
-  filters?: InputMaybe<Scalars['JSONObject']['input']>
+  filters?: InputMaybe<SubscriptionFilterInput>
   id?: InputMaybe<Scalars['String']['input']>
   orderBy?: InputMaybe<Scalars['String']['input']>
   orderDirection?: InputMaybe<Scalars['String']['input']>
@@ -1091,7 +1524,7 @@ export type ListSubscriptionInput = {
 export type ListTeamInput = {
   createdAt?: InputMaybe<Scalars['DateTime']['input']>
   description?: InputMaybe<Scalars['String']['input']>
-  filters?: InputMaybe<Scalars['JSONObject']['input']>
+  filters?: InputMaybe<TeamFilterInput>
   id?: InputMaybe<Scalars['String']['input']>
   membersIds?: InputMaybe<Array<Scalars['String']['input']>>
   name?: InputMaybe<Scalars['String']['input']>
@@ -1107,7 +1540,7 @@ export type ListTeamInput = {
 
 export type ListTeamMemberInput = {
   createdAt?: InputMaybe<Scalars['DateTime']['input']>
-  filters?: InputMaybe<Scalars['JSONObject']['input']>
+  filters?: InputMaybe<TeamMemberFilterInput>
   id?: InputMaybe<Scalars['String']['input']>
   orderBy?: InputMaybe<Scalars['String']['input']>
   orderDirection?: InputMaybe<Scalars['String']['input']>
@@ -1138,7 +1571,7 @@ export type ListUserInput = {
   emailValidated?: InputMaybe<Scalars['Boolean']['input']>
   emailsIds?: InputMaybe<Array<Scalars['String']['input']>>
   failedLoginCount?: InputMaybe<Scalars['Int']['input']>
-  filters?: InputMaybe<Scalars['JSONObject']['input']>
+  filters?: InputMaybe<UserFilterInput>
   firstName?: InputMaybe<Scalars['String']['input']>
   id?: InputMaybe<Scalars['String']['input']>
   imagesIds?: InputMaybe<Array<Scalars['String']['input']>>
@@ -1169,7 +1602,7 @@ export type ListUserInput = {
 
 export type ListUserPreferenceInput = {
   createdAt?: InputMaybe<Scalars['DateTime']['input']>
-  filters?: InputMaybe<Scalars['JSONObject']['input']>
+  filters?: InputMaybe<UserPreferenceFilterInput>
   id?: InputMaybe<Scalars['String']['input']>
   key?: InputMaybe<Scalars['String']['input']>
   orderBy?: InputMaybe<Scalars['String']['input']>
@@ -1186,7 +1619,7 @@ export type ListUserPreferenceInput = {
 export type ListUserSessionInput = {
   createdAt?: InputMaybe<Scalars['DateTime']['input']>
   deviceInfo?: InputMaybe<Scalars['String']['input']>
-  filters?: InputMaybe<Scalars['JSONObject']['input']>
+  filters?: InputMaybe<UserSessionFilterInput>
   id?: InputMaybe<Scalars['String']['input']>
   ipAddress?: InputMaybe<Scalars['String']['input']>
   isValid?: InputMaybe<Scalars['Boolean']['input']>
@@ -1215,6 +1648,59 @@ export type LoginAttempt = {
   user?: Maybe<User>
   userAgent?: Maybe<Scalars['String']['output']>
   userId?: Maybe<Scalars['String']['output']>
+}
+
+export type LoginAttemptFilterInput = {
+  createdAt?: InputMaybe<DateTimeFilterInput>
+  email?: InputMaybe<StringFilterInput>
+  id?: InputMaybe<StringFilterInput>
+  ipAddress?: InputMaybe<StringFilterInput>
+  location?: InputMaybe<StringFilterInput>
+  reason?: InputMaybe<FailureReasonFilterInput>
+  success?: InputMaybe<BooleanFilterInput>
+  updatedAt?: InputMaybe<DateTimeFilterInput>
+  user?: InputMaybe<UserFilterInput2>
+  userAgent?: InputMaybe<StringFilterInput>
+  userId?: InputMaybe<StringFilterInput>
+}
+
+export type LoginAttemptFilterInput2 = {
+  createdAt?: InputMaybe<DateTimeFilterInput>
+  email?: InputMaybe<StringFilterInput>
+  id?: InputMaybe<StringFilterInput>
+  ipAddress?: InputMaybe<StringFilterInput>
+  location?: InputMaybe<StringFilterInput>
+  reason?: InputMaybe<FailureReasonFilterInput>
+  success?: InputMaybe<BooleanFilterInput>
+  updatedAt?: InputMaybe<DateTimeFilterInput>
+  user?: InputMaybe<UserFilterInput3>
+  userAgent?: InputMaybe<StringFilterInput>
+  userId?: InputMaybe<StringFilterInput>
+}
+
+export type LoginAttemptFilterInput3 = {
+  createdAt?: InputMaybe<DateTimeFilterInput>
+  email?: InputMaybe<StringFilterInput>
+  id?: InputMaybe<StringFilterInput>
+  ipAddress?: InputMaybe<StringFilterInput>
+  location?: InputMaybe<StringFilterInput>
+  reason?: InputMaybe<FailureReasonFilterInput>
+  success?: InputMaybe<BooleanFilterInput>
+  updatedAt?: InputMaybe<DateTimeFilterInput>
+  userAgent?: InputMaybe<StringFilterInput>
+  userId?: InputMaybe<StringFilterInput>
+}
+
+export type LoginAttemptListRelationFilterInput = {
+  every?: InputMaybe<LoginAttemptFilterInput2>
+  none?: InputMaybe<LoginAttemptFilterInput2>
+  some?: InputMaybe<LoginAttemptFilterInput2>
+}
+
+export type LoginAttemptListRelationFilterInput2 = {
+  every?: InputMaybe<LoginAttemptFilterInput3>
+  none?: InputMaybe<LoginAttemptFilterInput3>
+  some?: InputMaybe<LoginAttemptFilterInput3>
 }
 
 export type LoginInput = {
@@ -1884,6 +2370,47 @@ export type OAuthAccount = {
   userId: Scalars['String']['output']
 }
 
+export type OAuthAccountFilterInput = {
+  createdAt?: InputMaybe<DateTimeFilterInput>
+  id?: InputMaybe<StringFilterInput>
+  provider?: InputMaybe<StringFilterInput>
+  providerUserId?: InputMaybe<StringFilterInput>
+  updatedAt?: InputMaybe<DateTimeFilterInput>
+  user?: InputMaybe<UserFilterInput2>
+  userId?: InputMaybe<StringFilterInput>
+}
+
+export type OAuthAccountFilterInput2 = {
+  createdAt?: InputMaybe<DateTimeFilterInput>
+  id?: InputMaybe<StringFilterInput>
+  provider?: InputMaybe<StringFilterInput>
+  providerUserId?: InputMaybe<StringFilterInput>
+  updatedAt?: InputMaybe<DateTimeFilterInput>
+  user?: InputMaybe<UserFilterInput3>
+  userId?: InputMaybe<StringFilterInput>
+}
+
+export type OAuthAccountFilterInput3 = {
+  createdAt?: InputMaybe<DateTimeFilterInput>
+  id?: InputMaybe<StringFilterInput>
+  provider?: InputMaybe<StringFilterInput>
+  providerUserId?: InputMaybe<StringFilterInput>
+  updatedAt?: InputMaybe<DateTimeFilterInput>
+  userId?: InputMaybe<StringFilterInput>
+}
+
+export type OAuthAccountListRelationFilterInput = {
+  every?: InputMaybe<OAuthAccountFilterInput2>
+  none?: InputMaybe<OAuthAccountFilterInput2>
+  some?: InputMaybe<OAuthAccountFilterInput2>
+}
+
+export type OAuthAccountListRelationFilterInput2 = {
+  every?: InputMaybe<OAuthAccountFilterInput3>
+  none?: InputMaybe<OAuthAccountFilterInput3>
+  some?: InputMaybe<OAuthAccountFilterInput3>
+}
+
 /** OAuth provider types */
 export enum OAuthProvider {
   Github = 'GITHUB',
@@ -1919,6 +2446,56 @@ export type Organization = {
   updatedAt: Scalars['DateTime']['output']
 }
 
+export type OrganizationFilterInput = {
+  AuditLog?: InputMaybe<AuditLogListRelationFilterInput>
+  Team?: InputMaybe<TeamListRelationFilterInput>
+  addresses?: InputMaybe<AddressListRelationFilterInput>
+  apiTokens?: InputMaybe<ApiTokenListRelationFilterInput>
+  createdAt?: InputMaybe<DateTimeFilterInput>
+  emails?: InputMaybe<EmailListRelationFilterInput>
+  id?: InputMaybe<StringFilterInput>
+  images?: InputMaybe<StoredFileListRelationFilterInput>
+  invites?: InputMaybe<InviteListRelationFilterInput>
+  links?: InputMaybe<LinkListRelationFilterInput>
+  logo?: InputMaybe<StoredFileFilterInput2>
+  logoId?: InputMaybe<StringFilterInput>
+  members?: InputMaybe<OrganizationMemberListRelationFilterInput>
+  name?: InputMaybe<StringFilterInput>
+  phoneNumbers?: InputMaybe<PhoneNumberListRelationFilterInput>
+  roles?: InputMaybe<RoleListRelationFilterInput>
+  subscription?: InputMaybe<SubscriptionFilterInput2>
+  updatedAt?: InputMaybe<DateTimeFilterInput>
+}
+
+export type OrganizationFilterInput2 = {
+  AuditLog?: InputMaybe<AuditLogListRelationFilterInput2>
+  Team?: InputMaybe<TeamListRelationFilterInput2>
+  addresses?: InputMaybe<AddressListRelationFilterInput2>
+  apiTokens?: InputMaybe<ApiTokenListRelationFilterInput2>
+  createdAt?: InputMaybe<DateTimeFilterInput>
+  emails?: InputMaybe<EmailListRelationFilterInput2>
+  id?: InputMaybe<StringFilterInput>
+  images?: InputMaybe<StoredFileListRelationFilterInput2>
+  invites?: InputMaybe<InviteListRelationFilterInput2>
+  links?: InputMaybe<LinkListRelationFilterInput2>
+  logo?: InputMaybe<StoredFileFilterInput3>
+  logoId?: InputMaybe<StringFilterInput>
+  members?: InputMaybe<OrganizationMemberListRelationFilterInput2>
+  name?: InputMaybe<StringFilterInput>
+  phoneNumbers?: InputMaybe<PhoneNumberListRelationFilterInput2>
+  roles?: InputMaybe<RoleListRelationFilterInput2>
+  subscription?: InputMaybe<SubscriptionFilterInput3>
+  updatedAt?: InputMaybe<DateTimeFilterInput>
+}
+
+export type OrganizationFilterInput3 = {
+  createdAt?: InputMaybe<DateTimeFilterInput>
+  id?: InputMaybe<StringFilterInput>
+  logoId?: InputMaybe<StringFilterInput>
+  name?: InputMaybe<StringFilterInput>
+  updatedAt?: InputMaybe<DateTimeFilterInput>
+}
+
 export type OrganizationMember = {
   __typename?: 'OrganizationMember'
   createdAt: Scalars['DateTime']['output']
@@ -1932,6 +2509,51 @@ export type OrganizationMember = {
   userId: Scalars['String']['output']
 }
 
+export type OrganizationMemberFilterInput = {
+  createdAt?: InputMaybe<DateTimeFilterInput>
+  id?: InputMaybe<StringFilterInput>
+  organization?: InputMaybe<OrganizationFilterInput2>
+  organizationId?: InputMaybe<StringFilterInput>
+  role?: InputMaybe<RoleFilterInput2>
+  roleId?: InputMaybe<StringFilterInput>
+  updatedAt?: InputMaybe<DateTimeFilterInput>
+  user?: InputMaybe<UserFilterInput2>
+  userId?: InputMaybe<StringFilterInput>
+}
+
+export type OrganizationMemberFilterInput2 = {
+  createdAt?: InputMaybe<DateTimeFilterInput>
+  id?: InputMaybe<StringFilterInput>
+  organization?: InputMaybe<OrganizationFilterInput3>
+  organizationId?: InputMaybe<StringFilterInput>
+  role?: InputMaybe<RoleFilterInput3>
+  roleId?: InputMaybe<StringFilterInput>
+  updatedAt?: InputMaybe<DateTimeFilterInput>
+  user?: InputMaybe<UserFilterInput3>
+  userId?: InputMaybe<StringFilterInput>
+}
+
+export type OrganizationMemberFilterInput3 = {
+  createdAt?: InputMaybe<DateTimeFilterInput>
+  id?: InputMaybe<StringFilterInput>
+  organizationId?: InputMaybe<StringFilterInput>
+  roleId?: InputMaybe<StringFilterInput>
+  updatedAt?: InputMaybe<DateTimeFilterInput>
+  userId?: InputMaybe<StringFilterInput>
+}
+
+export type OrganizationMemberListRelationFilterInput = {
+  every?: InputMaybe<OrganizationMemberFilterInput2>
+  none?: InputMaybe<OrganizationMemberFilterInput2>
+  some?: InputMaybe<OrganizationMemberFilterInput2>
+}
+
+export type OrganizationMemberListRelationFilterInput2 = {
+  every?: InputMaybe<OrganizationMemberFilterInput3>
+  none?: InputMaybe<OrganizationMemberFilterInput3>
+  some?: InputMaybe<OrganizationMemberFilterInput3>
+}
+
 export type Permission = {
   __typename?: 'Permission'
   action: Scalars['String']['output']
@@ -1939,6 +2561,41 @@ export type Permission = {
   id: Scalars['String']['output']
   roles?: Maybe<Array<Role>>
   subject: Scalars['String']['output']
+}
+
+export type PermissionFilterInput = {
+  action?: InputMaybe<StringFilterInput>
+  description?: InputMaybe<StringFilterInput>
+  id?: InputMaybe<StringFilterInput>
+  roles?: InputMaybe<RoleListRelationFilterInput>
+  subject?: InputMaybe<StringFilterInput>
+}
+
+export type PermissionFilterInput2 = {
+  action?: InputMaybe<StringFilterInput>
+  description?: InputMaybe<StringFilterInput>
+  id?: InputMaybe<StringFilterInput>
+  roles?: InputMaybe<RoleListRelationFilterInput2>
+  subject?: InputMaybe<StringFilterInput>
+}
+
+export type PermissionFilterInput3 = {
+  action?: InputMaybe<StringFilterInput>
+  description?: InputMaybe<StringFilterInput>
+  id?: InputMaybe<StringFilterInput>
+  subject?: InputMaybe<StringFilterInput>
+}
+
+export type PermissionListRelationFilterInput = {
+  every?: InputMaybe<PermissionFilterInput2>
+  none?: InputMaybe<PermissionFilterInput2>
+  some?: InputMaybe<PermissionFilterInput2>
+}
+
+export type PermissionListRelationFilterInput2 = {
+  every?: InputMaybe<PermissionFilterInput3>
+  none?: InputMaybe<PermissionFilterInput3>
+  some?: InputMaybe<PermissionFilterInput3>
 }
 
 export type PhoneNumber = {
@@ -1955,11 +2612,65 @@ export type PhoneNumber = {
   userId?: Maybe<Scalars['String']['output']>
 }
 
+export type PhoneNumberFilterInput = {
+  createdAt?: InputMaybe<DateTimeFilterInput>
+  id?: InputMaybe<StringFilterInput>
+  organization?: InputMaybe<OrganizationFilterInput2>
+  organizationId?: InputMaybe<StringFilterInput>
+  phone?: InputMaybe<StringFilterInput>
+  phoneType?: InputMaybe<PhoneTypeFilterInput>
+  primary?: InputMaybe<BooleanFilterInput>
+  updatedAt?: InputMaybe<DateTimeFilterInput>
+  user?: InputMaybe<UserFilterInput2>
+  userId?: InputMaybe<StringFilterInput>
+}
+
+export type PhoneNumberFilterInput2 = {
+  createdAt?: InputMaybe<DateTimeFilterInput>
+  id?: InputMaybe<StringFilterInput>
+  organization?: InputMaybe<OrganizationFilterInput3>
+  organizationId?: InputMaybe<StringFilterInput>
+  phone?: InputMaybe<StringFilterInput>
+  phoneType?: InputMaybe<PhoneTypeFilterInput>
+  primary?: InputMaybe<BooleanFilterInput>
+  updatedAt?: InputMaybe<DateTimeFilterInput>
+  user?: InputMaybe<UserFilterInput3>
+  userId?: InputMaybe<StringFilterInput>
+}
+
+export type PhoneNumberFilterInput3 = {
+  createdAt?: InputMaybe<DateTimeFilterInput>
+  id?: InputMaybe<StringFilterInput>
+  organizationId?: InputMaybe<StringFilterInput>
+  phone?: InputMaybe<StringFilterInput>
+  phoneType?: InputMaybe<PhoneTypeFilterInput>
+  primary?: InputMaybe<BooleanFilterInput>
+  updatedAt?: InputMaybe<DateTimeFilterInput>
+  userId?: InputMaybe<StringFilterInput>
+}
+
+export type PhoneNumberListRelationFilterInput = {
+  every?: InputMaybe<PhoneNumberFilterInput2>
+  none?: InputMaybe<PhoneNumberFilterInput2>
+  some?: InputMaybe<PhoneNumberFilterInput2>
+}
+
+export type PhoneNumberListRelationFilterInput2 = {
+  every?: InputMaybe<PhoneNumberFilterInput3>
+  none?: InputMaybe<PhoneNumberFilterInput3>
+  some?: InputMaybe<PhoneNumberFilterInput3>
+}
+
 export enum PhoneType {
   Home = 'HOME',
   Mobile = 'MOBILE',
   Other = 'OTHER',
   Work = 'WORK',
+}
+
+export type PhoneTypeFilterInput = {
+  equals?: InputMaybe<PhoneType>
+  in?: InputMaybe<Array<PhoneType>>
 }
 
 export type Plan = {
@@ -1978,6 +2689,50 @@ export type Plan = {
   subscriptions?: Maybe<Array<Subscription>>
   trialPeriodDays?: Maybe<Scalars['Int']['output']>
   updatedAt: Scalars['DateTime']['output']
+}
+
+export type PlanFilterInput = {
+  active?: InputMaybe<BooleanFilterInput>
+  createdAt?: InputMaybe<DateTimeFilterInput>
+  description?: InputMaybe<StringFilterInput>
+  id?: InputMaybe<StringFilterInput>
+  interval?: InputMaybe<StringFilterInput>
+  name?: InputMaybe<StringFilterInput>
+  price?: InputMaybe<FloatFilterInput>
+  stripePriceId?: InputMaybe<StringFilterInput>
+  stripeProductId?: InputMaybe<StringFilterInput>
+  subscriptions?: InputMaybe<SubscriptionListRelationFilterInput>
+  trialPeriodDays?: InputMaybe<IntFilterInput>
+  updatedAt?: InputMaybe<DateTimeFilterInput>
+}
+
+export type PlanFilterInput2 = {
+  active?: InputMaybe<BooleanFilterInput>
+  createdAt?: InputMaybe<DateTimeFilterInput>
+  description?: InputMaybe<StringFilterInput>
+  id?: InputMaybe<StringFilterInput>
+  interval?: InputMaybe<StringFilterInput>
+  name?: InputMaybe<StringFilterInput>
+  price?: InputMaybe<FloatFilterInput>
+  stripePriceId?: InputMaybe<StringFilterInput>
+  stripeProductId?: InputMaybe<StringFilterInput>
+  subscriptions?: InputMaybe<SubscriptionListRelationFilterInput2>
+  trialPeriodDays?: InputMaybe<IntFilterInput>
+  updatedAt?: InputMaybe<DateTimeFilterInput>
+}
+
+export type PlanFilterInput3 = {
+  active?: InputMaybe<BooleanFilterInput>
+  createdAt?: InputMaybe<DateTimeFilterInput>
+  description?: InputMaybe<StringFilterInput>
+  id?: InputMaybe<StringFilterInput>
+  interval?: InputMaybe<StringFilterInput>
+  name?: InputMaybe<StringFilterInput>
+  price?: InputMaybe<FloatFilterInput>
+  stripePriceId?: InputMaybe<StringFilterInput>
+  stripeProductId?: InputMaybe<StringFilterInput>
+  trialPeriodDays?: InputMaybe<IntFilterInput>
+  updatedAt?: InputMaybe<DateTimeFilterInput>
 }
 
 export type Query = {
@@ -2483,6 +3238,49 @@ export type Role = {
   teamMembers?: Maybe<Array<TeamMember>>
 }
 
+export type RoleFilterInput = {
+  description?: InputMaybe<StringFilterInput>
+  id?: InputMaybe<StringFilterInput>
+  invites?: InputMaybe<InviteListRelationFilterInput>
+  members?: InputMaybe<OrganizationMemberListRelationFilterInput>
+  name?: InputMaybe<StringFilterInput>
+  organization?: InputMaybe<OrganizationFilterInput2>
+  organizationId?: InputMaybe<StringFilterInput>
+  permissions?: InputMaybe<PermissionListRelationFilterInput>
+  teamMembers?: InputMaybe<TeamMemberListRelationFilterInput>
+}
+
+export type RoleFilterInput2 = {
+  description?: InputMaybe<StringFilterInput>
+  id?: InputMaybe<StringFilterInput>
+  invites?: InputMaybe<InviteListRelationFilterInput2>
+  members?: InputMaybe<OrganizationMemberListRelationFilterInput2>
+  name?: InputMaybe<StringFilterInput>
+  organization?: InputMaybe<OrganizationFilterInput3>
+  organizationId?: InputMaybe<StringFilterInput>
+  permissions?: InputMaybe<PermissionListRelationFilterInput2>
+  teamMembers?: InputMaybe<TeamMemberListRelationFilterInput2>
+}
+
+export type RoleFilterInput3 = {
+  description?: InputMaybe<StringFilterInput>
+  id?: InputMaybe<StringFilterInput>
+  name?: InputMaybe<StringFilterInput>
+  organizationId?: InputMaybe<StringFilterInput>
+}
+
+export type RoleListRelationFilterInput = {
+  every?: InputMaybe<RoleFilterInput2>
+  none?: InputMaybe<RoleFilterInput2>
+  some?: InputMaybe<RoleFilterInput2>
+}
+
+export type RoleListRelationFilterInput2 = {
+  every?: InputMaybe<RoleFilterInput3>
+  none?: InputMaybe<RoleFilterInput3>
+  some?: InputMaybe<RoleFilterInput3>
+}
+
 export type RotateApiTokenInput = {
   keepOldTokenActive?: InputMaybe<Scalars['Boolean']['input']>
   tokenId: Scalars['String']['input']
@@ -2511,6 +3309,50 @@ export type SecurityEvent = {
   userId: Scalars['String']['output']
 }
 
+export type SecurityEventFilterInput = {
+  createdAt?: InputMaybe<DateTimeFilterInput>
+  eventType?: InputMaybe<SecurityEventTypeFilterInput>
+  id?: InputMaybe<StringFilterInput>
+  ipAddress?: InputMaybe<StringFilterInput>
+  updatedAt?: InputMaybe<DateTimeFilterInput>
+  user?: InputMaybe<UserFilterInput2>
+  userAgent?: InputMaybe<StringFilterInput>
+  userId?: InputMaybe<StringFilterInput>
+}
+
+export type SecurityEventFilterInput2 = {
+  createdAt?: InputMaybe<DateTimeFilterInput>
+  eventType?: InputMaybe<SecurityEventTypeFilterInput>
+  id?: InputMaybe<StringFilterInput>
+  ipAddress?: InputMaybe<StringFilterInput>
+  updatedAt?: InputMaybe<DateTimeFilterInput>
+  user?: InputMaybe<UserFilterInput3>
+  userAgent?: InputMaybe<StringFilterInput>
+  userId?: InputMaybe<StringFilterInput>
+}
+
+export type SecurityEventFilterInput3 = {
+  createdAt?: InputMaybe<DateTimeFilterInput>
+  eventType?: InputMaybe<SecurityEventTypeFilterInput>
+  id?: InputMaybe<StringFilterInput>
+  ipAddress?: InputMaybe<StringFilterInput>
+  updatedAt?: InputMaybe<DateTimeFilterInput>
+  userAgent?: InputMaybe<StringFilterInput>
+  userId?: InputMaybe<StringFilterInput>
+}
+
+export type SecurityEventListRelationFilterInput = {
+  every?: InputMaybe<SecurityEventFilterInput2>
+  none?: InputMaybe<SecurityEventFilterInput2>
+  some?: InputMaybe<SecurityEventFilterInput2>
+}
+
+export type SecurityEventListRelationFilterInput2 = {
+  every?: InputMaybe<SecurityEventFilterInput3>
+  none?: InputMaybe<SecurityEventFilterInput3>
+  some?: InputMaybe<SecurityEventFilterInput3>
+}
+
 export enum SecurityEventType {
   AccountLocked = 'ACCOUNT_LOCKED',
   AccountUnlocked = 'ACCOUNT_UNLOCKED',
@@ -2525,6 +3367,11 @@ export enum SecurityEventType {
   SuspiciousLoginAttempt = 'SUSPICIOUS_LOGIN_ATTEMPT',
   TwoFactorDisabled = 'TWO_FACTOR_DISABLED',
   TwoFactorEnabled = 'TWO_FACTOR_ENABLED',
+}
+
+export type SecurityEventTypeFilterInput = {
+  equals?: InputMaybe<SecurityEventType>
+  in?: InputMaybe<Array<SecurityEventType>>
 }
 
 export type SecuritySummary = {
@@ -2548,6 +3395,11 @@ export enum StorageProvider {
   Imagekit = 'IMAGEKIT',
   Local = 'LOCAL',
   S3 = 'S3',
+}
+
+export type StorageProviderFilterInput = {
+  equals?: InputMaybe<StorageProvider>
+  in?: InputMaybe<Array<StorageProvider>>
 }
 
 export type StoredFile = {
@@ -2575,6 +3427,91 @@ export type StoredFile = {
   width?: Maybe<Scalars['Int']['output']>
 }
 
+export type StoredFileFilterInput = {
+  createdAt?: InputMaybe<DateTimeFilterInput>
+  filename?: InputMaybe<StringFilterInput>
+  folder?: InputMaybe<StringFilterInput>
+  height?: InputMaybe<IntFilterInput>
+  id?: InputMaybe<StringFilterInput>
+  mimeType?: InputMaybe<StringFilterInput>
+  organization?: InputMaybe<OrganizationFilterInput2>
+  organizationId?: InputMaybe<StringFilterInput>
+  organizationLogo?: InputMaybe<OrganizationFilterInput2>
+  originalName?: InputMaybe<StringFilterInput>
+  provider?: InputMaybe<StorageProviderFilterInput>
+  providerFileId?: InputMaybe<StringFilterInput>
+  publicUrl?: InputMaybe<StringFilterInput>
+  size?: InputMaybe<IntFilterInput>
+  updatedAt?: InputMaybe<DateTimeFilterInput>
+  url?: InputMaybe<StringFilterInput>
+  user?: InputMaybe<UserFilterInput2>
+  userAvatar?: InputMaybe<UserFilterInput2>
+  userId?: InputMaybe<StringFilterInput>
+  width?: InputMaybe<IntFilterInput>
+}
+
+export type StoredFileFilterInput2 = {
+  createdAt?: InputMaybe<DateTimeFilterInput>
+  filename?: InputMaybe<StringFilterInput>
+  folder?: InputMaybe<StringFilterInput>
+  height?: InputMaybe<IntFilterInput>
+  id?: InputMaybe<StringFilterInput>
+  mimeType?: InputMaybe<StringFilterInput>
+  organization?: InputMaybe<OrganizationFilterInput3>
+  organizationId?: InputMaybe<StringFilterInput>
+  organizationLogo?: InputMaybe<OrganizationFilterInput3>
+  originalName?: InputMaybe<StringFilterInput>
+  provider?: InputMaybe<StorageProviderFilterInput>
+  providerFileId?: InputMaybe<StringFilterInput>
+  publicUrl?: InputMaybe<StringFilterInput>
+  size?: InputMaybe<IntFilterInput>
+  updatedAt?: InputMaybe<DateTimeFilterInput>
+  url?: InputMaybe<StringFilterInput>
+  user?: InputMaybe<UserFilterInput3>
+  userAvatar?: InputMaybe<UserFilterInput3>
+  userId?: InputMaybe<StringFilterInput>
+  width?: InputMaybe<IntFilterInput>
+}
+
+export type StoredFileFilterInput3 = {
+  createdAt?: InputMaybe<DateTimeFilterInput>
+  filename?: InputMaybe<StringFilterInput>
+  folder?: InputMaybe<StringFilterInput>
+  height?: InputMaybe<IntFilterInput>
+  id?: InputMaybe<StringFilterInput>
+  mimeType?: InputMaybe<StringFilterInput>
+  organizationId?: InputMaybe<StringFilterInput>
+  originalName?: InputMaybe<StringFilterInput>
+  provider?: InputMaybe<StorageProviderFilterInput>
+  providerFileId?: InputMaybe<StringFilterInput>
+  publicUrl?: InputMaybe<StringFilterInput>
+  size?: InputMaybe<IntFilterInput>
+  updatedAt?: InputMaybe<DateTimeFilterInput>
+  url?: InputMaybe<StringFilterInput>
+  userId?: InputMaybe<StringFilterInput>
+  width?: InputMaybe<IntFilterInput>
+}
+
+export type StoredFileListRelationFilterInput = {
+  every?: InputMaybe<StoredFileFilterInput2>
+  none?: InputMaybe<StoredFileFilterInput2>
+  some?: InputMaybe<StoredFileFilterInput2>
+}
+
+export type StoredFileListRelationFilterInput2 = {
+  every?: InputMaybe<StoredFileFilterInput3>
+  none?: InputMaybe<StoredFileFilterInput3>
+  some?: InputMaybe<StoredFileFilterInput3>
+}
+
+export type StringFilterInput = {
+  contains?: InputMaybe<Scalars['String']['input']>
+  endsWith?: InputMaybe<Scalars['String']['input']>
+  equals?: InputMaybe<Scalars['String']['input']>
+  in?: InputMaybe<Array<Scalars['String']['input']>>
+  startsWith?: InputMaybe<Scalars['String']['input']>
+}
+
 export type Subscription = {
   __typename?: 'Subscription'
   cancelAt?: Maybe<Scalars['DateTime']['output']>
@@ -2596,6 +3533,76 @@ export type Subscription = {
   updatedAt: Scalars['DateTime']['output']
 }
 
+export type SubscriptionFilterInput = {
+  cancelAt?: InputMaybe<DateTimeFilterInput>
+  cancelAtPeriodEnd?: InputMaybe<BooleanFilterInput>
+  canceledAt?: InputMaybe<DateTimeFilterInput>
+  createdAt?: InputMaybe<DateTimeFilterInput>
+  id?: InputMaybe<StringFilterInput>
+  organization?: InputMaybe<OrganizationFilterInput2>
+  organizationId?: InputMaybe<StringFilterInput>
+  plan?: InputMaybe<PlanFilterInput2>
+  planId?: InputMaybe<StringFilterInput>
+  status?: InputMaybe<SubscriptionStatusFilterInput>
+  stripeCurrentPeriodEnd?: InputMaybe<DateTimeFilterInput>
+  stripeCustomerId?: InputMaybe<StringFilterInput>
+  stripePriceId?: InputMaybe<StringFilterInput>
+  stripeSubscriptionId?: InputMaybe<StringFilterInput>
+  trialEnd?: InputMaybe<DateTimeFilterInput>
+  trialStart?: InputMaybe<DateTimeFilterInput>
+  updatedAt?: InputMaybe<DateTimeFilterInput>
+}
+
+export type SubscriptionFilterInput2 = {
+  cancelAt?: InputMaybe<DateTimeFilterInput>
+  cancelAtPeriodEnd?: InputMaybe<BooleanFilterInput>
+  canceledAt?: InputMaybe<DateTimeFilterInput>
+  createdAt?: InputMaybe<DateTimeFilterInput>
+  id?: InputMaybe<StringFilterInput>
+  organization?: InputMaybe<OrganizationFilterInput3>
+  organizationId?: InputMaybe<StringFilterInput>
+  plan?: InputMaybe<PlanFilterInput3>
+  planId?: InputMaybe<StringFilterInput>
+  status?: InputMaybe<SubscriptionStatusFilterInput>
+  stripeCurrentPeriodEnd?: InputMaybe<DateTimeFilterInput>
+  stripeCustomerId?: InputMaybe<StringFilterInput>
+  stripePriceId?: InputMaybe<StringFilterInput>
+  stripeSubscriptionId?: InputMaybe<StringFilterInput>
+  trialEnd?: InputMaybe<DateTimeFilterInput>
+  trialStart?: InputMaybe<DateTimeFilterInput>
+  updatedAt?: InputMaybe<DateTimeFilterInput>
+}
+
+export type SubscriptionFilterInput3 = {
+  cancelAt?: InputMaybe<DateTimeFilterInput>
+  cancelAtPeriodEnd?: InputMaybe<BooleanFilterInput>
+  canceledAt?: InputMaybe<DateTimeFilterInput>
+  createdAt?: InputMaybe<DateTimeFilterInput>
+  id?: InputMaybe<StringFilterInput>
+  organizationId?: InputMaybe<StringFilterInput>
+  planId?: InputMaybe<StringFilterInput>
+  status?: InputMaybe<SubscriptionStatusFilterInput>
+  stripeCurrentPeriodEnd?: InputMaybe<DateTimeFilterInput>
+  stripeCustomerId?: InputMaybe<StringFilterInput>
+  stripePriceId?: InputMaybe<StringFilterInput>
+  stripeSubscriptionId?: InputMaybe<StringFilterInput>
+  trialEnd?: InputMaybe<DateTimeFilterInput>
+  trialStart?: InputMaybe<DateTimeFilterInput>
+  updatedAt?: InputMaybe<DateTimeFilterInput>
+}
+
+export type SubscriptionListRelationFilterInput = {
+  every?: InputMaybe<SubscriptionFilterInput2>
+  none?: InputMaybe<SubscriptionFilterInput2>
+  some?: InputMaybe<SubscriptionFilterInput2>
+}
+
+export type SubscriptionListRelationFilterInput2 = {
+  every?: InputMaybe<SubscriptionFilterInput3>
+  none?: InputMaybe<SubscriptionFilterInput3>
+  some?: InputMaybe<SubscriptionFilterInput3>
+}
+
 export enum SubscriptionStatus {
   Active = 'ACTIVE',
   Canceled = 'CANCELED',
@@ -2603,6 +3610,11 @@ export enum SubscriptionStatus {
   IncompleteExpired = 'INCOMPLETE_EXPIRED',
   PastDue = 'PAST_DUE',
   Trialing = 'TRIALING',
+}
+
+export type SubscriptionStatusFilterInput = {
+  equals?: InputMaybe<SubscriptionStatus>
+  in?: InputMaybe<Array<SubscriptionStatus>>
 }
 
 export type SwitchOrganizationInput = {
@@ -2621,6 +3633,49 @@ export type Team = {
   updatedAt: Scalars['DateTime']['output']
 }
 
+export type TeamFilterInput = {
+  createdAt?: InputMaybe<DateTimeFilterInput>
+  description?: InputMaybe<StringFilterInput>
+  id?: InputMaybe<StringFilterInput>
+  members?: InputMaybe<TeamMemberListRelationFilterInput>
+  name?: InputMaybe<StringFilterInput>
+  organization?: InputMaybe<OrganizationFilterInput2>
+  organizationId?: InputMaybe<StringFilterInput>
+  updatedAt?: InputMaybe<DateTimeFilterInput>
+}
+
+export type TeamFilterInput2 = {
+  createdAt?: InputMaybe<DateTimeFilterInput>
+  description?: InputMaybe<StringFilterInput>
+  id?: InputMaybe<StringFilterInput>
+  members?: InputMaybe<TeamMemberListRelationFilterInput2>
+  name?: InputMaybe<StringFilterInput>
+  organization?: InputMaybe<OrganizationFilterInput3>
+  organizationId?: InputMaybe<StringFilterInput>
+  updatedAt?: InputMaybe<DateTimeFilterInput>
+}
+
+export type TeamFilterInput3 = {
+  createdAt?: InputMaybe<DateTimeFilterInput>
+  description?: InputMaybe<StringFilterInput>
+  id?: InputMaybe<StringFilterInput>
+  name?: InputMaybe<StringFilterInput>
+  organizationId?: InputMaybe<StringFilterInput>
+  updatedAt?: InputMaybe<DateTimeFilterInput>
+}
+
+export type TeamListRelationFilterInput = {
+  every?: InputMaybe<TeamFilterInput2>
+  none?: InputMaybe<TeamFilterInput2>
+  some?: InputMaybe<TeamFilterInput2>
+}
+
+export type TeamListRelationFilterInput2 = {
+  every?: InputMaybe<TeamFilterInput3>
+  none?: InputMaybe<TeamFilterInput3>
+  some?: InputMaybe<TeamFilterInput3>
+}
+
 export type TeamMember = {
   __typename?: 'TeamMember'
   createdAt: Scalars['DateTime']['output']
@@ -2634,6 +3689,51 @@ export type TeamMember = {
   userId: Scalars['String']['output']
 }
 
+export type TeamMemberFilterInput = {
+  createdAt?: InputMaybe<DateTimeFilterInput>
+  id?: InputMaybe<StringFilterInput>
+  role?: InputMaybe<RoleFilterInput2>
+  roleId?: InputMaybe<StringFilterInput>
+  team?: InputMaybe<TeamFilterInput2>
+  teamId?: InputMaybe<StringFilterInput>
+  updatedAt?: InputMaybe<DateTimeFilterInput>
+  user?: InputMaybe<UserFilterInput2>
+  userId?: InputMaybe<StringFilterInput>
+}
+
+export type TeamMemberFilterInput2 = {
+  createdAt?: InputMaybe<DateTimeFilterInput>
+  id?: InputMaybe<StringFilterInput>
+  role?: InputMaybe<RoleFilterInput3>
+  roleId?: InputMaybe<StringFilterInput>
+  team?: InputMaybe<TeamFilterInput3>
+  teamId?: InputMaybe<StringFilterInput>
+  updatedAt?: InputMaybe<DateTimeFilterInput>
+  user?: InputMaybe<UserFilterInput3>
+  userId?: InputMaybe<StringFilterInput>
+}
+
+export type TeamMemberFilterInput3 = {
+  createdAt?: InputMaybe<DateTimeFilterInput>
+  id?: InputMaybe<StringFilterInput>
+  roleId?: InputMaybe<StringFilterInput>
+  teamId?: InputMaybe<StringFilterInput>
+  updatedAt?: InputMaybe<DateTimeFilterInput>
+  userId?: InputMaybe<StringFilterInput>
+}
+
+export type TeamMemberListRelationFilterInput = {
+  every?: InputMaybe<TeamMemberFilterInput2>
+  none?: InputMaybe<TeamMemberFilterInput2>
+  some?: InputMaybe<TeamMemberFilterInput2>
+}
+
+export type TeamMemberListRelationFilterInput2 = {
+  every?: InputMaybe<TeamMemberFilterInput3>
+  none?: InputMaybe<TeamMemberFilterInput3>
+  some?: InputMaybe<TeamMemberFilterInput3>
+}
+
 export type TransferOwnershipInput = {
   newOwnerUserId: Scalars['String']['input']
   organizationId: Scalars['String']['input']
@@ -2644,6 +3744,11 @@ export enum TwoFactorMethod {
   Email = 'EMAIL',
   None = 'NONE',
   Sms = 'SMS',
+}
+
+export type TwoFactorMethodFilterInput = {
+  equals?: InputMaybe<TwoFactorMethod>
+  in?: InputMaybe<Array<TwoFactorMethod>>
 }
 
 export type UnlinkOAuthInput = {
@@ -3043,6 +4148,110 @@ export type User = {
   updatedAt: Scalars['DateTime']['output']
 }
 
+export type UserFilterInput = {
+  AuditLog?: InputMaybe<AuditLogListRelationFilterInput>
+  SecurityEvent?: InputMaybe<SecurityEventListRelationFilterInput>
+  TeamMember?: InputMaybe<TeamMemberListRelationFilterInput>
+  UserPreference?: InputMaybe<UserPreferenceListRelationFilterInput>
+  activeOrganizationId?: InputMaybe<StringFilterInput>
+  activeSessions?: InputMaybe<UserSessionListRelationFilterInput>
+  addresses?: InputMaybe<AddressListRelationFilterInput>
+  apiTokens?: InputMaybe<ApiTokenListRelationFilterInput>
+  avatar?: InputMaybe<StoredFileFilterInput2>
+  avatarId?: InputMaybe<StringFilterInput>
+  bio?: InputMaybe<StringFilterInput>
+  createdAt?: InputMaybe<DateTimeFilterInput>
+  deactivatedAt?: InputMaybe<DateTimeFilterInput>
+  displayName?: InputMaybe<StringFilterInput>
+  emailValidated?: InputMaybe<BooleanFilterInput>
+  emails?: InputMaybe<EmailListRelationFilterInput>
+  failedLoginCount?: InputMaybe<IntFilterInput>
+  firstName?: InputMaybe<StringFilterInput>
+  id?: InputMaybe<StringFilterInput>
+  images?: InputMaybe<StoredFileListRelationFilterInput>
+  invitesSent?: InputMaybe<InviteListRelationFilterInput>
+  isActive?: InputMaybe<BooleanFilterInput>
+  isSuperAdmin?: InputMaybe<BooleanFilterInput>
+  lastFailedLogin?: InputMaybe<DateTimeFilterInput>
+  lastName?: InputMaybe<StringFilterInput>
+  lastSuccessfulLogin?: InputMaybe<DateTimeFilterInput>
+  links?: InputMaybe<LinkListRelationFilterInput>
+  lockedUntil?: InputMaybe<DateTimeFilterInput>
+  loginAttempts?: InputMaybe<LoginAttemptListRelationFilterInput>
+  oAuthAccounts?: InputMaybe<OAuthAccountListRelationFilterInput>
+  organizations?: InputMaybe<OrganizationMemberListRelationFilterInput>
+  phoneNumbers?: InputMaybe<PhoneNumberListRelationFilterInput>
+  privacyPolicyAcceptedAt?: InputMaybe<DateTimeFilterInput>
+  termsAcceptedAt?: InputMaybe<DateTimeFilterInput>
+  twoFactorEnabled?: InputMaybe<BooleanFilterInput>
+  twoFactorMethod?: InputMaybe<TwoFactorMethodFilterInput>
+  updatedAt?: InputMaybe<DateTimeFilterInput>
+}
+
+export type UserFilterInput2 = {
+  AuditLog?: InputMaybe<AuditLogListRelationFilterInput2>
+  SecurityEvent?: InputMaybe<SecurityEventListRelationFilterInput2>
+  TeamMember?: InputMaybe<TeamMemberListRelationFilterInput2>
+  UserPreference?: InputMaybe<UserPreferenceListRelationFilterInput2>
+  activeOrganizationId?: InputMaybe<StringFilterInput>
+  activeSessions?: InputMaybe<UserSessionListRelationFilterInput2>
+  addresses?: InputMaybe<AddressListRelationFilterInput2>
+  apiTokens?: InputMaybe<ApiTokenListRelationFilterInput2>
+  avatar?: InputMaybe<StoredFileFilterInput3>
+  avatarId?: InputMaybe<StringFilterInput>
+  bio?: InputMaybe<StringFilterInput>
+  createdAt?: InputMaybe<DateTimeFilterInput>
+  deactivatedAt?: InputMaybe<DateTimeFilterInput>
+  displayName?: InputMaybe<StringFilterInput>
+  emailValidated?: InputMaybe<BooleanFilterInput>
+  emails?: InputMaybe<EmailListRelationFilterInput2>
+  failedLoginCount?: InputMaybe<IntFilterInput>
+  firstName?: InputMaybe<StringFilterInput>
+  id?: InputMaybe<StringFilterInput>
+  images?: InputMaybe<StoredFileListRelationFilterInput2>
+  invitesSent?: InputMaybe<InviteListRelationFilterInput2>
+  isActive?: InputMaybe<BooleanFilterInput>
+  isSuperAdmin?: InputMaybe<BooleanFilterInput>
+  lastFailedLogin?: InputMaybe<DateTimeFilterInput>
+  lastName?: InputMaybe<StringFilterInput>
+  lastSuccessfulLogin?: InputMaybe<DateTimeFilterInput>
+  links?: InputMaybe<LinkListRelationFilterInput2>
+  lockedUntil?: InputMaybe<DateTimeFilterInput>
+  loginAttempts?: InputMaybe<LoginAttemptListRelationFilterInput2>
+  oAuthAccounts?: InputMaybe<OAuthAccountListRelationFilterInput2>
+  organizations?: InputMaybe<OrganizationMemberListRelationFilterInput2>
+  phoneNumbers?: InputMaybe<PhoneNumberListRelationFilterInput2>
+  privacyPolicyAcceptedAt?: InputMaybe<DateTimeFilterInput>
+  termsAcceptedAt?: InputMaybe<DateTimeFilterInput>
+  twoFactorEnabled?: InputMaybe<BooleanFilterInput>
+  twoFactorMethod?: InputMaybe<TwoFactorMethodFilterInput>
+  updatedAt?: InputMaybe<DateTimeFilterInput>
+}
+
+export type UserFilterInput3 = {
+  activeOrganizationId?: InputMaybe<StringFilterInput>
+  avatarId?: InputMaybe<StringFilterInput>
+  bio?: InputMaybe<StringFilterInput>
+  createdAt?: InputMaybe<DateTimeFilterInput>
+  deactivatedAt?: InputMaybe<DateTimeFilterInput>
+  displayName?: InputMaybe<StringFilterInput>
+  emailValidated?: InputMaybe<BooleanFilterInput>
+  failedLoginCount?: InputMaybe<IntFilterInput>
+  firstName?: InputMaybe<StringFilterInput>
+  id?: InputMaybe<StringFilterInput>
+  isActive?: InputMaybe<BooleanFilterInput>
+  isSuperAdmin?: InputMaybe<BooleanFilterInput>
+  lastFailedLogin?: InputMaybe<DateTimeFilterInput>
+  lastName?: InputMaybe<StringFilterInput>
+  lastSuccessfulLogin?: InputMaybe<DateTimeFilterInput>
+  lockedUntil?: InputMaybe<DateTimeFilterInput>
+  privacyPolicyAcceptedAt?: InputMaybe<DateTimeFilterInput>
+  termsAcceptedAt?: InputMaybe<DateTimeFilterInput>
+  twoFactorEnabled?: InputMaybe<BooleanFilterInput>
+  twoFactorMethod?: InputMaybe<TwoFactorMethodFilterInput>
+  updatedAt?: InputMaybe<DateTimeFilterInput>
+}
+
 export type UserPreference = {
   __typename?: 'UserPreference'
   createdAt: Scalars['DateTime']['output']
@@ -3052,6 +4261,47 @@ export type UserPreference = {
   user?: Maybe<User>
   userId: Scalars['String']['output']
   value: Scalars['String']['output']
+}
+
+export type UserPreferenceFilterInput = {
+  createdAt?: InputMaybe<DateTimeFilterInput>
+  id?: InputMaybe<StringFilterInput>
+  key?: InputMaybe<StringFilterInput>
+  updatedAt?: InputMaybe<DateTimeFilterInput>
+  user?: InputMaybe<UserFilterInput2>
+  userId?: InputMaybe<StringFilterInput>
+  value?: InputMaybe<StringFilterInput>
+}
+
+export type UserPreferenceFilterInput2 = {
+  createdAt?: InputMaybe<DateTimeFilterInput>
+  id?: InputMaybe<StringFilterInput>
+  key?: InputMaybe<StringFilterInput>
+  updatedAt?: InputMaybe<DateTimeFilterInput>
+  user?: InputMaybe<UserFilterInput3>
+  userId?: InputMaybe<StringFilterInput>
+  value?: InputMaybe<StringFilterInput>
+}
+
+export type UserPreferenceFilterInput3 = {
+  createdAt?: InputMaybe<DateTimeFilterInput>
+  id?: InputMaybe<StringFilterInput>
+  key?: InputMaybe<StringFilterInput>
+  updatedAt?: InputMaybe<DateTimeFilterInput>
+  userId?: InputMaybe<StringFilterInput>
+  value?: InputMaybe<StringFilterInput>
+}
+
+export type UserPreferenceListRelationFilterInput = {
+  every?: InputMaybe<UserPreferenceFilterInput2>
+  none?: InputMaybe<UserPreferenceFilterInput2>
+  some?: InputMaybe<UserPreferenceFilterInput2>
+}
+
+export type UserPreferenceListRelationFilterInput2 = {
+  every?: InputMaybe<UserPreferenceFilterInput3>
+  none?: InputMaybe<UserPreferenceFilterInput3>
+  some?: InputMaybe<UserPreferenceFilterInput3>
 }
 
 export type UserSession = {
@@ -3066,6 +4316,56 @@ export type UserSession = {
   updatedAt: Scalars['DateTime']['output']
   user?: Maybe<User>
   userId: Scalars['String']['output']
+}
+
+export type UserSessionFilterInput = {
+  createdAt?: InputMaybe<DateTimeFilterInput>
+  deviceInfo?: InputMaybe<StringFilterInput>
+  id?: InputMaybe<StringFilterInput>
+  ipAddress?: InputMaybe<StringFilterInput>
+  isValid?: InputMaybe<BooleanFilterInput>
+  lastActiveAt?: InputMaybe<DateTimeFilterInput>
+  twoFactorVerified?: InputMaybe<BooleanFilterInput>
+  updatedAt?: InputMaybe<DateTimeFilterInput>
+  user?: InputMaybe<UserFilterInput2>
+  userId?: InputMaybe<StringFilterInput>
+}
+
+export type UserSessionFilterInput2 = {
+  createdAt?: InputMaybe<DateTimeFilterInput>
+  deviceInfo?: InputMaybe<StringFilterInput>
+  id?: InputMaybe<StringFilterInput>
+  ipAddress?: InputMaybe<StringFilterInput>
+  isValid?: InputMaybe<BooleanFilterInput>
+  lastActiveAt?: InputMaybe<DateTimeFilterInput>
+  twoFactorVerified?: InputMaybe<BooleanFilterInput>
+  updatedAt?: InputMaybe<DateTimeFilterInput>
+  user?: InputMaybe<UserFilterInput3>
+  userId?: InputMaybe<StringFilterInput>
+}
+
+export type UserSessionFilterInput3 = {
+  createdAt?: InputMaybe<DateTimeFilterInput>
+  deviceInfo?: InputMaybe<StringFilterInput>
+  id?: InputMaybe<StringFilterInput>
+  ipAddress?: InputMaybe<StringFilterInput>
+  isValid?: InputMaybe<BooleanFilterInput>
+  lastActiveAt?: InputMaybe<DateTimeFilterInput>
+  twoFactorVerified?: InputMaybe<BooleanFilterInput>
+  updatedAt?: InputMaybe<DateTimeFilterInput>
+  userId?: InputMaybe<StringFilterInput>
+}
+
+export type UserSessionListRelationFilterInput = {
+  every?: InputMaybe<UserSessionFilterInput2>
+  none?: InputMaybe<UserSessionFilterInput2>
+  some?: InputMaybe<UserSessionFilterInput2>
+}
+
+export type UserSessionListRelationFilterInput2 = {
+  every?: InputMaybe<UserSessionFilterInput3>
+  none?: InputMaybe<UserSessionFilterInput3>
+  some?: InputMaybe<UserSessionFilterInput3>
 }
 
 export type UserSessionOutput = {
