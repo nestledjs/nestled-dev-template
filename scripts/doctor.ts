@@ -1315,17 +1315,13 @@ const checkCookieDomainConfig = () => {
 
 const AUTH_LEVEL_DECORATOR = /@(?:Public|Authenticated|AdminOnly)\s*\(\s*\)/
 
-// `GlobalAuthGuard` refuses any operation that has not declared an access level, but it accepts an
-// attached auth guard as a declaration so that generated CRUD keeps working until the generator
-// emits the decorators itself. That bridge is scoped to generated output by intent only — nothing
-// stops a hand-written resolver leaning on it, which would put us back to inferring intent from
-// whichever guards happen to be attached.
-//
-// So enforce the stricter rule here, on the code this repo actually owns: every operation declares
-// its level explicitly. Generated CRUD is exempt until the generator catches up.
+// `GlobalAuthGuard` refuses any operation that has not declared an access level, and since
+// generators 1.1.6 it has no fallback — declaration is the only way through. Generated CRUD is
+// therefore covered here too rather than exempted: if a regeneration ever emitted an operation
+// without a decorator, the runtime would start refusing it, and catching that at review time is
+// considerably cheaper than catching it in production.
 const checkAuthLevelDeclarations = () => {
-  const handWrittenRoots = ['libs/api/custom/src/lib', 'libs/api/core']
-  const resolverFiles = handWrittenRoots.flatMap(root =>
+  const resolverFiles = resolverSourceRoots.flatMap(root =>
     walkFiles(root, path => path.endsWith('.resolver.ts') && !path.endsWith('.spec.ts')),
   )
 

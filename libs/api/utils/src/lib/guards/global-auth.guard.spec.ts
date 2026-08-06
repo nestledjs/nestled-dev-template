@@ -56,27 +56,24 @@ describe('GlobalAuthGuard', () => {
     expect(guardWith({ level: 'admin' }).canActivate(contextFor())).toBe(true)
   })
 
-  it('accepts an attached auth guard as a declaration, for generated resolvers', () => {
-    expect(guardWith({ handlerGuards: [GqlAuthAdminGuard] }).canActivate(contextFor())).toBe(true)
-    expect(guardWith({ handlerGuards: [GqlAuthGuard] }).canActivate(contextFor())).toBe(true)
-  })
-
-  it('does not accept a throttler as authentication', () => {
-    // Rate limiting bounds how often anyone may call it, not who may call it.
+  it('does not accept an attached guard in place of a declaration', () => {
+    // The bridge that allowed this existed only until generators 1.1.6 emitted decorators on
+    // generated CRUD. Inferring intent from whichever guards are attached is what let a throttler
+    // read as authentication, so no guard substitutes for saying what the operation is.
+    expect(() =>
+      guardWith({ handlerGuards: [GqlAuthAdminGuard] }).canActivate(contextFor()),
+    ).toThrow(ForbiddenException)
+    expect(() => guardWith({ handlerGuards: [GqlAuthGuard] }).canActivate(contextFor())).toThrow(
+      ForbiddenException,
+    )
     expect(() =>
       guardWith({ handlerGuards: [GqlThrottlerGuard] }).canActivate(contextFor()),
     ).toThrow(ForbiddenException)
   })
 
-  it('accepts a real auth guard even when a throttler sits alongside it', () => {
+  it('honours a declaration regardless of which guards are attached', () => {
     expect(
-      guardWith({ handlerGuards: [GqlThrottlerGuard, GqlAuthGuard] }).canActivate(contextFor()),
+      guardWith({ level: 'admin', handlerGuards: [GqlThrottlerGuard] }).canActivate(contextFor()),
     ).toBe(true)
-  })
-
-  it('refuses when the guard list is empty', () => {
-    expect(() => guardWith({ handlerGuards: [] }).canActivate(contextFor())).toThrow(
-      ForbiddenException,
-    )
   })
 })

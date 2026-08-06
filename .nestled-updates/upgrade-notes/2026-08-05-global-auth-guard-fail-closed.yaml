@@ -20,11 +20,9 @@ intent: >
   the guard already attached to the operation still does the real check. That division is
   deliberate: this guard exists to refuse the undeclared, not to re-implement authentication.
 
-  It accepts an attached auth guard as a declaration, which is a temporary bridge for generated
-  CRUD. Those resolvers carry a real guard but not yet a level decorator, because they come from
-  `@nestledjs/generators`. A doctor check enforces explicit decorators on hand-written resolvers so
-  the bridge only ever covers generated output, and it can be deleted once the generator emits the
-  decorators itself.
+  There is no fallback. Nothing substitutes for a declaration — not an attached guard, not a
+  throttler. Generated CRUD declares its own level from `@nestledjs/generators` 1.1.6 onward, which
+  is why this note requires that version.
 
 why: >
   Every other finding in this review was a specific hole. This one is the shape of the system: the
@@ -36,6 +34,7 @@ why: >
   becomes a deliberate, reviewable edit rather than an omission that looks identical to correct code.
 
 affectedPaths:
+  - package.json
   - libs/api/utils/src/lib/guards/auth-level.decorator.ts
   - libs/api/utils/src/lib/guards/auth-level.decorator.spec.ts
   - libs/api/utils/src/lib/guards/global-auth.guard.ts
@@ -54,9 +53,15 @@ verification:
   - pnpm run nestled-doctor
 
 agentHints:
-  - Annotate every operation before registering the guard, never the other way round. Registering it
-    first makes each unannotated operation start refusing, which looks like a total outage and
-    invites reverting the whole change.
+  - Apply this together with the bump to @nestledjs/generators 1.1.6, in one change. The two are
+    mutually dependent and either half alone breaks the app in a different way. Taking the guard
+    without the bump leaves every generated operation undeclared, so all generated CRUD starts
+    refusing. Taking the bump without the guard produces generated code importing AdminOnly,
+    Authenticated and Public from a barrel that does not export them yet, which fails to compile
+    with an error that says nothing about upgrade ordering.
+  - Annotate every hand-written operation before registering the guard, never the other way round.
+    Registering it first makes each unannotated operation start refusing, which looks like a total
+    outage and invites reverting the whole change.
   - Derive each annotation from the guard the operation already carries rather than from its name.
     An admin guard becomes AdminOnly, an authenticated or organization-scoped guard becomes
     Authenticated. Keep the existing UseGuards in place; the decorator declares intent and the guard
