@@ -1281,22 +1281,26 @@ const checkEmulationPrivilegeCeiling = () => {
   }
 }
 
+// Read one key out of an already-loaded `.env` body. Shared by every check that inspects local
+// env pairings, so the quoting/comment rules stay in one place.
+const readEnvValue = (env: string, key: string): string => {
+  const line = env.split('\n').find(l => l.startsWith(`${key}=`))
+  const raw = line ? line.slice(key.length + 1).trim() : ''
+  // Quoted value: strip the surrounding quotes and keep it verbatim. Unquoted
+  // value: drop a dotenv-style inline ` # comment` so the parsed value matches
+  // what dotenv actually loads. (String ops, not regex — avoids backtracking.)
+  const quote = raw[0]
+  if ((quote === '"' || quote === "'") && raw.length >= 2 && raw[raw.length - 1] === quote) {
+    return raw.slice(1, -1)
+  }
+  const commentAt = raw.indexOf(' #')
+  return (commentAt === -1 ? raw : raw.slice(0, commentAt)).trim()
+}
+
 const checkCookieDomainConfig = () => {
   if (!existsSync('.env')) return
   const env = readFileSync('.env', 'utf8')
-  const read = (key: string) => {
-    const line = env.split('\n').find(l => l.startsWith(`${key}=`))
-    const raw = line ? line.slice(key.length + 1).trim() : ''
-    // Quoted value: strip the surrounding quotes and keep it verbatim. Unquoted
-    // value: drop a dotenv-style inline ` # comment` so the parsed value matches
-    // what dotenv actually loads. (String ops, not regex — avoids backtracking.)
-    const quote = raw[0]
-    if ((quote === '"' || quote === "'") && raw.length >= 2 && raw[raw.length - 1] === quote) {
-      return raw.slice(1, -1)
-    }
-    const commentAt = raw.indexOf(' #')
-    return (commentAt === -1 ? raw : raw.slice(0, commentAt)).trim()
-  }
+  const read = (key: string) => readEnvValue(env, key)
   const apiDomain = read('API_COOKIE_DOMAIN')
   const webDomain = read('VITE_COOKIE_DOMAIN')
   const isLocal = (v: string) => !v || v === 'localhost' || v.startsWith('127.')
@@ -1319,6 +1323,225 @@ const checkCookieDomainConfig = () => {
       '.env',
     )
   }
+}
+
+// Local dev ports move in must-move-together pairs: a port var, and the URL that points at it.
+// Moving only one half fails SILENTLY — the process starts clean and is broken only in the
+// browser, or, worse, connects to another repo's database. Documentation alone does not catch a
+// half-edited .env; this does. See docs/dev/dev-ports.md.
+//
+// WARN ONLY, never fail: .env is developer-local, CI has none, and a deliberate local setup must
+// never be able to break a build.
+type EnvReader = (key: string) => string
+
+const DEV_PORT_DEFAULTS: Record<string, string> = {
+  PORT: '3000',
+  WEB_PORT: '4200',
+  POSTGRES_PORT: '5432',
+  POSTGRES_TEST_PORT: '5433',
+  REDIS_PORT: '6379',
+  MAILHOG_SMTP_PORT: '1025',
+}
+
+// A URL with no explicit port still connects to a concrete one, and that is exactly where the
+// nastiest case hides: `postgresql://prisma:prisma@localhost/prisma` alongside POSTGRES_PORT=5442
+// silently reaches 5432 — a DIFFERENT repo's database. Treating "no port written down" as
+// "unknown, skip it" left that unwarned, so resolve the scheme's implicit port instead.
+const DEFAULT_SCHEME_PORTS: Record<string, string> = {
+  'postgres:': '5432',
+  'postgresql:': '5432',
+  'redis:': '6379',
+  'rediss:': '6380',
+  'http:': '80',
+  'https:': '443',
+}
+
+/**
+ * A URL's effective host port: the explicit one, else the scheme's default. '' only when the value
+ * is unparseable or its scheme has no known default — genuinely unknown, and not this check's
+ * problem. (`new URL` also drops a port that equals the scheme default, so `http://host:80` and
+ * `http://host` both resolve to 80 here.)
+ */
+const urlPort = (value: string): string => {
+  try {
+    const url = new URL(value)
+    return url.port || DEFAULT_SCHEME_PORTS[url.protocol] || ''
+  } catch {
+    return ''
+  }
+}
+
+/** The value of a port var only when it has actually moved off its default; '' otherwise. */
+const movedDevPort = (read: EnvReader, key: string): string => {
+  const value = read(key)
+  return value.length > 0 && value !== DEV_PORT_DEFAULTS[key] ? value : ''
+}
+
+const warnPortMismatch = (options: {
+  portKey: string
+  port: string
+  urlKey: string
+  urlValue: string
+  requireSet: boolean
+  consequence: string
+  fix: string
+}) => {
+  const { portKey, port, urlKey, urlValue, requireSet, consequence, fix } = options
+  if (urlValue.length === 0) {
+    if (requireSet) {
+      warn(
+        'dev-ports',
+        `${portKey}=${port} but ${urlKey} is not set — ${consequence} ${fix}`,
+        '.env',
+      )
+    }
+    return
+  }
+
+  const actual = urlPort(urlValue)
+  if (actual === '' || actual === port) return
+
+  warn(
+    'dev-ports',
+    `${portKey}=${port} but ${urlKey} uses port ${actual} — ${consequence} ${fix}`,
+    '.env',
+  )
+}
+
+const checkApiPortPairing = (read: EnvReader) => {
+  const port = movedDevPort(read, 'PORT')
+  if (!port) return
+
+  for (const urlKey of ['VITE_API_URL', 'API_URL']) {
+    warnPortMismatch({
+      portKey: 'PORT',
+      port,
+      urlKey,
+      urlValue: read(urlKey),
+      requireSet: true,
+      consequence: 'the browser will call the old API port and every request 404s or hangs.',
+      fix: `Set ${urlKey} to http://localhost:${port}.`,
+    })
+  }
+}
+
+const checkWebPortPairing = (read: EnvReader) => {
+  const port = movedDevPort(read, 'WEB_PORT')
+  if (!port) return
+
+  const origins = read('ALLOWED_ORIGINS')
+    .split(',')
+    .map(origin => origin.trim())
+    .filter(origin => origin.length > 0)
+
+  if (origins.length > 0 && !origins.some(origin => urlPort(origin) === port)) {
+    warn(
+      'dev-ports',
+      `WEB_PORT=${port} but ALLOWED_ORIGINS does not include http://localhost:${port} — ` +
+        `the API will reject every browser request with a CORS error. Add it to ALLOWED_ORIGINS.`,
+      '.env',
+    )
+  }
+
+  // An unset ALLOWED_ORIGINS is fine: the API derives the origin from WEB_URL, and failing that
+  // from WEB_PORT. Only an explicit WEB_URL on the wrong port defeats that derivation.
+  if (origins.length === 0) {
+    warnPortMismatch({
+      portKey: 'WEB_PORT',
+      port,
+      urlKey: 'WEB_URL',
+      urlValue: read('WEB_URL'),
+      requireSet: false,
+      consequence:
+        'ALLOWED_ORIGINS is empty, so CORS falls back to WEB_URL and the API will reject every ' +
+        'browser request.',
+      fix: `Set WEB_URL to http://localhost:${port}, or list the origin in ALLOWED_ORIGINS.`,
+    })
+  }
+
+  warnPortMismatch({
+    portKey: 'WEB_PORT',
+    port,
+    urlKey: 'SITE_URL',
+    urlValue: read('SITE_URL'),
+    requireSet: false,
+    consequence:
+      'links in verification, password-reset, and invite emails point at the old web port.',
+    fix: `Set SITE_URL to http://localhost:${port}.`,
+  })
+}
+
+const checkDatabasePortPairings = (read: EnvReader) => {
+  const pgPort = movedDevPort(read, 'POSTGRES_PORT')
+  if (pgPort) {
+    for (const urlKey of ['DATABASE_URL', 'DIRECT_URL']) {
+      warnPortMismatch({
+        portKey: 'POSTGRES_PORT',
+        port: pgPort,
+        urlKey,
+        urlValue: read(urlKey),
+        // DIRECT_URL is optional locally; DATABASE_URL is not.
+        requireSet: urlKey === 'DATABASE_URL',
+        consequence:
+          'this connects to whatever Postgres is on the old port, very likely a DIFFERENT ' +
+          'repo database, with no error anywhere.',
+        fix: `Point ${urlKey} at port ${pgPort}.`,
+      })
+    }
+  }
+
+  const testPort = movedDevPort(read, 'POSTGRES_TEST_PORT')
+  if (!testPort) return
+  warnPortMismatch({
+    portKey: 'POSTGRES_TEST_PORT',
+    port: testPort,
+    urlKey: 'TEST_DATABASE_URL',
+    urlValue: read('TEST_DATABASE_URL'),
+    requireSet: true,
+    consequence: 'pnpm test:e2e will run against the wrong database, or none at all.',
+    fix: `Point TEST_DATABASE_URL at port ${testPort}.`,
+  })
+}
+
+const checkServicePortPairings = (read: EnvReader) => {
+  const redisPort = movedDevPort(read, 'REDIS_PORT')
+  if (redisPort) {
+    warnPortMismatch({
+      portKey: 'REDIS_PORT',
+      port: redisPort,
+      urlKey: 'REDIS_URL',
+      urlValue: read('REDIS_URL'),
+      requireSet: false,
+      consequence: 'the API will talk to whatever Redis is on the old port.',
+      fix: `Point REDIS_URL at port ${redisPort}.`,
+    })
+  }
+
+  const mailhogPort = movedDevPort(read, 'MAILHOG_SMTP_PORT')
+  if (!mailhogPort) return
+
+  const smtpHost = read('SMTP_HOST')
+  const isLocalSmtp = !smtpHost || smtpHost === 'localhost' || smtpHost.startsWith('127.')
+  const smtpPort = read('SMTP_PORT')
+  if (!isLocalSmtp || !smtpPort || smtpPort === mailhogPort) return
+
+  warn(
+    'dev-ports',
+    `MAILHOG_SMTP_PORT=${mailhogPort} but SMTP_PORT=${smtpPort} with a local SMTP_HOST — ` +
+      `outbound dev mail will fail to connect. Set SMTP_PORT to ${mailhogPort}.`,
+    '.env',
+  )
+}
+
+const checkDevPortPairings = () => {
+  if (!existsSync('.env')) return
+  const env = readFileSync('.env', 'utf8')
+  const read = (key: string) => readEnvValue(env, key)
+
+  checkApiPortPairing(read)
+  checkWebPortPairing(read)
+  checkDatabasePortPairings(read)
+  checkServicePortPairings(read)
 }
 
 const AUTH_LEVEL_DECORATOR = /@(?:Public|Authenticated|AdminOnly)\s*\(\s*\)/
@@ -1462,6 +1685,7 @@ checkPublishablePackageReadmes()
 checkPublishedPackageVersions()
 checkUpgradeNoteImpactGate()
 checkCookieDomainConfig()
+checkDevPortPairings()
 checkGuardRegressions()
 checkUnguardedRootOperations()
 checkAuthLevelDeclarations()

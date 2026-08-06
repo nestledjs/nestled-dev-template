@@ -46,6 +46,11 @@ SITE_URL=http://localhost:4200
 API_URL=http://localhost:3000
 ```
 
+The default ports are the same in every nestled app, so only one can run at a time. To run
+several side by side, claim a port block in [`docs/dev/dev-ports.md`](../dev/dev-ports.md) and
+set it in `.env` — no code change is needed. `.env.example` documents which port and URL vars
+must move together; `pnpm nestled-doctor` warns when only one half has.
+
 Generate Prisma and seed:
 
 ```bash

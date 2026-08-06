@@ -33,6 +33,15 @@ or framework commands such as `pnpm doctor` or `expo doctor`.
 - Sensitive auth, organization, billing, admin, RBAC, and user mutations without obvious audit
   logging in the resolver file or a sibling service are flagged for review. Changed-line findings
   fail.
+- Local dev port pairs in `.env` moved together (warning-only; see
+  [`dev-ports.md`](./dev-ports.md)). Each pair is only checked once the port has moved off its
+  default:
+  - `PORT` against `VITE_API_URL` and `API_URL`.
+  - `WEB_PORT` against `ALLOWED_ORIGINS`, `SITE_URL`, and `WEB_URL`.
+  - `POSTGRES_PORT` against `DATABASE_URL` and `DIRECT_URL`.
+  - `POSTGRES_TEST_PORT` against `TEST_DATABASE_URL`.
+  - `REDIS_PORT` against `REDIS_URL`.
+  - `MAILHOG_SMTP_PORT` against `SMTP_PORT` when `SMTP_HOST` is local.
 
 Future checks should also validate that normal SDK operation files do not call
 generated CRUD fields directly after the remaining legacy SDK operations are
