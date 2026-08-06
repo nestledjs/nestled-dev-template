@@ -50,6 +50,8 @@ export class GlobalAuthGuard implements CanActivate {
     this.logger.error(
       `${controller.name}.${handler.name} declares no access level; add @Public(), @Authenticated(), or @AdminOnly().`,
     )
-    throw new ForbiddenException()
+    throw new ForbiddenException(
+      'Access level is not configured. Add @Public(), @Authenticated(), or @AdminOnly().',
+    )
   }
 }

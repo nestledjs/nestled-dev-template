@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import {
   declaresAuthLevel,
   getAuthOperations,
+  getGuardRank,
   getOperationGuardNames,
   hasAuthenticationGuard,
 } from './doctor-auth-analysis'
@@ -114,5 +115,24 @@ describe('getAuthOperations', () => {
     expect(declaresAuthLevel(operation)).toBe(true)
     expect(getOperationGuardNames(operation)).toEqual(['GqlThrottlerGuard'])
     expect(hasAuthenticationGuard(operation)).toBe(false)
+    expect(getGuardRank(['GqlAuthGuard'])).toBe(1)
+    expect(getGuardRank(['GqlAuthGuard', 'GqlThrottlerGuard'])).toBe(1)
+    expect(getGuardRank(['GqlThrottlerGuard'])).toBe(0)
+  })
+
+  it('parses nested guard calls and property-access decorators through the AST', () => {
+    const [operation] = getAuthOperations(`
+      @auth.Authenticated()
+      @nest.UseGuards(AuthGuard('jwt'), guards.RolesGuard)
+      @nest.Controller('reports')
+      class ReportsController {
+        @nest.Get()
+        list() {}
+      }
+    `)
+
+    expect(declaresAuthLevel(operation)).toBe(true)
+    expect(getOperationGuardNames(operation)).toEqual(['AuthGuard', 'RolesGuard'])
+    expect(hasAuthenticationGuard(operation)).toBe(true)
   })
 })

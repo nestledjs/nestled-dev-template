@@ -57,7 +57,9 @@ describe('GlobalAuthGuard', () => {
     }
 
     expect(thrown).toBeInstanceOf(ForbiddenException)
-    expect((thrown as ForbiddenException).message).toBe('Forbidden')
+    expect((thrown as ForbiddenException).message).toBe(
+      'Access level is not configured. Add @Public(), @Authenticated(), or @AdminOnly().',
+    )
     expect((thrown as ForbiddenException).message).not.toContain('SomeResolver')
     expect((thrown as ForbiddenException).message).not.toContain('operation')
     expect(Logger.prototype.error).toHaveBeenCalledWith(

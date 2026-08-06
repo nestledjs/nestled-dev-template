@@ -4,6 +4,7 @@ import { basename, dirname, join, relative } from 'node:path'
 import {
   declaresAuthLevel,
   getAuthOperations,
+  getGuardRank,
   getOperationGuardNames,
   hasAuthenticationGuard,
 } from './doctor-auth-analysis'
@@ -499,8 +500,14 @@ const checkApiControllerRoutesAllowed = () => {
   }
 }
 
-const getControllerSourceFiles = (): string[] =>
-  walkFiles('.', path => isControllerCandidateFile(path) && path.endsWith('.controller.ts'))
+const controllerSourceRoots = ['apps/api', 'libs/api']
+
+const getControllerSourceFiles = (): string[] => {
+  const files = controllerSourceRoots.flatMap(root =>
+    walkFiles(root, path => isControllerCandidateFile(path) && path.endsWith('.controller.ts')),
+  )
+  return [...new Set(files)].sort((left, right) => left.localeCompare(right))
+}
 
 const getAuthSourceFiles = (): string[] => {
   const files = resolverSourceRoots.flatMap(root =>
@@ -1014,13 +1021,6 @@ const getApiGuardMap = (): GuardBaseline => {
   return guardMap
 }
 
-const guardRank = (guards: string[]): number => {
-  if (guards.includes('GqlAuthAdminGuard')) return 3
-  if (guards.some(guard => guard.includes('Scoped') || guard.includes('Owner'))) return 2
-  if (guards.includes('GqlAuthGuard')) return 1
-  return guards.length > 0 ? 1 : 0
-}
-
 const formatGuardList = (guards: string[]): string =>
   guards.length > 0 ? guards.join(', ') : 'none'
 
@@ -1036,7 +1036,7 @@ const checkGuardRegressions = () => {
       const actualGuards = current[file]?.[method]
       if (!actualGuards) continue
 
-      if (guardRank(actualGuards) < guardRank(expectedGuards)) {
+      if (getGuardRank(actualGuards) < getGuardRank(expectedGuards)) {
         fail(
           'guard-regression',
           `API operation guard for ${method} was downgraded from ${formatGuardList(
