@@ -14,9 +14,11 @@ import {
 import { Logger, UseGuards } from '@nestjs/common'
 import { GraphQLResolveInfo } from 'graphql/type'
 import {
+  AdminOnly,
+  Authenticated,
   CtxUser,
-  GqlAuthGuard,
   GqlAuthAdminGuard,
+  GqlAuthGuard,
   GqlThrottlerGuard,
   Public,
 } from '@nestled-template/api/utils'
@@ -68,6 +70,7 @@ export class AuthResolver {
 
   @Query(() => User, { nullable: true })
   @UseGuards(GqlAuthGuard)
+  @Authenticated()
   async me(@CtxUser() user: User, @Info() info: GraphQLResolveInfo) {
     const validatedUser = await this.service.validateUser(user.id)
 
@@ -255,6 +258,7 @@ export class AuthResolver {
   // is authenticated and cannot choose the recipient, so it is not a mail-bombing primitive.
   @Mutation(() => Boolean)
   @UseGuards(GqlAuthGuard)
+  @Authenticated()
   resendMyVerificationEmail(@CtxUser() user: User) {
     return this.service.resendMyVerificationEmail(user.id)
   }
@@ -267,6 +271,7 @@ export class AuthResolver {
 
   @Mutation(() => UserToken, { nullable: true })
   @UseGuards(GqlAuthAdminGuard)
+  @AdminOnly()
   async emulateUser(
     @Context() context: NestContextType,
     @CtxUser() admin: User,
@@ -282,6 +287,7 @@ export class AuthResolver {
 
   @Mutation(() => Boolean)
   @UseGuards(GqlAuthGuard)
+  @Authenticated()
   async changeEmail(
     @Context() context: NestContextType,
     @CtxUser() user: User,
@@ -299,6 +305,7 @@ export class AuthResolver {
 
   @Mutation(() => Boolean)
   @UseGuards(GqlAuthGuard)
+  @Authenticated()
   async changePassword(
     @Context() context: NestContextType,
     @CtxUser() user: User,
@@ -313,6 +320,7 @@ export class AuthResolver {
 
   @Mutation(() => UserToken, { nullable: true })
   @UseGuards(GqlAuthGuard) // Changed from GqlAuthAdminGuard - we need to check JWT payload instead
+  @Authenticated()
   async endEmulation(
     @CtxUser() user: User,
     @Context() context: NestContextType,
@@ -345,6 +353,7 @@ export class AuthResolver {
 
   @Mutation(() => User)
   @UseGuards(GqlAuthGuard)
+  @Authenticated()
   async unlockAccount(
     @Context() context: NestContextType,
     @CtxUser() user: User,
@@ -360,12 +369,14 @@ export class AuthResolver {
 
   @Mutation(() => Setup2FAOutput)
   @UseGuards(GqlAuthGuard)
+  @Authenticated()
   async setup2FA(@CtxUser() user: User): Promise<Setup2FAOutput> {
     return this.service.setup2FA(user.id)
   }
 
   @Mutation(() => Enable2FAOutput)
   @UseGuards(GqlAuthGuard)
+  @Authenticated()
   async enable2FA(
     @Context() context: NestContextType,
     @CtxUser() user: User,
@@ -377,6 +388,7 @@ export class AuthResolver {
 
   @Mutation(() => Boolean)
   @UseGuards(GqlAuthGuard)
+  @Authenticated()
   async disable2FA(
     @Context() context: NestContextType,
     @CtxUser() user: User,
@@ -388,6 +400,7 @@ export class AuthResolver {
 
   @Mutation(() => Boolean)
   @UseGuards(GqlAuthGuard)
+  @Authenticated()
   async verify2FACode(
     @CtxUser() user: User,
     @Args('input') input: Verify2FAInput,
@@ -421,6 +434,7 @@ export class AuthResolver {
 
   @Mutation(() => Boolean)
   @UseGuards(GqlAuthGuard)
+  @Authenticated()
   async linkOAuthAccount(
     @CtxUser() user: User,
     @Args('input') input: LinkOAuthInput,
@@ -431,6 +445,7 @@ export class AuthResolver {
 
   @Mutation(() => Boolean)
   @UseGuards(GqlAuthGuard)
+  @Authenticated()
   async unlinkOAuthAccount(
     @CtxUser() user: User,
     @Args('input') input: UnlinkOAuthInput,
@@ -441,6 +456,7 @@ export class AuthResolver {
 
   @Query(() => [UserSessionOutput])
   @UseGuards(GqlAuthGuard)
+  @Authenticated()
   async getUserSessions(
     @Context() context: NestContextType,
     @CtxUser() user: User,
@@ -454,6 +470,7 @@ export class AuthResolver {
 
   @Mutation(() => Boolean)
   @UseGuards(GqlAuthGuard)
+  @Authenticated()
   async invalidateSession(
     @CtxUser() user: User,
     @Args('sessionId') sessionId: string,
@@ -463,6 +480,7 @@ export class AuthResolver {
 
   @Mutation(() => Number)
   @UseGuards(GqlAuthGuard)
+  @Authenticated()
   async invalidateAllSessions(
     @Context() context: NestContextType,
     @CtxUser() user: User,
@@ -489,18 +507,21 @@ export class AuthResolver {
 
   @Query(() => ExportUserDataOutput)
   @UseGuards(GqlAuthGuard)
+  @Authenticated()
   async exportUserData(@CtxUser() user: User): Promise<ExportUserDataOutput> {
     return this.service.exportUserData(user.id)
   }
 
   @Mutation(() => Boolean)
   @UseGuards(GqlAuthGuard)
+  @Authenticated()
   async deleteUserAccount(@CtxUser() user: User): Promise<boolean> {
     return this.service.deleteUserAccount(user.id)
   }
 
   @Mutation(() => Boolean)
   @UseGuards(GqlAuthGuard)
+  @Authenticated()
   async transferOrganizationOwnership(
     @CtxUser() user: User,
     @Args('input') input: TransferOwnershipInput,
