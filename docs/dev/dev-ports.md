@@ -92,7 +92,7 @@ exactly that, which is the guard you actually rely on here.
 The fallback applies only when `ALLOWED_ORIGINS` is empty or absent. Then the API uses `WEB_URL`
 if you actually set it, and otherwise `http://localhost:${WEB_PORT}`.
 
-`HOST` never contributes to that origin, whatever its value. `HOST` is the address the API *binds*
+`HOST` never contributes to that origin, whatever its value. `HOST` is the address the API _binds_
 to, and the config validator defaults `WEB_URL` from it — so letting it through would allow
 `http://0.0.0.0:4200`, or `http://127.0.0.1:4200` (a different origin to a browser on
 `http://localhost:4200`), or `http://api.internal:4200`, which pairs the API's host with the web
