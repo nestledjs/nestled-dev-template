@@ -1,6 +1,12 @@
 import { execSync } from 'node:child_process'
 import { existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs'
 import { basename, dirname, join, relative } from 'node:path'
+import {
+  declaresAuthLevel,
+  getAuthOperations,
+  getOperationGuardNames,
+  hasAuthenticationGuard,
+} from './doctor-auth-analysis'
 
 type Finding = {
   check: string
@@ -493,6 +499,27 @@ const checkApiControllerRoutesAllowed = () => {
   }
 }
 
+const getControllerSourceFiles = (): string[] =>
+  walkFiles('.', path => isControllerCandidateFile(path) && path.endsWith('.controller.ts'))
+
+const getAuthSourceFiles = (): string[] => {
+  const files = resolverSourceRoots.flatMap(root =>
+    walkFiles(root, path => path.endsWith('.resolver.ts') && !path.endsWith('.spec.ts')),
+  )
+  return [...new Set([...files, ...getControllerSourceFiles()])].sort((left, right) =>
+    left.localeCompare(right),
+  )
+}
+
+const getGuardBaselineSourceFiles = (): string[] => {
+  const customResolverFiles = walkFiles('libs/api/custom/src/lib', path =>
+    path.endsWith('.resolver.ts'),
+  )
+  return [...new Set([...customResolverFiles, ...getControllerSourceFiles()])].sort((left, right) =>
+    left.localeCompare(right),
+  )
+}
+
 const getGraphqlResolverMethods = (source: string): string[] =>
   getRegexMatches(/^\s{2}(?:override\s+)?(?:async\s+)?(\w+)\s*\(/gm, source)
     .map(match => match[1])
@@ -546,32 +573,6 @@ const getBlockSource = (source: string, openingBraceIndex: number): string => {
   }
 
   return source.slice(openingBraceIndex)
-}
-
-const getGuardNames = (source: string): string[] => {
-  const guards = new Set<string>()
-  for (const match of getRegexMatches(/@UseGuards\s*\(([^)]*)\)/g, source)) {
-    for (const guard of getRegexMatches(/\b[A-Z]\w*Guard\b/g, match[1])) {
-      guards.add(guard[0])
-    }
-  }
-  return [...guards].sort((left, right) => left.localeCompare(right))
-}
-
-const getClassGuardNames = (source: string): string[] => {
-  const classIndex = source.indexOf('export class ')
-  if (classIndex === -1) return []
-
-  const decoratorLines: string[] = []
-  const lines = source.slice(0, classIndex).split('\n')
-  for (let index = lines.length - 1; index >= 0; index -= 1) {
-    const line = lines[index]
-    if (line.trim() === '') continue
-    if (!line.trimStart().startsWith('@')) break
-    decoratorLines.unshift(line)
-  }
-
-  return getGuardNames(decoratorLines.join('\n'))
 }
 
 const getLineNumber = (source: string, index: number): number =>
@@ -987,7 +988,7 @@ const readGuardBaseline = (): GuardBaseline | null => {
   if (!existsSync(guardBaselinePath)) {
     fail(
       'guard-regression',
-      'Guard baseline is missing; regenerate it from the current trusted resolver surface',
+      'Guard baseline is missing; regenerate it from the current trusted API surface',
       guardBaselinePath,
     )
     return null
@@ -996,21 +997,17 @@ const readGuardBaseline = (): GuardBaseline | null => {
   return JSON.parse(readFileSync(guardBaselinePath, 'utf8')) as GuardBaseline
 }
 
-const getResolverGuardMap = (): GuardBaseline => {
-  const resolverFiles = walkFiles('libs/api/custom/src/lib', path => path.endsWith('.resolver.ts'))
+const getApiGuardMap = (): GuardBaseline => {
   const guardMap: GuardBaseline = {}
 
-  for (const file of resolverFiles) {
+  for (const file of getGuardBaselineSourceFiles()) {
     const source = stripComments(readFileSync(file, 'utf8'))
-    const classGuards = getClassGuardNames(source)
-    const operations = getGraphqlOperationMethods(source)
+    const operations = getAuthOperations(source, file)
     if (operations.length === 0) continue
 
     guardMap[file] = {}
     for (const operation of operations) {
-      const methodGuards = getGuardNames(operation.decorators)
-      const effectiveGuards = methodGuards.length > 0 ? methodGuards : classGuards
-      guardMap[file][operation.name] = effectiveGuards
+      guardMap[file][operation.name] = getOperationGuardNames(operation)
     }
   }
 
@@ -1021,7 +1018,7 @@ const guardRank = (guards: string[]): number => {
   if (guards.includes('GqlAuthAdminGuard')) return 3
   if (guards.some(guard => guard.includes('Scoped') || guard.includes('Owner'))) return 2
   if (guards.includes('GqlAuthGuard')) return 1
-  return 0
+  return guards.length > 0 ? 1 : 0
 }
 
 const formatGuardList = (guards: string[]): string =>
@@ -1031,7 +1028,7 @@ const checkGuardRegressions = () => {
   const baseline = readGuardBaseline()
   if (!baseline) return
 
-  const current = getResolverGuardMap()
+  const current = getApiGuardMap()
   for (const [file, methods] of Object.entries(baseline)) {
     if (!existsSync(file)) continue
 
@@ -1042,7 +1039,7 @@ const checkGuardRegressions = () => {
       if (guardRank(actualGuards) < guardRank(expectedGuards)) {
         fail(
           'guard-regression',
-          `Resolver guard for ${method} was downgraded from ${formatGuardList(
+          `API operation guard for ${method} was downgraded from ${formatGuardList(
             expectedGuards,
           )} to ${formatGuardList(actualGuards)}`,
           file,
@@ -1051,66 +1048,6 @@ const checkGuardRegressions = () => {
     }
   }
 }
-
-// `getClassGuardNames` only inspects the first class in a file, which is not safe here: a second
-// resolver class further down would silently inherit the first class's guards and an unguarded
-// operation inside it would go unreported. Collect every resolver class with its own guards and the
-// line it starts on, so each operation can be matched to the class that actually encloses it.
-type ResolverClassRegion = { guards: string[]; declaresAuthLevel: boolean; startLine: number }
-
-const getResolverClassRegions = (source: string): ResolverClassRegion[] => {
-  const regions: ResolverClassRegion[] = []
-  let decorators: string[] = []
-
-  source.split('\n').forEach((rawLine, index) => {
-    const line = rawLine.trim()
-    if (line.startsWith('@')) {
-      decorators.push(line)
-      return
-    }
-
-    if (line.startsWith('export class ') || line.startsWith('class ')) {
-      if (decorators.some(decorator => decorator.startsWith('@Resolver'))) {
-        regions.push({
-          guards: getGuardNames(decorators.join('\n')),
-          declaresAuthLevel: decorators.some(decorator => AUTH_LEVEL_DECORATOR.test(decorator)),
-          startLine: index + 1,
-        })
-      }
-      decorators = []
-      return
-    }
-
-    if (line !== '') decorators = []
-  })
-
-  return regions
-}
-
-// Regions arrive in source order, so the last one starting at or before the line is the class that
-// encloses it.
-const getEnclosingRegion = (
-  regions: ResolverClassRegion[],
-  line: number,
-): ResolverClassRegion | undefined => {
-  let enclosing: ResolverClassRegion | undefined
-  for (const region of regions) {
-    if (region.startLine > line) break
-    enclosing = region
-  }
-  return enclosing
-}
-
-const getEnclosingClassGuards = (regions: ResolverClassRegion[], line: number): string[] =>
-  getEnclosingRegion(regions, line)?.guards ?? []
-
-// Rate limiting is not authentication. `getGuardNames` returns every `*Guard`, so without this an
-// operation carrying only `@UseGuards(GqlThrottlerGuard)` would read as protected while still being
-// reachable by anyone. Unknown/custom guard names stay trusted so downstream auth guards don't trip.
-const nonAuthGuardPattern = /Throttler|RateLimit/
-
-const hasAuthGuard = (guards: string[]): boolean =>
-  guards.some(guard => !nonAuthGuardPattern.test(guard))
 
 const readPublicOperationAllowlist = (): PublicOperationAllowlist => {
   if (!existsSync(publicOperationsPath)) {
@@ -1142,31 +1079,24 @@ const reportStalePublicOperations = (
 }
 
 // `checkGuardRegressions` only walks the baseline, so it can catch a guard being *downgraded* but
-// never a brand-new operation that shipped with no guard at all. NestJS registers no global guard,
-// so an undecorated resolver method is fully public. Fail closed instead: every root operation must
-// either carry a guard or be declared public on purpose.
+// never a brand-new operation that shipped with no guard at all. Check GraphQL resolvers and REST
+// controllers together: every API operation must carry an auth guard or be allowlisted as public.
 const checkUnguardedRootOperations = () => {
   const allowlist = readPublicOperationAllowlist()
   const unguarded = new Set<string>()
-  const resolverFiles = resolverSourceRoots.flatMap(root =>
-    walkFiles(root, path => path.endsWith('.resolver.ts') && !path.endsWith('.spec.ts')),
-  )
 
-  for (const file of resolverFiles) {
+  for (const file of getAuthSourceFiles()) {
     const source = stripComments(readFileSync(file, 'utf8'))
-    const regions = getResolverClassRegions(source)
 
-    for (const operation of getGraphqlOperationMethods(source)) {
-      const methodGuards = getGuardNames(operation.decorators)
-      const classGuards = getEnclosingClassGuards(regions, operation.line)
-      if (hasAuthGuard(methodGuards) || hasAuthGuard(classGuards)) continue
+    for (const operation of getAuthOperations(source, file)) {
+      if (hasAuthenticationGuard(operation)) continue
 
       unguarded.add(`${file}::${operation.name}`)
       if (allowlist[file]?.[operation.name]) continue
 
       fail(
         'unguarded-operation',
-        `Root operation ${operation.name} has no auth guard and is reachable unauthenticated; add @UseGuards(...) or declare it in ${publicOperationsPath} with a reason`,
+        `API operation ${operation.className}.${operation.name} has no auth guard and is reachable unauthenticated; add @UseGuards(...) or declare it in ${publicOperationsPath} with a reason`,
         file,
         operation.line,
       )
@@ -1178,7 +1108,7 @@ const checkUnguardedRootOperations = () => {
 
 const updateGuardBaseline = () => {
   mkdirSync(dirname(guardBaselinePath), { recursive: true })
-  writeFileSync(guardBaselinePath, `${JSON.stringify(getResolverGuardMap(), null, 2)}\n`)
+  writeFileSync(guardBaselinePath, `${JSON.stringify(getApiGuardMap(), null, 2)}\n`)
   try {
     execSync(`pnpm exec prettier --write ${guardBaselinePath}`, { stdio: 'ignore' })
   } catch {
@@ -1632,31 +1562,20 @@ const checkDevPortPairings = () => {
   checkServicePortPairings(read)
 }
 
-const AUTH_LEVEL_DECORATOR = /@(?:Public|Authenticated|AdminOnly)\s*\(\s*\)/
-
-// `GlobalAuthGuard` refuses any operation that has not declared an access level, and since
-// generators 1.1.6 it has no fallback — declaration is the only way through. Generated CRUD is
-// therefore covered here too rather than exempted: if a regeneration ever emitted an operation
-// without a decorator, the runtime would start refusing it, and catching that at review time is
-// considerably cheaper than catching it in production.
+// `GlobalAuthGuard` applies equally to GraphQL resolvers and REST controllers. Declaration is the
+// only way through, so Doctor must inspect both surfaces or a controller can pass review and start
+// returning 403 for every request at runtime. Generated CRUD is covered here too rather than
+// exempted: a regeneration that drops a decorator should fail before deployment.
 const checkAuthLevelDeclarations = () => {
-  const resolverFiles = resolverSourceRoots.flatMap(root =>
-    walkFiles(root, path => path.endsWith('.resolver.ts') && !path.endsWith('.spec.ts')),
-  )
-
-  for (const file of resolverFiles) {
+  for (const file of getAuthSourceFiles()) {
     const source = stripComments(readFileSync(file, 'utf8'))
-    const classRegions = getResolverClassRegions(source)
 
-    for (const operation of getGraphqlOperationMethods(source)) {
-      if (AUTH_LEVEL_DECORATOR.test(operation.decorators)) continue
-
-      // A class-level declaration covers every operation inside it.
-      if (getEnclosingRegion(classRegions, operation.line)?.declaresAuthLevel) continue
+    for (const operation of getAuthOperations(source, file)) {
+      if (declaresAuthLevel(operation)) continue
 
       fail(
         'auth-level',
-        `Root operation ${operation.name} does not declare an access level; add @Public(), @Authenticated(), or @AdminOnly() so intent is explicit rather than inferred from the guards attached`,
+        `API operation ${operation.className}.${operation.name} does not declare an access level; add @Public(), @Authenticated(), or @AdminOnly() at the method or class level so intent is explicit`,
         file,
         operation.line,
       )

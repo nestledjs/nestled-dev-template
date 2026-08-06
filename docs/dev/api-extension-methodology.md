@@ -127,6 +127,12 @@ Rules for plugins:
 - Register plugin modules in `apps/api/src/app.module.ts`.
 - If the plugin exposes REST controllers, make sure `apps/api/src/main.ts`
   allows the `/api/...` route prefix.
+- Declare every REST route `@Public()`, `@Authenticated()`, or `@AdminOnly()` at the method or class
+  level. Protected routes also need the guard that performs authentication; the declaration only
+  records intent.
+- Add every intentionally unguarded REST route to
+  `.nestled-updates/security/public-operations.json` with a written reason, including endpoints that
+  authenticate through a webhook signature, OAuth exchange, or protocol bearer token.
 - Keep vendor SDK details out of plugins; inject integration services instead.
 - Name operations by feature intent, not generated CRUD convention.
 

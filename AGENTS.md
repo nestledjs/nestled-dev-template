@@ -401,6 +401,13 @@ The following files are overwritten when running `pnpm db-update`:
 - `GqlAuthGuard` — Authenticated user
 - Custom guards in `libs/api/utils/src/lib/guards/`
 
+Every GraphQL operation and REST controller route must explicitly declare `@Public()`,
+`@Authenticated()`, or `@AdminOnly()` at the method or class level. Protected operations also need
+the guard that performs authentication; access-level decorators only declare intent. Add every
+intentionally unguarded operation to `.nestled-updates/security/public-operations.json` with a
+written reason. `pnpm run nestled-doctor` checks resolvers and `*.controller.ts` files for all three
+requirements.
+
 **GraphQL Schema:** Auto-generated at `api-schema.graphql` (do not edit manually). SDK is generated from this schema + `.graphql` operation files in `libs/shared/sdk/src/graphql/` and `libs/shared/sdk/src/__admin/`.
 
 ## Billing & Integrations
