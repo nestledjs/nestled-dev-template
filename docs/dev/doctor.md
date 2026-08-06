@@ -25,8 +25,13 @@ or framework commands such as `pnpm doctor` or `expo doctor`.
 - Publishable packages include a README.
 - Sensitive auth, billing, admin, API, or route changes include a new upgrade note or an explicit
   `priority: ignore` note when Doctor is running in the source template repository.
-- Custom resolver guard levels do not regress below the committed guard baseline in
+- Hand-written resolver and REST controller guard levels do not regress below the committed guard
+  baseline in
   `.nestled-updates/security/guard-baseline.json`.
+- GraphQL operations and REST controller routes explicitly declare `@Public()`, `@Authenticated()`,
+  or `@AdminOnly()` at the method or class level.
+- GraphQL operations and REST controller routes carry an authentication guard, unless they are
+  recorded in `.nestled-updates/security/public-operations.json` with a written reason.
 - Non-generated TypeScript source avoids `as any`, double-casting through `unknown`, and
   `@ts-ignore`. Existing findings are warning-only; findings on changed lines fail.
 - Emulation or impersonation code requires `GqlAuthAdminGuard` and an explicit privilege ceiling.
@@ -52,8 +57,10 @@ retired or moved to `__admin`.
 ## Guard Baseline
 
 The guard baseline captures the effective guard list for each hand-written GraphQL resolver
-operation under `libs/api/custom/src/lib`. Doctor blocks changes that downgrade an existing
-operation's guard level, such as changing `GqlAuthAdminGuard` to `GqlAuthGuard`.
+operation under `libs/api/custom/src/lib` and each REST controller route. Class-level and
+method-level guards are combined. Doctor blocks changes that downgrade an existing operation's
+guard level, such as changing `GqlAuthAdminGuard` to `GqlAuthGuard` or removing a controller's
+authentication guard.
 
 When a guard change is intentionally stricter, update `.nestled-updates/security/guard-baseline.json`
 in the same PR. When a guard change is intentionally less restrictive, treat it as a security review
@@ -64,6 +71,18 @@ Regenerate the baseline after reviewing an intentional guard-contract change:
 ```bash
 pnpm security:update-guard-baseline
 ```
+
+## Public Operation Allowlist
+
+Every GraphQL operation and REST controller route must have an authentication guard. Operations
+that are intentionally reachable without a session instead belong in
+`.nestled-updates/security/public-operations.json` with a written reason. This includes protocol
+endpoints that authenticate internally, such as signed webhooks, OAuth callbacks, and bearer-token
+services.
+
+`@Public()` declares runtime access intent, but it does not satisfy this review check by itself.
+Keeping the reason in a separate allowlist makes anonymous exposure visible in one auditable file.
+Stale entries produce a warning after the operation gains a guard or is removed.
 
 ## Usage
 
