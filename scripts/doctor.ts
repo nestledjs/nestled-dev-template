@@ -1310,6 +1310,47 @@ const checkCookieDomainConfig = () => {
   }
 }
 
+// A concurrent `prisma generate` — typically `db-update` running while a dev server triggers its
+// own generate — can truncate the client to an empty file while still reporting success. Nx cannot
+// see it: `api-prisma:generate` declares this directory as an output, but Nx hashes inputs, so an
+// unchanged schema yields an unchanged cache key no matter what the generator actually wrote. The
+// directory is also gitignored, so nothing else notices either.
+//
+// The resulting failure is three hops from its cause. `client.ts` re-exports this file, so every
+// enum becomes undefined at runtime, `registerEnumType(undefined, ...)` stores an undefined ref, and
+// the API dies during GraphQL schema build with "Cannot convert undefined or null to object" —
+// naming neither Prisma nor this file.
+const checkPrismaGeneratedEnums = () => {
+  const generatedDir = 'libs/api/prisma/src/lib/prisma-generated'
+  // Nothing generated yet is a legitimate state, e.g. a fresh clone before the first generate.
+  if (!existsSync(generatedDir) || !existsSync(schemaPath)) return
+
+  const declaredEnums = getRegexMatches(/^enum\s+(\w+)/gm, readFileSync(schemaPath, 'utf8')).map(
+    match => match[1],
+  )
+  if (declaredEnums.length === 0) return
+
+  const enumsPath = join(generatedDir, 'enums.ts')
+  if (!existsSync(enumsPath)) {
+    fail(
+      'prisma-generated',
+      `${schemaPath} declares ${declaredEnums.length} enum(s) but the generated enums file is missing; re-run pnpm prisma:generate`,
+      enumsPath,
+    )
+    return
+  }
+
+  const source = readFileSync(enumsPath, 'utf8')
+  const missing = declaredEnums.filter(name => !source.includes(`export const ${name} =`))
+  if (missing.length === 0) return
+
+  fail(
+    'prisma-generated',
+    `Generated Prisma enums are incomplete (missing ${missing.join(', ')}). The client was written truncated, so these are undefined at runtime and the API will fail during GraphQL schema build. Re-run pnpm prisma:generate, then rebuild with --skip-nx-cache because Nx will otherwise reuse the stale bundle`,
+    enumsPath,
+  )
+}
+
 const printFindings = (label: string, items: Finding[]) => {
   if (items.length === 0) return
 
@@ -1380,6 +1421,7 @@ checkUpgradeNoteImpactGate()
 checkCookieDomainConfig()
 checkGuardRegressions()
 checkUnguardedRootOperations()
+checkPrismaGeneratedEnums()
 checkUnsafeTypeScriptCasts()
 checkResolverScopeAnchoring()
 checkAuditCoverageHeuristic()

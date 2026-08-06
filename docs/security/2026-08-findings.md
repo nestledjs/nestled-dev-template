@@ -10,14 +10,14 @@ require a package release before this template can consume them.
 
 ## Status
 
-| #   | Finding                                                  | Severity | Lives in             | Reachable by                              | Status                                         |
-| --- | -------------------------------------------------------- | -------- | -------------------- | ----------------------------------------- | ---------------------------------------------- |
-| 1   | `@crudAuth` resolved by prefix match, not model identity | critical | generator            | n/a (misconfiguration)                    | Fixed — generators 1.1.4                       |
-| 2   | Custom `@crudAuth` level casing mangled                  | low      | generator            | n/a (build failure)                       | Fixed — generators 1.1.4                       |
-| 3   | Root operations with no auth guard are fully public      | high     | template             | anonymous                                 | Detection shipped; runtime default outstanding |
-| 4   | Credential fields exposed in the GraphQL schema          | critical | template             | any caller who can read the row           | Fixed here; pending API restart                |
-| 5   | Arbitrary Prisma `where` injection via `filters`         | critical | template + generator | **anonymous**                             | **Open**                                       |
-| 6   | Relation traversal performs no authorization             | high     | template + generator | any caller with one reachable entry point | Open                                           |
+| #   | Finding                                                  | Severity | Lives in             | Reachable by                              | Status                                          |
+| --- | -------------------------------------------------------- | -------- | -------------------- | ----------------------------------------- | ----------------------------------------------- |
+| 1   | `@crudAuth` resolved by prefix match, not model identity | critical | generator            | n/a (misconfiguration)                    | Fixed — generators 1.1.4                        |
+| 2   | Custom `@crudAuth` level casing mangled                  | low      | generator            | n/a (build failure)                       | Fixed — generators 1.1.4                        |
+| 3   | Root operations with no auth guard are fully public      | high     | template             | anonymous                                 | Detection shipped; runtime default outstanding  |
+| 4   | Credential fields exposed in the GraphQL schema          | critical | template             | any caller who can read the row           | Fixed — verified against the live schema        |
+| 5   | Arbitrary Prisma `where` injection via `filters`         | critical | template + generator | **anonymous**                             | Fixed — generators 1.1.5 + typed inputs         |
+| 6   | Relation traversal performs no authorization             | high     | template + generator | any caller with one reachable entry point | Fixed — generators 1.1.5 + select-builder check |
 
 ## 1. `@crudAuth` resolved by prefix match
 
@@ -105,7 +105,7 @@ Both were cleaned here by hand. Downstream projects must do the same, and the fa
 as a codegen error rather than anything mentioning credentials — worth stating plainly in the
 upgrade note, because the error does not hint at its own cause. `__admin` needs no manual step.
 
-## 5. Arbitrary Prisma `where` injection via `filters` — OPEN, highest severity
+## 5. Arbitrary Prisma `where` injection via `filters` — FIXED
 
 Every generated list query accepts a caller-supplied `filters` object that reaches Prisma's `where`
 clause with no validation, key filtering, or field allow-listing.
@@ -161,7 +161,7 @@ Planned, in order of value:
 4. **Template** — bound relation-filter depth, and consider disallowing relation filters entirely on
    operations reachable without authentication.
 
-## 6. Relation traversal performs no authorization — OPEN
+## 6. Relation traversal performs no authorization — FIXED
 
 `createSelect(info)` compiles the whole incoming selection set into a single nested Prisma `select`.
 `buildSelectTree` recurses on any field carrying a `relationName`, at unbounded depth, producing one
