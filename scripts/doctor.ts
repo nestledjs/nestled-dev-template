@@ -968,8 +968,10 @@ const checkGuardRegressions = () => {
 // resolver class further down would silently inherit the first class's guards and an unguarded
 // operation inside it would go unreported. Collect every resolver class with its own guards and the
 // line it starts on, so each operation can be matched to the class that actually encloses it.
-const getResolverClassRegions = (source: string): { guards: string[]; startLine: number }[] => {
-  const regions: { guards: string[]; startLine: number }[] = []
+type ResolverClassRegion = { guards: string[]; declaresAuthLevel: boolean; startLine: number }
+
+const getResolverClassRegions = (source: string): ResolverClassRegion[] => {
+  const regions: ResolverClassRegion[] = []
   let decorators: string[] = []
 
   source.split('\n').forEach((rawLine, index) => {
@@ -981,7 +983,11 @@ const getResolverClassRegions = (source: string): { guards: string[]; startLine:
 
     if (line.startsWith('export class ') || line.startsWith('class ')) {
       if (decorators.some(decorator => decorator.startsWith('@Resolver'))) {
-        regions.push({ guards: getGuardNames(decorators.join('\n')), startLine: index + 1 })
+        regions.push({
+          guards: getGuardNames(decorators.join('\n')),
+          declaresAuthLevel: decorators.some(decorator => AUTH_LEVEL_DECORATOR.test(decorator)),
+          startLine: index + 1,
+        })
       }
       decorators = []
       return
@@ -993,10 +999,7 @@ const getResolverClassRegions = (source: string): { guards: string[]; startLine:
   return regions
 }
 
-const getEnclosingClassGuards = (
-  regions: { guards: string[]; startLine: number }[],
-  line: number,
-): string[] => {
+const getEnclosingClassGuards = (regions: ResolverClassRegion[], line: number): string[] => {
   let guards: string[] = []
   for (const region of regions) {
     if (region.startLine > line) break
@@ -1310,6 +1313,43 @@ const checkCookieDomainConfig = () => {
   }
 }
 
+const AUTH_LEVEL_DECORATOR = /@(?:Public|Authenticated|AdminOnly)\s*\(\s*\)/
+
+// `GlobalAuthGuard` refuses any operation that has not declared an access level, but it accepts an
+// attached auth guard as a declaration so that generated CRUD keeps working until the generator
+// emits the decorators itself. That bridge is scoped to generated output by intent only — nothing
+// stops a hand-written resolver leaning on it, which would put us back to inferring intent from
+// whichever guards happen to be attached.
+//
+// So enforce the stricter rule here, on the code this repo actually owns: every operation declares
+// its level explicitly. Generated CRUD is exempt until the generator catches up.
+const checkAuthLevelDeclarations = () => {
+  const handWrittenRoots = ['libs/api/custom/src/lib', 'libs/api/core']
+  const resolverFiles = handWrittenRoots.flatMap(root =>
+    walkFiles(root, path => path.endsWith('.resolver.ts') && !path.endsWith('.spec.ts')),
+  )
+
+  for (const file of resolverFiles) {
+    const source = stripComments(readFileSync(file, 'utf8'))
+    const classRegions = getResolverClassRegions(source)
+
+    for (const operation of getGraphqlOperationMethods(source)) {
+      if (AUTH_LEVEL_DECORATOR.test(operation.decorators)) continue
+
+      // A class-level declaration covers every operation inside it.
+      const enclosing = classRegions.filter(region => region.startLine <= operation.line).pop()
+      if (enclosing?.declaresAuthLevel) continue
+
+      fail(
+        'auth-level',
+        `Root operation ${operation.name} does not declare an access level; add @Public(), @Authenticated(), or @AdminOnly() so intent is explicit rather than inferred from the guards attached`,
+        file,
+        operation.line,
+      )
+    }
+  }
+}
+
 // A concurrent `prisma generate` — typically `db-update` running while a dev server triggers its
 // own generate — can truncate the client to an empty file while still reporting success. Nx cannot
 // see it: `api-prisma:generate` declares this directory as an output, but Nx hashes inputs, so an
@@ -1421,6 +1461,7 @@ checkUpgradeNoteImpactGate()
 checkCookieDomainConfig()
 checkGuardRegressions()
 checkUnguardedRootOperations()
+checkAuthLevelDeclarations()
 checkPrismaGeneratedEnums()
 checkUnsafeTypeScriptCasts()
 checkResolverScopeAnchoring()

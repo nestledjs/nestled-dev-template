@@ -14,7 +14,7 @@ require a package release before this template can consume them.
 | --- | -------------------------------------------------------- | -------- | -------------------- | ----------------------------------------- | ----------------------------------------------- |
 | 1   | `@crudAuth` resolved by prefix match, not model identity | critical | generator            | n/a (misconfiguration)                    | Fixed — generators 1.1.4                        |
 | 2   | Custom `@crudAuth` level casing mangled                  | low      | generator            | n/a (build failure)                       | Fixed — generators 1.1.4                        |
-| 3   | Root operations with no auth guard are fully public      | high     | template             | anonymous                                 | Detection shipped; runtime default outstanding  |
+| 3   | Root operations with no auth guard are fully public      | high     | template             | anonymous                                 | Fixed — doctor check + fail-closed APP_GUARD    |
 | 4   | Credential fields exposed in the GraphQL schema          | critical | template             | any caller who can read the row           | Fixed — verified against the live schema        |
 | 5   | Arbitrary Prisma `where` injection via `filters`         | critical | template + generator | **anonymous**                             | Fixed — generators 1.1.5 + typed inputs         |
 | 6   | Relation traversal performs no authorization             | high     | template + generator | any caller with one reachable entry point | Fixed — generators 1.1.5 + select-builder check |
@@ -57,11 +57,21 @@ being _downgraded_ on a known method but never a new operation that shipped with
 be declared in `.nestled-updates/security/public-operations.json` with a written reason. Guards are
 attributed per resolver class, and a throttler guard does not count as authentication.
 
-**Outstanding:** the runtime half — a metadata-aware global `APP_GUARD` that defaults to deny. Note
-for whoever picks it up: in NestJS a global guard is _not_ replaced by a method-level `@UseGuards`;
-both run and both must pass. Binding the admin guard naively breaks every user-facing operation.
+**Also shipped:** `GlobalAuthGuard`, registered as an `APP_GUARD`, refusing any operation that has
+not declared an access level via `@Public()`, `@Authenticated()`, or `@AdminOnly()`.
 
-REST controllers have the same exposure and are covered by neither half.
+It declares intent rather than authenticating. Global guards run _before_ method guards, so the
+request is not yet authenticated when it executes — the attached guard still performs the real
+check. A method-level `@UseGuards` does not replace a global guard; both run and both must pass,
+which is why binding an admin guard globally would have broken every user-facing operation.
+
+An attached auth guard counts as a declaration, a temporary bridge for generated CRUD, which carries
+a guard but not yet a decorator. A doctor `auth-level` check enforces explicit decorators on
+hand-written resolvers so the bridge only covers generated output; it can be removed once the
+generator emits them.
+
+REST controllers are covered too — all five are declared public at class level, each with its reason
+inline, since every endpoint is reached before a session exists or authenticates by other means.
 
 ## 4. Credential fields exposed in the GraphQL schema
 
