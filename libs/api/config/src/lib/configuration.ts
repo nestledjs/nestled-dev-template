@@ -45,6 +45,13 @@ const apiOrigin = () =>
 // evaluated, so this initialises before assignVariablesToProcess can blur it. Same
 // import-time-freeze idiom validation.ts already uses for its own defaults.
 //
+// The capture depends on the real environment ALREADY being in process.env when this line runs,
+// and it is: main.ts:1 is `import 'dotenv/config'`, which precedes the import of this barrel at
+// main.ts:5, so a `.env`-supplied WEB_URL is present here (and `nx serve` pre-loads the root .env
+// into the task env besides). Only the Joi-manufactured default arrives later, inside forRoot().
+// Do not move this to a lazily-evaluated position "to be safe" — reading it after forRoot() is
+// exactly what makes a supplied and an injected WEB_URL indistinguishable.
+//
 // This is what keeps HOST out of the CORS origin. HOST is the API's BIND address: folding it in
 // yields `http://0.0.0.0:4200`, or `http://127.0.0.1:4200` (a different origin to a browser sitting
 // on `http://localhost:4200`), or the incoherent `http://api.internal:4200` — pairing the API's
@@ -84,10 +91,6 @@ const toBrowserOrigin = (value: string): string => {
 // to an origin; otherwise derive from WEB_PORT alone, so moving the web port does not silently
 // break CORS and HOST never leaks in. (validation.ts's own HOST-derived default is deliberately
 // left alone — that divergence is out of scope here; this just declines to consume it.)
-//
-// Ignoring the injected value also un-freezes the port: validation.ts computes its default at
-// module-import time, before dotenv has loaded `.env`, so a `.env`-supplied WEB_PORT is missing
-// from that string but present in process.env by the time the fallback below reads it.
 const webOrigin = () => {
   const supplied = WEB_URL_WAS_EXPLICIT
     ? toBrowserOrigin((process.env['WEB_URL'] ?? '').trim())
