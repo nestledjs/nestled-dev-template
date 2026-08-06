@@ -509,7 +509,7 @@ const getGraphqlOperationMethods = (
   for (const line of lines) {
     const methodMatch = /^\s{2}(?:override\s+)?(?:async\s+)?(\w+)\s*\(/.exec(line)
     if (methodMatch && decorators.includes('@')) {
-      if (/@(?:Query|Mutation|Subscription)\b/.test(decorators)) {
+      if (/@(?:Query|Mutation|Subscription|ResolveField)\b/.test(decorators)) {
         const lineIndex = source.indexOf(line, offset)
         const openingBraceIndex = source.indexOf('{', lineIndex)
         methods.push({

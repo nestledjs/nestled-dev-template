@@ -13,7 +13,8 @@
     "resendVerificationEmail": "Pre-authentication recovery. Rate limited by GqlThrottlerGuard.",
     "verifyEmail": "Reached from an emailed link before a session exists. Authorized by the token in the input.",
     "verifyEmailChange": "Reached from an emailed link. Authorized by the single-use token argument.",
-    "availableOAuthProviders": "Renders the login screen's provider buttons. Returns static configuration, no user data."
+    "availableOAuthProviders": "Renders the login screen's provider buttons. Returns static configuration, no user data.",
+    "user": "Field resolver on UserToken, which only a successful login issues. Resolved as part of the public login response; reaching it requires already holding that token."
   },
   "libs/api/custom/src/lib/default/organization/organization.resolver.ts": {
     "getInvitationDetails": "Renders the invitation acceptance screen before the invitee has an account. Authorized by the invitation token argument."
