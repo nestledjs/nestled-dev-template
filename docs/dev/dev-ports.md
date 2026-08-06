@@ -97,7 +97,13 @@ to, and the config validator defaults `WEB_URL` from it — so letting it throug
 `http://0.0.0.0:4200`, or `http://127.0.0.1:4200` (a different origin to a browser on
 `http://localhost:4200`), or `http://api.internal:4200`, which pairs the API's host with the web
 port. The API distinguishes a `WEB_URL` you set from one the validator manufactured, and only
-honours yours. A hand-written `WEB_URL` naming a wildcard bind address is refused as well.
+honours yours.
+
+A `WEB_URL` you do set must be **origin-only** — scheme + host + optional port, nothing else. The
+API compares it against the browser's `Origin` header by exact string equality, so a trailing
+slash, a path, or credentials would produce an allow-list entry nothing can match. Such a value is
+collapsed to its origin; one that cannot be an origin at all (scheme-less, non-`http(s)`, or a
+wildcard bind address) is ignored in favour of `http://localhost:${WEB_PORT}`.
 
 ## How the values reach each process
 

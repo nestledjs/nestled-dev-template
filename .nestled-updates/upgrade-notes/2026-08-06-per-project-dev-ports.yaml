@@ -26,7 +26,14 @@ intent: >
   process.env BEFORE resolving the load factories, so by the time the factory runs an injected
   value is indistinguishable from a real one. app.module.ts resolves its `import { configuration }`
   before the ConfigModule.forRoot({...}) argument is evaluated, so the constant is initialised
-  first. A hand-written WEB_URL naming a wildcard bind address (0.0.0.0, ::) is refused too.
+  first.
+
+  A WEB_URL that IS supplied is collapsed to a bare origin before use, because main.ts matches it
+  against the browser's Origin header with exact string equality — a trailing slash, path, query,
+  fragment, or credentials would otherwise become an allow-list entry nothing can match. A value
+  that cannot be an origin at all (scheme-less like `localhost:4200`, a non-http(s) scheme, or a
+  wildcard bind address) is ignored in favour of the WEB_PORT-derived origin. This is NOT
+  normalizeApiOrigin — that also strips a trailing `/api`, which is meaningless for a web URL.
 
   Without this, HOST leaks into the CORS origin for EVERY value it can take — http://0.0.0.0:4200,
   http://127.0.0.1:4200 (a different origin to a browser on localhost:4200), or the incoherent
@@ -117,6 +124,10 @@ agentHints:
     WEB_URL from an injected one, which can only be done by capturing `'WEB_URL' in process.env`
     at module scope. Filtering the VALUE cannot work — an injected `http://127.0.0.1:4200` is
     indistinguishable from one somebody typed.
+  - Anything fed into api.cors.origin must be a bare origin. main.ts compares it to the browser's
+    Origin header with `origins.includes(origin)`, so a trailing slash or path silently blocks
+    every request. Collapse with `new URL(value).origin`, not normalizeApiOrigin — the latter
+    strips a trailing `/api`, which is API-prefix semantics a web URL does not have.
   - Test this through the real startup order (validate, assign validated values into process.env,
     then call configuration()). Calling configuration() directly makes WEB_URL look unset, which
     silently passes a guard that production would fail.

@@ -52,32 +52,47 @@ const apiOrigin = () =>
 const WEB_URL_WAS_EXPLICIT = 'WEB_URL' in process.env
 
 // Wildcard BIND addresses, as `new URL(...).hostname` reports them (Node normalizes `[::0]` to
-// `[::]`). A server binds to these; a browser never sends one as an Origin. Only reachable via a
-// hand-written WEB_URL now that injected values are ignored, but honouring one would still mean
-// allowing an origin no browser can match.
+// `[::]`). A server binds to these; a browser never sends one as an Origin.
 const WILDCARD_BIND_HOSTS = new Set(['0.0.0.0', '[::]'])
 
-const isWildcardBindOrigin = (value: string): boolean => {
+/**
+ * Collapse a WEB_URL to a bare browser origin, or return '' when it cannot be one.
+ *
+ * main.ts matches with `origins.includes(origin)` — exact string equality against the browser's
+ * `Origin` header, which is always bare scheme+host+port. So a WEB_URL carrying a trailing slash,
+ * a path, or credentials becomes an allow-list entry NOTHING can ever match, silently blocking
+ * every request. `url.origin` drops path, query, hash and credentials in one step.
+ *
+ * Deliberately NOT normalizeApiOrigin: that also strips a trailing `/api` segment, which is
+ * API-prefix semantics with no meaning for a web URL.
+ *
+ * '' means unusable, and the caller falls back to the WEB_PORT-derived origin: an unparseable or
+ * scheme-less value (`localhost:4200`), a non-http(s) protocol, or a wildcard bind address.
+ */
+const toBrowserOrigin = (value: string): string => {
   try {
-    return WILDCARD_BIND_HOSTS.has(new URL(value).hostname)
+    const url = new URL(value)
+    if (url.protocol !== 'http:' && url.protocol !== 'https:') return ''
+    if (WILDCARD_BIND_HOSTS.has(url.hostname)) return ''
+    return url.origin
   } catch {
-    // Not a parseable absolute URL — not something this guard can judge. Leave it to the caller.
-    return false
+    return ''
   }
 }
 
-// The browser origin the web app is served from. A genuinely user-supplied WEB_URL wins; otherwise
-// derive from WEB_PORT alone, so moving the web port does not silently break CORS and HOST never
-// leaks in. (validation.ts's own HOST-derived default is deliberately left alone — that
-// divergence is out of scope here; this just declines to consume it.)
+// The browser origin the web app is served from. A genuinely user-supplied WEB_URL wins, collapsed
+// to an origin; otherwise derive from WEB_PORT alone, so moving the web port does not silently
+// break CORS and HOST never leaks in. (validation.ts's own HOST-derived default is deliberately
+// left alone — that divergence is out of scope here; this just declines to consume it.)
 //
 // Ignoring the injected value also un-freezes the port: validation.ts computes its default at
 // module-import time, before dotenv has loaded `.env`, so a `.env`-supplied WEB_PORT is missing
 // from that string but present in process.env by the time the fallback below reads it.
 const webOrigin = () => {
-  const raw = WEB_URL_WAS_EXPLICIT ? (process.env['WEB_URL'] ?? '').trim() : ''
-  if (raw.length > 0 && !isWildcardBindOrigin(raw)) return raw
-  return defaultOrigin(undefined, process.env['WEB_PORT'], 4200)
+  const supplied = WEB_URL_WAS_EXPLICIT
+    ? toBrowserOrigin((process.env['WEB_URL'] ?? '').trim())
+    : ''
+  return supplied.length > 0 ? supplied : defaultOrigin(undefined, process.env['WEB_PORT'], 4200)
 }
 
 export const configuration = () => ({

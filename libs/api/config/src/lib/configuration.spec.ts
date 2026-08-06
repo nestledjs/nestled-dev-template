@@ -96,11 +96,40 @@ describe('configuration() CORS origins', () => {
       await expectOrigins(['https://app.example.com'])
     })
 
-    it('is refused when it names a wildcard bind address', async () => {
-      // A server binds to 0.0.0.0; a browser never sends it as an Origin, so honoring a
-      // hand-written one would allow an origin nothing can match.
-      process.env['WEB_URL'] = 'http://0.0.0.0:4201'
+    // main.ts matches with `origins.includes(origin)` — exact string equality against the
+    // browser's Origin header, which is always bare scheme+host+port. Anything that is not
+    // already an origin becomes an allow-list entry NOTHING can match, which blocks every request
+    // with no error. So collapse what can be collapsed...
+    it.each([
+      ['a trailing slash', 'http://localhost:4200/'],
+      ['a path', 'http://localhost:4200/app'],
+      ['a query string', 'http://localhost:4200/?x=1'],
+      ['a fragment', 'http://localhost:4200/#/dashboard'],
+      ['credentials', 'http://user:pass@localhost:4200'],
+    ])('collapses %s to a bare origin', async (_label, webUrl) => {
+      process.env['WEB_URL'] = webUrl
       await expectOrigins(['http://localhost:4200'])
+    })
+
+    // ...and reject what cannot be an Origin at all, falling back to the derived origin. WEB_PORT
+    // is moved in each case so the expectation can only be met by the fallback actually running.
+    it.each([
+      ['is scheme-less', 'localhost:4200'],
+      ['has a non-http(s) scheme', 'ftp://app.example.com'],
+      ['is not a URL', 'not a url'],
+      ['names an IPv4 wildcard bind address', 'http://0.0.0.0:4200'],
+      ['names an IPv6 wildcard bind address', 'http://[::]:4200'],
+    ])('falls back to the WEB_PORT origin when WEB_URL %s', async (_label, webUrl) => {
+      process.env['WEB_URL'] = webUrl
+      process.env['WEB_PORT'] = '4201'
+      await expectOrigins(['http://localhost:4201'])
+    })
+
+    it('drops a default port the browser would not send', async () => {
+      // A browser's Origin header for https on 443 is `https://app.example.com`, never
+      // `https://app.example.com:443` — so the allow-list entry must not carry it either.
+      process.env['WEB_URL'] = 'https://app.example.com:443/'
+      await expectOrigins(['https://app.example.com'])
     })
   })
 
