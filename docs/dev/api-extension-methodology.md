@@ -59,21 +59,32 @@ Examples in this repo:
 - `subscription` adds user-facing subscription and billing portal operations.
 - `user-preference` adds safer preference-specific behavior around a model.
 
-The default resolver classes must extend `Generated<Model>Resolver`. That
-inheritance is the required pass-through adapter that preserves generated admin
-CRUD registration for the model.
+`ApiGeneratedCrudFeatureModule` registers generated CRUD independently. Default
+resolver classes are additive and must not extend `Generated<Model>Resolver`.
+Multiple resolver classes may target the same GraphQL model as long as their
+field names do not collide.
 
 Rules for default model extensions:
 
 - Do not edit `libs/api/generated-crud/*`.
-- Keep the default resolver extending `Generated<Model>Resolver`.
-- Do not override inherited generated CRUD methods.
+- Do not extend or override `Generated<Model>Resolver`.
 - Do not re-use generated field names such as `create<Model>`, `update<Model>`,
   `delete<Model>`, `<model>`, `<models>`, or `<models>Count`.
 - Do not create `__Admin*` GraphQL documents by hand.
 - Add new operations with clear non-generated names.
 - Keep model-specific DTOs beside the model under `dto/`.
 - Register additional resolvers in the model module's `providers`.
+
+Create a conventional model-adjacent extension only when custom behavior is
+needed:
+
+```bash
+pnpm nx g @nestledjs/generators:model-extension Organization --no-interactive
+```
+
+The model-named folder is a convention. Use `--name=<FeatureName>` when a more
+specific artifact name is clearer; the resolver still targets the supplied
+Prisma model.
 
 Recommended custom operation prefixes:
 

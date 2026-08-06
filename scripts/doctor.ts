@@ -126,6 +126,7 @@ const getChangedFiles = (): string[] => {
     `git diff --name-only ${gitBaseRef}...HEAD`,
     'git diff --cached --name-only',
     'git diff --name-only',
+    'git ls-files --others --exclude-standard',
   ]
 
   for (const command of commands) {
@@ -592,18 +593,12 @@ const getGeneratedCrudMethodNames = (): Set<string> => {
   return methodNames
 }
 
-const getCanonicalDefaultResolverPath = (file: string): string => {
-  const folderName = basename(dirname(file))
-  return join(dirname(file), `${folderName}.resolver.ts`)
-}
-
-const checkDefaultResolverInheritance = (file: string, source: string) => {
-  if (file !== getCanonicalDefaultResolverPath(file)) return
-  if (source.includes('extends Generated')) return
+const checkDefaultResolverComposition = (file: string, source: string) => {
+  if (!/\bextends\s+Generated\w+Resolver\b/.test(source)) return
 
   fail(
     'api-names',
-    'Default model resolver must extend its generated resolver to keep admin CRUD registered',
+    'Custom model resolvers must be additive and must not extend generated CRUD resolvers',
     file,
   )
 }
@@ -632,10 +627,103 @@ const checkResolverMethodName = (
 
 const checkDefaultResolverFile = (file: string, generatedMethodNames: Set<string>) => {
   const source = stripComments(readFileSync(file, 'utf8'))
-  checkDefaultResolverInheritance(file, source)
+  checkDefaultResolverComposition(file, source)
 
   for (const methodName of getGraphqlResolverMethods(source)) {
     checkResolverMethodName(file, methodName, generatedMethodNames)
+  }
+}
+
+const getGeneratedResolverClassNames = (): string[] => {
+  const resolverFiles = walkFiles('libs/api/generated-crud/feature/src/lib', path =>
+    path.endsWith('.resolver.ts'),
+  )
+  const classNames: string[] = []
+
+  for (const file of resolverFiles) {
+    const source = stripComments(readFileSync(file, 'utf8'))
+    const classMatch = /export\s+class\s+(Generated\w+Resolver)\b/.exec(source)
+    if (classMatch) classNames.push(classMatch[1])
+  }
+
+  return classNames.sort((left, right) => left.localeCompare(right))
+}
+
+const checkGeneratedCrudModuleRegistration = () => {
+  const featureRoot = 'libs/api/generated-crud/feature/src'
+  const canonicalModulePath = join(featureRoot, 'lib/api-generated-crud-feature.module.ts')
+  const featureIndexPath = join(featureRoot, 'index.ts')
+  const appModulePath = 'apps/api/src/app.module.ts'
+  const moduleFiles = walkFiles(join(featureRoot, 'lib'), path => path.endsWith('.module.ts'))
+  const moduleDeclarations = moduleFiles.filter(file =>
+    readFileSync(file, 'utf8').includes('export class ApiGeneratedCrudFeatureModule'),
+  )
+
+  if (moduleDeclarations.length !== 1 || moduleDeclarations[0] !== canonicalModulePath) {
+    fail(
+      'crud-registration',
+      'Generated CRUD must declare exactly one ApiGeneratedCrudFeatureModule at the canonical path',
+      canonicalModulePath,
+    )
+    return
+  }
+
+  const moduleSource = stripComments(readFileSync(canonicalModulePath, 'utf8'))
+  const providerBlock = /providers\s*:\s*\[([\s\S]*?)\]/.exec(moduleSource)?.[1] ?? ''
+  const registeredProviders = new Set(
+    getRegexMatches(/\bGenerated\w+Resolver\b/g, providerBlock).map(match => match[0]),
+  )
+  const resolverClasses = getGeneratedResolverClassNames()
+
+  for (const resolverClass of resolverClasses) {
+    if (!registeredProviders.has(resolverClass)) {
+      fail(
+        'crud-registration',
+        `Generated resolver provider "${resolverClass}" is missing from ApiGeneratedCrudFeatureModule`,
+        canonicalModulePath,
+      )
+    }
+  }
+  if (registeredProviders.size !== resolverClasses.length) {
+    fail(
+      'crud-registration',
+      'Generated CRUD provider count does not match the generated resolver files',
+      canonicalModulePath,
+    )
+  }
+
+  if (!existsSync(featureIndexPath)) {
+    fail('crud-registration', 'Generated CRUD feature barrel is missing', featureIndexPath)
+  } else {
+    const indexSource = stripComments(readFileSync(featureIndexPath, 'utf8'))
+    if (!indexSource.includes("'./lib/api-generated-crud-feature.module'")) {
+      fail(
+        'crud-registration',
+        'Generated CRUD feature barrel must export the canonical feature module',
+        featureIndexPath,
+      )
+    }
+  }
+
+  if (!existsSync(appModulePath)) {
+    fail('crud-registration', 'API app module is missing', appModulePath)
+    return
+  }
+  const appModuleSource = stripComments(readFileSync(appModulePath, 'utf8'))
+  const hasFeatureImport =
+    /import\s*\{\s*ApiGeneratedCrudFeatureModule\s*\}\s*from\s*['"]@[^'"]+\/api\/generated-crud\/feature['"]/.test(
+      appModuleSource,
+    )
+  const hasFeatureRegistration =
+    /coreModules\s*=\s*\[[\s\S]*?\bApiGeneratedCrudFeatureModule\s*,?[\s\S]*?\]/.test(
+      appModuleSource,
+    )
+  if (!hasFeatureImport || !hasFeatureRegistration) {
+    fail(
+      'crud-registration',
+      'ApiGeneratedCrudFeatureModule must be imported and registered in coreModules',
+      appModulePath,
+    )
   }
 }
 
@@ -1453,6 +1541,7 @@ checkForbiddenPrismaImports()
 checkStaleConfigNames()
 checkMcpWiring()
 checkApiControllerRoutesAllowed()
+checkGeneratedCrudModuleRegistration()
 checkDefaultResolverGeneratedNameCollisions()
 checkHandwrittenAdminSdkOperations()
 checkPluginExportsAndRegistration()
