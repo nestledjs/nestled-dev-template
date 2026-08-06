@@ -55,6 +55,10 @@ pnpm dev:api      # API server (localhost:3000)
 pnpm dev:web      # Web app (separate terminal)
 ```
 
+Every nestled app defaults to these same ports, so only one runs at a time. To run several side
+by side, claim a port block in [`docs/dev/dev-ports.md`](docs/dev/dev-ports.md) and set it in the
+local `.env` — no code change needed. `pnpm nestled-doctor` warns when half a port pair has moved.
+
 ### Building
 
 ```bash
@@ -71,7 +75,7 @@ pnpm test:e2e                      # scripted end-to-end tests
 pnpm nx test <project-name>        # focused project test
 pnpm nx e2e api-e2e                # API e2e tests
 
-# Test database management (port 5433, separate from dev DB on 5432)
+# Test database management (port ${POSTGRES_TEST_PORT:-5433}, separate from dev DB on ${POSTGRES_PORT:-5432})
 pnpm test:db:start
 pnpm test:db:reset
 pnpm test:db:stop

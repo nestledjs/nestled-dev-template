@@ -1,4 +1,4 @@
-import { normalizeApiOrigin } from './api-url'
+import { defaultOrigin, normalizeApiOrigin } from './api-url'
 
 // Treat unset OR `.env.example` placeholder values (e.g. `your-google-client-id`) as "not
 // configured", so a plain `cp .env.example .env` does not falsely report OAuth as enabled. Trim
@@ -35,6 +35,14 @@ const apiOrigin = () =>
     port: process.env['PORT'],
   })
 
+// The browser origin the web app is served from. Explicit WEB_URL wins; otherwise derive from
+// WEB_PORT so moving the web port alone does not silently break CORS. Deliberately does NOT use
+// HOST — that is the API's bind address, and `http://0.0.0.0:4200` is never a browser Origin.
+const webOrigin = () => {
+  const explicit = (process.env['WEB_URL'] ?? '').trim()
+  return explicit.length > 0 ? explicit : defaultOrigin(undefined, process.env['WEB_PORT'], 4200)
+}
+
 export const configuration = () => ({
   prefix: 'api',
   environment: process.env['NODE_ENV'],
@@ -69,10 +77,17 @@ export const configuration = () => ({
       },
     },
     cors: {
-      origin: (process.env['ALLOWED_ORIGINS'] ?? '')
-        .split(',')
-        .map(o => o.trim())
-        .filter(o => o.length > 0),
+      // An empty ALLOWED_ORIGINS used to yield [] and hand main.ts's hardcoded
+      // ['http://localhost:4200'] the job, so moving WEB_PORT blocked every request with no
+      // visible error. Fall back to the derived web origin instead — identical to the old
+      // behavior when nothing is set.
+      origin: (() => {
+        const explicit = (process.env['ALLOWED_ORIGINS'] ?? '')
+          .split(',')
+          .map(o => o.trim())
+          .filter(o => o.length > 0)
+        return explicit.length > 0 ? explicit : [webOrigin()]
+      })(),
     },
   },
   siteUrl: process.env['SITE_URL'] ?? apiOrigin(),
