@@ -37,6 +37,7 @@ why: >
 
 affectedPaths:
   - libs/api/utils/src/lib/guards/auth-level.decorator.ts
+  - libs/api/utils/src/lib/guards/auth-level.decorator.spec.ts
   - libs/api/utils/src/lib/guards/global-auth.guard.ts
   - libs/api/utils/src/lib/guards/global-auth.guard.spec.ts
   - libs/api/utils/src/lib/guards/guards.module.ts
