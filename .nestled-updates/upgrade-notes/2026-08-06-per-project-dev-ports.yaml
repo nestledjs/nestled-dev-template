@@ -97,7 +97,6 @@ affectedPaths:
   - scripts/doctor.ts
   - docs/dev/doctor.md
   - docs/dev/README.md
-  - docs/dev/dev-ports.md
   - docs/template/README.md
   - AGENTS.md
 
