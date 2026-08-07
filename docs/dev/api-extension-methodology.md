@@ -35,6 +35,10 @@ These names are reserved for generated admin CRUD. Custom code must not define
 operations with those names and should not use the `admin` or `__Admin` prefix
 unless it is part of the generated/admin framework surface.
 
+Generated CRUD is always protected by `GqlAuthAdminGuard` and `@AdminOnly()`.
+Its typed, depth-bounded filters and recursive relation selection exist for the
+admin data browser only. Do not use `@crudAuth` to lower access.
+
 `adminCreateUser` is not one of the generated CRUD fields today, but `admin*` is
 reserved by convention for framework/admin surfaces. Use a role or workflow
 prefix such as `user*`, `staff*`, `owner*`, or a domain verb for app-specific
@@ -73,6 +77,9 @@ Rules for default model extensions:
 - Do not create `__Admin*` GraphQL documents by hand.
 - Add new operations with clear non-generated names.
 - Keep model-specific DTOs beside the model under `dto/`.
+- Define application inputs locally; do not import generated CRUD DTOs.
+- Use `ApiCoreDataAccessService` with explicit `where` and `select` clauses. Do
+  not inject `ApiCrudDataAccessService` or call `createSelect`.
 - Register additional resolvers in the model module's `providers`.
 
 Create a conventional model-adjacent extension only when custom behavior is
@@ -118,8 +125,9 @@ Good examples:
 - admin dashboard/reporting
 
 Plugin modules can own resolvers, services, controllers, DTOs, guards, and
-feature-specific helpers. They can depend on generated data access and
-integrations, but they should keep product workflow rules inside the plugin.
+feature-specific helpers. They can depend on `ApiCoreDataAccessService` and
+integrations, but not generated CRUD data access. They should keep product
+workflow rules inside the plugin.
 
 Rules for plugins:
 
@@ -135,6 +143,17 @@ Rules for plugins:
   authenticate through a webhook signature, OAuth exchange, or protocol bearer token.
 - Keep vendor SDK details out of plugins; inject integration services instead.
 - Name operations by feature intent, not generated CRUD convention.
+
+## `admin-custom`: Admin-Only Generated CRUD Composition
+
+Use `libs/api/admin-custom` only when an admin-only workflow must add validation
+or side effects around a generated CRUD operation. Resolver classes in this
+library must declare both `GqlAuthAdminGuard` and `@AdminOnly()` at class level.
+
+This is the only handwritten project that may inject `ApiCrudDataAccessService`
+or reuse generated CRUD inputs. It must never contain authenticated-user or
+public operations. Prefer explicit `ApiCoreDataAccessService` queries even here
+when generic selection behavior is unnecessary.
 
 ## `integrations`: Vendor and Provider Wrappers
 
@@ -177,6 +196,12 @@ Use `integrations` when:
 - the code wraps a third-party SDK or provider
 - other plugins/default modules should inject it
 - the code should not know Nestled business rules
+
+Use `admin-custom` when:
+
+- every operation is super-admin-only
+- the workflow intentionally composes generated CRUD
+- the operation adds admin validation or side effects without lowering access
 
 ## Verification
 

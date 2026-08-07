@@ -16,6 +16,13 @@ or framework commands such as `pnpm doctor` or `expo doctor`.
 - Registered Nest API controller routes are covered by `VALID_API_PREFIXES`.
 - Generated CRUD has one populated, registered feature module whose provider list
   matches the generated resolver files.
+- Every generated CRUD operation uses `GqlAuthAdminGuard` and declares `@AdminOnly()`.
+- Prisma schemas contain no `@crudAuth` annotations.
+- The installed `@nestledjs/generators` is 3.0.2 or newer, so regeneration cannot lower CRUD
+  authorization or restore the removed public selector.
+- Application API code under `libs/api/custom` does not import generated CRUD inputs/services or
+  the recursive admin selection compiler.
+- Resolver operations under `libs/api/admin-custom` remain class- or method-level admin-only.
 - Default model resolvers are additive, do not inherit generated resolvers, and
   avoid generated field-name collisions.
 - Hand-written `__Admin*` SDK operations stay out of normal SDK operation folders.
@@ -104,3 +111,7 @@ source repository during local downstream work.
 Doctor is intentionally fast and local. It does not replace builds, tests, or
 type checks; it catches framework-specific drift before those checks become
 harder to interpret.
+
+`pnpm db-update` runs Doctor before and after generation. The preflight rejects deprecated
+`@crudAuth` annotations before the installed generator can interpret them; the postflight verifies
+that every emitted resolver still satisfies the admin-only contract.
