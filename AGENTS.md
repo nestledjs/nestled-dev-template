@@ -374,13 +374,13 @@ After making changes to the Prisma schema:
    - GraphQL resolvers with updated guards
    - GraphQL schema types
    - TypeScript SDK
+3. Review generated code in:
+   - `/libs/api/generated-crud/feature/` — Resolvers
+   - `/libs/api/generated-crud/data-access/` — Data access services
+   - `/libs/shared/sdk/` — TypeScript SDK for frontend
 
 `pnpm db-update` runs Doctor before and after generation so forbidden authorization annotations or
-non-admin generated resolvers cannot be produced unnoticed. 3. Generated code appears in:
-
-- `/libs/api/generated-crud/feature/` — Resolvers
-- `/libs/api/generated-crud/data-access/` — Data access services
-- `/libs/shared/sdk/` — TypeScript SDK for frontend
+non-admin generated resolvers cannot be produced unnoticed.
 
 ## API Server Management
 
