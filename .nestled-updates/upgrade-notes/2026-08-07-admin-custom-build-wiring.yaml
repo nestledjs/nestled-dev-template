@@ -20,11 +20,11 @@ why: >
   analysis configuration, and both are excluded from the promotion mirror, so a downstream
   project maintains its own copies against its own library list.
 
-  Recorded rather than skipped because every reference in apps/api/tsconfig.json is already
-  broken: they resolve relative to apps/api/, so "./libs/api/prisma" points at
-  apps/api/libs/api/prisma and tsc reports TS6053 for all eleven pre-existing entries. The new
-  entry is added for consistency, not effect. Correcting all twelve to ../../libs/... deserves
-  its own change and a check that nothing depends on the current inertness.
+  Also corrects every project reference in apps/api/tsconfig.json. They resolved relative to
+  apps/api/, so "./libs/api/prisma" pointed at apps/api/libs/api/prisma and tsc reported TS6053
+  for all eleven — the whole references block was inert. They are now ../../libs/... and resolve,
+  and `tsc --build` walks them. One entry pointed at libs/api/smtp-mailer/data-access, a library
+  that no longer exists anywhere in the repo; removed.
 
 affectedPaths:
   - apps/api/tsconfig.json
