@@ -5,7 +5,8 @@ the second `pnpm dev:api` dies on `EADDRINUSE`, and the second `pnpm docker:up` 
 This page defines a deterministic way to choose non-overlapping ports without recording anyone's
 private project inventory in the public template.
 
-**The rule:** choose a unique positive block number, record the assignment in a private team
+**The rule:** block `0` is the public default. To run another checkout alongside it, choose a
+unique private allocation starting at block `1`, record the assignment in a private team
 inventory, then set the whole block in that repo's local `.env`. No code change is needed — every
 port here is env-driven. Never add real repo/client names, local sites, IP ranges, or deployment
 inventory to this public document. A checkout-local inventory may live under `.nestled-local/`,
