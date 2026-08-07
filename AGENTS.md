@@ -16,6 +16,7 @@
 Application code lives in `apps/`: `apps/api` is the NestJS GraphQL API, `apps/web` is the React/React Router web app, and `apps/api-e2e` contains API end-to-end tests. Shared code lives in `libs/`:
 
 - `libs/api/*` — Backend libraries:
+  - `admin-custom` — Admin-only workflows that intentionally compose generated CRUD
   - `config` — Configuration module
   - `core` — Core business logic and models
   - `custom` — Custom resolvers and plugins
@@ -223,33 +224,16 @@ Changelog generation is deliberately not part of this process. `nx.json` configu
 and no GitHub release has ever been cut, so `nx release changelog` has never run here. Do not
 introduce it as part of a routine release; make it a deliberate separate change if wanted.
 
-## @crudAuth System for Declarative Security
+## Generated Admin CRUD and Explicit Application APIs
 
-This project uses a custom `@crudAuth` annotation system in the Prisma schema to declaratively configure CRUD authorization at the model level.
+Generated CRUD is a super-admin management surface. Every generated query and mutation must use
+`GqlAuthAdminGuard` and `@AdminOnly()`; Prisma `@crudAuth` annotations are forbidden and Doctor fails
+when one is present. Do not lower generated CRUD to satisfy an application or frontend workflow.
 
-### How it works
-
-Add a comment above any model in `/libs/api/prisma/src/lib/schemas/schema.prisma`:
-
-```prisma
-/// @crudAuth: { "readOne": "user", "readMany": "user", "create": "user", "update": "user", "delete": "user" }
-model UserPreference {
-  id        String   @id @default(uuid())
-  // ... rest of model
-}
-```
-
-### Auth Levels
-
-- `"admin"` - Uses `GqlAuthAdminGuard` (default for all operations)
-- `"user"` - Uses `GqlAuthGuard` (authenticated user)
-- `"custom"` - Uses a custom guard (e.g., `"organizationOwner"` would require `GqlAuthOrganizationOwnerGuard` in `/libs/api/utils/src/lib/guards/`)
-
-### CRUD Operations
-
-Configure security for: `readOne`, `readMany`, `count`, `create`, `update`, `delete`.
-
-**Best practice:** Only specify non-admin levels. Since all operations default to `"admin"`, only include operations you want to change.
+Clients may submit any GraphQL document, but they can only call fields and arguments declared in the
+schema. Application resolvers therefore define their own inputs and explicit Prisma `where` and
+`select` clauses. They must not accept generated CRUD inputs or inject
+`ApiCrudDataAccessService`. The legacy public `createSelect` helper no longer exists.
 
 ### Custom Resolvers and Generated CRUD
 
@@ -269,23 +253,33 @@ For custom user-facing operations, use names that cannot collide with generated 
 @Resolver(() => Organization)
 export class OrganizationResolver {
   @Mutation(() => Organization)
-  userCreateOrganization(@CtxUser() user: User, @Args('input') input: CreateOrganizationInput) {
-    // Custom model-specific workflow.
+  userCreateOrganization(@CtxUser() user: User, @Args('input') input: UserCreateOrganizationInput) {
+    // Service uses ApiCoreDataAccessService with an explicit user-scoped where/select.
   }
 }
 ```
+
+Use `ApiCoreDataAccessService` for handwritten Prisma access. That service is not generated CRUD;
+the resolver or service remains responsible for ownership, tenant scope, selected fields, and
+auditing. Resolve user-visible relations deliberately with an explicit query or guarded
+`@ResolveField` instead of compiling the incoming selection set recursively.
+
+When an admin-only custom workflow intentionally needs generated CRUD composition, place it under
+`libs/api/admin-custom`, protect the resolver class with `GqlAuthAdminGuard` and `@AdminOnly()`, and
+keep it out of `libs/api/custom`. The Nx and Doctor boundaries enforce that separation.
 
 For cross-model features, create a separate plugin resolver under
 `libs/api/custom/src/lib/plugins/<feature>` instead of adding unrelated behavior to a default model.
 
 ### Standard Pattern Summary
 
-1. Every model gets generated admin CRUD (organization, createOrganization, updateOrganization, etc.)
+1. Every normal model gets generated admin CRUD (organization, createOrganization, etc.)
 2. User-specific operations get custom resolvers (myOrganizations, userCreateOrganization, etc.)
 3. Avoid `@skipCrud` except for documented security-sensitive internal models
 4. Default model resolvers are independent and only add non-colliding custom methods
-5. Admin operations are admin-only by default
-6. User operations are in separate resolvers with clear naming
+5. Generated CRUD is always admin-only and keeps its typed, bounded admin filters
+6. User operations define purpose-built DTOs and explicit data access
+7. Only `api-admin-custom` may compose generated CRUD data access
 
 ## CRUD Generation and Security-Sensitive Exceptions
 
@@ -310,8 +304,14 @@ export class UserOrganizationResolver {
   myOrganizations(@CtxUser() user: User): Promise<Organization[]> { ... }
 
   @Mutation(() => Organization)
-  userCreateOrganization(@CtxUser() user: User, @Args('input') input: CreateOrganizationInput): Promise<Organization> { ... }
+  userCreateOrganization(@CtxUser() user: User, @Args('input') input: UserCreateOrganizationInput): Promise<Organization> { ... }
 }
+```
+
+Scaffold a model-adjacent resolver only when custom behavior is needed:
+
+```bash
+pnpm nx g @nestledjs/generators:model-extension Organization --no-interactive
 ```
 
 **WRONG** ❌:
@@ -369,16 +369,20 @@ export default [
 
 After making changes to the Prisma schema:
 
-1. Update schema annotations in `/libs/api/prisma/src/lib/schemas/schema.prisma`
+1. Update schema annotations in `/libs/api/prisma/src/lib/schemas/schema.prisma` (`@crudAuth` is
+   forbidden)
 2. Run `pnpm db-update` to regenerate:
    - Prisma client
    - GraphQL resolvers with updated guards
    - GraphQL schema types
    - TypeScript SDK
-3. Generated code appears in:
-   - `/libs/api/generated-crud/feature/` — Resolvers
-   - `/libs/api/generated-crud/data-access/` — Data access services
-   - `/libs/shared/sdk/` — TypeScript SDK for frontend
+
+`pnpm db-update` runs Doctor before and after generation so forbidden authorization annotations or
+non-admin generated resolvers cannot be produced unnoticed. 3. Generated code appears in:
+
+- `/libs/api/generated-crud/feature/` — Resolvers
+- `/libs/api/generated-crud/data-access/` — Data access services
+- `/libs/shared/sdk/` — TypeScript SDK for frontend
 
 ## API Server Management
 
