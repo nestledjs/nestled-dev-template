@@ -1,11 +1,15 @@
 # Local Dev Port Blocks
 
 Every nestled app ships the same default ports, so out of the box only one can run at a time —
-the second `pnpm dev:api` dies on `EADDRINUSE`, and the second `pnpm docker:up` cannot bind 5432. This page assigns each repo its own block of ports.
+the second `pnpm dev:api` dies on `EADDRINUSE`, and the second `pnpm docker:up` cannot bind 5432.
+This page defines a deterministic way to choose non-overlapping ports without recording anyone's
+private project inventory in the public template.
 
-**The rule:** claim a block below, then set the whole block in that repo's local `.env`. No code
-change is needed — every port here is env-driven. `.env` is gitignored, which is why the registry
-lives in the repo instead: it is what stops two people claiming block 3.
+**The rule:** choose a unique positive block number, record the assignment in a private team
+inventory, then set the whole block in that repo's local `.env`. No code change is needed — every
+port here is env-driven. Never add real repo/client names, local sites, IP ranges, or deployment
+inventory to this public document. A checkout-local inventory may live under `.nestled-local/`,
+which is gitignored, but teams should keep their shared canonical registry in a private system.
 
 Run `pnpm nestled-doctor` after editing. It warns (never fails) when one half of a pair has moved
 and the other has not.
@@ -26,21 +30,14 @@ dev/test Postgres pair from ever overlapping the next block:
 | `MAILHOG_SMTP_PORT`  | `1025 + 10N` |
 | `MAILHOG_UI_PORT`    | `8025 + 10N` |
 
-## Assigned blocks
+## Choosing a block
 
-| N   | Repo                                                     | API  | WEB  | PREVIEW | PG   | PG TEST | REDIS | MAILHOG SMTP/UI |
-| --- | -------------------------------------------------------- | ---- | ---- | ------- | ---- | ------- | ----- | --------------- |
-| 0   | `nestled-dev-template`, `nestled-template` (defaults)    | 3000 | 4200 | 4300    | 5432 | 5433    | 6379  | 1025 / 8025     |
-| 1   | `travel-outlook`                                         | 3001 | 4201 | 4301    | 5442 | 5443    | 6389  | 1035 / 8035     |
-| 2   | `muzebook`                                               | 3002 | 4202 | 4302    | 5452 | 5453    | 6399  | 1045 / 8045     |
-| 3   | `flightdesk`                                             | 3003 | 4203 | 4303    | 5462 | 5463    | 6409  | 1055 / 8055     |
-| 4   | `cashcast`                                               | 3004 | 4204 | 4304    | 5472 | 5473    | 6419  | 1065 / 8065     |
-| 5   | `biztobiz`                                               | 3005 | 4205 | 4305    | 5482 | 5483    | 6429  | 1075 / 8075     |
-| 6   | `qalatra.com`                                            | 3006 | 4206 | 4306    | 5492 | 5493    | 6439  | 1085 / 8085     |
-| 7   | `moceanic-ai`                                            | 3007 | 4207 | 4307    | 5502 | 5503    | 6449  | 1095 / 8095     |
-| 8+  | unclaimed — take the next N and add a row in the same PR |      |      |         |      |         |       |                 |
+Block 0 is the public default and needs no `.env` changes. Start private allocations at block 1,
+then use the next block not already present in your private registry. The registry—not this repo—is
+what prevents two developers or projects from choosing the same block.
 
-Block 0 is the defaults. A repo on block 0 needs no `.env` changes at all.
+The block number is not a secret; the private information is the mapping between that number and
+your clients, repos, local sites, or network ranges.
 
 ## Paste-ready `.env` block
 

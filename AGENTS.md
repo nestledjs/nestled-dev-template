@@ -56,8 +56,10 @@ pnpm dev:web      # Web app (separate terminal)
 ```
 
 Every nestled app defaults to these same ports, so only one runs at a time. To run several side
-by side, claim a port block in [`docs/dev/dev-ports.md`](docs/dev/dev-ports.md) and set it in the
-local `.env` — no code change needed. `pnpm nestled-doctor` warns when half a port pair has moved.
+by side, choose a unique port block with [`docs/dev/dev-ports.md`](docs/dev/dev-ports.md), record
+the assignment in a private team inventory, and set it in the local `.env` — no code change
+needed. Never add real repo/client assignments, local sites, or IP ranges to this public repo.
+`pnpm nestled-doctor` warns when half a port pair has moved.
 
 ### Building
 
