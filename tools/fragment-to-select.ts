@@ -1,5 +1,5 @@
 #!/usr/bin/env tsx
-import { readdirSync, readFileSync, statSync } from 'node:fs'
+import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs'
 import { basename, join, resolve } from 'node:path'
 import { pathToFileURL } from 'node:url'
 import {
@@ -58,6 +58,18 @@ const renderSelect = (select: PrismaSelect, indent = 2): string => {
   return lines.join('\n')
 }
 
+const requireDirectory = (path: string, label: string): void => {
+  if (!existsSync(path) || !statSync(path).isDirectory()) {
+    throw new Error(`${label} does not exist or is not a directory: ${path}`)
+  }
+}
+
+const requireFile = (path: string, label: string): void => {
+  if (!existsSync(path) || !statSync(path).isFile()) {
+    throw new Error(`${label} does not exist or is not a file: ${path}`)
+  }
+}
+
 const main = async (): Promise<void> => {
   const args = process.argv.slice(2)
   if (args.includes('--help') || args.includes('-h')) {
@@ -75,6 +87,10 @@ const main = async (): Promise<void> => {
   const graphqlRoot = join(repo, 'libs/shared/sdk/src/graphql')
   const modelDirectory = join(graphqlRoot, modelFolder)
   const metadataPath = join(repo, 'libs/shared/sdk/src/lib/database-models.ts')
+  requireDirectory(repo, 'Repository root')
+  requireDirectory(graphqlRoot, 'Application SDK GraphQL directory')
+  requireDirectory(modelDirectory, `SDK model folder ${modelFolder}`)
+  requireFile(metadataPath, 'Generated database metadata')
   const metadataModule = (await import(pathToFileURL(metadataPath).href)) as {
     DATABASE_MODELS: DatabaseModelMetadata[]
   }
