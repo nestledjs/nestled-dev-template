@@ -889,10 +889,19 @@ const checkApplicationSdkCrudBoundary = () => {
   const applicationFiles = walkFiles('libs/shared/sdk/src/graphql', path =>
     path.endsWith('.graphql'),
   )
-  for (const file of applicationFiles) {
-    const source = readFileSync(file, 'utf8')
-    for (const violation of getPublicSdkGeneratedCrudViolations(source, generatedRootFields)) {
-      fail('admin-crud-boundary', violation.message, file, violation.line)
+  const applicationDocuments = applicationFiles.map(file => ({
+    file,
+    source: readFileSync(file, 'utf8'),
+  }))
+  const applicationSources = applicationDocuments.map(document => document.source)
+
+  for (const document of applicationDocuments) {
+    for (const violation of getPublicSdkGeneratedCrudViolations(
+      document.source,
+      generatedRootFields,
+      applicationSources,
+    )) {
+      fail('admin-crud-boundary', violation.message, document.file, violation.line)
     }
   }
 }

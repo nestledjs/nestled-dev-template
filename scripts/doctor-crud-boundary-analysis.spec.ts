@@ -83,6 +83,72 @@ describe('generated CRUD boundary analysis', () => {
     ])
   })
 
+  it('rejects generated admin CRUD fields behind root-level inline fragments', () => {
+    expect(
+      getPublicSdkGeneratedCrudViolations(
+        `
+          query ActiveUsers {
+            ... on Query {
+              users { id }
+            }
+          }
+        `,
+        new Set(['users']),
+      ),
+    ).toEqual([
+      expect.objectContaining({
+        line: 4,
+        message: expect.stringContaining('ActiveUsers calls generated admin CRUD field users'),
+      }),
+    ])
+  })
+
+  it('rejects generated admin CRUD fields behind root-level named fragments', () => {
+    expect(
+      getPublicSdkGeneratedCrudViolations(
+        `
+          query ActiveUsers {
+            ...GeneratedUsers
+          }
+          fragment GeneratedUsers on Query {
+            users { id }
+          }
+        `,
+        new Set(['users']),
+      ),
+    ).toEqual([
+      expect.objectContaining({
+        line: 3,
+        message: expect.stringContaining('ActiveUsers calls generated admin CRUD field users'),
+      }),
+    ])
+  })
+
+  it('rejects generated admin CRUD fields from root fragments in another SDK file', () => {
+    expect(
+      getPublicSdkGeneratedCrudViolations(
+        `
+          query ActiveUsers {
+            ...GeneratedUsers
+          }
+        `,
+        new Set(['users']),
+        [
+          `
+            fragment GeneratedUsers on Query {
+              users { id }
+            }
+          `,
+        ],
+      ),
+    ).toEqual([
+      expect.objectContaining({
+        line: 3,
+        message: expect.stringContaining('ActiveUsers calls generated admin CRUD field users'),
+      }),
+    ])
+  })
+
   it('accepts purpose-built application SDK operations and fragments', () => {
     const generatedFields = new Set(['users', 'usersCount', 'updateUser'])
     expect(

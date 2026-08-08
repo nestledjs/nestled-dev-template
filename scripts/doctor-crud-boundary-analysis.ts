@@ -1,5 +1,5 @@
 import ts from 'typescript'
-import { Kind, parse } from 'graphql'
+import { Kind, parse, type FragmentDefinitionNode, type SelectionSetNode } from 'graphql'
 import { getAuthOperations } from './doctor-auth-analysis'
 
 export type CrudBoundaryViolation = {
@@ -72,26 +72,100 @@ export const getGraphqlRootFieldNames = (source: string): Set<string> => {
   return names
 }
 
+type RootFieldAnalysis = {
+  fragments: ReadonlyMap<string, FragmentDefinitionNode>
+  generatedRootFields: ReadonlySet<string>
+  operationName: string
+  operationSource: string
+  violations: CrudBoundaryViolation[]
+}
+
+const lineAtOffset = (source: string, offset: number): number =>
+  source.slice(0, offset).split('\n').length
+
+const getFragments = (sources: readonly string[]): Map<string, FragmentDefinitionNode> => {
+  const fragments = new Map<string, FragmentDefinitionNode>()
+
+  for (const source of sources) {
+    for (const definition of parse(source).definitions) {
+      if (definition.kind === Kind.FRAGMENT_DEFINITION) {
+        fragments.set(definition.name.value, definition)
+      }
+    }
+  }
+
+  return fragments
+}
+
+const addGeneratedRootFieldViolation = (
+  fieldName: string,
+  offset: number,
+  analysis: RootFieldAnalysis,
+) => {
+  analysis.violations.push({
+    line: lineAtOffset(analysis.operationSource, offset),
+    message:
+      `Application SDK operation ${analysis.operationName} calls generated admin CRUD field ` +
+      `${fieldName}; use the generated __Admin* document or call an explicit application resolver`,
+  })
+}
+
+const checkRootSelections = (
+  selectionSet: SelectionSetNode,
+  analysis: RootFieldAnalysis,
+  fragmentPath: ReadonlySet<string>,
+  reportOffset?: number,
+) => {
+  for (const selection of selectionSet.selections) {
+    if (selection.kind === Kind.FIELD) {
+      if (analysis.generatedRootFields.has(selection.name.value)) {
+        addGeneratedRootFieldViolation(
+          selection.name.value,
+          reportOffset ?? selection.loc?.start ?? 0,
+          analysis,
+        )
+      }
+      continue
+    }
+
+    if (selection.kind === Kind.INLINE_FRAGMENT) {
+      checkRootSelections(selection.selectionSet, analysis, fragmentPath, reportOffset)
+      continue
+    }
+
+    const fragmentName = selection.name.value
+    const fragment = analysis.fragments.get(fragmentName)
+    if (!fragment || fragmentPath.has(fragmentName)) continue
+
+    const nextPath = new Set(fragmentPath)
+    nextPath.add(fragmentName)
+    const nextReportOffset = reportOffset ?? selection.loc?.start ?? 0
+    checkRootSelections(fragment.selectionSet, analysis, nextPath, nextReportOffset)
+  }
+}
+
 export const getPublicSdkGeneratedCrudViolations = (
   source: string,
   generatedRootFields: ReadonlySet<string>,
+  fragmentSources: readonly string[] = [],
 ): CrudBoundaryViolation[] => {
   const violations: CrudBoundaryViolation[] = []
+  const document = parse(source)
+  const fragments = getFragments([source, ...fragmentSources])
 
-  for (const definition of parse(source).definitions) {
+  for (const definition of document.definitions) {
     if (definition.kind !== Kind.OPERATION_DEFINITION) continue
-    const operationName = definition.name?.value ?? '(anonymous operation)'
-
-    for (const selection of definition.selectionSet.selections) {
-      if (selection.kind !== Kind.FIELD || !generatedRootFields.has(selection.name.value)) continue
-      const line = source.slice(0, selection.loc?.start ?? 0).split('\n').length
-      violations.push({
-        line,
-        message:
-          `Application SDK operation ${operationName} calls generated admin CRUD field ` +
-          `${selection.name.value}; use the generated __Admin* document or call an explicit application resolver`,
-      })
-    }
+    checkRootSelections(
+      definition.selectionSet,
+      {
+        fragments,
+        generatedRootFields,
+        operationName: definition.name?.value ?? '(anonymous operation)',
+        operationSource: source,
+        violations,
+      },
+      new Set(),
+    )
   }
 
   return violations
