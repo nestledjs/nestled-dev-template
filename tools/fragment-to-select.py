@@ -33,9 +33,10 @@ def sanitize_argument(argument: str) -> str | None:
     developer helper into an arbitrary-code loader. `--` would not help, because tsx interprets
     its own flags ahead of that separator.
 
-    The forwarded string is reconstructed character by character rather than passed through, so
-    the value reaching the command is built here from ALLOWED_CHARACTERS and never derives from
-    the caller's object.
+    The string passed to subprocess.run() is a newly created one containing only characters from
+    ALLOWED_CHARACTERS. It is of course still derived from the caller's input — it is that input
+    with everything outside the alphabet dropped — and is only forwarded when the result compares
+    equal to what was supplied, so nothing is silently rewritten into something else.
     """
     if not argument or argument[0] not in ALLOWED_LEADING_CHARACTERS:
         return None
