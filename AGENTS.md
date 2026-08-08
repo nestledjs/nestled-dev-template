@@ -16,7 +16,6 @@
 Application code lives in `apps/`: `apps/api` is the NestJS GraphQL API, `apps/web` is the React/React Router web app, and `apps/api-e2e` contains API end-to-end tests. Shared code lives in `libs/`:
 
 - `libs/api/*` — Backend libraries:
-  - `admin-custom` — Admin-only workflows that intentionally compose generated CRUD
   - `config` — Configuration module
   - `core` — Core business logic and models
   - `custom` — Custom resolvers and plugins
@@ -253,7 +252,15 @@ providers. Default model resolvers under `libs/api/custom/src/lib/default/<model
 additive resolvers and must not extend `Generated<Model>Resolver`. Never duplicate or override a
 generated operation name.
 
-For custom user-facing operations, use names that cannot collide with generated admin CRUD:
+All handwritten application operations belong under `libs/api/custom`, regardless of whether they
+are anonymous, authenticated, staff-only, or super-admin-only. Place an operation under
+`libs/api/custom/src/lib/default/<model>` when one Prisma model is its primary domain owner. This
+includes custom staff and admin operations such as `staffUsersList` or `adminDeleteUser`. Place a
+capability under `libs/api/custom/src/lib/plugins/<feature>` when it spans multiple models or owns a
+larger product workflow. Authorization level does not determine the folder.
+
+Use names that communicate the operation's audience or workflow and cannot collide with generated
+admin CRUD:
 
 ```typescript
 @Resolver(() => Organization)
@@ -270,22 +277,30 @@ the resolver or service remains responsible for ownership, tenant scope, selecte
 auditing. Resolve user-visible relations deliberately with an explicit query or guarded
 `@ResolveField` instead of compiling the incoming selection set recursively.
 
-When an admin-only custom workflow intentionally needs generated CRUD composition, place it under
-`libs/api/admin-custom`, protect the resolver class with `GqlAuthAdminGuard` and `@AdminOnly()`, and
-keep it out of `libs/api/custom`. The Nx and Doctor boundaries enforce that separation.
+The only generated CRUD import allowed in handwritten code is `ApiGeneratedCrudFeatureModule` in
+`apps/api/src/app.module.ts`, solely to register the sealed admin CRUD surface. Never import,
+inject, extend, wrap, or compose generated CRUD inputs, services, or resolvers from a handwritten
+resolver or service. This rule also applies to admin-only workflows: protect their explicit
+resolver with `GqlAuthAdminGuard` and `@AdminOnly()`, define a purpose-built input, and query Prisma
+through `ApiCoreDataAccessService`.
 
 For cross-model features, create a separate plugin resolver under
 `libs/api/custom/src/lib/plugins/<feature>` instead of adding unrelated behavior to a default model.
 
+Use `libs/api/integrations` only for thin, reusable NestJS wrappers around third-party providers or
+infrastructure, such as SendGrid, Infusionsoft, Stripe, or a storage SDK. Integration services may
+expose injectable methods such as `sendgrid.send(...)`; product queries, mutations, authorization,
+and workflow decisions remain in `custom/default` or `custom/plugins`.
+
 ### Standard Pattern Summary
 
 1. Every normal model gets generated admin CRUD (organization, createOrganization, etc.)
-2. User-specific operations get custom resolvers (myOrganizations, userCreateOrganization, etc.)
+2. Every handwritten application operation lives in `custom`, at any authorization level
 3. Avoid `@skipCrud` except for documented security-sensitive internal models
 4. Default model resolvers are independent and only add non-colliding custom methods
 5. Generated CRUD is always admin-only and keeps its typed, bounded admin filters
-6. User operations define purpose-built DTOs and explicit data access
-7. Only `api-admin-custom` may compose generated CRUD data access
+6. Handwritten operations define purpose-built DTOs and explicit data access
+7. No handwritten resolver or service composes generated CRUD, including admin-only workflows
 
 ## CRUD Generation and Security-Sensitive Exceptions
 

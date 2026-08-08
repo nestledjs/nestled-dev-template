@@ -31,13 +31,22 @@ The generated SDK admin operations use the `__Admin*` naming convention:
 - `__AdminUpdateOrganization`
 - `__AdminDeleteOrganization`
 
-These names are reserved for generated admin CRUD. Custom code must not define
-operations with those names and should not use the `admin` or `__Admin` prefix
-unless it is part of the generated/admin framework surface.
+The plain schema field names and the generated `__Admin*` SDK document names are reserved for
+generated admin CRUD. `__Admin*` identifies generated executable documents; it is not the schema
+field namespace. Handwritten code may use an `admin*` field or document name for an explicit custom
+super-admin workflow as long as the name does not collide with a generated field. Never create a
+handwritten `__Admin*` document, and do not rename schema fields into a `__Admin*` namespace;
+GraphQL reserves schema names beginning with `__` for introspection.
 
 Generated CRUD is always protected by `GqlAuthAdminGuard` and `@AdminOnly()`.
 Its typed, depth-bounded filters and recursive relation selection exist for the
 admin data browser only. Do not use `@crudAuth` to lower access.
+
+The sole handwritten import from generated CRUD is `ApiGeneratedCrudFeatureModule` in the API app
+module, used only for registration. Never import, inject, extend, wrap, or compose generated CRUD
+inputs, services, or resolvers from handwritten resolvers or services. There is no admin-only
+exception. A custom admin workflow still defines its own input and explicit Prisma query through
+`ApiCoreDataAccessService`.
 
 The GraphQL SDK follows the same ownership boundary:
 
@@ -52,19 +61,22 @@ admin `plans` field. Use an explicit field such as `availablePlans` instead. Emp
 and placeholder `.graphql` files are unnecessary; `graphql/core/core.graphql` establishes the
 source tree, and empty GraphQL documents are invalid.
 
-`adminCreateUser` is not one of the generated CRUD fields today, but `admin*` is
-reserved by convention for framework/admin surfaces. Use a role or workflow
-prefix such as `user*`, `staff*`, `owner*`, or a domain verb for app-specific
-custom operations.
+For example, generated CRUD owns `createUser`, `updateUser`, and `deleteUser`; custom operations may
+use distinct names such as `adminDeleteUser` or `staffUsersList`. Use `admin*` only when the
+operation truly requires super-admin access, `staff*` for an application staff role, `user*` or
+`my*` for self-service behavior, and domain verbs when the workflow name is clearer. Guards and
+access metadata remain authoritative; the prefix communicates intent but does not enforce access.
 
 ## `custom/default`: Model-Adjacent Extensions
 
-Use `libs/api/custom/src/lib/default/<model>` when the behavior is centered on a
-single Prisma model.
+Use `libs/api/custom/src/lib/default/<model>` when the behavior is centered on a single Prisma
+model. Authorization level does not affect placement: anonymous/public, authenticated, staff, and
+super-admin queries and mutations all belong here when the model is their primary domain owner.
 
 Good examples:
 
-- user-facing operations for one model
+- application operations for one model at any authorization level
+- model-specific staff or super-admin workflows
 - membership-aware create/update/delete for one model
 - computed fields or relation fields for one model
 - model-specific DTOs and validation
@@ -113,19 +125,23 @@ Recommended custom operation prefixes:
 - `my*` for current-user queries, such as `myOrganizations`.
 - `current*` for active-account or active-organization state, such as
   `currentSubscription`.
+- `staff*` for operations available to an application staff role, such as `staffUsersList`.
+- `admin*` for explicit custom super-admin workflows, such as `adminDeleteUser`.
 - domain verbs for business workflows, such as `acceptOrganizationInvitation`,
   `switchActiveOrganization`, or `transferOrganizationOwnership`.
 
 Avoid:
 
-- `admin*` for app-specific custom operations.
+- using `admin*` for operations that do not actually require super-admin access.
+- handwritten `__Admin*` SDK document names.
 - generated CRUD names.
 - broad names like `create`, `update`, or `delete` without domain context.
 
 ## `custom/plugins`: Cross-Model Product Capabilities
 
-Use `libs/api/custom/src/lib/plugins/<feature>` when the behavior spans multiple
-models or represents a product capability rather than a single model extension.
+Use `libs/api/custom/src/lib/plugins/<feature>` when the behavior spans multiple models, has
+substantial cross-model workflow complexity, or represents a product capability rather than a
+single model extension. Authorization level does not affect placement.
 
 Good examples:
 
@@ -157,21 +173,11 @@ Rules for plugins:
 - Keep vendor SDK details out of plugins; inject integration services instead.
 - Name operations by feature intent, not generated CRUD convention.
 
-## `admin-custom`: Admin-Only Generated CRUD Composition
-
-Use `libs/api/admin-custom` only when an admin-only workflow must add validation
-or side effects around a generated CRUD operation. Resolver classes in this
-library must declare both `GqlAuthAdminGuard` and `@AdminOnly()` at class level.
-
-This is the only handwritten project that may inject `ApiCrudDataAccessService`
-or reuse generated CRUD inputs. It must never contain authenticated-user or
-public operations. Prefer explicit `ApiCoreDataAccessService` queries even here
-when generic selection behavior is unnecessary.
-
 ## `integrations`: Vendor and Provider Wrappers
 
-Use `libs/api/integrations` for NestJS-injectable wrappers around external
-providers and infrastructure services.
+Use `libs/api/integrations` for thin, reusable NestJS-injectable wrappers around external providers
+and infrastructure services. These are provider adapters intended to be injected elsewhere, such
+as generic SendGrid, Infusionsoft, Stripe, or storage clients.
 
 Good examples:
 
@@ -209,12 +215,6 @@ Use `integrations` when:
 - the code wraps a third-party SDK or provider
 - other plugins/default modules should inject it
 - the code should not know Nestled business rules
-
-Use `admin-custom` when:
-
-- every operation is super-admin-only
-- the workflow intentionally composes generated CRUD
-- the operation adds admin validation or side effects without lowering access
 
 ## Verification
 

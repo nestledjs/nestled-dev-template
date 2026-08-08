@@ -171,7 +171,7 @@ export const getPublicSdkGeneratedCrudViolations = (
   return violations
 }
 
-export const getCustomCrudImportViolations = (
+export const getGeneratedCrudImportViolations = (
   source: string,
   fileName = 'source.ts',
 ): CrudBoundaryViolation[] =>
@@ -180,8 +180,8 @@ export const getCustomCrudImportViolations = (
     .map(reference => ({
       line: reference.line,
       message:
-        `Application API code must not import generated admin CRUD (${reference.moduleName}); ` +
-        'define an explicit input/query or move an admin-only composition into api-admin-custom',
+        `Handwritten resolvers and services must not import generated admin CRUD (${reference.moduleName}); ` +
+        'define an explicit input and Prisma query instead; there is no admin-only exception',
     }))
 
 export const getLegacyCoreHelpersImportViolations = (
