@@ -395,9 +395,15 @@ After making changes to the Prisma schema:
 2. Run `pnpm db-update` to regenerate:
    - Prisma client
    - GraphQL resolvers with updated guards
-   - GraphQL schema types
-   - TypeScript SDK
-3. Review generated code in:
+   - GraphQL model/input classes
+   - generated admin SDK documents and custom barrels
+3. If a Prisma, resolver, decorator, or DTO change affects the GraphQL schema, refresh
+   `api-schema.graphql` by booting the API against disposable local dependencies. Before starting,
+   verify that `DATABASE_URL`, `DIRECT_URL`, and `REDIS_URL` do not point to production. Wait for
+   NestJS to emit the schema, then stop the API.
+4. Run `pnpm sdk` to compile the SDK from the refreshed `api-schema.graphql` and the maintained
+   `.graphql` documents.
+5. Review generated code in:
    - `/libs/api/generated-crud/feature/` — Resolvers
    - `/libs/api/generated-crud/data-access/` — Data access services
    - `/libs/shared/sdk/src/__admin/` — regenerated admin CRUD documents
@@ -405,7 +411,10 @@ After making changes to the Prisma schema:
    - `/libs/shared/sdk/src/generated/` — compiled TypeScript SDK for frontend
 
 `pnpm db-update` runs Doctor before and after generation so forbidden authorization annotations or
-non-admin generated resolvers cannot be produced unnoticed.
+non-admin generated resolvers cannot be produced unnoticed. It does not boot NestJS or refresh
+`api-schema.graphql`; `pnpm sdk` also does not refresh the schema because it reads that local file.
+Do not defer schema refresh until the end of a resolver migration—refresh it whenever resolver or
+DTO signatures change so SDK failures are attributable to the current batch.
 
 ## API Server Management
 

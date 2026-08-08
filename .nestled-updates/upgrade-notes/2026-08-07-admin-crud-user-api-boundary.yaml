@@ -31,6 +31,7 @@ why: >
 affectedPaths:
   - package.json
   - pnpm-lock.yaml
+  - api-schema.graphql
   - tsconfig.base.json
   - eslint.config.mjs
   - apps/api/src/app.module.ts
@@ -41,6 +42,7 @@ affectedPaths:
   - scripts/doctor-crud-boundary-analysis.ts
   - scripts/doctor-crud-boundary-analysis.spec.ts
   - tools/fragment-to-select.py
+  - libs/shared/sdk/src/generated/graphql.ts
   - AGENTS.md
   - docs/decisions/0001-generated-crud-admin-default.md
   - docs/dev/api-extension-methodology.md
@@ -64,6 +66,7 @@ verification:
   - pnpm nx test api-custom
   - pnpm nx run api-custom:eslint:lint
   - pnpm nx build api --skip-nx-cache
+  - git diff -- api-schema.graphql libs/shared/sdk/src/generated/graphql.ts
 
 agentHints:
   - >
@@ -76,10 +79,14 @@ agentHints:
     resolver, DTO, guard, and user/tenant-scoped service query. Do not simply delete access that the
     product still needs, and do not reproduce the generated CRUD field name.
   - >
-    Run pnpm db-update only after all @crudAuth annotations are removed. Compare the root GraphQL
-    schema before and after: generated CRUD names remain, but are admin-only; replacement user
-    operations have distinct names and explicit inputs. Update the db-update script to run Doctor
-    before and after generation so the current generator cannot silently reintroduce lowered CRUD.
+    Run pnpm db-update only after all @crudAuth annotations are removed. It does not boot NestJS or
+    refresh api-schema.graphql, and pnpm sdk reads that file rather than a live server. After each
+    batch that changes resolver or DTO signatures, verify DATABASE_URL, DIRECT_URL, and REDIS_URL
+    point only to disposable local services, boot the API until NestJS emits api-schema.graphql,
+    stop it, and then run pnpm sdk. Do not postpone schema refresh until the end. Compare the root
+    schema before and after: generated CRUD names remain admin-only, while replacement application
+    operations have distinct names and explicit inputs. Keep Doctor before and after generation so
+    the current generator cannot silently reintroduce lowered CRUD.
   - >
     Search all handwritten code under libs/api, not only resolver files, for generated Create*, Update*, List*,
     filter DTOs, ApiCrudDataAccessService, ApiCrudDataAccessModule, and createSelect. Replace

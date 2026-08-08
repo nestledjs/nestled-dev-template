@@ -218,6 +218,24 @@ Use `integrations` when:
 
 ## Verification
 
+### Schema and SDK sequencing
+
+`api-schema.graphql` is emitted by NestJS during API bootstrap. Neither `pnpm db-update` nor
+`pnpm sdk` refreshes it; SDK codegen reads the existing file from disk. Whenever a resolver, DTO,
+decorator, or generated model changes the schema:
+
+1. Run the required model/CRUD generation.
+2. Confirm `DATABASE_URL`, `DIRECT_URL`, and `REDIS_URL` point only to disposable local services.
+3. Boot the API, wait for `api-schema.graphql` to be emitted, and stop the API.
+4. Run `pnpm sdk`.
+5. Review both the schema and SDK diffs before continuing.
+
+Repeat this at each resolver migration batch rather than once at the end. A stale schema can make
+valid new documents look like missing SDK exports, while codegen itself still exits successfully
+against the old contract.
+
+### Checks
+
 After API extension work:
 
 ```bash
