@@ -15,6 +15,7 @@ import {
   getLegacyCoreHelpersImportViolations,
   getNonAdminOperationViolations,
   getPublicSdkGeneratedCrudViolations,
+  isHandwrittenApiFile,
   supportsAdminOnlyGeneratorBoundary,
 } from './doctor-crud-boundary-analysis'
 
@@ -809,12 +810,6 @@ const checkGeneratorAdminBoundaryVersion = () => {
 }
 
 const checkHandwrittenCrudImports = () => {
-  const isHandwrittenApiFile = (path: string) =>
-    path.endsWith('.ts') &&
-    path !== 'apps/api/src/app.module.ts' &&
-    !path.includes('libs/api/generated-crud/') &&
-    !path.endsWith('.spec.ts') &&
-    !path.endsWith('.test.ts')
   const handwrittenApiFiles = [
     ...walkFiles('libs/api', isHandwrittenApiFile),
     ...walkFiles('apps/api/src', isHandwrittenApiFile),

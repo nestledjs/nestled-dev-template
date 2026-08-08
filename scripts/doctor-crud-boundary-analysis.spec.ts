@@ -6,6 +6,7 @@ import {
   getLegacyCoreHelpersImportViolations,
   getNonAdminOperationViolations,
   getPublicSdkGeneratedCrudViolations,
+  isHandwrittenApiFile,
   supportsAdminOnlyGeneratorBoundary,
 } from './doctor-crud-boundary-analysis'
 
@@ -38,6 +39,16 @@ describe('generated CRUD boundary analysis', () => {
         import { ApiCoreDataAccessService } from '@example/api/core/data-access'
       `),
     ).toEqual([])
+  })
+
+  it('classifies handwritten API files with POSIX and Windows separators', () => {
+    expect(isHandwrittenApiFile('libs/api/custom/src/lib/user.resolver.ts')).toBe(true)
+    expect(isHandwrittenApiFile('libs\\api\\custom\\src\\lib\\user.resolver.ts')).toBe(true)
+    expect(isHandwrittenApiFile('apps\\api\\src\\app.module.ts')).toBe(false)
+    expect(
+      isHandwrittenApiFile('libs\\api\\generated-crud\\feature\\src\\lib\\user.resolver.ts'),
+    ).toBe(false)
+    expect(isHandwrittenApiFile('libs\\api\\custom\\src\\lib\\user.resolver.spec.ts')).toBe(false)
   })
 
   it('rejects every form of import from the removed core-helper library', () => {

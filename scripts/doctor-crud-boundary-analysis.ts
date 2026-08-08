@@ -51,6 +51,18 @@ const getModuleReferences = (source: string, fileName: string): ModuleReference[
 const isGeneratedCrudModule = (moduleName: string): boolean =>
   moduleName.includes('/generated-crud/') || moduleName.endsWith('/generated-crud')
 
+export const isHandwrittenApiFile = (filePath: string): boolean => {
+  const normalizedPath = filePath.replaceAll('\\', '/')
+
+  return (
+    normalizedPath.endsWith('.ts') &&
+    normalizedPath !== 'apps/api/src/app.module.ts' &&
+    !normalizedPath.includes('libs/api/generated-crud/') &&
+    !normalizedPath.endsWith('.spec.ts') &&
+    !normalizedPath.endsWith('.test.ts')
+  )
+}
+
 export const supportsAdminOnlyGeneratorBoundary = (version: string): boolean => {
   const versionMatch = /^(\d+)\.(\d+)\.(\d+)/.exec(version)
   if (versionMatch === null) return false
