@@ -214,6 +214,18 @@ export const getCrudAuthAnnotationLines = (schema: string): number[] =>
     .map((line, index) => (line.includes('@crudAuth') ? index + 1 : undefined))
     .filter((line): line is number => line !== undefined)
 
+export const getCustomResolverNameViolations = (
+  source: string,
+  generatedMethodNames: ReadonlySet<string>,
+  fileName = 'source.ts',
+): CrudBoundaryViolation[] =>
+  getAuthOperations(source, fileName)
+    .filter(operation => operation.kind === 'graphql' && generatedMethodNames.has(operation.name))
+    .map(operation => ({
+      line: operation.line,
+      message: `Custom resolver method "${operation.name}" collides with a generated CRUD field name`,
+    }))
+
 const declaresAdminOnly = (classDecorators: string, methodDecorators: string): boolean =>
   `${classDecorators}\n${methodDecorators}`.includes('@AdminOnly')
 
