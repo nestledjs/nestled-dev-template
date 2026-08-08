@@ -43,6 +43,7 @@ affectedPaths:
   - scripts/doctor-crud-boundary-analysis.spec.ts
   - tools/fragment-to-select.py
   - tools/fragment-to-select.ts
+  - tools/verify-selects.mjs
   - libs/shared/sdk/src/generated/graphql.ts
   - AGENTS.md
   - docs/decisions/0001-generated-crud-admin-default.md
@@ -62,8 +63,10 @@ skipIf:
 verification:
   - rg -n "@crudAuth|ApiCrudDataAccessService|ApiCrudDataAccessModule|createSelect|api/generated-crud" libs/api --glob '!libs/api/generated-crud/**'
   - pnpm template:test-doctor-auth
+  - pnpm template:test-migration-tools
   - pnpm template:validate-upgrade-notes
   - pnpm run nestled-doctor
+  - pnpm verify:selects
   - pnpm nx test api-custom
   - pnpm nx run api-custom:eslint:lint
   - pnpm nx build api --skip-nx-cache
@@ -102,6 +105,9 @@ agentHints:
     values are not emitted as Prisma columns. A missing fragment must fail instead of producing an
     empty nested select. Review the output before using it: a requested field is not automatically
     authorized, and the generated constant is a starting point rather than a security decision.
+    Store reusable constants in *.select.ts and immediately run `pnpm verify:selects`; the verifier
+    reloads the full Prisma schema and catches nonexistent fields, empty nested selects, and model
+    resolution failures after generation or later edits.
   - >
     Pay special attention to helpers that cast a generated List input and read
     `filters.<foreignKey>` as a string. Typed filters represent that value as an operator object,

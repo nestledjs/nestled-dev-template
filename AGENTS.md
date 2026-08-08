@@ -424,6 +424,13 @@ dynamic consumers may exist. Baseline only debt that predates adoption; document
 external, internal, or deprecated contracts in `.nestled-updates/sdk-contract-exceptions.json`.
 Follow `/docs/dev/api-contract-lifecycle.md` before removing an operation.
 
+Reusable explicit Prisma selects belong in `*.select.ts` files and must pass
+`pnpm verify:selects`. The verifier loads the full Prisma DMMF, recursively checks relation fields,
+rejects empty nested selects, and reports constants whose model cannot be resolved. Name constants
+and files after their Prisma model when possible; otherwise put `/** @prisma-model ModelName */`
+immediately before the affected constant. Run the verifier after `fragment-to-select` and after any
+manual select change. A schema-valid select still requires a separate authorization review.
+
 ## API Server Management
 
 **IMPORTANT**: Never attempt to automatically restart the API server. Always ask the user to restart it manually.

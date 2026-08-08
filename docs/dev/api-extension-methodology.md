@@ -247,6 +247,29 @@ fragment owned by another model folder. It filters every emitted field through g
 select. Missing fragments fail instead of producing an empty relation select. The result is still
 only a reviewed starting point: requested fields are not automatically authorized.
 
+Store reusable explicit selects in `*.select.ts` files and verify them after generation or manual
+changes:
+
+```bash
+pnpm verify:selects
+```
+
+The verifier reads the full Prisma DMMF, walks relations at the correct model level, and fails on
+nonexistent fields, empty nested selects, or constants whose model cannot be inferred. It uses the
+constant name, an unambiguous relation name, and then the filename by convention. For an ambiguous
+constant, place a scoped override immediately before it:
+
+```typescript
+/** @prisma-model GroupMember */
+export const SETTINGS_SELECT = {
+  id: true,
+} as const
+```
+
+Use `pnpm verify:selects --json [roots...]` for machine-readable output or to scan custom roots.
+The converter prevents known bad fields at creation time; the verifier catches handwritten selects
+and later drift. Neither tool decides which valid database fields a caller is authorized to read.
+
 For additive changes, deprecations, and removals, follow
 [`api-contract-lifecycle.md`](./api-contract-lifecycle.md).
 
@@ -256,6 +279,7 @@ After API extension work:
 
 ```bash
 pnpm db-update        # only when Prisma/schema/codegen changed
+pnpm verify:selects
 pnpm run nestled-doctor
 pnpm nx build api
 ```
