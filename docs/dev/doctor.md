@@ -21,9 +21,9 @@ or framework commands such as `pnpm doctor` or `expo doctor`.
 - The installed `@nestledjs/generators` is 3.0.3 or newer, so regeneration cannot lower CRUD
   authorization, restore the removed public selector, or seed public copies of admin CRUD SDK
   documents.
-- Application API code under `libs/api/custom` does not import generated CRUD inputs/services or
-  the recursive admin selection compiler.
-- Resolver operations under `libs/api/admin-custom` remain class- or method-level admin-only.
+- Outside the sole app-module registration import, handwritten API code does not import generated
+  CRUD inputs/services/resolvers or the recursive admin selection compiler. There is no admin-only
+  composition exception.
 - Default model resolvers are additive, do not inherit generated resolvers, and
   avoid generated field-name collisions.
 - Hand-written `__Admin*` SDK operations stay out of normal SDK operation folders.

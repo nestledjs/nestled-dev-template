@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import {
   getCrudAuthAnnotationLines,
-  getCustomCrudImportViolations,
+  getGeneratedCrudImportViolations,
   getGraphqlRootFieldNames,
   getLegacyCoreHelpersImportViolations,
   getNonAdminOperationViolations,
@@ -22,18 +22,19 @@ describe('generated CRUD boundary analysis', () => {
   })
 
   it('rejects generated CRUD imports from application API code', () => {
-    const violations = getCustomCrudImportViolations(`
+    const violations = getGeneratedCrudImportViolations(`
       import type { ListUserInput } from '@example/api/generated-crud/data-access'
       const service = require('@example/api/generated-crud/feature')
     `)
 
     expect(violations).toHaveLength(2)
-    expect(violations[0].message).toContain('explicit input/query')
+    expect(violations[0].message).toContain('explicit input and Prisma query')
+    expect(violations[0].message).toContain('no admin-only exception')
   })
 
   it('does not reject the normal explicit Prisma data-access wrapper', () => {
     expect(
-      getCustomCrudImportViolations(`
+      getGeneratedCrudImportViolations(`
         import { ApiCoreDataAccessService } from '@example/api/core/data-access'
       `),
     ).toEqual([])

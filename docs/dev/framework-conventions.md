@@ -15,8 +15,10 @@ specific to the app shell.
 
 API plugins live under `libs/api/custom/src/lib/plugins`.
 
-Use a plugin for a first-class Nestled capability that combines resolvers,
-services, controllers, guards, middleware, or domain workflows. Examples:
+All handwritten application API operations live under `libs/api/custom`. When one Prisma model is
+the primary owner, put the resolver and service in `libs/api/custom/src/lib/default/<model>`, at any
+authorization level. Use a plugin for a cross-model or complex first-class Nestled capability that
+combines resolvers, services, controllers, guards, middleware, or domain workflows. Examples:
 
 - auth
 - billing
@@ -38,8 +40,8 @@ is allowed by the early request filter in `apps/api/src/main.ts`.
 
 Integrations live under `libs/api/integrations`.
 
-Use an integration for vendor-specific infrastructure or external service
-clients. Examples:
+Use an integration for thin, reusable vendor-specific infrastructure or external-service clients
+that other custom modules inject. Examples:
 
 - Stripe SDK/client wrappers
 - email providers
@@ -80,8 +82,9 @@ Weak reasons:
 
 ## Generated CRUD
 
-Normal application models should generate admin CRUD. User-facing operations
-belong in separate custom resolvers with prefixed names.
+Normal application models should generate admin CRUD. Every handwritten application operation—at
+anonymous, authenticated, staff, or super-admin access—belongs in a separate custom resolver with
+a non-colliding name.
 
 `@skipCrud` is reserved for documented security-sensitive internal models, such
 as password hash history, token material, provider secrets, or credential

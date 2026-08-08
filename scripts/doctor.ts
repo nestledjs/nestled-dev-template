@@ -10,7 +10,7 @@ import {
 } from './doctor-auth-analysis'
 import {
   getCrudAuthAnnotationLines,
-  getCustomCrudImportViolations,
+  getGeneratedCrudImportViolations,
   getGraphqlRootFieldNames,
   getLegacyCoreHelpersImportViolations,
   getNonAdminOperationViolations,
@@ -808,39 +808,27 @@ const checkGeneratorAdminBoundaryVersion = () => {
   }
 }
 
-const checkApplicationCrudImports = () => {
-  const customFiles = walkFiles(
-    'libs/api/custom/src',
-    path => path.endsWith('.ts') && !path.endsWith('.spec.ts') && !path.endsWith('.test.ts'),
-  )
+const checkHandwrittenCrudImports = () => {
+  const isHandwrittenApiFile = (path: string) =>
+    path.endsWith('.ts') &&
+    path !== 'apps/api/src/app.module.ts' &&
+    !path.includes('libs/api/generated-crud/') &&
+    !path.endsWith('.spec.ts') &&
+    !path.endsWith('.test.ts')
+  const handwrittenApiFiles = [
+    ...walkFiles('libs/api', isHandwrittenApiFile),
+    ...walkFiles('apps/api/src', isHandwrittenApiFile),
+  ]
 
-  for (const file of customFiles) {
+  for (const file of handwrittenApiFiles) {
     const source = readFileSync(file, 'utf8')
     const violations = [
-      ...getCustomCrudImportViolations(source, file),
+      ...getGeneratedCrudImportViolations(source, file),
       ...getLegacyCoreHelpersImportViolations(source, file),
     ]
 
     for (const violation of violations) {
       fail('admin-crud-boundary', violation.message, file, violation.line)
-    }
-  }
-}
-
-const checkAdminCustomResolvers = () => {
-  const resolverFiles = walkFiles('libs/api/admin-custom/src', path =>
-    path.endsWith('.resolver.ts'),
-  )
-
-  for (const file of resolverFiles) {
-    const source = readFileSync(file, 'utf8')
-    for (const violation of getNonAdminOperationViolations(source, file)) {
-      fail(
-        'admin-crud-boundary',
-        `Admin CRUD composition must remain admin-only: ${violation.message}`,
-        file,
-        violation.line,
-      )
     }
   }
 }
@@ -1826,8 +1814,7 @@ checkGeneratedCrudModuleRegistration()
 checkGeneratedCrudAlwaysAdmin()
 checkCrudAuthAnnotations()
 checkGeneratorAdminBoundaryVersion()
-checkApplicationCrudImports()
-checkAdminCustomResolvers()
+checkHandwrittenCrudImports()
 checkDefaultResolverGeneratedNameCollisions()
 checkHandwrittenAdminSdkOperations()
 checkApplicationSdkCrudBoundary()
