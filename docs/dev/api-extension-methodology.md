@@ -229,10 +229,26 @@ decorator, or generated model changes the schema:
 3. Boot the API, wait for `api-schema.graphql` to be emitted, and stop the API.
 4. Run `pnpm sdk`.
 5. Review both the schema and SDK diffs before continuing.
+6. Run Doctor and resolve new API-to-SDK or SDK-to-client contract findings.
 
 Repeat this at each resolver migration batch rather than once at the end. A stale schema can make
 valid new documents look like missing SDK exports, while codegen itself still exits successfully
 against the old contract.
+
+When a custom resolver needs an explicit Prisma select matching existing fragments, use:
+
+```bash
+python3 tools/fragment-to-select.py . <model-folder> [SELECT_NAME]
+```
+
+The converter loads fragments across the complete application SDK tree, so a relation may spread a
+fragment owned by another model folder. It filters every emitted field through generated
+`DATABASE_MODELS` metadata, which excludes GraphQL-only `@ResolveField` values that Prisma cannot
+select. Missing fragments fail instead of producing an empty relation select. The result is still
+only a reviewed starting point: requested fields are not automatically authorized.
+
+For additive changes, deprecations, and removals, follow
+[`api-contract-lifecycle.md`](./api-contract-lifecycle.md).
 
 ### Checks
 

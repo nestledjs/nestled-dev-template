@@ -42,6 +42,7 @@ affectedPaths:
   - scripts/doctor-crud-boundary-analysis.ts
   - scripts/doctor-crud-boundary-analysis.spec.ts
   - tools/fragment-to-select.py
+  - tools/fragment-to-select.ts
   - libs/shared/sdk/src/generated/graphql.ts
   - AGENTS.md
   - docs/decisions/0001-generated-crud-admin-default.md
@@ -95,9 +96,12 @@ agentHints:
   - >
     When an explicit Prisma select must cover an existing SDK fragment, run
     `python3 tools/fragment-to-select.py . <model-folder> [SELECT_NAME]`. The tool is part of the
-    template and unions the fields requested by that model's application fragments. Review the
-    output before using it: a requested field is not automatically authorized, and the generated
-    constant is a starting point rather than a security decision.
+    template and unions the fields requested by that model's application fragments. It loads
+    fragment definitions from the complete application SDK tree, including another model's folder,
+    and filters fields through generated DATABASE_MODELS metadata so GraphQL-only @ResolveField
+    values are not emitted as Prisma columns. A missing fragment must fail instead of producing an
+    empty nested select. Review the output before using it: a requested field is not automatically
+    authorized, and the generated constant is a starting point rather than a security decision.
   - >
     Pay special attention to helpers that cast a generated List input and read
     `filters.<foreignKey>` as a string. Typed filters represent that value as an operator object,

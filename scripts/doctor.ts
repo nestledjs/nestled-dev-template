@@ -18,6 +18,11 @@ import {
   isHandwrittenApiFile,
   supportsAdminOnlyGeneratorBoundary,
 } from './doctor-crud-boundary-analysis'
+import {
+  getSdkContractReport,
+  type GraphqlSource,
+  type TypeScriptSource,
+} from './doctor-sdk-contract-analysis'
 
 type Finding = {
   check: string
@@ -36,15 +41,29 @@ const generatorPackagePath = 'node_modules/@nestledjs/generators/package.json'
 const notesDir = '.nestled-updates/upgrade-notes'
 const guardBaselinePath = '.nestled-updates/security/guard-baseline.json'
 const publicOperationsPath = '.nestled-updates/security/public-operations.json'
+const sdkContractBaselinePath = '.nestled-updates/sdk-contract-baseline.json'
+const sdkContractExceptionsPath = '.nestled-updates/sdk-contract-exceptions.json'
 const resolverSourceRoots = ['libs/api', 'apps/api/src']
 const gitBaseRef = process.env.NX_BASE || process.env.GITHUB_BASE_REF || 'develop'
 const shouldUpdateGuardBaseline = process.argv.includes('--update-guard-baseline')
+const shouldUpdateSdkContractBaseline = process.argv.includes('--update-sdk-contract-baseline')
 const sourceTemplateRemotePattern = /github\.com[:/]nestledjs\/nestled-(?:dev-)?template(?:\.git)?$/
 
 type GuardBaseline = Record<string, Record<string, string[]>>
 
 // file -> operation name -> reason the operation is intentionally reachable without a guard.
 type PublicOperationAllowlist = Record<string, Record<string, string>>
+
+type SdkContractBaseline = {
+  apiWithoutSdk?: string[]
+  inlineClientOperations?: string[]
+}
+
+type SdkContractExceptions = {
+  apiWithoutSdk?: Record<string, string>
+  inlineClientOperations?: Record<string, string>
+  sdkWithoutConsumer?: Record<string, string>
+}
 
 const fail = (check: string, message: string, file?: string, line?: number) => {
   failures.push({ check, message, file, line })
@@ -886,6 +905,136 @@ const checkApplicationSdkCrudBoundary = () => {
     )) {
       fail('admin-crud-boundary', violation.message, document.file, violation.line)
     }
+  }
+}
+
+const readSdkContractBaseline = (): SdkContractBaseline => {
+  if (!existsSync(sdkContractBaselinePath)) return {}
+  return JSON.parse(readFileSync(sdkContractBaselinePath, 'utf8')) as SdkContractBaseline
+}
+
+const readSdkContractExceptions = (): SdkContractExceptions => {
+  if (!existsSync(sdkContractExceptionsPath)) return {}
+  return JSON.parse(readFileSync(sdkContractExceptionsPath, 'utf8')) as SdkContractExceptions
+}
+
+const writeSdkContractBaseline = (
+  report: ReturnType<typeof getSdkContractReport>,
+  exceptions: SdkContractExceptions,
+): SdkContractBaseline => {
+  const baseline: SdkContractBaseline = {
+    apiWithoutSdk: report.apiWithoutSdk.filter(field => !exceptions.apiWithoutSdk?.[field]),
+    inlineClientOperations: report.inlineClientOperations
+      .map(operation => `${operation.file}#${operation.name}`)
+      .filter(operation => !exceptions.inlineClientOperations?.[operation]),
+  }
+  mkdirSync(dirname(sdkContractBaselinePath), { recursive: true })
+  writeFileSync(sdkContractBaselinePath, `${JSON.stringify(baseline, null, 2)}\n`)
+  return baseline
+}
+
+const graphqlSourcesUnder = (root: string): GraphqlSource[] =>
+  walkFiles(root, path => path.endsWith('.graphql')).map(file => ({
+    file,
+    source: readFileSync(file, 'utf8'),
+  }))
+
+const isClientContractSource = (path: string): boolean =>
+  (path.endsWith('.ts') || path.endsWith('.tsx')) &&
+  !path.replaceAll('\\', '/').startsWith('apps/api/') &&
+  !path.replaceAll('\\', '/').startsWith('libs/api/') &&
+  !path.replaceAll('\\', '/').startsWith('libs/shared/sdk/') &&
+  !path.endsWith('.spec.ts') &&
+  !path.endsWith('.spec.tsx') &&
+  !path.endsWith('.test.ts') &&
+  !path.endsWith('.test.tsx')
+
+const clientContractSources = (): TypeScriptSource[] =>
+  ['apps', 'libs'].flatMap(root =>
+    walkFiles(root, isClientContractSource).map(file => ({
+      file,
+      source: readFileSync(file, 'utf8'),
+    })),
+  )
+
+const checkSdkContract = () => {
+  if (!existsSync('api-schema.graphql')) return
+
+  const report = getSdkContractReport({
+    adminSources: graphqlSourcesUnder('libs/shared/sdk/src/__admin'),
+    applicationSources: graphqlSourcesUnder('libs/shared/sdk/src/graphql'),
+    clientSources: clientContractSources(),
+    schemaSource: readFileSync('api-schema.graphql', 'utf8'),
+  })
+  const exceptions = readSdkContractExceptions()
+  const baseline = shouldUpdateSdkContractBaseline
+    ? writeSdkContractBaseline(report, exceptions)
+    : readSdkContractBaseline()
+  const baselineApiFields = new Set(baseline.apiWithoutSdk ?? [])
+  const baselineInlineOperations = new Set(baseline.inlineClientOperations ?? [])
+
+  for (const mismatch of report.sdkWithoutApi) {
+    fail(
+      'sdk-contract',
+      `SDK operation ${mismatch.operation} references missing GraphQL root field(s): ` +
+        mismatch.rootFields.join(', '),
+      mismatch.file,
+    )
+  }
+
+  for (const field of report.apiWithoutSdk) {
+    if (exceptions.apiWithoutSdk?.[field]) continue
+    const message =
+      `GraphQL root field ${field} has no SDK operation document; add one under ` +
+      'libs/shared/sdk/src/graphql or document an external/internal/deprecated exception'
+    if (baselineApiFields.has(field)) warn('sdk-contract', `Existing drift: ${message}`)
+    else fail('sdk-contract', message, 'api-schema.graphql')
+  }
+
+  for (const operation of report.inlineClientOperations) {
+    const key = `${operation.file}#${operation.name}`
+    if (exceptions.inlineClientOperations?.[key]) continue
+    const message =
+      `Client operation ${operation.name} bypasses the application SDK; move it to ` +
+      'libs/shared/sdk/src/graphql and regenerate the SDK'
+    if (baselineInlineOperations.has(key)) {
+      warn('sdk-contract', `Existing drift: ${message}`, operation.file, operation.line)
+    } else {
+      fail('sdk-contract', message, operation.file, operation.line)
+    }
+  }
+
+  const currentApiFields = new Set(report.apiWithoutSdk)
+  for (const field of baselineApiFields) {
+    if (!currentApiFields.has(field)) {
+      warn('sdk-contract', `Remove resolved API-without-SDK baseline entry: ${field}`)
+    }
+  }
+
+  const currentInlineOperations = new Set(
+    report.inlineClientOperations.map(operation => `${operation.file}#${operation.name}`),
+  )
+  for (const operation of baselineInlineOperations) {
+    if (!currentInlineOperations.has(operation)) {
+      warn('sdk-contract', `Remove resolved inline-operation baseline entry: ${operation}`)
+    }
+  }
+
+  const unusedByFile = new Map<string, string[]>()
+  for (const operation of report.sdkWithoutConsumer) {
+    const key = `${operation.file}#${operation.name}`
+    if (exceptions.sdkWithoutConsumer?.[key]) continue
+    const names = unusedByFile.get(operation.file) ?? []
+    names.push(operation.name)
+    unusedByFile.set(operation.file, names)
+  }
+  for (const [file, operationNames] of unusedByFile) {
+    warn(
+      'sdk-contract',
+      `SDK operations have no in-repo value consumer: ${operationNames.sort().join(', ')}; ` +
+        'remove them, document an external consumer, or begin API deprecation',
+      file,
+    )
   }
 }
 
@@ -1813,6 +1962,7 @@ checkHandwrittenCrudImports()
 checkDefaultResolverGeneratedNameCollisions()
 checkHandwrittenAdminSdkOperations()
 checkApplicationSdkCrudBoundary()
+checkSdkContract()
 checkPluginExportsAndRegistration()
 checkIntegrationExports()
 checkSkipCrudDocumentation()

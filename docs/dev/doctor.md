@@ -28,6 +28,10 @@ or framework commands such as `pnpm doctor` or `expo doctor`.
   avoid generated field-name collisions.
 - Hand-written `__Admin*` SDK operations stay out of normal SDK operation folders.
 - Application-owned SDK operations do not call generated admin CRUD root fields.
+- The API, application SDK documents, and in-repo clients remain connected: new GraphQL root fields
+  require an SDK document or a written exception; SDK documents cannot call missing root fields;
+  and new inline client operations outside the SDK fail. Application SDK operations with no
+  visible in-repo consumer are reported as warnings.
 - Plugin modules are exported and registered in the API app module.
 - Integration modules/services are exported through integration barrels.
 - `@skipCrud` includes a nearby security-sensitive internal-model explanation.
@@ -89,6 +93,44 @@ services.
 Keeping the reason in a separate allowlist makes anonymous exposure visible in one auditable file.
 Stale entries produce a warning after the operation gains a guard or is removed.
 
+## SDK Contract
+
+The `sdk-contract` check compares three static layers:
+
+```text
+api-schema.graphql -> libs/shared/sdk/src/graphql -> apps/** and libs/** clients
+```
+
+Generated admin documents under `libs/shared/sdk/src/__admin` count as coverage for generated admin
+CRUD, but they are excluded from unused-application-operation warnings because the data browser
+loads them dynamically. The check:
+
+- fails when a new Query or Mutation root has no generated-admin or application SDK operation;
+- fails when an SDK operation calls a root field that is absent from the checked-in schema;
+- fails when new client code declares an inline `gql` operation instead of importing an
+  application SDK document;
+- warns when an application SDK operation has no statically visible value import in the repository.
+
+The static unused check is a review signal, not proof that an API is unused. Runtime clients,
+dynamic imports, scripts, and separately deployed applications may not be visible. Record an
+intentional case in `.nestled-updates/sdk-contract-exceptions.json`; key SDK consumers as
+`<document-file>#<OperationName>` and include the owner, consumer, and removal condition in the
+reason.
+
+`.nestled-updates/sdk-contract-baseline.json` is migration debt, not an allowlist. It makes drift
+that existed when the check was adopted warning-only while all newly introduced drift fails.
+Remove entries as they are fixed; Doctor reports stale entries. During a downstream project's
+initial trusted migration only, capture its own current debt with:
+
+```bash
+pnpm sdk:update-contract-baseline
+```
+
+Do not routinely regenerate the baseline and do not copy this template's entries into another
+application. Add a written exception for an intentional external, internal, or deprecated API
+instead. See [`api-contract-lifecycle.md`](./api-contract-lifecycle.md) for deprecation and removal
+rules.
+
 ## Usage
 
 ```bash
@@ -107,8 +149,9 @@ Set `NESTLED_TEMPLATE_SOURCE=false` in unusual clone setups where the remote sti
 source repository during local downstream work.
 
 Doctor is intentionally fast and local. It does not replace builds, tests, or
-type checks; it catches framework-specific drift before those checks become
-harder to interpret.
+type checks. In particular, `pnpm sdk` still performs full GraphQL document validation and the web
+typecheck catches removed generated exports. Doctor catches framework-specific drift before those
+checks become harder to interpret.
 
 `pnpm db-update` runs Doctor before and after generation. The preflight rejects deprecated
 `@crudAuth` annotations before the installed generator can interpret them; the postflight verifies
