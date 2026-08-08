@@ -3,7 +3,10 @@ import {
   buildSchema,
   Kind,
   parse,
+  type FieldNode,
   type FragmentDefinitionNode,
+  type FragmentSpreadNode,
+  type InlineFragmentNode,
   type SelectionSetNode,
 } from 'graphql'
 
@@ -66,6 +69,8 @@ type FragmentReference = {
   file: string
 }
 
+const alphabetical = (left: string, right: string): number => left.localeCompare(right)
+
 const mergeSelect = (target: PrismaSelect, addition: PrismaSelect): void => {
   for (const [fieldName, value] of Object.entries(addition)) {
     const current = target[fieldName]
@@ -108,68 +113,88 @@ type SelectContext = {
   skippedFields: Set<string>
 }
 
-const selectForSelectionSet = (
-  selectionSet: SelectionSetNode,
+const selectForField = (
+  selection: FieldNode,
   model: DatabaseModelMetadata,
   context: SelectContext,
   fragmentPath: ReadonlySet<string>,
 ): PrismaSelect => {
+  const fieldName = selection.name.value
+  const field = model.fields.find(candidate => candidate.name === fieldName)
+  if (!field) {
+    context.skippedFields.add(`${model.modelName}.${fieldName}`)
+    return {}
+  }
+
+  const relatedModel = context.models.get(field.type)
+  if (!relatedModel || !selection.selectionSet) return { [fieldName]: true }
+
+  const nestedSelect = selectForSelectionSet(
+    selection.selectionSet,
+    relatedModel,
+    context,
+    fragmentPath,
+  )
+  if (Object.keys(nestedSelect).length > 0) {
+    return { [fieldName]: { select: nestedSelect } }
+  }
+
+  context.skippedFields.add(`${model.modelName}.${fieldName}`)
+  return {}
+}
+
+const selectForInlineFragment = (
+  selection: InlineFragmentNode,
+  model: DatabaseModelMetadata,
+  context: SelectContext,
+  fragmentPath: ReadonlySet<string>,
+): PrismaSelect => {
+  const typeName = selection.typeCondition?.name.value
+  const fragmentModel = (typeName && context.models.get(typeName)) || model
+  return selectForSelectionSet(selection.selectionSet, fragmentModel, context, fragmentPath)
+}
+
+const selectForFragmentSpread = (
+  selection: FragmentSpreadNode,
+  model: DatabaseModelMetadata,
+  context: SelectContext,
+  fragmentPath: ReadonlySet<string>,
+): PrismaSelect => {
+  const fragmentName = selection.name.value
+  if (fragmentPath.has(fragmentName)) return {}
+
+  const fragment = context.fragments.get(fragmentName)
+  if (!fragment) {
+    context.missingFragments.add(fragmentName)
+    return {}
+  }
+
+  const fragmentModel = context.models.get(fragment.definition.typeCondition.name.value) ?? model
+  const nextPath = new Set(fragmentPath)
+  nextPath.add(fragmentName)
+  return selectForSelectionSet(fragment.definition.selectionSet, fragmentModel, context, nextPath)
+}
+
+function selectForSelectionSet(
+  selectionSet: SelectionSetNode,
+  model: DatabaseModelMetadata,
+  context: SelectContext,
+  fragmentPath: ReadonlySet<string>,
+): PrismaSelect {
   const select: PrismaSelect = {}
 
   for (const selection of selectionSet.selections) {
     if (selection.kind === Kind.FIELD) {
-      const fieldName = selection.name.value
-      const field = model.fields.find(candidate => candidate.name === fieldName)
-      if (!field) {
-        context.skippedFields.add(`${model.modelName}.${fieldName}`)
-        continue
-      }
-
-      const relatedModel = context.models.get(field.type)
-      if (!relatedModel || !selection.selectionSet) {
-        select[fieldName] = true
-        continue
-      }
-
-      const nestedSelect = selectForSelectionSet(
-        selection.selectionSet,
-        relatedModel,
-        context,
-        fragmentPath,
-      )
-      if (Object.keys(nestedSelect).length > 0) {
-        select[fieldName] = { select: nestedSelect }
-      } else {
-        context.skippedFields.add(`${model.modelName}.${fieldName}`)
-      }
+      mergeSelect(select, selectForField(selection, model, context, fragmentPath))
       continue
     }
 
     if (selection.kind === Kind.INLINE_FRAGMENT) {
-      const typeName = selection.typeCondition?.name.value
-      const fragmentModel = (typeName && context.models.get(typeName)) || model
-      mergeSelect(
-        select,
-        selectForSelectionSet(selection.selectionSet, fragmentModel, context, fragmentPath),
-      )
+      mergeSelect(select, selectForInlineFragment(selection, model, context, fragmentPath))
       continue
     }
 
-    const fragmentName = selection.name.value
-    if (fragmentPath.has(fragmentName)) continue
-    const fragment = context.fragments.get(fragmentName)
-    if (!fragment) {
-      context.missingFragments.add(fragmentName)
-      continue
-    }
-
-    const fragmentModel = context.models.get(fragment.definition.typeCondition.name.value) ?? model
-    const nextPath = new Set(fragmentPath)
-    nextPath.add(fragmentName)
-    mergeSelect(
-      select,
-      selectForSelectionSet(fragment.definition.selectionSet, fragmentModel, context, nextPath),
-    )
+    mergeSelect(select, selectForFragmentSpread(selection, model, context, fragmentPath))
   }
 
   return select
@@ -219,10 +244,10 @@ export const buildPrismaSelectFromFragments = (options: {
   }
 
   return {
-    fragmentNames: rootFragments.map(fragment => fragment.definition.name.value).sort(),
-    missingFragments: [...context.missingFragments].sort(),
+    fragmentNames: rootFragments.map(fragment => fragment.definition.name.value).sort(alphabetical),
+    missingFragments: [...context.missingFragments].sort(alphabetical),
     select,
-    skippedFields: [...context.skippedFields].sort(),
+    skippedFields: [...context.skippedFields].sort(alphabetical),
   }
 }
 
@@ -272,7 +297,9 @@ export const getSdkOperations = (sources: readonly GraphqlSource[]): SdkOperatio
       operations.push({
         file: graphqlSource.file,
         name: definition.name?.value ?? '(anonymous operation)',
-        rootFields: [...operationRootFields(definition.selectionSet, fragments, new Set())].sort(),
+        rootFields: [...operationRootFields(definition.selectionSet, fragments, new Set())].sort(
+          alphabetical,
+        ),
       })
     }
   }
@@ -282,53 +309,71 @@ export const getSdkOperations = (sources: readonly GraphqlSource[]): SdkOperatio
 
 const sdkModulePattern = /\/shared\/sdk$|\/shared\/sdk\/|^@[^/]+\/shared\/sdk$/
 
+type SdkImportBindings = {
+  imports: Set<string>
+  namespaces: Set<string>
+}
+
+const collectSdkImportDeclaration = (
+  statement: ts.Statement,
+  bindings: SdkImportBindings,
+): void => {
+  if (!ts.isImportDeclaration(statement) || !ts.isStringLiteral(statement.moduleSpecifier)) return
+  if (!sdkModulePattern.test(statement.moduleSpecifier.text)) return
+
+  const clause = statement.importClause
+  if (!clause || clause.phaseModifier === ts.SyntaxKind.TypeKeyword || !clause.namedBindings) {
+    return
+  }
+
+  if (ts.isNamespaceImport(clause.namedBindings)) {
+    bindings.namespaces.add(clause.namedBindings.name.text)
+    return
+  }
+
+  for (const element of clause.namedBindings.elements) {
+    if (!element.isTypeOnly) bindings.imports.add(element.propertyName?.text ?? element.name.text)
+  }
+}
+
+const collectNamespaceImports = (sourceFile: ts.SourceFile, bindings: SdkImportBindings): void => {
+  const visit = (node: ts.Node): void => {
+    if (
+      ts.isPropertyAccessExpression(node) &&
+      ts.isIdentifier(node.expression) &&
+      bindings.namespaces.has(node.expression.text)
+    ) {
+      bindings.imports.add(node.name.text)
+    }
+    ts.forEachChild(node, visit)
+  }
+  visit(sourceFile)
+}
+
+const collectSdkValueImports = (typeScriptSource: TypeScriptSource, imports: Set<string>): void => {
+  const sourceFile = ts.createSourceFile(
+    typeScriptSource.file,
+    typeScriptSource.source,
+    ts.ScriptTarget.Latest,
+    true,
+    typeScriptSource.file.endsWith('.tsx') ? ts.ScriptKind.TSX : ts.ScriptKind.TS,
+  )
+  const bindings: SdkImportBindings = { imports, namespaces: new Set() }
+
+  for (const statement of sourceFile.statements) collectSdkImportDeclaration(statement, bindings)
+  collectNamespaceImports(sourceFile, bindings)
+}
+
 const getSdkValueImports = (sources: readonly TypeScriptSource[]): Set<string> => {
   const imports = new Set<string>()
-
   for (const typeScriptSource of sources) {
-    const sourceFile = ts.createSourceFile(
-      typeScriptSource.file,
-      typeScriptSource.source,
-      ts.ScriptTarget.Latest,
-      true,
-      typeScriptSource.file.endsWith('.tsx') ? ts.ScriptKind.TSX : ts.ScriptKind.TS,
-    )
-    const namespaces = new Set<string>()
-
-    for (const statement of sourceFile.statements) {
-      if (!ts.isImportDeclaration(statement) || !ts.isStringLiteral(statement.moduleSpecifier)) {
-        continue
-      }
-      if (!sdkModulePattern.test(statement.moduleSpecifier.text)) continue
-      const clause = statement.importClause
-      if (!clause || clause.isTypeOnly || !clause.namedBindings) continue
-
-      if (ts.isNamespaceImport(clause.namedBindings)) {
-        namespaces.add(clause.namedBindings.name.text)
-        continue
-      }
-      for (const element of clause.namedBindings.elements) {
-        if (!element.isTypeOnly) imports.add(element.propertyName?.text ?? element.name.text)
-      }
-    }
-
-    const visit = (node: ts.Node): void => {
-      if (
-        ts.isPropertyAccessExpression(node) &&
-        ts.isIdentifier(node.expression) &&
-        namespaces.has(node.expression.text)
-      ) {
-        imports.add(node.name.text)
-      }
-      ts.forEachChild(node, visit)
-    }
-    visit(sourceFile)
+    collectSdkValueImports(typeScriptSource, imports)
   }
 
   return imports
 }
 
-const operationPattern = /\b(?:query|mutation|subscription)\s+([_A-Za-z][_0-9A-Za-z]*)/g
+const operationPattern = /\b(?:query|mutation|subscription)\s+([_A-Za-z]\w*)/g
 
 export const getInlineClientOperations = (
   sources: readonly TypeScriptSource[],
@@ -396,7 +441,9 @@ export const getSdkContractReport = (options: {
   const allOperations = [...adminOperations, ...applicationOperations]
 
   return {
-    apiWithoutSdk: [...schemaRootFields].filter(field => !coveredFields.has(field)).sort(),
+    apiWithoutSdk: [...schemaRootFields]
+      .filter(field => !coveredFields.has(field))
+      .sort(alphabetical),
     inlineClientOperations: getInlineClientOperations(options.clientSources),
     sdkWithoutApi: allOperations
       .map(operation => ({
