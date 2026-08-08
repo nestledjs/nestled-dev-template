@@ -40,6 +40,7 @@ affectedPaths:
   - scripts/doctor.ts
   - scripts/doctor-crud-boundary-analysis.ts
   - scripts/doctor-crud-boundary-analysis.spec.ts
+  - tools/fragment-to-select.py
   - AGENTS.md
   - docs/decisions/0001-generated-crud-admin-default.md
   - docs/dev/api-extension-methodology.md
@@ -84,6 +85,12 @@ agentHints:
     filter DTOs, ApiCrudDataAccessService, ApiCrudDataAccessModule, and createSelect. Replace
     user-facing uses with local DTOs and ApiCoreDataAccessService. ApiCoreDataAccessService is the
     normal Prisma wrapper and remains allowed.
+  - >
+    When an explicit Prisma select must cover an existing SDK fragment, run
+    `python3 tools/fragment-to-select.py . <model-folder> [SELECT_NAME]`. The tool is part of the
+    template and unions the fields requested by that model's application fragments. Review the
+    output before using it: a requested field is not automatically authorized, and the generated
+    constant is a starting point rather than a security decision.
   - >
     Pay special attention to helpers that cast a generated List input and read
     `filters.<foreignKey>` as a string. Typed filters represent that value as an operator object,
