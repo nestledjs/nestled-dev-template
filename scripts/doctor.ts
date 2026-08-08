@@ -20,6 +20,7 @@ import {
 } from './doctor-crud-boundary-analysis'
 import {
   getSdkContractReport,
+  normalizeContractPath,
   type GraphqlSource,
   type SdkContractReport,
   type TypeScriptSource,
@@ -936,24 +937,28 @@ const writeSdkContractBaseline = (
 
 const graphqlSourcesUnder = (root: string): GraphqlSource[] =>
   walkFiles(root, path => path.endsWith('.graphql')).map(file => ({
-    file,
+    file: normalizeContractPath(file),
     source: readFileSync(file, 'utf8'),
   }))
 
-const isClientContractSource = (path: string): boolean =>
-  (path.endsWith('.ts') || path.endsWith('.tsx')) &&
-  !path.replaceAll('\\', '/').startsWith('apps/api/') &&
-  !path.replaceAll('\\', '/').startsWith('libs/api/') &&
-  !path.replaceAll('\\', '/').startsWith('libs/shared/sdk/') &&
-  !path.endsWith('.spec.ts') &&
-  !path.endsWith('.spec.tsx') &&
-  !path.endsWith('.test.ts') &&
-  !path.endsWith('.test.tsx')
+const isClientContractSource = (path: string): boolean => {
+  const contractPath = normalizeContractPath(path)
+  return (
+    (contractPath.endsWith('.ts') || contractPath.endsWith('.tsx')) &&
+    !contractPath.startsWith('apps/api/') &&
+    !contractPath.startsWith('libs/api/') &&
+    !contractPath.startsWith('libs/shared/sdk/') &&
+    !contractPath.endsWith('.spec.ts') &&
+    !contractPath.endsWith('.spec.tsx') &&
+    !contractPath.endsWith('.test.ts') &&
+    !contractPath.endsWith('.test.tsx')
+  )
+}
 
 const clientContractSources = (): TypeScriptSource[] =>
   ['apps', 'libs'].flatMap(root =>
     walkFiles(root, isClientContractSource).map(file => ({
-      file,
+      file: normalizeContractPath(file),
       source: readFileSync(file, 'utf8'),
     })),
   )

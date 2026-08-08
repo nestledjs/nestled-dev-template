@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import {
   buildPrismaSelectFromFragments,
   getSdkContractReport,
+  normalizeContractPath,
   type DatabaseModelMetadata,
 } from './doctor-sdk-contract-analysis'
 
@@ -88,6 +89,12 @@ describe('fragment-to-select analysis', () => {
 })
 
 describe('SDK contract analysis', () => {
+  it('normalizes Windows paths for portable baseline and exception keys', () => {
+    expect(normalizeContractPath('libs\\shared\\sdk\\src\\graphql\\user.graphql')).toBe(
+      'libs/shared/sdk/src/graphql/user.graphql',
+    )
+  })
+
   it('reports uncovered API fields, unused SDK operations, and inline client operations', () => {
     const report = getSdkContractReport({
       adminSources: [],

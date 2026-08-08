@@ -64,6 +64,8 @@ export type SdkRootMismatch = {
   rootFields: string[]
 }
 
+export const normalizeContractPath = (file: string): string => file.replaceAll('\\', '/')
+
 type FragmentReference = {
   definition: FragmentDefinitionNode
   file: string
