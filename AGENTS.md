@@ -416,6 +416,14 @@ non-admin generated resolvers cannot be produced unnoticed. It does not boot Nes
 Do not defer schema refresh until the end of a resolver migration—refresh it whenever resolver or
 DTO signatures change so SDK failures are attributable to the current batch.
 
+`pnpm run nestled-doctor` enforces the static API -> SDK -> client contract. New Query or Mutation
+root fields need an SDK document or a written exception, application SDK documents may not refer to
+removed root fields, and frontend operations belong in `libs/shared/sdk/src/graphql` rather than
+inline `gql` templates. Unused application SDK operations are warning-only because external or
+dynamic consumers may exist. Baseline only debt that predates adoption; document intentional
+external, internal, or deprecated contracts in `.nestled-updates/sdk-contract-exceptions.json`.
+Follow `/docs/dev/api-contract-lifecycle.md` before removing an operation.
+
 ## API Server Management
 
 **IMPORTANT**: Never attempt to automatically restart the API server. Always ask the user to restart it manually.

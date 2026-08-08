@@ -51,6 +51,10 @@ pnpm db-update
 When changing routes, update `apps/web/app/routes.tsx`; routes are not
 auto-discovered.
 
+When changing GraphQL operations, follow the API/SDK/client sequencing and deprecation policy in
+[`api-contract-lifecycle.md`](./api-contract-lifecycle.md). Doctor's static contract checks are
+documented in [`doctor.md`](./doctor.md).
+
 ## Running Several Nestled Apps At Once
 
 Every nestled app defaults to the same local ports, so only one runs at a time until a repo
