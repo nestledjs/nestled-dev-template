@@ -21,6 +21,7 @@ import {
 import {
   getSdkContractReport,
   type GraphqlSource,
+  type SdkContractReport,
   type TypeScriptSource,
 } from './doctor-sdk-contract-analysis'
 
@@ -957,6 +958,105 @@ const clientContractSources = (): TypeScriptSource[] =>
     })),
   )
 
+const reportSdkWithoutApi = (report: SdkContractReport): void => {
+  for (const mismatch of report.sdkWithoutApi) {
+    fail(
+      'sdk-contract',
+      `SDK operation ${mismatch.operation} references missing GraphQL root field(s): ` +
+        mismatch.rootFields.join(', '),
+      mismatch.file,
+    )
+  }
+}
+
+const reportApiWithoutSdk = (
+  report: SdkContractReport,
+  exceptions: SdkContractExceptions,
+  baselineApiFields: ReadonlySet<string>,
+): void => {
+  for (const field of report.apiWithoutSdk) {
+    if (exceptions.apiWithoutSdk?.[field]) continue
+    const message =
+      `GraphQL root field ${field} has no SDK operation document; add one under ` +
+      'libs/shared/sdk/src/graphql or document an external/internal/deprecated exception'
+    if (baselineApiFields.has(field)) warn('sdk-contract', `Existing drift: ${message}`)
+    else fail('sdk-contract', message, 'api-schema.graphql')
+  }
+}
+
+const reportInlineClientOperations = (
+  report: SdkContractReport,
+  exceptions: SdkContractExceptions,
+  baselineInlineOperations: ReadonlySet<string>,
+): void => {
+  for (const operation of report.inlineClientOperations) {
+    const key = `${operation.file}#${operation.name}`
+    if (exceptions.inlineClientOperations?.[key]) continue
+    const message =
+      `Client operation ${operation.name} bypasses the application SDK; move it to ` +
+      'libs/shared/sdk/src/graphql and regenerate the SDK'
+    if (baselineInlineOperations.has(key)) {
+      warn('sdk-contract', `Existing drift: ${message}`, operation.file, operation.line)
+    } else {
+      fail('sdk-contract', message, operation.file, operation.line)
+    }
+  }
+}
+
+const reportResolvedSdkBaselineEntries = (
+  report: SdkContractReport,
+  baselineApiFields: ReadonlySet<string>,
+  baselineInlineOperations: ReadonlySet<string>,
+): void => {
+  const currentApiFields = new Set(report.apiWithoutSdk)
+  for (const field of baselineApiFields) {
+    if (!currentApiFields.has(field)) {
+      warn('sdk-contract', `Remove resolved API-without-SDK baseline entry: ${field}`)
+    }
+  }
+
+  const currentInlineOperations = new Set(
+    report.inlineClientOperations.map(operation => `${operation.file}#${operation.name}`),
+  )
+  for (const operation of baselineInlineOperations) {
+    if (!currentInlineOperations.has(operation)) {
+      warn('sdk-contract', `Remove resolved inline-operation baseline entry: ${operation}`)
+    }
+  }
+}
+
+const unusedSdkOperationsByFile = (
+  report: SdkContractReport,
+  exceptions: SdkContractExceptions,
+): Map<string, string[]> => {
+  const unusedByFile = new Map<string, string[]>()
+  for (const operation of report.sdkWithoutConsumer) {
+    const key = `${operation.file}#${operation.name}`
+    if (exceptions.sdkWithoutConsumer?.[key]) continue
+    const names = unusedByFile.get(operation.file) ?? []
+    names.push(operation.name)
+    unusedByFile.set(operation.file, names)
+  }
+  return unusedByFile
+}
+
+const operationNameCompare = (left: string, right: string): number => left.localeCompare(right)
+
+const reportUnusedSdkOperations = (
+  report: SdkContractReport,
+  exceptions: SdkContractExceptions,
+): void => {
+  for (const [file, operationNames] of unusedSdkOperationsByFile(report, exceptions)) {
+    operationNames.sort(operationNameCompare)
+    warn(
+      'sdk-contract',
+      `SDK operations have no in-repo value consumer: ${operationNames.join(', ')}; ` +
+        'remove them, document an external consumer, or begin API deprecation',
+      file,
+    )
+  }
+}
+
 const checkSdkContract = () => {
   if (!existsSync('api-schema.graphql')) return
 
@@ -973,69 +1073,11 @@ const checkSdkContract = () => {
   const baselineApiFields = new Set(baseline.apiWithoutSdk ?? [])
   const baselineInlineOperations = new Set(baseline.inlineClientOperations ?? [])
 
-  for (const mismatch of report.sdkWithoutApi) {
-    fail(
-      'sdk-contract',
-      `SDK operation ${mismatch.operation} references missing GraphQL root field(s): ` +
-        mismatch.rootFields.join(', '),
-      mismatch.file,
-    )
-  }
-
-  for (const field of report.apiWithoutSdk) {
-    if (exceptions.apiWithoutSdk?.[field]) continue
-    const message =
-      `GraphQL root field ${field} has no SDK operation document; add one under ` +
-      'libs/shared/sdk/src/graphql or document an external/internal/deprecated exception'
-    if (baselineApiFields.has(field)) warn('sdk-contract', `Existing drift: ${message}`)
-    else fail('sdk-contract', message, 'api-schema.graphql')
-  }
-
-  for (const operation of report.inlineClientOperations) {
-    const key = `${operation.file}#${operation.name}`
-    if (exceptions.inlineClientOperations?.[key]) continue
-    const message =
-      `Client operation ${operation.name} bypasses the application SDK; move it to ` +
-      'libs/shared/sdk/src/graphql and regenerate the SDK'
-    if (baselineInlineOperations.has(key)) {
-      warn('sdk-contract', `Existing drift: ${message}`, operation.file, operation.line)
-    } else {
-      fail('sdk-contract', message, operation.file, operation.line)
-    }
-  }
-
-  const currentApiFields = new Set(report.apiWithoutSdk)
-  for (const field of baselineApiFields) {
-    if (!currentApiFields.has(field)) {
-      warn('sdk-contract', `Remove resolved API-without-SDK baseline entry: ${field}`)
-    }
-  }
-
-  const currentInlineOperations = new Set(
-    report.inlineClientOperations.map(operation => `${operation.file}#${operation.name}`),
-  )
-  for (const operation of baselineInlineOperations) {
-    if (!currentInlineOperations.has(operation)) {
-      warn('sdk-contract', `Remove resolved inline-operation baseline entry: ${operation}`)
-    }
-  }
-
-  const unusedByFile = new Map<string, string[]>()
-  for (const operation of report.sdkWithoutConsumer) {
-    const key = `${operation.file}#${operation.name}`
-    if (exceptions.sdkWithoutConsumer?.[key]) continue
-    const names = unusedByFile.get(operation.file) ?? []
-    names.push(operation.name)
-    unusedByFile.set(operation.file, names)
-  }
-  for (const [file, operationNames] of unusedByFile) {
-    warn(
-      'sdk-contract',
-      `SDK operations have no in-repo value consumer: ${operationNames.sort().join(', ')}; ` +
-        'remove them, document an external consumer, or begin API deprecation',
-      file,
-    )
-  }
+  reportSdkWithoutApi(report)
+  reportApiWithoutSdk(report, exceptions, baselineApiFields)
+  reportInlineClientOperations(report, exceptions, baselineInlineOperations)
+  reportResolvedSdkBaselineEntries(report, baselineApiFields, baselineInlineOperations)
+  reportUnusedSdkOperations(report, exceptions)
 }
 
 const pascalCase = (value: string): string =>
