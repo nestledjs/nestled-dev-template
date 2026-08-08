@@ -288,4 +288,33 @@ describe('verify-selects', () => {
       },
     ])
   })
+
+  it('is not fooled by a closing brace inside a comment or string', async () => {
+    const workspace = createWorkspace()
+    writeFixture(
+      workspace,
+      'custom-selects/misc.select.ts',
+      `
+        export const FIRST_SELECT = {
+          id: true,
+          // a closing brace in a comment: }  then @prisma-model User
+        }
+
+        export const TOTALLY_UNKNOWN_THING = {
+          id: true,
+        }
+      `,
+    )
+
+    const result = await verifySelects({ cwd: workspace, roots: ['custom-selects'] })
+
+    // closingBrace() is not comment-aware, so counting braces on the raw source ended the first
+    // constant at the `}` in that comment — putting the rest of its body, annotation included,
+    // back into the next constant's window. Counting on the sanitized source fixes it; the mask
+    // is length-preserving, so the offsets still line up with rawSource for the annotation scan.
+    expect(result.unresolved.map(entry => entry.const).sort()).toEqual([
+      'FIRST_SELECT',
+      'TOTALLY_UNKNOWN_THING',
+    ])
+  })
 })

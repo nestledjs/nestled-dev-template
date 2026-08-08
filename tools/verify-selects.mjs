@@ -420,8 +420,12 @@ const verifyFile = ({ absolutePath, file }, models) => {
     const constantOffset = match.index
     const annotatedModel = annotationBefore(rawSource, constantOffset, previousConstantEnd)
     const model = resolveModel(models, match[1], file, annotatedModel)
+    // Count braces on the SANITIZED source: closingBrace() is not comment- or string-aware, and
+    // a `}` inside either would end the constant early, putting part of its body back into the
+    // next constant's annotation window. sanitizeSource() masks with spaces and is
+    // length-preserving, so these offsets are interchangeable with rawSource's.
     const bodyStart = match.index + match[0].length - 1
-    const bodyEnd = closingBrace(rawSource, bodyStart)
+    const bodyEnd = closingBrace(source, bodyStart)
     previousConstantEnd = bodyEnd === -1 ? constantOffset : bodyEnd
 
     if (!model) {
