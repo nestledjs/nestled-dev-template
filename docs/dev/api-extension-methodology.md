@@ -39,6 +39,19 @@ Generated CRUD is always protected by `GqlAuthAdminGuard` and `@AdminOnly()`.
 Its typed, depth-bounded filters and recursive relation selection exist for the
 admin data browser only. Do not use `@crudAuth` to lower access.
 
+The GraphQL SDK follows the same ownership boundary:
+
+- `libs/shared/sdk/src/__admin/<model>` is generated and replaced from the Prisma schema. It owns
+  the complete client document surface for generated admin CRUD.
+- `libs/shared/sdk/src/graphql/<feature>` is application-owned. Put a document here only for an
+  explicit application resolver with a purpose-built input and scoped service method.
+
+Do not copy generated root fields into the application tree, even with a friendlier operation name
+or response alias. For example, `query ActivePlans { plans(...) { ... } }` still calls the generated
+admin `plans` field. Use an explicit field such as `availablePlans` instead. Empty per-model folders
+and placeholder `.graphql` files are unnecessary; `graphql/core/core.graphql` establishes the
+source tree, and empty GraphQL documents are invalid.
+
 `adminCreateUser` is not one of the generated CRUD fields today, but `admin*` is
 reserved by convention for framework/admin surfaces. Use a role or workflow
 prefix such as `user*`, `staff*`, `owner*`, or a domain verb for app-specific

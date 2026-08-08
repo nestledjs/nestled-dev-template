@@ -18,14 +18,16 @@ or framework commands such as `pnpm doctor` or `expo doctor`.
   matches the generated resolver files.
 - Every generated CRUD operation uses `GqlAuthAdminGuard` and declares `@AdminOnly()`.
 - Prisma schemas contain no `@crudAuth` annotations.
-- The installed `@nestledjs/generators` is 3.0.2 or newer, so regeneration cannot lower CRUD
-  authorization or restore the removed public selector.
+- The installed `@nestledjs/generators` is 3.0.3 or newer, so regeneration cannot lower CRUD
+  authorization, restore the removed public selector, or seed public copies of admin CRUD SDK
+  documents.
 - Application API code under `libs/api/custom` does not import generated CRUD inputs/services or
   the recursive admin selection compiler.
 - Resolver operations under `libs/api/admin-custom` remain class- or method-level admin-only.
 - Default model resolvers are additive, do not inherit generated resolvers, and
   avoid generated field-name collisions.
 - Hand-written `__Admin*` SDK operations stay out of normal SDK operation folders.
+- Application-owned SDK operations do not call generated admin CRUD root fields.
 - Plugin modules are exported and registered in the API app module.
 - Integration modules/services are exported through integration barrels.
 - `@skipCrud` includes a nearby security-sensitive internal-model explanation.
@@ -56,10 +58,6 @@ or framework commands such as `pnpm doctor` or `expo doctor`.
   - `POSTGRES_TEST_PORT` against `TEST_DATABASE_URL`.
   - `REDIS_PORT` against `REDIS_URL`.
   - `MAILHOG_SMTP_PORT` against `SMTP_PORT` when `SMTP_HOST` is local.
-
-Future checks should also validate that normal SDK operation files do not call
-generated CRUD fields directly after the remaining legacy SDK operations are
-retired or moved to `__admin`.
 
 ## Guard Baseline
 
