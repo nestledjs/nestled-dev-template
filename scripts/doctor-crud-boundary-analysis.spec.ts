@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import {
   getCrudAuthAnnotationLines,
+  getCustomResolverNameViolations,
   getGeneratedCrudImportViolations,
   getGraphqlRootFieldNames,
   getLegacyCoreHelpersImportViolations,
@@ -68,6 +69,28 @@ describe('generated CRUD boundary analysis', () => {
         /// @crudAuth: { "readMany": "public" }
       `),
     ).toEqual([2, 4])
+  })
+
+  it('allows explicit admin-prefixed operations but rejects generated CRUD collisions', () => {
+    expect(
+      getCustomResolverNameViolations(
+        `
+          @Resolver(() => User)
+          class UserResolver {
+            @Mutation(() => User)
+            adminDeleteUser() {}
+
+            @Mutation(() => User)
+            updateUser() {}
+          }
+        `,
+        new Set(['updateUser', 'deleteUser']),
+      ),
+    ).toEqual([
+      expect.objectContaining({
+        message: 'Custom resolver method "updateUser" collides with a generated CRUD field name',
+      }),
+    ])
   })
 
   it('rejects application SDK operations that call generated admin CRUD fields', () => {

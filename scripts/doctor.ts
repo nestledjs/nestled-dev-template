@@ -10,6 +10,7 @@ import {
 } from './doctor-auth-analysis'
 import {
   getCrudAuthAnnotationLines,
+  getCustomResolverNameViolations,
   getGeneratedCrudImportViolations,
   getGraphqlRootFieldNames,
   getLegacyCoreHelpersImportViolations,
@@ -643,34 +644,12 @@ const checkDefaultResolverComposition = (file: string, source: string) => {
   )
 }
 
-const checkResolverMethodName = (
-  file: string,
-  methodName: string,
-  generatedMethodNames: Set<string>,
-) => {
-  if (generatedMethodNames.has(methodName)) {
-    fail(
-      'api-names',
-      `Custom resolver method "${methodName}" collides with a generated CRUD field name`,
-      file,
-    )
-  }
-
-  if (/^admin[A-Z]/.test(methodName)) {
-    fail(
-      'api-names',
-      `Custom default resolver method "${methodName}" uses reserved admin* naming`,
-      file,
-    )
-  }
-}
-
 const checkDefaultResolverFile = (file: string, generatedMethodNames: Set<string>) => {
-  const source = stripComments(readFileSync(file, 'utf8'))
-  checkDefaultResolverComposition(file, source)
+  const source = readFileSync(file, 'utf8')
+  checkDefaultResolverComposition(file, stripComments(source))
 
-  for (const methodName of getGraphqlResolverMethods(source)) {
-    checkResolverMethodName(file, methodName, generatedMethodNames)
+  for (const violation of getCustomResolverNameViolations(source, generatedMethodNames, file)) {
+    fail('api-names', violation.message, file, violation.line)
   }
 }
 

@@ -61,6 +61,10 @@ agentHints:
     Custom admin* names are allowed when they do not collide with the plain generated CRUD fields;
     keep __Admin* SDK document names reserved for generated documents.
   - >
+    Do not recreate libs/api/admin-custom to work around a Doctor error that says admin* names are
+    reserved under custom/default. That restriction was stale: authorization does not determine
+    source ownership, and Doctor should reject only actual generated CRUD field-name collisions.
+  - >
     Do not move generated DTOs or services with the workflow. Define a local input containing only
     the fields the custom operation supports, remove GraphQLResolveInfo-driven recursive selection,
     and implement the mutation or query directly through ApiCoreDataAccessService.
