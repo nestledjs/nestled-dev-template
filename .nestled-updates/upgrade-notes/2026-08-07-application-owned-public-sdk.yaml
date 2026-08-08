@@ -62,7 +62,8 @@ agentHints:
   - >
     Inventory every operation under libs/shared/sdk/src/graphql that calls a generated root field:
     <model>, <models>, <models>Count, create<Model>, update<Model>, or delete<Model>. The GraphQL
-    operation name and response alias do not change which server field executes.
+    operation name, response alias, inline fragment, and named fragment spread do not change which
+    server field executes.
   - >
     Delete unused legacy documents. For every active caller, add or use a purpose-built resolver,
     DTO, authenticated user or tenant scope, and explicit Prisma query. Update the frontend
