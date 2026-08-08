@@ -1,4 +1,5 @@
 import ts from 'typescript'
+import { Kind, parse } from 'graphql'
 import { getAuthOperations } from './doctor-auth-analysis'
 
 export type CrudBoundaryViolation = {
@@ -55,7 +56,45 @@ export const supportsAdminOnlyGeneratorBoundary = (version: string): boolean => 
   if (versionMatch === null) return false
 
   const [, major, minor, patch] = versionMatch.map(Number)
-  return major > 3 || (major === 3 && (minor > 0 || (minor === 0 && patch >= 2)))
+  return major > 3 || (major === 3 && (minor > 0 || (minor === 0 && patch >= 3)))
+}
+
+export const getGraphqlRootFieldNames = (source: string): Set<string> => {
+  const names = new Set<string>()
+
+  for (const definition of parse(source).definitions) {
+    if (definition.kind !== Kind.OPERATION_DEFINITION) continue
+    for (const selection of definition.selectionSet.selections) {
+      if (selection.kind === Kind.FIELD) names.add(selection.name.value)
+    }
+  }
+
+  return names
+}
+
+export const getPublicSdkGeneratedCrudViolations = (
+  source: string,
+  generatedRootFields: ReadonlySet<string>,
+): CrudBoundaryViolation[] => {
+  const violations: CrudBoundaryViolation[] = []
+
+  for (const definition of parse(source).definitions) {
+    if (definition.kind !== Kind.OPERATION_DEFINITION) continue
+    const operationName = definition.name?.value ?? '(anonymous operation)'
+
+    for (const selection of definition.selectionSet.selections) {
+      if (selection.kind !== Kind.FIELD || !generatedRootFields.has(selection.name.value)) continue
+      const line = source.slice(0, selection.loc?.start ?? 0).split('\n').length
+      violations.push({
+        line,
+        message:
+          `Application SDK operation ${operationName} calls generated admin CRUD field ` +
+          `${selection.name.value}; use the generated __Admin* document or call an explicit application resolver`,
+      })
+    }
+  }
+
+  return violations
 }
 
 export const getCustomCrudImportViolations = (

@@ -242,6 +242,12 @@ Generated CRUD methods and generated SDK admin operation names are reserved. Do 
 operations that reuse generated names such as `create<Model>`, `update<Model>`, `delete<Model>`,
 `<model>`, `<models>`, `<models>Count`, or `__Admin*`.
 
+Generated admin SDK documents live under `libs/shared/sdk/src/__admin/<model>` and are replaced by
+codegen. Application-owned documents live under `libs/shared/sdk/src/graphql/<feature>` and must
+call only explicit application resolvers; never wrap a generated CRUD root field in a differently
+named public operation. Do not create empty `.graphql` placeholders. The generated
+`graphql/core/core.graphql` document establishes the application source tree.
+
 `ApiGeneratedCrudFeatureModule` is the sole registration point for generated CRUD resolver
 providers. Default model resolvers under `libs/api/custom/src/lib/default/<model>` are independent,
 additive resolvers and must not extend `Generated<Model>Resolver`. Never duplicate or override a
@@ -379,7 +385,9 @@ After making changes to the Prisma schema:
 3. Review generated code in:
    - `/libs/api/generated-crud/feature/` — Resolvers
    - `/libs/api/generated-crud/data-access/` — Data access services
-   - `/libs/shared/sdk/` — TypeScript SDK for frontend
+   - `/libs/shared/sdk/src/__admin/` — regenerated admin CRUD documents
+   - `/libs/shared/sdk/src/graphql/` — preserved application-owned documents
+   - `/libs/shared/sdk/src/generated/` — compiled TypeScript SDK for frontend
 
 `pnpm db-update` runs Doctor before and after generation so forbidden authorization annotations or
 non-admin generated resolvers cannot be produced unnoticed.
@@ -414,7 +422,10 @@ intentionally unguarded operation to `.nestled-updates/security/public-operation
 written reason. `pnpm run nestled-doctor` checks resolvers and `*.controller.ts` files for all three
 requirements.
 
-**GraphQL Schema:** Auto-generated at `api-schema.graphql` (do not edit manually). SDK is generated from this schema + `.graphql` operation files in `libs/shared/sdk/src/graphql/` and `libs/shared/sdk/src/__admin/`.
+**GraphQL Schema:** Auto-generated at `api-schema.graphql` (do not edit manually). The SDK is
+compiled from this schema plus generated admin documents in `libs/shared/sdk/src/__admin/` and
+application-owned documents in `libs/shared/sdk/src/graphql/`. Application documents must not call
+generated CRUD root fields.
 
 ## Billing & Integrations
 

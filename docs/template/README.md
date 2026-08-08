@@ -92,6 +92,10 @@ pnpm db-update
 This regenerates Prisma-related code, generated CRUD, model metadata, and the
 GraphQL SDK.
 
+Generated admin CRUD documents live under `libs/shared/sdk/src/__admin` and are replaced during
+generation. User-facing documents under `libs/shared/sdk/src/graphql` are application-owned: add
+them only for explicit application resolvers, and do not call generated CRUD fields from them.
+
 ## Routes
 
 Web routes are not auto-discovered. When adding or moving a page, update:
