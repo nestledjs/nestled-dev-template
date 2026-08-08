@@ -153,6 +153,12 @@ type checks. In particular, `pnpm sdk` still performs full GraphQL document vali
 typecheck catches removed generated exports. Doctor catches framework-specific drift before those
 checks become harder to interpret.
 
+Explicit Prisma selects have a separate schema gate because verifying them requires loading the
+Prisma DMMF. `pnpm verify:selects` scans `*.select.ts` files under the custom API, core API, and API
+application roots; CI runs it alongside Doctor and typechecking. See
+[`api-extension-methodology.md`](./api-extension-methodology.md) for generation and model-override
+usage.
+
 `pnpm db-update` runs Doctor before and after generation. The preflight rejects deprecated
 `@crudAuth` annotations before the installed generator can interpret them; the postflight verifies
 that every emitted resolver still satisfies the admin-only contract.

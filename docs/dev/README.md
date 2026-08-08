@@ -71,6 +71,7 @@ pnpm nx build web
 pnpm nx test data-browser
 pnpm nx test web-ui
 pnpm run nestled-doctor
+pnpm verify:selects
 pnpm template:validate-upgrade-notes
 ```
 

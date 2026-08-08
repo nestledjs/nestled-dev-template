@@ -40,6 +40,7 @@ describe('fragment-to-select analysis', () => {
           friendsCount
           members {
             isAdmin
+            # This prose must never become Prisma select fields.
             user { ...UserBasicInfo }
           }
         }

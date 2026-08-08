@@ -13,8 +13,10 @@ const usage = `Usage:
   pnpm exec tsx tools/fragment-to-select.ts <repo> <model-folder> [SELECT_NAME]
 
 Derives a reviewed starting point for an explicit Prisma select from application SDK fragments.
-The tool follows fragments across libs/shared/sdk/src/graphql and filters every field through the
-generated DATABASE_MODELS metadata. Its output is not an authorization decision.`
+The GraphQL AST ignores # comments, follows fragments across libs/shared/sdk/src/graphql, and
+filters every field through generated DATABASE_MODELS metadata. Without that filter, GraphQL-only
+@ResolveField values would be emitted as nonexistent Prisma columns. Review authorization
+separately, then run pnpm verify:selects after adding or changing the select.`
 
 const walkGraphqlFiles = (directory: string): string[] => {
   const files: string[] = []

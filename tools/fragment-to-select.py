@@ -1,5 +1,11 @@
 #!/usr/bin/env python3
-"""Compatibility wrapper for the metadata-aware TypeScript selection tool."""
+"""Run the metadata-aware GraphQL-fragment to Prisma-select converter.
+
+The TypeScript implementation parses GraphQL comments and fragment spreads through the GraphQL
+AST, resolves fragments across the application SDK, and filters every field through generated
+database metadata. That filter is essential: GraphQL-only @ResolveField values such as signedUrl or
+likesCount are not Prisma columns and make an explicit select fail at runtime.
+"""
 
 from __future__ import annotations
 
