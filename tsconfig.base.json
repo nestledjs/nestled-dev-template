@@ -36,7 +36,8 @@
       "@nestled-template/shared/utils": ["libs/shared/utils/src/index.ts"],
       "@nestled-template/web": ["libs/web/src/index.ts"],
       "@nestled-template/web-ui": ["libs/web-ui/src/index.ts"],
-      "@nestledjs/shared-components": ["libs/shared-components/src/index.ts"]
+      "@nestledjs/shared-components": ["libs/shared-components/src/index.ts"],
+      "@nestledjs/access-control": ["libs/access-control/src/index.ts"]
     },
     "esModuleInterop": true
   },

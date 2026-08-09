@@ -14,7 +14,7 @@ foundation up front so teams can focus on their product-specific features.
 - API: NestJS, GraphQL, Prisma, PostgreSQL
 - Web: React, React Router v7, Apollo Client
 - Shared: generated GraphQL SDK and TypeScript utilities
-- Admin: generated CRUD and data browser
+- Admin: scoped platform RBAC, generated root CRUD, and data browser
 
 ## Getting Started
 
@@ -111,6 +111,23 @@ management. Normal application models should generate admin CRUD. Security-
 sensitive internal models, such as password hash history or token material, can
 opt out with a documented `@skipCrud` annotation.
 
+Generated CRUD and the data browser are root-only. Delegate ordinary platform operations through
+code-owned platform permissions and the `/admin/access-control` console instead of lowering that
+boundary.
+
+## Roles and permissions
+
+Platform roles authorize cross-organization operational work. Organization roles authorize work
+inside a verified organization membership. The template keeps their tables, decorators, APIs, and
+management surfaces separate so a null organization ID never changes a role's meaning.
+
+The reusable platform-admin console lives at `/admin/access-control`. The client-facing
+organization role example lives at `/settings/roles` and is intentionally application code so you
+can adapt terminology, seats, ownership, and delegation rules. Permission keys are defined in seed
+catalogs; administrators compose roles but cannot invent new keys through the UI.
+
+See [`docs/security/scoped-rbac.md`](../security/scoped-rbac.md) before adding a capability.
+
 ## Billing
 
 Stripe billing is optional. If Stripe environment variables are not configured,
@@ -181,4 +198,5 @@ pnpm nx show projects
 pnpm nx show project api
 pnpm nx build api
 pnpm nx test data-browser
+pnpm nx test access-control
 ```

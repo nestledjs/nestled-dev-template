@@ -86,12 +86,15 @@ Remove or rewrite dev-only material before committing `nestled-template`:
 
 ## Package Externalization
 
-`libs/data-browser` and `libs/shared-components` are package source in `nestled-dev-template`. In
-`nestled-template`, they should normally be consumed as published packages:
+`libs/data-browser`, `libs/shared-components`, and `libs/access-control` are package source in
+`nestled-dev-template`. In `nestled-template`, they should normally be consumed as published
+packages:
 
 - Remove `libs/data-browser` from the public template when `@nestledjs/data-browser` is published
   with the required version.
 - Remove `libs/shared-components` from the public template when `@nestledjs/shared-components` is
+  published with the required version.
+- Remove `libs/access-control` from the public template when `@nestledjs/access-control` is
   published with the required version.
 - Add those packages to the public template `package.json` dependency surface.
 - Update imports so app/template code consumes package names rather than workspace source paths.
@@ -160,10 +163,11 @@ Also run focused checks for any package externalization changes:
 pnpm nx build web
 pnpm nx test web-ui
 pnpm nx test data-browser
+pnpm nx test access-control
 ```
 
-Adjust the project names if `data-browser` or `shared-components` have already been removed from
-the public template.
+Adjust the project names if `data-browser`, `shared-components`, or `access-control` have already
+been removed from the public template.
 
 ## Final Public Commit Checklist
 

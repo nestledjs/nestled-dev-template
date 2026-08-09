@@ -1,0 +1,14 @@
+{
+  "name": "access-control",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/access-control/src",
+  "projectType": "library",
+  "tags": ["publishable"],
+  "targets": {
+    "nx-release-publish": {
+      "options": {
+        "packageRoot": "dist/{projectRoot}"
+      }
+    }
+  }
+}

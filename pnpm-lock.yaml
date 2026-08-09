@@ -650,6 +650,9 @@ importers:
       '@mdx-js/rollup':
         specifier: ^3.1.0
         version: 3.1.0(acorn@8.16.0)(rollup@4.44.0)
+      '@nestledjs/access-control':
+        specifier: workspace:*
+        version: link:../../libs/access-control
       '@radix-ui/react-slot':
         specifier: ^1.2.3
         version: 1.2.3(@types/react@19.1.0)(react@19.1.0)
@@ -887,6 +890,12 @@ importers:
       '@types/ws':
         specifier: ^8.18.1
         version: 8.18.1
+
+  libs/access-control:
+    dependencies:
+      react:
+        specifier: ^18.0.0 || ^19.0.0
+        version: 19.1.0
 
   libs/data-browser:
     dependencies:
