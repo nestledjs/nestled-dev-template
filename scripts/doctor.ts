@@ -8,6 +8,7 @@ import {
   getOperationGuardNames,
   hasAuthenticationGuard,
 } from './doctor-auth-analysis'
+import { analyzeAccessPolicies, readStringObjectArray } from './doctor-access-policy-analysis'
 import {
   getCrudAuthAnnotationLines,
   getCustomResolverNameViolations,
@@ -44,6 +45,10 @@ const generatorPackagePath = 'node_modules/@nestledjs/generators/package.json'
 const notesDir = '.nestled-updates/upgrade-notes'
 const guardBaselinePath = '.nestled-updates/security/guard-baseline.json'
 const publicOperationsPath = '.nestled-updates/security/public-operations.json'
+const platformPermissionCatalogPath =
+  'libs/api/prisma/src/lib/seed/seed-data/seed-platform-access-control.ts'
+const organizationPermissionCatalogPath =
+  'libs/api/prisma/src/lib/seed/seed-data/seed-roles-permissions.ts'
 const sdkContractBaselinePath = '.nestled-updates/sdk-contract-baseline.json'
 const sdkContractExceptionsPath = '.nestled-updates/sdk-contract-exceptions.json'
 const resolverSourceRoots = ['libs/api', 'apps/api/src']
@@ -1568,10 +1573,13 @@ const checkEmulationPrivilegeCeiling = () => {
           /\b\w+\.impersonate\w*\s*\(/i.test(operation.body))
       if (!isEmulationMutation) continue
 
-      if (!operation.decorators.includes('GqlAuthAdminGuard')) {
+      const hasPlatformEmulationPolicy =
+        operation.decorators.includes('RequirePlatformPermission') &&
+        operation.decorators.includes('platform.users.emulate')
+      if (!operation.decorators.includes('GqlAuthAdminGuard') && !hasPlatformEmulationPolicy) {
         fail(
           'emulation-security',
-          `Emulation/impersonation resolver ${operation.name} must require GqlAuthAdminGuard`,
+          `Emulation/impersonation resolver ${operation.name} must require GqlAuthAdminGuard or platform.users.emulate`,
           file,
         )
       }
@@ -1872,9 +1880,69 @@ const checkAuthLevelDeclarations = () => {
 
       fail(
         'auth-level',
-        `API operation ${operation.className}.${operation.name} does not declare an access level; add @Public(), @Authenticated(), or @AdminOnly() at the method or class level so intent is explicit`,
+        `API operation ${operation.className}.${operation.name} does not declare an access level; add @Public(), @Authenticated(), @AdminOnly(), or a scoped permission decorator at the method or class level so intent is explicit`,
         file,
         operation.line,
+      )
+    }
+  }
+}
+
+const readPermissionCatalogs = () => {
+  const platform = new Set<string>()
+  if (existsSync(platformPermissionCatalogPath)) {
+    const source = readFileSync(platformPermissionCatalogPath, 'utf8')
+    for (const entry of readStringObjectArray(source, 'platformPermissions', ['key'])) {
+      platform.add(entry.key)
+    }
+  }
+  const organization = new Set<string>()
+  if (existsSync(organizationPermissionCatalogPath)) {
+    const source = readFileSync(organizationPermissionCatalogPath, 'utf8')
+    for (const entry of readStringObjectArray(source, 'defaultPermissions', [
+      'subject',
+      'action',
+    ])) {
+      organization.add(`${entry.subject}:${entry.action}`)
+    }
+  }
+  return { organization, platform }
+}
+
+const checkAccessPolicyDeclarations = () => {
+  const catalogs = readPermissionCatalogs()
+
+  for (const file of getAuthSourceFiles()) {
+    const report = analyzeAccessPolicies(readFileSync(file, 'utf8'), file)
+    for (const declaration of report.declarations) {
+      if (declaration.permissions.length === 0) {
+        fail(
+          'access-policy',
+          `${declaration.className}.${declaration.name} declares ${declaration.decorator} without a permission`,
+          file,
+          declaration.line,
+        )
+        continue
+      }
+
+      const catalog = catalogs[declaration.scope]
+      for (const permission of declaration.permissions) {
+        if (catalog.has(permission)) continue
+        fail(
+          'access-policy',
+          `${declaration.className}.${declaration.name} declares unknown ${declaration.scope} permission ${permission}; add it to the code-owned catalog or fix the typo`,
+          file,
+          declaration.line,
+        )
+      }
+    }
+
+    for (const violation of report.inlineViolations) {
+      fail(
+        'access-policy',
+        `${violation.className}.${violation.name} calls ${violation.calls.join(', ')} inside the operation body without a scoped permission decorator; move the role gate into declarative metadata and leave only row/object checks in the service`,
+        file,
+        violation.line,
       )
     }
   }
@@ -2000,6 +2068,7 @@ checkDevPortPairings()
 checkGuardRegressions()
 checkUnguardedRootOperations()
 checkAuthLevelDeclarations()
+checkAccessPolicyDeclarations()
 checkPrismaGeneratedEnums()
 checkUnsafeTypeScriptCasts()
 checkResolverScopeAnchoring()

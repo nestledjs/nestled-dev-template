@@ -1,8 +1,8 @@
 # Nestled Development Template
 
 This repository is the development source for the Nestled SaaS template and for
-published Nestled packages such as `@nestledjs/data-browser` and
-`@nestledjs/shared-components`.
+published Nestled packages such as `@nestledjs/data-browser`,
+`@nestledjs/shared-components`, and `@nestledjs/access-control`.
 
 It is not the final clone-facing template exactly as users receive it. The
 release process copies this workspace into the clonable template, removes
@@ -17,6 +17,7 @@ published package dependencies, and applies the adopter-facing documentation.
 - `libs/shared/*` - shared SDK, Apollo setup, styles, and utilities.
 - `libs/data-browser` - source for `@nestledjs/data-browser`.
 - `libs/shared-components` - source for `@nestledjs/shared-components`.
+- `libs/access-control` - source for the reusable `@nestledjs/access-control` platform RBAC console.
 - `.nestled-updates` - upgrade-note and downstream propagation tooling.
 - `docs/dev` - maintainer documentation for this development repo.
 - `docs/template` - source documentation intended for the clonable template.
@@ -57,6 +58,8 @@ pnpm prisma migrate deploy
 - [Add an API Integration](docs/blueprints/add-integration.md)
 - [Data Browser Package](libs/data-browser/README.md)
 - [Shared Components Package](libs/shared-components/README.md)
+- [Access Control Package](libs/access-control/README.md)
+- [Scoped RBAC Security Model](docs/security/scoped-rbac.md)
 
 ## Release Notes
 

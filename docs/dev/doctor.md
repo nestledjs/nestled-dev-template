@@ -45,9 +45,12 @@ or framework commands such as `pnpm doctor` or `expo doctor`.
   or `@AdminOnly()` at the method or class level.
 - GraphQL operations and REST controller routes carry an authentication guard, unless they are
   recorded in `.nestled-updates/security/public-operations.json` with a written reason.
+- Scoped policy decorators contain known, code-owned platform or organization permission keys.
+  Empty policies, hidden inline permission helpers on API operations, and unknown keys fail.
 - Non-generated TypeScript source avoids `as any`, double-casting through `unknown`, and
   `@ts-ignore`. Existing findings are warning-only; findings on changed lines fail.
-- Emulation or impersonation code requires `GqlAuthAdminGuard` and an explicit privilege ceiling.
+- Emulation or impersonation code requires `GqlAuthAdminGuard` or
+  `platform.users.emulate`, plus an explicit privilege ceiling.
 - Resolver methods that use caller-supplied IDs in data access without an obvious `@CtxUser`
   scope anchor are flagged for review. Changed-line findings fail.
 - Sensitive auth, organization, billing, admin, RBAC, and user mutations without obvious audit

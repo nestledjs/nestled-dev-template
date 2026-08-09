@@ -61,6 +61,21 @@ Use `libs/web/*`, `libs/web-ui`, and `libs/shared-components` for browser-only
 React helpers and components. Published component packages should not depend on
 application-specific imports.
 
+`libs/access-control` is the publishable, adapter-driven platform RBAC console. Keep its React UI,
+types, theme tokens, and accessibility behavior reusable. Apollo wiring belongs in the template's
+`/admin/access-control` route. Organization/client permission management stays application-local
+under `apps/web` so a product can customize its delegation model and terminology.
+
+## Scoped authorization
+
+Use `RequirePlatformPermission` for cross-tenant operational capabilities and
+`RequireOrganizationPermission` for a verified organization target. Do not use platform roles to
+unlock generated CRUD or the generic data browser; those remain `AdminOnly` root surfaces.
+
+Scoped decorators declare operation-level capability. Ownership, tenant membership of a target
+record, state transitions, and field visibility remain explicit service responsibilities. See
+[Scoped RBAC](../security/scoped-rbac.md).
+
 ## Custom Libraries
 
 Create a new library when code is reusable across multiple app surfaces or has a

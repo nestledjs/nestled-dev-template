@@ -32,6 +32,7 @@ Application code lives in `apps/`: `apps/api` is the NestJS GraphQL API, `apps/w
 - `libs/web-ui` — Low-level UI primitives (Storybook available)
 - `libs/shared-components` — Shared React components
 - `libs/data-browser` — Data browsing UI components
+- `libs/access-control` — Reusable platform access-control UI
 
 Static assets are in `apps/web/public`; helper scripts are in `scripts/`.
 
@@ -149,9 +150,9 @@ gh pr create --base develop
 
 ## Release Process
 
-Applies to the two published packages, `@nestledjs/data-browser` (`libs/data-browser`) and
-`@nestledjs/shared-components` (`libs/shared-components`). "Release it" means exactly the
-procedure below.
+Applies to the published packages `@nestledjs/data-browser` (`libs/data-browser`),
+`@nestledjs/shared-components` (`libs/shared-components`), and `@nestledjs/access-control`
+(`libs/access-control`). "Release it" means exactly the procedure below.
 
 ### Rules
 
@@ -170,6 +171,8 @@ procedure below.
 - **Releasing `shared-components` cascades into `data-browser`**, because data-browser peers on
   it; nx bumps both. Expect two versions and two tags. Releasing `data-browser` alone does not
   cascade.
+- **Releasing `access-control` is independent.** It peers only on React and does not bump either
+  existing package.
 
 ### Phase 1 — version bump, via PR
 
@@ -219,7 +222,7 @@ The newest git tag and the npm `latest` version must agree. If they do not, reso
 immediately — either push the missing tag, or backfill it against the commit that was published.
 
 Changelog generation is deliberately not part of this process. `nx.json` configures
-`changelog.projectChangelogs.createRelease: github`, but no `CHANGELOG.md` exists in either package
+`changelog.projectChangelogs.createRelease: github`, but no `CHANGELOG.md` exists in these packages
 and no GitHub release has ever been cut, so `nx release changelog` has never run here. Do not
 introduce it as part of a routine release; make it a deliberate separate change if wanted.
 

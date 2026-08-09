@@ -146,7 +146,7 @@
     }
   },
   "release": {
-    "projects": ["shared-components", "data-browser"],
+    "projects": ["shared-components", "data-browser", "access-control"],
     "projectsRelationship": "independent",
     "version": {
       "git": {

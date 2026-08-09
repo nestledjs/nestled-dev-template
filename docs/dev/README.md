@@ -26,6 +26,7 @@ Published packages currently developed here:
 
 - `@nestledjs/data-browser` from `libs/data-browser`
 - `@nestledjs/shared-components` from `libs/shared-components`
+- `@nestledjs/access-control` from `libs/access-control`
 
 Package source should be tested and documented as a standalone public package.
 The clonable template should consume released packages rather than asking users
@@ -69,6 +70,7 @@ Prefer focused Nx commands while developing:
 pnpm nx build api
 pnpm nx build web
 pnpm nx test data-browser
+pnpm nx test access-control
 pnpm nx test web-ui
 pnpm run nestled-doctor
 pnpm verify:selects
