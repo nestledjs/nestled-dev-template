@@ -56,6 +56,9 @@ function RoleEditor({ role, permissions, busy, onClose, onSave }: Readonly<RoleE
     event.preventDefault()
     await onSave({ name, description, permissionKeys: [...selected] })
   }
+  let submitLabel = 'Create role'
+  if (role) submitLabel = 'Save role'
+  if (busy) submitLabel = 'Saving…'
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
@@ -135,6 +138,7 @@ function RoleEditor({ role, permissions, busy, onClose, onSave }: Readonly<RoleE
                           key={permission.id}
                           className="flex cursor-pointer items-start gap-3 rounded-lg p-2 hover:bg-white dark:hover:bg-white/5"
                         >
+                          <span className="sr-only">Toggle permission</span>
                           <input
                             type="checkbox"
                             checked={checked}
@@ -179,7 +183,7 @@ function RoleEditor({ role, permissions, busy, onClose, onSave }: Readonly<RoleE
             disabled={busy}
             className="rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-600 disabled:opacity-60"
           >
-            {busy ? 'Saving…' : role ? 'Save role' : 'Create role'}
+            {submitLabel}
           </button>
         </footer>
       </form>

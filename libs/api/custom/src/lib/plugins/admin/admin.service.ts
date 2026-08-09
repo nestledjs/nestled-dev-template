@@ -512,7 +512,7 @@ export class AdminService {
   async verifyEmail(actorUserId: string, userId: string, emailId: string) {
     await this.accessControl.assertCanManagePrincipal(actorUserId, userId)
     const email = await this.prisma.email.findUnique({ where: { id: emailId } })
-    if (!email || email.userId !== userId) {
+    if (email?.userId !== userId) {
       throw new BadRequestException('Email does not belong to the selected user')
     }
 

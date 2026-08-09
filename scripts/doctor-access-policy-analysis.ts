@@ -128,7 +128,7 @@ const calledAccessHelpers = (method: ts.MethodDeclaration): string[] => {
     ts.forEachChild(node, visit)
   }
   visit(method.body)
-  return [...calls].sort()
+  return [...calls].sort((left, right) => left.localeCompare(right))
 }
 
 const unwrapExpression = (expression: ts.Expression): ts.Expression => {

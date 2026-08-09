@@ -1561,47 +1561,49 @@ const checkAuditCoverageHeuristic = () => {
 const hasPrivilegeCeiling = (source: string): boolean =>
   /role|permission|privilege|superAdmin|isSuperAdmin|higher|equal|ceiling/i.test(source)
 
-const checkEmulationPrivilegeCeiling = () => {
-  const resolverFiles = walkFiles('libs/api/custom/src/lib', path => path.endsWith('.resolver.ts'))
-  for (const file of resolverFiles) {
-    const source = stripComments(readFileSync(file, 'utf8'))
-    for (const operation of getGraphqlOperationMethods(source)) {
-      const isEmulationMutation =
-        /@Mutation\b/.test(operation.decorators) &&
-        (/\b(emulat|impersonat)/i.test(operation.name) ||
-          /\b\w+\.emulate\w*\s*\(/i.test(operation.body) ||
-          /\b\w+\.impersonate\w*\s*\(/i.test(operation.body))
-      if (!isEmulationMutation) continue
+type GraphqlOperation = ReturnType<typeof getGraphqlOperationMethods>[number]
 
-      const hasPlatformEmulationPolicy =
-        operation.decorators.includes('RequirePlatformPermission') &&
-        operation.decorators.includes('platform.users.emulate')
-      if (!operation.decorators.includes('GqlAuthAdminGuard') && !hasPlatformEmulationPolicy) {
-        fail(
-          'emulation-security',
-          `Emulation/impersonation resolver ${operation.name} must require GqlAuthAdminGuard or platform.users.emulate`,
-          file,
-        )
-      }
-    }
+const isEmulationMutation = (operation: GraphqlOperation): boolean =>
+  /@Mutation\b/.test(operation.decorators) &&
+  (/\b(emulat|impersonat)/i.test(operation.name) ||
+    /\b\w+\.emulate\w*\s*\(/i.test(operation.body) ||
+    /\b\w+\.impersonate\w*\s*\(/i.test(operation.body))
+
+const hasEmulationAuthorization = (operation: GraphqlOperation): boolean =>
+  operation.decorators.includes('GqlAuthAdminGuard') ||
+  (operation.decorators.includes('RequirePlatformPermission') &&
+    operation.decorators.includes('platform.users.emulate'))
+
+const checkEmulationResolverFile = (file: string) => {
+  const source = stripComments(readFileSync(file, 'utf8'))
+  for (const operation of getGraphqlOperationMethods(source)) {
+    if (!isEmulationMutation(operation) || hasEmulationAuthorization(operation)) continue
+    fail(
+      'emulation-security',
+      `Emulation/impersonation resolver ${operation.name} must require GqlAuthAdminGuard or platform.users.emulate`,
+      file,
+    )
   }
+}
 
-  const serviceFiles = walkFiles(
+const checkEmulationServiceFile = (file: string) => {
+  const source = stripComments(readFileSync(file, 'utf8'))
+  if (!/\b(emulat|impersonat)/i.test(source) || hasPrivilegeCeiling(source)) return
+  fail(
+    'emulation-security',
+    'Emulation/impersonation service code must enforce an explicit privilege ceiling',
+    file,
+  )
+}
+
+const checkEmulationPrivilegeCeiling = () => {
+  walkFiles('libs/api/custom/src/lib', path => path.endsWith('.resolver.ts')).forEach(
+    checkEmulationResolverFile,
+  )
+  walkFiles(
     'libs/api/custom/src/lib',
     path => path.endsWith('.service.ts') && !path.endsWith('.spec.ts'),
-  )
-
-  for (const file of serviceFiles) {
-    const source = stripComments(readFileSync(file, 'utf8'))
-    if (!/\b(emulat|impersonat)/i.test(source)) continue
-    if (!hasPrivilegeCeiling(source)) {
-      fail(
-        'emulation-security',
-        'Emulation/impersonation service code must enforce an explicit privilege ceiling',
-        file,
-      )
-    }
-  }
+  ).forEach(checkEmulationServiceFile)
 }
 
 // Read one key out of an already-loaded `.env` body. Shared by every check that inspects local

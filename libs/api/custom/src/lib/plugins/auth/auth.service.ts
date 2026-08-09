@@ -1,10 +1,4 @@
-import {
-  BadRequestException,
-  ForbiddenException,
-  Injectable,
-  Logger,
-  NotFoundException,
-} from '@nestjs/common'
+import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
 import { ApiCoreDataAccessService } from '@nestled-template/api/core/data-access'
 import { EmailType, User } from '@nestled-template/api/core/models'
