@@ -25,6 +25,7 @@ export class OrganizationContextService {
     requestedOrganizationId?: string,
   ): Promise<OrganizationContext | undefined> {
     if (!req.user) return undefined
+    if (!requestedOrganizationId && req.organizationContext) return req.organizationContext
 
     const organizationId = requestedOrganizationId ?? (await this.resolveOrganizationId(req))
     if (!organizationId) return undefined
