@@ -48,13 +48,17 @@ async function reconnectOrgRolePermissions(prisma: PrismaClient): Promise<number
     const template = defaultRoles.find(t => t.name === role.name)
     if (!template) continue
     const existingKeys = new Set(role.permissions.map(p => `${p.subject}:${p.action}`))
-    const resemblesSeededRole = [...existingKeys].every(key => template.permissions.includes(key))
-    const toConnect = allPermissions.filter(
-      p =>
-        template.permissions.includes(`${p.subject}:${p.action}`) &&
-        !existingKeys.has(`${p.subject}:${p.action}`),
-    )
-    const shouldMarkSystem = !role.isSystem && resemblesSeededRole
+    const hasExactDefaultPermissions =
+      existingKeys.size === template.permissions.length &&
+      template.permissions.every(permission => existingKeys.has(permission))
+    const toConnect = role.isSystem
+      ? allPermissions.filter(
+          p =>
+            template.permissions.includes(`${p.subject}:${p.action}`) &&
+            !existingKeys.has(`${p.subject}:${p.action}`),
+        )
+      : []
+    const shouldMarkSystem = !role.isSystem && hasExactDefaultPermissions
     if (toConnect.length === 0 && !shouldMarkSystem) continue
     await prisma.role.update({
       where: { id: role.id },

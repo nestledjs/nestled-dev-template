@@ -92,9 +92,10 @@ agentHints:
     administrator, and generated CRUD/data-browser access must remain AdminOnly.
   - >
     Backfill isSystem only for roles the project can identify as its seeded defaults. The template
-    requires a default name and no permissions outside that default role's catalog; adapt that
-    evidence if the downstream has stronger provenance. Do not mark customer-created roles
-    immutable merely because their names resemble Owner, Admin, or Member.
+    requires a default name and an exact match with that default role's permission set; adapt that
+    evidence if the downstream has stronger provenance. Leave ambiguous or incomplete roles
+    mutable for manual review, and do not mark customer-created roles immutable merely because
+    their names resemble Owner, Admin, or Member.
   - >
     Consume the published @nestledjs/access-control package and provide a local adapter for the
     purpose-built API. Keep the organization/client management route application-local; downstream
