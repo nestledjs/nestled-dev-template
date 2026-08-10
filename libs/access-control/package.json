@@ -1,6 +1,6 @@
 {
   "name": "@nestledjs/access-control",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Transport-agnostic platform RBAC administration UI for Nestled applications",
   "main": "./index.js",
   "module": "./index.js",
