@@ -9,7 +9,9 @@ intent: >
   Treat the agent-reachable MCP tools as a data-access boundary. Restrict platform-wide MCP
   authority to actual super administrators, constrain organization-scoped responses and lookups
   to the token's organization, invalidate organization tokens after membership removal, and add
-  coverage thresholds that keep the MCP tool surface fully exercised by default.
+  coverage thresholds that keep the MCP tool surface fully exercised by default. Coverage is
+  measured over every source file rather than only those a spec imports, and the global threshold
+  is a ratchet set from the project's own measured baseline rather than a number copied from here.
 
 why: >
   The existing low-coverage MCP surface contained four real scope failures. An organization role
@@ -56,6 +58,26 @@ agentHints:
     get_organization must combine the requested organization id with a current membership filter,
     and organization-scoped get_profile must return only that membership.
   - >
-    Preserve the api-custom global minimums of 85 percent statements and lines and 70 percent
-    branches and functions. Keep MCP tools at 100 percent statements, functions, and lines with at
-    least 80 percent branch coverage so future agent-reachable paths cannot arrive untested.
+    Set collectCoverageFrom before setting any threshold. Without it Jest measures only the files
+    some spec imported and omits the rest, so a file with no test does not lower the percentage and
+    the gate is computed over a subset that moves as tests are added or deleted. In this template
+    that was the difference between 86.9 percent over 71 of 132 source files and 70.7 percent over
+    all of them. Exclude barrels and declaration files only; excluding modules and DTOs buys a
+    better number by measuring less, which is the defect this setting exists to remove.
+  - >
+    Do NOT copy this template's global threshold numbers. Measure your own coverage with the honest
+    denominator first, then set the gate just below what you actually have, as a ratchet against
+    regression. A threshold above current coverage is not a policy, it is a red build, and a build
+    that is red on arrival gets disabled — leaving no gate at all. Coverage across these projects
+    varies enormously: this template measures about 70 percent statements while at least one
+    downstream measures under 30 percent once its denominator is honest. One number cannot fit both.
+  - >
+    Put forward pressure in the Sonar new-code gate rather than in this threshold. New-code coverage
+    is strict about the lines being changed now and charges nothing for legacy surface nobody has
+    reached, which is what actually raises quality over time. The Jest threshold is the tool for not
+    getting worse; it is a poor tool for getting better.
+  - >
+    Keep MCP tools at 100 percent statements, functions and lines with at least 80 percent branches,
+    whatever the global numbers are. Strict where risk concentrates and lenient globally is the point:
+    the audit behind this note found four real tenancy defects in exactly that surface, so a new path
+    arriving untested there is an unreviewed authorization boundary rather than a missing test.
