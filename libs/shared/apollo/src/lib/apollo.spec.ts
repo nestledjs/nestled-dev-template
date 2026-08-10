@@ -59,10 +59,17 @@ describe('makeClient', () => {
     )
   })
 
-  it('chooses the newest JWT when duplicate session cookies exist', () => {
+  it('chooses the newest JWT when duplicate session cookies exist', async () => {
     process.env.VITE_COOKIE_NAME = '__session'
     const older = jwtWithIssuedAt(1)
     const newer = jwtWithIssuedAt(2)
+    const fetchMock = vi.fn().mockResolvedValue(
+      new Response(JSON.stringify({ data: { ping: 'pong' } }), {
+        status: 200,
+        headers: { 'content-type': 'application/json' },
+      }),
+    )
+    globalThis.fetch = fetchMock
     const request = new Request('https://app.example.com', {
       headers: {
         cookie: `__session=${older}; theme=dark; __session=${newer}`,
@@ -71,7 +78,45 @@ describe('makeClient', () => {
 
     const client = makeClient(request, { apiUrl: 'https://api.example.com/graphql' })
 
-    expect(client).toBeTruthy()
+    await client.query({
+      query: gql`
+        query Ping {
+          ping
+        }
+      `,
+    })
+
+    expect(fetchMock.mock.calls[0][1].headers.authorization).toBe(`Bearer ${newer}`)
+  })
+
+  it('prefers the last duplicate JWT when both were issued in the same second', async () => {
+    process.env.VITE_COOKIE_NAME = '__session'
+    const first = jwtWithIssuedAt(1)
+    const second = `${jwtWithIssuedAt(1)}-newer-signature`
+    const fetchMock = vi.fn().mockResolvedValue(
+      new Response(JSON.stringify({ data: { ping: 'pong' } }), {
+        status: 200,
+        headers: { 'content-type': 'application/json' },
+      }),
+    )
+    globalThis.fetch = fetchMock
+    const request = new Request('https://app.example.com', {
+      headers: {
+        cookie: `__session=${first}; __session=${second}`,
+      },
+    })
+
+    const client = makeClient(request, { apiUrl: 'https://api.example.com/graphql' })
+
+    await client.query({
+      query: gql`
+        query Ping {
+          ping
+        }
+      `,
+    })
+
+    expect(fetchMock.mock.calls[0][1].headers.authorization).toBe(`Bearer ${second}`)
   })
 
   it('sends authorization and active organization headers through the link chain', async () => {
