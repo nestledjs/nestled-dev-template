@@ -102,13 +102,38 @@ function getSessionCookieName(): string {
   return '__session'
 }
 
+/**
+ * Decode a base64url JWT segment in both runtimes.
+ *
+ * `Buffer` is Node-only and the web bundle polyfills nothing, so decoding through it threw a
+ * ReferenceError on every token in the browser. The throw never surfaced: the caller's `catch`
+ * treats it as a malformed token, leaves `best` null, and falls back to the last cookie value —
+ * which is exactly the behaviour `pickNewestJwt` exists to replace. `document.cookie` orders by
+ * path specificity rather than by age, so that fallback can hand back the stale token, silently,
+ * in precisely the duplicate-cookie case this code was written for.
+ *
+ * Padding is restored explicitly because base64url omits it and `atob` requires it.
+ */
+export function decodeBase64UrlSegment(segment: string): string {
+  const base64 = segment.replaceAll('-', '+').replaceAll('_', '/')
+  const padded = base64.padEnd(Math.ceil(base64.length / 4) * 4, '=')
+
+  if (typeof atob === 'function') {
+    const binary = atob(padded)
+    const bytes = Uint8Array.from(binary, character => character.codePointAt(0) ?? 0)
+    return new TextDecoder().decode(bytes)
+  }
+
+  return Buffer.from(padded, 'base64').toString('utf8')
+}
+
 function pickNewestJwt(values: string[]): string {
   let best: { token: string; iat: number } | null = null
   for (const token of values) {
     try {
       const parts = token.split('.')
       if (parts.length !== 3) continue
-      const payload = JSON.parse(Buffer.from(parts[1], 'base64url').toString('utf8')) as {
+      const payload = JSON.parse(decodeBase64UrlSegment(parts[1])) as {
         iat?: number
         exp?: number
       }
