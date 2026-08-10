@@ -8,9 +8,11 @@ delivery: code-patch
 intent: >
   The client picks the newest of several session cookies by reading each token's issued-at claim.
   That decode ran through Buffer, which does not exist in a browser and is not polyfilled by the web
-  bundle, so on the client it threw for every token. Decode base64url through atob and TextDecoder
-  when available, falling back to Buffer for server rendering. Also reset the access-denied state on
-  the whole navigation rather than on the pathname alone.
+  bundle, so on the client it threw for every token. Decode through Buffer where it exists, through
+  atob plus TextDecoder where both exist, and throw a clear error otherwise rather than guessing.
+  Warn when nothing decodes and several cookies were offered, so the positional fallback stops being
+  silent. Also reset the access-denied state on the whole navigation rather than on the pathname
+  alone.
 
 why: >
   The throw never surfaced. It was raised inside the per-token try/catch that exists to skip
@@ -51,8 +53,11 @@ agentHints:
     must translate the URL-safe alphabet: '-' to '+' and '_' to '/'. Skipping either silently
     produces wrong bytes rather than an error.
   - >
-    Keep a Buffer branch for server rendering. atob exists in modern Node, but the fallback costs
-    nothing and this path runs in both runtimes.
+    Order the branches so the runtime that has a real decoder uses it. Prefer Buffer where it
+    exists: modern Node also exposes atob, so guarding on atob first quietly routes server rendering
+    down the browser path and leaves the Buffer branch dead while the docs still claim it is the SSR
+    fallback. Require TextDecoder alongside atob rather than assuming it, and throw when neither
+    pair is available instead of returning something plausible.
   - >
     When testing this, remove Buffer around the pure decode call only. Removing it around a live
     Apollo client leaves module-level state behind - the once-only service-unavailable flag - which
