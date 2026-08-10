@@ -434,6 +434,14 @@ and files after their Prisma model when possible; otherwise put `/** @prisma-mod
 immediately before the affected constant. Run the verifier after `fragment-to-select` and after any
 manual select change. A schema-valid select still requires a separate authorization review.
 
+After refreshing `api-schema.graphql`, also run `pnpm verify:select-coverage` and
+`pnpm verify:fragments`. Select coverage fails when a reusable select omits a non-nullable Prisma
+scalar exposed by its GraphQL return type; declare a deliberate security omission with
+`/** @select-omits fieldName */`. Fragment coverage fails when an application SDK fragment requests
+a field no named select for that model produces. Mark nested helper constants with
+`@fragment-partial` when they need `@prisma-model` for schema validation but do not independently
+back a GraphQL operation. Neither coverage tool authorizes widening a select.
+
 ## API Server Management
 
 Agents may start, stop, and restart this workspace's local API and web development servers when
