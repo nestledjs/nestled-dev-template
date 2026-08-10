@@ -1305,7 +1305,7 @@ export class AuthService {
     if (cookie.options.domain) {
       const hostOnlyOptions = { ...cookie.options }
       delete hostOnlyOptions.domain
-      res.clearCookie(cookie.name, hostOnlyOptions)
+      response.clearCookie(cookie.name, hostOnlyOptions)
     }
 
     return response
