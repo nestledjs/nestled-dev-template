@@ -1,6 +1,6 @@
 import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest'
 import { gql } from '@apollo/client'
-import { makeClient } from './apollo'
+import { APOLLO_ACCESS_FORBIDDEN_EVENT, makeClient } from './apollo'
 
 function jwtWithIssuedAt(iat: number): string {
   const payload = Buffer.from(JSON.stringify({ iat })).toString('base64url')
@@ -24,6 +24,7 @@ describe('makeClient', () => {
       process.env.VITE_COOKIE_NAME = originalCookieName
     }
     vi.restoreAllMocks()
+    vi.unstubAllGlobals()
     globalThis.fetch = originalFetch
     localStorage.clear()
   })
@@ -132,5 +133,95 @@ describe('makeClient', () => {
 
     vi.advanceTimersByTime(30000)
     vi.useRealTimers()
+  })
+
+  it('redirects through logout when a transport response is unauthorized', async () => {
+    const consoleLog = vi.spyOn(console, 'log').mockImplementation(() => undefined)
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined)
+    const testWindow = {
+      location: { pathname: '/admin/sessions', href: '' },
+    }
+    vi.stubGlobal('window', testWindow)
+    globalThis.fetch = vi.fn().mockResolvedValue(
+      new Response(JSON.stringify({ errors: [{ message: 'Unauthorized' }] }), {
+        status: 401,
+        headers: { 'content-type': 'application/json' },
+      }),
+    )
+    const client = makeClient(undefined, { apiUrl: 'https://api.example.com/graphql' })
+
+    await client.query({
+      query: gql`
+        query PrivateData {
+          privateData
+        }
+      `,
+    })
+
+    expect(consoleLog).toHaveBeenCalledWith(
+      '[Apollo] Authentication error detected, redirecting to logout then login',
+    )
+    expect(consoleError).toHaveBeenCalled()
+    expect(testWindow.location.href).toBe('/logout?return_url=%2Fadmin%2Fsessions')
+  })
+
+  it('signals a friendly access-denied state for forbidden queries', async () => {
+    const forbiddenHandler = vi.fn()
+    globalThis.addEventListener(APOLLO_ACCESS_FORBIDDEN_EVENT, forbiddenHandler)
+    globalThis.fetch = vi.fn().mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          errors: [
+            {
+              message: 'Forbidden',
+              extensions: { code: 'FORBIDDEN' },
+            },
+          ],
+        }),
+        { status: 200, headers: { 'content-type': 'application/json' } },
+      ),
+    )
+    const client = makeClient(undefined, { apiUrl: 'https://api.example.com/graphql' })
+
+    await client.query({
+      query: gql`
+        query PrivateData {
+          privateData
+        }
+      `,
+    })
+
+    expect(forbiddenHandler).toHaveBeenCalledTimes(1)
+    globalThis.removeEventListener(APOLLO_ACCESS_FORBIDDEN_EVENT, forbiddenHandler)
+  })
+
+  it('leaves forbidden mutations with the invoking UI', async () => {
+    const forbiddenHandler = vi.fn()
+    globalThis.addEventListener(APOLLO_ACCESS_FORBIDDEN_EVENT, forbiddenHandler)
+    globalThis.fetch = vi.fn().mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          errors: [
+            {
+              message: 'Forbidden',
+              extensions: { code: 'FORBIDDEN' },
+            },
+          ],
+        }),
+        { status: 200, headers: { 'content-type': 'application/json' } },
+      ),
+    )
+    const client = makeClient(undefined, { apiUrl: 'https://api.example.com/graphql' })
+
+    await client.mutate({
+      mutation: gql`
+        mutation UpdatePrivateData {
+          updatePrivateData
+        }
+      `,
+    })
+
+    expect(forbiddenHandler).not.toHaveBeenCalled()
+    globalThis.removeEventListener(APOLLO_ACCESS_FORBIDDEN_EVENT, forbiddenHandler)
   })
 })

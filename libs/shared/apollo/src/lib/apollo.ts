@@ -80,6 +80,8 @@ export type ClientOptions = {
   environment?: 'development' | 'staging' | 'production'
 }
 
+export const APOLLO_ACCESS_FORBIDDEN_EVENT = 'apollo-access-forbidden'
+
 // Global flag to track if we've already shown the "service-unavailable" message
 let hasShownServiceUnavailableMessage = false
 
@@ -192,6 +194,25 @@ function isAuthenticationError(message: string, extensions?: any): boolean {
   )
 }
 
+function isForbiddenError(extensions?: { code?: unknown }): boolean {
+  return extensions?.code === 'FORBIDDEN'
+}
+
+function isQueryOperation(operation: ApolloLink.Operation): boolean {
+  const definition = getMainDefinition(operation.query)
+  return definition.kind === 'OperationDefinition' && definition.operation === 'query'
+}
+
+function handleAuthorizationError(operation: ApolloLink.Operation): void {
+  if (globalThis.window === undefined || !isQueryOperation(operation)) return
+
+  globalThis.window.dispatchEvent(
+    new CustomEvent(APOLLO_ACCESS_FORBIDDEN_EVENT, {
+      detail: { operation: operation.operationName },
+    }),
+  )
+}
+
 function handleAuthenticationError(): void {
   console.log('[Apollo] Authentication error detected, redirecting to logout then login')
 
@@ -236,6 +257,8 @@ function createErrorLink(): ApolloLink {
 
         if (isAuthenticationError(message, extensions)) {
           handleAuthenticationError()
+        } else if (isForbiddenError(extensions)) {
+          handleAuthorizationError(operation)
         }
 
         logDevelopmentExtensions(extensions)
@@ -253,9 +276,28 @@ function createErrorLink(): ApolloLink {
 function handleNetworkError(networkError: Error, operation: ApolloLink.Operation): void {
   console.error(`[Network error]: ${networkError}`)
 
+  const statusCode = networkErrorStatus(networkError)
+  if (statusCode === 401) {
+    handleAuthenticationError()
+    return
+  }
+  if (statusCode === 403) {
+    handleAuthorizationError(operation)
+    return
+  }
+
   if (isNetworkConnectivityError(networkError) && shouldShowServiceUnavailableMessage()) {
     dispatchServiceUnavailableEvent(networkError, operation)
   }
+}
+
+function networkErrorStatus(networkError: Error): number | undefined {
+  const enrichedError = networkError as Error & {
+    status?: number
+    statusCode?: number
+    response?: { status?: number }
+  }
+  return enrichedError.statusCode ?? enrichedError.status ?? enrichedError.response?.status
 }
 
 function isNetworkConnectivityError(networkError: Error): boolean {
