@@ -1,16 +1,30 @@
 /// <reference types='vitest' />
-import { defineConfig } from 'vite'
+import { defineConfig, type Plugin } from 'vite'
 import react from '@vitejs/plugin-react'
 import dts from 'vite-plugin-dts'
 import * as path from 'path'
 import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin'
 import { nxCopyAssetsPlugin } from '@nx/vite/plugins/nx-copy-assets.plugin'
 
+function rejectDevelopmentJsx(): Plugin {
+  return {
+    name: 'reject-development-jsx',
+    generateBundle(_options, bundle) {
+      for (const output of Object.values(bundle)) {
+        if (output.type === 'chunk' && output.code.includes('jsxDEV')) {
+          this.error('The access-control package must not contain the development JSX runtime.')
+        }
+      }
+    },
+  }
+}
+
 export default defineConfig(() => ({
   root: import.meta.dirname,
   cacheDir: '../../node_modules/.vite/libs/access-control',
   plugins: [
-    react(),
+    react({ jsxRuntime: 'automatic' }),
+    rejectDevelopmentJsx(),
     nxViteTsPaths(),
     nxCopyAssetsPlugin(['*.md', 'LICENSE']),
     dts({
@@ -43,7 +57,7 @@ export default defineConfig(() => ({
     },
     rollupOptions: {
       // External packages that should not be bundled into your library.
-      external: ['react', 'react-dom', 'react/jsx-runtime'],
+      external: ['react', 'react-dom', 'react/jsx-runtime', 'react/jsx-dev-runtime'],
     },
   },
   test: {

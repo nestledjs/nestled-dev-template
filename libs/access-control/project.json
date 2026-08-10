@@ -5,6 +5,14 @@
   "projectType": "library",
   "tags": ["publishable"],
   "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "outputs": ["{workspaceRoot}/dist/libs/access-control"],
+      "options": {
+        "command": "NODE_ENV=production vite build --mode production",
+        "cwd": "libs/access-control"
+      }
+    },
     "nx-release-publish": {
       "options": {
         "packageRoot": "dist/{projectRoot}"

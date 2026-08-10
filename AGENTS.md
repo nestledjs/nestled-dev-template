@@ -436,9 +436,14 @@ manual select change. A schema-valid select still requires a separate authorizat
 
 ## API Server Management
 
-**IMPORTANT**: Never attempt to automatically restart the API server. Always ask the user to restart it manually.
+Agents may start, stop, and restart this workspace's local API and web development servers when
+needed for implementation, code generation, or end-to-end verification. The standard local ports
+are API `3000` and web `4200`.
 
-**Why**: The project may have multiple background API processes, custom startup configurations, or development workflows that cannot be safely managed automatically.
+Before starting a server, check whether its expected port is already in use. Reuse a process only
+when it is clearly this workspace's development server; never terminate an unrelated process. Keep
+track of processes started during the task and shut them down before handing work back to the user,
+unless the user explicitly asks to leave them running.
 
 ## Auto-Generated Files and Safe Export Patterns
 
