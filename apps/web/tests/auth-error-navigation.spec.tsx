@@ -52,12 +52,14 @@ describe('authentication and authorization error navigation', () => {
     render(<RouterProvider router={router} />)
     expect(await screen.findByText('Protected page')).toBeInTheDocument()
 
-    act(() => {
+    await act(async () => {
       globalThis.dispatchEvent(new CustomEvent(APOLLO_ACCESS_FORBIDDEN_EVENT))
     })
 
     expect(
-      screen.getByRole('heading', { name: 'You don’t have permission to view this page' }),
+      await screen.findByRole('heading', {
+        name: 'You don’t have permission to view this page',
+      }),
     ).toBeInTheDocument()
   })
 })
