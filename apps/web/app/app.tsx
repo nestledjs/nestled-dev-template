@@ -110,9 +110,13 @@ export function App() {
     }
   }, [])
 
+  // Keyed on the whole navigation, not the pathname. A route that changes only its query string
+  // -- switching the active organization, say -- is a new request that may well be permitted, and
+  // keying on pathname alone leaves the access-denied screen up over it with no way to clear it.
+  // location.key changes on every navigation, including same-path ones.
   useEffect(() => {
     setAccessForbidden(false)
-  }, [location.pathname])
+  }, [location.key])
 
   // Show Vite cache error UI if detected
   if (viteCacheError) {
