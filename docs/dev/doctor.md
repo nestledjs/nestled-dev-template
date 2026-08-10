@@ -162,6 +162,13 @@ application roots; CI runs it alongside Doctor and typechecking. See
 [`api-extension-methodology.md`](./api-extension-methodology.md) for generation and model-override
 usage.
 
+Two complementary coverage gates catch selects that are valid but too narrow.
+`pnpm verify:select-coverage` compares each reusable select with the non-nullable Prisma scalar
+surface exposed by its GraphQL type, using the checked-in `api-schema.graphql` emitted at API boot.
+`pnpm verify:fragments` compares application SDK fragments with the union of named selects for their
+model, excluding fields served by `@ResolveField`. The first protects the schema contract clients
+may submit; the second protects fields known application documents already request.
+
 `pnpm db-update` runs Doctor before and after generation. The preflight rejects deprecated
 `@crudAuth` annotations before the installed generator can interpret them; the postflight verifies
 that every emitted resolver still satisfies the admin-only contract.

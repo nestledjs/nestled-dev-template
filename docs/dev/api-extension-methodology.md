@@ -252,6 +252,8 @@ changes:
 
 ```bash
 pnpm verify:selects
+pnpm verify:select-coverage
+pnpm verify:fragments
 ```
 
 The verifier reads the full Prisma DMMF, walks relations at the correct model level, and fails on
@@ -270,6 +272,39 @@ Use `pnpm verify:selects --json [roots...]` for machine-readable output or to sc
 The converter prevents known bad fields at creation time; the verifier catches handwritten selects
 and later drift. Neither tool decides which valid database fields a caller is authorized to read.
 
+The two coverage commands check the reverse direction. `verify:select-coverage` reads the current
+`api-schema.graphql` and fails when a reusable select omits a non-nullable Prisma scalar exposed on
+the GraphQL type. Nullable gaps are available with `--warn-nullable`; nested non-nullable gaps are
+advisory unless `--strict-nested` is passed. If a credential, moderation, or other sensitive column
+must remain unreadable, record the decision immediately above the constant:
+
+```typescript
+/** @select-omits redFlagged, tokenVersion */
+export const USER_SELF_SELECT = {
+  id: true,
+} as const
+```
+
+`verify:fragments` fails when an application SDK fragment requests a path produced by none of the
+named selects attributed to that model. It resolves object spreads and named select identifiers
+within one file. A nested helper can use `@fragment-partial` so `verify:selects` still validates its
+`@prisma-model` columns without treating the helper as a complete operation select:
+
+```typescript
+/**
+ * @prisma-model User
+ * @fragment-partial
+ */
+export const POST_AUTHOR_SELECT = {
+  id: true,
+} as const
+```
+
+Fragment coverage is model-wide rather than per-operation. A relation select nested under another
+model is not attributed as an independent select for the related model, and cross-file identifiers
+are not followed. Read the reported `NOT CHECKED` count and review any widening for authorization;
+a requested or schema-valid field is not automatically safe to expose.
+
 For additive changes, deprecations, and removals, follow
 [`api-contract-lifecycle.md`](./api-contract-lifecycle.md).
 
@@ -280,6 +315,8 @@ After API extension work:
 ```bash
 pnpm db-update        # only when Prisma/schema/codegen changed
 pnpm verify:selects
+pnpm verify:select-coverage
+pnpm verify:fragments
 pnpm run nestled-doctor
 pnpm nx build api
 ```

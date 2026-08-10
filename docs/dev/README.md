@@ -74,6 +74,8 @@ pnpm nx test access-control
 pnpm nx test web-ui
 pnpm run nestled-doctor
 pnpm verify:selects
+pnpm verify:select-coverage
+pnpm verify:fragments
 pnpm template:validate-upgrade-notes
 ```
 

@@ -1,0 +1,61 @@
+id: 2026-08-10-mcp-tool-scoping-and-coverage
+title: Audit MCP tool tenancy and enforce security-sensitive coverage
+priority: high
+area: auth
+type: security
+delivery: code-patch
+
+intent: >
+  Treat the agent-reachable MCP tools as a data-access boundary. Restrict platform-wide MCP
+  authority to actual super administrators, constrain organization-scoped responses and lookups
+  to the token's organization, invalidate organization tokens after membership removal, and add
+  coverage thresholds that keep the MCP tool surface fully exercised by default.
+
+why: >
+  The existing low-coverage MCP surface contained four real scope failures. An organization role
+  with all:manage was promoted to platform-wide MCP administration; an organization-scoped
+  get_profile response exposed every membership; a token remained valid after its organization
+  membership was removed; and get_organization trusted the token scope without rechecking the
+  current membership. These are authorization defects, not merely missing test lines.
+
+affectedPaths:
+  - libs/api/custom/jest.config.ts
+  - libs/api/custom/src/lib/plugins/api-tokens/api-tokens.service.ts
+  - libs/api/custom/src/lib/plugins/api-tokens/api-tokens.service.spec.ts
+  - libs/api/custom/src/lib/plugins/mcp/mcp-auth.ts
+  - libs/api/custom/src/lib/plugins/mcp/mcp.controller.ts
+  - libs/api/custom/src/lib/plugins/mcp/mcp.controller.spec.ts
+  - libs/api/custom/src/lib/plugins/mcp/tools/organization.ts
+  - libs/api/custom/src/lib/plugins/mcp/tools/organization.spec.ts
+  - libs/api/custom/src/lib/plugins/mcp/tools/profile.ts
+  - libs/api/custom/src/lib/plugins/mcp/tools/profile.spec.ts
+
+packageReleases: []
+
+skipIf:
+  - The downstream project does not expose MCP or API-token operations.
+  - The downstream implementation already proves equivalent tenant boundaries and enforces equal
+    or stricter coverage thresholds for every MCP tool module.
+
+verification:
+  - pnpm exec nx run api-custom:test --configuration=ci --skipNxCache
+  - pnpm test
+  - pnpm typecheck
+  - pnpm run nestled-doctor
+
+agentHints:
+  - >
+    Keep platform and tenant authority distinct. Only user.isSuperAdmin may enable platform-wide
+    MCP enumeration; an organization role named all:manage is still scoped to that organization.
+  - >
+    Revalidate organization membership when an organization-scoped token is used, not only when
+    it is created. Membership removal must revoke effective access even if the token row itself is
+    still active.
+  - >
+    Defense in depth belongs in the tool query too. For non-super administrators,
+    get_organization must combine the requested organization id with a current membership filter,
+    and organization-scoped get_profile must return only that membership.
+  - >
+    Preserve the api-custom global minimums of 85 percent statements and lines and 70 percent
+    branches and functions. Keep MCP tools at 100 percent statements, functions, and lines with at
+    least 80 percent branch coverage so future agent-reachable paths cannot arrive untested.

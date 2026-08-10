@@ -40,8 +40,8 @@
     "react-router": "^7.0.0"
   },
   "dependencies": {
-    "dayjs": "^1.11.0",
-    "json5": "^2.2.0"
+    "dayjs": "^1.11.21",
+    "json5": "^2.2.3"
   },
   "publishConfig": {
     "access": "public",
