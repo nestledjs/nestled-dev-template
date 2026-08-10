@@ -44,6 +44,8 @@ affectedPaths:
 packageReleases:
   - name: '@nestledjs/access-control'
     sourcePath: libs/access-control
+    targetVersion: 0.0.1
+    versionRange: ^0.0.1
 
 skipIf:
   - >
