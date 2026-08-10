@@ -5,6 +5,17 @@ import dts from 'vite-plugin-dts'
 import * as path from 'path'
 import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin'
 import { nxCopyAssetsPlugin } from '@nx/vite/plugins/nx-copy-assets.plugin'
+import { attachExtractedCssImport } from './build-css-import.mts'
+
+function retainExtractedCssImport(): Plugin {
+  return {
+    name: 'retain-extracted-css-import',
+    enforce: 'post',
+    generateBundle(_options, bundle) {
+      attachExtractedCssImport(bundle)
+    },
+  }
+}
 
 function rejectDevelopmentJsx(): Plugin {
   return {
@@ -25,6 +36,7 @@ export default defineConfig(() => ({
   plugins: [
     react({ jsxRuntime: 'automatic' }),
     rejectDevelopmentJsx(),
+    retainExtractedCssImport(),
     nxViteTsPaths(),
     nxCopyAssetsPlugin(['*.md', 'LICENSE']),
     dts({
@@ -51,6 +63,7 @@ export default defineConfig(() => ({
       entry: 'src/index.ts',
       name: 'access-control',
       fileName: 'index',
+      cssFileName: 'index',
       // Change this to the formats you want to support.
       // Don't forget to update your package.json as well.
       formats: ['es' as const],
@@ -65,7 +78,10 @@ export default defineConfig(() => ({
     watch: false,
     globals: true,
     environment: 'jsdom',
-    include: ['{src,tests}/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
+    include: [
+      'vite.config.spec.mts',
+      '{src,tests}/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}',
+    ],
     reporters: ['default'],
     coverage: {
       reportsDirectory: '../../coverage/libs/access-control',

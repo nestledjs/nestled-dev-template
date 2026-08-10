@@ -12,12 +12,15 @@ invitation, and delegation model.
 
 ```tsx
 import { PlatformAccessControl } from '@nestledjs/access-control'
-import '@nestledjs/access-control/styles.css'
 
 export function AccessControlPage() {
   return <PlatformAccessControl adapter={platformAccessControlAdapter} theme="system" />
 }
 ```
+
+The package entry loads its styles automatically. The `./styles.css` export remains available for
+tools that need to inspect or preload the stylesheet, but application code should not need a
+separate side-effect import.
 
 The `PlatformAccessControlAdapter` interface contains purpose-built operations for loading the
 catalog, searching principals, editing roles, and changing assignments. Do not implement it with a
