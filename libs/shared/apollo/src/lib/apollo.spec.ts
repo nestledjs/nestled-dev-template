@@ -139,7 +139,12 @@ describe('makeClient', () => {
     const consoleLog = vi.spyOn(console, 'log').mockImplementation(() => undefined)
     const consoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined)
     const testWindow = {
-      location: { pathname: '/admin/sessions', href: '' },
+      location: {
+        pathname: '/admin/sessions',
+        search: '?view=active',
+        hash: '#recent',
+        href: '',
+      },
     }
     vi.stubGlobal('window', testWindow)
     globalThis.fetch = vi.fn().mockResolvedValue(
@@ -162,7 +167,9 @@ describe('makeClient', () => {
       '[Apollo] Authentication error detected, redirecting to logout then login',
     )
     expect(consoleError).toHaveBeenCalled()
-    expect(testWindow.location.href).toBe('/logout?return_url=%2Fadmin%2Fsessions')
+    expect(testWindow.location.href).toBe(
+      '/logout?return_url=%2Fadmin%2Fsessions%3Fview%3Dactive%23recent',
+    )
   })
 
   it('signals a friendly access-denied state for forbidden queries', async () => {

@@ -221,7 +221,8 @@ function handleAuthenticationError(): void {
     return
   }
 
-  const currentPath = globalThis.window.location.pathname
+  const { pathname, search, hash } = globalThis.window.location
+  const currentPath = `${pathname}${search}${hash}`
   const shouldRedirectWithReturnUrl =
     currentPath && currentPath !== '/login' && !currentPath.startsWith('/logout')
 
