@@ -118,7 +118,9 @@ function pickNewestJwt(values: string[]): string {
       } else {
         iat = 0
       }
-      if (!best || iat > best.iat) {
+      // Cookie headers order equal-path cookies from oldest to newest. Prefer the later value when
+      // rapid re-logins produce tokens with the same whole-second JWT timestamp.
+      if (!best || iat >= best.iat) {
         best = { token, iat }
       }
     } catch {
