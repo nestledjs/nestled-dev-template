@@ -36,6 +36,36 @@ describe('decodeBase64UrlSegment', () => {
     expect(decodeBase64UrlSegment(segment)).toBe(value)
   })
 
+  it('throws a clear error rather than guessing when no decoder exists', () => {
+    // Guarding on atob alone would take the browser branch in a runtime that has atob but not
+    // TextDecoder, throw there, and land in pickNewestJwt's catch -- restoring the silent
+    // last-cookie fallback this whole change removes.
+    const segment = Buffer.from(JSON.stringify({ iat: 1 })).toString('base64url')
+
+    vi.stubGlobal('Buffer', undefined)
+    vi.stubGlobal('atob', () => 'unused')
+    vi.stubGlobal('TextDecoder', undefined)
+    try {
+      expect(() => decodeBase64UrlSegment(segment)).toThrow(/neither Buffer nor atob/)
+    } finally {
+      vi.unstubAllGlobals()
+    }
+  })
+
+  it('prefers Buffer where it exists so SSR keeps one decoder', () => {
+    // The doc and upgrade note claim SSR falls back to Buffer. Node exposes atob, so guarding on
+    // atob first made that claim false and the Buffer branch dead.
+    const atobSpy = vi.fn(() => 'should not be called')
+    vi.stubGlobal('atob', atobSpy)
+    try {
+      const segment = Buffer.from(JSON.stringify({ iat: 7 })).toString('base64url')
+      expect(JSON.parse(decodeBase64UrlSegment(segment))).toEqual({ iat: 7 })
+      expect(atobSpy).not.toHaveBeenCalled()
+    } finally {
+      vi.unstubAllGlobals()
+    }
+  })
+
   it('decodes the URL-safe alphabet', () => {
     // Payloads containing '-' or '_' decode to different bytes than '+' and '/' would.
     const payload = { sub: 'a~b?c>d' }
