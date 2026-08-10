@@ -150,8 +150,27 @@ for (const root of searchRoots) {
   if (existsSync(absolute)) walk(absolute)
 }
 
-const constantBody = (source, name) =>
-  source.match(new RegExp(`const ${name} = \\{([\\s\\S]*?)\\n\\} as const`))?.[1]
+/**
+ * Body of a named select constant, however it happens to be declared.
+ *
+ * The previous pattern required the exact shape `const NAME = {` … `\n} as const`, which silently
+ * returned nothing for two forms that occur in real projects: a type annotation
+ * (`const NAME: Prisma.XSelect = {`) and a constant with no `as const` suffix. When a `...SPREAD`
+ * cannot be resolved the fields it contributes are simply absent, so the caller reports them as
+ * missing — a false positive, in a checker that gates CI. A checker that fails builds for fields
+ * that are in fact selected gets switched off, which costs more than the check was worth.
+ *
+ * Brace matching replaces the non-greedy scan so the terminator no longer has to be guessed, and
+ * the value must actually begin with `{`: without that guard a non-object constant would send
+ * `objectBodyAt` hunting forward for an unrelated brace elsewhere in the file.
+ */
+const constantBody = (source, name) => {
+  const declaration = new RegExp(`\\b(?:const|let|var)\\s+${name}\\s*(?::[^=]+)?=\\s*`).exec(source)
+  if (!declaration) return null
+  const cursor = declaration.index + declaration[0].length
+  if (source[cursor] !== '{') return null
+  return objectBodyAt(source, cursor)
+}
 
 const annotationFor = (source, name, tag) => {
   const declaration = new RegExp(`(?:export\\s+)?const\\s+${name}\\s*=\\s*\\{`).exec(source)
