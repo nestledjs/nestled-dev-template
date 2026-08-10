@@ -215,7 +215,7 @@ export function ErrorBoundary({ error }: Readonly<{ error: unknown }>) {
     )
 
   if (isUnauthorized && globalThis.window !== undefined) {
-    const currentPath = `${globalThis.location.pathname}${globalThis.location.search}`
+    const currentPath = `${globalThis.location.pathname}${globalThis.location.search}${globalThis.location.hash}`
     const returnUrl =
       currentPath && currentPath !== '/' ? `?return_url=${encodeURIComponent(currentPath)}` : ''
     globalThis.location.href = `/force-logout${returnUrl}`
