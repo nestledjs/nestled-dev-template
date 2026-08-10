@@ -164,8 +164,40 @@ for (const root of searchRoots) {
  * the value must actually begin with `{`: without that guard a non-object constant would send
  * `objectBodyAt` hunting forward for an unrelated brace elsewhere in the file.
  */
+/**
+ * The declaration head of a named constant, tolerant of the shapes these projects actually use:
+ * an `export` prefix, `let`/`var`, and a type annotation.
+ *
+ * Both readers below share this deliberately. They previously carried separate patterns and drifted
+ * apart, so widening one to accept `const NAME: Prisma.XSelect = {` left the other still blind to
+ * it — and that reader is the one that finds `@select-omits` and `@prisma-model`. A base whose
+ * omissions were declared but not seen reports those fields as missing, which is the same false
+ * positive this file was fixing, one layer up.
+ *
+ * The match starts at `export` when present rather than at `const`. `annotationFor` slices the text
+ * before the match to find the JSDoc immediately above it, and a stray `export ` left between the
+ * comment and the declaration would read as intervening code and discard the annotation.
+ */
+const declarationOf = (source, name) =>
+  new RegExp(`\\b(?:export\\s+)?(?:const|let|var)\\s+${name}\\s*(?::[^=]+)?=\\s*`).exec(source)
+
+/**
+ * Names of exported constants whose value is an object literal — the candidate selects in a file.
+ *
+ * Only exported names are candidates, matching the previous behaviour: a module-private constant is
+ * a building block reached through a spread, not a select the API returns, and checking it directly
+ * would report the base's deliberate partiality as a defect.
+ */
+const exportedConstantNames = source => [
+  ...new Set(
+    [...source.matchAll(/\bexport\s+(?:const|let|var)\s+(\w+)\s*(?::[^=]+)?=\s*\{/g)].map(
+      match => match[1],
+    ),
+  ),
+]
+
 const constantBody = (source, name) => {
-  const declaration = new RegExp(`\\b(?:const|let|var)\\s+${name}\\s*(?::[^=]+)?=\\s*`).exec(source)
+  const declaration = declarationOf(source, name)
   if (!declaration) return null
   const cursor = declaration.index + declaration[0].length
   if (source[cursor] !== '{') return null
@@ -173,7 +205,7 @@ const constantBody = (source, name) => {
 }
 
 const annotationFor = (source, name, tag) => {
-  const declaration = new RegExp(`(?:export\\s+)?const\\s+${name}\\s*=\\s*\\{`).exec(source)
+  const declaration = declarationOf(source, name)
   if (!declaration) return []
   const preceding = source.slice(0, declaration.index)
   const commentEnd = preceding.lastIndexOf('*/')
@@ -304,8 +336,14 @@ const nullableGaps = []
 for (const file of selectFiles.sort()) {
   const source = readFileSync(file, 'utf8')
   const relativePath = relative(cwd, file)
-  for (const match of source.matchAll(/export const (\w+) = \{([\s\S]*?)\n\} as const/g)) {
-    const [, name, body] = match
+  // Discovery deliberately shares the declaration shapes the readers below accept. It previously
+  // required `export const NAME = {` … `\n} as const` exactly, which meant a type-annotated select
+  // was never discovered at all: not checked, not reported unresolved, simply invisible. That is a
+  // worse failure than the false positive this file set out to fix, because it reports success by
+  // omission — the check passes precisely because it looked at nothing.
+  for (const name of exportedConstantNames(source)) {
+    const body = constantBody(source, name)
+    if (body === null) continue
     const model = modelFor(source, name, file)
     if (!model || !prismaScalars[model]) {
       unresolved.push({ file: relativePath, constant: name, reason: 'model not resolved' })

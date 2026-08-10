@@ -273,6 +273,53 @@ const USER_BASE = {
     expect(JSON.parse(result.stdout)).toMatchObject({ problems: [], unresolved: [] })
   })
 
+  it('honours @select-omits on a type-annotated base constant', () => {
+    // The annotation reader and the body reader used separate declaration patterns, so widening
+    // the body reader to accept a type annotation left the annotation reader still blind to it.
+    // A base whose omissions are declared but not seen reports those fields as missing — the same
+    // false positive, one layer up.
+    const workspace = createWorkspace(`
+/** @select-omits email */
+const USER_BASE: Record<string, boolean> = {
+  id: true,
+}
+
+export const USER_SELECT = {
+  ...USER_BASE,
+} as const
+`)
+
+    const result = runTool(workspace)
+
+    expect(result.status).toBe(0)
+    expect(JSON.parse(result.stdout)).toMatchObject({ problems: [], unresolved: [] })
+  })
+
+  it('honours @prisma-model on a type-annotated constant', () => {
+    // The same reader resolves the model override. Annotating Post inside user.select.ts is what
+    // makes this discriminate: if the annotation is missed the constant falls back to the model
+    // implied by the filename, so the run still reports a problem — just against the wrong model,
+    // naming User's missing column rather than Post's. Asserting status alone would pass either way.
+    const workspace = createWorkspace(`
+/** @prisma-model Post */
+export const ACCOUNT_SELECT: Record<string, boolean> = {
+  id: true,
+}
+`)
+
+    const result = runTool(workspace)
+
+    expect(result.status).toBe(1)
+    expect(JSON.parse(result.stdout).problems).toEqual([
+      {
+        file: 'libs/api/custom/src/lib/user/user.select.ts',
+        constant: 'ACCOUNT_SELECT',
+        model: 'Post',
+        missing: ['authorId', 'title'],
+      },
+    ])
+  })
+
   it('still reports a genuinely missing field when the spread resolves', () => {
     // The counterpart to the three above: resolution must not become a way to pass by accident.
     const workspace = createWorkspace(`
