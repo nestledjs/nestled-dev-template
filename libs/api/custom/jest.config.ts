@@ -23,8 +23,19 @@ export default {
    * Barrels and declaration files are excluded because they contain no executable branch.
    * Nothing else is: excluding modules and DTOs moves statements only 70.7% -> 75.3%, which buys
    * a better-looking number by measuring less, and that is the failure this setting exists to fix.
+   *
+   * Both test suffixes are excluded. The preset's testMatch is `+(spec|test)`, so a `.test.ts`
+   * file is run as a test; counting it as source would add a file that executes end to end and
+   * therefore reports near-total coverage, inflating the denominator's health rather than
+   * measuring it. There are none today, which is exactly when the exclusion is cheap to add.
    */
-  collectCoverageFrom: ['src/**/*.ts', '!src/**/*.spec.ts', '!src/**/index.ts', '!src/**/*.d.ts'],
+  collectCoverageFrom: [
+    'src/**/*.ts',
+    '!src/**/*.spec.ts',
+    '!src/**/*.test.ts',
+    '!src/**/index.ts',
+    '!src/**/*.d.ts',
+  ],
   /**
    * A ratchet, not an aspiration.
    *
