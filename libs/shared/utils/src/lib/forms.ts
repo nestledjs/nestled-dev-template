@@ -47,26 +47,19 @@ function formatDate(value: unknown): string {
   return ''
 }
 
+/**
+ * Strings pass through as-is (trimmed to the date part) — they are already form values. Dates and
+ * numeric timestamps are validated before formatting: `toISOString` THROWS on an invalid date, so
+ * an unguarded call turns one bad field value into a crashed submit instead of an empty value.
+ */
 function cleanDateFieldValue(value: unknown) {
-  if (value instanceof Date) {
-    return value.toISOString().split('T')[0]
-  }
-
-  if (typeof value === 'number') {
-    return new Date(value).toISOString().split('T')[0]
-  }
-
   if (typeof value === 'string') {
     return value.includes('T') ? value.split('T')[0] : value
   }
 
-  // Date, number and string are handled above; anything else only converts meaningfully if it is
-  // one of the constructor's accepted inputs, so narrow instead of casting away the check.
-  if (typeof value === 'number' || typeof value === 'string' || value instanceof Date) {
-    const date = new Date(value)
-    if (!Number.isNaN(date.getTime())) {
-      return date.toISOString().split('T')[0]
-    }
+  const date = value instanceof Date ? value : typeof value === 'number' ? new Date(value) : null
+  if (date && !Number.isNaN(date.getTime())) {
+    return date.toISOString().split('T')[0]
   }
 
   return ''

@@ -147,7 +147,9 @@ export function handleViteCacheError(error: unknown, autoReload = true, delay = 
 export interface AuthErrorInfo {
   isAuth: boolean
   // 'unauthenticated' = no valid session (401-shaped); 'forbidden' = valid session, no permission
-  // (403-shaped). UNAUTHORIZED codes are classified as unauthenticated, so no third member exists.
+  // (403-shaped). The ambiguous UNAUTHORIZED family never becomes a third member: it classifies as
+  // unauthenticated when the message suggests re-login ("please log in", …) and forbidden
+  // otherwise — the same rule on every path, GraphQL or raw message.
   type: 'unauthenticated' | 'forbidden' | null
   message: string | null
 }
@@ -212,7 +214,12 @@ function checkErrorMessage(
   }
 
   if (errorMessage.includes('unauthorized')) {
-    return { isAuth: true, type: 'unauthenticated', message: originalMessage }
+    // Same rule as the GraphQL path: "unauthorized" is ambiguous, so let the message decide.
+    // Classifying it unconditionally here while the GraphQL path used the heuristic meant the
+    // same error text could route to logout or to the access-denied panel depending on which
+    // shape it arrived in.
+    const type = suggestsLoginNeeded(errorMessage) ? 'unauthenticated' : 'forbidden'
+    return { isAuth: true, type, message: originalMessage }
   }
 
   return null
