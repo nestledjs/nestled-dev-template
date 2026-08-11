@@ -48,9 +48,11 @@ function formatDate(value: unknown): string {
 }
 
 /**
- * Strings pass through as-is (trimmed to the date part) — they are already form values. Dates and
- * numeric timestamps are validated before formatting: `toISOString` THROWS on an invalid date, so
- * an unguarded call turns one bad field value into a crashed submit instead of an empty value.
+ * Strings are treated as existing form values: an ISO datetime (contains `T`) is cut to its date
+ * part, and any other string passes through untouched — including non-date garbage, which is the
+ * form's problem to validate, not this formatter's. Dates and numeric timestamps are validated
+ * before formatting: `toISOString` THROWS on an invalid date, so an unguarded call turns one bad
+ * field value into a crashed submit instead of an empty value.
  */
 function cleanDateFieldValue(value: unknown) {
   if (typeof value === 'string') {
