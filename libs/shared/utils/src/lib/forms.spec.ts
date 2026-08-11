@@ -53,6 +53,9 @@ describe('form utilities', () => {
             { label: 'missing value' },
             null,
             { value: { nested: true }, label: 'bad object' },
+            // A boolean is a legitimate SELECT value but never a relation id; admitting it here
+            // once produced relation connects against ids named "true".
+            { value: true, label: 'boolean' },
           ],
         },
         fields,
@@ -60,6 +63,13 @@ describe('form utilities', () => {
     ).toEqual({
       tags: [{ id: 'tag-1' }, { id: '22' }],
     })
+  })
+
+  it('returns an empty value for an invalid numeric timestamp instead of throwing', () => {
+    // Invalid Date OBJECTS are filtered before mapping, but a NaN number is not a Date instance,
+    // so it reaches the date formatter — where an unguarded toISOString() turns one bad field
+    // into a crashed submit.
+    expect(cleanFormInput({ startDate: Number.NaN }, fields)).toEqual({ startDate: '' })
   })
 
   it('maps database output back to form values', () => {
