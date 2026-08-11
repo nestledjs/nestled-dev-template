@@ -18,12 +18,15 @@ function isSelectOption(value: unknown): value is SelectOption {
   return isRecord(value) && 'value' in value
 }
 
-function isSelectOptionWithValue(value: unknown): value is { value: string | number | boolean } {
+/**
+ * Only used for the multiselect path, whose output is relation ids (`{ id: String(value) }`).
+ * A boolean is a legitimate SELECT option value but never a legitimate relation id — admitting it
+ * here would connect relations to ids named "true"/"false". Plain selects go through
+ * `isSelectOption`, which still allows booleans.
+ */
+function isSelectOptionWithValue(value: unknown): value is { value: string | number } {
   return (
-    isSelectOption(value) &&
-    (typeof value.value === 'string' ||
-      typeof value.value === 'number' ||
-      typeof value.value === 'boolean')
+    isSelectOption(value) && (typeof value.value === 'string' || typeof value.value === 'number')
   )
 }
 

@@ -146,7 +146,9 @@ export function handleViteCacheError(error: unknown, autoReload = true, delay = 
  */
 export interface AuthErrorInfo {
   isAuth: boolean
-  type: 'unauthenticated' | 'forbidden' | 'unauthorized' | null
+  // 'unauthenticated' = no valid session (401-shaped); 'forbidden' = valid session, no permission
+  // (403-shaped). UNAUTHORIZED codes are classified as unauthenticated, so no third member exists.
+  type: 'unauthenticated' | 'forbidden' | null
   message: string | null
 }
 
