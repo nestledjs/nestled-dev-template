@@ -32,7 +32,7 @@ describe('error detection utilities', () => {
     })
     Object.defineProperty(globalThis, 'window', {
       configurable: true,
-      value: {},
+      value: { location: { reload } },
     })
 
     expect(

@@ -140,3 +140,115 @@ export function handleViteCacheError(error: unknown, autoReload = true, delay = 
   }
   return false
 }
+
+/**
+ * Authentication error details returned by isAuthError
+ */
+export interface AuthErrorInfo {
+  isAuth: boolean
+  type: 'unauthenticated' | 'forbidden' | 'unauthorized' | null
+  message: string | null
+}
+
+const NO_AUTH: AuthErrorInfo = { isAuth: false, type: null, message: null }
+
+/** Check if message indicates unauthenticated state */
+function isUnauthenticatedMessage(msg: string): boolean {
+  return msg.includes('unauthenticated') || msg.includes('not authenticated')
+}
+
+/** Check if message indicates forbidden state */
+function isForbiddenMessage(msg: string): boolean {
+  return msg.includes('forbidden') || msg.includes('access denied')
+}
+
+/** Check if unauthorized message suggests login needed */
+function suggestsLoginNeeded(msg: string): boolean {
+  return (
+    msg.includes('not logged in') ||
+    msg.includes('please log in') ||
+    msg.includes('must be logged in')
+  )
+}
+
+/** Check a single GraphQL error for auth issues */
+function checkGraphQLError(graphQLError: {
+  message?: string
+  extensions?: { code?: string }
+}): AuthErrorInfo | null {
+  const msg = (graphQLError?.message || '').toLowerCase()
+  const code = (graphQLError?.extensions?.code || '').toUpperCase()
+  const originalMessage = graphQLError?.message || ''
+
+  if (code === 'UNAUTHENTICATED' || isUnauthenticatedMessage(msg)) {
+    return { isAuth: true, type: 'unauthenticated', message: originalMessage }
+  }
+
+  if (code === 'FORBIDDEN' || isForbiddenMessage(msg)) {
+    return { isAuth: true, type: 'forbidden', message: originalMessage }
+  }
+
+  if (code === 'UNAUTHORIZED' || msg.includes('unauthorized')) {
+    const type = suggestsLoginNeeded(msg) ? 'unauthenticated' : 'forbidden'
+    return { isAuth: true, type, message: originalMessage }
+  }
+
+  return null
+}
+
+/** Check raw error message for auth keywords */
+function checkErrorMessage(
+  errorMessage: string,
+  originalMessage: string | null,
+): AuthErrorInfo | null {
+  if (isUnauthenticatedMessage(errorMessage)) {
+    return { isAuth: true, type: 'unauthenticated', message: originalMessage }
+  }
+
+  if (isForbiddenMessage(errorMessage)) {
+    return { isAuth: true, type: 'forbidden', message: originalMessage }
+  }
+
+  if (errorMessage.includes('unauthorized')) {
+    return { isAuth: true, type: 'unauthenticated', message: originalMessage }
+  }
+
+  return null
+}
+
+/**
+ * Detects if an error is an authentication or authorization error from GraphQL/API
+ * Returns detailed information about the type of auth error
+ */
+export function isAuthError(error: unknown): AuthErrorInfo {
+  if (!error || typeof error !== 'object') {
+    return NO_AUTH
+  }
+
+  const errorObj = error as Error
+  const anyErr = error as Record<string, unknown>
+
+  // Check for Apollo GraphQL errors structure
+  if (anyErr.graphQLErrors && Array.isArray(anyErr.graphQLErrors)) {
+    for (const graphQLError of anyErr.graphQLErrors) {
+      const result = checkGraphQLError(graphQLError)
+      if (result) return result
+    }
+  }
+
+  // Check raw error message
+  const errorMessage = (errorObj.message || '').toLowerCase()
+  const messageResult = checkErrorMessage(errorMessage, errorObj.message ?? null)
+  if (messageResult) return messageResult
+
+  // Check for HTTP status codes
+  const statusCode = (anyErr.statusCode ?? anyErr.status) as number | undefined
+  if (statusCode === 401) {
+    return { isAuth: true, type: 'unauthenticated', message: errorObj.message ?? null }
+  }
+  if (statusCode === 403) {
+    return { isAuth: true, type: 'forbidden', message: errorObj.message ?? null }
+  }
+
+  return NO_AUTH
+}
