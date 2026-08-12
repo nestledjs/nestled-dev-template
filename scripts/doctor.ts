@@ -1376,9 +1376,12 @@ const checkUnsafeTypeScriptCasts = () => {
     '.',
     path =>
       /\.(ts|tsx)$/.test(path) &&
-      path !== 'scripts/doctor.ts' &&
+      // scripts/ is one-off ops/maintenance tooling (also excluded from Sonar), not shipped product
+      // code; the cast gate targets the product surface. Specs and skipped future specs likewise.
+      !path.startsWith('scripts/') &&
       !path.endsWith('.spec.ts') &&
       !path.endsWith('.spec.tsx') &&
+      !path.endsWith('.spec.future.ts') &&
       !isGeneratedOrExternalCode(path),
   )
 
