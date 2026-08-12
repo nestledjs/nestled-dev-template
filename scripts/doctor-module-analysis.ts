@@ -1,4 +1,5 @@
 import ts from 'typescript'
+import { decoratorName, decoratorsOf, unwrapExpression } from './doctor-typescript-analysis'
 
 export type NestModuleSource = {
   file: string
@@ -10,37 +11,12 @@ type NestModuleDeclaration = {
   importedNames: Set<string>
 }
 
-const decoratorsOf = (node: ts.Node): readonly ts.Decorator[] =>
-  ts.canHaveDecorators(node) ? (ts.getDecorators(node) ?? []) : []
-
-const decoratorName = (decorator: ts.Decorator): string => {
-  const expression = ts.isCallExpression(decorator.expression)
-    ? decorator.expression.expression
-    : decorator.expression
-
-  if (ts.isIdentifier(expression)) return expression.text
-  if (ts.isPropertyAccessExpression(expression)) return expression.name.text
-  return ''
-}
-
 const propertyName = (property: ts.ObjectLiteralElementLike): string => {
   if (!('name' in property) || !property.name) return ''
   if (ts.isIdentifier(property.name) || ts.isStringLiteral(property.name)) {
     return property.name.text
   }
   return ''
-}
-
-const unwrapExpression = (expression: ts.Expression): ts.Expression => {
-  let current = expression
-  while (
-    ts.isAsExpression(current) ||
-    ts.isSatisfiesExpression(current) ||
-    ts.isParenthesizedExpression(current)
-  ) {
-    current = current.expression
-  }
-  return current
 }
 
 const getArrayDeclarations = (
