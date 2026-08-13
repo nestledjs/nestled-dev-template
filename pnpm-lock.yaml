@@ -25,7 +25,7 @@ overrides:
   nx@>=17.0.4 <22.7.7: 22.7.8
   brace-expansion@>=4.0.0 <5.0.9: 5.0.9
   protobufjs@<7.6.1: 7.6.1
-  shell-quote@<=1.8.3: 1.9.0
+  shell-quote@<1.9.0: 1.9.0
   websocket-driver@<0.7.5: 0.7.5
   less>image-size: '-'
 
@@ -12873,10 +12873,6 @@ packages:
 
   shell-exec@1.0.2:
     resolution: {integrity: sha512-jyVd+kU2X+mWKMmGhx4fpWbPsjvD53k9ivqetutVW/BQ+WIZoDoP4d8vUMGezV6saZsiNoW2f9GIhg9Dondohg==}
-
-  shell-quote@1.10.0:
-    resolution: {integrity: sha512-w1aiOKwKuRgtwAReIIj89puqg+I7GvX4IbLrvmhXbzQsj1+Zwi4VO3+fa6ZF91TWSjIxoEkKnMeHcLEODK5ZXA==}
-    engines: {node: '>= 0.4'}
 
   shell-quote@1.9.0:
     resolution: {integrity: sha512-Iov+JwFv/2HcTpcwNMKd8+IWNb8tboQJNQTkAY/LLVK7gGH9jy+LGkVqPxfekHl+yMmiqXszdGWXgkfml7hjqA==}
@@ -26927,7 +26923,7 @@ snapshots:
   launch-editor@2.14.1:
     dependencies:
       picocolors: 1.1.1
-      shell-quote: 1.10.0
+      shell-quote: 1.9.0
 
   less-loader@12.3.3(@rspack/core@1.6.8(@swc/helpers@0.5.18))(less@4.5.1)(webpack@5.109.2):
     dependencies:
@@ -29854,8 +29850,6 @@ snapshots:
   shebang-regex@3.0.0: {}
 
   shell-exec@1.0.2: {}
-
-  shell-quote@1.10.0: {}
 
   shell-quote@1.9.0: {}
 
