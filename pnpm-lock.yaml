@@ -24,6 +24,9 @@ overrides:
   turbo-stream@<3.0.0: 3.0.0
   nx@>=17.0.4 <22.7.7: 22.7.8
   brace-expansion@>=4.0.0 <5.0.9: 5.0.9
+  protobufjs@<7.6.1: 7.6.1
+  shell-quote@<=1.8.3: 1.9.0
+  websocket-driver@<0.7.5: 0.7.5
   less>image-size: '-'
 
 importers:
@@ -670,176 +673,6 @@ importers:
       '@nestledjs/access-control':
         specifier: workspace:*
         version: link:../../libs/access-control
-      '@radix-ui/react-slot':
-        specifier: ^1.3.3
-        version: 1.3.3(@types/react@19.1.0)(react@19.1.0)
-      '@react-router/node':
-        specifier: 7.18.2
-        version: 7.18.2(react-router@7.18.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(typescript@5.9.3)
-      '@react-router/serve':
-        specifier: 7.18.2
-        version: 7.18.2(react-router@7.18.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(typescript@5.9.3)
-      '@sindresorhus/slugify':
-        specifier: ^2.2.1
-        version: 2.2.1
-      '@tanstack/react-table':
-        specifier: ^8.21.3
-        version: 8.21.3(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
-      '@types/mdx':
-        specifier: ^2.0.14
-        version: 2.0.14
-      class-variance-authority:
-        specifier: ^0.7.1
-        version: 0.7.1
-      clsx:
-        specifier: ^2.1.1
-        version: 2.1.1
-      isbot:
-        specifier: ^4.4.0
-        version: 4.4.0
-      js-yaml:
-        specifier: ^4.3.1
-        version: 4.3.1
-      react:
-        specifier: 19.1.0
-        version: 19.1.0
-      react-markdown:
-        specifier: ^10.1.0
-        version: 10.1.0(@types/react@19.1.0)(react@19.1.0)
-      react-router:
-        specifier: 7.18.2
-        version: 7.18.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
-      rehype-raw:
-        specifier: ^7.0.0
-        version: 7.0.0
-      remark-frontmatter:
-        specifier: ^5.0.0
-        version: 5.0.0
-      remark-gfm:
-        specifier: ^4.0.1
-        version: 4.0.1
-      remark-mdx-frontmatter:
-        specifier: ^5.2.0
-        version: 5.2.0
-      tailwind-merge:
-        specifier: ^3.6.0
-        version: 3.6.0
-      ws:
-        specifier: ^8.21.3
-        version: 8.21.3
-    devDependencies:
-      '@react-router/dev':
-        specifier: 7.18.2
-        version: 7.18.2(@react-router/serve@7.18.2(react-router@7.18.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(typescript@5.9.3))(@types/node@20.19.43)(babel-plugin-macros@3.1.0)(jiti@2.7.0)(less@4.5.1)(lightningcss@1.32.0)(react-router@7.18.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(sass-embedded@1.100.0)(sass@1.102.0)(stylus@0.64.0)(terser@5.49.2)(tsx@4.23.12)(typescript@5.9.3)(vite@7.3.6(@types/node@20.19.43)(jiti@2.7.0)(less@4.5.1)(lightningcss@1.32.0)(sass-embedded@1.100.0)(sass@1.102.0)(stylus@0.64.0)(terser@5.49.2)(tsx@4.23.12)(yaml@2.9.0))(yaml@2.9.0)
-      '@types/node':
-        specifier: ^20.19.43
-        version: 20.19.43
-      '@types/react':
-        specifier: 19.1.0
-        version: 19.1.0
-      '@types/react-dom':
-        specifier: 19.1.0
-        version: 19.1.0(@types/react@19.1.0)
-      '@types/ws':
-        specifier: ^8.18.1
-        version: 8.18.1
-
-  apps/web/build/client:
-    dependencies:
-      '@mdx-js/react':
-        specifier: ^3.1.1
-        version: 3.1.1(@types/react@19.1.0)(react@19.1.0)
-      '@mdx-js/rollup':
-        specifier: ^3.1.1
-        version: 3.1.1(rollup@4.62.4)
-      '@nestledjs/access-control':
-        specifier: workspace:*
-        version: link:../../../../libs/access-control
-      '@radix-ui/react-slot':
-        specifier: ^1.3.3
-        version: 1.3.3(@types/react@19.1.0)(react@19.1.0)
-      '@react-router/node':
-        specifier: 7.18.2
-        version: 7.18.2(react-router@7.18.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(typescript@5.9.3)
-      '@react-router/serve':
-        specifier: 7.18.2
-        version: 7.18.2(react-router@7.18.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(typescript@5.9.3)
-      '@sindresorhus/slugify':
-        specifier: ^2.2.1
-        version: 2.2.1
-      '@tanstack/react-table':
-        specifier: ^8.21.3
-        version: 8.21.3(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
-      '@types/mdx':
-        specifier: ^2.0.14
-        version: 2.0.14
-      class-variance-authority:
-        specifier: ^0.7.1
-        version: 0.7.1
-      clsx:
-        specifier: ^2.1.1
-        version: 2.1.1
-      isbot:
-        specifier: ^4.4.0
-        version: 4.4.0
-      js-yaml:
-        specifier: ^4.3.1
-        version: 4.3.1
-      react:
-        specifier: 19.1.0
-        version: 19.1.0
-      react-markdown:
-        specifier: ^10.1.0
-        version: 10.1.0(@types/react@19.1.0)(react@19.1.0)
-      react-router:
-        specifier: 7.18.2
-        version: 7.18.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
-      rehype-raw:
-        specifier: ^7.0.0
-        version: 7.0.0
-      remark-frontmatter:
-        specifier: ^5.0.0
-        version: 5.0.0
-      remark-gfm:
-        specifier: ^4.0.1
-        version: 4.0.1
-      remark-mdx-frontmatter:
-        specifier: ^5.2.0
-        version: 5.2.0
-      tailwind-merge:
-        specifier: ^3.6.0
-        version: 3.6.0
-      ws:
-        specifier: ^8.21.3
-        version: 8.21.3
-    devDependencies:
-      '@react-router/dev':
-        specifier: 7.18.2
-        version: 7.18.2(@react-router/serve@7.18.2(react-router@7.18.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(typescript@5.9.3))(@types/node@20.19.43)(babel-plugin-macros@3.1.0)(jiti@2.7.0)(less@4.5.1)(lightningcss@1.32.0)(react-router@7.18.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(sass-embedded@1.100.0)(sass@1.102.0)(stylus@0.64.0)(terser@5.49.2)(tsx@4.23.12)(typescript@5.9.3)(vite@7.3.6(@types/node@20.19.43)(jiti@2.7.0)(less@4.5.1)(lightningcss@1.32.0)(sass-embedded@1.100.0)(sass@1.102.0)(stylus@0.64.0)(terser@5.49.2)(tsx@4.23.12)(yaml@2.9.0))(yaml@2.9.0)
-      '@types/node':
-        specifier: ^20.19.43
-        version: 20.19.43
-      '@types/react':
-        specifier: 19.1.0
-        version: 19.1.0
-      '@types/react-dom':
-        specifier: 19.1.0
-        version: 19.1.0(@types/react@19.1.0)
-      '@types/ws':
-        specifier: ^8.18.1
-        version: 8.18.1
-
-  apps/web/build/server:
-    dependencies:
-      '@mdx-js/react':
-        specifier: ^3.1.1
-        version: 3.1.1(@types/react@19.1.0)(react@19.1.0)
-      '@mdx-js/rollup':
-        specifier: ^3.1.1
-        version: 3.1.1(rollup@4.62.4)
-      '@nestledjs/access-control':
-        specifier: workspace:*
-        version: link:../../../../libs/access-control
       '@radix-ui/react-slot':
         specifier: ^1.3.3
         version: 1.3.3(@types/react@19.1.0)(react@19.1.0)
@@ -13045,6 +12878,10 @@ packages:
     resolution: {integrity: sha512-w1aiOKwKuRgtwAReIIj89puqg+I7GvX4IbLrvmhXbzQsj1+Zwi4VO3+fa6ZF91TWSjIxoEkKnMeHcLEODK5ZXA==}
     engines: {node: '>= 0.4'}
 
+  shell-quote@1.9.0:
+    resolution: {integrity: sha512-Iov+JwFv/2HcTpcwNMKd8+IWNb8tboQJNQTkAY/LLVK7gGH9jy+LGkVqPxfekHl+yMmiqXszdGWXgkfml7hjqA==}
+    engines: {node: '>= 0.4'}
+
   side-channel-list@1.0.1:
     resolution: {integrity: sha512-mjn/0bi/oUURjc5Xl7IaWi/OJJJumuoJFQJfDDyO46+hBWsfaVM65TBHq2eoZBhzl9EchxOijpkbRC8SVBQU0w==}
     engines: {node: '>= 0.4'}
@@ -16587,7 +16424,7 @@ snapshots:
       listr2: 9.0.5
       log-symbols: 4.1.0
       micromatch: 4.0.8
-      shell-quote: 1.10.0
+      shell-quote: 1.9.0
       string-env-interpolation: 1.0.1
       ts-log: 2.2.7
       tslib: 2.8.1
@@ -30019,6 +29856,8 @@ snapshots:
   shell-exec@1.0.2: {}
 
   shell-quote@1.10.0: {}
+
+  shell-quote@1.9.0: {}
 
   side-channel-list@1.0.1:
     dependencies:
