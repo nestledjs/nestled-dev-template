@@ -239,6 +239,29 @@ describe('operation-path select analysis', () => {
     expect(result.matched.get('UserToken.user')).toBe(1)
   })
 
+  it('follows a fragment spread to an inline fragment on the scoped type', () => {
+    // The inline `... on UserToken` lives inside AuthResult (a fragment on AuthPayload, so the
+    // fragment-on-type filter misses it) — the walker must descend through the spread to find it.
+    const spreadSources = [
+      {
+        file: 'graphql/auth/social.graphql',
+        source: `
+          mutation SocialLogin { socialLogin { ...AuthResult } }
+          fragment AuthResult on AuthPayload { ... on UserToken { user { id displayName } } }
+        `,
+      },
+    ]
+    const result = buildPrismaSelectFromOperationPaths({
+      allSources: spreadSources,
+      models: pathModels,
+      paths: ['UserToken.user'],
+      targetModelName: 'User',
+    })
+
+    expect(result.select).toEqual({ displayName: true, id: true })
+    expect(result.matched.get('UserToken.user')).toBe(1)
+  })
+
   it('counts zero matches for a stale path so the caller can fail on it', () => {
     const result = buildPrismaSelectFromOperationPaths({
       allSources: sources,

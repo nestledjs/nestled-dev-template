@@ -7,6 +7,7 @@ import {
   type FragmentDefinitionNode,
   type FragmentSpreadNode,
   type InlineFragmentNode,
+  type OperationDefinitionNode,
   type SelectionSetNode,
 } from 'graphql'
 
@@ -295,23 +296,86 @@ const fieldNodesNamed = (
   return nodes
 }
 
-/** Every inline-fragment selection set conditioned on `typeName`, anywhere in a definition. */
+/**
+ * Every inline-fragment selection set conditioned on `typeName` reachable from a selection set —
+ * descending through fields AND following fragment spreads by name across the whole SDK (with a
+ * path guard against cycles), so `... on UserToken` nested inside a spread is not missed.
+ */
 const inlineFragmentSetsOn = (
   selectionSet: SelectionSetNode,
   typeName: string,
+  fragments: ReadonlyMap<string, FragmentReference>,
+  fragmentPath: ReadonlySet<string>,
 ): SelectionSetNode[] => {
   const sets: SelectionSetNode[] = []
   for (const selection of selectionSet.selections) {
     if (selection.kind === Kind.INLINE_FRAGMENT) {
       if (selection.typeCondition?.name.value === typeName) sets.push(selection.selectionSet)
-      sets.push(...inlineFragmentSetsOn(selection.selectionSet, typeName))
+      sets.push(...inlineFragmentSetsOn(selection.selectionSet, typeName, fragments, fragmentPath))
       continue
     }
-    if (selection.kind === Kind.FIELD && selection.selectionSet) {
-      sets.push(...inlineFragmentSetsOn(selection.selectionSet, typeName))
+    if (selection.kind === Kind.FIELD) {
+      if (selection.selectionSet) {
+        sets.push(...inlineFragmentSetsOn(selection.selectionSet, typeName, fragments, fragmentPath))
+      }
+      continue
     }
+    const fragment = fragments.get(selection.name.value)
+    if (!fragment || fragmentPath.has(selection.name.value)) continue
+    const nextPath = new Set(fragmentPath)
+    nextPath.add(selection.name.value)
+    sets.push(...inlineFragmentSetsOn(fragment.definition.selectionSet, typeName, fragments, nextPath))
   }
   return sets
+}
+
+/** Operation definitions across the whole SDK, parsed once so path matching doesn't reparse. */
+const operationDefinitionsOf = (sources: readonly GraphqlSource[]): OperationDefinitionNode[] =>
+  sources.flatMap(source =>
+    parse(source.source).definitions.filter(
+      (definition): definition is OperationDefinitionNode =>
+        definition.kind === Kind.OPERATION_DEFINITION,
+    ),
+  )
+
+/**
+ * Where a path's first segment starts matching, and the segments still to walk. A type-scoped
+ * entry (`UserToken.user`, leading capital) begins in every fragment defined ON that type plus
+ * every inline fragment conditioned on it; a plain entry begins at every operation's root.
+ */
+const pathCursors = (
+  entry: string,
+  operations: readonly OperationDefinitionNode[],
+  fragments: ReadonlyMap<string, FragmentReference>,
+): { cursors: SelectionSetNode[]; remaining: string[] } => {
+  const segments = entry.split('.').map(segment => segment.trim())
+  if (!/^[A-Z]/.test(segments[0] ?? '')) {
+    return { cursors: operations.map(operation => operation.selectionSet), remaining: segments }
+  }
+  const cursors = [...fragments.values()]
+    .filter(fragment => fragment.definition.typeCondition.name.value === segments[0])
+    .map(fragment => fragment.definition.selectionSet)
+  for (const operation of operations) {
+    cursors.push(...inlineFragmentSetsOn(operation.selectionSet, segments[0], fragments, new Set()))
+  }
+  return { cursors, remaining: segments.slice(1) }
+}
+
+/** Walk `remaining` segments from `cursors`, returning the field nodes at the final segment. */
+const walkPathToLeaves = (
+  cursors: readonly SelectionSetNode[],
+  remaining: readonly string[],
+  fragments: ReadonlyMap<string, FragmentReference>,
+): FieldNode[] => {
+  let current: SelectionSetNode[] = [...cursors]
+  for (const [index, segment] of remaining.entries()) {
+    const nodes = current.flatMap(cursor => fieldNodesNamed(cursor, segment, fragments, new Set()))
+    if (index === remaining.length - 1) return nodes
+    current = nodes
+      .map(node => node.selectionSet)
+      .filter((set): set is SelectionSetNode => set !== undefined)
+  }
+  return []
 }
 
 /**
@@ -350,51 +414,13 @@ export const buildPrismaSelectFromOperationPaths = (options: {
     models,
     skippedFields: new Set(),
   }
+  const operations = operationDefinitionsOf(options.allSources)
   const select: PrismaSelect = {}
   const matched = new Map<string, number>()
 
   for (const entry of options.paths) {
-    const segments = entry.split('.').map(segment => segment.trim())
-    const typeScoped = /^[A-Z]/.test(segments[0] ?? '')
-
-    let cursors: SelectionSetNode[]
-    let remaining: string[]
-    if (typeScoped) {
-      cursors = [...fragments.values()]
-        .filter(fragment => fragment.definition.typeCondition.name.value === segments[0])
-        .map(fragment => fragment.definition.selectionSet)
-      for (const graphqlSource of options.allSources) {
-        for (const definition of parse(graphqlSource.source).definitions) {
-          if (definition.kind !== Kind.OPERATION_DEFINITION) continue
-          cursors.push(...inlineFragmentSetsOn(definition.selectionSet, segments[0]))
-        }
-      }
-      remaining = segments.slice(1)
-    } else {
-      cursors = []
-      for (const graphqlSource of options.allSources) {
-        for (const definition of parse(graphqlSource.source).definitions) {
-          if (definition.kind !== Kind.OPERATION_DEFINITION) continue
-          cursors.push(definition.selectionSet)
-        }
-      }
-      remaining = segments
-    }
-
-    let leaves: FieldNode[] = []
-    for (const [index, segment] of remaining.entries()) {
-      const nodes = cursors.flatMap(cursor =>
-        fieldNodesNamed(cursor, segment, fragments, new Set()),
-      )
-      if (index === remaining.length - 1) {
-        leaves = nodes
-        break
-      }
-      cursors = nodes
-        .map(node => node.selectionSet)
-        .filter((set): set is SelectionSetNode => set !== undefined)
-    }
-
+    const { cursors, remaining } = pathCursors(entry, operations, fragments)
+    const leaves = walkPathToLeaves(cursors, remaining, fragments)
     matched.set(entry, leaves.length)
     for (const leaf of leaves) {
       if (!leaf.selectionSet) continue
