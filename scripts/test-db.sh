@@ -105,8 +105,8 @@ case "$1" in
     
   "migrate")
     echo "🔄 Running Prisma migrations on test database..."
-    export DATABASE_URL=$TEST_DB_URL
-    export DIRECT_URL=$TEST_DB_URL   # prisma.config.ts prefers DIRECT_URL; pin it to the test DB (#117)
+    export DATABASE_URL="$TEST_DB_URL"
+    export DIRECT_URL="$TEST_DB_URL"   # prisma.config.ts prefers DIRECT_URL; pin it (quoted for ?schema=) (#117)
     pnpm prisma migrate deploy
     echo "✅ Test database migrations complete"
     ;;

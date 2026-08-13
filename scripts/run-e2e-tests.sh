@@ -42,10 +42,11 @@ echo -e "${BLUE}2. Running database migrations...${NC}"
 # with a plain shell that never loads .env, so deriving the URL here would pin it to 5433 while
 # the container came up on whatever port block this repo claimed.
 export TEST_DATABASE_URL="${TEST_DATABASE_URL:-$(./scripts/test-db.sh url)}"
-export DATABASE_URL=$TEST_DATABASE_URL
+export DATABASE_URL="$TEST_DATABASE_URL"
 # prisma.config.ts prefers DIRECT_URL || DATABASE_URL — pin DIRECT_URL to the test DB too, or a repo
-# .env DIRECT_URL wins and `migrate deploy` runs against the dev database (#117).
-export DIRECT_URL=$TEST_DATABASE_URL
+# .env DIRECT_URL wins and `migrate deploy` runs against the dev database (#117). Quoted so a `?schema=`
+# query in the URL isn't mangled by pathname expansion.
+export DIRECT_URL="$TEST_DATABASE_URL"
 pnpm prisma migrate deploy
 
 # Run the tests
