@@ -259,7 +259,7 @@ const getRegexMatches = (pattern: RegExp, source: string): RegExpExecArray[] => 
 const resolveLocalImport = (fromDir: string, spec: string): string | undefined => {
   const base = join(fromDir, spec)
   const candidates = [base, `${base}.ts`, `${base}.tsx`, join(base, 'index.ts'), join(base, 'index.tsx')]
-  return candidates.find(candidate => existsSync(candidate) && statSync(candidate).isFile())
+  return candidates.find(candidate => safeStat(candidate)?.isFile() === true)
 }
 
 const getRegisteredRouteFiles = (): Set<string> => {
