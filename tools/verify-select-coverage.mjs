@@ -128,10 +128,10 @@ for (const match of datamodel.matchAll(/^model (\w+) \{\n([\s\S]*?)^\}/gm)) {
   for (const line of body.split('\n')) {
     const field = line.match(/^\s+(\w+)\s+(\w+)(\[\])?/)
     if (!field) continue
-    const [, column, type, list] = field
+    const [, column, type] = field
     // An enum LIST (`TrainerType[]`) is an ordinary selectable scalar column, exactly like a scalar
-    // list — the old `&& !list` dropped it from coverage entirely, the silent-skip shape behind a
-    // login outage (fleet-upstream #129).
+    // list — list-ness no longer affects classification. The old `&& !list` dropped enum lists from
+    // coverage entirely, the silent-skip shape behind a login outage (fleet-upstream #129).
     if (PRISMA_SCALARS.has(type) || enumNames.has(type)) columns.add(column)
     else if (modelNames.has(type)) relations[column] = type
   }
