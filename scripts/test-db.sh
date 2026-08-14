@@ -59,7 +59,7 @@ TEST_DB_DATA_DIR="$ROOT/.dev/tmp/postgres-test"
 
 wait_for_db() {
   echo "⏳ Waiting for test database to be ready..."
-  timeout=30
+  local timeout=30
   while ! docker exec "$TEST_DB_CONTAINER" pg_isready -U postgres > /dev/null 2>&1; do
     sleep 1
     timeout=$((timeout - 1))
