@@ -270,11 +270,16 @@ const importedConstantSelect = (
 ): PrismaSelect | undefined => {
   if (context.imported) return undefined
   // Import specifiers live inside string literals, which sanitize() blanks — so imports are read
-  // from the raw file, not from the sanitized source the select parser works on.
+  // from the raw file, not from the sanitized source the select parser works on. But raw text
+  // also still contains comments, so each match is checked against the offset-preserving
+  // sanitized source: a commented-out import has its `import` keyword blanked there, and must
+  // not bind the identifier to a file nobody imports anymore.
   const raw = readFileSync(context.file, 'utf8')
+  const sanitized = sanitize(raw)
   NAMED_IMPORT_PATTERN.lastIndex = 0
   let match: RegExpExecArray | null
   while ((match = NAMED_IMPORT_PATTERN.exec(raw)) !== null) {
+    if (!sanitized.startsWith('import', match.index)) continue
     const binding = match[1]
       .split(',')
       .map(name => name.trim())
