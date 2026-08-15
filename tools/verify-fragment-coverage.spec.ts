@@ -323,6 +323,37 @@ describe('readSelectConstants', () => {
       })
     })
 
+    it('does not bind an identifier through a commented-out import', () => {
+      const warnings: string[] = []
+      const original = console.warn
+      console.warn = (message: string) => warnings.push(message)
+      try {
+        const workspace = createSelectWorkspace(`
+          // import { COURSE_CHAPTER_SELECT } from './stale-location.select'
+          import { COURSE_CHAPTER_SELECT } from './course-chapter.select'
+
+          export const COURSE_SELECT = {
+            chapters: { select: COURSE_CHAPTER_SELECT },
+          } as const
+        `)
+        writeSelectFile(
+          workspace,
+          'course-chapter.select.ts',
+          `export const COURSE_CHAPTER_SELECT = { title: true } as const`,
+        )
+
+        // The live import resolves; the commented one neither binds nor warns about its
+        // nonexistent module.
+        const constants = readSelectConstants(workspace, courseModels)
+        expect(constants.find(constant => constant.name === 'COURSE_SELECT')?.select).toEqual({
+          chapters: { select: { title: true } },
+        })
+        expect(warnings).toEqual([])
+      } finally {
+        console.warn = original
+      }
+    })
+
     it('warns instead of silently reading absent when the import cannot be resolved', () => {
       const warnings: string[] = []
       const original = console.warn
