@@ -65,6 +65,46 @@ const updateWhitespaceState = (current: string, onlyWhitespaceOnLine: boolean): 
  * string literals for comments. Newlines inside block comments are retained so diagnostics keep
  * their original source line numbers.
  */
+/**
+ * Blank comments AND string-literal contents while preserving every byte offset, for scans that
+ * must match only CODE. `stripComments` deliberately keeps trailing `//` comments (a `//` later
+ * on a code line can live inside a regex literal) and keeps strings — right for structural scans,
+ * wrong for token scans like the `as any` gate, which flagged the prose "the same two locks as
+ * any other write" in a comment. Blanking instead of deleting keeps `getLineNumber` valid against
+ * the original source. The trade-offs are deliberate: an unescaped `//` inside a regex character
+ * class blanks the rest of that line, and code inside a template-literal `${…}` is blanked with
+ * the string — both vanishingly rare in product source, and both fail toward NOT flagging.
+ */
+export const blankCommentsAndStrings = (source: string): string => {
+  const out = source.split('')
+  const blank = (from: number, to: number): void => {
+    for (let position = from; position < to; position += 1) {
+      if (out[position] !== '\n') out[position] = ' '
+    }
+  }
+
+  let index = 0
+  while (index < source.length) {
+    if (startsWithBlockComment(source, index)) {
+      const end = skipBlockComment(source, index).index
+      blank(index, end)
+      index = end
+    } else if (source[index] === '/' && source[index + 1] === '/') {
+      const start = index
+      while (index < source.length && source[index] !== '\n') index += 1
+      blank(start, index)
+    } else if (source[index] === "'" || source[index] === '"' || source[index] === '`') {
+      const end = skipStringLiteral(source, index)
+      blank(index, end)
+      index = end
+    } else {
+      index += 1
+    }
+  }
+
+  return out.join('')
+}
+
 export const stripComments = (source: string): string => {
   let output = ''
   let index = 0

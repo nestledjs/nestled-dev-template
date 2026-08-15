@@ -33,7 +33,7 @@ import {
   type TypeScriptSource,
 } from './doctor-sdk-contract-analysis'
 import { getRegisteredModuleClasses } from './doctor-module-analysis'
-import { stripComments } from './doctor-source-analysis'
+import { blankCommentsAndStrings, stripComments } from './doctor-source-analysis'
 
 type Finding = {
   check: string
@@ -1445,16 +1445,31 @@ const checkUnsafeTypeScriptCasts = () => {
       !isGeneratedOrExternalCode(path),
   )
 
+  // The cast patterns scan code only: raw source flagged the English "…the same two locks as any
+  // other write" in a comment, and would equally flag an error-message string. `@ts-ignore` is the
+  // opposite case — the directive IS a comment — so it scans raw text, tightened to a `//` comment
+  // that OPENS with the directive (the form TypeScript honors, leading or trailing). Prose
+  // mentioning @ts-ignore mid-sentence suppresses nothing and no longer flags.
   const unsafePatterns = [
-    { pattern: /\bas\s+any\b/g, message: 'Avoid as any in non-generated source' },
-    { pattern: /\bas\s+unknown\s+as\b/g, message: 'Avoid double-casting through unknown' },
-    { pattern: /@ts-ignore/g, message: 'Use typed code instead of @ts-ignore' },
+    { pattern: /\bas\s+any\b/g, message: 'Avoid as any in non-generated source', codeOnly: true },
+    {
+      pattern: /\bas\s+unknown\s+as\b/g,
+      message: 'Avoid double-casting through unknown',
+      codeOnly: true,
+    },
+    {
+      pattern: /\/\/\s*@ts-ignore\b/g,
+      message: 'Use typed code instead of @ts-ignore',
+      codeOnly: false,
+    },
   ]
 
   for (const file of files) {
     const source = readFileSync(file, 'utf8')
-    for (const { pattern, message } of unsafePatterns) {
-      for (const match of getRegexMatches(pattern, source)) {
+    // Offset-preserving, so match indexes remain valid against the raw source for line numbers.
+    const code = blankCommentsAndStrings(source)
+    for (const { pattern, message, codeOnly } of unsafePatterns) {
+      for (const match of getRegexMatches(pattern, codeOnly ? code : source)) {
         review('typescript-safety', message, file, getLineNumber(source, match.index))
       }
     }
