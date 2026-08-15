@@ -297,7 +297,12 @@ const getRegisteredRouteFiles = (): Set<string> => {
   // disabling the does-it-exist one. Anything still carrying an unresolved `${…}` is skipped,
   // not guessed at.
   const templatePattern = /`\.\/routes\/([^`]+\.(?:tsx|ts))`/g
-  const constantPattern = /\b(?:const|let|var)\s+(\w+)\s*=\s*['"]([^'"]+)['"]/g
+  // The literal must be the WHOLE initializer (allowing a trailing `as const`): matching the
+  // prefix of `const basePath = 'foo' + suffix` would substitute 'foo' as if it were the full
+  // value and register a wrong concrete path. Only horizontal whitespace before the terminator,
+  // so the lookahead can see the newline that ends the declaration.
+  const constantPattern =
+    /\b(?:const|let|var)\s+(\w+)\s*=\s*['"]([^'"]+)['"][^\S\n]*(?=as\b|;|\n|$)/g
 
   const scan = (filePath: string): void => {
     if (visited.has(filePath) || !existsSync(filePath)) return
