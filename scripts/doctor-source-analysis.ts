@@ -61,10 +61,54 @@ const updateWhitespaceState = (current: string, onlyWhitespaceOnLine: boolean): 
 }
 
 /**
- * Remove comments before Doctor's lightweight source scans without mistaking comment-like text in
- * string literals for comments. Newlines inside block comments are retained so diagnostics keep
- * their original source line numbers.
+ * End index (exclusive) of a template literal, following `${…}` interpolations — including
+ * strings and NESTED template literals inside them. `skipStringLiteral` stops at the first
+ * unescaped backtick, which for `` `a ${flag ? `b` : ''} c` `` is the NESTED opener, leaving the
+ * tail parsed as code — so backticks need their own scanner.
  */
+const skipTemplateLiteral = (source: string, startIndex: number): number => {
+  let index = startIndex + 1
+  while (index < source.length) {
+    const current = source[index]
+    if (current === '\\') {
+      index += 2
+      continue
+    }
+    if (current === '`') return index + 1
+    if (current === '$' && source[index + 1] === '{') {
+      index = skipInterpolation(source, index + 2)
+      continue
+    }
+    index += 1
+  }
+  return index
+}
+
+/** End index (exclusive) of a `${…}` interpolation body, starting just after the `${`. */
+const skipInterpolation = (source: string, startIndex: number): number => {
+  let depth = 1
+  let index = startIndex
+  while (index < source.length && depth > 0) {
+    const current = source[index]
+    if (current === '\\') {
+      index += 2
+      continue
+    }
+    if (current === '`') {
+      index = skipTemplateLiteral(source, index)
+      continue
+    }
+    if (current === "'" || current === '"') {
+      index = skipStringLiteral(source, index)
+      continue
+    }
+    if (current === '{') depth += 1
+    else if (current === '}') depth -= 1
+    index += 1
+  }
+  return index
+}
+
 /**
  * Blank comments AND string-literal contents while preserving every byte offset, for scans that
  * must match only CODE. `stripComments` deliberately keeps trailing `//` comments (a `//` later
@@ -93,8 +137,12 @@ export const blankCommentsAndStrings = (source: string): string => {
       const start = index
       while (index < source.length && source[index] !== '\n') index += 1
       blank(start, index)
-    } else if (source[index] === "'" || source[index] === '"' || source[index] === '`') {
+    } else if (source[index] === "'" || source[index] === '"') {
       const end = skipStringLiteral(source, index)
+      blank(index, end)
+      index = end
+    } else if (source[index] === '`') {
+      const end = skipTemplateLiteral(source, index)
       blank(index, end)
       index = end
     } else {
@@ -105,6 +153,11 @@ export const blankCommentsAndStrings = (source: string): string => {
   return out.join('')
 }
 
+/**
+ * Remove comments before Doctor's lightweight source scans without mistaking comment-like text in
+ * string literals for comments. Newlines inside block comments are retained so diagnostics keep
+ * their original source line numbers.
+ */
 export const stripComments = (source: string): string => {
   let output = ''
   let index = 0
