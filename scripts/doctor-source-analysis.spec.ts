@@ -66,4 +66,27 @@ describe('blankCommentsAndStrings', () => {
     // swallow the rest of the line.
     expect(blanked).toContain('as any')
   })
+
+  it('follows a template literal through interpolations with nested templates', () => {
+    // skipStringLiteral stops at the FIRST backtick — for a nested template that is the nested
+    // opener, and the outer tail would be parsed as code. "as any" prose in that tail must stay
+    // blanked, and real code after the closing backtick must survive.
+    const source =
+      'const label = `use ${flag ? `nested` : "plain"} as any other tag`\nconst cast = value as any'
+    const blanked = blankCommentsAndStrings(source)
+
+    expect([...blanked.matchAll(/\bas\s+any\b/g)]).toHaveLength(1)
+    expect(blanked.split('\n')[1]).toContain('as any')
+    expect(blanked).toHaveLength(source.length)
+  })
+
+  it('tracks braces inside interpolations so an object literal does not end the template early', () => {
+    const source =
+      'const text = `count ${format({ max: 3 })} as any left` as const\nconst after = compute() as any'
+    const blanked = blankCommentsAndStrings(source)
+
+    expect([...blanked.matchAll(/\bas\s+any\b/g)]).toHaveLength(1)
+    expect(blanked.split('\n')[0]).toContain('as const')
+    expect(blanked.split('\n')[1]).toContain('as any')
+  })
 })
