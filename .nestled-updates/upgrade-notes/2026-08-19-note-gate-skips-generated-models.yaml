@@ -29,10 +29,14 @@ affectedPaths:
 
 agentHints:
   - >
-    The exclusion is a prefix list (`generatedOutputPrefixes`) checked before every other clause, so
-    it also wins over the `/guards/`, `/billing/`, `/auth/`, `/rbac/` and `/admin/` substring tests.
-    Keep the prefixes exact: `api-core-models.module.ts` sits beside the generated `models/`
-    directory, is hand-written, and must stay gated.
+    The exclusion is an exact-path set (`generatedOutputPaths`) checked before every other clause,
+    so it also wins over the `/guards/`, `/billing/`, `/auth/`, `/rbac/` and `/admin/` substring
+    tests. It must stay exact paths, never a directory prefix: the generated `models/` directory
+    also holds the hand-written `core-paging.model.ts`, and `api-core-models.module.ts` sits beside
+    it — a prefix would silently ungate both.
   - >
-    If a future generator writes into another gated path, add its directory to
-    `generatedOutputPrefixes` rather than reaching for a per-regeneration ignore note.
+    The three paths are what `nx g @nestledjs/generators:models` writes (see the generator's
+    `src/models/generator.js`). If that generator's output set changes, this list changes with it.
+  - >
+    If a future generator writes into another gated path, add its files here rather than reaching
+    for a per-regeneration ignore note.

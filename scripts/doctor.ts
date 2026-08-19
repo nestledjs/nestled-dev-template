@@ -1466,12 +1466,19 @@ const checkUnsafeTypeScriptCasts = () => {
 // nobody wrote. Nothing is lost by skipping them: the change that produced them is `schema.prisma`,
 // which is gated on its own line below, so gating the generated mirror too makes one change demand
 // two notes. Generated CRUD output (`libs/api/generated-crud/**`) already sits outside this gate
-// for the same reason. Keep these prefixes exact — `api-core-models.module.ts` sits beside the
-// generated `models/` directory and is hand-written, so it stays gated.
-const generatedOutputPrefixes = ['libs/api/core/models/src/lib/models/']
+// for the same reason.
+//
+// Exact file paths, NOT a directory prefix: `models/` also holds hand-written files
+// (`core-paging.model.ts`), and `api-core-models.module.ts` sits beside it — a prefix would
+// silently ungate them. These three are what `nx g @nestledjs/generators:models` writes; if that
+// generator's output ever changes, this list changes with it.
+const generatedOutputPaths = new Set([
+  'libs/api/core/models/src/lib/models/models.ts',
+  'libs/api/core/models/src/lib/models/enums.ts',
+  'libs/api/core/models/src/lib/models/index.ts',
+])
 
-const isGeneratedOutput = (path: string): boolean =>
-  generatedOutputPrefixes.some(prefix => path.startsWith(prefix))
+const isGeneratedOutput = (path: string): boolean => generatedOutputPaths.has(path)
 
 const isSensitiveUpgradePath = (path: string): boolean =>
   !isGeneratedOutput(path) &&
