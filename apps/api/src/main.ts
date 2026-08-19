@@ -11,6 +11,7 @@ import helmet from 'helmet'
 import { NextFunction, Request, Response } from 'express'
 
 import { AppModule } from './app.module'
+import { isFlightdeskPreviewOrigin } from './flightdesk-preview-cors'
 
 const GLOBAL_PREFIX = 'api'
 
@@ -172,6 +173,11 @@ async function bootstrap() {
     origin: (origin, callback) => {
       if (!origin) return callback(null, true)
       if (origins.includes(origin)) {
+        return callback(null, true)
+      }
+      // FlightDesk previews use a random per-task host — see ./flightdesk-preview-cors for why
+      // this is a pattern (and the single-tenant assumption it rests on).
+      if (isFlightdeskPreviewOrigin(origin)) {
         return callback(null, true)
       }
       return callback(new Error('Not allowed by CORS'))
