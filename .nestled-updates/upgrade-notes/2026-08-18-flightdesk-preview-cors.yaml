@@ -19,7 +19,9 @@ why: >
   for review. Originated in mi-core (PR #1671) and flows up so the whole fleet gets it.
 
 affectedPaths:
-  - apps/api/src/flightdesk-preview-cors.ts
+  - libs/api/config/src/lib/flightdesk-preview-cors.ts
+  - libs/api/config/src/lib/flightdesk-preview-cors.spec.ts
+  - libs/api/config/src/index.ts
   - apps/api/src/main.ts
 
 packageReleases: []
@@ -32,8 +34,8 @@ skipIf:
     applied as a pattern; inject a per-deploy exact origin into the allowlist instead.
 
 verification:
+  - pnpm exec nx run config:test
   - pnpm exec nx run api:typecheck
-  - pnpm exec nx run api:lint
 
 agentHints:
   - >
@@ -45,7 +47,8 @@ agentHints:
     The pattern is https-only, port-less, and anchored at both ends so suffix attacks
     (`x.preview.flightdesk.dev.evil.com`) are rejected.
   - >
-    Downstream repos may keep `main.ts` helpers in `apps/api/src/app/` rather than `apps/api/src/`
-    (mi-core does, alongside a Shopify `storefront-cors.ts` that does the same trick uncredentialed).
-    Place the file where that project's other CORS helpers live and fix the import path; do not move
-    existing files to match the template.
+    The helper lives in the config lib rather than `apps/api/src` because `apps/api` has no test
+    target: there it would be untestable and uncovered. Downstream repos may already keep CORS
+    helpers under `apps/api/src/app/` (mi-core does, alongside a Shopify `storefront-cors.ts` doing
+    the same trick uncredentialed). Either home is fine — put it where that project can test it, fix
+    the import path, and do not move existing files to match the template.
