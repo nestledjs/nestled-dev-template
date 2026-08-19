@@ -2,7 +2,7 @@ import 'dotenv/config' // Load environment variables before anything else
 import { BadRequestException, Logger, ValidationError, ValidationPipe } from '@nestjs/common'
 import { NestFactory } from '@nestjs/core'
 import { NestExpressApplication } from '@nestjs/platform-express'
-import { ConfigService } from '@nestled-template/api/config'
+import { ConfigService, isFlightDeskPreviewOrigin } from '@nestled-template/api/config'
 import cookieParser from 'cookie-parser'
 import { graphqlUploadExpress } from 'graphql-upload-minimal'
 import * as express from 'express'
@@ -11,7 +11,6 @@ import helmet from 'helmet'
 import { NextFunction, Request, Response } from 'express'
 
 import { AppModule } from './app.module'
-import { isFlightdeskPreviewOrigin } from './flightdesk-preview-cors'
 
 const GLOBAL_PREFIX = 'api'
 
@@ -175,9 +174,9 @@ async function bootstrap() {
       if (origins.includes(origin)) {
         return callback(null, true)
       }
-      // FlightDesk previews use a random per-task host — see ./flightdesk-preview-cors for why
+      // FlightDesk previews use a random per-task host — see isFlightDeskPreviewOrigin for why
       // this is a pattern (and the single-tenant assumption it rests on).
-      if (isFlightdeskPreviewOrigin(origin)) {
+      if (isFlightDeskPreviewOrigin(origin)) {
         return callback(null, true)
       }
       return callback(new Error('Not allowed by CORS'))
