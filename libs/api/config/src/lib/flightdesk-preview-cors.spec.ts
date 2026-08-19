@@ -5,6 +5,7 @@ describe('isFlightDeskPreviewOrigin', () => {
     ['a single preview label', 'https://abc.preview.flightdesk.dev'],
     ['hyphens and digits in the label', 'https://task-123.preview.flightdesk.dev'],
     ['nested labels', 'https://a.b.preview.flightdesk.dev'],
+    ['a single-character label', 'https://a.preview.flightdesk.dev'],
     ['an uppercase host (browsers may send one)', 'https://ABC.Preview.FlightDesk.DEV'],
   ])('accepts %s', (_label, origin) => {
     expect(isFlightDeskPreviewOrigin(origin)).toBe(true)
@@ -22,6 +23,9 @@ describe('isFlightDeskPreviewOrigin', () => {
     ['a look-alike with a hyphen for the dot', 'https://abc.preview-flightdesk.dev'],
     ['a look-alike with no dot at all', 'https://abcpreview.flightdesk.dev'],
     ['an underscore, which no browser emits in an Origin host', 'https://a_b.preview.flightdesk.dev'],
+    ['a label starting with a hyphen, which DNS forbids', 'https://-a.preview.flightdesk.dev'],
+    ['a label ending with a hyphen, which DNS forbids', 'https://a-.preview.flightdesk.dev'],
+    ['a bare hyphen label', 'https://-.preview.flightdesk.dev'],
     ['a userinfo prefix', 'https://evil.com@abc.preview.flightdesk.dev.evil.com'],
     ['an empty label', 'https://.preview.flightdesk.dev'],
   ])('rejects %s', (_label, origin) => {

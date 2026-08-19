@@ -8,8 +8,9 @@ delivery: code-patch
 intent: >
   Accept `https://<anything>.preview.flightdesk.dev` in the API's credentialed CORS callback via a
   regex check, alongside the existing exact-match allowlist from `apiCorsOrigins`. The pattern and
-  its rationale live in `apps/api/src/flightdesk-preview-cors.ts`; `main.ts` consults it after the
-  exact-match check and before rejecting.
+  its rationale live in `libs/api/config/src/lib/flightdesk-preview-cors.ts`, beside the
+  apiCorsOrigins allowlist it complements; `main.ts` consults it after the exact-match check and
+  before rejecting.
 
 why: >
   FlightDesk deploys a per-task preview of the web app on a random host under
