@@ -2023,42 +2023,40 @@ const readPermissionExemptions = (): PermissionExemptions => {
  * template alone, which is a list nobody reads rather than a rule, and would bury the few that
  * matter among the many that are already correct.
  */
-const checkAccessPolicyCoverage = () => {
-  const exemptions = readPermissionExemptions()
-  const unauthorized = new Set<string>()
+const reportUnauthorizedOperations = (
+  file: string,
+  exemptions: PermissionExemptions,
+  unauthorized: Set<string>,
+): void => {
+  const raw = readFileSync(file, 'utf8')
+  const source = stripComments(raw)
 
-  for (const file of getAuthSourceFiles()) {
-    // Generated CRUD is governed by generated-crud posture, not per-operation permissions: the
-    // whole surface is one declared tier, asserted by checkGeneratedCrudPosture.
-    if (file.includes('libs/api/generated-crud/')) continue
+  const guardedNames = new Set(
+    getAuthOperations(source, file)
+      .filter(operation => hasAuthenticationGuard(operation))
+      .map(operation => operation.name),
+  )
 
-    const raw = readFileSync(file, 'utf8')
-    const source = stripComments(raw)
+  for (const operation of getUndeclaredAccessOperations(raw, file, name => guardedNames.has(name))) {
+    if (operation.callerScoped) continue
 
-    const guardedNames = new Set(
-      getAuthOperations(source, file)
-        .filter(operation => hasAuthenticationGuard(operation))
-        .map(operation => operation.name),
+    unauthorized.add(`${file}::${operation.name}`)
+    if (exemptions[file]?.[operation.name]) continue
+
+    fail(
+      'access-policy',
+      `${operation.className}.${operation.name} is authenticated but neither declares a permission nor scopes to the caller; add a Require*Permission decorator, take @CtxUser() and scope the query, or record it in ${permissionExemptionsPath} with a reason`,
+      file,
+      operation.line,
     )
-
-    for (const operation of getUndeclaredAccessOperations(raw, file, name =>
-      guardedNames.has(name),
-    )) {
-      if (operation.callerScoped) continue
-
-      unauthorized.add(`${file}::${operation.name}`)
-      if (exemptions[file]?.[operation.name]) continue
-
-      fail(
-        'access-policy',
-        `${operation.className}.${operation.name} is authenticated but neither declares a permission nor scopes to the caller; add a Require*Permission decorator, take @CtxUser() and scope the query, or record it in ${permissionExemptionsPath} with a reason`,
-        file,
-        operation.line,
-      )
-    }
   }
+}
 
-  // An exemption that no longer applies is a claim nobody is checking.
+// An exemption that no longer applies is a claim nobody is checking.
+const reportStaleExemptions = (
+  exemptions: PermissionExemptions,
+  unauthorized: Set<string>,
+): void => {
   for (const [file, operations] of Object.entries(exemptions)) {
     for (const name of Object.keys(operations)) {
       if (unauthorized.has(`${file}::${name}`)) continue
@@ -2069,6 +2067,20 @@ const checkAccessPolicyCoverage = () => {
       )
     }
   }
+}
+
+const checkAccessPolicyCoverage = () => {
+  const exemptions = readPermissionExemptions()
+  const unauthorized = new Set<string>()
+
+  for (const file of getAuthSourceFiles()) {
+    // Generated CRUD is governed by generated-crud posture, not per-operation permissions: the
+    // whole surface is one declared tier, asserted by checkGeneratedCrudPosture.
+    if (file.includes('libs/api/generated-crud/')) continue
+    reportUnauthorizedOperations(file, exemptions, unauthorized)
+  }
+
+  reportStaleExemptions(exemptions, unauthorized)
 }
 
 const reportInlineAccessViolation = (violation: InlineAccessCheckViolation, file: string): void => {
