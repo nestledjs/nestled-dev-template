@@ -42,10 +42,15 @@ const types = new Set([
 const deliveries = new Set(['code-patch', 'package-release', 'hybrid'])
 // These paths identify package sources in the upstream nestled-dev-template promotion source.
 // The public nestled-template checkout intentionally imports the packages and omits their source.
-const upstreamPublishedPackages = new Map([
+// package name -> the path IN THIS REPO where its source lives, or null when the package is
+// published from a different repository. @nestledjs/doctor is the first of the latter kind: its
+// source is the nestled monorepo, so there is no in-repo path a note could name, and demanding one
+// would force every adopter to invent a lie.
+const upstreamPublishedPackages = new Map<string, string | null>([
   ['@nestledjs/data-browser', 'libs/data-browser'],
   ['@nestledjs/shared-components', 'libs/shared-components'],
   ['@nestledjs/access-control', 'libs/access-control'],
+  ['@nestledjs/doctor', null],
 ])
 
 const isNonEmptyString = (value: unknown): value is string =>
@@ -82,22 +87,32 @@ const validatePackageReleaseName = (
     return undefined
   }
 
-  const expectedSourcePath = upstreamPublishedPackages.get(packageRelease.name)
-  if (!expectedSourcePath) {
+  if (!upstreamPublishedPackages.has(packageRelease.name)) {
     errors.push(
       `packageReleases[${index}].name must be one of: ${Array.from(upstreamPublishedPackages.keys()).join(', ')}`,
     )
   }
 
-  return expectedSourcePath
+  return upstreamPublishedPackages.get(packageRelease.name) ?? null
 }
 
 const validatePackageReleaseSourcePath = (
   packageRelease: PackageRelease,
   index: number,
-  expectedSourcePath: string | undefined,
+  expectedSourcePath: string | null | undefined,
   errors: string[],
 ) => {
+  // A package published from another repository has no in-repo source, so naming one is an error
+  // rather than an omission.
+  if (expectedSourcePath === null) {
+    if (packageRelease.sourcePath !== undefined) {
+      errors.push(
+        `packageReleases[${index}].sourcePath must be omitted — that package is published from another repository`,
+      )
+    }
+    return
+  }
+
   if (!isNonEmptyString(packageRelease.sourcePath)) {
     errors.push(`packageReleases[${index}].sourcePath is required`)
     return
