@@ -1,7 +1,7 @@
 import { Injectable, UseGuards } from '@nestjs/common'
 import { Args, Mutation, Resolver } from '@nestjs/graphql'
 import { Email } from '@nestled-template/api/core/models'
-import { AdminOnly, GqlAuthAdminGuard } from '@nestled-template/api/utils'
+import { AdminOnly, GqlAuthAdminGuard, RequirePlatformPermission } from '@nestled-template/api/utils'
 import { StaffUpdateEmailInput } from './dto'
 import { StaffEmailService } from './email.service'
 
@@ -13,6 +13,7 @@ export class StaffEmailResolver {
   constructor(private readonly service: StaffEmailService) {}
 
   @Mutation(() => Email, { nullable: true })
+  @RequirePlatformPermission('platform.users.manage')
   staffUpdateEmail(
     @Args('emailId') emailId: string,
     @Args('input') input: StaffUpdateEmailInput,
@@ -21,6 +22,7 @@ export class StaffEmailResolver {
   }
 
   @Mutation(() => Email, { nullable: true })
+  @RequirePlatformPermission('platform.users.manage')
   staffDeleteEmail(@Args('emailId') emailId: string): Promise<Email> {
     return this.service.staffDeleteEmail(emailId)
   }

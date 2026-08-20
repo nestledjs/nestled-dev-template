@@ -1,0 +1,6 @@
+{
+  "libs/api/custom/src/lib/plugins/auth/user-extension.resolver.ts": {
+    "isEmulating": "Reads a property off the already-resolved @Parent() User and performs no data access — there is no row to scope and no query to authorize. Whatever resolved the parent User decided what this caller may see; this field adds nothing to that decision.",
+    "originalAdminId": "Reads a property off the already-resolved @Parent() User and performs no data access — there is no row to scope and no query to authorize. Whatever resolved the parent User decided what this caller may see; this field adds nothing to that decision."
+  }
+}

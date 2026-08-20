@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { analyzeAccessPolicies, readStringObjectArray } from './doctor-access-policy-analysis'
+import { getUndeclaredAccessOperations, analyzeAccessPolicies, readStringObjectArray } from './doctor-access-policy-analysis'
 
 describe('analyzeAccessPolicies', () => {
   it('extracts platform and organization permission literals without option prose', () => {
@@ -116,5 +116,104 @@ describe('readStringObjectArray', () => {
     )
 
     expect(entries).toEqual([{ key: 'platform.users.read' }])
+  })
+})
+
+describe('getUndeclaredAccessOperations', () => {
+  it('reports an operation with neither a permission nor caller scoping', () => {
+    const undeclared = getUndeclaredAccessOperations(`
+      @Resolver()
+      class FileResolver {
+        @Query(() => String)
+        async getSignedUrl(@Args('uploadId') uploadId: string): Promise<string> {
+          return this.service.getSignedUrl(uploadId)
+        }
+      }
+    `)
+
+    expect(undeclared.map(operation => operation.name)).toEqual(['getSignedUrl'])
+    expect(undeclared[0].callerScoped).toBe(false)
+  })
+
+  // @CtxUser() is a PARAMETER decorator, so detection has to read the whole method — a scan of the
+  // method's own decorators, or of its body alone, misses it.
+  it('treats a @CtxUser() parameter as caller scoping', () => {
+    const undeclared = getUndeclaredAccessOperations(`
+      @Resolver()
+      class FileResolver {
+        @Query(() => [String])
+        async userFiles(@CtxUser() user: User): Promise<string[]> {
+          return this.service.getUserFiles(user.id)
+        }
+      }
+    `)
+
+    expect(undeclared[0].callerScoped).toBe(true)
+  })
+
+  it('sees caller scoping even when an @Args object literal precedes the caller parameter', () => {
+    const undeclared = getUndeclaredAccessOperations(`
+      @Resolver()
+      class FileResolver {
+        @Mutation(() => Boolean)
+        async deleteFile(
+          @Args('uploadId', { type: () => String }) uploadId: string,
+          @CtxUser() user: User,
+        ): Promise<boolean> {
+          await this.service.deleteFile(uploadId, user.id)
+          return true
+        }
+      }
+    `)
+
+    expect(undeclared[0].callerScoped).toBe(true)
+  })
+
+  it('treats a declared permission as authorization and reports nothing', () => {
+    expect(
+      getUndeclaredAccessOperations(`
+        @Resolver()
+        class AdminResolver {
+          @Mutation(() => Boolean)
+          @RequirePlatformPermission('platform.users.manage')
+          async unlockAccount(@Args('userId') userId: string): Promise<boolean> {
+            return true
+          }
+        }
+      `),
+    ).toEqual([])
+  })
+
+  it('treats a class-wide permission as covering its operations', () => {
+    expect(
+      getUndeclaredAccessOperations(`
+        @Resolver()
+        @RequirePlatformPermission('platform.users.read')
+        class AdminResolver {
+          @Query(() => String)
+          async anything(@Args('id') id: string): Promise<string> {
+            return id
+          }
+        }
+      `),
+    ).toEqual([])
+  })
+
+  it('respects the guarded filter, so public operations are out of scope', () => {
+    expect(
+      getUndeclaredAccessOperations(
+        `
+          @Resolver()
+          class AuthResolver {
+            @Mutation(() => String)
+            async login(@Args('email') email: string): Promise<string> {
+              return email
+            }
+          }
+        `,
+        'auth.resolver.ts',
+        () => false,
+      ),
+    ).toEqual([])
   })
 })

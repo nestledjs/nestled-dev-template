@@ -177,6 +177,54 @@ export const readStringObjectArray = (
   })
 }
 
+/**
+ * Evidence that an operation answers "is this row yours" rather than "do you hold permission X":
+ * it takes the caller, or reaches for the caller's identity when querying. Mirrors the anchor the
+ * resolver-scope review uses.
+ */
+const CALLER_SCOPE_ANCHOR =
+  /@CtxUser\s*\(\)|@CtxOrganization\s*\(\)|\buser\.(?:id|organizationId|currentOrganizationId)\b|currentUser|organizationScoped/i
+
+export type UndeclaredAccessOperation = {
+  className: string
+  name: string
+  line: number
+  /** The operation takes the caller and scopes its data access to them. */
+  callerScoped: boolean
+}
+
+/**
+ * Guarded API operations that declare no permission — neither on the method nor class-wide.
+ *
+ * Authentication says *someone* is calling; it never says *this* caller may do *this*. Many
+ * operations legitimately need nothing more (anything acting on the caller's own row), but the
+ * repo cannot tell "deliberately self-service" from "forgotten" unless every one of them is
+ * written down. That is what this feeds: declare a permission, or record the exemption and why.
+ *
+ * Unauthenticated operations are out of scope — they are governed by the public-operations
+ * allowlist, which already demands a reason for each.
+ */
+export const getUndeclaredAccessOperations = (
+  source: string,
+  fileName = 'source.ts',
+  isGuarded: (operationName: string) => boolean = () => true,
+): UndeclaredAccessOperation[] => {
+  const { declarations, operations } = analyzeAccessPolicies(source, fileName)
+  const classWide = declarations.some(declaration => declaration.name === '(class)')
+  if (classWide) return []
+
+  const declared = new Set(declarations.map(declaration => declaration.name))
+
+  return operations
+    .filter(operation => !declared.has(operation.name) && isGuarded(operation.name))
+    .map(operation => ({
+      className: operation.className,
+      name: operation.name,
+      line: operation.line,
+      callerScoped: operation.callerScoped,
+    }))
+}
+
 export const analyzeAccessPolicies = (source: string, fileName = 'source.ts') => {
   const sourceFile = ts.createSourceFile(
     fileName,
@@ -187,6 +235,7 @@ export const analyzeAccessPolicies = (source: string, fileName = 'source.ts') =>
   )
   const declarations: AccessPolicyDeclaration[] = []
   const inlineViolations: InlineAccessCheckViolation[] = []
+  const operations: UndeclaredAccessOperation[] = []
 
   for (const statement of sourceFile.statements) {
     if (!ts.isClassDeclaration(statement) || !isApiClass(statement)) continue
@@ -204,6 +253,15 @@ export const analyzeAccessPolicies = (source: string, fileName = 'source.ts') =>
       const name = methodName(member, sourceFile)
       const methodPolicies = policyDeclarations(decoratorsOf(member), sourceFile, className, name)
       declarations.push(...methodPolicies)
+      // Whole method text, parameters included: @CtxUser() is a PARAMETER decorator, so any
+      // detection that reads only the method's own decorators or its body misses it.
+      operations.push({
+        className,
+        name,
+        line: sourceFile.getLineAndCharacterOfPosition(member.name.getStart(sourceFile)).line + 1,
+        callerScoped: CALLER_SCOPE_ANCHOR.test(member.getText(sourceFile)),
+      })
+
       const calls = calledAccessHelpers(member)
       if (calls.length > 0 && classPolicies.length === 0 && methodPolicies.length === 0) {
         inlineViolations.push({
@@ -216,5 +274,5 @@ export const analyzeAccessPolicies = (source: string, fileName = 'source.ts') =>
     }
   }
 
-  return { declarations, inlineViolations }
+  return { declarations, inlineViolations, operations }
 }

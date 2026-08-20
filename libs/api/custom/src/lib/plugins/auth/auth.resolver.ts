@@ -363,15 +363,11 @@ export class AuthResolver {
   @Mutation(() => User)
   @UseGuards(GqlAuthGuard)
   @Authenticated()
+  @RequirePlatformPermission('platform.users.manage')
   async unlockAccount(
     @Context() context: NestContextType,
-    @CtxUser() user: User,
     @Args('userId') userId: string,
   ): Promise<User> {
-    // Only super admins can unlock accounts
-    if (!user.isSuperAdmin) {
-      throw new Error('Only super admins can unlock accounts')
-    }
     const sessionInfo = this.sessionService.extractSessionInfo(context.req)
     return this.service.unlockAccount(userId, sessionInfo)
   }
