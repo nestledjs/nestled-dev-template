@@ -1,5 +1,6 @@
-import { gql, type TypedDocumentNode } from '@apollo/client'
 import { useQuery } from '@apollo/client/react'
+// Aliased: this route's default export is also called AdminBillingSubscriptions.
+import { AdminBillingSubscriptions as AdminBillingSubscriptionsDocument } from '@nestled-template/shared/sdk'
 import { useState } from 'react'
 
 type Subscription = {
@@ -42,45 +43,6 @@ type AdminSubscriptionsQuery = {
   }
 }
 
-const ADMIN_SUBSCRIPTIONS_QUERY: TypedDocumentNode<AdminSubscriptionsQuery> = gql`
-  query AdminSubscriptions($input: ListSubscriptionInput) {
-    subscriptions(input: $input) {
-      id
-      createdAt
-      updatedAt
-      organizationId
-      organization {
-        id
-        name
-        emails {
-          email
-          primary
-        }
-      }
-      planId
-      plan {
-        id
-        name
-        price
-        interval
-      }
-      stripeCustomerId
-      stripeSubscriptionId
-      stripePriceId
-      stripeCurrentPeriodEnd
-      trialStart
-      trialEnd
-      cancelAt
-      canceledAt
-      cancelAtPeriodEnd
-      status
-    }
-    subscriptionsCount(input: $input) {
-      total
-      count
-    }
-  }
-`
 
 const STATUS_COLORS: Record<string, string> = {
   ACTIVE: 'bg-green-100 text-green-800',
@@ -95,16 +57,8 @@ export default function AdminBillingSubscriptions() {
   const [statusFilter, setStatusFilter] = useState<string>('')
   const [search, setSearch] = useState<string>('')
 
-  const { data, loading, error } = useQuery(ADMIN_SUBSCRIPTIONS_QUERY, {
-    variables: {
-      input: {
-        take: 50,
-        orderBy: 'createdAt',
-        orderDirection: 'desc',
-        search,
-        searchFields: search ? ['organization.name'] : [],
-      },
-    },
+  const { data, loading, error } = useQuery(AdminBillingSubscriptionsDocument, {
+    variables: { input: { take: 50, search } },
   })
 
   if (loading) {
@@ -123,8 +77,8 @@ export default function AdminBillingSubscriptions() {
     )
   }
 
-  let subscriptions = data?.subscriptions || []
-  const total = data?.subscriptionsCount?.total || 0
+  let subscriptions = data?.adminBillingSubscriptions?.subscriptions || []
+  const total = data?.adminBillingSubscriptions?.total || 0
 
   // Client-side filter by status
   if (statusFilter) {

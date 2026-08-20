@@ -12,8 +12,18 @@ type ModuleReference = {
   moduleName: string
 }
 
+// Script kind follows the extension: parsing a .tsx file as TS makes every JSX construct a syntax
+// error, and `createSourceFile` does not throw — it returns a tree the walkers traverse as empty.
+// A hardcoded TS kind therefore reads as "nothing to report" on exactly the client files most
+// likely to hold an inline GraphQL document.
 const sourceFileFor = (source: string, fileName: string): ts.SourceFile =>
-  ts.createSourceFile(fileName, source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS)
+  ts.createSourceFile(
+    fileName,
+    source,
+    ts.ScriptTarget.Latest,
+    true,
+    fileName.endsWith('.tsx') ? ts.ScriptKind.TSX : ts.ScriptKind.TS,
+  )
 
 const lineFor = (sourceFile: ts.SourceFile, node: ts.Node): number =>
   sourceFile.getLineAndCharacterOfPosition(node.getStart(sourceFile)).line + 1
@@ -180,6 +190,62 @@ export const getPublicSdkGeneratedCrudViolations = (
     )
   }
 
+  return violations
+}
+
+const flattenGqlTemplate = (template: ts.TemplateLiteral): string =>
+  ts.isNoSubstitutionTemplateLiteral(template)
+    ? template.text
+    : [template.head.text, ...template.templateSpans.map(span => span.literal.text)].join(' ')
+
+/**
+ * Generated-CRUD roots called from GraphQL written inline in client code as `gql\`...\`` — the
+ * same boundary `getPublicSdkGeneratedCrudViolations` enforces over SDK `.graphql` documents.
+ *
+ * Without this, a route or component can query a generated CRUD root straight from the browser and
+ * the check stays green, because it only ever read the SDK documents. That is not hypothetical: it
+ * is how a Billing page reached the generated `plans` / `subscriptions` / `subscriptionsCount`
+ * roots with no boundary finding.
+ *
+ * An inline template that does not parse as GraphQL is skipped rather than thrown on: interpolated
+ * documents flatten to text that is often not a valid document on its own, and a boundary check
+ * must not be the thing that crashes the doctor. That fails toward not reporting — the same
+ * direction the surrounding scans take.
+ */
+export const getInlineClientGeneratedCrudViolations = (
+  source: string,
+  generatedRootFields: ReadonlySet<string>,
+  fileName = 'source.tsx',
+  fragmentSources: readonly string[] = [],
+): CrudBoundaryViolation[] => {
+  const sourceFile = sourceFileFor(source, fileName)
+  const violations: CrudBoundaryViolation[] = []
+
+  const visit = (node: ts.Node): void => {
+    if (
+      ts.isTaggedTemplateExpression(node) &&
+      ts.isIdentifier(node.tag) &&
+      node.tag.text === 'gql'
+    ) {
+      const line = lineFor(sourceFile, node)
+
+      try {
+        for (const violation of getPublicSdkGeneratedCrudViolations(
+          flattenGqlTemplate(node.template),
+          generatedRootFields,
+          fragmentSources,
+        )) {
+          violations.push({ line, message: violation.message })
+        }
+      } catch {
+        // Not a parseable GraphQL document on its own — see the note above.
+      }
+    }
+
+    ts.forEachChild(node, visit)
+  }
+
+  visit(sourceFile)
   return violations
 }
 

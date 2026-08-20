@@ -19,6 +19,7 @@ import {
   getCustomResolverNameViolations,
   getGeneratedCrudImportViolations,
   getGraphqlRootFieldNames,
+  getInlineClientGeneratedCrudViolations,
   getLegacyCoreHelpersImportViolations,
   getNonAdminOperationViolations,
   getPublicSdkGeneratedCrudViolations,
@@ -891,6 +892,19 @@ const checkApplicationSdkCrudBoundary = () => {
       applicationSources,
     )) {
       fail('admin-crud-boundary', violation.message, document.file, violation.line)
+    }
+  }
+
+  // The SDK is not the only way a client reaches a root field: a component can write the document
+  // inline as gql`...`. Scanning only the SDK left that path unguarded.
+  for (const clientSource of clientContractSources()) {
+    for (const violation of getInlineClientGeneratedCrudViolations(
+      clientSource.source,
+      generatedRootFields,
+      clientSource.file,
+      applicationSources,
+    )) {
+      fail('admin-crud-boundary', violation.message, clientSource.file, violation.line)
     }
   }
 }
