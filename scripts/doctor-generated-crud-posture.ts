@@ -37,9 +37,18 @@ export const readGeneratedCrudPosture = (
 ): GeneratedCrudPostureReading => {
   if (!existsSync(postureFilePath)) return { posture: 'admin' }
 
+  let contents: string
+  try {
+    contents = readFileSync(postureFilePath, 'utf8')
+  } catch {
+    // Distinct from unparseable JSON on purpose: "fix the file or delete it" is the wrong advice
+    // for a permissions or transient filesystem error, and the two need different responses.
+    return { posture: 'admin', invalid: 'a file that exists but could not be read' }
+  }
+
   let parsed: unknown
   try {
-    parsed = JSON.parse(readFileSync(postureFilePath, 'utf8'))
+    parsed = JSON.parse(contents)
   } catch {
     return { posture: 'admin', invalid: 'unparseable JSON' }
   }

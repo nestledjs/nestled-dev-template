@@ -332,7 +332,7 @@ export const getNonAuthenticatedOperationViolations = (
     ) {
       violations.push({
         line: operation.line,
-        message: `${operation.className}.${operation.name} must use GqlAuthGuard while generated-crud posture is authenticated`,
+        message: `${operation.className}.${operation.name} must use GqlAuthGuard (or the stricter GqlAuthAdminGuard) while generated-crud posture is authenticated`,
       })
     }
 
@@ -342,7 +342,7 @@ export const getNonAuthenticatedOperationViolations = (
     ) {
       violations.push({
         line: operation.line,
-        message: `${operation.className}.${operation.name} must declare @Authenticated() while generated-crud posture is authenticated`,
+        message: `${operation.className}.${operation.name} must declare @Authenticated() (or the stricter @AdminOnly()) while generated-crud posture is authenticated`,
       })
     }
 
