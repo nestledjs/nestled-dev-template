@@ -322,6 +322,48 @@ describe('verify-selects', () => {
   })
 })
 
+// The skipped-local bug: `continue` used to skip advancing previousConstantEnd, so the skipped
+// local's body stayed inside the NEXT constant's annotation window, and a @prisma-model mentioned
+// in it resolved that constant to the wrong model. annotationBefore exists precisely to prevent
+// this, and the skip quietly defeated it.
+describe('annotation window with skipped constants', () => {
+  it("does not let a skipped local's body annotate the next select", async () => {
+    const workspace = createWorkspace()
+    writeFixture(
+      workspace,
+      '.nestled-updates/doctor.config.json',
+      JSON.stringify({ selectFileSuffixes: ['.select.ts', '.resolver.ts'] }),
+    )
+    writeFixture(
+      workspace,
+      'custom-selects/user.resolver.ts',
+      `
+        /** @prisma-model User */
+        export const FIRST_SELECT = {
+          id: true,
+        }
+
+        const where = {
+          // @prisma-model Post
+          id: true,
+        }
+
+        export const USER_SELECT = {
+          posts: { select: { id: true } },
+        }
+      `,
+    )
+
+    const result = await verifySelects({ cwd: workspace, roots: ['custom-selects'] })
+
+    // \`posts\` is valid on User and absent from Post. If the skipped \`where\` body stays in the
+    // annotation window, USER_SELECT resolves to Post and this reports an invalid field.
+    expect(result.problems).toEqual([])
+    // And the ordinary local is not itself reported as an unresolvable select.
+    expect(result.unresolved.map((entry) => entry.const)).not.toContain('where')
+  })
+})
+
 describe('repo layout config', () => {
   const withRepo = (files) => {
     const repo = mkdtempSync(join(tmpdir(), 'verify-selects-config-'))
@@ -361,6 +403,22 @@ describe('repo layout config', () => {
 
   // A dedicated select file holds nothing but selects, so camelCase names are real selects there —
   // mi-core has courseOverviewSelect. Requiring SCREAMING_SNAKE everywhere would stop verifying them.
+  // A config file that exists is intent to configure. Defaulting on a typoed key would scan zero
+  // files and pass, in exactly the repos that wrote the file BECAUSE the default finds nothing.
+  it('rejects a config that omits selectFileSuffixes or declares it empty', () => {
+    expect(() =>
+      readRepoConfig(
+        withRepo({ '.nestled-updates/doctor.config.json': JSON.stringify({ selectFileSufixes: ['.a.ts'] }) }),
+      ),
+    ).toThrow('non-empty array')
+
+    expect(() =>
+      readRepoConfig(
+        withRepo({ '.nestled-updates/doctor.config.json': JSON.stringify({ selectFileSuffixes: [] }) }),
+      ),
+    ).toThrow('non-empty array')
+  })
+
   it('requires conventional names only for suffixes beyond .select.ts', () => {
     const repo = withRepo({
       'libs/api/custom/src/a.select.ts': 'export const courseOverviewSelect = { id: true }\n',
