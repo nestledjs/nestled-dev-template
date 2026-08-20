@@ -1,5 +1,45 @@
 import ts from 'typescript'
 
+/**
+ * Module specifiers a file imports from outside itself — relative siblings excluded.
+ *
+ * Read from the AST rather than by regex: an import specifier is a string literal, so any scan that
+ * blanks strings to avoid comment false-positives blanks the very thing being inspected.
+ */
+export const getExternalImportSpecifiers = (source: string, fileName = 'source.ts'): string[] => {
+  const sourceFile = ts.createSourceFile(
+    fileName,
+    source,
+    ts.ScriptTarget.Latest,
+    true,
+    fileName.endsWith('.tsx') ? ts.ScriptKind.TSX : ts.ScriptKind.TS,
+  )
+  const specifiers: string[] = []
+
+  const record = (node: ts.Expression | undefined): void => {
+    if (!node || !ts.isStringLiteralLike(node)) return
+    if (node.text.startsWith('.')) return
+    specifiers.push(node.text)
+  }
+
+  const visit = (node: ts.Node): void => {
+    if (ts.isImportDeclaration(node) || ts.isExportDeclaration(node)) {
+      record(node.moduleSpecifier)
+    } else if (
+      ts.isCallExpression(node) &&
+      (node.expression.kind === ts.SyntaxKind.ImportKeyword ||
+        (ts.isIdentifier(node.expression) && node.expression.text === 'require'))
+    ) {
+      record(node.arguments[0])
+    }
+
+    ts.forEachChild(node, visit)
+  }
+
+  visit(sourceFile)
+  return [...new Set(specifiers)].sort()
+}
+
 export type GraphqlOperationMethod = {
   /** The method's own decorators, verbatim. */
   decorators: string

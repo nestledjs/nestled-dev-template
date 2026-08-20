@@ -42,6 +42,7 @@ import {
 } from './doctor-generated-crud-posture'
 import {
   blankCommentsAndStrings,
+  getExternalImportSpecifiers,
   getGraphqlOperationMethods,
   stripComments,
 } from './doctor-source-analysis'
@@ -2071,6 +2072,59 @@ const reportStaleExemptions = (
   }
 }
 
+// The enforcement surface: the checks every repo is judged by. The promotion mirror copies these
+// verbatim into eleven repos, so they have to be portable — free of anything true of one repo only.
+const enforcementSourceGlobs = [
+  { dir: 'scripts', match: (name: string) => /^doctor.*\.ts$/.test(name) },
+  { dir: 'tools', match: (name: string) => /^verify-.*\.ts$/.test(name) },
+]
+
+// Everything the checks legitimately need: node builtins, the parsers they drive, the test runner.
+// Deliberately an allowlist — a new dependency here should be a decision, not a drive-by import.
+const portableEnforcementModules = new Set(['typescript', 'graphql', 'vitest'])
+
+const enforcementSourceFiles = (): string[] =>
+  enforcementSourceGlobs.flatMap(({ dir, match }) =>
+    existsSync(dir)
+      ? readdirSync(dir)
+          .filter(match)
+          .map(name => `${dir}/${name}`)
+      : [],
+  )
+
+/**
+ * Enforcement code must not import anything repo-specific — including this repo's own scope.
+ *
+ * These files are copied verbatim into every clone, where the workspace scope is different
+ * (`@mi-core/...`, `@cashcast/...`, …). An import of `@nestled-template/api/utils` would resolve
+ * here and nowhere else, so the check would silently stop working in exactly the repos it is meant
+ * to police — while continuing to pass in the one place anybody looks.
+ *
+ * Scoped to the source template on purpose: this exists to stop repo-specific content being
+ * promoted INTO the shared tool. A downstream repo's local edits are a different question, and are
+ * surfaced by the upgrader's convergence-status enforcement drift report.
+ *
+ * Limit worth stating: this reads imports, which are precise. A hardcoded repo-specific PATH STRING
+ * inside a check would not be caught — a real near-miss, since mi-core's local doctor edit
+ * referenced a path that exists only there.
+ */
+const checkEnforcementPortability = () => {
+  if (!isSourceTemplateRepository()) return
+
+  for (const file of enforcementSourceFiles()) {
+    for (const specifier of getExternalImportSpecifiers(readFileSync(file, 'utf8'), file)) {
+      if (specifier.startsWith('node:')) continue
+      if (portableEnforcementModules.has(specifier)) continue
+
+      fail(
+        'enforcement-portability',
+        `Enforcement code must be portable across every clone, but ${file} imports "${specifier}"; use only node builtins, ${[...portableEnforcementModules].join('/')}, or a relative sibling — a workspace-scoped import resolves in this repo alone`,
+        file,
+      )
+    }
+  }
+}
+
 const checkAccessPolicyCoverage = () => {
   const exemptions = readPermissionExemptions()
   const unauthorized = new Set<string>()
@@ -2243,6 +2297,7 @@ checkUnguardedRootOperations()
 checkAuthLevelDeclarations()
 checkAccessPolicyDeclarations()
 checkAccessPolicyCoverage()
+checkEnforcementPortability()
 checkPrismaGeneratedEnums()
 checkUnsafeTypeScriptCasts()
 checkResolverScopeAnchoring()
