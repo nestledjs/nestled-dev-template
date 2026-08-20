@@ -25,6 +25,12 @@ export const getExternalImportSpecifiers = (source: string, fileName = 'source.t
   const visit = (node: ts.Node): void => {
     if (ts.isImportDeclaration(node) || ts.isExportDeclaration(node)) {
       record(node.moduleSpecifier)
+    } else if (ts.isImportEqualsDeclaration(node)) {
+      // `import x = require('…')`. A static external import that looks nothing like one, and the
+      // only import form that reaches a module without an ImportDeclaration or a CallExpression —
+      // so a scan built from those two alone lets it through silently.
+      if (ts.isExternalModuleReference(node.moduleReference))
+        record(node.moduleReference.expression)
     } else if (
       ts.isCallExpression(node) &&
       (node.expression.kind === ts.SyntaxKind.ImportKeyword ||

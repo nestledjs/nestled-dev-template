@@ -51,6 +51,11 @@ agentHints:
     repo-specific path string inside a check body is not caught. That is the shape mi-core's local
     edit actually took, so read promoted enforcement changes for it by eye.
   - >
+    All five ways a module gets imported are covered: `import … from`, `export … from`, dynamic
+    `import()`, `require()`, and `import x = require(…)`. The last is the easy one to miss — it
+    reaches a module without an ImportDeclaration or a CallExpression, so a scan built from those
+    two alone lets it through silently. If you extend this reader, extend the spec first.
+  - >
     Repo names in comments stay legal — the check reads the AST, not text, so provenance notes like
     "(mi-core: 10 false findings)" are unaffected. Keep writing them; knowing where a rule came from
     is worth more than a blanket ban on the word.
