@@ -43,7 +43,7 @@ export const getExternalImportSpecifiers = (source: string, fileName = 'source.t
   }
 
   visit(sourceFile)
-  return [...new Set(specifiers)].sort()
+  return [...new Set(specifiers)].sort((left, right) => left.localeCompare(right))
 }
 
 export type GraphqlOperationMethod = {
