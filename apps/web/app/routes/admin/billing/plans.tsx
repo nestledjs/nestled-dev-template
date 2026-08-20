@@ -10,25 +10,7 @@ function formatLimitValue(value: unknown): string | number {
   return JSON.stringify(value)
 }
 
-type Plan = {
-  id: string
-  createdAt: string
-  updatedAt: string
-  name: string
-  description?: string
-  price: string
-  interval: string
-  features?: string[]
-  limits?: Record<string, unknown>
-  active: boolean
-  stripeProductId?: string
-  stripePriceId?: string
-  trialPeriodDays?: number
-}
 
-type AdminPlansQuery = {
-  plans: Plan[]
-}
 
 
 export default function AdminBillingPlans() {

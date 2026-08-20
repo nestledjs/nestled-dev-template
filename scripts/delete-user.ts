@@ -3,8 +3,12 @@
  *
  * Safely deletes a user and all their related data.
  *
- * Run with: pnpm tsx scripts/delete-user.ts <email>
- * Example: pnpm tsx scripts/delete-user.ts john@example.com
+ * Run with: pnpm run user:delete <email>
+ * Example: pnpm run user:delete john@example.com
+ *
+ * Use the package script, not `pnpm tsx scripts/delete-user.ts` directly: tsx resolves no path
+ * aliases without a tsconfig, and this repo has only tsconfig.base.json, so the bare invocation
+ * fails to resolve the Prisma import before it runs a single line.
  */
 
 import 'dotenv/config'
@@ -119,8 +123,8 @@ async function main() {
 
   if (!email) {
     console.error('❌ Error: Email address required')
-    console.log('\nUsage: pnpm tsx scripts/delete-user.ts <email>')
-    console.log('Example: pnpm tsx scripts/delete-user.ts john@example.com')
+    console.log('\nUsage: pnpm run user:delete <email>')
+    console.log('Example: pnpm run user:delete john@example.com')
     process.exit(1)
   }
 

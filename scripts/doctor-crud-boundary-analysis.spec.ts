@@ -6,6 +6,7 @@ import {
   getGraphqlRootFieldNames,
   getLegacyCoreHelpersImportViolations,
   getNonAdminOperationViolations,
+  getInlineClientGeneratedCrudViolations,
   getPublicSdkGeneratedCrudViolations,
   isHandwrittenApiFile,
   supportsAdminOnlyGeneratorBoundary,
@@ -229,5 +230,121 @@ describe('generated CRUD boundary analysis', () => {
       'UserResolver.user must use GqlAuthAdminGuard',
       'UserResolver.user must declare @AdminOnly()',
     ])
+  })
+})
+
+describe('getInlineClientGeneratedCrudViolations', () => {
+  const generatedRootFields = new Set(['plans', 'subscriptions', 'subscriptionsCount'])
+
+  it('reports a generated CRUD root queried from an inline gql template', () => {
+    const violations = getInlineClientGeneratedCrudViolations(
+      `
+        const DOC = gql\`
+          query AdminPlans {
+            plans {
+              id
+            }
+          }
+        \`
+      `,
+      generatedRootFields,
+      'apps/web/app/routes/admin/billing/_index.tsx',
+    )
+
+    expect(violations).toHaveLength(1)
+    expect(violations[0].message).toContain('plans')
+  })
+
+  // The bug this check exists for: a .tsx parsed as ScriptKind.TS is a syntax-error tree that
+  // walks as EMPTY, so the files most likely to hold an inline document scanned clean.
+  it('sees inline documents in a .tsx file containing JSX', () => {
+    const violations = getInlineClientGeneratedCrudViolations(
+      `
+        const DOC = gql\`
+          query AdminSubscriptions {
+            subscriptions {
+              id
+            }
+          }
+        \`
+        export function Page() {
+          return <div className="p-4">{DOC ? <span>ok</span> : null}</div>
+        }
+      `,
+      generatedRootFields,
+      'apps/web/app/routes/admin/billing/subscriptions.tsx',
+    )
+
+    expect(violations).toHaveLength(1)
+    expect(violations[0].message).toContain('subscriptions')
+  })
+
+  it('reports every generated root in one document', () => {
+    const violations = getInlineClientGeneratedCrudViolations(
+      `
+        const DOC = gql\`
+          query AdminSubscriptions {
+            subscriptions {
+              id
+            }
+            subscriptionsCount {
+              total
+            }
+          }
+        \`
+      `,
+      generatedRootFields,
+      'page.tsx',
+    )
+
+    expect(violations).toHaveLength(2)
+  })
+
+  it('ignores documents that call no generated root', () => {
+    expect(
+      getInlineClientGeneratedCrudViolations(
+        `
+          const DOC = gql\`
+            query AdminBillingPlans {
+              adminBillingPlans {
+                id
+              }
+            }
+          \`
+        `,
+        generatedRootFields,
+        'page.tsx',
+      ),
+    ).toEqual([])
+  })
+
+  it('ignores tagged templates that are not gql', () => {
+    expect(
+      getInlineClientGeneratedCrudViolations(
+        'const styles = css`.plans { color: red }`',
+        generatedRootFields,
+        'page.tsx',
+      ),
+    ).toEqual([])
+  })
+
+  it('skips an interpolated template that is not a document on its own', () => {
+    expect(() =>
+      getInlineClientGeneratedCrudViolations(
+        'const DOC = gql`${FRAGMENT} not a document`',
+        generatedRootFields,
+        'page.tsx',
+      ),
+    ).not.toThrow()
+  })
+
+  it('reports at the line the tagged template starts on', () => {
+    const violations = getInlineClientGeneratedCrudViolations(
+      ['// leading comment', '', 'const DOC = gql`', '  query A { plans { id } }', '`'].join('\n'),
+      generatedRootFields,
+      'page.tsx',
+    )
+
+    expect(violations[0].line).toBe(3)
   })
 })

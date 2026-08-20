@@ -1,5 +1,11 @@
 import ts from 'typescript'
-import { Kind, parse, type FragmentDefinitionNode, type SelectionSetNode } from 'graphql'
+import {
+  GraphQLError,
+  Kind,
+  parse,
+  type FragmentDefinitionNode,
+  type SelectionSetNode,
+} from 'graphql'
 import { getAuthOperations } from './doctor-auth-analysis'
 
 export type CrudBoundaryViolation = {
@@ -210,7 +216,9 @@ const flattenGqlTemplate = (template: ts.TemplateLiteral): string =>
  * An inline template that does not parse as GraphQL is skipped rather than thrown on: interpolated
  * documents flatten to text that is often not a valid document on its own, and a boundary check
  * must not be the thing that crashes the doctor. That fails toward not reporting — the same
- * direction the surrounding scans take.
+ * direction the surrounding scans take. Only GraphQL parse failures are swallowed; any other error
+ * is a defect here and is rethrown, because silently reporting "no findings" is the worst outcome
+ * for a security check.
  */
 export const getInlineClientGeneratedCrudViolations = (
   source: string,
@@ -237,8 +245,11 @@ export const getInlineClientGeneratedCrudViolations = (
         )) {
           violations.push({ line, message: violation.message })
         }
-      } catch {
-        // Not a parseable GraphQL document on its own — see the note above.
+      } catch (error) {
+        // A document that does not parse on its own is expected (see the note above) and skipped.
+        // Anything else is a defect in this checker, and a boundary check that reports "no
+        // findings" because it crashed is worse than one that fails loudly — so rethrow.
+        if (!(error instanceof GraphQLError)) throw error
       }
     }
 
