@@ -61,7 +61,9 @@ agentHints:
   - >
     `x-organization-id` can arrive as an array (repeated header). Take the first element before
     comparing, or a repeated header slips past a naive string comparison — there is a regression
-    test for exactly this.
+    test for exactly this. The header is then written back as a scalar unconditionally, which also
+    collapses a repeated-but-matching header to one value so a downstream consumer reading it
+    naively cannot receive an array.
   - >
     Audit any project-local caller of ApiTokenAuthMiddleware or any other consumer that reads
     `x-organization-id` directly: it must prefer `apiTokenOrganizationId`, as
