@@ -351,12 +351,11 @@ export class StorageService {
   }
 
   /**
-   * Get a signed URL for temporary access to a private file
-   */
-  /**
+   * Get a signed URL for temporary access to a private file.
+   *
    * A signed URL is a bearer credential for the file's bytes, so the caller must be entitled to the
-   * file itself: they own it, or it belongs to an organization they are a member of. Public files
-   * are readable by anyone who can reach the API.
+   * file itself: they own it, or it belongs to an organization they are a member of. There is no
+   * exception for files that also have a public URL — see canReadFile.
    *
    * Not-found rather than forbidden on a failed check, matching deleteFile — a caller probing ids
    * should not learn which ones exist.
