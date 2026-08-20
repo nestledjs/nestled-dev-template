@@ -12,8 +12,8 @@ intent: >
   recorded in `.nestled-updates/security/permission-exemptions.json` with a reason. Stale exemptions
   are reported.
 
-  Also declares `platform.users.manage` on `staffUpdateEmail` / `staffDeleteEmail`, which edit any
-  user's email address and previously relied on the class-wide superadmin gate alone.
+  Also drops `unlockAccount`'s now-redundant `@UseGuards(GqlAuthGuard)` + `@Authenticated()`, which
+  `RequirePlatformPermission` already applies.
 
 why: >
   The existing access-policy check validated the declarations that existed — spelling, catalog
@@ -67,3 +67,14 @@ agentHints:
   - >
     Generated CRUD is excluded: it is governed by generated-crud posture as one declared tier, not
     per-operation permissions. Including it adds 138 findings nobody can act on.
+  - >
+    `Require*Permission` is a composed decorator — it already applies `@Authenticated()` and
+    `@UseGuards(GqlAuthGuard, AccessPolicyGuard)`. Do not add those alongside it; the guard runs
+    twice and the intent reads as though the permission were an extra on top of a separate gate.
+  - >
+    Four exemptions, not two, and the extra pair is a decision rather than an oversight.
+    StaffEmailResolver's mutations are superadmin-only through a class-level gate that
+    email.resolver.spec.ts asserts. Adding a per-operation permission on top would narrow nothing;
+    replacing the class gate with one would WIDEN them from "superadmin" to "any role holding that
+    permission". That may be the right call for your project — take it deliberately, not as a side
+    effect of clearing this check.

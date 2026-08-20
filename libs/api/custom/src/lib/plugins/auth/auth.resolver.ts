@@ -360,9 +360,9 @@ export class AuthResolver {
     return userToken
   }
 
+  // RequirePlatformPermission already applies @Authenticated() and
+  // @UseGuards(GqlAuthGuard, AccessPolicyGuard) — see access-policy.decorator.
   @Mutation(() => User)
-  @UseGuards(GqlAuthGuard)
-  @Authenticated()
   @RequirePlatformPermission('platform.users.manage')
   async unlockAccount(
     @Context() context: NestContextType,
