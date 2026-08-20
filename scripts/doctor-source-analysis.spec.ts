@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import {
   blankCommentsAndStrings,
+  getExternalImportSpecifiers,
   stripComments,
   getGraphqlOperationMethods,
 } from './doctor-source-analysis'
@@ -172,5 +173,60 @@ describe('getGraphqlOperationMethods', () => {
 
   it('handles a resolver with no operations', () => {
     expect(getGraphqlOperationMethods('class Plain { helper() { return 1 } }')).toEqual([])
+  })
+})
+
+describe('getExternalImportSpecifiers', () => {
+  it('returns external specifiers and ignores relative siblings', () => {
+    expect(
+      getExternalImportSpecifiers(`
+        import ts from 'typescript'
+        import { parse } from 'graphql'
+        import { helper } from './doctor-auth-analysis'
+        import { other } from '../tools/thing'
+      `),
+    ).toEqual(['graphql', 'typescript'])
+  })
+
+  it('catches a workspace-scoped import — the one that resolves in a single repo', () => {
+    expect(
+      getExternalImportSpecifiers("import { ConfigService } from '@nestled-template/api/config'"),
+    ).toEqual(['@nestled-template/api/config'])
+  })
+
+  // An import specifier IS a string literal, so a scan that blanks strings to dodge comment
+  // false-positives blanks the thing being inspected. Reading the AST avoids both traps.
+  it('ignores a specifier-shaped string in a comment or a plain string', () => {
+    expect(
+      getExternalImportSpecifiers(`
+        // import { x } from '@mi-core/api/utils'
+        const note = '@cashcast/api/config'
+        import ts from 'typescript'
+      `),
+    ).toEqual(['typescript'])
+  })
+
+  it('catches dynamic import and require, not just static imports', () => {
+    expect(
+      getExternalImportSpecifiers(`
+        const a = await import('@mi-core/api/utils')
+        const b = require('@muzebook/api/config')
+      `),
+    ).toEqual(['@mi-core/api/utils', '@muzebook/api/config'])
+  })
+
+  it('catches a re-export, which imports just as effectively', () => {
+    expect(getExternalImportSpecifiers("export * from '@mi-core/api/utils'")).toEqual([
+      '@mi-core/api/utils',
+    ])
+  })
+
+  it('deduplicates', () => {
+    expect(
+      getExternalImportSpecifiers(`
+        import ts from 'typescript'
+        import type { Node } from 'typescript'
+      `),
+    ).toEqual(['typescript'])
   })
 })
