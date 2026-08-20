@@ -306,6 +306,49 @@ export const getCustomResolverNameViolations = (
 const declaresAdminOnly = (classDecorators: string, methodDecorators: string): boolean =>
   `${classDecorators}\n${methodDecorators}`.includes('@AdminOnly')
 
+const declaresAuthenticated = (classDecorators: string, methodDecorators: string): boolean =>
+  `${classDecorators}\n${methodDecorators}`.includes('@Authenticated')
+
+/**
+ * The inverse of getNonAdminOperationViolations, for a repo that has declared generated-crud
+ * posture `authenticated`.
+ *
+ * Such a repo is mid-migration, not unprotected: its generated resolvers should carry
+ * GqlAuthGuard + @Authenticated, and an operation missing those is drift regardless of posture.
+ * Without this the doctor has nothing to say about generated CRUD in a relaxed repo — every
+ * operation reports as a violation of a rule the repo has deliberately suspended, which is how
+ * 1,213 findings buried the 195 that mattered.
+ */
+export const getNonAuthenticatedOperationViolations = (
+  source: string,
+  fileName = 'source.ts',
+): CrudBoundaryViolation[] =>
+  getAuthOperations(source, fileName).flatMap(operation => {
+    const violations: CrudBoundaryViolation[] = []
+
+    if (
+      !operation.guardNames.includes('GqlAuthGuard') &&
+      !operation.guardNames.includes('GqlAuthAdminGuard')
+    ) {
+      violations.push({
+        line: operation.line,
+        message: `${operation.className}.${operation.name} must use GqlAuthGuard while generated-crud posture is authenticated`,
+      })
+    }
+
+    if (
+      !declaresAuthenticated(operation.classDecorators, operation.decorators) &&
+      !declaresAdminOnly(operation.classDecorators, operation.decorators)
+    ) {
+      violations.push({
+        line: operation.line,
+        message: `${operation.className}.${operation.name} must declare @Authenticated() while generated-crud posture is authenticated`,
+      })
+    }
+
+    return violations
+  })
+
 export const getNonAdminOperationViolations = (
   source: string,
   fileName = 'source.ts',

@@ -20,6 +20,7 @@ import {
   getGeneratedCrudImportViolations,
   getGraphqlRootFieldNames,
   getInlineClientGeneratedCrudViolations,
+  getNonAuthenticatedOperationViolations,
   getLegacyCoreHelpersImportViolations,
   getNonAdminOperationViolations,
   getPublicSdkGeneratedCrudViolations,
@@ -34,6 +35,10 @@ import {
   type TypeScriptSource,
 } from './doctor-sdk-contract-analysis'
 import { getRegisteredModuleClasses } from './doctor-module-analysis'
+import {
+  GENERATED_CRUD_POSTURE_PATH,
+  readGeneratedCrudPosture,
+} from './doctor-generated-crud-posture'
 import { blankCommentsAndStrings, stripComments } from './doctor-source-analysis'
 
 type Finding = {
@@ -761,17 +766,48 @@ const checkGeneratedCrudModuleRegistration = () => {
   }
 }
 
-const checkGeneratedCrudAlwaysAdmin = () => {
+const checkGeneratedCrudPosture = () => {
+  const reading = readGeneratedCrudPosture()
+
+  // A posture file the generator would reject is worse than no file: the repo believes it declared
+  // something. Both read it fail-closed, so nothing is unguarded — but say so loudly.
+  if (reading.invalid) {
+    fail(
+      'admin-crud-boundary',
+      `${GENERATED_CRUD_POSTURE_PATH} declares ${reading.invalid}; both the generator and this check fall back to admin, so fix the file or delete it`,
+      GENERATED_CRUD_POSTURE_PATH,
+    )
+  }
+
   const resolverFiles = walkFiles('libs/api/generated-crud/feature/src/lib', path =>
     path.endsWith('.resolver.ts'),
   )
 
+  // At `authenticated` the repo has deliberately suspended the admin rule, so asserting it would
+  // report every generated operation as a violation and bury the findings that matter. Assert the
+  // tier the repo actually declared instead — drift is still drift.
+  const relaxed = reading.posture === 'authenticated'
+
+  if (relaxed) {
+    review(
+      'admin-crud-boundary',
+      `Generated CRUD is running at posture "authenticated", not admin-only${reading.reason ? ` — ${reading.reason}` : ''}`,
+      GENERATED_CRUD_POSTURE_PATH,
+    )
+  }
+
   for (const file of resolverFiles) {
     const source = readFileSync(file, 'utf8')
-    for (const violation of getNonAdminOperationViolations(source, file)) {
+    const violations = relaxed
+      ? getNonAuthenticatedOperationViolations(source, file)
+      : getNonAdminOperationViolations(source, file)
+
+    for (const violation of violations) {
       fail(
         'admin-crud-boundary',
-        `Generated CRUD is fixed admin-only: ${violation.message}`,
+        relaxed
+          ? `Generated CRUD does not match its declared posture: ${violation.message}`
+          : `Generated CRUD is fixed admin-only: ${violation.message}`,
         file,
         violation.line,
       )
@@ -2140,7 +2176,7 @@ checkStaleConfigNames()
 checkMcpWiring()
 checkApiControllerRoutesAllowed()
 checkGeneratedCrudModuleRegistration()
-checkGeneratedCrudAlwaysAdmin()
+checkGeneratedCrudPosture()
 checkCrudAuthAnnotations()
 checkGeneratorAdminBoundaryVersion()
 checkHandwrittenCrudImports()
