@@ -6,6 +6,7 @@ import {
   getGraphqlRootFieldNames,
   getLegacyCoreHelpersImportViolations,
   getNonAdminOperationViolations,
+  getNonAuthenticatedOperationViolations,
   getInlineClientGeneratedCrudViolations,
   getPublicSdkGeneratedCrudViolations,
   isHandwrittenApiFile,
@@ -346,5 +347,54 @@ describe('getInlineClientGeneratedCrudViolations', () => {
     )
 
     expect(violations[0].line).toBe(3)
+  })
+})
+
+describe('getNonAuthenticatedOperationViolations', () => {
+  it('accepts a resolver carrying GqlAuthGuard and @Authenticated', () => {
+    expect(
+      getNonAuthenticatedOperationViolations(`
+        @Resolver(() => User)
+        @UseGuards(GqlAuthGuard)
+        @Authenticated()
+        class GeneratedUserResolver {
+          @Query(() => User)
+          user() {}
+        }
+      `),
+    ).toEqual([])
+  })
+
+  // A repo at `authenticated` posture is mid-migration, not unprotected — an operation with no
+  // guard at all is still drift and must still be reported.
+  it('reports an operation with no guard at all', () => {
+    const violations = getNonAuthenticatedOperationViolations(`
+      @Resolver(() => User)
+      class GeneratedUserResolver {
+        @Query(() => User)
+        user() {}
+      }
+    `)
+
+    expect(violations.map(violation => violation.message)).toEqual([
+      'GeneratedUserResolver.user must use GqlAuthGuard while generated-crud posture is authenticated',
+      'GeneratedUserResolver.user must declare @Authenticated() while generated-crud posture is authenticated',
+    ])
+  })
+
+  // The stricter tier is never drift against the looser one: a repo part-way through restoring
+  // admin should not be nagged for the operations it has already restored.
+  it('accepts an operation that is still admin-only', () => {
+    expect(
+      getNonAuthenticatedOperationViolations(`
+        @Resolver(() => User)
+        @UseGuards(GqlAuthAdminGuard)
+        @AdminOnly()
+        class GeneratedUserResolver {
+          @Query(() => User)
+          user() {}
+        }
+      `),
+    ).toEqual([])
   })
 })
