@@ -180,8 +180,12 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
             )
           }
 
-          // Absent header: state the token's organization rather than letting resolution fall
+          // Assigned unconditionally, and that is deliberate — it does two jobs. When the header
+          // was absent it states the token's organization, rather than letting resolution fall
           // through to the user's active organization, which is not what the token authorizes.
+          // When the header was present it has already been proven equal above, and writing the
+          // scalar collapses a repeated header (`['org-1', 'org-1']`) to a single value, so a
+          // downstream consumer reading it naively cannot receive an array.
           req.headers['x-organization-id'] = result.organizationId
         }
 

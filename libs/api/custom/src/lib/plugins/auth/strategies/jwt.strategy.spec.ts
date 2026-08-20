@@ -124,6 +124,26 @@ describe('JwtStrategy API token authentication', () => {
     )
   })
 
+  it('collapses a repeated matching header to a single value', async () => {
+    const user = { id: 'user-1' }
+    const req = {
+      headers: { authorization: `Bearer ${token}`, 'x-organization-id': ['org-1', 'org-1'] },
+    } as any
+
+    apiTokensService.validateApiToken.mockResolvedValue({
+      userId: 'user-1',
+      tokenId: 'api-token-1',
+      organizationId: 'org-1',
+    })
+    auth.validateUser.mockResolvedValue(user)
+
+    await strategy.authenticate(req)
+
+    // A consumer reading the header naively must not receive an array.
+    expect(req.headers['x-organization-id']).toBe('org-1')
+    expect((strategy as any).success).toHaveBeenCalledWith(user)
+  })
+
   it("defaults an absent header to the token's organization rather than the user's active one", async () => {
     const user = { id: 'user-1', activeOrganizationId: 'org-9' }
     const req = { headers: { authorization: `Bearer ${token}` } } as any
