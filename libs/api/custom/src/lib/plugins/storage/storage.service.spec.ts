@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing'
-import { NotFoundException } from '@nestjs/common'
+import { ForbiddenException, NotFoundException } from '@nestjs/common'
 import { StorageService } from './storage.service'
 import { StorageProvider } from '@nestled-template/api/prisma'
 import { ApiCoreDataAccessService } from '@nestled-template/api/core/data-access'
@@ -405,6 +405,9 @@ describe('StorageService', () => {
       mockPrisma.organizationMember.findFirst.mockResolvedValue(null)
 
       await expect(service.getOrganizationFiles('org-999', 'outsider')).rejects.toThrow(
+        ForbiddenException,
+      )
+      await expect(service.getOrganizationFiles('org-999', 'outsider')).rejects.toThrow(
         'You are not a member of that organization',
       )
       expect(mockPrisma.storedFile.findMany).not.toHaveBeenCalled()
@@ -466,6 +469,9 @@ describe('StorageService', () => {
 
       // Not-found rather than forbidden, matching deleteFile: probing ids must not reveal which exist.
       await expect(service.getSignedUrl('stored-123', 'intruder')).rejects.toThrow(
+        NotFoundException,
+      )
+      await expect(service.getSignedUrl('stored-123', 'intruder')).rejects.toThrow(
         'Upload not found: stored-123',
       )
       expect(mockStorageProvider.getSignedUrl).not.toHaveBeenCalled()
@@ -498,6 +504,9 @@ describe('StorageService', () => {
       mockPrisma.organizationMember.findFirst.mockResolvedValue(null)
 
       await expect(service.getSignedUrl('stored-123', 'outsider')).rejects.toThrow(
+        NotFoundException,
+      )
+      await expect(service.getSignedUrl('stored-123', 'outsider')).rejects.toThrow(
         'Upload not found: stored-123',
       )
       expect(mockStorageProvider.getSignedUrl).not.toHaveBeenCalled()
@@ -512,6 +521,7 @@ describe('StorageService', () => {
         organizationId: null,
       } as any)
 
+      await expect(service.getSignedUrl('orphan', 'anyone')).rejects.toThrow(NotFoundException)
       await expect(service.getSignedUrl('orphan', 'anyone')).rejects.toThrow('Upload not found')
     })
   })
