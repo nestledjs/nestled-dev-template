@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { blankCommentsAndStrings, stripComments } from './doctor-source-analysis'
+import { blankCommentsAndStrings, stripComments, getGraphqlOperationMethods } from './doctor-source-analysis'
 
 describe('stripComments', () => {
   it('preserves comment openers inside string literals', () => {
@@ -88,5 +88,77 @@ describe('blankCommentsAndStrings', () => {
     expect([...blanked.matchAll(/\bas\s+any\b/g)]).toHaveLength(1)
     expect(blanked.split('\n')[0]).toContain('as const')
     expect(blanked.split('\n')[1]).toContain('as any')
+  })
+})
+
+describe('getGraphqlOperationMethods', () => {
+  // The regression this replaced: the old line scanner took the first `{` after the declaration
+  // line, so a method with an @Args object literal had THAT literal captured as its body. Callers
+  // then tested the wrong text — the resolver-scope check skipped almost every operation.
+  it('captures the real body when a parameter contains an object literal', () => {
+    const [operation] = getGraphqlOperationMethods(`
+      @Resolver()
+      class StorageResolver {
+        @Mutation(() => Boolean)
+        async deleteFile(
+          @Args('uploadId', { type: () => String }) uploadId: string,
+          @CtxUser() user: User,
+        ): Promise<boolean> {
+          await this.storageService.deleteFile(uploadId, user.id)
+          return true
+        }
+      }
+    `)
+
+    expect(operation.name).toBe('deleteFile')
+    expect(operation.body).toContain('this.storageService.deleteFile(uploadId, user.id)')
+    expect(operation.body).not.toContain('type: () => String')
+  })
+
+  // @CtxUser() is a parameter decorator: it appears in neither `decorators` nor `body`.
+  it('exposes the whole method, parameters included, as text', () => {
+    const [operation] = getGraphqlOperationMethods(`
+      @Resolver()
+      class FileResolver {
+        @Query(() => [String])
+        async userFiles(@CtxUser() user: User): Promise<string[]> {
+          return this.service.getUserFiles(user.id)
+        }
+      }
+    `)
+
+    expect(operation.decorators).not.toContain('@CtxUser')
+    expect(operation.body).not.toContain('@CtxUser')
+    expect(operation.text).toContain('@CtxUser()')
+  })
+
+  it('returns only GraphQL operations', () => {
+    const operations = getGraphqlOperationMethods(`
+      @Resolver()
+      class MixedResolver {
+        @Query(() => String)
+        anOperation(): string {
+          return 'x'
+        }
+
+        private aHelper(): string {
+          return 'y'
+        }
+      }
+    `)
+
+    expect(operations.map(operation => operation.name)).toEqual(['anOperation'])
+  })
+
+  it('reports the line of the method name', () => {
+    const [operation] = getGraphqlOperationMethods(
+      ['@Resolver()', 'class R {', '  @Query(() => String)', '  thing(): string {', '    return {}', '  }', '}'].join('\n'),
+    )
+
+    expect(operation.line).toBe(4)
+  })
+
+  it('handles a resolver with no operations', () => {
+    expect(getGraphqlOperationMethods('class Plain { helper() { return 1 } }')).toEqual([])
   })
 })
