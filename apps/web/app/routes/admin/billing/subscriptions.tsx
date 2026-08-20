@@ -3,45 +3,7 @@ import { useQuery } from '@apollo/client/react'
 import { AdminBillingSubscriptions as AdminBillingSubscriptionsDocument } from '@nestled-template/shared/sdk'
 import { useState } from 'react'
 
-type Subscription = {
-  id: string
-  createdAt: string
-  updatedAt: string
-  organizationId: string
-  organization?: {
-    id: string
-    name: string
-    emails?: Array<{
-      email: string
-      primary: boolean
-    }>
-  }
-  planId: string
-  plan?: {
-    id: string
-    name: string
-    price: string
-    interval: string
-  }
-  stripeCustomerId?: string
-  stripeSubscriptionId?: string
-  stripePriceId?: string
-  stripeCurrentPeriodEnd?: string
-  trialStart?: string
-  trialEnd?: string
-  cancelAt?: string
-  canceledAt?: string
-  cancelAtPeriodEnd: boolean
-  status: string
-}
 
-type AdminSubscriptionsQuery = {
-  subscriptions: Subscription[]
-  subscriptionsCount: {
-    total: number
-    count: number
-  }
-}
 
 
 const STATUS_COLORS: Record<string, string> = {

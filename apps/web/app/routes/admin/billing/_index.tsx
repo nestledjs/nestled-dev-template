@@ -14,37 +14,8 @@ import {
 } from '@heroicons/react/24/outline'
 import { useState } from 'react'
 
-type Plan = {
-  id: string
-  name: string
-  description?: string
-  price: string
-  interval: string
-  active: boolean
-  stripeProductId?: string
-  stripePriceId?: string
-  trialPeriodDays?: number
-}
 
-type Subscription = {
-  id: string
-  status: string
-  organizationId: string
-  organization?: {
-    id: string
-    name: string
-  }
-  plan?: {
-    id: string
-    name: string
-    price: string
-  }
-  stripeCurrentPeriodEnd?: string
-}
 
-type AdminPlansQuery = {
-  plans: Plan[]
-}
 
 function getSubscriptionStatusClass(status: string): string {
   if (status === 'ACTIVE') return 'bg-green-100 text-green-800'
@@ -52,21 +23,8 @@ function getSubscriptionStatusClass(status: string): string {
   return 'bg-red-100 text-red-800'
 }
 
-type AdminSubscriptionsQuery = {
-  subscriptions: Subscription[]
-  subscriptionsCount: {
-    total: number
-    count: number
-  }
-}
 
-type AdminSyncStripeProductsMutation = {
-  syncStripeProducts: boolean
-}
 
-type AdminSyncStripePricesMutation = {
-  syncStripePrices: boolean
-}
 
 
 
