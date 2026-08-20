@@ -4,7 +4,10 @@ import { tmpdir } from 'node:os'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { afterEach, describe, expect, it } from 'vitest'
-import { loadModels, verifySelects } from './verify-selects.mjs'
+import { loadModels, verifySelects,
+  readRepoConfig,
+  findSelectFiles,
+} from './verify-selects.mjs'
 
 const toolPath = fileURLToPath(new URL('./verify-selects.mjs', import.meta.url))
 const workspaces = []
@@ -316,5 +319,61 @@ describe('verify-selects', () => {
       'FIRST_SELECT',
       'TOTALLY_UNKNOWN_THING',
     ])
+  })
+})
+
+describe('repo layout config', () => {
+  const withRepo = (files) => {
+    const repo = mkdtempSync(join(tmpdir(), 'verify-selects-config-'))
+    for (const [relative, contents] of Object.entries(files)) {
+      const full = join(repo, relative)
+      mkdirSync(dirname(full), { recursive: true })
+      writeFileSync(full, contents)
+    }
+    return repo
+  }
+
+  it('defaults to .select.ts when no config is present', () => {
+    expect(readRepoConfig(withRepo({})).selectFileSuffixes).toEqual(['.select.ts'])
+  })
+
+  it('honours declared suffixes', () => {
+    const repo = withRepo({
+      '.nestled-updates/doctor.config.json': JSON.stringify({
+        selectFileSuffixes: ['.select.ts', '.resolver.ts'],
+      }),
+    })
+
+    expect(readRepoConfig(repo).selectFileSuffixes).toEqual(['.select.ts', '.resolver.ts'])
+  })
+
+  // Silently reverting to the default would make this checker pass by verifying an empty set.
+  it('throws on malformed config rather than quietly scanning nothing', () => {
+    expect(() => readRepoConfig(withRepo({ '.nestled-updates/doctor.config.json': '{ not json' }))).toThrow(
+      'not valid JSON',
+    )
+    expect(() =>
+      readRepoConfig(
+        withRepo({ '.nestled-updates/doctor.config.json': JSON.stringify({ selectFileSuffixes: 'x' }) }),
+      ),
+    ).toThrow('array of non-empty strings')
+  })
+
+  // A dedicated select file holds nothing but selects, so camelCase names are real selects there —
+  // mi-core has courseOverviewSelect. Requiring SCREAMING_SNAKE everywhere would stop verifying them.
+  it('requires conventional names only for suffixes beyond .select.ts', () => {
+    const repo = withRepo({
+      'libs/api/custom/src/a.select.ts': 'export const courseOverviewSelect = { id: true }\n',
+      'libs/api/custom/src/b.resolver.ts': 'const where = { id: true }\nexport const GROUP_SELECT = { id: true }\n',
+      '.nestled-updates/doctor.config.json': JSON.stringify({
+        selectFileSuffixes: ['.select.ts', '.resolver.ts'],
+      }),
+    })
+
+    const found = findSelectFiles({ cwd: repo, roots: ['libs/api/custom/src'] })
+    const byName = Object.fromEntries(found.map((entry) => [entry.file.split('/').pop(), entry]))
+
+    expect(byName['a.select.ts'].conventionalNamesOnly).toBe(false)
+    expect(byName['b.resolver.ts'].conventionalNamesOnly).toBe(true)
   })
 })

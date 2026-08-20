@@ -32,6 +32,42 @@ export const SCHEMA_DIRECTORY_CANDIDATES = [
 
 export const DEFAULT_SEARCH_ROOTS = ['libs/api/custom/src', 'libs/api/core', 'apps/api/src']
 
+export const REPO_CONFIG_PATH = '.nestled-updates/doctor.config.json'
+
+export const DEFAULT_SELECT_FILE_SUFFIXES = ['.select.ts']
+
+/**
+ * The few things about a repo's LAYOUT that enforcement cannot assume.
+ *
+ * Deliberately tiny, and deliberately not a general escape hatch: this declares where to look, never
+ * what to accept. A repo that keeps select constants beside the resolver that owns them is laid out
+ * differently, not held to a weaker rule.
+ *
+ * It exists because the alternative is editing the checker in place — which muzebook had to do, and
+ * which stops being possible at all once these tools ship as a package.
+ */
+export const readRepoConfig = (cwd = process.cwd()) => {
+  const configPath = resolve(cwd, REPO_CONFIG_PATH)
+  if (!existsSync(configPath)) return { selectFileSuffixes: DEFAULT_SELECT_FILE_SUFFIXES }
+
+  let parsed
+  try {
+    parsed = JSON.parse(readFileSync(configPath, 'utf8'))
+  } catch {
+    // Fail loudly rather than silently scanning nothing: a malformed config that quietly reverted
+    // to the default would make this checker pass by verifying an empty set.
+    throw new Error(`${REPO_CONFIG_PATH} is not valid JSON`)
+  }
+
+  const declared = parsed?.selectFileSuffixes
+  if (declared === undefined) return { selectFileSuffixes: DEFAULT_SELECT_FILE_SUFFIXES }
+  if (!Array.isArray(declared) || declared.some(suffix => typeof suffix !== 'string' || !suffix)) {
+    throw new Error(`${REPO_CONFIG_PATH}: selectFileSuffixes must be an array of non-empty strings`)
+  }
+
+  return { selectFileSuffixes: declared }
+}
+
 /**
  * Keys whose object value contains model FIELDS, so their contents are validated as columns.
  *
@@ -178,7 +214,11 @@ const displayPath = (cwd, path) => {
   return normalizePath(pathFromCwd.startsWith('..') ? path : pathFromCwd)
 }
 
-export const findSelectFiles = ({ cwd = process.cwd(), roots = DEFAULT_SEARCH_ROOTS } = {}) => {
+export const findSelectFiles = ({
+  cwd = process.cwd(),
+  roots = DEFAULT_SEARCH_ROOTS,
+  selectFileSuffixes = readRepoConfig(cwd).selectFileSuffixes,
+} = {}) => {
   const files = []
   const walk = directory => {
     if (!existsSync(directory)) return
@@ -187,8 +227,20 @@ export const findSelectFiles = ({ cwd = process.cwd(), roots = DEFAULT_SEARCH_RO
       const path = join(directory, entry)
       const stat = statSync(path)
       if (stat.isDirectory()) walk(path)
-      else if (entry.endsWith('.select.ts')) {
-        files.push({ absolutePath: path, file: displayPath(cwd, path) })
+      else {
+        const suffix = selectFileSuffixes.find(candidate => entry.endsWith(candidate))
+        if (suffix) {
+          files.push({
+            absolutePath: path,
+            file: displayPath(cwd, path),
+            // A dedicated .select.ts file holds nothing but selects, so every exported const is
+            // one — including camelCase names, which real repos use. A shared file matched by an
+            // extra suffix also holds ordinary locals (`const where = {}`), so there a naming
+            // convention is the only way to tell a select from a local. Applying that convention
+            // everywhere would silently stop verifying camelCase selects in .select.ts files.
+            conventionalNamesOnly: suffix !== '.select.ts',
+          })
+        }
       }
     }
   }
@@ -409,7 +461,9 @@ const annotationBefore = (rawSource, constantOffset, previousEnd) => {
   return [...gap.matchAll(/@prisma-model\s+(\w+)/g)].pop()?.[1]
 }
 
-const verifyFile = ({ absolutePath, file }, models) => {
+export const CONVENTIONAL_SELECT_NAME = /^[A-Z][A-Z0-9_]*$/
+
+const verifyFile = ({ absolutePath, file, conventionalNamesOnly = false }, models) => {
   const rawSource = readFileSync(absolutePath, 'utf8')
   const source = sanitizeSource(rawSource)
   const problems = []
@@ -418,6 +472,9 @@ const verifyFile = ({ absolutePath, file }, models) => {
 
   for (const match of source.matchAll(/(?:export\s+)?const\s+(\w+)\s*=\s*\{/g)) {
     const constantOffset = match.index
+    // See conventionalNamesOnly above: in a shared file, an ordinary local is not an unresolvable
+    // select, and reporting it as one is the noise that gets a whole check switched off.
+    if (conventionalNamesOnly && !CONVENTIONAL_SELECT_NAME.test(match[1])) continue
     const annotatedModel = annotationBefore(rawSource, constantOffset, previousConstantEnd)
     const model = resolveModel(models, match[1], file, annotatedModel)
     // Count braces on the SANITIZED source: closingBrace() is not comment- or string-aware, and
