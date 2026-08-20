@@ -83,6 +83,12 @@ jobs:
 
       - run: pnpm verify:selects
 
+      # Formatting is checked in CI or it is not checked at all: `nx format:check --base=<ref>`
+      # only inspects files a branch CHANGED, so anything already on the default branch is invisible
+      # to a local run. Two unformatted files reached develop that way.
+      - name: Check formatting
+        run: pnpm exec prettier --check "scripts/**/*.ts" "tools/**/*.ts"
+
       - run: pnpm verify:select-coverage
 
       - run: pnpm verify:fragments
