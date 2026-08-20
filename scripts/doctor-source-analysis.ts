@@ -1,3 +1,66 @@
+import ts from 'typescript'
+
+export type GraphqlOperationMethod = {
+  /** The method's own decorators, verbatim. */
+  decorators: string
+  name: string
+  /** The method body, braces included. Empty for an overload or abstract signature. */
+  body: string
+  /** The ENTIRE method — decorators, signature, parameters and body. */
+  text: string
+  line: number
+}
+
+/**
+ * GraphQL operation methods, read from the AST.
+ *
+ * The previous line-scanning version located a method's body by taking the first `{` after the
+ * declaration line, which for any method with an object literal in its parameters —
+ * `@Args('id', { type: () => String })` — captured THAT literal as the body. Callers then tested
+ * the wrong text, and the resolver-scope check skipped almost every operation as a result.
+ *
+ * `text` exists because parameter decorators (`@CtxUser()`) live in the signature: they appear in
+ * neither `decorators` nor `body`, so any caller reasoning about the caller-scope of an operation
+ * has to look at the whole method.
+ */
+export const getGraphqlOperationMethods = (source: string): GraphqlOperationMethod[] => {
+  const sourceFile = ts.createSourceFile(
+    'operation.ts',
+    source,
+    ts.ScriptTarget.Latest,
+    true,
+    ts.ScriptKind.TS,
+  )
+  const methods: GraphqlOperationMethod[] = []
+
+  const visit = (node: ts.Node): void => {
+    if (ts.isClassDeclaration(node)) {
+      for (const member of node.members) {
+        if (!ts.isMethodDeclaration(member) || !member.name) continue
+
+        const decorators = (ts.getDecorators(member) ?? [])
+          .map(decorator => decorator.getText(sourceFile))
+          .join('\n')
+        if (!/@(?:Query|Mutation|Subscription|ResolveField)\b/.test(decorators)) continue
+
+        methods.push({
+          decorators,
+          name: member.name.getText(sourceFile),
+          body: member.body ? member.body.getText(sourceFile) : '',
+          text: member.getText(sourceFile),
+          line:
+            sourceFile.getLineAndCharacterOfPosition(member.name.getStart(sourceFile)).line + 1,
+        })
+      }
+    }
+
+    ts.forEachChild(node, visit)
+  }
+
+  visit(sourceFile)
+  return methods
+}
+
 const startsWithBlockComment = (source: string, index: number): boolean =>
   source[index] === '/' && source[index + 1] === '*'
 

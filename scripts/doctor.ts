@@ -39,7 +39,11 @@ import {
   GENERATED_CRUD_POSTURE_PATH,
   readGeneratedCrudPosture,
 } from './doctor-generated-crud-posture'
-import { blankCommentsAndStrings, stripComments } from './doctor-source-analysis'
+import {
+  blankCommentsAndStrings,
+  getGraphqlOperationMethods,
+  stripComments,
+} from './doctor-source-analysis'
 
 type Finding = {
   check: string
@@ -576,56 +580,6 @@ const getGraphqlResolverMethods = (source: string): string[] =>
   getRegexMatches(/^\s{2}(?:override\s+)?(?:async\s+)?(\w+)\s*\(/gm, source)
     .map(match => match[1])
     .filter(methodName => methodName !== 'constructor')
-
-const getGraphqlOperationMethods = (
-  source: string,
-): { decorators: string; name: string; body: string; line: number }[] => {
-  const methods: { decorators: string; name: string; body: string; line: number }[] = []
-  const lines = source.split('\n')
-  let offset = 0
-  let decorators = ''
-  let lineNumber = 1
-
-  for (const line of lines) {
-    const methodMatch = /^\s{2}(?:override\s+)?(?:async\s+)?(\w+)\s*\(/.exec(line)
-    if (methodMatch && decorators.includes('@')) {
-      if (/@(?:Query|Mutation|Subscription|ResolveField)\b/.test(decorators)) {
-        const lineIndex = source.indexOf(line, offset)
-        const openingBraceIndex = source.indexOf('{', lineIndex)
-        methods.push({
-          decorators,
-          name: methodMatch[1],
-          body: openingBraceIndex === -1 ? '' : getBlockSource(source, openingBraceIndex),
-          line: lineNumber,
-        })
-      }
-      decorators = ''
-    } else if (/^\s{2}@/.test(line) || (decorators && /^\s{4}/.test(line))) {
-      decorators += `${line}\n`
-    } else if (line.trim() !== '') {
-      decorators = ''
-    }
-
-    offset += line.length + 1
-    lineNumber += 1
-  }
-
-  return methods
-}
-
-const getBlockSource = (source: string, openingBraceIndex: number): string => {
-  let depth = 0
-  for (let index = openingBraceIndex; index < source.length; index += 1) {
-    if (source[index] === '{') {
-      depth += 1
-    } else if (source[index] === '}') {
-      depth -= 1
-      if (depth === 0) return source.slice(openingBraceIndex, index + 1)
-    }
-  }
-
-  return source.slice(openingBraceIndex)
-}
 
 const getLineNumber = (source: string, index: number): number =>
   source.slice(0, index).split('\n').length
@@ -1595,7 +1549,8 @@ const checkResolverScopeAnchoring = () => {
   for (const file of resolverFiles) {
     const source = stripComments(readFileSync(file, 'utf8'))
     for (const operation of getGraphqlOperationMethods(source)) {
-      const operationSource = `${operation.decorators}\n${operation.body}`
+      // The whole method, not decorators+body: @CtxUser() lives in the parameter list.
+      const operationSource = operation.text
       if (!/@Args\s*\(/.test(operationSource) || !usesInputIdInPrismaWhere(operationSource))
         continue
       if (hasContextScopeAnchor(operationSource)) continue
