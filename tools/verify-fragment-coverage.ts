@@ -264,6 +264,21 @@ const resolveImportFile = (fromDir: string, spec: string): string | undefined =>
  * One hop only; an import that cannot be resolved warns rather than silently reading as `{}` —
  * silent absence is what buries real findings under false ones.
  */
+// Reading and sanitizing a file is pure for the duration of a run, and importedConstantSelect is
+// called once per identifier it has to resolve — so a select constant with several imported
+// sub-selects re-read and re-sanitized the same sources repeatedly. Memoize by path.
+const fileTextCache = new Map<string, { raw: string; sanitized: string }>()
+
+const readFileText = (file: string): { raw: string; sanitized: string } => {
+  const cached = fileTextCache.get(file)
+  if (cached) return cached
+
+  const raw = readFileSync(file, 'utf8')
+  const text = { raw, sanitized: sanitize(raw) }
+  fileTextCache.set(file, text)
+  return text
+}
+
 const importedConstantSelect = (
   ident: string,
   context: SourceContext,
@@ -274,8 +289,7 @@ const importedConstantSelect = (
   // also still contains comments, so each match is checked against the offset-preserving
   // sanitized source: a commented-out import has its `import` keyword blanked there, and must
   // not bind the identifier to a file nobody imports anymore.
-  const raw = readFileSync(context.file, 'utf8')
-  const sanitized = sanitize(raw)
+  const { raw, sanitized } = readFileText(context.file)
   NAMED_IMPORT_PATTERN.lastIndex = 0
   let match: RegExpExecArray | null
   while ((match = NAMED_IMPORT_PATTERN.exec(raw)) !== null) {
@@ -297,7 +311,7 @@ const importedConstantSelect = (
       )
       return undefined
     }
-    const importedSource = sanitize(readFileSync(importedFile, 'utf8'))
+    const importedSource = readFileText(importedFile).sanitized
     const body = findConstantBody(importedSource, binding.original)
     if (body === -1) {
       console.warn(
