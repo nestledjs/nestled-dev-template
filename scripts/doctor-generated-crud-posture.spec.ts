@@ -57,6 +57,16 @@ describe('readGeneratedCrudPosture', () => {
     expect(reading.invalid).toBe(invalid)
   })
 
+  it('distinguishes an unreadable file from unparseable JSON', () => {
+    // A directory at the posture path exists but cannot be read as a file — the same shape as a
+    // permissions or transient filesystem error, and it must not be reported as bad JSON.
+    const directory = mkdtempSync(join(tmpdir(), 'posture-dir-'))
+    const reading = readGeneratedCrudPosture(directory)
+
+    expect(reading.posture).toBe('admin')
+    expect(reading.invalid).toBe('a file that exists but could not be read')
+  })
+
   it('is case-sensitive — "Authenticated" is not a posture', () => {
     const reading = readGeneratedCrudPosture(writePostureFile('{"posture":"Authenticated"}'))
 

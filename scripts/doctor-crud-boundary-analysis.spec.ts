@@ -377,8 +377,8 @@ describe('getNonAuthenticatedOperationViolations', () => {
     `)
 
     expect(violations.map(violation => violation.message)).toEqual([
-      'GeneratedUserResolver.user must use GqlAuthGuard while generated-crud posture is authenticated',
-      'GeneratedUserResolver.user must declare @Authenticated() while generated-crud posture is authenticated',
+      'GeneratedUserResolver.user must use GqlAuthGuard (or the stricter GqlAuthAdminGuard) while generated-crud posture is authenticated',
+      'GeneratedUserResolver.user must declare @Authenticated() (or the stricter @AdminOnly()) while generated-crud posture is authenticated',
     ])
   })
 

@@ -789,9 +789,10 @@ const checkGeneratedCrudPosture = () => {
   const relaxed = reading.posture === 'authenticated'
 
   if (relaxed) {
+    const declaredReason = reading.reason ? ` — ${reading.reason}` : ''
     review(
       'admin-crud-boundary',
-      `Generated CRUD is running at posture "authenticated", not admin-only${reading.reason ? ` — ${reading.reason}` : ''}`,
+      `Generated CRUD is running at posture "authenticated", not admin-only${declaredReason}`,
       GENERATED_CRUD_POSTURE_PATH,
     )
   }
