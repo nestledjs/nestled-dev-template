@@ -33,9 +33,9 @@ describe('readGeneratedCrudPosture', () => {
   })
 
   it('reads an explicit admin posture', () => {
-    expect(readGeneratedCrudPosture(writePostureFile(JSON.stringify({ posture: 'admin' })))).toEqual(
-      { posture: 'admin', reason: undefined },
-    )
+    expect(
+      readGeneratedCrudPosture(writePostureFile(JSON.stringify({ posture: 'admin' }))),
+    ).toEqual({ posture: 'admin', reason: undefined })
   })
 
   // Every rejection path must land on admin. A relaxed tier may only come from a positively

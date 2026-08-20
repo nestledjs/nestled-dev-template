@@ -48,8 +48,7 @@ export const getGraphqlOperationMethods = (source: string): GraphqlOperationMeth
           name: member.name.getText(sourceFile),
           body: member.body ? member.body.getText(sourceFile) : '',
           text: member.getText(sourceFile),
-          line:
-            sourceFile.getLineAndCharacterOfPosition(member.name.getStart(sourceFile)).line + 1,
+          line: sourceFile.getLineAndCharacterOfPosition(member.name.getStart(sourceFile)).line + 1,
         })
       }
     }

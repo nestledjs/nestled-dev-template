@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'vitest'
-import { blankCommentsAndStrings, stripComments, getGraphqlOperationMethods } from './doctor-source-analysis'
+import {
+  blankCommentsAndStrings,
+  stripComments,
+  getGraphqlOperationMethods,
+} from './doctor-source-analysis'
 
 describe('stripComments', () => {
   it('preserves comment openers inside string literals', () => {
@@ -152,7 +156,15 @@ describe('getGraphqlOperationMethods', () => {
 
   it('reports the line of the method name', () => {
     const [operation] = getGraphqlOperationMethods(
-      ['@Resolver()', 'class R {', '  @Query(() => String)', '  thing(): string {', '    return {}', '  }', '}'].join('\n'),
+      [
+        '@Resolver()',
+        'class R {',
+        '  @Query(() => String)',
+        '  thing(): string {',
+        '    return {}',
+        '  }',
+        '}',
+      ].join('\n'),
     )
 
     expect(operation.line).toBe(4)
