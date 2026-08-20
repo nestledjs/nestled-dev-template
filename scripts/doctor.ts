@@ -10,6 +10,7 @@ import {
 } from './doctor-auth-analysis'
 import {
   analyzeAccessPolicies,
+  getUndeclaredAccessOperations,
   readStringObjectArray,
   type AccessPolicyDeclaration,
   type InlineAccessCheckViolation,
@@ -62,6 +63,7 @@ const generatorPackagePath = 'node_modules/@nestledjs/generators/package.json'
 const notesDir = '.nestled-updates/upgrade-notes'
 const guardBaselinePath = '.nestled-updates/security/guard-baseline.json'
 const publicOperationsPath = '.nestled-updates/security/public-operations.json'
+const permissionExemptionsPath = '.nestled-updates/security/permission-exemptions.json'
 const platformPermissionCatalogPath =
   'libs/api/prisma/src/lib/seed/seed-data/seed-platform-access-control.ts'
 const organizationPermissionCatalogPath =
@@ -1995,6 +1997,80 @@ const reportAccessPolicyDeclaration = (
   }
 }
 
+type PermissionExemptions = Record<string, Record<string, string>>
+
+const readPermissionExemptions = (): PermissionExemptions => {
+  if (!existsSync(permissionExemptionsPath)) return {}
+  return JSON.parse(readFileSync(permissionExemptionsPath, 'utf8')) as PermissionExemptions
+}
+
+/**
+ * Authentication says *someone* is calling. It never says *this* caller may do *this*.
+ *
+ * Two mechanisms answer that question, and both are legitimate:
+ *
+ *   1. a declared permission — for anything touching shared or other people's data;
+ *   2. caller scoping — `me`, `changePassword`, own tokens and preferences, where the question is
+ *      not "do you hold permission X" but "is this row yours", enforced by taking @CtxUser() and
+ *      passing the caller's id into the query.
+ *
+ * An operation with NEITHER is the interesting case: authenticated, but nothing anywhere decides
+ * whether this caller may do this to this row. That is not a hypothetical — `getSignedUrl` and
+ * `organizationFiles` were exactly this shape, took a caller-supplied id, and let any authenticated
+ * user read any private file and list any organization's files.
+ *
+ * Requiring a permission from every operation would instead demand ~59 written exemptions in this
+ * template alone, which is a list nobody reads rather than a rule, and would bury the few that
+ * matter among the many that are already correct.
+ */
+const checkAccessPolicyCoverage = () => {
+  const exemptions = readPermissionExemptions()
+  const unauthorized = new Set<string>()
+
+  for (const file of getAuthSourceFiles()) {
+    // Generated CRUD is governed by generated-crud posture, not per-operation permissions: the
+    // whole surface is one declared tier, asserted by checkGeneratedCrudPosture.
+    if (file.includes('libs/api/generated-crud/')) continue
+
+    const raw = readFileSync(file, 'utf8')
+    const source = stripComments(raw)
+
+    const guardedNames = new Set(
+      getAuthOperations(source, file)
+        .filter(operation => hasAuthenticationGuard(operation))
+        .map(operation => operation.name),
+    )
+
+    for (const operation of getUndeclaredAccessOperations(raw, file, name =>
+      guardedNames.has(name),
+    )) {
+      if (operation.callerScoped) continue
+
+      unauthorized.add(`${file}::${operation.name}`)
+      if (exemptions[file]?.[operation.name]) continue
+
+      fail(
+        'access-policy',
+        `${operation.className}.${operation.name} is authenticated but neither declares a permission nor scopes to the caller; add a Require*Permission decorator, take @CtxUser() and scope the query, or record it in ${permissionExemptionsPath} with a reason`,
+        file,
+        operation.line,
+      )
+    }
+  }
+
+  // An exemption that no longer applies is a claim nobody is checking.
+  for (const [file, operations] of Object.entries(exemptions)) {
+    for (const name of Object.keys(operations)) {
+      if (unauthorized.has(`${file}::${name}`)) continue
+      warn(
+        'access-policy',
+        `Exempted operation ${name} is now authorized or no longer exists; remove the stale entry`,
+        permissionExemptionsPath,
+      )
+    }
+  }
+}
+
 const reportInlineAccessViolation = (violation: InlineAccessCheckViolation, file: string): void => {
   fail(
     'access-policy',
@@ -2152,6 +2228,7 @@ checkGuardRegressions()
 checkUnguardedRootOperations()
 checkAuthLevelDeclarations()
 checkAccessPolicyDeclarations()
+checkAccessPolicyCoverage()
 checkPrismaGeneratedEnums()
 checkUnsafeTypeScriptCasts()
 checkResolverScopeAnchoring()
