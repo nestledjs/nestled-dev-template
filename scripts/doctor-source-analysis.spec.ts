@@ -215,6 +215,22 @@ describe('getExternalImportSpecifiers', () => {
     ).toEqual(['@mi-core/api/utils', '@muzebook/api/config'])
   })
 
+  // `import x = require('…')` reaches a module without an ImportDeclaration or a CallExpression, so
+  // a scan built from those two alone lets it through — a silent bypass of the portability rule.
+  it('catches import-equals-require, which is neither an import declaration nor a call', () => {
+    expect(getExternalImportSpecifiers("import cfg = require('@mi-core/api/config')")).toEqual([
+      '@mi-core/api/config',
+    ])
+  })
+
+  it('ignores a relative import-equals and a namespace alias', () => {
+    expect(
+      getExternalImportSpecifiers("import helper = require('./doctor-auth-analysis')"),
+    ).toEqual([])
+    // Not a module reference at all — aliasing an existing namespace imports nothing.
+    expect(getExternalImportSpecifiers('import factory = ts.factory')).toEqual([])
+  })
+
   it('catches a re-export, which imports just as effectively', () => {
     expect(getExternalImportSpecifiers("export * from '@mi-core/api/utils'")).toEqual([
       '@mi-core/api/utils',
