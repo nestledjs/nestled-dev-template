@@ -32,7 +32,7 @@ async function deleteUser(email: string) {
     },
     include: {
       emails: true,
-      organizationMemberships: true,
+      organizations: true,
     },
   })
 
@@ -45,7 +45,7 @@ async function deleteUser(email: string) {
   console.log(`   ID: ${user.id}`)
   console.log(`   Name: ${user.firstName} ${user.lastName}`)
   console.log(`   Emails: ${user.emails.map(e => e.email).join(', ')}`)
-  console.log(`   Organizations: ${user.organizationMemberships.length}`)
+  console.log(`   Organizations: ${user.organizations.length}`)
 
   console.log(`\n🗑️  Deleting user and all related data...`)
 
@@ -95,7 +95,7 @@ async function deleteUser(email: string) {
     console.log(`   ✅ Deleted ${memberships.count} organization memberships`)
 
     // 8. Delete user emails
-    const emails = await prisma.userEmail.deleteMany({
+    const emails = await prisma.email.deleteMany({
       where: { userId: user.id },
     })
     console.log(`   ✅ Deleted ${emails.count} email addresses`)
