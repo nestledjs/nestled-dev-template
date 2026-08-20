@@ -2074,14 +2074,30 @@ const reportStaleExemptions = (
 
 // The enforcement surface: the checks every repo is judged by. The promotion mirror copies these
 // verbatim into eleven repos, so they have to be portable — free of anything true of one repo only.
-const enforcementSourceGlobs = [
-  { dir: 'scripts', match: (name: string) => /^doctor.*\.ts$/.test(name) },
-  { dir: 'tools', match: (name: string) => /^verify-.*\.ts$/.test(name) },
-]
+// Both prefixes in both directories, and .mjs as well as .ts. The first cut matched only
+// scripts/doctor*.ts and tools/verify-*.ts, which silently excluded five enforcement files that
+// CI actually runs: scripts/verify-prisma-client.ts, tools/verify-selects.mjs,
+// tools/verify-select-coverage.mjs and the two .mjs specs. A guard with an arbitrary blind spot is
+// worse than none, because the gap is invisible from its passing output.
+const enforcementSourceGlobs = ['scripts', 'tools'].map(dir => ({
+  dir,
+  match: (name: string) => /^(?:doctor|verify-).*\.(?:ts|mjs)$/.test(name),
+}))
 
-// Everything the checks legitimately need: node builtins, the parsers they drive, the test runner.
-// Deliberately an allowlist — a new dependency here should be a decision, not a drive-by import.
-const portableEnforcementModules = new Set(['typescript', 'graphql', 'vitest'])
+// The test is not "is it on a short list" but "does it resolve identically in every clone".
+// A published package the template declares does; a workspace scope (@nestled-template/...,
+// @mi-core/...) does not, because the scope is rewritten per clone.
+//
+// Still an allowlist rather than a scope-shaped denylist: adding a dependency that all eleven repos
+// must then carry should be a decision taken once, not a drive-by import.
+const portableEnforcementModules = new Set([
+  'typescript',
+  'graphql',
+  'vitest',
+  // Dynamically imported by verify-selects, with a fallback when it is unavailable. A direct
+  // devDependency of the template, so present wherever the template's package.json is.
+  '@prisma/internals',
+])
 
 const enforcementSourceFiles = (): string[] =>
   enforcementSourceGlobs.flatMap(({ dir, match }) =>
