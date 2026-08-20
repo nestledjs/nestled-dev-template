@@ -59,10 +59,19 @@ export const readRepoConfig = (cwd = process.cwd()) => {
     throw new Error(`${REPO_CONFIG_PATH} is not valid JSON`)
   }
 
+  // A config file that exists is a statement of intent to configure. Silently defaulting on a typoed
+  // key — or accepting an empty list — would scan zero files and pass, in exactly the repos that
+  // wrote this file BECAUSE the default finds nothing for them. Absent file: default. Present file:
+  // say what you mean.
   const declared = parsed?.selectFileSuffixes
-  if (declared === undefined) return { selectFileSuffixes: DEFAULT_SELECT_FILE_SUFFIXES }
-  if (!Array.isArray(declared) || declared.some(suffix => typeof suffix !== 'string' || !suffix)) {
-    throw new Error(`${REPO_CONFIG_PATH}: selectFileSuffixes must be an array of non-empty strings`)
+  if (
+    !Array.isArray(declared) ||
+    declared.length === 0 ||
+    declared.some(suffix => typeof suffix !== 'string' || !suffix)
+  ) {
+    throw new Error(
+      `${REPO_CONFIG_PATH}: selectFileSuffixes must be a non-empty array of non-empty strings`,
+    )
   }
 
   return { selectFileSuffixes: declared }
@@ -472,18 +481,25 @@ const verifyFile = ({ absolutePath, file, conventionalNamesOnly = false }, model
 
   for (const match of source.matchAll(/(?:export\s+)?const\s+(\w+)\s*=\s*\{/g)) {
     const constantOffset = match.index
-    // See conventionalNamesOnly above: in a shared file, an ordinary local is not an unresolvable
-    // select, and reporting it as one is the noise that gets a whole check switched off.
-    if (conventionalNamesOnly && !CONVENTIONAL_SELECT_NAME.test(match[1])) continue
-    const annotatedModel = annotationBefore(rawSource, constantOffset, previousConstantEnd)
-    const model = resolveModel(models, match[1], file, annotatedModel)
     // Count braces on the SANITIZED source: closingBrace() is not comment- or string-aware, and
     // a `}` inside either would end the constant early, putting part of its body back into the
     // next constant's annotation window. sanitizeSource() masks with spaces and is
     // length-preserving, so these offsets are interchangeable with rawSource's.
     const bodyStart = match.index + match[0].length - 1
     const bodyEnd = closingBrace(source, bodyStart)
+    // Advance the annotation window for EVERY matched constant, skipped ones included, and keep the
+    // prior value for this constant's own lookup. A skipped local left inside the window would put
+    // its body in front of the next constant, so a @prisma-model mentioned in it would resolve that
+    // constant to the wrong model — exactly what this tracking exists to prevent.
+    const previousEnd = previousConstantEnd
     previousConstantEnd = bodyEnd === -1 ? constantOffset : bodyEnd
+
+    // See conventionalNamesOnly above: in a shared file, an ordinary local is not an unresolvable
+    // select, and reporting it as one is the noise that gets a whole check switched off.
+    if (conventionalNamesOnly && !CONVENTIONAL_SELECT_NAME.test(match[1])) continue
+
+    const annotatedModel = annotationBefore(rawSource, constantOffset, previousEnd)
+    const model = resolveModel(models, match[1], file, annotatedModel)
 
     if (!model) {
       unresolved.push({ file, const: match[1] })
