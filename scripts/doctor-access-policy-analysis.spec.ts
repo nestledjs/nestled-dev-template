@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'vitest'
-import { getUndeclaredAccessOperations, analyzeAccessPolicies, readStringObjectArray } from './doctor-access-policy-analysis'
+import {
+  getUndeclaredAccessOperations,
+  analyzeAccessPolicies,
+  readStringObjectArray,
+} from './doctor-access-policy-analysis'
 
 describe('analyzeAccessPolicies', () => {
   it('extracts platform and organization permission literals without option prose', () => {

@@ -2037,7 +2037,9 @@ const reportUnauthorizedOperations = (
       .map(operation => operation.name),
   )
 
-  for (const operation of getUndeclaredAccessOperations(raw, file, name => guardedNames.has(name))) {
+  for (const operation of getUndeclaredAccessOperations(raw, file, name =>
+    guardedNames.has(name),
+  )) {
     if (operation.callerScoped) continue
 
     unauthorized.add(`${file}::${operation.name}`)
