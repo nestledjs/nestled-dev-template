@@ -60,12 +60,16 @@ export const readGeneratedCrudPosture = (
   const declared = (parsed as { posture?: unknown }).posture
   const reason =
     typeof (parsed as { reason?: unknown }).reason === 'string'
-      ? ((parsed as { reason: string }).reason)
+      ? (parsed as { reason: string }).reason
       : undefined
 
   if (declared === undefined) return { posture: 'admin', invalid: 'no "posture" key', reason }
   if (typeof declared !== 'string') {
-    return { posture: 'admin', invalid: `a non-string posture (${JSON.stringify(declared)})`, reason }
+    return {
+      posture: 'admin',
+      invalid: `a non-string posture (${JSON.stringify(declared)})`,
+      reason,
+    }
   }
   if (!(GENERATED_CRUD_POSTURES as readonly string[]).includes(declared)) {
     return { posture: 'admin', invalid: `an unrecognized posture "${declared}"`, reason }
