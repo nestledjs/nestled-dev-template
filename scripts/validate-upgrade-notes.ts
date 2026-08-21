@@ -81,7 +81,7 @@ const validatePackageReleaseName = (
   packageRelease: PackageRelease,
   index: number,
   errors: string[],
-): string | undefined => {
+): string | null | undefined => {
   if (!isNonEmptyString(packageRelease.name)) {
     errors.push(`packageReleases[${index}].name is required`)
     return undefined
@@ -91,6 +91,10 @@ const validatePackageReleaseName = (
     errors.push(
       `packageReleases[${index}].name must be one of: ${Array.from(upstreamPublishedPackages.keys()).join(', ')}`,
     )
+    // undefined, NOT null: null means "published from another repository, no sourcePath expected",
+    // so returning it here would let an unrecognized package skip sourcePath validation entirely —
+    // one bad name silently disabling a second check.
+    return undefined
   }
 
   return upstreamPublishedPackages.get(packageRelease.name) ?? null
