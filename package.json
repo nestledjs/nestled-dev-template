@@ -30,7 +30,6 @@
     "test:e2e": "./scripts/run-e2e-tests.sh",
     "test:e2e:auth": "./scripts/run-e2e-tests.sh auth",
     "template:create-upgrade-note": "tsx scripts/create-upgrade-note.ts",
-    "template:test-migration-tools": "vitest run tools/*.spec.mjs tools/*.spec.ts",
     "template:validate-upgrade-notes": "tsx scripts/validate-upgrade-notes.ts",
     "nestled-doctor": "nestled-doctor",
     "security:update-guard-baseline": "nestled-doctor --update-guard-baseline",

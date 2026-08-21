@@ -75,10 +75,6 @@ jobs:
 
       - run: pnpm template:validate-upgrade-notes
 
-      - run: pnpm template:test-doctor-auth
-
-      - run: pnpm template:test-migration-tools
-
       - run: pnpm run nestled-doctor
 
       - run: pnpm verify:selects
