@@ -31,6 +31,7 @@ why: >
 
 affectedPaths:
   - package.json
+  - pnpm-lock.yaml
   - scripts/
   - tools/
 
@@ -41,10 +42,12 @@ packageReleases:
 
 skipIf:
   - >
-    The project already depends on @nestledjs/doctor at 0.1.2 or later AND carries no
-    scripts/doctor*.ts. Depending on the package is not sufficient on its own: 0.1.1 and earlier
-    report caller-scoped resolvers as unscoped, so a repo can hold the package, pass this note's
-    skip test, and still be running checks with a known bug in them.
+    The project RESOLVES @nestledjs/doctor to 0.1.2 or later in pnpm-lock.yaml AND carries no
+    scripts/doctor*.ts. Check the lockfile, not package.json: the manifest states an intent and the
+    lockfile states what actually runs, and a caret range can satisfy the manifest while resolving
+    to something older. Depending on the package is not sufficient on its own either -- 0.1.1 and
+    earlier report caller-scoped resolvers as unscoped, so a repo can hold the package, pass a
+    name-only skip test, and still be running checks with a known bug in them.
 
 verification:
   - pnpm run nestled-doctor
