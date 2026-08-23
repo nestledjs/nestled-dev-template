@@ -12,7 +12,7 @@ import {
 import {
   AdminOnly,
   GqlAuthAdminGuard,
-  RequirePlatformPermission,
+  RequirePlatformPermissionUnderClassGuard,
 } from '@nestled-template/api/utils'
 
 @Resolver(() => Link)
@@ -22,7 +22,7 @@ export class GeneratedLinkResolver {
   constructor(private readonly generatedService: ApiCrudDataAccessService) {}
 
   @Query(() => [Link], { nullable: true })
-  @RequirePlatformPermission('platform.data-browser.read')
+  @RequirePlatformPermissionUnderClassGuard('platform.data-browser.read')
   links(
     @Info() info: GraphQLResolveInfo,
     @Args({ name: 'input', type: () => ListLinkInput, nullable: true }) input?: ListLinkInput,
@@ -31,7 +31,7 @@ export class GeneratedLinkResolver {
   }
 
   @Query(() => CorePaging, { nullable: true })
-  @RequirePlatformPermission('platform.data-browser.read')
+  @RequirePlatformPermissionUnderClassGuard('platform.data-browser.read')
   linksCount(
     @Args({ name: 'input', type: () => ListLinkInput, nullable: true }) input?: ListLinkInput,
   ) {
@@ -39,19 +39,19 @@ export class GeneratedLinkResolver {
   }
 
   @Query(() => Link, { nullable: true })
-  @RequirePlatformPermission('platform.data-browser.read')
+  @RequirePlatformPermissionUnderClassGuard('platform.data-browser.read')
   link(@Info() info: GraphQLResolveInfo, @Args('linkId') linkId: string) {
     return this.generatedService.link(info, linkId)
   }
 
   @Mutation(() => Link, { nullable: true })
-  @RequirePlatformPermission('platform.data-browser.manage')
+  @RequirePlatformPermissionUnderClassGuard('platform.data-browser.manage')
   createLink(@Info() info: GraphQLResolveInfo, @Args('input') input: CreateLinkInput) {
     return this.generatedService.createLink(info, input)
   }
 
   @Mutation(() => Link, { nullable: true })
-  @RequirePlatformPermission('platform.data-browser.manage')
+  @RequirePlatformPermissionUnderClassGuard('platform.data-browser.manage')
   updateLink(
     @Info() info: GraphQLResolveInfo,
     @Args('linkId') linkId: string,
@@ -61,7 +61,7 @@ export class GeneratedLinkResolver {
   }
 
   @Mutation(() => Link, { nullable: true })
-  @RequirePlatformPermission('platform.data-browser.manage')
+  @RequirePlatformPermissionUnderClassGuard('platform.data-browser.manage')
   deleteLink(@Args('linkId') linkId: string) {
     return this.generatedService.deleteLink(linkId)
   }

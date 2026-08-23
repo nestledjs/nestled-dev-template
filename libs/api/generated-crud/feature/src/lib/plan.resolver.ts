@@ -12,7 +12,7 @@ import {
 import {
   AdminOnly,
   GqlAuthAdminGuard,
-  RequirePlatformPermission,
+  RequirePlatformPermissionUnderClassGuard,
 } from '@nestled-template/api/utils'
 
 @Resolver(() => Plan)
@@ -22,7 +22,7 @@ export class GeneratedPlanResolver {
   constructor(private readonly generatedService: ApiCrudDataAccessService) {}
 
   @Query(() => [Plan], { nullable: true })
-  @RequirePlatformPermission('platform.data-browser.read')
+  @RequirePlatformPermissionUnderClassGuard('platform.data-browser.read')
   plans(
     @Info() info: GraphQLResolveInfo,
     @Args({ name: 'input', type: () => ListPlanInput, nullable: true }) input?: ListPlanInput,
@@ -31,7 +31,7 @@ export class GeneratedPlanResolver {
   }
 
   @Query(() => CorePaging, { nullable: true })
-  @RequirePlatformPermission('platform.data-browser.read')
+  @RequirePlatformPermissionUnderClassGuard('platform.data-browser.read')
   plansCount(
     @Args({ name: 'input', type: () => ListPlanInput, nullable: true }) input?: ListPlanInput,
   ) {
@@ -39,19 +39,19 @@ export class GeneratedPlanResolver {
   }
 
   @Query(() => Plan, { nullable: true })
-  @RequirePlatformPermission('platform.data-browser.read')
+  @RequirePlatformPermissionUnderClassGuard('platform.data-browser.read')
   plan(@Info() info: GraphQLResolveInfo, @Args('planId') planId: string) {
     return this.generatedService.plan(info, planId)
   }
 
   @Mutation(() => Plan, { nullable: true })
-  @RequirePlatformPermission('platform.data-browser.manage')
+  @RequirePlatformPermissionUnderClassGuard('platform.data-browser.manage')
   createPlan(@Info() info: GraphQLResolveInfo, @Args('input') input: CreatePlanInput) {
     return this.generatedService.createPlan(info, input)
   }
 
   @Mutation(() => Plan, { nullable: true })
-  @RequirePlatformPermission('platform.data-browser.manage')
+  @RequirePlatformPermissionUnderClassGuard('platform.data-browser.manage')
   updatePlan(
     @Info() info: GraphQLResolveInfo,
     @Args('planId') planId: string,
@@ -61,7 +61,7 @@ export class GeneratedPlanResolver {
   }
 
   @Mutation(() => Plan, { nullable: true })
-  @RequirePlatformPermission('platform.data-browser.manage')
+  @RequirePlatformPermissionUnderClassGuard('platform.data-browser.manage')
   deletePlan(@Args('planId') planId: string) {
     return this.generatedService.deletePlan(planId)
   }

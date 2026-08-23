@@ -12,7 +12,7 @@ import {
 import {
   AdminOnly,
   GqlAuthAdminGuard,
-  RequirePlatformPermission,
+  RequirePlatformPermissionUnderClassGuard,
 } from '@nestled-template/api/utils'
 
 @Resolver(() => Invite)
@@ -22,7 +22,7 @@ export class GeneratedInviteResolver {
   constructor(private readonly generatedService: ApiCrudDataAccessService) {}
 
   @Query(() => [Invite], { nullable: true })
-  @RequirePlatformPermission('platform.data-browser.read')
+  @RequirePlatformPermissionUnderClassGuard('platform.data-browser.read')
   invites(
     @Info() info: GraphQLResolveInfo,
     @Args({ name: 'input', type: () => ListInviteInput, nullable: true }) input?: ListInviteInput,
@@ -31,7 +31,7 @@ export class GeneratedInviteResolver {
   }
 
   @Query(() => CorePaging, { nullable: true })
-  @RequirePlatformPermission('platform.data-browser.read')
+  @RequirePlatformPermissionUnderClassGuard('platform.data-browser.read')
   invitesCount(
     @Args({ name: 'input', type: () => ListInviteInput, nullable: true }) input?: ListInviteInput,
   ) {
@@ -39,19 +39,19 @@ export class GeneratedInviteResolver {
   }
 
   @Query(() => Invite, { nullable: true })
-  @RequirePlatformPermission('platform.data-browser.read')
+  @RequirePlatformPermissionUnderClassGuard('platform.data-browser.read')
   invite(@Info() info: GraphQLResolveInfo, @Args('inviteId') inviteId: string) {
     return this.generatedService.invite(info, inviteId)
   }
 
   @Mutation(() => Invite, { nullable: true })
-  @RequirePlatformPermission('platform.data-browser.manage')
+  @RequirePlatformPermissionUnderClassGuard('platform.data-browser.manage')
   createInvite(@Info() info: GraphQLResolveInfo, @Args('input') input: CreateInviteInput) {
     return this.generatedService.createInvite(info, input)
   }
 
   @Mutation(() => Invite, { nullable: true })
-  @RequirePlatformPermission('platform.data-browser.manage')
+  @RequirePlatformPermissionUnderClassGuard('platform.data-browser.manage')
   updateInvite(
     @Info() info: GraphQLResolveInfo,
     @Args('inviteId') inviteId: string,
@@ -61,7 +61,7 @@ export class GeneratedInviteResolver {
   }
 
   @Mutation(() => Invite, { nullable: true })
-  @RequirePlatformPermission('platform.data-browser.manage')
+  @RequirePlatformPermissionUnderClassGuard('platform.data-browser.manage')
   deleteInvite(@Args('inviteId') inviteId: string) {
     return this.generatedService.deleteInvite(inviteId)
   }

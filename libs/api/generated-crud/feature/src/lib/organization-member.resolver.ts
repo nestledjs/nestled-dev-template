@@ -12,7 +12,7 @@ import {
 import {
   AdminOnly,
   GqlAuthAdminGuard,
-  RequirePlatformPermission,
+  RequirePlatformPermissionUnderClassGuard,
 } from '@nestled-template/api/utils'
 
 @Resolver(() => OrganizationMember)
@@ -22,7 +22,7 @@ export class GeneratedOrganizationMemberResolver {
   constructor(private readonly generatedService: ApiCrudDataAccessService) {}
 
   @Query(() => [OrganizationMember], { nullable: true })
-  @RequirePlatformPermission('platform.data-browser.read')
+  @RequirePlatformPermissionUnderClassGuard('platform.data-browser.read')
   organizationMembers(
     @Info() info: GraphQLResolveInfo,
     @Args({ name: 'input', type: () => ListOrganizationMemberInput, nullable: true })
@@ -32,7 +32,7 @@ export class GeneratedOrganizationMemberResolver {
   }
 
   @Query(() => CorePaging, { nullable: true })
-  @RequirePlatformPermission('platform.data-browser.read')
+  @RequirePlatformPermissionUnderClassGuard('platform.data-browser.read')
   organizationMembersCount(
     @Args({ name: 'input', type: () => ListOrganizationMemberInput, nullable: true })
     input?: ListOrganizationMemberInput,
@@ -41,7 +41,7 @@ export class GeneratedOrganizationMemberResolver {
   }
 
   @Query(() => OrganizationMember, { nullable: true })
-  @RequirePlatformPermission('platform.data-browser.read')
+  @RequirePlatformPermissionUnderClassGuard('platform.data-browser.read')
   organizationMember(
     @Info() info: GraphQLResolveInfo,
     @Args('organizationMemberId') organizationMemberId: string,
@@ -50,7 +50,7 @@ export class GeneratedOrganizationMemberResolver {
   }
 
   @Mutation(() => OrganizationMember, { nullable: true })
-  @RequirePlatformPermission('platform.data-browser.manage')
+  @RequirePlatformPermissionUnderClassGuard('platform.data-browser.manage')
   createOrganizationMember(
     @Info() info: GraphQLResolveInfo,
     @Args('input') input: CreateOrganizationMemberInput,
@@ -59,7 +59,7 @@ export class GeneratedOrganizationMemberResolver {
   }
 
   @Mutation(() => OrganizationMember, { nullable: true })
-  @RequirePlatformPermission('platform.data-browser.manage')
+  @RequirePlatformPermissionUnderClassGuard('platform.data-browser.manage')
   updateOrganizationMember(
     @Info() info: GraphQLResolveInfo,
     @Args('organizationMemberId') organizationMemberId: string,
@@ -69,7 +69,7 @@ export class GeneratedOrganizationMemberResolver {
   }
 
   @Mutation(() => OrganizationMember, { nullable: true })
-  @RequirePlatformPermission('platform.data-browser.manage')
+  @RequirePlatformPermissionUnderClassGuard('platform.data-browser.manage')
   deleteOrganizationMember(@Args('organizationMemberId') organizationMemberId: string) {
     return this.generatedService.deleteOrganizationMember(organizationMemberId)
   }

@@ -12,7 +12,7 @@ import {
 import {
   AdminOnly,
   GqlAuthAdminGuard,
-  RequirePlatformPermission,
+  RequirePlatformPermissionUnderClassGuard,
 } from '@nestled-template/api/utils'
 
 @Resolver(() => Organization)
@@ -22,7 +22,7 @@ export class GeneratedOrganizationResolver {
   constructor(private readonly generatedService: ApiCrudDataAccessService) {}
 
   @Query(() => [Organization], { nullable: true })
-  @RequirePlatformPermission('platform.data-browser.read')
+  @RequirePlatformPermissionUnderClassGuard('platform.data-browser.read')
   organizations(
     @Info() info: GraphQLResolveInfo,
     @Args({ name: 'input', type: () => ListOrganizationInput, nullable: true })
@@ -32,7 +32,7 @@ export class GeneratedOrganizationResolver {
   }
 
   @Query(() => CorePaging, { nullable: true })
-  @RequirePlatformPermission('platform.data-browser.read')
+  @RequirePlatformPermissionUnderClassGuard('platform.data-browser.read')
   organizationsCount(
     @Args({ name: 'input', type: () => ListOrganizationInput, nullable: true })
     input?: ListOrganizationInput,
@@ -41,13 +41,13 @@ export class GeneratedOrganizationResolver {
   }
 
   @Query(() => Organization, { nullable: true })
-  @RequirePlatformPermission('platform.data-browser.read')
+  @RequirePlatformPermissionUnderClassGuard('platform.data-browser.read')
   organization(@Info() info: GraphQLResolveInfo, @Args('organizationId') organizationId: string) {
     return this.generatedService.organization(info, organizationId)
   }
 
   @Mutation(() => Organization, { nullable: true })
-  @RequirePlatformPermission('platform.data-browser.manage')
+  @RequirePlatformPermissionUnderClassGuard('platform.data-browser.manage')
   createOrganization(
     @Info() info: GraphQLResolveInfo,
     @Args('input') input: CreateOrganizationInput,
@@ -56,7 +56,7 @@ export class GeneratedOrganizationResolver {
   }
 
   @Mutation(() => Organization, { nullable: true })
-  @RequirePlatformPermission('platform.data-browser.manage')
+  @RequirePlatformPermissionUnderClassGuard('platform.data-browser.manage')
   updateOrganization(
     @Info() info: GraphQLResolveInfo,
     @Args('organizationId') organizationId: string,
@@ -66,7 +66,7 @@ export class GeneratedOrganizationResolver {
   }
 
   @Mutation(() => Organization, { nullable: true })
-  @RequirePlatformPermission('platform.data-browser.manage')
+  @RequirePlatformPermissionUnderClassGuard('platform.data-browser.manage')
   deleteOrganization(@Args('organizationId') organizationId: string) {
     return this.generatedService.deleteOrganization(organizationId)
   }
