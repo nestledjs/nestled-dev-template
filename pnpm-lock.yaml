@@ -118,8 +118,8 @@ importers:
         specifier: 0.9.0
         version: 0.9.0(@apollo/client@4.1.8(graphql-ws@6.2.1(graphql@16.14.2)(ws@8.21.3))(graphql@16.14.2)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(rxjs@7.8.2)(subscriptions-transport-ws@0.11.0(graphql@16.14.2)))(@hookform/resolvers@3.10.0(react-hook-form@7.85.0(react@19.1.0)))(dayjs@1.11.21)(react-hook-form@7.85.0(react@19.1.0))(react@19.1.0)(zod@3.25.56)
       '@nestledjs/generators':
-        specifier: 3.2.0
-        version: 3.2.0(@babel/traverse@7.29.8)(@swc-node/register@1.11.1(@swc/core@1.15.8(@swc/helpers@0.5.18))(@swc/types@0.1.28)(typescript@5.9.3))(@swc/core@1.15.8(@swc/helpers@0.5.18))(@types/node@24.13.3)(@zkochan/js-yaml@0.0.7)(babel-plugin-macros@3.1.0)(esbuild-register@3.6.0(esbuild@0.28.2))(eslint@9.39.5(jiti@2.4.2))(magicast@0.5.4)(nx@22.7.8(@swc-node/register@1.11.1(@swc/core@1.15.8(@swc/helpers@0.5.18))(@swc/types@0.1.28)(typescript@5.9.3))(@swc/core@1.15.8(@swc/helpers@0.5.18)))(prettier@3.9.6)(ts-node@10.9.2(@swc/core@1.15.8(@swc/helpers@0.5.18))(@types/node@24.13.3)(typescript@5.9.3))(typescript@5.9.3)(verdaccio@6.5.2(encoding@0.1.13)(typanion@3.14.0))
+        specifier: 3.2.1
+        version: 3.2.1(@babel/traverse@7.29.8)(@swc-node/register@1.11.1(@swc/core@1.15.8(@swc/helpers@0.5.18))(@swc/types@0.1.28)(typescript@5.9.3))(@swc/core@1.15.8(@swc/helpers@0.5.18))(@types/node@24.13.3)(@zkochan/js-yaml@0.0.7)(babel-plugin-macros@3.1.0)(esbuild-register@3.6.0(esbuild@0.28.2))(eslint@9.39.5(jiti@2.4.2))(magicast@0.5.4)(nx@22.7.8(@swc-node/register@1.11.1(@swc/core@1.15.8(@swc/helpers@0.5.18))(@swc/types@0.1.28)(typescript@5.9.3))(@swc/core@1.15.8(@swc/helpers@0.5.18)))(prettier@3.9.6)(ts-node@10.9.2(@swc/core@1.15.8(@swc/helpers@0.5.18))(@types/node@24.13.3)(typescript@5.9.3))(typescript@5.9.3)(verdaccio@6.5.2(encoding@0.1.13)(typanion@3.14.0))
       '@nx/devkit':
         specifier: 22.7.8
         version: 22.7.8(nx@22.7.8(@swc-node/register@1.11.1(@swc/core@1.15.8(@swc/helpers@0.5.18))(@swc/types@0.1.28)(typescript@5.9.3))(@swc/core@1.15.8(@swc/helpers@0.5.18)))
@@ -398,8 +398,8 @@ importers:
         specifier: ^11.1.29
         version: 11.1.29(@nestjs/common@11.1.29(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.29)(@nestjs/platform-express@11.1.29)
       '@nestledjs/doctor':
-        specifier: 0.3.0
-        version: 0.3.0(@prisma/internals@7.9.1(magicast@0.5.4)(typescript@5.9.3))
+        specifier: 0.3.1
+        version: 0.3.1(@prisma/internals@7.9.1(magicast@0.5.4)(typescript@5.9.3))
       '@nx/eslint':
         specifier: 22.7.8
         version: 22.7.8(e00af594702c7ddb38c00cf4c1d6d85f)
@@ -3617,8 +3617,8 @@ packages:
       '@nestjs/core': ^7.0.0 || ^8.0.0 || ^9.0.0 || ^10.0.0 || ^11.0.0
       reflect-metadata: ^0.1.13 || ^0.2.0
 
-  '@nestledjs/doctor@0.3.0':
-    resolution: {integrity: sha512-mBqHL8tnfoEo8scs7fs96DWyHO71WPvNDfopZMI0Xsc8G1NWsqmH1kpI3+yK/hJ5TWflZ7yFZgpzRyn9sNjhNQ==}
+  '@nestledjs/doctor@0.3.1':
+    resolution: {integrity: sha512-3Un2pZY5ob7pxN5PP3nfSPWbhIrnVGRIS/tt/XFRut8qVfu4TIr/i5er64cbXjVWY9DADPZxJoGTS8l6Y2l+fw==}
     hasBin: true
     peerDependencies:
       '@prisma/internals': '>=6'
@@ -3657,8 +3657,8 @@ packages:
       '@mdxeditor/editor':
         optional: true
 
-  '@nestledjs/generators@3.2.0':
-    resolution: {integrity: sha512-18ibYZtpH/22xVL/0iQGhHYfg9E14x6BM3smcHv0zF+Nom2qeKr5cFtuA3X4UgyGZbZHTblDcDV462LvuD2wZw==}
+  '@nestledjs/generators@3.2.1':
+    resolution: {integrity: sha512-90gAxz3kUz3U6U3uUbNVHlBZzXAp7UV0UeSX7YJTSgSW7GrRKOduUoh4q3rkA+Sg1YibMrUSQbzYAEEGlYj6xw==}
 
   '@nestledjs/shared-components@1.0.15':
     resolution: {integrity: sha512-sDlulOirGqYVVbkBjT2DmjaWAOkM95aqfaB/JdLitA7pcnHYREjbNZSqISSH8Fh3Fiu/8j36dKrXd+6YukXh8A==}
@@ -18393,7 +18393,7 @@ snapshots:
       '@nestjs/core': 11.1.29(@nestjs/common@11.1.29(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/platform-express@11.1.29)(reflect-metadata@0.2.2)(rxjs@7.8.2)
       reflect-metadata: 0.2.2
 
-  '@nestledjs/doctor@0.3.0(@prisma/internals@7.9.1(magicast@0.5.4)(typescript@5.9.3))':
+  '@nestledjs/doctor@0.3.1(@prisma/internals@7.9.1(magicast@0.5.4)(typescript@5.9.3))':
     dependencies:
       graphql: 16.14.2
       tslib: 2.8.1
@@ -18429,7 +18429,7 @@ snapshots:
     transitivePeerDependencies:
       - dayjs
 
-  '@nestledjs/generators@3.2.0(@babel/traverse@7.29.8)(@swc-node/register@1.11.1(@swc/core@1.15.8(@swc/helpers@0.5.18))(@swc/types@0.1.28)(typescript@5.9.3))(@swc/core@1.15.8(@swc/helpers@0.5.18))(@types/node@24.13.3)(@zkochan/js-yaml@0.0.7)(babel-plugin-macros@3.1.0)(esbuild-register@3.6.0(esbuild@0.28.2))(eslint@9.39.5(jiti@2.4.2))(magicast@0.5.4)(nx@22.7.8(@swc-node/register@1.11.1(@swc/core@1.15.8(@swc/helpers@0.5.18))(@swc/types@0.1.28)(typescript@5.9.3))(@swc/core@1.15.8(@swc/helpers@0.5.18)))(prettier@3.9.6)(ts-node@10.9.2(@swc/core@1.15.8(@swc/helpers@0.5.18))(@types/node@24.13.3)(typescript@5.9.3))(typescript@5.9.3)(verdaccio@6.5.2(encoding@0.1.13)(typanion@3.14.0))':
+  '@nestledjs/generators@3.2.1(@babel/traverse@7.29.8)(@swc-node/register@1.11.1(@swc/core@1.15.8(@swc/helpers@0.5.18))(@swc/types@0.1.28)(typescript@5.9.3))(@swc/core@1.15.8(@swc/helpers@0.5.18))(@types/node@24.13.3)(@zkochan/js-yaml@0.0.7)(babel-plugin-macros@3.1.0)(esbuild-register@3.6.0(esbuild@0.28.2))(eslint@9.39.5(jiti@2.4.2))(magicast@0.5.4)(nx@22.7.8(@swc-node/register@1.11.1(@swc/core@1.15.8(@swc/helpers@0.5.18))(@swc/types@0.1.28)(typescript@5.9.3))(@swc/core@1.15.8(@swc/helpers@0.5.18)))(prettier@3.9.6)(ts-node@10.9.2(@swc/core@1.15.8(@swc/helpers@0.5.18))(@types/node@24.13.3)(typescript@5.9.3))(typescript@5.9.3)(verdaccio@6.5.2(encoding@0.1.13)(typanion@3.14.0))':
     dependencies:
       '@nx/devkit': 22.0.2(nx@22.7.8(@swc-node/register@1.11.1(@swc/core@1.15.8(@swc/helpers@0.5.18))(@swc/types@0.1.28)(typescript@5.9.3))(@swc/core@1.15.8(@swc/helpers@0.5.18)))
       '@nx/js': 22.0.2(@babel/traverse@7.29.8)(@swc-node/register@1.11.1(@swc/core@1.15.8(@swc/helpers@0.5.18))(@swc/types@0.1.28)(typescript@5.9.3))(@swc/core@1.15.8(@swc/helpers@0.5.18))(nx@22.7.8(@swc-node/register@1.11.1(@swc/core@1.15.8(@swc/helpers@0.5.18))(@swc/types@0.1.28)(typescript@5.9.3))(@swc/core@1.15.8(@swc/helpers@0.5.18)))(verdaccio@6.5.2(encoding@0.1.13)(typanion@3.14.0))
