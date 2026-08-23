@@ -12,7 +12,7 @@ import {
 import {
   AdminOnly,
   GqlAuthAdminGuard,
-  RequirePlatformPermission,
+  RequirePlatformPermissionUnderClassGuard,
 } from '@nestled-template/api/utils'
 
 @Resolver(() => SecurityEvent)
@@ -22,7 +22,7 @@ export class GeneratedSecurityEventResolver {
   constructor(private readonly generatedService: ApiCrudDataAccessService) {}
 
   @Query(() => [SecurityEvent], { nullable: true })
-  @RequirePlatformPermission('platform.data-browser.read')
+  @RequirePlatformPermissionUnderClassGuard('platform.data-browser.read')
   securityEvents(
     @Info() info: GraphQLResolveInfo,
     @Args({ name: 'input', type: () => ListSecurityEventInput, nullable: true })
@@ -32,7 +32,7 @@ export class GeneratedSecurityEventResolver {
   }
 
   @Query(() => CorePaging, { nullable: true })
-  @RequirePlatformPermission('platform.data-browser.read')
+  @RequirePlatformPermissionUnderClassGuard('platform.data-browser.read')
   securityEventsCount(
     @Args({ name: 'input', type: () => ListSecurityEventInput, nullable: true })
     input?: ListSecurityEventInput,
@@ -41,7 +41,7 @@ export class GeneratedSecurityEventResolver {
   }
 
   @Query(() => SecurityEvent, { nullable: true })
-  @RequirePlatformPermission('platform.data-browser.read')
+  @RequirePlatformPermissionUnderClassGuard('platform.data-browser.read')
   securityEvent(
     @Info() info: GraphQLResolveInfo,
     @Args('securityEventId') securityEventId: string,
@@ -50,7 +50,7 @@ export class GeneratedSecurityEventResolver {
   }
 
   @Mutation(() => SecurityEvent, { nullable: true })
-  @RequirePlatformPermission('platform.data-browser.manage')
+  @RequirePlatformPermissionUnderClassGuard('platform.data-browser.manage')
   createSecurityEvent(
     @Info() info: GraphQLResolveInfo,
     @Args('input') input: CreateSecurityEventInput,
@@ -59,7 +59,7 @@ export class GeneratedSecurityEventResolver {
   }
 
   @Mutation(() => SecurityEvent, { nullable: true })
-  @RequirePlatformPermission('platform.data-browser.manage')
+  @RequirePlatformPermissionUnderClassGuard('platform.data-browser.manage')
   updateSecurityEvent(
     @Info() info: GraphQLResolveInfo,
     @Args('securityEventId') securityEventId: string,
@@ -69,7 +69,7 @@ export class GeneratedSecurityEventResolver {
   }
 
   @Mutation(() => SecurityEvent, { nullable: true })
-  @RequirePlatformPermission('platform.data-browser.manage')
+  @RequirePlatformPermissionUnderClassGuard('platform.data-browser.manage')
   deleteSecurityEvent(@Args('securityEventId') securityEventId: string) {
     return this.generatedService.deleteSecurityEvent(securityEventId)
   }

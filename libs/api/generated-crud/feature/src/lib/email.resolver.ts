@@ -12,7 +12,7 @@ import {
 import {
   AdminOnly,
   GqlAuthAdminGuard,
-  RequirePlatformPermission,
+  RequirePlatformPermissionUnderClassGuard,
 } from '@nestled-template/api/utils'
 
 @Resolver(() => Email)
@@ -22,7 +22,7 @@ export class GeneratedEmailResolver {
   constructor(private readonly generatedService: ApiCrudDataAccessService) {}
 
   @Query(() => [Email], { nullable: true })
-  @RequirePlatformPermission('platform.data-browser.read')
+  @RequirePlatformPermissionUnderClassGuard('platform.data-browser.read')
   emails(
     @Info() info: GraphQLResolveInfo,
     @Args({ name: 'input', type: () => ListEmailInput, nullable: true }) input?: ListEmailInput,
@@ -31,7 +31,7 @@ export class GeneratedEmailResolver {
   }
 
   @Query(() => CorePaging, { nullable: true })
-  @RequirePlatformPermission('platform.data-browser.read')
+  @RequirePlatformPermissionUnderClassGuard('platform.data-browser.read')
   emailsCount(
     @Args({ name: 'input', type: () => ListEmailInput, nullable: true }) input?: ListEmailInput,
   ) {
@@ -39,19 +39,19 @@ export class GeneratedEmailResolver {
   }
 
   @Query(() => Email, { nullable: true })
-  @RequirePlatformPermission('platform.data-browser.read')
+  @RequirePlatformPermissionUnderClassGuard('platform.data-browser.read')
   email(@Info() info: GraphQLResolveInfo, @Args('emailId') emailId: string) {
     return this.generatedService.email(info, emailId)
   }
 
   @Mutation(() => Email, { nullable: true })
-  @RequirePlatformPermission('platform.data-browser.manage')
+  @RequirePlatformPermissionUnderClassGuard('platform.data-browser.manage')
   createEmail(@Info() info: GraphQLResolveInfo, @Args('input') input: CreateEmailInput) {
     return this.generatedService.createEmail(info, input)
   }
 
   @Mutation(() => Email, { nullable: true })
-  @RequirePlatformPermission('platform.data-browser.manage')
+  @RequirePlatformPermissionUnderClassGuard('platform.data-browser.manage')
   updateEmail(
     @Info() info: GraphQLResolveInfo,
     @Args('emailId') emailId: string,
@@ -61,7 +61,7 @@ export class GeneratedEmailResolver {
   }
 
   @Mutation(() => Email, { nullable: true })
-  @RequirePlatformPermission('platform.data-browser.manage')
+  @RequirePlatformPermissionUnderClassGuard('platform.data-browser.manage')
   deleteEmail(@Args('emailId') emailId: string) {
     return this.generatedService.deleteEmail(emailId)
   }

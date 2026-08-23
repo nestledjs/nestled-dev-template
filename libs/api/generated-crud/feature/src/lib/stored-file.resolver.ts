@@ -12,7 +12,7 @@ import {
 import {
   AdminOnly,
   GqlAuthAdminGuard,
-  RequirePlatformPermission,
+  RequirePlatformPermissionUnderClassGuard,
 } from '@nestled-template/api/utils'
 
 @Resolver(() => StoredFile)
@@ -22,7 +22,7 @@ export class GeneratedStoredFileResolver {
   constructor(private readonly generatedService: ApiCrudDataAccessService) {}
 
   @Query(() => [StoredFile], { nullable: true })
-  @RequirePlatformPermission('platform.data-browser.read')
+  @RequirePlatformPermissionUnderClassGuard('platform.data-browser.read')
   storedFiles(
     @Info() info: GraphQLResolveInfo,
     @Args({ name: 'input', type: () => ListStoredFileInput, nullable: true })
@@ -32,7 +32,7 @@ export class GeneratedStoredFileResolver {
   }
 
   @Query(() => CorePaging, { nullable: true })
-  @RequirePlatformPermission('platform.data-browser.read')
+  @RequirePlatformPermissionUnderClassGuard('platform.data-browser.read')
   storedFilesCount(
     @Args({ name: 'input', type: () => ListStoredFileInput, nullable: true })
     input?: ListStoredFileInput,
@@ -41,19 +41,19 @@ export class GeneratedStoredFileResolver {
   }
 
   @Query(() => StoredFile, { nullable: true })
-  @RequirePlatformPermission('platform.data-browser.read')
+  @RequirePlatformPermissionUnderClassGuard('platform.data-browser.read')
   storedFile(@Info() info: GraphQLResolveInfo, @Args('storedFileId') storedFileId: string) {
     return this.generatedService.storedFile(info, storedFileId)
   }
 
   @Mutation(() => StoredFile, { nullable: true })
-  @RequirePlatformPermission('platform.data-browser.manage')
+  @RequirePlatformPermissionUnderClassGuard('platform.data-browser.manage')
   createStoredFile(@Info() info: GraphQLResolveInfo, @Args('input') input: CreateStoredFileInput) {
     return this.generatedService.createStoredFile(info, input)
   }
 
   @Mutation(() => StoredFile, { nullable: true })
-  @RequirePlatformPermission('platform.data-browser.manage')
+  @RequirePlatformPermissionUnderClassGuard('platform.data-browser.manage')
   updateStoredFile(
     @Info() info: GraphQLResolveInfo,
     @Args('storedFileId') storedFileId: string,
@@ -63,7 +63,7 @@ export class GeneratedStoredFileResolver {
   }
 
   @Mutation(() => StoredFile, { nullable: true })
-  @RequirePlatformPermission('platform.data-browser.manage')
+  @RequirePlatformPermissionUnderClassGuard('platform.data-browser.manage')
   deleteStoredFile(@Args('storedFileId') storedFileId: string) {
     return this.generatedService.deleteStoredFile(storedFileId)
   }

@@ -12,7 +12,7 @@ import {
 import {
   AdminOnly,
   GqlAuthAdminGuard,
-  RequirePlatformPermission,
+  RequirePlatformPermissionUnderClassGuard,
 } from '@nestled-template/api/utils'
 
 @Resolver(() => Country)
@@ -22,7 +22,7 @@ export class GeneratedCountryResolver {
   constructor(private readonly generatedService: ApiCrudDataAccessService) {}
 
   @Query(() => [Country], { nullable: true })
-  @RequirePlatformPermission('platform.data-browser.read')
+  @RequirePlatformPermissionUnderClassGuard('platform.data-browser.read')
   countries(
     @Info() info: GraphQLResolveInfo,
     @Args({ name: 'input', type: () => ListCountryInput, nullable: true }) input?: ListCountryInput,
@@ -31,7 +31,7 @@ export class GeneratedCountryResolver {
   }
 
   @Query(() => CorePaging, { nullable: true })
-  @RequirePlatformPermission('platform.data-browser.read')
+  @RequirePlatformPermissionUnderClassGuard('platform.data-browser.read')
   countriesCount(
     @Args({ name: 'input', type: () => ListCountryInput, nullable: true }) input?: ListCountryInput,
   ) {
@@ -39,19 +39,19 @@ export class GeneratedCountryResolver {
   }
 
   @Query(() => Country, { nullable: true })
-  @RequirePlatformPermission('platform.data-browser.read')
+  @RequirePlatformPermissionUnderClassGuard('platform.data-browser.read')
   country(@Info() info: GraphQLResolveInfo, @Args('countryId') countryId: string) {
     return this.generatedService.country(info, countryId)
   }
 
   @Mutation(() => Country, { nullable: true })
-  @RequirePlatformPermission('platform.data-browser.manage')
+  @RequirePlatformPermissionUnderClassGuard('platform.data-browser.manage')
   createCountry(@Info() info: GraphQLResolveInfo, @Args('input') input: CreateCountryInput) {
     return this.generatedService.createCountry(info, input)
   }
 
   @Mutation(() => Country, { nullable: true })
-  @RequirePlatformPermission('platform.data-browser.manage')
+  @RequirePlatformPermissionUnderClassGuard('platform.data-browser.manage')
   updateCountry(
     @Info() info: GraphQLResolveInfo,
     @Args('countryId') countryId: string,
@@ -61,7 +61,7 @@ export class GeneratedCountryResolver {
   }
 
   @Mutation(() => Country, { nullable: true })
-  @RequirePlatformPermission('platform.data-browser.manage')
+  @RequirePlatformPermissionUnderClassGuard('platform.data-browser.manage')
   deleteCountry(@Args('countryId') countryId: string) {
     return this.generatedService.deleteCountry(countryId)
   }

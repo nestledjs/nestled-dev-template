@@ -12,7 +12,7 @@ import {
 import {
   AdminOnly,
   GqlAuthAdminGuard,
-  RequirePlatformPermission,
+  RequirePlatformPermissionUnderClassGuard,
 } from '@nestled-template/api/utils'
 
 @Resolver(() => PhoneNumber)
@@ -22,7 +22,7 @@ export class GeneratedPhoneNumberResolver {
   constructor(private readonly generatedService: ApiCrudDataAccessService) {}
 
   @Query(() => [PhoneNumber], { nullable: true })
-  @RequirePlatformPermission('platform.data-browser.read')
+  @RequirePlatformPermissionUnderClassGuard('platform.data-browser.read')
   phoneNumbers(
     @Info() info: GraphQLResolveInfo,
     @Args({ name: 'input', type: () => ListPhoneNumberInput, nullable: true })
@@ -32,7 +32,7 @@ export class GeneratedPhoneNumberResolver {
   }
 
   @Query(() => CorePaging, { nullable: true })
-  @RequirePlatformPermission('platform.data-browser.read')
+  @RequirePlatformPermissionUnderClassGuard('platform.data-browser.read')
   phoneNumbersCount(
     @Args({ name: 'input', type: () => ListPhoneNumberInput, nullable: true })
     input?: ListPhoneNumberInput,
@@ -41,13 +41,13 @@ export class GeneratedPhoneNumberResolver {
   }
 
   @Query(() => PhoneNumber, { nullable: true })
-  @RequirePlatformPermission('platform.data-browser.read')
+  @RequirePlatformPermissionUnderClassGuard('platform.data-browser.read')
   phoneNumber(@Info() info: GraphQLResolveInfo, @Args('phoneNumberId') phoneNumberId: string) {
     return this.generatedService.phoneNumber(info, phoneNumberId)
   }
 
   @Mutation(() => PhoneNumber, { nullable: true })
-  @RequirePlatformPermission('platform.data-browser.manage')
+  @RequirePlatformPermissionUnderClassGuard('platform.data-browser.manage')
   createPhoneNumber(
     @Info() info: GraphQLResolveInfo,
     @Args('input') input: CreatePhoneNumberInput,
@@ -56,7 +56,7 @@ export class GeneratedPhoneNumberResolver {
   }
 
   @Mutation(() => PhoneNumber, { nullable: true })
-  @RequirePlatformPermission('platform.data-browser.manage')
+  @RequirePlatformPermissionUnderClassGuard('platform.data-browser.manage')
   updatePhoneNumber(
     @Info() info: GraphQLResolveInfo,
     @Args('phoneNumberId') phoneNumberId: string,
@@ -66,7 +66,7 @@ export class GeneratedPhoneNumberResolver {
   }
 
   @Mutation(() => PhoneNumber, { nullable: true })
-  @RequirePlatformPermission('platform.data-browser.manage')
+  @RequirePlatformPermissionUnderClassGuard('platform.data-browser.manage')
   deletePhoneNumber(@Args('phoneNumberId') phoneNumberId: string) {
     return this.generatedService.deletePhoneNumber(phoneNumberId)
   }

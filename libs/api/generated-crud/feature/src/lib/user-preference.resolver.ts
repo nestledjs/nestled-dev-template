@@ -12,7 +12,7 @@ import {
 import {
   AdminOnly,
   GqlAuthAdminGuard,
-  RequirePlatformPermission,
+  RequirePlatformPermissionUnderClassGuard,
 } from '@nestled-template/api/utils'
 
 @Resolver(() => UserPreference)
@@ -22,7 +22,7 @@ export class GeneratedUserPreferenceResolver {
   constructor(private readonly generatedService: ApiCrudDataAccessService) {}
 
   @Query(() => [UserPreference], { nullable: true })
-  @RequirePlatformPermission('platform.data-browser.read')
+  @RequirePlatformPermissionUnderClassGuard('platform.data-browser.read')
   userPreferences(
     @Info() info: GraphQLResolveInfo,
     @Args({ name: 'input', type: () => ListUserPreferenceInput, nullable: true })
@@ -32,7 +32,7 @@ export class GeneratedUserPreferenceResolver {
   }
 
   @Query(() => CorePaging, { nullable: true })
-  @RequirePlatformPermission('platform.data-browser.read')
+  @RequirePlatformPermissionUnderClassGuard('platform.data-browser.read')
   userPreferencesCount(
     @Args({ name: 'input', type: () => ListUserPreferenceInput, nullable: true })
     input?: ListUserPreferenceInput,
@@ -41,7 +41,7 @@ export class GeneratedUserPreferenceResolver {
   }
 
   @Query(() => UserPreference, { nullable: true })
-  @RequirePlatformPermission('platform.data-browser.read')
+  @RequirePlatformPermissionUnderClassGuard('platform.data-browser.read')
   userPreference(
     @Info() info: GraphQLResolveInfo,
     @Args('userPreferenceId') userPreferenceId: string,
@@ -50,7 +50,7 @@ export class GeneratedUserPreferenceResolver {
   }
 
   @Mutation(() => UserPreference, { nullable: true })
-  @RequirePlatformPermission('platform.data-browser.manage')
+  @RequirePlatformPermissionUnderClassGuard('platform.data-browser.manage')
   createUserPreference(
     @Info() info: GraphQLResolveInfo,
     @Args('input') input: CreateUserPreferenceInput,
@@ -59,7 +59,7 @@ export class GeneratedUserPreferenceResolver {
   }
 
   @Mutation(() => UserPreference, { nullable: true })
-  @RequirePlatformPermission('platform.data-browser.manage')
+  @RequirePlatformPermissionUnderClassGuard('platform.data-browser.manage')
   updateUserPreference(
     @Info() info: GraphQLResolveInfo,
     @Args('userPreferenceId') userPreferenceId: string,
@@ -69,7 +69,7 @@ export class GeneratedUserPreferenceResolver {
   }
 
   @Mutation(() => UserPreference, { nullable: true })
-  @RequirePlatformPermission('platform.data-browser.manage')
+  @RequirePlatformPermissionUnderClassGuard('platform.data-browser.manage')
   deleteUserPreference(@Args('userPreferenceId') userPreferenceId: string) {
     return this.generatedService.deleteUserPreference(userPreferenceId)
   }

@@ -12,7 +12,7 @@ import {
 import {
   AdminOnly,
   GqlAuthAdminGuard,
-  RequirePlatformPermission,
+  RequirePlatformPermissionUnderClassGuard,
 } from '@nestled-template/api/utils'
 
 @Resolver(() => Role)
@@ -22,7 +22,7 @@ export class GeneratedRoleResolver {
   constructor(private readonly generatedService: ApiCrudDataAccessService) {}
 
   @Query(() => [Role], { nullable: true })
-  @RequirePlatformPermission('platform.data-browser.read')
+  @RequirePlatformPermissionUnderClassGuard('platform.data-browser.read')
   roles(
     @Info() info: GraphQLResolveInfo,
     @Args({ name: 'input', type: () => ListRoleInput, nullable: true }) input?: ListRoleInput,
@@ -31,7 +31,7 @@ export class GeneratedRoleResolver {
   }
 
   @Query(() => CorePaging, { nullable: true })
-  @RequirePlatformPermission('platform.data-browser.read')
+  @RequirePlatformPermissionUnderClassGuard('platform.data-browser.read')
   rolesCount(
     @Args({ name: 'input', type: () => ListRoleInput, nullable: true }) input?: ListRoleInput,
   ) {
@@ -39,19 +39,19 @@ export class GeneratedRoleResolver {
   }
 
   @Query(() => Role, { nullable: true })
-  @RequirePlatformPermission('platform.data-browser.read')
+  @RequirePlatformPermissionUnderClassGuard('platform.data-browser.read')
   role(@Info() info: GraphQLResolveInfo, @Args('roleId') roleId: string) {
     return this.generatedService.role(info, roleId)
   }
 
   @Mutation(() => Role, { nullable: true })
-  @RequirePlatformPermission('platform.data-browser.manage')
+  @RequirePlatformPermissionUnderClassGuard('platform.data-browser.manage')
   createRole(@Info() info: GraphQLResolveInfo, @Args('input') input: CreateRoleInput) {
     return this.generatedService.createRole(info, input)
   }
 
   @Mutation(() => Role, { nullable: true })
-  @RequirePlatformPermission('platform.data-browser.manage')
+  @RequirePlatformPermissionUnderClassGuard('platform.data-browser.manage')
   updateRole(
     @Info() info: GraphQLResolveInfo,
     @Args('roleId') roleId: string,
@@ -61,7 +61,7 @@ export class GeneratedRoleResolver {
   }
 
   @Mutation(() => Role, { nullable: true })
-  @RequirePlatformPermission('platform.data-browser.manage')
+  @RequirePlatformPermissionUnderClassGuard('platform.data-browser.manage')
   deleteRole(@Args('roleId') roleId: string) {
     return this.generatedService.deleteRole(roleId)
   }

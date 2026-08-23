@@ -12,7 +12,7 @@ import {
 import {
   AdminOnly,
   GqlAuthAdminGuard,
-  RequirePlatformPermission,
+  RequirePlatformPermissionUnderClassGuard,
 } from '@nestled-template/api/utils'
 
 @Resolver(() => UserSession)
@@ -22,7 +22,7 @@ export class GeneratedUserSessionResolver {
   constructor(private readonly generatedService: ApiCrudDataAccessService) {}
 
   @Query(() => [UserSession], { nullable: true })
-  @RequirePlatformPermission('platform.data-browser.read')
+  @RequirePlatformPermissionUnderClassGuard('platform.data-browser.read')
   userSessions(
     @Info() info: GraphQLResolveInfo,
     @Args({ name: 'input', type: () => ListUserSessionInput, nullable: true })
@@ -32,7 +32,7 @@ export class GeneratedUserSessionResolver {
   }
 
   @Query(() => CorePaging, { nullable: true })
-  @RequirePlatformPermission('platform.data-browser.read')
+  @RequirePlatformPermissionUnderClassGuard('platform.data-browser.read')
   userSessionsCount(
     @Args({ name: 'input', type: () => ListUserSessionInput, nullable: true })
     input?: ListUserSessionInput,
@@ -41,13 +41,13 @@ export class GeneratedUserSessionResolver {
   }
 
   @Query(() => UserSession, { nullable: true })
-  @RequirePlatformPermission('platform.data-browser.read')
+  @RequirePlatformPermissionUnderClassGuard('platform.data-browser.read')
   userSession(@Info() info: GraphQLResolveInfo, @Args('userSessionId') userSessionId: string) {
     return this.generatedService.userSession(info, userSessionId)
   }
 
   @Mutation(() => UserSession, { nullable: true })
-  @RequirePlatformPermission('platform.data-browser.manage')
+  @RequirePlatformPermissionUnderClassGuard('platform.data-browser.manage')
   createUserSession(
     @Info() info: GraphQLResolveInfo,
     @Args('input') input: CreateUserSessionInput,
@@ -56,7 +56,7 @@ export class GeneratedUserSessionResolver {
   }
 
   @Mutation(() => UserSession, { nullable: true })
-  @RequirePlatformPermission('platform.data-browser.manage')
+  @RequirePlatformPermissionUnderClassGuard('platform.data-browser.manage')
   updateUserSession(
     @Info() info: GraphQLResolveInfo,
     @Args('userSessionId') userSessionId: string,
@@ -66,7 +66,7 @@ export class GeneratedUserSessionResolver {
   }
 
   @Mutation(() => UserSession, { nullable: true })
-  @RequirePlatformPermission('platform.data-browser.manage')
+  @RequirePlatformPermissionUnderClassGuard('platform.data-browser.manage')
   deleteUserSession(@Args('userSessionId') userSessionId: string) {
     return this.generatedService.deleteUserSession(userSessionId)
   }

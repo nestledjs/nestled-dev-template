@@ -12,7 +12,7 @@ import {
 import {
   AdminOnly,
   GqlAuthAdminGuard,
-  RequirePlatformPermission,
+  RequirePlatformPermissionUnderClassGuard,
 } from '@nestled-template/api/utils'
 
 @Resolver(() => Team)
@@ -22,7 +22,7 @@ export class GeneratedTeamResolver {
   constructor(private readonly generatedService: ApiCrudDataAccessService) {}
 
   @Query(() => [Team], { nullable: true })
-  @RequirePlatformPermission('platform.data-browser.read')
+  @RequirePlatformPermissionUnderClassGuard('platform.data-browser.read')
   teams(
     @Info() info: GraphQLResolveInfo,
     @Args({ name: 'input', type: () => ListTeamInput, nullable: true }) input?: ListTeamInput,
@@ -31,7 +31,7 @@ export class GeneratedTeamResolver {
   }
 
   @Query(() => CorePaging, { nullable: true })
-  @RequirePlatformPermission('platform.data-browser.read')
+  @RequirePlatformPermissionUnderClassGuard('platform.data-browser.read')
   teamsCount(
     @Args({ name: 'input', type: () => ListTeamInput, nullable: true }) input?: ListTeamInput,
   ) {
@@ -39,19 +39,19 @@ export class GeneratedTeamResolver {
   }
 
   @Query(() => Team, { nullable: true })
-  @RequirePlatformPermission('platform.data-browser.read')
+  @RequirePlatformPermissionUnderClassGuard('platform.data-browser.read')
   team(@Info() info: GraphQLResolveInfo, @Args('teamId') teamId: string) {
     return this.generatedService.team(info, teamId)
   }
 
   @Mutation(() => Team, { nullable: true })
-  @RequirePlatformPermission('platform.data-browser.manage')
+  @RequirePlatformPermissionUnderClassGuard('platform.data-browser.manage')
   createTeam(@Info() info: GraphQLResolveInfo, @Args('input') input: CreateTeamInput) {
     return this.generatedService.createTeam(info, input)
   }
 
   @Mutation(() => Team, { nullable: true })
-  @RequirePlatformPermission('platform.data-browser.manage')
+  @RequirePlatformPermissionUnderClassGuard('platform.data-browser.manage')
   updateTeam(
     @Info() info: GraphQLResolveInfo,
     @Args('teamId') teamId: string,
@@ -61,7 +61,7 @@ export class GeneratedTeamResolver {
   }
 
   @Mutation(() => Team, { nullable: true })
-  @RequirePlatformPermission('platform.data-browser.manage')
+  @RequirePlatformPermissionUnderClassGuard('platform.data-browser.manage')
   deleteTeam(@Args('teamId') teamId: string) {
     return this.generatedService.deleteTeam(teamId)
   }
