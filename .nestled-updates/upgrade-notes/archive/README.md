@@ -26,9 +26,8 @@ the template got there.
 ## Notes that exist only in one clone
 
 A clone may hold archived notes this repo never had — its own bootstrap, its own build wiring,
-anything describing that repo's setup rather than a change flowing down from here. `nestled-template`
-carries three. They are archived in place, in the repo that owns them, because there is no upstream
-copy to archive.
+anything describing that repo's own setup rather than a change flowing down from here. Those are
+archived in place, in the repo that owns them, because there is no upstream copy to archive.
 
 That is the one exception. Every other note here is mirrored, and editing a mirrored note in a clone
 is undone by the next promotion — which is how the section explaining this exception was lost once
