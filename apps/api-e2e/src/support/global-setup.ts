@@ -211,12 +211,15 @@ module.exports = async function globalSetup() {
   const apiAlreadyRunning = await isPortInUse(port, host)
 
   if (apiAlreadyRunning) {
-    // Refuse by default. The old behaviour adopted whatever was listening and printed "make sure
-    // it's using the test database!" — an instruction to a human, in a place no human reads during
-    // CI, about a fact the suite cannot verify. When the listener was the dev server, every spec
-    // ran against dev and the users they create landed in dev data. It stayed invisible because it
-    // only fires when someone happens to have a dev server up, so it presented as a suite that
-    // passed in the morning and failed in the afternoon with unrelated auth errors.
+    // Refuse by default. Adopting whatever is listening and printing "make sure it's using the
+    // test database!" is an instruction to a human, in a place no human reads during CI, about a
+    // fact the suite cannot verify.
+    //
+    // #118 already moved this harness off the dev port, so the collision is rare here. It is not
+    // rare downstream: a repo still on the pre-#118 global-setup reads PORT (dev) rather than
+    // E2E_API_PORT, adopts the dev server, seeds the TEST database and runs every spec against DEV.
+    // moceanic-ai hit exactly that. Port isolation makes the collision unlikely; refusing makes it
+    // impossible to lose the evidence when it happens anyway.
     if (process.env.E2E_ALLOW_EXISTING_API !== '1') {
       throw new Error(
         [
@@ -228,7 +231,7 @@ module.exports = async function globalSetup() {
           ``,
           `Do one of:`,
           `  - stop whatever is on ${port}`,
-          `  - run e2e on another port:  E2E_PORT=3101 pnpm test:e2e`,
+          `  - run e2e on another port:  E2E_API_PORT=3101 pnpm test:e2e`,
           `  - if you started that API yourself against the TEST database, say so explicitly:`,
           `      E2E_ALLOW_EXISTING_API=1 pnpm test:e2e`,
         ].join('\n'),
