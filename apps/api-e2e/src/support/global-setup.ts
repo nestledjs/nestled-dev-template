@@ -211,8 +211,33 @@ module.exports = async function globalSetup() {
   const apiAlreadyRunning = await isPortInUse(port, host)
 
   if (apiAlreadyRunning) {
-    console.log(`⚠️  API is already running on ${host}:${port}`)
-    console.log("   Using existing API server (make sure it's using the test database!)")
+    // Refuse by default. The old behaviour adopted whatever was listening and printed "make sure
+    // it's using the test database!" — an instruction to a human, in a place no human reads during
+    // CI, about a fact the suite cannot verify. When the listener was the dev server, every spec
+    // ran against dev and the users they create landed in dev data. It stayed invisible because it
+    // only fires when someone happens to have a dev server up, so it presented as a suite that
+    // passed in the morning and failed in the afternoon with unrelated auth errors.
+    if (process.env.E2E_ALLOW_EXISTING_API !== '1') {
+      throw new Error(
+        [
+          `Refusing to run e2e against an API this suite did not start.`,
+          `Something is already listening on ${host}:${port}.`,
+          ``,
+          `This suite cannot check which database that process is using. If it is the dev server,`,
+          `every spec runs against dev data.`,
+          ``,
+          `Do one of:`,
+          `  - stop whatever is on ${port}`,
+          `  - run e2e on another port:  E2E_PORT=3101 pnpm test:e2e`,
+          `  - if you started that API yourself against the TEST database, say so explicitly:`,
+          `      E2E_ALLOW_EXISTING_API=1 pnpm test:e2e`,
+        ].join('\n'),
+      )
+    }
+    console.log(`⚠️  Using an API this suite did not start, on ${host}:${port}`)
+    console.log(
+      '   E2E_ALLOW_EXISTING_API=1 was set — you have asserted it uses the test database.',
+    )
     e2eGlobal.__WE_STARTED_API__ = false
     e2eGlobal.__SKIP_E2E_TESTS__ = false
   } else {
