@@ -1,0 +1,59 @@
+id: 2026-08-23-e2e-must-not-adopt-the-dev-server
+title: E2E must not silently run against the dev server
+priority: high
+area: infra
+type: correctness
+delivery: code-patch
+
+intent: >
+  Both e2e entry scripts pin the API port away from the dev API, and the e2e global setup refuses
+  to adopt an API it did not start.
+
+    export PORT="${E2E_PORT:-3100}"    # in scripts/run-e2e-tests.sh AND apps/api-e2e/run-tests.sh
+
+  Deliberately not `${PORT:-3100}`. Nx injects .env into every task's environment and .env sets
+  PORT for the dev API, so honouring an inherited PORT points e2e straight at the dev server.
+
+  global-setup now throws when something is already listening, naming three ways out: stop that
+  process, choose another port with E2E_PORT, or assert the existing API is on the test database
+  with E2E_ALLOW_EXISTING_API=1.
+
+why: >
+  api-e2e global-setup reused whatever was already listening rather than starting its own API, and
+  printed "Using existing API server (make sure it's using the test database!)" — an instruction to
+  a human, in a place no human reads during CI, about a fact the suite could not verify.
+
+  With no port of its own, e2e inherited PORT from .env. When a dev server happened to be running,
+  the suite pushed and seeded the TEST database and then ran every spec against DEV: specs failed
+  for reasons unrelated to the code, and the users they create landed in dev data.
+
+  It is invisible whenever no dev server happens to be up, so it presents as a suite that passes in
+  the morning and fails in the afternoon with unrelated auth errors — which is exactly how it was
+  found, in moceanic-ai, after a day of blaming the tests.
+
+  apps/api-e2e/run-tests.sh already carried the export and the reasoning. The outer script did not,
+  and the outer script is the one `pnpm test:e2e` runs.
+
+affectedPaths:
+  - scripts/run-e2e-tests.sh
+  - apps/api-e2e/run-tests.sh
+  - apps/api-e2e/src/support/global-setup.ts
+
+skipIf:
+  - >
+    Both scripts already export PORT="${E2E_PORT:-3100}" AND global-setup throws rather than
+    adopting a listening API. Check both scripts: having it in the inner one only is the bug.
+
+verification:
+  - pnpm test:e2e
+
+agentHints:
+  - >
+    Verify it the way it actually fails: leave a dev API running on the .env PORT, then run
+    `pnpm test:e2e`. Before the fix the suite adopts it and prints "API is already running".
+    After, it starts its own on 3100 — or refuses, if something is on 3100 too. A run with no dev
+    server up proves nothing, which is why this survived.
+  - >
+    Do not "fix" this by setting E2E_ALLOW_EXISTING_API=1 in CI. That flag exists for a human who
+    started an API against the test database on purpose; setting it in CI restores the original
+    silent behaviour with extra steps.

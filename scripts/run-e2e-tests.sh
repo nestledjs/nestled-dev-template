@@ -31,6 +31,21 @@ if ! docker info > /dev/null 2>&1; then
   exit 1
 fi
 
+# ── E2E port ───────────────────────────────────────────────────────────────────────────────────
+# E2E gets its own port, away from the dev API.
+#
+# Deliberately NOT `${PORT:-3100}`: Nx injects .env into every task's environment, and .env sets
+# PORT for the dev API. Honouring an inherited PORT sends e2e straight at the dev server, because
+# api-e2e global-setup REUSES an API that is already listening rather than starting its own
+# ("Using existing API server (make sure it's using the test database!)"). The suite then pushes
+# and seeds the TEST database and runs every spec against DEV: specs fail for reasons unrelated to
+# the code, and the users they create land in dev data.
+#
+# It is invisible whenever no dev server happens to be running, so it presents as a suite that
+# passes and then later fails with unrelated auth errors. Override with E2E_PORT if you need a
+# different port.
+export PORT="${E2E_PORT:-3100}"
+
 # Start test database
 echo -e "${BLUE}1. Starting test database...${NC}"
 ./scripts/test-db.sh start

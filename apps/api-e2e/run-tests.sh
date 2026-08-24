@@ -3,6 +3,10 @@
 # The tests use SIGKILL to prevent hanging, which causes a non-zero exit code
 # but if all tests passed, we should still report success
 
+# E2E gets its own port. Without this, an inherited PORT from .env points the suite at the dev API,
+# which global-setup adopts rather than replacing. Override with E2E_PORT if you need a different one.
+export PORT="${E2E_PORT:-3100}"
+
 set +e  # Don't exit on error
 
 # Use tee to show output in real-time AND capture it
