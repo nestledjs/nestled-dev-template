@@ -346,6 +346,7 @@ function safeApiEnvironment({ databaseUrl, redisPort, apiPort }) {
     EMAIL_PROVIDER: 'mock',
     STORAGE_PROVIDER: 'local',
     SHOPIFY_SHOP_NAME: 'db-update',
+    SHOPIFY_BASE_URL: 'https://db-update.invalid',
     SHOPIFY_ACCESS_TOKEN: 'db-update-disabled',
     JWT_SECRET: 'db-update-local-schema-refresh-only-000000000000000000000000',
     SECRET_ENCRYPTION_KEY: '0000000000000000000000000000000000000000000000000000000000000000',
