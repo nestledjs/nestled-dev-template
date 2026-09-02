@@ -66,7 +66,7 @@ async function readEnvironmentVariableNames(file) {
 
   const names = []
   for (const line of contents.split('\n')) {
-    const match = /^\s*(?:export\s+)?([A-Za-z_][A-Za-z0-9_]*)\s*=/.exec(line)
+    const match = /^\s*(?:export\s+)?([A-Za-z_]\w*)\s*=/.exec(line)
     if (match) names.push(match[1])
   }
   return names
@@ -438,8 +438,9 @@ async function refreshWithIsolatedApi() {
     if (vectorResult.error) throw vectorResult.error
     if (vectorResult.status !== 0) {
       const detail = (vectorResult.stderr || vectorResult.stdout).trim()
+      const detailSuffix = detail ? `\n${detail}` : ''
       console.warn(
-        `Optional pgvector extension is unavailable; continuing without it.${detail ? `\n${detail}` : ''}`,
+        `Optional pgvector extension is unavailable; continuing without it.${detailSuffix}`,
       )
     }
 
