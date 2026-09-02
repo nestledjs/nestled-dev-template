@@ -10,7 +10,7 @@
 | `base_branch`           | `develop`                                                                                                                                         |
 | `repo_path`             | resolve at runtime with `git rev-parse --show-toplevel` — portable across Mac (`~/IdeaProjects`) and Linux (`~/workspaces`) hosts; never hardcode |
 | `flightdesk_project_id` | `TBD — create in FlightDesk`                                                                                                                      |
-| `sdk_command`           | `pnpm sdk`                                                                                                                                        |
+| `sdk_command`           | included in `pnpm db-update`                                                                                                                                        |
 
 ## Deployment
 

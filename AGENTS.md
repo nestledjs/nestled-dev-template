@@ -108,7 +108,7 @@ pnpm prisma:studio      # open Prisma Studio
 ### Code Generation
 
 ```bash
-pnpm db-update          # full regen: Prisma → CRUD resolvers → Models → SDK
+pnpm db-update          # full sync: Prisma → CRUD/models → API schema → typed SDK
 pnpm sdk                # generate GraphQL SDK only
 pnpm sdk:watch          # watch mode for SDK generation
 pnpm generate:models    # generate TypeScript models from Prisma
@@ -425,24 +425,21 @@ After making changes to the Prisma schema:
    - GraphQL resolvers with updated guards
    - GraphQL model/input classes
    - generated admin SDK documents and custom barrels
-3. If a Prisma, resolver, decorator, or DTO change affects the GraphQL schema, refresh
-   `api-schema.graphql` by booting the API against disposable local dependencies. Before starting,
-   verify that `DATABASE_URL`, `DIRECT_URL`, and `REDIS_URL` do not point to production. Wait for
-   NestJS to emit the schema, then stop the API.
-4. Run `pnpm sdk` to compile the SDK from the refreshed `api-schema.graphql` and the maintained
-   `.graphql` documents.
-5. Review generated code in:
+   - the code-first `api-schema.graphql`
+   - the compiled TypeScript SDK
+3. Review generated code in:
    - `/libs/api/generated-crud/feature/` — Resolvers
    - `/libs/api/generated-crud/data-access/` — Data access services
    - `/libs/shared/sdk/src/__admin/` — regenerated admin CRUD documents
    - `/libs/shared/sdk/src/graphql/` — preserved application-owned documents
    - `/libs/shared/sdk/src/generated/` — compiled TypeScript SDK for frontend
 
-`pnpm db-update` runs Doctor before and after generation so forbidden authorization annotations or
-non-admin generated resolvers cannot be produced unnoticed. It does not boot NestJS or refresh
-`api-schema.graphql`; `pnpm sdk` also does not refresh the schema because it reads that local file.
-Do not defer schema refresh until the end of a resolver migration—refresh it whenever resolver or
-DTO signatures change so SDK failures are attributable to the current batch.
+`pnpm db-update` is the complete, ordered artifact contract. It runs Doctor and the Prisma/Nestled
+generators, then bootstraps the API against a disposable local database long enough to rewrite
+`api-schema.graphql`, and only then compiles the SDK. If this workspace already has healthy
+`nx serve api` and/or `sdk:watch` processes, it reuses them and waits for their output instead of
+starting competitors. Otherwise it uses one-shot processes on an ephemeral API port and stops only
+the dependencies it started. Do not add a separate API boot or `pnpm sdk` after it.
 
 `pnpm run nestled-doctor` enforces the static API -> SDK -> client contract. New Query or Mutation
 root fields need an SDK document or a written exception, application SDK documents may not refer to
