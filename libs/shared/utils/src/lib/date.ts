@@ -3,14 +3,28 @@ import utc from 'dayjs/plugin/utc'
 
 dayjs.extend(utc)
 
+/** Anything these formatters accept as a temporal value. */
+export type DateInput = Date | string | number | null | undefined
+
+/**
+ * Parse a DateInput, or return null when there is nothing to format.
+ *
+ * Emptiness is tested explicitly rather than with `!value`, which would also discard the numeric
+ * timestamp 0 -- midnight UTC on 1970-01-01 is a real instant, and blanking it hides whatever
+ * produced it.
+ */
+function toValidDate(value: DateInput): Date | null {
+  if (value === null || value === undefined || value === '') return null
+  const d = value instanceof Date ? value : new Date(value)
+  return Number.isNaN(d.getTime()) ? null : d
+}
+
 /**
  * Format a Date or ISO string as YYYY-MM-DD using UTC semantics, suitable for date inputs
  */
-export function formatUtcForDateInput(value: Date | string | number | null | undefined): string {
-  if (!value) return ''
-  const d = typeof value === 'string' || typeof value === 'number' ? new Date(value) : value
-  if (!(d instanceof Date) || Number.isNaN(d.getTime())) return ''
-  return dayjs.utc(d).format('YYYY-MM-DD')
+export function formatUtcForDateInput(value: DateInput): string {
+  const d = toValidDate(value)
+  return d ? dayjs.utc(d).format('YYYY-MM-DD') : ''
 }
 
 /**
@@ -18,11 +32,9 @@ export function formatUtcForDateInput(value: Date | string | number | null | und
  * using UTC semantics, so calendar-date fields stored at midnight UTC are not shifted
  * by the viewer's local timezone. Returns '' for empty/invalid values.
  */
-export function formatUtcLongDate(value: Date | string | number | null | undefined): string {
-  if (!value) return ''
-  const d = typeof value === 'string' || typeof value === 'number' ? new Date(value) : value
-  if (!(d instanceof Date) || Number.isNaN(d.getTime())) return ''
-  return dayjs.utc(d).format('MMMM D, YYYY')
+export function formatUtcLongDate(value: DateInput): string {
+  const d = toValidDate(value)
+  return d ? dayjs.utc(d).format('MMMM D, YYYY') : ''
 }
 
 /**
@@ -64,9 +76,9 @@ export function toUtcMidnightIso(value: Date | string): string {
  */
 export function isIsoDateTimeString(value: unknown): value is string {
   if (typeof value !== 'string') return false
-  if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2})?(\.\d+)?(Z|[+-]\d{2}:\d{2})?$/.test(value)) {
-    return false
-  }
+  // Shape first, so a bare calendar day and anything Date happens to accept ("May 16, 2026") are
+  // both rejected; Date then validates the remainder, which keeps this pattern trivial.
+  if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(value)) return false
   return !Number.isNaN(new Date(value).getTime())
 }
 
@@ -78,9 +90,7 @@ export function isIsoDateTimeString(value: unknown): value is string {
  * be localized; a calendar date has no time to localize and must not be. Choosing between them
  * by field name is what this pair exists to replace -- see `isDateOnlyField` in `table-utils`.
  */
-export function formatLocalLongDateTime(value: Date | string | number | null | undefined): string {
-  if (!value) return ''
-  const d = typeof value === 'string' || typeof value === 'number' ? new Date(value) : value
-  if (!(d instanceof Date) || Number.isNaN(d.getTime())) return ''
-  return dayjs(d).format('MMMM D, YYYY h:mm A')
+export function formatLocalLongDateTime(value: DateInput): string {
+  const d = toValidDate(value)
+  return d ? dayjs(d).format('MMMM D, YYYY h:mm A') : ''
 }

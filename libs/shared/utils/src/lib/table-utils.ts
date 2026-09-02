@@ -12,6 +12,9 @@ export interface DateFieldMeta {
   readonly documentation?: string
 }
 
+/** Matched as a whole token, so `@dateOnlyDeprecated` is not read as `@dateOnly`. */
+const DATE_ONLY_ANNOTATION = /@dateOnly\b/
+
 /**
  * PostgreSQL-backed Prisma models express every temporal column as `DateTime`, so a column that
  * is conceptually a calendar day (a birth date, a due date) is indistinguishable from a true
@@ -27,7 +30,7 @@ export interface DateFieldMeta {
 export function isDateOnlyField(field?: DateFieldMeta): boolean {
   // A provider that does expose a native date scalar needs no annotation.
   if (field?.type?.toLowerCase() === 'date') return true
-  return Boolean(field?.documentation?.includes('@dateOnly'))
+  return DATE_ONLY_ANNOTATION.test(field?.documentation ?? '')
 }
 
 function isTemporalField(field?: DateFieldMeta): boolean {
