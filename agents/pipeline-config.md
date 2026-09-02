@@ -10,7 +10,7 @@
 | `base_branch`           | `develop`                                                                                                                                         |
 | `repo_path`             | resolve at runtime with `git rev-parse --show-toplevel` — portable across Mac (`~/IdeaProjects`) and Linux (`~/workspaces`) hosts; never hardcode |
 | `flightdesk_project_id` | `TBD — create in FlightDesk`                                                                                                                      |
-| `sdk_command`           | included in `pnpm db-update`                                                                                                                                        |
+| `sdk_command`           | included in `pnpm db-update`                                                                                                                      |
 
 ## Deployment
 
@@ -46,7 +46,7 @@ routed to other repos.
 Approved → merge (= deploy) → archive cloud session → archive FlightDesk task (webhook usually
 handles it) → **post the closing comment** → set Linear `Done` **last**, only after cleanup succeeds.
 
-The closing comment is a **required** step and must come **before** `Done` — see *Closeout sequence*
+The closing comment is a **required** step and must come **before** `Done` — see _Closeout sequence_
 in `linear-pipeline.md`. Observed skipped twice (cashcast PIR-265 2026-08-11, flightdesk PIR-259
 2026-08-12): the handler merged, archived, and set `Done` while leaving the issue's last word as the
 pipeline's own "I need a decision from you" question, so from Linear alone it read as abandoned. On
