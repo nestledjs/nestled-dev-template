@@ -60,4 +60,24 @@ describe('date utilities', () => {
     expect(formatLocalLongDateTime('')).toBe('')
     expect(formatLocalLongDateTime(new Date('invalid'))).toBe('')
   })
+
+  it('formats the epoch rather than blanking it', () => {
+    // A `!value` emptiness test also discards 0, which is a real instant -- midnight UTC on
+    // 1970-01-01. Blanking it hides whatever produced it.
+    expect(formatUtcLongDate(0)).toBe('January 1, 1970')
+    expect(formatUtcForDateInput(0)).toBe('1970-01-01')
+    expect(formatLocalLongDateTime(0)).not.toBe('')
+
+    // Genuinely absent values are still empty.
+    expect(formatUtcLongDate(Number.NaN)).toBe('')
+    expect(formatUtcForDateInput(Number.NaN)).toBe('')
+    expect(formatLocalLongDateTime(Number.NaN)).toBe('')
+  })
+
+  it('rejects date-like prose that Date would otherwise accept', () => {
+    // `new Date('May 16, 2026')` parses, so validity alone is not enough -- the shape test is
+    // what keeps a table cell from formatting arbitrary text.
+    expect(isIsoDateTimeString('May 16, 2026')).toBe(false)
+    expect(isIsoDateTimeString('2026/05/16 12:30')).toBe(false)
+  })
 })

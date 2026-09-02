@@ -151,6 +151,9 @@ function findForeignKeyFieldName(
   return foreignKeyField?.relationFromFields?.[0] || null
 }
 
+/** Matched as a whole token, so `@dateOnlyDeprecated` is not read as `@dateOnly`. */
+const DATE_ONLY_ANNOTATION = /@dateOnly\b/
+
 /**
  * A PostgreSQL-backed Prisma model has no date-only scalar -- every temporal column arrives as
  * `DateTime`. `/// @dateOnly` in `schema.prisma` marks the ones that are conceptually a calendar
@@ -163,7 +166,7 @@ function findForeignKeyFieldName(
  */
 export function isDateOnlyField(field?: { type?: string; documentation?: string }): boolean {
   if (field?.type?.toLowerCase() === 'date') return true
-  return Boolean(field?.documentation?.includes('@dateOnly'))
+  return DATE_ONLY_ANNOTATION.test(field?.documentation ?? '')
 }
 
 /**
@@ -772,6 +775,30 @@ function cleanInputEntry(
 }
 
 /**
+ * Convert a temporal form value to the instant the API stores, or null when the value is not a
+ * temporal input for this field.
+ */
+function convertTemporalValue(value: string, field?: any): string | null {
+  // A `/// @dateOnly` field is edited with a plain `date` input, which yields a bare YYYY-MM-DD.
+  // Pin it to midnight UTC explicitly rather than leaning on `new Date()` reading a date-only
+  // string as UTC -- the instant then matches what the UTC formatters read back, in every zone.
+  if (isDateOnlyField(field) && /^\d{4}-\d{2}-\d{2}$/.test(value)) {
+    return `${value}T00:00:00.000Z`
+  }
+
+  // A `datetime-local` value is local wall-clock time, so converting it yields the stored instant.
+  if (field?.type?.toLowerCase() === 'datetime' && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(value)) {
+    // The pattern fixes the shape but not the range, so an out-of-range value such as
+    // 2026-13-45T99:99 still parses to an invalid date. Check it rather than letting
+    // `toISOString` throw.
+    const date = new Date(value)
+    return Number.isNaN(date.getTime()) ? value : date.toISOString()
+  }
+
+  return null
+}
+
+/**
  * Convert string values to appropriate types (number, boolean, null, datetime)
  */
 function convertStringValue(value: string, field?: any): string | number | boolean | null {
@@ -780,24 +807,8 @@ function convertStringValue(value: string, field?: any): string | number | boole
     return null
   }
 
-  // A `/// @dateOnly` field is edited with a plain `date` input, which yields a bare
-  // YYYY-MM-DD. Pin it to midnight UTC explicitly rather than leaning on `new Date()` treating a
-  // date-only string as UTC -- the instant then matches what `formatUtcLongDate` reads back, in
-  // every viewer's zone.
-  if (isDateOnlyField(field) && /^\d{4}-\d{2}-\d{2}$/.test(value)) {
-    return `${value}T00:00:00.000Z`
-  }
-
-  // Handle datetime-local format (YYYY-MM-DDTHH:mm) - convert to ISO string
-  if (field?.type.toLowerCase() === 'datetime' && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(value)) {
-    try {
-      // datetime-local values are in local time, convert to ISO string
-      const date = new Date(value)
-      return date.toISOString()
-    } catch {
-      return value
-    }
-  }
+  const temporal = convertTemporalValue(value, field)
+  if (temporal !== null) return temporal
 
   // Handle boolean strings
   if (value === 'true') return true

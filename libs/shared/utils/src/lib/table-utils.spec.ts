@@ -79,6 +79,11 @@ describe('table utils', () => {
     )
     expect(isDateOnlyField(DATETIME)).toBe(false)
     expect(isDateOnlyField(undefined)).toBe(false)
+
+    // Matched as a whole token, so a longer annotation starting with the same characters is not
+    // silently read as @dateOnly.
+    expect(isDateOnlyField({ type: 'DateTime', documentation: '@dateOnlyDeprecated' })).toBe(false)
+    expect(isDateOnlyField({ type: 'DateTime', documentation: '@dateOnlyish' })).toBe(false)
   })
 
   it('renders arrays, objects, primitives, and empty values for table cells', () => {
