@@ -1,6 +1,6 @@
 {
   "name": "@nestledjs/data-browser",
-  "version": "1.0.20",
+  "version": "1.0.21",
   "description": "Universal admin data browser for Nestled framework projects with full CRUD operations",
   "main": "./index.js",
   "module": "./index.js",
