@@ -52,6 +52,8 @@ why: >
 packageReleases:
   - name: '@nestledjs/data-browser'
     sourcePath: libs/data-browser
+    targetVersion: 1.0.21
+    versionRange: ^1.0.21
 
 affectedPaths:
   - apps/web/app/routes/admin/audit-logs/_index.tsx
