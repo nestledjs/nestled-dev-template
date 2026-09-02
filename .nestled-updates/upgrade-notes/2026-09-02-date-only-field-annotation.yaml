@@ -102,7 +102,7 @@ verification:
 
 agentHints:
   - >
-    Upgrade @nestledjs/doctor to 0.4.0 or newer as part of this note. That release adds the
+    Upgrade @nestledjs/doctor to 0.5.0 or newer as part of this note. 0.4.0 added the
     date-only check, which rejects @dateOnly on a non-DateTime field, on a model or enum, and
     dangling with no declaration beneath it. Without it the annotation is unenforced and a
     misplaced one fails silently at runtime instead of at build time.
