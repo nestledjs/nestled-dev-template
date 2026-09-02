@@ -385,12 +385,15 @@ async function refreshWithIsolatedApi() {
     services.map(service => [service, Boolean(runningServiceContainer(service))]),
   )
   const startedServices = services.filter(service => !previouslyRunning.get(service))
+  const composeEnv = { ...process.env }
+  if (!previouslyRunning.get('postgres')) composeEnv.POSTGRES_PORT = '0'
+  if (!previouslyRunning.get('redis')) composeEnv.REDIS_PORT = '0'
   let postgresContainer
   let databaseName
   let apiChild
 
   try {
-    run('docker', composeArgs('up', '-d', ...services))
+    run('docker', composeArgs('up', '-d', ...services), { env: composeEnv })
     postgresContainer = runningServiceContainer('postgres')
     const redisContainer = runningServiceContainer('redis')
     if (!postgresContainer || !redisContainer) {
@@ -476,7 +479,10 @@ async function refreshWithIsolatedApi() {
       )
     }
     if (startedServices.length > 0) {
-      spawnToolSync('docker', composeArgs('stop', ...startedServices), { stdio: 'inherit' })
+      spawnToolSync('docker', composeArgs('stop', ...startedServices), {
+        env: composeEnv,
+        stdio: 'inherit',
+      })
     }
   }
 }
