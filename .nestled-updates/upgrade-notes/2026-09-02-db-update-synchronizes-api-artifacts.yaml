@@ -93,5 +93,5 @@ agentHints:
   - >
     The doctor upgrade-note gate did not require this note. isSensitiveUpgradePath covers runtime
     API and route paths, not scripts, root package.json, or AGENTS.md, so build and workflow
-    tooling changes pass the gate silently. Treat a tooling change as note-worthy on judgement
+    tooling changes pass the gate silently. Treat a tooling change as noteworthy on judgment
     rather than waiting for Doctor to demand one.
