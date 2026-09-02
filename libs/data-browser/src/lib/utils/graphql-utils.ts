@@ -152,6 +152,21 @@ function findForeignKeyFieldName(
 }
 
 /**
+ * A PostgreSQL-backed Prisma model has no date-only scalar -- every temporal column arrives as
+ * `DateTime`. `/// @dateOnly` in `schema.prisma` marks the ones that are conceptually a calendar
+ * day, and the crud generator already copies a field's doc comment into
+ * `DatabaseField.documentation`, so the annotation reaches this code with no generator change.
+ *
+ * Un-annotated `DateTime` fields are treated as true timestamps. That is the truthful reading of
+ * the Prisma type and matches what this file did before the annotation existed, so a project that
+ * has not annotated anything sees no behaviour change.
+ */
+export function isDateOnlyField(field?: { type?: string; documentation?: string }): boolean {
+  if (field?.type?.toLowerCase() === 'date') return true
+  return Boolean(field?.documentation?.includes('@dateOnly'))
+}
+
+/**
  * Normalize a date/datetime field's initial value to the expected string format.
  *
  * A `datetime-local` input has no timezone: whatever it shows is read back as local wall-clock
@@ -164,14 +179,14 @@ function findForeignKeyFieldName(
  * midnight, and is submitted as a bare 'YYYY-MM-DD' the server reads as UTC — so it stays on the
  * UTC calendar day at both ends.
  */
-function normalizeDateInitialValue(value: unknown, fieldType: string): unknown {
+function normalizeDateInitialValue(value: unknown, dateOnly: boolean): unknown {
   if (!(value instanceof Date) && !(value && typeof value === 'string')) return value
   const dateValue = value instanceof Date ? value : new Date(String(value))
   if (Number.isNaN(dateValue.getTime())) {
     console.error('Unparseable date value for form field:', value)
     return ''
   }
-  if (fieldType === 'date') return dateValue.toISOString().split('T')[0]
+  if (dateOnly) return dateValue.toISOString().split('T')[0]
   return formatLocalDateTime(dateValue)
 }
 
@@ -183,7 +198,7 @@ function getFieldInitialValue(field: any, currentItem: any, operation: string): 
 
   const fieldTypeLower = field.type.toLowerCase()
   if (fieldTypeLower === 'datetime' || fieldTypeLower === 'date') {
-    initialValue = normalizeDateInitialValue(initialValue, fieldTypeLower)
+    initialValue = normalizeDateInitialValue(initialValue, isDateOnlyField(field))
   }
 
   if (
@@ -421,11 +436,13 @@ function buildRegularFormField(
       })
     }
 
+    // Prisma never emits a `date` scalar, so the control is chosen by annotation. The `date`
+    // case is kept for a schema whose provider does expose one.
     case 'datetime':
-      return FormFieldClass.dateTimePicker(field.name, options)
-
     case 'date':
-      return FormFieldClass.datePicker(field.name, options)
+      return isDateOnlyField(field)
+        ? FormFieldClass.datePicker(field.name, options)
+        : FormFieldClass.dateTimePicker(field.name, options)
 
     default:
       return buildDefaultFormField(field, options, initialValue, sdk, currentItem, operation, {
@@ -761,6 +778,14 @@ function convertStringValue(value: string, field?: any): string | number | boole
   // Convert empty strings to null for optional fields
   if (value === '') {
     return null
+  }
+
+  // A `/// @dateOnly` field is edited with a plain `date` input, which yields a bare
+  // YYYY-MM-DD. Pin it to midnight UTC explicitly rather than leaning on `new Date()` treating a
+  // date-only string as UTC -- the instant then matches what `formatUtcLongDate` reads back, in
+  // every viewer's zone.
+  if (isDateOnlyField(field) && /^\d{4}-\d{2}-\d{2}$/.test(value)) {
+    return `${value}T00:00:00.000Z`
   }
 
   // Handle datetime-local format (YYYY-MM-DDTHH:mm) - convert to ISO string

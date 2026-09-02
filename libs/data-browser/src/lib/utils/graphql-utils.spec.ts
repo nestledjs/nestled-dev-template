@@ -777,6 +777,63 @@ describe('graphql-utils', () => {
         expect(new Date(submitted['startTime'] as string).toISOString()).toBe(instant.toISOString())
       })
 
+      it('gives a @dateOnly field a date picker and a plain calendar day', () => {
+        // Prisma has no date-only scalar, so without the annotation this column is
+        // indistinguishable from a timestamp and gets a datetime-local control.
+        const mockModel: DatabaseModel = {
+          name: 'Person',
+          fields: [
+            { name: 'birthDate', type: 'DateTime', isOptional: true, documentation: '@dateOnly' },
+            { name: 'lastSeenAt', type: 'DateTime', isOptional: true },
+          ],
+        }
+        const currentItem = {
+          birthDate: '2026-05-16T00:00:00.000Z',
+          lastSeenAt: '2026-05-16T00:00:00.000Z',
+        }
+
+        const fields = buildFormFields({}, mockModel, 'update', { currentItem })
+        const birthDate = fields.find(f => f.key === 'birthDate')
+        const lastSeenAt = fields.find(f => f.key === 'lastSeenAt')
+
+        expect(birthDate?.type).toBe('DatePicker')
+        // The calendar day, not the viewer's local reading of midnight UTC.
+        expect(birthDate?.options?.value).toBe('2026-05-16')
+
+        expect(lastSeenAt?.type).toBe('DateTimePicker')
+        expect(lastSeenAt?.options?.value).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/)
+      })
+
+      it('submits a @dateOnly value pinned to midnight UTC in every zone', () => {
+        const mockModel: DatabaseModel = {
+          name: 'Person',
+          fields: [
+            { name: 'birthDate', type: 'DateTime', isOptional: true, documentation: '@dateOnly' },
+          ],
+        }
+
+        const submitted = cleanFormInput({ birthDate: '2026-05-16' }, mockModel)
+
+        expect(submitted['birthDate']).toBe('2026-05-16T00:00:00.000Z')
+      })
+
+      it('round-trips a @dateOnly field without moving the calendar day', () => {
+        const mockModel: DatabaseModel = {
+          name: 'Person',
+          fields: [
+            { name: 'birthDate', type: 'DateTime', isOptional: true, documentation: '@dateOnly' },
+          ],
+        }
+        const stored = '2026-05-16T00:00:00.000Z'
+
+        const shown = buildFormFields({}, mockModel, 'update', {
+          currentItem: { birthDate: stored },
+        })[0].options?.value
+        const submitted = cleanFormInput({ birthDate: shown }, mockModel)
+
+        expect(submitted['birthDate']).toBe(stored)
+      })
+
       it('should handle date strings as initial values', () => {
         const mockModel: DatabaseModel = {
           name: 'Event',
