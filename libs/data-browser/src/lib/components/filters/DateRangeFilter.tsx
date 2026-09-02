@@ -7,6 +7,16 @@ interface DateRangeFilterProps {
   onChange: (value: any) => void
 }
 
+/**
+ * Both bounds are anchored to the UTC calendar day, because that is the day the inputs display:
+ * the values above are rendered with `toISOString()`. Deriving a bound in local terms instead --
+ * `new Date(day)` parses as UTC midnight, so a following `setHours(23, 59, 59, 999)` lands on the
+ * local day BEFORE the one the user picked -- silently truncates the range by the UTC offset and
+ * drops most of the final day's records, while the input still reads back the day that was picked.
+ */
+const startOfUtcDay = (day: string) => new Date(`${day}T00:00:00.000Z`).toISOString()
+const endOfUtcDay = (day: string) => new Date(`${day}T23:59:59.999Z`).toISOString()
+
 // Component for date range filtering
 export function DateRangeFilter({
   fieldName,
@@ -20,7 +30,7 @@ export function DateRangeFilter({
   const handleFromChange = (date: string) => {
     const newValue = { ...currentValue }
     if (date) {
-      newValue.gte = new Date(date).toISOString()
+      newValue.gte = startOfUtcDay(date)
     } else {
       delete newValue.gte
     }
@@ -36,10 +46,8 @@ export function DateRangeFilter({
   const handleToChange = (date: string) => {
     const newValue = { ...currentValue }
     if (date) {
-      // Set to end of day for "to" date
-      const endOfDay = new Date(date)
-      endOfDay.setHours(23, 59, 59, 999)
-      newValue.lte = endOfDay.toISOString()
+      // Inclusive of the whole picked day, on the same UTC day the input displays
+      newValue.lte = endOfUtcDay(date)
     } else {
       delete newValue.lte
     }

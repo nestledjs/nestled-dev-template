@@ -1,55 +1,73 @@
 id: 2026-09-01-data-browser-datetime-local-round-trip
-title: Admin data browser stops shifting datetimes by the viewer's UTC offset on every save
+title: Datetime inputs stop shifting by the viewer's UTC offset
 priority: high
 area: admin
 type: correctness
-delivery: package-release
+delivery: hybrid
 
 intent: >
-  The admin data browser fills a `datetime-local` input with LOCAL wall-clock components instead of
-  the UTC ones. Stored instants stay UTC and displayed times stay local, so opening a record and
-  saving it round-trips to the same instant.
+  Every `datetime-local` input in the template is now filled from LOCAL wall-clock components
+  instead of UTC ones, so what an input displays is what it is read back as. Stored instants stay
+  UTC and displayed times stay local.
 
-  Three read sites converged on one rule. `normalizeDateInitialValue` in
-  `libs/data-browser/src/lib/utils/graphql-utils.ts` and `processDateFieldValue` in
-  `libs/data-browser/src/lib/pages/AdminDataEditPage.tsx` now format datetimes with
-  `formatLocalDateTime` from `@nestledjs/forms-core`, and the third site in
-  `performFinalSafetyChecks` calls `processDateFieldValue` rather than carrying a third
-  disagreeing copy of the conversion.
+  In the published data browser this covers three read sites that had drifted apart --
+  `normalizeDateInitialValue` in `libs/data-browser/src/lib/utils/graphql-utils.ts`,
+  `processDateFieldValue` in `libs/data-browser/src/lib/pages/AdminDataEditPage.tsx`, and a third
+  copy in `performFinalSafetyChecks` that emitted a full ISO string a `datetime-local` input cannot
+  render at all. They now share one helper, `formatLocalDateTime` from `@nestledjs/forms-core`.
+
+  In app source it covers the audit-log and security-event admin filters, which had the same
+  read/write mismatch.
+
+  `DateRangeFilter` is a separate defect of the same family and is fixed in the same release. Its
+  `lte` bound parsed the picked day as UTC midnight and then called `setHours(23, 59, 59, 999)`,
+  which sets a LOCAL time-of-day and so landed on the local day BEFORE the one picked. Both bounds
+  are now derived explicitly on the UTC calendar day, which is the day the inputs display.
 
   Calendar `date` fields are deliberately unchanged. A calendar day has no time to localize, is
-  stored as UTC midnight, and is submitted as a bare `YYYY-MM-DD` the server reads as UTC, so it
-  is already symmetric at both ends.
+  stored as UTC midnight and submitted as a bare `YYYY-MM-DD` the server reads as UTC, so it is
+  already symmetric at both ends.
 
 why: >
   A `datetime-local` input carries no timezone. Whatever it displays is read back as local
-  wall-clock time, and the save path has always honoured that, converting with
+  wall-clock time, and the save paths always honoured that, converting with
   `new Date(localValue).toISOString()`.
 
-  The read path disagreed. It wrote the UTC wall-clock into that input using
-  `toISOString().substring(0, 16)`, so the two ends used different clocks and the mismatch was
-  applied on every write. Opening a record in a UTC-4 zone and pressing save without editing
-  anything moved the stored timestamp forward four hours, and each subsequent save moved it another
-  four. East of UTC it walked backward instead. Only a viewer sitting exactly on UTC saw correct
-  behaviour, which is why this survived in a suite whose date assertions were written as fixed
-  literals and only ever run in UTC.
+  The read paths disagreed. They wrote the UTC wall-clock into those inputs using
+  `toISOString().substring(0, 16)`, so the two ends ran on different clocks and the mismatch was
+  applied on every write.
 
-  The damage is silent and cumulative. Nothing errors, the value simply drifts a little further out
-  of true each time an admin touches the record, so it presents late as timestamps that are
-  inexplicably wrong by some multiple of the editor's UTC offset.
+  In the data browser that made the damage cumulative, because the mismatch is applied per save
+  rather than per view. Opening a record in a UTC-4 zone and pressing save without editing anything
+  moved the stored timestamp forward four hours, and each subsequent save moved it another four.
+  East of UTC it walked backward instead. Nothing errors; the value simply drifts further out of
+  true each time an admin touches the record, so it surfaces late as timestamps that are wrong by
+  some multiple of the editor's UTC offset.
+
+  Only a viewer sitting exactly on UTC ever saw correct behaviour, which is why this survived a
+  test suite whose date assertions were written as fixed literals and only ever run in UTC. The
+  DateRangeFilter defect was likewise protected by an assertion on `getHours()`, the LOCAL getter,
+  which reads 23 no matter which day `setHours` actually moved the instant to.
 
 packageReleases:
   - name: '@nestledjs/data-browser'
     sourcePath: libs/data-browser
 
+affectedPaths:
+  - apps/web/app/routes/admin/audit-logs/_index.tsx
+  - apps/web/app/routes/admin/security-events/_index.tsx
+  - apps/web/tests/routes/admin/audit-logs/_index.spec.tsx
+  - apps/web/tests/routes/admin/security-events/_index.spec.tsx
+
 skipIf:
   - >
-    The data browser already fills datetime inputs from formatLocalDateTime (or another local-component
-    formatter) rather than from toISOString. Check the read path, not the save path — the save path
-    was always correct and looking at it alone will suggest there is nothing to fix.
+    Every datetime input in the project is already filled from formatLocalDateTime (or another
+    local-component formatter) rather than from toISOString. Check the read path, not the save path
+    -- the save path was always correct and looking at it alone suggests there is nothing to fix.
 
 verification:
   - TZ=America/New_York pnpm nx test data-browser
+  - TZ=America/New_York pnpm nx test web
   - pnpm nx build data-browser
 
 agentHints:
@@ -59,13 +77,18 @@ agentHints:
     as if they were local.
   - >
     Run the date tests under a non-UTC TZ. Assertions written as fixed literals such as
-    2024-03-15T10:30 silently encode the bug and pass in a UTC-run suite; the regression test added
-    here asserts the round-trip instant is preserved, which holds in every zone.
+    2024-03-15T10:30 silently encode the bug and pass in a UTC-run suite. The regression tests added
+    here assert round-trip properties instead, which hold in every zone.
   - >
     Calendar date fields must stay on the UTC calendar day at both ends. Converting them to local
     reading as well reintroduces the same asymmetry pointing the other way, because their submit
     path sends a bare YYYY-MM-DD that the server reads as UTC midnight.
   - >
-    Related read/write mismatches of the same shape exist outside this package and are NOT covered
-    by this note — the audit-log and security-event datetime filters in apps/web, and the lte bound
-    in DateRangeFilter, which parses as UTC and then calls setHours in local.
+    Never mix a UTC-parsed date with local mutators. new Date(day) parses a bare day as UTC
+    midnight, so setHours on the result moves a LOCAL time-of-day on whatever local day that
+    instant falls on, which west of UTC is the previous day. Build the instant explicitly instead.
+  - >
+    Two known instances of this family are NOT addressed here, because they concern display rather
+    than input. table-utils formats by field-NAME substring in local time, and the unused
+    cleanFormInput in libs/shared/utils truncates any field whose name contains date down to a bare
+    day, discarding its time. Neither is wired into the paths fixed above.

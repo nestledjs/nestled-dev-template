@@ -149,12 +149,42 @@ describe('DateRangeFilter', () => {
       await user.type(toInput, '2024-01-31')
 
       const callArg = mockOnChange.mock.calls[0][0]
-      const lteDate = new Date(callArg.lte)
 
-      expect(lteDate.getHours()).toBe(23)
-      expect(lteDate.getMinutes()).toBe(59)
-      expect(lteDate.getSeconds()).toBe(59)
-      expect(lteDate.getMilliseconds()).toBe(999)
+      // End of the picked day in UTC, the same calendar day the input displays. Asserting the
+      // LOCAL getters here passed while the bound was landing on the previous UTC day, because
+      // `setHours` makes `getHours()` read 23 whatever day it actually moved the instant to.
+      expect(callArg.lte).toBe('2024-01-31T23:59:59.999Z')
+    })
+
+    it('should cover the whole of the picked to-day, not just its first hours', async () => {
+      const user = userEvent.setup()
+      render(<DateRangeFilter fieldName="createdAt" currentValue={{}} onChange={mockOnChange} />)
+
+      await user.type(screen.getByLabelText('To'), '2024-01-31')
+
+      // A record late on the picked day must fall inside the range. Deriving the bound with
+      // `setHours` truncated it to the local day before, excluding most of 2024-01-31.
+      const { lte } = mockOnChange.mock.calls[0][0]
+      expect(new Date('2024-01-31T22:00:00.000Z').getTime()).toBeLessThanOrEqual(
+        new Date(lte).getTime(),
+      )
+    })
+
+    it('should round-trip the picked days back into the inputs', async () => {
+      const user = userEvent.setup()
+      render(<DateRangeFilter fieldName="createdAt" currentValue={{}} onChange={mockOnChange} />)
+
+      await user.type(screen.getByLabelText('From'), '2024-01-15')
+      const { gte } = mockOnChange.mock.calls[0][0]
+
+      mockOnChange.mockClear()
+      await user.type(screen.getByLabelText('To'), '2024-01-31')
+      const { lte } = mockOnChange.mock.calls[0][0]
+
+      // The inputs render their value as `new Date(v).toISOString().split('T')[0]`, so both
+      // bounds have to sit on the UTC day that was picked or the filter shows a day it did not set.
+      expect(new Date(gte).toISOString().split('T')[0]).toBe('2024-01-15')
+      expect(new Date(lte).toISOString().split('T')[0]).toBe('2024-01-31')
     })
 
     it('should preserve gte when setting lte', async () => {
