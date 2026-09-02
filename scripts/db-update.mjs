@@ -355,6 +355,7 @@ function safeApiEnvironment({ databaseUrl, redisPort, apiPort }) {
     SMTP_PORT: '2525',
     SMTP_USER: 'db-update',
     SMTP_PASS: 'db-update',
+    SENDGRID_API_KEY: 'db-update-disabled',
   })
   return env
 }
