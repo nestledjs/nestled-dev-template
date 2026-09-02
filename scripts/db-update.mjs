@@ -4,7 +4,7 @@ import { existsSync } from 'node:fs'
 import { open, readFile, readdir, realpath, stat, unlink, utimes } from 'node:fs/promises'
 import { createServer } from 'node:net'
 import { tmpdir } from 'node:os'
-import { join } from 'node:path'
+import { isAbsolute, join } from 'node:path'
 import { spawn, spawnSync } from 'node:child_process'
 
 const root = await realpath(process.cwd())
@@ -28,11 +28,44 @@ const composeEnvironmentArgs = existsSync(join(root, '.env'))
 const apiWatchTimeoutMs = 5 * 60 * 1000
 const sdkWatchTimeoutMs = 60 * 1000
 const schemaRefreshTimeoutMs = 5 * 60 * 1000
+const trustedExecutableCandidates = {
+  docker:
+    process.platform === 'darwin'
+      ? [
+          '/usr/local/bin/docker',
+          '/opt/homebrew/bin/docker',
+          '/Applications/Docker.app/Contents/Resources/bin/docker',
+        ]
+      : ['/usr/bin/docker', '/usr/local/bin/docker'],
+  lsof: ['/usr/sbin/lsof'],
+  ps: ['/bin/ps', '/usr/bin/ps'],
+}
 
 const delay = milliseconds => new Promise(resolveDelay => setTimeout(resolveDelay, milliseconds))
 
+function trustedInvocation(command, args) {
+  if (command === 'pnpm') {
+    const pnpmCli = process.env.npm_execpath
+    if (!pnpmCli || !isAbsolute(pnpmCli) || !existsSync(pnpmCli)) {
+      throw new Error('pnpm db-update must be invoked through pnpm so its exact CLI path is known.')
+    }
+    return { executable: process.execPath, args: [pnpmCli, ...args] }
+  }
+
+  const executable = trustedExecutableCandidates[command]?.find(candidate => existsSync(candidate))
+  if (!executable) {
+    throw new Error(`Could not find ${command} in the trusted executable locations.`)
+  }
+  return { executable, args }
+}
+
+function spawnToolSync(command, args, options = {}) {
+  const invocation = trustedInvocation(command, args)
+  return spawnSync(invocation.executable, invocation.args, options)
+}
+
 function run(command, args, options = {}) {
-  const result = spawnSync(command, args, {
+  const result = spawnToolSync(command, args, {
     cwd: root,
     env: options.env ?? process.env,
     encoding: 'utf8',
@@ -122,7 +155,7 @@ async function processCwd(pid) {
   }
 
   if (process.platform === 'darwin') {
-    const result = spawnSync('lsof', ['-a', '-p', String(pid), '-d', 'cwd', '-Fn'], {
+    const result = spawnToolSync('lsof', ['-a', '-p', String(pid), '-d', 'cwd', '-Fn'], {
       encoding: 'utf8',
     })
     const cwdLine = result.stdout
@@ -141,23 +174,25 @@ async function processCwd(pid) {
 }
 
 async function findWorkspaceProcess(predicate) {
-  const result = spawnSync('ps', ['-axo', 'pid=,command='], { encoding: 'utf8' })
+  const result = spawnToolSync('ps', ['-axo', 'pid=,command='], { encoding: 'utf8' })
   if (result.status !== 0) return undefined
 
   for (const line of result.stdout.split('\n')) {
-    const match = /^\s*(\d+)\s+(.+)$/.exec(line)
-    if (!match || Number(match[1]) === process.pid || !predicate(match[2])) continue
-    const cwd = await processCwd(Number(match[1]))
-    if (cwd === root) return { pid: Number(match[1]), command: match[2] }
+    const processDescription = line.trimStart()
+    const separator = processDescription.indexOf(' ')
+    if (separator < 1) continue
+    const pid = Number(processDescription.slice(0, separator))
+    const command = processDescription.slice(separator).trimStart()
+    if (!Number.isInteger(pid) || pid === process.pid || !command || !predicate(command)) continue
+    const cwd = await processCwd(pid)
+    if (cwd === root) return { pid, command }
   }
 
   return undefined
 }
 
 const isApiWatcher = command =>
-  /(?:^|[/\\\s])nx(?:\.js)?\s+(?:serve\s+api(?:\s|$)|run\s+api:serve(?:[:\s]|$))/.test(
-    command,
-  )
+  /(?:^|[/\\\s])nx(?:\.js)?\s+(?:serve\s+api(?:\s|$)|run\s+api:serve(?:[:\s]|$))/.test(command)
 const isSdkWatcher = command =>
   command.includes('graphql-codegen') && /(?:^|\s)(?:--watch|-w)(?:\s|$)/.test(command)
 
@@ -214,7 +249,7 @@ function publishedPort(container, containerPort) {
 async function waitForPostgres(container) {
   const deadline = Date.now() + 60_000
   while (Date.now() < deadline) {
-    const result = spawnSync('docker', [
+    const result = spawnToolSync('docker', [
       'exec',
       container,
       'pg_isready',
@@ -343,7 +378,7 @@ async function refreshWithIsolatedApi() {
     const redisPort = publishedPort(redisContainer, 6379)
     databaseName = `db_update_${process.pid}_${Date.now()}`
     run('docker', ['exec', postgresContainer, 'createdb', '-U', 'prisma', databaseName])
-    spawnSync(
+    spawnToolSync(
       'docker',
       [
         'exec',
@@ -394,7 +429,7 @@ async function refreshWithIsolatedApi() {
   } finally {
     if (apiChild) await stopChild(apiChild)
     if (postgresContainer && databaseName) {
-      spawnSync(
+      spawnToolSync(
         'docker',
         [
           'exec',
@@ -410,7 +445,7 @@ async function refreshWithIsolatedApi() {
       )
     }
     if (startedServices.length > 0) {
-      spawnSync('docker', composeArgs('stop', ...startedServices), { stdio: 'inherit' })
+      spawnToolSync('docker', composeArgs('stop', ...startedServices), { stdio: 'inherit' })
     }
   }
 }
