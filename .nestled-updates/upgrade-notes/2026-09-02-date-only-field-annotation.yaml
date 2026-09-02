@@ -72,6 +72,7 @@ packageReleases:
     versionRange: ^1.0.16
 
 affectedPaths:
+  - package.json
   - libs/api/prisma/src/lib/schemas/schema.prisma
   - libs/shared/utils/src/lib/table-utils.ts
   - libs/shared/utils/src/lib/table-utils.spec.ts
@@ -100,6 +101,11 @@ verification:
   - pnpm run nestled-doctor
 
 agentHints:
+  - >
+    Upgrade @nestledjs/doctor to 0.4.0 or newer as part of this note. That release adds the
+    date-only check, which rejects @dateOnly on a non-DateTime field, on a model or enum, and
+    dangling with no declaration beneath it. Without it the annotation is unenforced and a
+    misplaced one fails silently at runtime instead of at build time.
   - >
     Audit every DateTime column in schema.prisma, not only the ones whose name contains "date".
     The name is where to start looking, never the answer -- that is the defect being removed. The
