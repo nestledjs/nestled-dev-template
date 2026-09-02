@@ -6,6 +6,7 @@ import { CheckCircleIcon, ExclamationCircleIcon } from '@heroicons/react/24/outl
 import { TrashIcon } from '@heroicons/react/24/solid'
 import { ErrorBoundary } from '@nestledjs/shared-components'
 import { Form } from '@nestledjs/forms'
+import { formatLocalDateTime } from '@nestledjs/forms-core'
 import { useAdminDataContext } from '../context/AdminDataContext'
 import { AdminDataStateMessage } from '../components/AdminDataStateMessage'
 
@@ -69,27 +70,29 @@ function processRelationFieldValue(field: any, item: any): string {
 }
 
 /**
- * Process date/datetime field value to proper format
+ * Process date/datetime field value to proper format.
+ *
+ * The `datetime-local` input holds local wall-clock time and is submitted back as
+ * `new Date(local).toISOString()`, so a datetime must be written into it in LOCAL components.
+ * Using `toISOString()` here would put the UTC wall-clock into a local-reading input and shift the
+ * stored instant by the viewer's UTC offset on every save. A calendar `date` carries no time,
+ * is stored as UTC midnight and submitted as a bare 'YYYY-MM-DD', so it stays on the UTC day.
  */
 function processDateFieldValue(field: any, value: any): string {
   if (value === null || value === undefined || value === '') {
     return ''
   }
 
-  try {
-    const dateValue = value instanceof Date ? value : new Date(value)
-    const fieldTypeLower = field.type.toLowerCase()
-
-    if (fieldTypeLower === 'date') {
-      return dateValue.toISOString().split('T')[0]
-    } else {
-      // DateTime: YYYY-MM-DDTHH:mm format
-      return dateValue.toISOString().substring(0, 16)
-    }
-  } catch (e) {
-    console.error('Unexpected error:', e)
+  const dateValue = value instanceof Date ? value : new Date(value)
+  if (Number.isNaN(dateValue.getTime())) {
+    console.error('Unparseable date value for form field:', value)
     return ''
   }
+
+  if (field.type.toLowerCase() === 'date') {
+    return dateValue.toISOString().split('T')[0]
+  }
+  return formatLocalDateTime(dateValue)
 }
 
 /**
@@ -140,10 +143,7 @@ function performFinalSafetyChecks(initialValues: Record<string, any>, model: any
       initialValues[key] = value.id
     } else if (value instanceof Date) {
       const field = model.fields.find((f: any) => f.name === key)
-      initialValues[key] =
-        field?.type.toLowerCase() === 'date'
-          ? value.toISOString().split('T')[0]
-          : value.toISOString()
+      initialValues[key] = processDateFieldValue(field ?? { type: 'datetime' }, value)
     } else {
       initialValues[key] = ''
     }

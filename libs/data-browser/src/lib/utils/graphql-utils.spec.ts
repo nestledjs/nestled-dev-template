@@ -8,6 +8,7 @@ import {
   toReadableText,
   sanitizeInput,
 } from './graphql-utils'
+import { formatLocalDateTime } from '@nestledjs/forms-core'
 import type { DatabaseModel } from '../types'
 
 describe('graphql-utils', () => {
@@ -752,7 +753,28 @@ describe('graphql-utils', () => {
 
         const result = buildFormFields({}, mockModel, 'update', { currentItem })
 
-        expect(result[0].options?.value).toBe('2024-03-15T10:30')
+        // A `datetime-local` input carries no timezone, so it must be filled with LOCAL
+        // components. Asserting a fixed literal here would only hold in a UTC-run test.
+        expect(result[0].options?.value).toBe(formatLocalDateTime(currentItem.startTime))
+      })
+
+      it('round-trips a datetime through the form without shifting the instant', () => {
+        const mockModel: DatabaseModel = {
+          name: 'Event',
+          fields: [{ name: 'startTime', type: 'DateTime', isOptional: true }],
+        }
+
+        const instant = new Date('2024-03-15T10:30:00Z')
+        const shown = buildFormFields({}, mockModel, 'update', {
+          currentItem: { startTime: instant },
+        })[0].options?.value
+
+        // `cleanFormInput` reads the input back as local wall-clock time. When the value was
+        // written in as the UTC wall-clock, every save moved the stored instant by the viewer's
+        // UTC offset and compounded on each edit.
+        const submitted = cleanFormInput({ startTime: shown }, mockModel)
+
+        expect(new Date(submitted['startTime'] as string).toISOString()).toBe(instant.toISOString())
       })
 
       it('should handle date strings as initial values', () => {
