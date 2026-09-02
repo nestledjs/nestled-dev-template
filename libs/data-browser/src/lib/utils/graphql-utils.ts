@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router'
-import { type FormField, FormFieldClass } from '@nestledjs/forms-core'
+import { type FormField, FormFieldClass, formatLocalDateTime } from '@nestledjs/forms-core'
 
 import type { DatabaseModel } from '../types'
 import type { DisplayFieldConfig } from '../context/AdminDataContext'
@@ -152,18 +152,27 @@ function findForeignKeyFieldName(
 }
 
 /**
- * Normalize a date/datetime field's initial value to the expected string format
+ * Normalize a date/datetime field's initial value to the expected string format.
+ *
+ * A `datetime-local` input has no timezone: whatever it shows is read back as local wall-clock
+ * time, and `convertStringValue` submits it as `new Date(local).toISOString()`. So the value put
+ * INTO the input must be local components too — formatting with `toISOString()` writes the UTC
+ * wall-clock into a local-reading input, and every save then shifts the stored instant by the
+ * viewer's UTC offset, compounding on each edit.
+ *
+ * A calendar `date` field is the opposite case: it has no time to localize, is stored as UTC
+ * midnight, and is submitted as a bare 'YYYY-MM-DD' the server reads as UTC — so it stays on the
+ * UTC calendar day at both ends.
  */
 function normalizeDateInitialValue(value: unknown, fieldType: string): unknown {
   if (!(value instanceof Date) && !(value && typeof value === 'string')) return value
-  try {
-    const dateValue = value instanceof Date ? value : new Date(String(value))
-    if (fieldType === 'date') return dateValue.toISOString().split('T')[0]
-    return dateValue.toISOString().substring(0, 16)
-  } catch (e) {
-    console.error('Unexpected error:', e)
+  const dateValue = value instanceof Date ? value : new Date(String(value))
+  if (Number.isNaN(dateValue.getTime())) {
+    console.error('Unparseable date value for form field:', value)
     return ''
   }
+  if (fieldType === 'date') return dateValue.toISOString().split('T')[0]
+  return formatLocalDateTime(dateValue)
 }
 
 /**
