@@ -8,10 +8,21 @@ import { isAbsolute, join } from 'node:path'
 import { spawn, spawnSync } from 'node:child_process'
 
 const root = await realpath(process.cwd())
+const workspaceEnvironmentFile = join(root, '.env')
 const composeFile = join(root, '.dev', 'docker-compose.yml')
 const schemaFile = join(root, 'api-schema.graphql')
 const apiMainFile = join(root, 'apps', 'api', 'src', 'main.ts')
 const apiEntryFile = join(root, 'dist', 'apps', 'api', 'main.js')
+const prismaSchemaFile = join(
+  root,
+  'libs',
+  'api',
+  'prisma',
+  'src',
+  'lib',
+  'schemas',
+  'schema.prisma',
+)
 const sdkOutputFile = join(root, 'libs', 'shared', 'sdk', 'src', 'generated', 'graphql.ts')
 const sdkSourceDirectories = [
   join(root, 'libs', 'shared', 'sdk', 'src', 'graphql'),
@@ -22,9 +33,10 @@ const lockFile = join(
   `nestled-db-update-${createHash('sha256').update(root).digest('hex').slice(0, 16)}.lock`,
 )
 const generatedCommand = ['run', 'db-update:generate']
-const composeEnvironmentArgs = existsSync(join(root, '.env'))
-  ? ['--env-file', join(root, '.env')]
+const composeEnvironmentArgs = existsSync(workspaceEnvironmentFile)
+  ? ['--env-file', workspaceEnvironmentFile]
   : []
+const environmentFileVariableNames = await readEnvironmentVariableNames(workspaceEnvironmentFile)
 const apiWatchTimeoutMs = 5 * 60 * 1000
 const sdkWatchTimeoutMs = 60 * 1000
 const schemaRefreshTimeoutMs = 5 * 60 * 1000
@@ -42,6 +54,23 @@ const trustedExecutableCandidates = {
 }
 
 const delay = milliseconds => new Promise(resolveDelay => setTimeout(resolveDelay, milliseconds))
+
+async function readEnvironmentVariableNames(file) {
+  let contents
+  try {
+    contents = await readFile(file, 'utf8')
+  } catch (error) {
+    if (error.code === 'ENOENT') return []
+    throw error
+  }
+
+  const names = []
+  for (const line of contents.split('\n')) {
+    const match = /^\s*(?:export\s+)?([A-Za-z_][A-Za-z0-9_]*)\s*=/.exec(line)
+    if (match) names.push(match[1])
+  }
+  return names
+}
 
 function trustedInvocation(command, args) {
   if (command === 'pnpm') {
@@ -117,32 +146,34 @@ function processIsAlive(pid) {
 }
 
 async function acquireLock() {
-  try {
-    const handle = await open(lockFile, 'wx')
-    await handle.writeFile(JSON.stringify({ pid: process.pid, root }))
-    await handle.close()
-    return
-  } catch (error) {
-    if (error.code !== 'EEXIST') throw error
+  for (let attempt = 0; attempt < 3; attempt += 1) {
+    try {
+      const handle = await open(lockFile, 'wx')
+      await handle.writeFile(JSON.stringify({ pid: process.pid, root }))
+      await handle.close()
+      return
+    } catch (error) {
+      if (error.code !== 'EEXIST') throw error
+    }
+
+    let owner
+    try {
+      owner = JSON.parse(await readFile(lockFile, 'utf8'))
+    } catch {
+      owner = undefined
+    }
+
+    if (owner?.pid && processIsAlive(owner.pid)) {
+      throw new Error(`db-update is already running for this workspace (PID ${owner.pid}).`)
+    }
+
+    await unlink(lockFile).catch(error => {
+      if (error.code !== 'ENOENT') throw error
+    })
+    await delay(25)
   }
 
-  let owner
-  try {
-    owner = JSON.parse(await readFile(lockFile, 'utf8'))
-  } catch {
-    owner = undefined
-  }
-
-  if (owner?.pid && processIsAlive(owner.pid)) {
-    throw new Error(`db-update is already running for this workspace (PID ${owner.pid}).`)
-  }
-
-  await unlink(lockFile).catch(error => {
-    if (error.code !== 'ENOENT') throw error
-  })
-  const handle = await open(lockFile, 'wx')
-  await handle.writeFile(JSON.stringify({ pid: process.pid, root }))
-  await handle.close()
+  throw new Error('Could not acquire the db-update workspace lock after stale-lock recovery.')
 }
 
 async function processCwd(pid) {
@@ -285,29 +316,19 @@ function reservePort() {
 }
 
 function scrubExternalCredentials(env) {
-  const names = [
-    'AWS_ACCESS_KEY_ID',
-    'AWS_SECRET_ACCESS_KEY',
-    'DIGITALOCEAN_API_TOKEN',
-    'DO_API_TOKEN',
-    'DO_SSH_KEY_IDS',
-    'GITHUB_TOKEN',
-    'MAILGUN_API_KEY',
-    'POSTMARK_SERVER_TOKEN',
-    'RESEND_API_KEY',
-    'SENDGRID_API_KEY',
-    'STRIPE_SECRET_KEY',
-    'STRIPE_WEBHOOK_SECRET',
-    'WORKER_DROPLET_ID',
-    'WORKER_IP',
-    'WORKER_SSH_PRIVATE_KEY',
-  ]
-  for (const name of names) env[name] = ''
+  const credentialName =
+    /(?:^|_)(?:ACCESS_KEY|API_KEY|AUTH_TOKEN|CLIENT_SECRET|CREDENTIALS|PASS|PASSWORD|PRIVATE_KEY|SECRET|SECRET_KEY|TOKEN|WEBHOOK_SECRET)(?:_|$)/
+  const names = new Set([...Object.keys(env), ...environmentFileVariableNames])
+  for (const name of names) {
+    if (credentialName.test(name)) env[name] = 'db-update-disabled'
+  }
+  if (names.has('CLOUDINARY_URL')) env.CLOUDINARY_URL = 'cloudinary://db-update:disabled@local'
 }
 
 function safeApiEnvironment({ databaseUrl, redisPort, apiPort }) {
-  const env = {
-    ...process.env,
+  const env = { ...process.env }
+  scrubExternalCredentials(env)
+  Object.assign(env, {
     DATABASE_URL: databaseUrl,
     DIRECT_URL: databaseUrl,
     TEST_DATABASE_URL: databaseUrl,
@@ -316,15 +337,18 @@ function safeApiEnvironment({ databaseUrl, redisPort, apiPort }) {
     HOST: '127.0.0.1',
     PORT: String(apiPort),
     NODE_ENV: 'test',
-    DB_UPDATE_SCHEMA_REFRESH: 'true',
     ENABLE_ATTENDANCE_NOTIFICATIONS: 'false',
     ENABLE_RENEWAL_NOTIFICATIONS: 'false',
+    EMAIL_PROVIDER: 'mock',
+    STORAGE_PROVIDER: 'local',
     JWT_SECRET: 'db-update-local-schema-refresh-only-000000000000000000000000',
     SECRET_ENCRYPTION_KEY: '0000000000000000000000000000000000000000000000000000000000000000',
     PREVIEW_WAKE_SECRET: 'db-update-local-schema-refresh-only',
     SMTP_HOST: '127.0.0.1',
-  }
-  scrubExternalCredentials(env)
+    SMTP_PORT: '2525',
+    SMTP_USER: 'db-update',
+    SMTP_PASS: 'db-update',
+  })
   return env
 }
 
@@ -378,7 +402,7 @@ async function refreshWithIsolatedApi() {
     const redisPort = publishedPort(redisContainer, 6379)
     databaseName = `db_update_${process.pid}_${Date.now()}`
     run('docker', ['exec', postgresContainer, 'createdb', '-U', 'prisma', databaseName])
-    spawnToolSync(
+    const vectorResult = spawnToolSync(
       'docker',
       [
         'exec',
@@ -391,15 +415,22 @@ async function refreshWithIsolatedApi() {
         '-c',
         'CREATE EXTENSION IF NOT EXISTS vector',
       ],
-      { stdio: 'ignore' },
+      { encoding: 'utf8', stdio: 'pipe' },
     )
+    if (vectorResult.error) throw vectorResult.error
+    if (vectorResult.status !== 0) {
+      const detail = (vectorResult.stderr || vectorResult.stdout).trim()
+      console.warn(
+        `Optional pgvector extension is unavailable; continuing without it.${detail ? `\n${detail}` : ''}`,
+      )
+    }
 
     const databaseUrl = `postgresql://prisma:prisma@127.0.0.1:${postgresPort}/${databaseName}`
     const apiPort = await reservePort()
     const env = safeApiEnvironment({ databaseUrl, redisPort, apiPort })
 
     console.log('Preparing a disposable local database for schema generation.')
-    run('pnpm', ['exec', 'prisma', 'db', 'push'], { env })
+    run('pnpm', ['exec', 'prisma', 'db', 'push', `--schema=${prismaSchemaFile}`], { env })
     run('pnpm', ['nx', 'build', 'api', '--configuration=development'], {
       env: { ...env, NX_DAEMON: 'false' },
     })
