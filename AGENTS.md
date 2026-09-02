@@ -389,6 +389,31 @@ export default [
 ] satisfies RouteConfig
 ```
 
+## Schema Annotations: Calendar Dates vs Timestamps
+
+PostgreSQL-backed Prisma models have no date-only scalar — every temporal column is `DateTime`, so
+a birth date and a login timestamp are indistinguishable by type. Mark the columns that are
+conceptually a calendar day:
+
+```prisma
+/// @dateOnly
+birthDate DateTime?
+```
+
+The crud generator already copies a field's doc comment into `DatabaseField.documentation`, so the
+annotation reaches the client with no generator change. `isDateOnlyField` in
+`libs/data-browser/src/lib/utils/graphql-utils.ts` and in `libs/shared/utils/src/lib/table-utils.ts`
+is the only supported way to ask the question.
+
+- **A calendar day** is stored at midnight UTC and must be read, rendered, and submitted on the
+  **UTC** calendar. Reading it locally moves it to the previous day west of UTC.
+- **A timestamp** marks an instant and must be rendered and edited in **local** time.
+
+**Never infer this from the field's name.** `fieldName.includes('date')` matches `mandateNotes`,
+`validateStatus`, and `candidateName` while missing `createdAt` — and it matches `updatedAt`, so
+the two halves of the same audit pair behave differently. Un-annotated `DateTime` fields are
+treated as timestamps, which is the truthful reading of the Prisma type.
+
 ## Code Generation Workflow
 
 After making changes to the Prisma schema:

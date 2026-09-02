@@ -52,3 +52,35 @@ export function toUtcMidnightIso(value: Date | string): string {
   // Fallback
   return new Date().toISOString()
 }
+
+/**
+ * Strict ISO-8601 datetime detector.
+ *
+ * Used to decide whether an unknown table value is a timestamp WITHOUT consulting the field's
+ * name. Name-based detection (`fieldName.includes('date')`) matched unrelated columns such as
+ * `mandateNotes` or `validateStatus` and fed their text to a date formatter, which rendered
+ * `Invalid Date` into the cell. Anchored with no nested quantifiers so malformed input cannot
+ * cause backtracking.
+ */
+export function isIsoDateTimeString(value: unknown): value is string {
+  if (typeof value !== 'string') return false
+  if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2})?(\.\d+)?(Z|[+-]\d{2}:\d{2})?$/.test(value)) {
+    return false
+  }
+  return !Number.isNaN(new Date(value).getTime())
+}
+
+/**
+ * Format a Date or ISO string as a human-friendly long date and time (e.g.
+ * "December 25, 2024 3:30 PM") in the VIEWER'S LOCAL zone.
+ *
+ * This is the counterpart to `formatUtcLongDate`. A true timestamp marks an instant, so it must
+ * be localized; a calendar date has no time to localize and must not be. Choosing between them
+ * by field name is what this pair exists to replace -- see `isDateOnlyField` in `table-utils`.
+ */
+export function formatLocalLongDateTime(value: Date | string | number | null | undefined): string {
+  if (!value) return ''
+  const d = typeof value === 'string' || typeof value === 'number' ? new Date(value) : value
+  if (!(d instanceof Date) || Number.isNaN(d.getTime())) return ''
+  return dayjs(d).format('MMMM D, YYYY h:mm A')
+}
