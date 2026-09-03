@@ -17,6 +17,7 @@
     "index.js",
     "index.d.ts",
     "lib/**/*",
+    "shared/**/*",
     "README.md"
   ],
   "keywords": [

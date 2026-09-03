@@ -13,8 +13,21 @@ import {
   formatFieldName,
   getNestedProperty,
   renderValue,
-  type DateFieldMeta,
 } from '@nestled-template/shared/utils'
+
+/**
+ * Declared locally rather than imported from shared/utils, so the emitted declaration stays
+ * inside the published package. Importing the type made `data-table.d.ts` reference
+ * `../../../shared/utils/src/index.ts`, a path that does not exist for an npm consumer.
+ *
+ * It is structural and intentionally duplicated: the canonical `DateFieldMeta` is itself
+ * declared structurally, precisely so it can be restated across a package boundary without
+ * coupling this package to the generated SDK types.
+ */
+export interface DateFieldMeta {
+  readonly type?: string
+  readonly documentation?: string
+}
 
 // Inlined type from CorePaging
 export interface Paging {
