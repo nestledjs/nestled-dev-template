@@ -1,0 +1,90 @@
+id: 2026-09-15-railway-predeploy-migrations
+title: Production schema changes are Prisma migrations applied by a Railway pre-deploy command
+priority: high
+area: database
+type: infra
+delivery: code-patch
+
+intent: >
+  Every deploy applies committed Prisma migrations before the new container serves traffic, and
+  schema changes are authored as migrations rather than pushed.
+
+  The template now ships railway.json with a deploy.preDeployCommand that runs
+  `pnpm prisma:deploy` (`prisma migrate deploy`) when DIRECT_URL or DATABASE_URL is set and
+  skips otherwise, so the same file is safe for the web service. The api service additionally
+  carries a Railway health check on /api/uptime, set in the dashboard, so a container that fails
+  to boot never replaces the running one.
+
+  The template carries its first migration, libs/api/prisma/src/lib/migrations/0_init, generated
+  from the schema, plus migration_lock.toml. Package scripts change to match: prisma:apply now
+  runs `prisma migrate deploy` instead of `db push`, prisma:migrate (`prisma migrate dev`) is the
+  authoring command, prisma:deploy is the production command, and prisma:db-push remains only for
+  throwaway prototyping. AGENTS.md documents the contract under "Production Migrations".
+
+why: >
+  Half the fleet migrated on deploy and half did not, and nothing in the template said which was
+  intended. Projects that stayed on db push had production databases with no migration history
+  at all, so a schema change either reached production by someone running db push against it by
+  hand or did not reach it. Projects that did migrate on deploy did so three different ways: a
+  Railway pre-deploy command set only in the dashboard, a start command that runs migrate
+  before node, or railway.json. A dashboard-only setting vanishes when the service is recreated;
+  a start-command migration crashes the new container on failure and, without a health check,
+  takes the old one down with it.
+
+  Railway's pre-deploy command is the safest of the three: it runs once, to completion, and a
+  failure leaves the previous deployment serving. Putting it in railway.json makes it versioned
+  and identical across every project cloned from the template. This template is opinionated
+  toward Railway; a project on another host replaces this one file.
+
+affectedPaths:
+  - railway.json
+  - package.json
+  - libs/api/prisma/src/lib/migrations/0_init/migration.sql
+  - libs/api/prisma/src/lib/migrations/migration_lock.toml
+  - AGENTS.md
+
+skipIf:
+  - >
+    The project already commits Prisma migrations and applies them from a Railway pre-deploy
+    command defined in railway.json. If the pre-deploy command exists only in the Railway
+    dashboard, do not skip: move it into railway.json so it survives a service rebuild.
+
+verification:
+  - "test -f railway.json && grep -q preDeployCommand railway.json"
+  - "pnpm prisma migrate status"
+  - "Railway deploy log for the api service shows `prisma migrate deploy` running before start"
+
+agentHints:
+  - >
+    Do not copy the template's 0_init migration into a project that already has migrations. It
+    is the template's baseline, not the project's. Keep the project's own history.
+  - >
+    A project that has no migrations folder and whose production database was built with
+    `db push` must be baselined before railway.json lands, or the first pre-deploy will try to
+    recreate tables that already exist and fail the deploy. First confirm the live database
+    matches the schema: `prisma migrate diff --from-config-datasource --to-schema
+    libs/api/prisma/src/lib/schemas --script --exit-code` with DIRECT_URL pointed at production
+    must exit 0. Then generate the baseline with `prisma migrate diff --from-empty --to-schema
+    libs/api/prisma/src/lib/schemas --script > libs/api/prisma/src/lib/migrations/0_init/migration.sql`,
+    commit it, and record it as applied on production with `prisma migrate resolve --applied
+    0_init` before pushing the railway.json commit. Repeat the resolve for every other
+    long-lived environment (staging) of that project.
+  - >
+    package.json is not mirrored by template promotion. Apply the script changes by hand:
+    prisma:apply -> `pnpm prisma:format && pnpm prisma migrate deploy`; add
+    prisma:deploy -> `prisma migrate deploy` and prisma:migrate -> `prisma migrate dev`.
+    prisma.config.ts already supplies the schema and migrations paths and prefers DIRECT_URL,
+    so none of these need --schema.
+  - >
+    If the project's start command currently runs `prisma migrate deploy` before node, remove
+    that once railway.json is in place so migrations run exactly once per deploy, in the
+    pre-deploy step. Keep any post-migration step the project relies on (for example an
+    ensure-indexes script) by running it in the same pre-deploy command after migrate deploy.
+  - >
+    railway.json applies to every service built from the repo. The DIRECT_URL/DATABASE_URL
+    guard is what keeps the web service out of it; confirm the web service defines neither
+    variable before merging.
+  - >
+    Add the api service's health check in the Railway dashboard (path /api/uptime, timeout 300).
+    It is a per-service setting and must not go into railway.json, where it would apply to web
+    as well and fail every web deploy.
