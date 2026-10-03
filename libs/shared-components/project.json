@@ -1,0 +1,49 @@
+{
+  "name": "shared-components",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/shared-components/src",
+  "projectType": "library",
+  "tags": ["publishable"],
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "outputs": ["{workspaceRoot}/dist/libs/shared-components"],
+      "options": {
+        "commands": [
+          "NODE_ENV=production vite build --mode production",
+          "cp README.md ../../dist/libs/shared-components/",
+          "cp LICENSE ../../dist/libs/shared-components/",
+          "cp package.json ../../dist/libs/shared-components/"
+        ],
+        "cwd": "libs/shared-components",
+        "parallel": false
+      }
+    },
+    "publish": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["build"],
+      "options": {
+        "command": "npm publish dist/libs/shared-components --access public"
+      }
+    },
+    "version": {
+      "executor": "@jscutlery/semver:version",
+      "options": {
+        "preset": "conventional"
+      }
+    },
+    "nx-release-publish": {
+      "options": {
+        "packageRoot": "dist/{projectRoot}"
+      }
+    },
+    "test": {
+      "executor": "@nx/vitest:test",
+      "outputs": ["{workspaceRoot}/coverage/libs/shared-components"],
+      "options": {
+        "configFile": "libs/shared-components/vitest.config.mts",
+        "reportsDirectory": "libs/shared-components/../../coverage/libs/shared-components"
+      }
+    }
+  }
+}

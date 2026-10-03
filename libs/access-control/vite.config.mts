@@ -1,0 +1,91 @@
+/// <reference types='vitest' />
+import { defineConfig, type Plugin } from 'vite'
+import react from '@vitejs/plugin-react'
+import dts from 'vite-plugin-dts'
+import * as path from 'path'
+import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin'
+import { nxCopyAssetsPlugin } from '@nx/vite/plugins/nx-copy-assets.plugin'
+import { attachExtractedCssImport } from './build-css-import.mts'
+
+function retainExtractedCssImport(): Plugin {
+  return {
+    name: 'retain-extracted-css-import',
+    enforce: 'post',
+    generateBundle(_options, bundle) {
+      attachExtractedCssImport(bundle)
+    },
+  }
+}
+
+function rejectDevelopmentJsx(): Plugin {
+  return {
+    name: 'reject-development-jsx',
+    generateBundle(_options, bundle) {
+      for (const output of Object.values(bundle)) {
+        if (output.type === 'chunk' && output.code.includes('jsxDEV')) {
+          this.error('The access-control package must not contain the development JSX runtime.')
+        }
+      }
+    },
+  }
+}
+
+export default defineConfig(() => ({
+  root: import.meta.dirname,
+  cacheDir: '../../node_modules/.vite/libs/access-control',
+  plugins: [
+    react({ jsxRuntime: 'automatic' }),
+    rejectDevelopmentJsx(),
+    retainExtractedCssImport(),
+    nxViteTsPaths(),
+    nxCopyAssetsPlugin(['*.md', 'LICENSE']),
+    dts({
+      entryRoot: 'src',
+      tsconfigPath: path.join(import.meta.dirname, 'tsconfig.lib.json'),
+      pathsToAliases: false,
+    }),
+  ],
+  // Uncomment this if you are using workers.
+  // worker: {
+  //   plugins: () => [ nxViteTsPaths() ],
+  // },
+  // Configuration for building your library.
+  // See: https://vite.dev/guide/build.html#library-mode
+  build: {
+    outDir: '../../dist/libs/access-control',
+    emptyOutDir: true,
+    reportCompressedSize: true,
+    commonjsOptions: {
+      transformMixedEsModules: true,
+    },
+    lib: {
+      // Could also be a dictionary or array of multiple entry points.
+      entry: 'src/index.ts',
+      name: 'access-control',
+      fileName: 'index',
+      cssFileName: 'index',
+      // Change this to the formats you want to support.
+      // Don't forget to update your package.json as well.
+      formats: ['es' as const],
+    },
+    rollupOptions: {
+      // External packages that should not be bundled into your library.
+      external: ['react', 'react-dom', 'react/jsx-runtime', 'react/jsx-dev-runtime'],
+    },
+  },
+  test: {
+    name: 'access-control',
+    watch: false,
+    globals: true,
+    environment: 'jsdom',
+    include: [
+      'vite.config.spec.mts',
+      '{src,tests}/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}',
+    ],
+    reporters: ['default'],
+    coverage: {
+      reportsDirectory: '../../coverage/libs/access-control',
+      provider: 'v8' as const,
+    },
+  },
+}))

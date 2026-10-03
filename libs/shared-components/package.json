@@ -1,0 +1,51 @@
+{
+  "name": "@nestledjs/shared-components",
+  "version": "1.0.17",
+  "description": "Reusable React components for Nestled framework projects including DataTable and ErrorBoundary",
+  "main": "./index.js",
+  "module": "./index.js",
+  "types": "./index.d.ts",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "import": "./index.js",
+      "default": "./index.js"
+    }
+  },
+  "files": [
+    "index.js",
+    "index.d.ts",
+    "lib/**/*",
+    "shared/**/*",
+    "README.md"
+  ],
+  "keywords": [
+    "nestled",
+    "react",
+    "components",
+    "data-table",
+    "error-boundary",
+    "typescript"
+  ],
+  "author": "Nestled Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nestledjs/nestled_template.git",
+    "directory": "libs/shared-components"
+  },
+  "peerDependencies": {
+    "@heroicons/react": "^2.0.0",
+    "react": "^18.0.0 || ^19.0.0",
+    "react-router": "^7.0.0"
+  },
+  "dependencies": {
+    "dayjs": "^1.11.21",
+    "json5": "^2.2.3"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  }
+}

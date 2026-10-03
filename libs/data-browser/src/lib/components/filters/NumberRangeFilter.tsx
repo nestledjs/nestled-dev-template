@@ -1,0 +1,116 @@
+import { formatFieldName } from '../../utils/string-utils'
+import { filterControlClasses, filterHelpTextClasses, filterLabelClasses } from './filter-styles'
+
+interface NumberRangeFilterProps {
+  fieldName: string
+  fieldType: string
+  currentValue: any
+  onChange: (value: any) => void
+}
+
+export function NumberRangeFilter({
+  fieldName,
+  fieldType,
+  currentValue,
+  onChange,
+}: Readonly<NumberRangeFilterProps>) {
+  // Parse current value if it's a range object
+  const minValue = currentValue?.gte === undefined ? '' : currentValue.gte.toString()
+  const maxValue = currentValue?.lte === undefined ? '' : currentValue.lte.toString()
+
+  const parseNumber = (value: string) => {
+    if (!value) return undefined
+
+    // Parse based on field type
+    if (fieldType === 'int' || fieldType === 'bigint') {
+      const parsed = Number.parseInt(value, 10)
+      return Number.isNaN(parsed) ? undefined : parsed
+    } else if (fieldType === 'float' || fieldType === 'decimal') {
+      const parsed = Number.parseFloat(value)
+      return Number.isNaN(parsed) ? undefined : parsed
+    }
+    return undefined
+  }
+
+  const handleMinChange = (value: string) => {
+    const newValue = { ...currentValue }
+    const parsedValue = parseNumber(value)
+
+    if (parsedValue === undefined) {
+      delete newValue.gte
+    } else {
+      newValue.gte = parsedValue
+    }
+
+    // If no min or max value, clear the filter entirely
+    if (newValue.gte === undefined && newValue.lte === undefined) {
+      onChange(undefined)
+    } else {
+      onChange(newValue)
+    }
+  }
+
+  const handleMaxChange = (value: string) => {
+    const newValue = { ...currentValue }
+    const parsedValue = parseNumber(value)
+
+    if (parsedValue === undefined) {
+      delete newValue.lte
+    } else {
+      newValue.lte = parsedValue
+    }
+
+    // If no min or max value, clear the filter entirely
+    if (newValue.gte === undefined && newValue.lte === undefined) {
+      onChange(undefined)
+    } else {
+      onChange(newValue)
+    }
+  }
+
+  // Determine input step based on field type
+  const step = fieldType === 'int' || fieldType === 'bigint' ? '1' : 'any'
+
+  return (
+    <div className="space-y-1">
+      <label className={filterLabelClasses}>{formatFieldName(fieldName)}</label>
+      <div className="grid grid-cols-2 gap-2">
+        <div>
+          <label htmlFor={`${fieldName}-min`} className={`${filterHelpTextClasses} block mb-1`}>
+            Min
+          </label>
+          <input
+            id={`${fieldName}-min`}
+            type="number"
+            step={step}
+            value={minValue}
+            onChange={e => handleMinChange(e.target.value)}
+            placeholder="No minimum"
+            className={filterControlClasses}
+          />
+        </div>
+        <div>
+          <label htmlFor={`${fieldName}-max`} className={`${filterHelpTextClasses} block mb-1`}>
+            Max
+          </label>
+          <input
+            id={`${fieldName}-max`}
+            type="number"
+            step={step}
+            value={maxValue}
+            onChange={e => handleMaxChange(e.target.value)}
+            placeholder="No maximum"
+            className={filterControlClasses}
+          />
+        </div>
+      </div>
+      {(minValue || maxValue) && (
+        <div className={filterHelpTextClasses}>
+          {minValue && maxValue && `${minValue} to ${maxValue}`}
+          {minValue && !maxValue && `≥ ${minValue}`}
+          {!minValue && maxValue && `≤ ${maxValue}`}
+        </div>
+      )}
+    </div>
+  )
+}

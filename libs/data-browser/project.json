@@ -1,0 +1,49 @@
+{
+  "name": "data-browser",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/data-browser/src",
+  "projectType": "library",
+  "tags": ["publishable"],
+  "targets": {
+    "test": {
+      "executor": "@nx/vitest:test",
+      "outputs": ["{workspaceRoot}/coverage/libs/data-browser"],
+      "options": {
+        "passWithNoTests": false,
+        "reportsDirectory": "{projectRoot}/../../coverage/libs/data-browser",
+        "configFile": "libs/data-browser/vitest.config.mts"
+      }
+    },
+    "build": {
+      "executor": "nx:run-commands",
+      "outputs": ["{workspaceRoot}/dist/libs/data-browser"],
+      "options": {
+        "commands": [
+          "NODE_ENV=production vite build --mode production",
+          "cp README.md ../../dist/libs/data-browser/",
+          "cp package.json ../../dist/libs/data-browser/"
+        ],
+        "cwd": "libs/data-browser",
+        "parallel": false
+      }
+    },
+    "publish": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["build"],
+      "options": {
+        "command": "npm publish dist/libs/data-browser --access public"
+      }
+    },
+    "version": {
+      "executor": "@jscutlery/semver:version",
+      "options": {
+        "preset": "conventional"
+      }
+    },
+    "nx-release-publish": {
+      "options": {
+        "packageRoot": "dist/{projectRoot}"
+      }
+    }
+  }
+}
