@@ -23,25 +23,26 @@ export class SecurityEventsService {
     eventType: SecurityEventType,
     context?: SecurityEventContext,
   ): Promise<void> {
-    try {
-      // Use setImmediate to make this async and non-blocking
-      setImmediate(async () => {
-        await this.data.securityEvent.create({
-          data: {
-            userId,
-            eventType,
-            ipAddress: context?.ipAddress,
-            userAgent: context?.userAgent,
-            metadata: context?.metadata || {},
-          },
-        })
-      })
-
-      this.logger.log(`Security event logged: ${eventType} for user ${userId}`)
-    } catch (error) {
-      // Log error but don't throw - security logging should not break app flow
-      this.logger.error(`Failed to log security event: ${eventType}`, error)
-    }
+    // Use setImmediate to make this async and non-blocking. The write's failure is caught INSIDE
+    // the callback: by the time it runs this method has returned, so a try/catch around the
+    // scheduling cannot see it, and an uncaught rejection there would be an unhandled rejection
+    // that can bring the process down. Security logging must never break the app flow.
+    setImmediate(() => {
+      Promise.resolve()
+        .then(() =>
+          this.data.securityEvent.create({
+            data: {
+              userId,
+              eventType,
+              ipAddress: context?.ipAddress,
+              userAgent: context?.userAgent,
+              metadata: context?.metadata || {},
+            },
+          }),
+        )
+        .then(() => this.logger.log(`Security event logged: ${eventType} for user ${userId}`))
+        .catch(error => this.logger.error(`Failed to log security event: ${eventType}`, error))
+    })
   }
 
   /**
