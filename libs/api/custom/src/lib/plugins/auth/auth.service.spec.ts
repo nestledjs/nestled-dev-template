@@ -2208,6 +2208,41 @@ describe('AuthService', () => {
       )
     })
   })
+  describe('verifyToken', () => {
+    // A real JwtService, so the expiry and signature checks themselves are exercised, not a mock.
+    const signer = new JwtService({ secret: 'test-secret' })
+    const otherSigner = new JwtService({ secret: 'another-secret' })
+    const nowSeconds = () => Math.floor(Date.now() / 1000)
+
+    beforeEach(() => {
+      mockJwtService.verify.mockImplementation((token: string, options?: any) =>
+        signer.verify(token, options),
+      )
+    })
+
+    it('returns the claims of a valid token', () => {
+      const token = signer.sign({ userId: 'user-1', sessionId: 'session-1' })
+      expect(service.verifyToken(token)).toMatchObject({ userId: 'user-1', sessionId: 'session-1' })
+    })
+
+    it('refuses an expired token by default and accepts it only when asked to', () => {
+      const expired = signer.sign({
+        userId: 'user-1',
+        sessionId: 'session-1',
+        exp: nowSeconds() - 60,
+      })
+      expect(service.verifyToken(expired)).toBeNull()
+      expect(service.verifyToken(expired, { ignoreExpiration: true })).toMatchObject({
+        sessionId: 'session-1',
+      })
+    })
+
+    it('refuses a token signed with another secret in both modes', () => {
+      const forged = otherSigner.sign({ userId: 'user-1', sessionId: 'session-1' })
+      expect(service.verifyToken(forged)).toBeNull()
+      expect(service.verifyToken(forged, { ignoreExpiration: true })).toBeNull()
+    })
+  })
   describe('User Data Export', () => {
     it('should export user data', async () => {
       const userId = 'user-123'

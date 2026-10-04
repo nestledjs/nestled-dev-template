@@ -6,38 +6,25 @@ type: security
 delivery: code-patch
 
 intent: >
-  `AuthService.decodeToken()` is replaced by `verifyToken(token, { ignoreExpiration? })`, which
-  returns the claims only when the signature verifies against JWT_SECRET (null otherwise). Every
-  caller that acted on a token's claims now uses it:
+  Authentication hardening. `AuthService.decodeToken()` is replaced by
+  `verifyToken(token, { ignoreExpiration? })`, which returns a token's claims only when its
+  signature verifies (null otherwise), and every place that acted on claims read from a token now
+  uses it:
 
-  1. Logout (`AuthResolver.logout`, a public mutation) reads `{ sessionId, userId }` from the token
-  with `verifyToken(token, { ignoreExpiration: true })`: an expired but genuine token can still end
-  its own session; a token that does not verify ends nothing. `AuthService.logout(sessionId, userId)`
-  now looks the session up first and invalidates it, and records LOGOUT, only when the session
-  belongs to that user. A failed lookup propagates (the resolver still clears the cookie in its
-  `finally`) instead of invalidating an unchecked session.
+  1. `AuthResolver.logout` reads `{ sessionId, userId }` with `verifyToken(token, { ignoreExpiration:
+  true })`, so an expired but genuine token can still end its own session. `AuthService.logout`
+  now takes `(sessionId, userId)` and invalidates the session, and records LOGOUT, only when the
+  session belongs to that user. A failed lookup propagates; the resolver still clears the cookie.
 
-  2. `AuthService.endEmulation(token)` verifies the cookie token (expiry enforced) before reading
-  `originalAdminId`; an unverifiable token is "Not currently emulating a user".
+  2. `AuthService.endEmulation(token)` verifies the token (expiry enforced) before reading it.
 
-  3. The resolver's current-session lookups for `changePassword` and `getUserSessions` read the
-  session id from a verified token.
+  3. The resolver's current-session lookups (`changePassword`, `getUserSessions`) read the session
+  id from a verified token.
 
 why: >
-  `jwtService.decode()` checks neither signature nor expiry, so a token's claims are whatever the
-  client wrote. Logout is public: a forged token naming another user's session id ended that
-  session, and since the audit-records release also wrote a LOGOUT row in that user's name.
-  Session ids are random UUIDs, which limits this to someone who has learned one.
-
-  `endEmulation` sits behind the auth guard, but the guard authenticates from the Authorization
-  header first while `endEmulation` re-read the cookie and only decoded it. A caller holding a
-  genuine emulation token in the header could put a forged token in the cookie naming any admin as
-  `originalAdminId` and be issued that admin's session. Only someone already holding an emulation
-  token (an admin with emulation rights) can reach this, so the exposure is escalation between
-  admins rather than from outside.
-
-  `getUserFromToken` still uses `decode()`: it only ever receives a token this server signed in the
-  same response (the `UserToken.user` field), so there is nothing to verify.
+  Claims read with `jwtService.decode()` are not checked for signature or expiry, so they must not
+  decide which session, user or admin an operation acts on. Apply this release promptly; details
+  will be published in a security advisory after the fleet has updated.
 
 affectedPaths:
   - libs/api/custom/src/lib/plugins/auth/auth.service.ts
