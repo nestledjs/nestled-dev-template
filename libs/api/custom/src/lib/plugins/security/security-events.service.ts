@@ -74,6 +74,17 @@ export class SecurityEventsService {
   }
 
   /**
+   * Log an unauthenticated request for a fresh verification email on this account. The account is
+   * the subject, not the actor: whoever asked only had to know the address.
+   */
+  async logEmailVerificationRequested(
+    userId: string,
+    context?: SecurityEventContext,
+  ): Promise<void> {
+    return this.logEvent(userId, SecurityEventType.EMAIL_VERIFICATION_REQUESTED, context)
+  }
+
+  /**
    * Log suspicious login attempt
    */
   async logSuspiciousLogin(
