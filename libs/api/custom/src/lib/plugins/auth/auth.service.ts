@@ -52,6 +52,7 @@ import {
   hashBackupCode,
 } from './twofa.helper'
 import { PlatformAccessControlService } from '../access-control'
+import { recordAuditLog } from '../../shared/audit-log'
 
 const authUserRelations = {
   emails: true,
@@ -323,6 +324,15 @@ export class AuthService {
         },
       })
 
+      await recordAuditLog(this.data, {
+        actorUserId: user.id,
+        organizationId: organization.id,
+        entityId: user.id,
+        entityType: 'User',
+        action: 'USER_REGISTERED',
+        changes: { organizationId: organization.id, isSuperAdmin: user.isSuperAdmin },
+      })
+
       Logger.log(
         `✓ User registered: ${primaryEmail} (SuperAdmin: ${user.isSuperAdmin}, Org: ${organization.name})`,
       )
@@ -421,6 +431,15 @@ export class AuthService {
           appName,
           expirationHours: 24,
         },
+      })
+
+      await recordAuditLog(this.data, {
+        actorUserId: user.id,
+        organizationId: invite.organizationId,
+        entityId: user.id,
+        entityType: 'User',
+        action: 'USER_REGISTERED_WITH_INVITATION',
+        changes: { inviteId: invite.id, roleId },
       })
 
       Logger.log(
@@ -727,6 +746,16 @@ export class AuthService {
     if (!sent) {
       Logger.warn(`Verification resend requested for non-primary address of user ${user.id}`)
       await this.addBruteForceDelay()
+    } else {
+      // Only once a user is known — an unknown address has nobody to attribute the row to. Audit
+      // writes never throw and the response is the same either way, so this reveals nothing.
+      await recordAuditLog(this.data, {
+        actorUserId: user.id,
+        entityId: user.id,
+        entityType: 'User',
+        action: 'EMAIL_VERIFICATION_RESENT',
+        changes: { source: 'public' },
+      })
     }
     return true
   }
@@ -755,6 +784,13 @@ export class AuthService {
     if (!sent) {
       throw new BadRequestException('Your email address just changed. Please try again.')
     }
+    await recordAuditLog(this.data, {
+      actorUserId: user.id,
+      entityId: user.id,
+      entityType: 'User',
+      action: 'EMAIL_VERIFICATION_RESENT',
+      changes: { source: 'self' },
+    })
     return true
   }
 
@@ -830,6 +866,14 @@ export class AuthService {
           `This account's email records are inconsistent and need manual repair.`,
       )
     }
+
+    await recordAuditLog(this.data, {
+      actorUserId: user.id,
+      entityId: user.id,
+      entityType: 'User',
+      action: 'EMAIL_VERIFIED',
+      changes: { primaryEmailRowsVerified: verifiedEmails.count },
+    })
 
     // Send welcome email after successful verification
     const appName = this.config.get('app.name')
@@ -975,6 +1019,14 @@ export class AuthService {
         throw new NotFoundException('Invalid or already used verification token')
       }
       return user
+    })
+
+    await recordAuditLog(this.data, {
+      actorUserId: userId,
+      entityId: email.id,
+      entityType: 'Email',
+      action: 'EMAIL_CHANGE_VERIFIED',
+      changes: { email: email.email },
     })
 
     Logger.log(`Email change verified for user ${email.userId}: ${email.email}`)
@@ -1384,8 +1436,8 @@ export class AuthService {
     })
   }
 
-  updateMyProfile(userId: string, input: UpdateMyProfileInput): Promise<User> {
-    return this.data.user.update({
+  async updateMyProfile(userId: string, input: UpdateMyProfileInput): Promise<User> {
+    const updated = await this.data.user.update({
       where: { id: userId },
       data: {
         firstName: input.firstName,
@@ -1394,6 +1446,20 @@ export class AuthService {
       },
       include: authUserRelations,
     })
+
+    await recordAuditLog(this.data, {
+      actorUserId: userId,
+      entityId: userId,
+      entityType: 'User',
+      action: 'PROFILE_UPDATED',
+      changes: {
+        ...(input.firstName !== undefined && { firstName: input.firstName }),
+        ...(input.lastName !== undefined && { lastName: input.lastName }),
+        ...(input.displayName !== undefined && { displayName: input.displayName }),
+      },
+    })
+
+    return updated
   }
 
   getUserFromToken(token: string) {
@@ -1525,6 +1591,14 @@ export class AuthService {
         twoFactorSecret: encryptedSecret,
         twoFactorEnabled: false, // Not enabled until verified
       },
+    })
+
+    // Never the secret, QR code or otpauth URL: any of them is the second factor itself.
+    await recordAuditLog(this.data, {
+      actorUserId: userId,
+      entityId: userId,
+      entityType: 'User',
+      action: 'TWO_FACTOR_SETUP_STARTED',
     })
 
     Logger.log(`2FA setup initiated for user ${userId}`)
@@ -1685,6 +1759,7 @@ export class AuthService {
     const isValid = verify2FACode(secret, code, window)
 
     if (isValid) {
+      await this.recordTwoFactorVerification(userId, true, 'totp')
       return true
     }
 
@@ -1713,10 +1788,27 @@ export class AuthService {
 
     if (affected === 1) {
       Logger.log(`Backup code used for 2FA login by user ${userId}`)
+      await this.recordTwoFactorVerification(userId, true, 'backup_code')
       return true
     }
 
+    await this.recordTwoFactorVerification(userId, false)
     return false
+  }
+
+  /** Never records the code itself. */
+  private recordTwoFactorVerification(
+    userId: string,
+    success: boolean,
+    method?: 'totp' | 'backup_code',
+  ): Promise<void> {
+    return recordAuditLog(this.data, {
+      actorUserId: userId,
+      entityId: userId,
+      entityType: 'User',
+      action: success ? 'TWO_FACTOR_CODE_VERIFIED' : 'TWO_FACTOR_CODE_REJECTED',
+      ...(method && { changes: { method } }),
+    })
   }
 
   /**
@@ -1779,6 +1871,14 @@ export class AuthService {
       },
     })
 
+    await recordAuditLog(this.data, {
+      actorUserId: user.id,
+      entityId: user.id,
+      entityType: 'User',
+      action: 'LOGIN_2FA_COMPLETED',
+      changes: { rememberMe },
+    })
+
     Logger.log(`2FA login completed for user ${userId}`)
 
     // Return full session token
@@ -1817,8 +1917,34 @@ export class AuthService {
     }
 
     await this.sessionService.invalidateSession(sessionId)
+    await recordAuditLog(this.data, {
+      actorUserId: userId,
+      entityId: sessionId,
+      entityType: 'UserSession',
+      action: 'SESSION_INVALIDATED',
+    })
     Logger.log(`Session ${sessionId} invalidated by user ${userId}`)
     return true
+  }
+
+  /**
+   * End the session a logout presented. Attributed to the session's owner; a session id that
+   * resolves to no session has nobody to attribute it to, so nothing is recorded.
+   */
+  async logout(sessionId: string): Promise<void> {
+    await this.sessionService.invalidateSession(sessionId)
+    const session = await this.data.userSession.findUnique({
+      where: { id: sessionId },
+      select: { userId: true },
+    })
+    if (session?.userId) {
+      await recordAuditLog(this.data, {
+        actorUserId: session.userId,
+        entityId: sessionId,
+        entityType: 'UserSession',
+        action: 'LOGOUT',
+      })
+    }
   }
 
   /**
@@ -1826,6 +1952,13 @@ export class AuthService {
    */
   async invalidateAllSessions(userId: string, exceptSessionId?: string): Promise<number> {
     const count = await this.sessionService.invalidateAllUserSessions(userId, exceptSessionId)
+    await recordAuditLog(this.data, {
+      actorUserId: userId,
+      entityId: userId,
+      entityType: 'User',
+      action: 'ALL_SESSIONS_INVALIDATED',
+      changes: { count, keptCurrentSession: Boolean(exceptSessionId) },
+    })
     Logger.log(
       `User ${userId} invalidated ${count} sessions` +
         (exceptSessionId ? ` (kept current session)` : ''),
@@ -2022,6 +2155,14 @@ export class AuthService {
       },
     })
 
+    await recordAuditLog(this.data, {
+      actorUserId: userId,
+      entityId: userId,
+      entityType: 'User',
+      action: 'ACCOUNT_DELETED',
+      changes: { softDelete: true },
+    })
+
     Logger.warn(`User account deleted (soft delete): ${userId}`)
 
     return true
@@ -2098,6 +2239,20 @@ export class AuthService {
       this.data.organizationMember.update({
         where: { id: newOwnerMembership.id },
         data: { roleId: ownerRole.id },
+      }),
+      this.data.auditLog.create({
+        data: {
+          userId: currentOwnerId,
+          organizationId,
+          entityId: organizationId,
+          entityType: 'Organization',
+          action: 'ORGANIZATION_OWNERSHIP_TRANSFERRED',
+          changes: {
+            previousOwnerUserId: currentOwnerId,
+            newOwnerUserId,
+            previousOwnerNewRoleId: adminRole.id,
+          },
+        },
       }),
     ])
 

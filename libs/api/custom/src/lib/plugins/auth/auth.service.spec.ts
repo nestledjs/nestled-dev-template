@@ -1560,6 +1560,38 @@ describe('AuthService', () => {
         where: { id: sessionId, userId },
       })
       expect(mockSessionService.invalidateSession).toHaveBeenCalledWith(sessionId)
+      expect(mockData.auditLog.create).toHaveBeenCalledWith({
+        data: expect.objectContaining({
+          userId,
+          entityId: sessionId,
+          entityType: 'UserSession',
+          action: 'SESSION_INVALIDATED',
+        }),
+      })
+    })
+    it('should audit a logout against the session owner', async () => {
+      mockSessionService.invalidateSession.mockResolvedValue(undefined)
+      mockData.userSession.findUnique.mockResolvedValue({ userId: 'user-123' } as any)
+
+      await service.logout('session-1')
+
+      expect(mockSessionService.invalidateSession).toHaveBeenCalledWith('session-1')
+      expect(mockData.auditLog.create).toHaveBeenCalledWith({
+        data: expect.objectContaining({
+          userId: 'user-123',
+          entityId: 'session-1',
+          entityType: 'UserSession',
+          action: 'LOGOUT',
+        }),
+      })
+    })
+    it('should not audit a logout whose session cannot be attributed', async () => {
+      mockSessionService.invalidateSession.mockResolvedValue(undefined)
+      mockData.userSession.findUnique.mockResolvedValue(null)
+
+      await service.logout('session-gone')
+
+      expect(mockData.auditLog.create).not.toHaveBeenCalled()
     })
     it('should invalidate all sessions except current', async () => {
       const userId = 'user-123'
@@ -2208,6 +2240,16 @@ describe('AuthService', () => {
       )
       expect(result).toBe(true)
       expect(mockData.organizationMember.update).toHaveBeenCalledTimes(2)
+      // Written as part of the role-swap transaction, not after it.
+      expect(mockData.auditLog.create).toHaveBeenCalledWith({
+        data: expect.objectContaining({
+          userId: currentOwnerId,
+          organizationId,
+          entityType: 'Organization',
+          action: 'ORGANIZATION_OWNERSHIP_TRANSFERRED',
+          changes: expect.objectContaining({ newOwnerUserId: newOwnerId }),
+        }),
+      })
     })
     it('should reject ownership transfer if current user is not owner', async () => {
       const currentOwnerId = 'user-123'
