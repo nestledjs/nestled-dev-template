@@ -1,12 +1,12 @@
 id: 2026-10-04-sensitive-mutations-write-audit-records
-title: Doctor 0.6.1 (hard-fail checks, --full) and AuditLog rows for every sensitive mutation
+title: Doctor 0.6.2 (hard-fail checks, --full) and AuditLog rows for every sensitive mutation
 priority: normal
 area: auth
 type: security
 delivery: hybrid
 
 intent: >
-  0. `@nestledjs/doctor` moves to 0.6.1. New and stricter checks fail hard: per-mutation
+  0. `@nestledjs/doctor` moves to 0.6.2. New and stricter checks fail hard: per-mutation
   audit-coverage, raw NUL bytes in source, verify-fragments declarations, and repo-declared guards
   (`.nestled-updates/security/declared-guards.json`). `nestled-doctor --full` fails on every review
   finding and is how a repo gets clean once; normal runs then fail only on changed lines.
@@ -21,7 +21,7 @@ intent: >
   `recordAuditLog(data, { actorUserId, organizationId?, entityId, entityType, action, changes? })`.
   It logs and swallows a failed write, so an audit failure never changes a mutation's result.
   The billing sync and checkout/portal/cancel mutations already wrote rows through it; doctor 0.6.0
-  did not recognise the old name and reported them. Doctor 0.6.1 recognises `audit` as any part of
+  did not recognise the old name and reported them. Since 0.6.1 the doctor recognises `audit` as any part of
   an identifier, so the rename is for clarity (the helper is no longer billing-only), not to satisfy
   the check.
 
@@ -71,8 +71,8 @@ affectedPaths:
 
 packageReleases:
   - name: '@nestledjs/doctor'
-    targetVersion: 0.6.1
-    versionRange: 0.6.1
+    targetVersion: 0.6.2
+    versionRange: 0.6.2
 
 skipIf:
   - Never skip the doctor bump. Skip only the AuditLog code changes, and only when the project already writes audit rows for these mutations through its own mechanism and `nestled-doctor --full` passes.
@@ -93,6 +93,13 @@ agentHints:
     follows only `this.method()` and `this.<typed injected field>.method()` calls, up to three deep.
     A project-local audit helper is detected as long as its name contains `audit`/`Audit` and it is
     reached through one of those call shapes. Do not rename helpers to satisfy the check.
+  - >
+    The verifiers no longer pass when they examined nothing. If `pnpm verify:fragments` (or
+    `verify:selects` / `verify:select-coverage`) now exits 1 saying it checked nothing, either the
+    project genuinely has no checkable select constants, in which case declare why in
+    `.nestled-updates/doctor.config.json` (`noCheckableSelects` for fragments, `noSelectFiles` for
+    the select verifiers, each a one-sentence reason), or the search is missing the project's files,
+    in which case set `selectFileSuffixes`. The template declares both.
   - >
     Adopting doctor 0.6.x: run `pnpm exec nestled-doctor --full` once and fix every failure it lists
     (not only audit-coverage), then normal runs fail only on changed lines. Record a mutation in
