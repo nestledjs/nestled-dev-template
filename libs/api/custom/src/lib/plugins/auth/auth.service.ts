@@ -303,6 +303,15 @@ export class AuthService {
         data: { activeOrganizationId: organization.id },
       })
 
+      await recordAuditLog(this.data, {
+        actorUserId: user.id,
+        organizationId: organization.id,
+        entityId: user.id,
+        entityType: 'User',
+        action: 'USER_REGISTERED',
+        changes: { organizationId: organization.id, isSuperAdmin: user.isSuperAdmin },
+      })
+
       // Send verification email
       const validateEmailToken = generateEmailVerificationToken()
       const validateEmailTokenExpires = generateExpireDate()
@@ -322,15 +331,6 @@ export class AuthService {
           appName,
           expirationHours: 24,
         },
-      })
-
-      await recordAuditLog(this.data, {
-        actorUserId: user.id,
-        organizationId: organization.id,
-        entityId: user.id,
-        entityType: 'User',
-        action: 'USER_REGISTERED',
-        changes: { organizationId: organization.id, isSuperAdmin: user.isSuperAdmin },
       })
 
       Logger.log(
@@ -411,6 +411,15 @@ export class AuthService {
         data: { status: 'ACCEPTED' },
       })
 
+      await recordAuditLog(this.data, {
+        actorUserId: user.id,
+        organizationId: invite.organizationId,
+        entityId: user.id,
+        entityType: 'User',
+        action: 'USER_REGISTERED_WITH_INVITATION',
+        changes: { inviteId: invite.id, roleId },
+      })
+
       // Send verification email
       const validateEmailToken = generateEmailVerificationToken()
       const validateEmailTokenExpires = generateExpireDate()
@@ -431,15 +440,6 @@ export class AuthService {
           appName,
           expirationHours: 24,
         },
-      })
-
-      await recordAuditLog(this.data, {
-        actorUserId: user.id,
-        organizationId: invite.organizationId,
-        entityId: user.id,
-        entityType: 'User',
-        action: 'USER_REGISTERED_WITH_INVITATION',
-        changes: { inviteId: invite.id, roleId },
       })
 
       Logger.log(
@@ -646,7 +646,11 @@ export class AuthService {
    * user's PRIMARY address, because redeeming the token verifies whatever is primary. Returns false,
    * sending nothing, when it is not. Callers remain responsible for authorising the send.
    */
-  private async sendVerificationEmail(user: User, email: string): Promise<boolean> {
+  private async sendVerificationEmail(
+    user: User,
+    email: string,
+    source: 'public' | 'self',
+  ): Promise<boolean> {
     const validateEmailToken = generateEmailVerificationToken()
     const validateEmailTokenExpires = generateExpireDate()
     const minted = await this.mintVerificationTokenForPrimary(
@@ -658,6 +662,15 @@ export class AuthService {
     if (!minted) {
       return false
     }
+    // Recorded once the new token is committed, not after delivery: the old link is already dead
+    // whether or not the mail goes out, and sendTemplate rethrows. Never includes the token.
+    await recordAuditLog(this.data, {
+      actorUserId: user.id,
+      entityId: user.id,
+      entityType: 'User',
+      action: 'EMAIL_VERIFICATION_TOKEN_REISSUED',
+      changes: { source },
+    })
     const appName = this.config.get('app.name')
     const siteUrl = this.config.get('siteUrl')
     const verificationUrl = `${siteUrl}/verify-email?token=${validateEmailToken}&type=initial`
@@ -741,21 +754,11 @@ export class AuthService {
     // unknown-address branch.
     let sent = true
     await this.sendWithoutRevealing(async () => {
-      sent = await this.sendVerificationEmail(user, normalizedEmail)
+      sent = await this.sendVerificationEmail(user, normalizedEmail, 'public')
     }, `Verification email to ${normalizedEmail}`)
     if (!sent) {
       Logger.warn(`Verification resend requested for non-primary address of user ${user.id}`)
       await this.addBruteForceDelay()
-    } else {
-      // Only once a user is known — an unknown address has nobody to attribute the row to. Audit
-      // writes never throw and the response is the same either way, so this reveals nothing.
-      await recordAuditLog(this.data, {
-        actorUserId: user.id,
-        entityId: user.id,
-        entityType: 'User',
-        action: 'EMAIL_VERIFICATION_RESENT',
-        changes: { source: 'public' },
-      })
     }
     return true
   }
@@ -780,17 +783,10 @@ export class AuthService {
 
     // False only if the primary changed between the read above and the mint — a concurrent
     // changeEmail(), which has already mailed the new address its own link.
-    const sent = await this.sendVerificationEmail(user, normalizeEmail(primaryEmail))
+    const sent = await this.sendVerificationEmail(user, normalizeEmail(primaryEmail), 'self')
     if (!sent) {
       throw new BadRequestException('Your email address just changed. Please try again.')
     }
-    await recordAuditLog(this.data, {
-      actorUserId: user.id,
-      entityId: user.id,
-      entityType: 'User',
-      action: 'EMAIL_VERIFICATION_RESENT',
-      changes: { source: 'self' },
-    })
     return true
   }
 
@@ -1933,17 +1929,27 @@ export class AuthService {
    */
   async logout(sessionId: string): Promise<void> {
     await this.sessionService.invalidateSession(sessionId)
-    const session = await this.data.userSession.findUnique({
-      where: { id: sessionId },
-      select: { userId: true },
-    })
-    if (session?.userId) {
-      await recordAuditLog(this.data, {
-        actorUserId: session.userId,
-        entityId: sessionId,
-        entityType: 'UserSession',
-        action: 'LOGOUT',
+    // Best-effort like the write itself: a failed attribution lookup must not stop the resolver
+    // from clearing the cookie.
+    try {
+      const session = await this.data.userSession.findUnique({
+        where: { id: sessionId },
+        select: { userId: true },
       })
+      if (session?.userId) {
+        await recordAuditLog(this.data, {
+          actorUserId: session.userId,
+          entityId: sessionId,
+          entityType: 'UserSession',
+          action: 'LOGOUT',
+        })
+      }
+    } catch (error) {
+      Logger.warn(
+        `Failed to attribute logout of session ${sessionId}: ${
+          error instanceof Error ? error.message : 'unknown error'
+        }`,
+      )
     }
   }
 

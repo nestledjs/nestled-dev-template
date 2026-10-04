@@ -27,13 +27,13 @@ intent: >
 
   2. `OrganizationService` records ORGANIZATION_CREATED, ORGANIZATION_DELETED (no organizationId on
   the row, since the organization is gone; entityId identifies it), ORGANIZATION_MEMBER_ADDED,
-  ORGANIZATION_INVITATION_RESENT, ORGANIZATION_INVITATION_ACCEPTED,
+  ORGANIZATION_INVITATION_RENEWED, ORGANIZATION_INVITATION_ACCEPTED,
   ORGANIZATION_INVITATION_DECLINED and ACTIVE_ORGANIZATION_SWITCHED through its existing
   `recordAuditLog`. `transferOrganizationOwnership` writes ORGANIZATION_OWNERSHIP_TRANSFERRED inside
   the role-swap `$transaction`.
 
   3. `AuthService` records USER_REGISTERED, USER_REGISTERED_WITH_INVITATION, PROFILE_UPDATED,
-  EMAIL_VERIFICATION_RESENT (`source: public|self`), EMAIL_VERIFIED, EMAIL_CHANGE_VERIFIED,
+  EMAIL_VERIFICATION_TOKEN_REISSUED (`source: public|self`), EMAIL_VERIFIED, EMAIL_CHANGE_VERIFIED,
   TWO_FACTOR_SETUP_STARTED, TWO_FACTOR_CODE_VERIFIED / TWO_FACTOR_CODE_REJECTED (from
   `verify2FALogin`, with `method: totp|backup_code`), LOGIN_2FA_COMPLETED, SESSION_INVALIDATED,
   ALL_SESSIONS_INVALIDATED, ACCOUNT_DELETED and LOGOUT. `transferOrganizationOwnership` writes
@@ -44,6 +44,11 @@ intent: >
   4. `OAuthService` records OAUTH_ACCOUNT_LINKED and OAUTH_ACCOUNT_UNLINKED with the provider.
 
   No secrets, tokens, codes, passwords, 2FA secrets or URLs are written to `changes`.
+
+  Where a mutation commits state and then sends mail (registration, invitation registration,
+  invitation renewal, verification-token reissue), the row is written after the commit and BEFORE
+  the send: the mailer rethrows, and a failed send must not leave a committed change unrecorded.
+  Logout's owner lookup is best-effort like the write, so it can never stop the cookie being cleared.
 
 why: >
   These mutations change who can sign in, who belongs to an organization, and what an

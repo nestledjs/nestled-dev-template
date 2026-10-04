@@ -1135,6 +1135,14 @@ describe('AuthService', () => {
       mockEmailService.sendTemplate.mockRejectedValue(new Error('connect ECONNREFUSED :1025'))
 
       await expect(service.resendMyVerificationEmail('user-1')).rejects.toThrow(/ECONNREFUSED/)
+      // The new token was committed before the send failed, so the reissue is still recorded.
+      expect(mockData.auditLog.create).toHaveBeenCalledWith({
+        data: expect.objectContaining({
+          userId: 'user-1',
+          action: 'EMAIL_VERIFICATION_TOKEN_REISSUED',
+          changes: { source: 'self' },
+        }),
+      })
     })
 
     it('marks the primary Email row verified alongside the User flag', async () => {
@@ -1592,6 +1600,13 @@ describe('AuthService', () => {
       await service.logout('session-gone')
 
       expect(mockData.auditLog.create).not.toHaveBeenCalled()
+    })
+    it('should still complete a logout when the audit attribution lookup fails', async () => {
+      mockSessionService.invalidateSession.mockResolvedValue(undefined)
+      mockData.userSession.findUnique.mockRejectedValue(new Error('connection reset'))
+
+      await expect(service.logout('session-1')).resolves.toBeUndefined()
+      expect(mockSessionService.invalidateSession).toHaveBeenCalledWith('session-1')
     })
     it('should invalidate all sessions except current', async () => {
       const userId = 'user-123'

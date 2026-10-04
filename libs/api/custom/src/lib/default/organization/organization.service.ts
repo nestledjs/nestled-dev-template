@@ -709,6 +709,20 @@ export class OrganizationService {
       },
     })
 
+    // Recorded when the old link is replaced, not after delivery: sendTemplate rethrows, and a
+    // failed send still leaves the invitation renewed.
+    await this.recordAuditLog({
+      actorUserId: userId,
+      organizationId: invite.organizationId,
+      entityId: invite.id,
+      entityType: 'Invite',
+      action: 'ORGANIZATION_INVITATION_RENEWED',
+      changes: {
+        email: invite.email,
+        expiresAt: expiresAt.toISOString(),
+      },
+    })
+
     // Get inviter details for email
     const inviter = await this.data.user.findUnique({ where: { id: userId } })
 
@@ -729,18 +743,6 @@ export class OrganizationService {
         invitationUrl,
         appName,
         expirationDays: 7,
-      },
-    })
-
-    await this.recordAuditLog({
-      actorUserId: userId,
-      organizationId: invite.organizationId,
-      entityId: invite.id,
-      entityType: 'Invite',
-      action: 'ORGANIZATION_INVITATION_RESENT',
-      changes: {
-        email: invite.email,
-        expiresAt: expiresAt.toISOString(),
       },
     })
 
