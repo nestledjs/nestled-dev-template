@@ -330,6 +330,12 @@ and workflow decisions remain in `custom/default` or `custom/plugins`.
 
 ## CRUD Generation and Security-Sensitive Exceptions
 
+Use `/// @crudReadOnly` on fields whose writes belong to explicit application workflows. With
+generators 3.4.0+, they remain readable and filterable but are omitted from generated create/update
+inputs and admin editors. Relation annotations also protect the foreign key and inverse write
+aliases. `@graphqlOmit` remains the rule for fields that must not be readable at all. Neither
+annotation replaces database invariants needed across handwritten and generated write paths.
+
 **DEFAULT PRINCIPLE**: Generate admin CRUD for every normal application model. Do not use
 `@skipCrud` to avoid authorization work, hide incomplete models, or create user-specific behavior.
 Generated CRUD gives super admins a predictable management surface; custom user workflows belong in
