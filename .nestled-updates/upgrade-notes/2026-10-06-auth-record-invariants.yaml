@@ -47,6 +47,8 @@ agentHints:
     when that user has a different active organization. Organization deletion must lock all
     affected User rows in sorted order before deleting memberships. Carry this lock order into
     local handwritten transactions; generated-write retries do not cover application services.
+    Retry the complete organization-deletion transaction on P2034 to refresh its owner snapshot
+    when a membership is inserted or moved concurrently; keep external side effects outside retries.
   - >
     Run the e2e command from the repository root with TEST_DATABASE_URL and REDIS_URL
     pointing to isolated local test services and EMAIL_PROVIDER=mock. Require an actual test

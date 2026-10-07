@@ -11,6 +11,31 @@ const connectionString =
 const primaryId = (user: TestUser) =>
   sql(`SELECT id FROM "Email" WHERE "userId" = :'userId' AND "primary";`, { userId: user.id })
 
+async function waitForAccountLock(owner: pg.Client, writing: Promise<unknown>) {
+  let settled = false
+  void writing.then(
+    () => {
+      settled = true
+    },
+    () => {
+      settled = true
+    },
+  )
+  const deadline = Date.now() + 5000
+  while (Date.now() < deadline) {
+    const result = await owner.query<{ waiting: boolean }>(`
+      SELECT EXISTS (
+        SELECT 1 FROM pg_stat_activity
+        WHERE pg_backend_pid() = ANY(pg_blocking_pids(pid))
+      ) AS waiting
+    `)
+    if (result.rows[0].waiting) return
+    if (settled) throw new Error('The API request finished before waiting for the account lock')
+    await delay(10)
+  }
+  throw new Error('The API request did not reach the account lock')
+}
+
 describe('Concurrent administrative authentication maintenance', () => {
   let admin: TestUser
   beforeAll(async () => {
@@ -204,7 +229,7 @@ describe('Concurrent administrative authentication maintenance', () => {
                     actor,
                     { organizationId },
                   )
-            await delay(150)
+            await waitForAccountLock(owner, writing)
             await owner.query(`SELECT id FROM "OrganizationMember" WHERE id = $1 FOR UPDATE`, [
               membershipId,
             ])
@@ -226,4 +251,46 @@ describe('Concurrent administrative authentication maintenance', () => {
       )
     },
   )
+
+  it('retries organization deletion when a membership arrives after the owner snapshot', async () => {
+    const actor = await TestHelpers.registerUser()
+    const member = await TestHelpers.registerUser()
+    const organizationId = sql(`SELECT "activeOrganizationId" FROM "User" WHERE id = :'id';`, {
+      id: actor.id,
+    })
+    const roleId = sql(
+      `SELECT id FROM "Role" WHERE "organizationId" = :'id' AND name = 'Member';`,
+      { id: organizationId },
+    )
+    const response = await holdingOwner(actor.id, async actorOwner => {
+      const writing = TestHelpers.authenticatedGraphql(
+        `mutation($organizationId: String!) { userDeleteOrganization(organizationId: $organizationId) }`,
+        actor,
+        { organizationId },
+      )
+      // The owner's blocked SELECT has already taken its membership snapshot.
+      await waitForAccountLock(actorOwner, writing)
+      sql(
+        `INSERT INTO "OrganizationMember" (id, "createdAt", "updatedAt", "userId", "organizationId", "roleId")
+         VALUES (:'id', NOW(), NOW(), :'userId', :'organizationId', :'roleId');`,
+        { id: randomUUID(), userId: member.id, organizationId, roleId },
+      )
+      return holdingOwner(member.id, async memberOwner => {
+        await actorOwner.query('COMMIT')
+        // The first attempt rolls back; its retry sees and waits for the new member's account.
+        await waitForAccountLock(memberOwner, writing)
+        await memberOwner.query('COMMIT')
+        return writing
+      })
+    })
+    expect(response.data.errors).toBeUndefined()
+    expect(
+      sql(`SELECT COUNT(*) FROM "Organization" WHERE id = :'id';`, { id: organizationId }),
+    ).toBe('0')
+    expect(
+      sql(`SELECT COUNT(*) FROM "OrganizationMember" WHERE "organizationId" = :'id';`, {
+        id: organizationId,
+      }),
+    ).toBe('0')
+  })
 })

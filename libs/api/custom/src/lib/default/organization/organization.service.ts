@@ -8,7 +8,7 @@ import {
 } from '@nestjs/common'
 import { ApiCoreDataAccessService } from '@nestled-template/api/core/data-access'
 import { Organization, User } from '@nestled-template/api/core/models'
-import { defaultRoles, type InputJsonValue } from '@nestled-template/api/prisma'
+import { defaultRoles, Prisma, type InputJsonValue } from '@nestled-template/api/prisma'
 import {
   AddOrganizationMemberInput,
   RemoveOrganizationMemberInput,
@@ -39,6 +39,27 @@ export class OrganizationService {
     private readonly config: ConfigService,
     @Optional() private readonly authCache?: AuthCacheService,
   ) {}
+
+  private async retryMembershipTransaction<T>(
+    work: (tx: Prisma.TransactionClient) => Promise<T>,
+  ): Promise<T> {
+    for (let attempt = 0; ; attempt++) {
+      try {
+        return await this.data.$transaction(work)
+      } catch (error) {
+        if (
+          attempt >= 5 ||
+          !(error instanceof Prisma.PrismaClientKnownRequestError) ||
+          error.code !== 'P2034'
+        ) {
+          throw error
+        }
+        // Memberships can change after the owner snapshot. Start a fresh transaction so its
+        // owner set is refreshed, and repeat every write only after Prisma rolled it all back.
+        await new Promise(resolve => setTimeout(resolve, 50 * 2 ** attempt + Math.random() * 50))
+      }
+    }
+  }
 
   private async recordAuditLog(input: {
     actorUserId: string
@@ -299,7 +320,7 @@ export class OrganizationService {
     // Manually cascade delete related records before deleting organization
     // This is necessary because the database schema doesn't have cascade deletes configured.
     // One transaction, so a failure part-way leaves no organization with half its records gone.
-    await this.data.$transaction(async tx => {
+    await this.retryMembershipTransaction(async tx => {
       // Take account locks before any membership locks, in the same order as the triggers.
       // Include members with a different active organization and stale active-context owners.
       await tx.$queryRaw`

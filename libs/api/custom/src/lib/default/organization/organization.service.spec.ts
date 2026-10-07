@@ -4,6 +4,7 @@ import { ConfigService } from '@nestjs/config'
 import { OrganizationService } from './organization.service'
 import { ApiCoreDataAccessService } from '@nestled-template/api/core/data-access'
 import { EmailService } from '@nestled-template/api/integrations'
+import { Prisma } from '@nestled-template/api/prisma'
 describe('OrganizationService', () => {
   let service: OrganizationService
   let data: any // Use any to avoid Prisma type conflicts with Jest mocks
@@ -222,6 +223,38 @@ describe('OrganizationService', () => {
     })
   })
   describe('userDeleteOrganization', () => {
+    it('retries the complete transaction on a rolled-back membership conflict', async () => {
+      data.organizationMember.findFirst.mockResolvedValue({ role: { name: 'Owner' } })
+      data.organizationMember.deleteMany.mockRejectedValueOnce(
+        new Prisma.PrismaClientKnownRequestError('conflict', {
+          code: 'P2034',
+          clientVersion: 'test',
+        }),
+      )
+
+      await expect(service.userDeleteOrganization('owner', 'org')).resolves.toBe(true)
+      expect(data.$transaction).toHaveBeenCalledTimes(2)
+      expect(data.$queryRaw).toHaveBeenCalledTimes(2)
+      expect(data.invite.deleteMany).toHaveBeenCalledTimes(2)
+      expect(data.auditLog.create).toHaveBeenCalledTimes(1)
+    })
+
+    it.each(['P2034', 'P2003'])(
+      'bounds conflict retries and does not retry other failures (%s)',
+      async code => {
+        data.organizationMember.findFirst.mockResolvedValue({ role: { name: 'Owner' } })
+        const failure = new Prisma.PrismaClientKnownRequestError('failed', {
+          code,
+          clientVersion: 'test',
+        })
+        data.organizationMember.deleteMany.mockRejectedValue(failure)
+
+        await expect(service.userDeleteOrganization('owner', 'org')).rejects.toBe(failure)
+        expect(data.$transaction).toHaveBeenCalledTimes(code === 'P2034' ? 6 : 1)
+        expect(data.auditLog.create).not.toHaveBeenCalled()
+      },
+    )
+
     it('should delete organization when user is owner', async () => {
       const order: string[] = []
       data.$queryRaw.mockImplementation(async () => order.push('lock-owners'))
