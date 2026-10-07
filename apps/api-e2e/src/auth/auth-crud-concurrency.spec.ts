@@ -154,4 +154,76 @@ describe('Concurrent administrative authentication maintenance', () => {
       sql(`SELECT "activeOrganizationId" IS NULL FROM "User" WHERE id = :'id';`, { id: user.id }),
     ).toBe('t')
   })
+
+  describe.each(['remove member', 'delete organization'])(
+    '%s through the explicit API',
+    operation => {
+      it.each([true, false])(
+        'waits for the account before taking membership locks (removed organization active: %s)',
+        async active => {
+          const actor = await TestHelpers.registerUser()
+          const member = await TestHelpers.registerUser()
+          const organizationId = sql(
+            `SELECT "activeOrganizationId" FROM "User" WHERE id = :'id';`,
+            { id: actor.id },
+          )
+          const originalOrganizationId = sql(
+            `SELECT "activeOrganizationId" FROM "User" WHERE id = :'id';`,
+            { id: member.id },
+          )
+          const roleId = sql(
+            `SELECT id FROM "Role" WHERE "organizationId" = :'id' AND name = 'Member';`,
+            { id: organizationId },
+          )
+          const added = await TestHelpers.authenticatedGraphql(
+            `mutation($input: AddOrganizationMemberInput!) { addOrganizationMember(input: $input) }`,
+            actor,
+            { input: { organizationId, userId: member.id, roleId } },
+          )
+          expect(added.data.errors).toBeUndefined()
+          const membershipId = sql(
+            `SELECT id FROM "OrganizationMember" WHERE "userId" = :'userId' AND "organizationId" = :'organizationId';`,
+            { userId: member.id, organizationId },
+          )
+          if (active) {
+            sql(`UPDATE "User" SET "activeOrganizationId" = :'organizationId' WHERE id = :'id';`, {
+              organizationId,
+              id: member.id,
+            })
+          }
+          const response = await holdingOwner(member.id, async owner => {
+            const writing =
+              operation === 'remove member'
+                ? TestHelpers.authenticatedGraphql(
+                    `mutation($input: RemoveOrganizationMemberInput!) { removeOrganizationMember(input: $input) }`,
+                    actor,
+                    { input: { organizationId, userId: member.id } },
+                  )
+                : TestHelpers.authenticatedGraphql(
+                    `mutation($organizationId: String!) { userDeleteOrganization(organizationId: $organizationId) }`,
+                    actor,
+                    { organizationId },
+                  )
+            await delay(150)
+            await owner.query(`SELECT id FROM "OrganizationMember" WHERE id = $1 FOR UPDATE`, [
+              membershipId,
+            ])
+            await owner.query('COMMIT')
+            return writing
+          })
+          expect(response.data.errors).toBeUndefined()
+          expect(
+            sql(`SELECT COUNT(*) FROM "OrganizationMember" WHERE id = :'id';`, {
+              id: membershipId,
+            }),
+          ).toBe('0')
+          expect(
+            sql(`SELECT COALESCE("activeOrganizationId", '') FROM "User" WHERE id = :'id';`, {
+              id: member.id,
+            }),
+          ).toBe(active ? '' : originalOrganizationId)
+        },
+      )
+    },
+  )
 })

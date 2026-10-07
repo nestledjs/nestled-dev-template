@@ -56,6 +56,7 @@ describe('OrganizationService', () => {
       auditLog: {
         create: jest.fn(),
       },
+      $queryRaw: jest.fn().mockResolvedValue([]),
       $transaction: jest.fn((arg: any) => {
         // Handle both callback and array forms
         if (typeof arg === 'function') {
@@ -222,6 +223,8 @@ describe('OrganizationService', () => {
   })
   describe('userDeleteOrganization', () => {
     it('should delete organization when user is owner', async () => {
+      const order: string[] = []
+      data.$queryRaw.mockImplementation(async () => order.push('lock-owners'))
       const userId = 'user-123'
       const organizationId = 'org-123'
       // Mock owner check
@@ -230,7 +233,10 @@ describe('OrganizationService', () => {
         role: { name: 'Owner' },
       } as any)
       data.invite.deleteMany.mockResolvedValue({ count: 2 } as any)
-      data.organizationMember.deleteMany.mockResolvedValue({ count: 5 } as any)
+      data.organizationMember.deleteMany.mockImplementation(async () => {
+        order.push('delete-members')
+        return { count: 5 }
+      })
       data.role.deleteMany.mockResolvedValue({ count: 3 } as any)
       data.organization.delete.mockResolvedValue({} as any)
       data.user.findUnique.mockResolvedValue({
@@ -240,6 +246,7 @@ describe('OrganizationService', () => {
       data.user.update.mockResolvedValue({} as any)
       const result = await service.userDeleteOrganization(userId, organizationId)
       expect(result).toBe(true)
+      expect(order).toEqual(['lock-owners', 'delete-members'])
       expect(data.invite.deleteMany).toHaveBeenCalledWith({ where: { organizationId } })
       expect(data.organizationMember.deleteMany).toHaveBeenCalledWith({ where: { organizationId } })
       expect(data.role.deleteMany).toHaveBeenCalledWith({ where: { organizationId } })
@@ -323,6 +330,7 @@ describe('OrganizationService', () => {
   describe('removeOrganizationMember', () => {
     it("clears the removed member's active organization in the same transaction", async () => {
       const order: string[] = []
+      data.$queryRaw.mockImplementation(async () => order.push('lock-owner'))
       data.organizationMember.findFirst
         .mockResolvedValueOnce({
           role: { permissions: [{ subject: 'member', action: 'remove' }] },
@@ -350,7 +358,7 @@ describe('OrganizationService', () => {
         where: { id: 'target-user-456', activeOrganizationId: 'org-123' },
         data: { activeOrganizationId: null },
       })
-      expect(order).toEqual(['begin', 'delete', 'clear', 'commit'])
+      expect(order).toEqual(['begin', 'lock-owner', 'delete', 'clear', 'commit'])
     })
     it('should remove member when user has permission', async () => {
       const userId = 'user-123'

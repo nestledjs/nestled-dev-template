@@ -300,6 +300,14 @@ export class OrganizationService {
     // This is necessary because the database schema doesn't have cascade deletes configured.
     // One transaction, so a failure part-way leaves no organization with half its records gone.
     await this.data.$transaction(async tx => {
+      // Take account locks before any membership locks, in the same order as the triggers.
+      // Include members with a different active organization and stale active-context owners.
+      await tx.$queryRaw`
+        SELECT id FROM "User"
+        WHERE id IN (SELECT "userId" FROM "OrganizationMember" WHERE "organizationId" = ${organizationId})
+           OR "activeOrganizationId" = ${organizationId}
+        ORDER BY id FOR NO KEY UPDATE
+      `
       // Delete all pending invitations
       await tx.invite.deleteMany({
         where: { organizationId },
@@ -439,6 +447,9 @@ export class OrganizationService {
 
     // The membership and the removed user's active organization (when it is this one) go together.
     await this.data.$transaction(async tx => {
+      // Lock even when another organization is active: the membership trigger locks its owner
+      // unconditionally. Waiting here holds no membership lock and cannot invert that order.
+      await tx.$queryRaw`SELECT id FROM "User" WHERE id = ${input.userId} FOR NO KEY UPDATE`
       await tx.organizationMember.delete({
         where: { id: member.id },
       })
