@@ -22,7 +22,8 @@ intent: >
   test database URL variables pinned to the same test database. Register API process-group cleanup
   immediately after spawn for exit, SIGINT and SIGTERM, remove listeners on normal teardown, and
   report whether cleanup killed a group, only the launcher, or found it already stopped. Include
-  the process-cleanup unit tests in the e2e test target's dependencies.
+  the process-cleanup unit tests in the e2e test target's dependencies and exclude them from
+  the main e2e config so they run once.
 why: >
   Syntax-aware checks reduce false positives without allowing log prose or unused identity
   injection to certify enforcement. Guard-baseline omissions now fail explicitly. E2e cancellation
@@ -40,6 +41,7 @@ affectedPaths:
   - .nestled-updates/security/resolver-scope-exemptions.json
   - scripts/run-e2e-tests.sh
   - apps/api-e2e/project.json
+  - apps/api-e2e/vitest.config.mts
   - apps/api-e2e/vitest.support.config.mts
   - apps/api-e2e/tsconfig.support.json
   - apps/api-e2e/src/support/api-process.ts
