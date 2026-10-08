@@ -10,6 +10,10 @@ intent: >
   from a cross-request membership cache. Cached active organization IDs are only selection hints;
   the selected organization still requires a current membership. Preserve project-specific context
   resolution and API-token scope rules. CI exercises API authorization with Redis enabled.
+  Membership transaction retries remain sequential and bounded to six attempts, with randomInt
+  jitter between attempts.
+  Correct the existing Sonar migration-history exclusion to libs/api/prisma/src/lib/migrations/**;
+  applied SQL remains immutable and is verified through PostgreSQL integration tests.
 why: >
   Organization-scoped authorization must use current membership and permission state across all
   administrative and application write paths. Details will follow in a coordinated advisory.
@@ -20,9 +24,12 @@ affectedPaths:
   - libs/api/utils/src/lib/services/auth-loader.service.spec.ts
   - apps/api-e2e/src/auth/organization-billing.spec.ts
   - .github/workflows/ci.yml
+  - libs/api/custom/src/lib/default/organization/organization.service.ts
+  - sonar-project.properties
 packageReleases: []
 verification:
   - pnpm exec nx run api-utils:test
+  - pnpm exec nx run api-custom:test
   - pnpm exec nx run-many -t lint typecheck
   - pnpm exec vitest run --config apps/api-e2e/vitest.config.mts
 agentHints:
