@@ -4,7 +4,7 @@ import {
   AdminOnly,
   CtxUser,
   GqlAuthAdminGuard,
-  RequirePlatformPermission,
+  RequirePlatformPermissionUnderClassGuard,
 } from '@nestled-template/api/utils'
 import { SyncService } from './sync.service'
 import { Plan, Subscription, User } from '@nestled-template/api/core/models'
@@ -35,13 +35,13 @@ export class BillingResolver {
   ) {}
 
   @Query(() => [Plan])
-  @RequirePlatformPermission('platform.billing.read')
+  @RequirePlatformPermissionUnderClassGuard('platform.billing.read')
   async adminBillingPlans(): Promise<Plan[]> {
     return this.data.plan.findMany({ orderBy: { createdAt: 'desc' } })
   }
 
   @Query(() => AdminBillingSubscriptionsResponse)
-  @RequirePlatformPermission('platform.billing.read')
+  @RequirePlatformPermissionUnderClassGuard('platform.billing.read')
   async adminBillingSubscriptions(
     @Args('input', { nullable: true }) input?: AdminBillingSubscriptionsInput,
   ): Promise<AdminBillingSubscriptionsResponse> {
@@ -69,7 +69,7 @@ export class BillingResolver {
   }
 
   @Mutation(() => Boolean)
-  @RequirePlatformPermission('platform.billing.manage')
+  @RequirePlatformPermissionUnderClassGuard('platform.billing.manage')
   async syncStripeProducts(@CtxUser() user: User): Promise<boolean> {
     const result = await this.syncService.syncAllProducts()
     await recordAuditLog(this.data, {
@@ -83,7 +83,7 @@ export class BillingResolver {
   }
 
   @Mutation(() => Boolean)
-  @RequirePlatformPermission('platform.billing.manage')
+  @RequirePlatformPermissionUnderClassGuard('platform.billing.manage')
   async syncStripePrices(@CtxUser() user: User): Promise<boolean> {
     const result = await this.syncService.syncAllPrices()
     await recordAuditLog(this.data, {
@@ -97,7 +97,7 @@ export class BillingResolver {
   }
 
   @Mutation(() => Boolean)
-  @RequirePlatformPermission('platform.billing.manage')
+  @RequirePlatformPermissionUnderClassGuard('platform.billing.manage')
   async syncStripeProduct(
     @Args('productId') productId: string,
     @CtxUser() user: User,
@@ -114,7 +114,7 @@ export class BillingResolver {
   }
 
   @Mutation(() => Boolean)
-  @RequirePlatformPermission('platform.billing.manage')
+  @RequirePlatformPermissionUnderClassGuard('platform.billing.manage')
   async syncStripePrice(@Args('priceId') priceId: string, @CtxUser() user: User): Promise<boolean> {
     await this.syncService.syncPriceFromStripe(priceId)
     await recordAuditLog(this.data, {
@@ -128,7 +128,7 @@ export class BillingResolver {
   }
 
   @Mutation(() => Boolean)
-  @RequirePlatformPermission('platform.billing.manage')
+  @RequirePlatformPermissionUnderClassGuard('platform.billing.manage')
   async syncStripeSubscription(
     @Args('subscriptionId') subscriptionId: string,
     @CtxUser() user: User,
