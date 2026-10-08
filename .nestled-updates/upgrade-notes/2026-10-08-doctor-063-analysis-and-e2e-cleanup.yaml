@@ -65,4 +65,7 @@ agentHints:
   - Never rewrite the whole guard baseline merely to make the check green. Inspect and select each missing or changed operation.
   - Do not change production databases or auth policies to satisfy a static check.
   - Gitignored caches are excluded; tracked files remain checked even when matched by an ignore rule.
-  - This release changes tooling and test lifecycle only; no database migration or production deployment is required.
+  - >
+    This release changes Doctor checks, test lifecycle and billing authentication-decorator
+    composition while preserving existing admin and permission policies. No database migration or
+    writer maintenance is required; deliver the billing change through the normal staged release process.

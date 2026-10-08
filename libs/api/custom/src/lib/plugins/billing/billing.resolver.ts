@@ -18,12 +18,10 @@ import {
 /**
  * Billing Resolver
  *
- * Admin queries and mutations for billing infrastructure. Every operation states its own guard
- * (`GqlAuthAdminGuard`) and its own permission, rather than inheriting protection from the guard
- * tier the CRUD generator happens to emit. The admin Billing pages read through the queries here
- * for exactly that reason: a page that calls a generated CRUD root silently widens whenever the
- * repo's generated-crud posture changes, which is how a member-facing surface can lose its gate
- * without any change to the page.
+ * The class authenticates super administrators with GqlAuthAdminGuard and declares AdminOnly.
+ * Each operation adds its platform permission through the under-class-guard decorator, preserving
+ * that admin declaration without authenticating again. These explicit billing APIs keep their
+ * authorization independent of the generated CRUD surface.
  */
 @AdminOnly()
 @Resolver()
