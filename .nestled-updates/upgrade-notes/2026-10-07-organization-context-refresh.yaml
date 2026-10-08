@@ -12,6 +12,8 @@ intent: >
   resolution and API-token scope rules. CI exercises API authorization with Redis enabled.
   Membership transaction retries remain sequential and bounded to six attempts, with randomInt
   jitter between attempts.
+  Correct the existing Sonar migration-history exclusion to libs/api/prisma/src/lib/migrations/**;
+  applied SQL remains immutable and is verified through PostgreSQL integration tests.
 why: >
   Organization-scoped authorization must use current membership and permission state across all
   administrative and application write paths. Details will follow in a coordinated advisory.
@@ -23,6 +25,7 @@ affectedPaths:
   - apps/api-e2e/src/auth/organization-billing.spec.ts
   - .github/workflows/ci.yml
   - libs/api/custom/src/lib/default/organization/organization.service.ts
+  - sonar-project.properties
 packageReleases: []
 verification:
   - pnpm exec nx run api-utils:test
