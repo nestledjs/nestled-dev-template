@@ -8,8 +8,30 @@ import {
   toReadableText,
   sanitizeInput,
 } from './graphql-utils'
-import { formatLocalDateTime } from '@nestledjs/forms-core'
+import {
+  type ButtonOptions,
+  type FormField,
+  FormFieldType,
+  formatLocalDateTime,
+} from '@nestledjs/forms-core'
 import type { DatabaseModel } from '../types'
+
+/**
+ * The initial value `buildFormFields` attaches as `options.value`. That key is not part of the
+ * forms-core option types, so it is read through an `in` check rather than a cast.
+ */
+function initialValueOf(field: FormField | undefined): unknown {
+  const options = field?.options
+  return options && 'value' in options ? options.value : undefined
+}
+
+/** A field's options, narrowed to `ButtonOptions` once the field is confirmed to be a button. */
+function buttonOptionsOf(field: FormField): ButtonOptions {
+  if (field.type !== FormFieldType.Button) {
+    throw new Error(`Expected a Button field, got ${field.type}`)
+  }
+  return field.options
+}
 
 describe('graphql-utils', () => {
   describe('getAdminDocuments', () => {
@@ -722,8 +744,8 @@ describe('graphql-utils', () => {
 
         const result = buildFormFields({}, mockModel, 'update', { currentItem })
 
-        expect(result[0].options?.value).toBe('John Doe')
-        expect(result[1].options?.value).toBe('john@example.com')
+        expect(initialValueOf(result[0])).toBe('John Doe')
+        expect(initialValueOf(result[1])).toBe('john@example.com')
       })
 
       it('should convert Date objects to proper format for date fields', () => {
@@ -738,7 +760,7 @@ describe('graphql-utils', () => {
 
         const result = buildFormFields({}, mockModel, 'update', { currentItem })
 
-        expect(result[0].options?.value).toBe('2024-03-15')
+        expect(initialValueOf(result[0])).toBe('2024-03-15')
       })
 
       it('should convert Date objects to datetime-local format for datetime fields', () => {
@@ -755,7 +777,7 @@ describe('graphql-utils', () => {
 
         // A `datetime-local` input carries no timezone, so it must be filled with LOCAL
         // components. Asserting a fixed literal here would only hold in a UTC-run test.
-        expect(result[0].options?.value).toBe(formatLocalDateTime(currentItem.startTime))
+        expect(initialValueOf(result[0])).toBe(formatLocalDateTime(currentItem.startTime))
       })
 
       it('round-trips a datetime through the form without shifting the instant', () => {
@@ -765,9 +787,11 @@ describe('graphql-utils', () => {
         }
 
         const instant = new Date('2024-03-15T10:30:00Z')
-        const shown = buildFormFields({}, mockModel, 'update', {
-          currentItem: { startTime: instant },
-        })[0].options?.value
+        const shown = initialValueOf(
+          buildFormFields({}, mockModel, 'update', {
+            currentItem: { startTime: instant },
+          })[0],
+        )
 
         // `cleanFormInput` reads the input back as local wall-clock time. When the value was
         // written in as the UTC wall-clock, every save moved the stored instant by the viewer's
@@ -798,10 +822,10 @@ describe('graphql-utils', () => {
 
         expect(birthDate?.type).toBe('DatePicker')
         // The calendar day, not the viewer's local reading of midnight UTC.
-        expect(birthDate?.options?.value).toBe('2026-05-16')
+        expect(initialValueOf(birthDate)).toBe('2026-05-16')
 
         expect(lastSeenAt?.type).toBe('DateTimePicker')
-        expect(lastSeenAt?.options?.value).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/)
+        expect(initialValueOf(lastSeenAt)).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/)
       })
 
       it('submits a @dateOnly value pinned to midnight UTC in every zone', () => {
@@ -826,9 +850,11 @@ describe('graphql-utils', () => {
         }
         const stored = '2026-05-16T00:00:00.000Z'
 
-        const shown = buildFormFields({}, mockModel, 'update', {
-          currentItem: { birthDate: stored },
-        })[0].options?.value
+        const shown = initialValueOf(
+          buildFormFields({}, mockModel, 'update', {
+            currentItem: { birthDate: stored },
+          })[0],
+        )
         const submitted = cleanFormInput({ birthDate: shown }, mockModel)
 
         expect(submitted['birthDate']).toBe(stored)
@@ -846,7 +872,7 @@ describe('graphql-utils', () => {
 
         const result = buildFormFields({}, mockModel, 'update', { currentItem })
 
-        expect(result[0].options?.value).toBe('2024-03-15')
+        expect(initialValueOf(result[0])).toBe('2024-03-15')
       })
 
       it('should extract ID from relation objects', () => {
@@ -869,7 +895,7 @@ describe('graphql-utils', () => {
 
         const result = buildFormFields({}, mockModel, 'update', { currentItem })
 
-        expect(result[0].options?.value).toBe('user-123')
+        expect(initialValueOf(result[0])).toBe('user-123')
       })
 
       it('should convert null to empty string for non-boolean fields', () => {
@@ -884,7 +910,7 @@ describe('graphql-utils', () => {
 
         const result = buildFormFields({}, mockModel, 'update', { currentItem })
 
-        expect(result[0].options?.value).toBe('')
+        expect(initialValueOf(result[0])).toBe('')
       })
 
       it('should convert boolean values correctly', () => {
@@ -899,7 +925,7 @@ describe('graphql-utils', () => {
 
         const result = buildFormFields({}, mockModel, 'update', { currentItem })
 
-        expect(result[0].options?.value).toBe(true)
+        expect(initialValueOf(result[0])).toBe(true)
       })
     })
 
@@ -914,7 +940,7 @@ describe('graphql-utils', () => {
 
         const submitButton = result[result.length - 1]
         expect(submitButton.type).toBe('Button')
-        expect(submitButton.options?.text).toBe('Create')
+        expect(buttonOptionsOf(submitButton).text).toBe('Create')
       })
 
       it('should add Update button for update operations', () => {
@@ -927,7 +953,7 @@ describe('graphql-utils', () => {
 
         const submitButton = result[result.length - 1]
         expect(submitButton.type).toBe('Button')
-        expect(submitButton.options?.text).toBe('Update')
+        expect(buttonOptionsOf(submitButton).text).toBe('Update')
       })
 
       it('should show loading text when submitting', () => {
@@ -939,8 +965,8 @@ describe('graphql-utils', () => {
         const result = buildFormFields({}, mockModel, 'create', { isSubmitting: true })
 
         const submitButton = result[result.length - 1]
-        expect(submitButton.options?.text).toBe('Creating...')
-        expect(submitButton.options?.disabled).toBe(true)
+        expect(buttonOptionsOf(submitButton).text).toBe('Creating...')
+        expect(buttonOptionsOf(submitButton).disabled).toBe(true)
       })
     })
 
@@ -1280,7 +1306,7 @@ describe('graphql-utils', () => {
           currentItem: { eventDate: 'not-a-date' },
         })
 
-        expect(result[0].options?.value).toBe('')
+        expect(initialValueOf(result[0])).toBe('')
         expect(consoleError).toHaveBeenCalled()
       })
     })

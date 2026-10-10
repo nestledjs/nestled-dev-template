@@ -4,6 +4,9 @@ import { useRelationData } from './useRelationData'
 import { AdminDataProvider } from '../context/AdminDataContext'
 import { ReactNode } from 'react'
 import { DocumentNode } from 'graphql'
+import { useQuery } from '@apollo/client/react'
+import { useDebounce } from './useDebounce'
+import { getAdminDocuments } from '../utils/graphql-utils'
 
 // Mock dependencies
 vi.mock('@apollo/client/react', () => ({
@@ -26,10 +29,6 @@ vi.mock('../utils/string-utils', async () => {
     getSmartSearchFields: actual.getSmartSearchFields,
   }
 })
-
-import { useQuery } from '@apollo/client/react'
-import { useDebounce } from './useDebounce'
-import { getAdminDocuments } from '../utils/graphql-utils'
 
 describe('useRelationData', () => {
   const mockDatabaseModels = [
@@ -78,7 +77,7 @@ describe('useRelationData', () => {
   })
 
   const wrapper = ({ children }: { children: ReactNode }) => (
-    <AdminDataProvider sdk={mockSdk} databaseModels={mockDatabaseModels}>
+    <AdminDataProvider sdk={mockSdk} databaseModels={mockDatabaseModels} formTheme={{}}>
       {children}
     </AdminDataProvider>
   )
@@ -699,7 +698,11 @@ describe('useRelationData', () => {
       }
 
       const customWrapper = ({ children }: { children: ReactNode }) => (
-        <AdminDataProvider sdk={sdkWithoutPlural} databaseModels={modelsWithoutPlural}>
+        <AdminDataProvider
+          sdk={sdkWithoutPlural}
+          databaseModels={modelsWithoutPlural}
+          formTheme={{}}
+        >
           {children}
         </AdminDataProvider>
       )
