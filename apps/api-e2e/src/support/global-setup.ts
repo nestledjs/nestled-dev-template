@@ -1,6 +1,6 @@
 import { waitForPortOpen } from '@nx/node/utils'
 import { execSync, spawn, spawnSync, type ChildProcess } from 'node:child_process'
-import { createConnection } from 'node:net'
+import { createConnection, type Socket } from 'node:net'
 import { killApiProcessTree, registerApiProcessCleanup } from './api-process'
 import globalTeardown from './global-teardown'
 
@@ -194,12 +194,15 @@ async function startApiServer(
   })
 
   apiProcess.unref()
-  apiProcess.stdout?.unref()
-  apiProcess.stderr?.unref()
+  // Piped stdio streams are sockets at runtime; ChildProcess types them as plain Readable.
+  ;(apiProcess.stdout as Socket | null)?.unref()
+  ;(apiProcess.stderr as Socket | null)?.unref()
 
   console.log(`⏳ Waiting for API to start...`)
   try {
-    await waitForPortOpen(port, { host, timeout: 45000 })
+    // waitForPortOpen has no `timeout` option; it retries. A `timeout: 45000` here was ignored, so
+    // the wait was always the 120 x 1s default — keep that proven budget and state it.
+    await waitForPortOpen(port, { host, retries: 120, retryDelay: 1000 })
   } catch (portError) {
     console.error('❌ API server did not start within timeout')
     console.error('Last output from API server:')

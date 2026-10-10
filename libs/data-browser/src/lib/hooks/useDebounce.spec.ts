@@ -260,8 +260,8 @@ describe('useDebounce', () => {
       // Wait to ensure no state updates occur after unmount
       await wait(150)
 
-      // No error should be thrown - cleanup worked
-      expect(result.error).toBeUndefined()
+      // No error was thrown, and the pending update never landed after unmount - cleanup worked
+      expect(result.current).toBe('initial')
     })
 
     it('should not cause errors after unmount', async () => {

@@ -1,0 +1,88 @@
+id: 2026-10-10-truthful-test-and-typecheck-gates
+title: Typecheck and lint gates that check what they claim
+priority: normal
+area: infra
+type: correctness
+delivery: code-patch
+intent: >
+  Make every project's typecheck cover all of its TypeScript and fail when it checks nothing, and
+  make lint reach every project.
+
+  Add scripts/typecheck-project.mjs and the local Nx plugin tools/nx-plugins/typecheck.js, and
+  list the plugin last in nx.json plugins so its `typecheck` target replaces the inferred
+  `tsc --noEmit -p tsconfig.lib.json`. The runner checks every config a project's tsconfig.json
+  references inside the project (lib/app, spec, storybook) one at a time with `tsc --noEmit`, and
+  fails when a config resolves no files, when an `exclude` inherited through `extends` removes files
+  the config's own `include` asks for, or when a tracked .ts/.tsx file under the project (other
+  than root build-tool configs such as vite.config.ts) is in no checked config. Projects whose
+  typecheck target is written in project.json (apps/api with tsconfig.typecheck.json, apps/web
+  after typegen) call the runner too, keeping their dependsOn. Typecheck inputs use `default`, not
+  `production`, so spec edits invalidate the cache.
+
+  Give every tsconfig.spec.json its own `exclude`. The workspace base config excludes
+  `**/*.spec.ts`, `**/*.test.ts` and their tsx forms, and a spec config that inherits that exclude
+  checks no spec at all. Add spec configs (and the solution-config reference) for libraries whose
+  specs had none, and include test folders outside src (for example apps/web/tests) in the spec
+  config that runs them. Then fix the type errors this exposes in tests, stories and tool configs
+  rather than excluding files or loosening strict.
+
+  Rename the inferred ESLint target from `eslint:lint` to `lint` in nx.json so `pnpm lint` and CI's
+  `nx affected -t lint` reach every project, and fix the lint errors that surfaces.
+why: >
+  Spec files were never typechecked in any project: each spec config inherited the base
+  `**/*.spec.ts` exclude, so `tsc -p tsconfig.spec.json` compiled only a vite config or nothing.
+  `api-e2e:typecheck` ran `tsc -p` on a solution config with `files: []` and `include: []`, which
+  compiles zero files and exits 0. Libraries without a Vite or React Router plugin target (every
+  libs/api library) had no typecheck at all, so code only they contained was never checked, and
+  `pnpm lint`/CI lint ran ESLint for one project because the others' target was named
+  `eslint:lint`. Each of these reported green without checking the code. Enabling the checks found
+  real defects, including an e2e port wait passing an option the helper ignores.
+affectedPaths:
+  - nx.json
+  - scripts/typecheck-project.mjs
+  - scripts/typecheck-project.spec.mjs
+  - tools/nx-plugins/typecheck.js
+  - apps/api/project.json
+  - apps/web/project.json
+  - apps/web/tsconfig.spec.json
+  - apps/api-e2e/tsconfig.spec.json
+  - apps/api-e2e/src/support/global-setup.ts
+  - libs/**/tsconfig.json
+  - libs/**/tsconfig.spec.json
+  - libs/**/tsconfig.storybook.json
+  - libs/**/vitest.config.mts
+  - libs/web-ui/eslint.config.mjs
+  - libs/shared-components/eslint.config.mjs
+  - libs/api/prisma/src/lib/seed/seed.ts
+  - libs/api/prisma/src/lib/seed/diagnose-rbac.ts
+  - apps/web/tests/**
+  - .github/workflows/ci.yml
+  - AGENTS.md
+verification:
+  - node --test scripts/typecheck-project.spec.mjs
+  - pnpm exec nx run-many -t typecheck --skip-nx-cache
+  - pnpm exec nx run-many -t lint
+  - pnpm test
+agentHints:
+  - >
+    Expect the first run to fail with real errors in specs, stories and tool configs that were
+    never checked. Fix them in the tests and configs; change product source only where the error
+    shows the product type is wrong. Do not add @ts-ignore, broad any casts, or excludes to get green.
+  - >
+    Downstream libraries are covered automatically once the plugin is registered; any project the
+    runner reports with an uncovered file needs that file added to the config that matches how it
+    runs (lib/app, spec or storybook), or a spec config created and referenced from tsconfig.json.
+  - >
+    If CI, scripts or docs call `eslint:lint`, rename them to `lint`. A project.json `lint` target
+    still overrides the inferred one.
+  - Typecheck now runs spec configs as well, so it does more work; configs run one at a time per project.
+  - >
+    Vitest 4 no longer adds `test` to Vite's config type: a vitest.config that imports defineConfig
+    from 'vite' fails typecheck. Import defineConfig from 'vitest/config'. Storybook 10 packages
+    resolve only through package exports, so storybook and spec configs that load them need
+    moduleResolution bundler.
+  - >
+    apps/web/vite.config.ts is not in the spec config: @react-router/dev resolves its own copy of
+    Vite when apps/web's peer set (@types/node, jiti, stylus) differs from the root's, and the two
+    Plugin types are nominally distinct. Do not bridge it with a double cast; de-duplicate Vite
+    instead when the dependency versions are aligned.
