@@ -105,15 +105,21 @@ jobs:
       # Prepend any command with "nx-cloud record --" to record its logs to Nx Cloud
       # - run: pnpm exec nx-cloud record -- echo Hello World
       # Nx Affected runs only tasks affected by the changes in this PR/commit. Learn more: https://nx.dev/ci/features/affected
+      # `lint` is every project's ESLint target (nx.json names the inferred target `lint`). It used
+      # to be inferred as `eslint:lint`, so this step and `pnpm lint` reached one project.
       - run: pnpm exec nx affected -t lint build
+
+      - name: Test the typecheck runner
+        run: node --test scripts/typecheck-project.spec.mjs
 
       # run-many, not `nx run web:typecheck`: `nx affected -t build` above compiles the API through
       # webpack, which does not enforce strict. A passing build was never a passing typecheck, and
       # for the API no typecheck ran at all.
       #
-      # Unscoped: this covers every project with a typecheck target, including the ones Nx infers
-      # from a tsconfig.lib.json. Keep it that way — a scoped list silently stops covering new
-      # projects as they are added.
+      # Unscoped: every project with a tsconfig.json gets a typecheck target from
+      # tools/nx-plugins/typecheck.js, which checks all of its configs (lib/app, spec, storybook) and
+      # fails when a config checks nothing or a tracked source is in no config. Keep it unscoped — a
+      # scoped list silently stops covering new projects as they are added.
       - run: pnpm exec nx run-many -t typecheck
 
       - name: Run tests with coverage

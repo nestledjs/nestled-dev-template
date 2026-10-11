@@ -109,10 +109,10 @@ pnpm test:db:stop
 ### Linting & Formatting
 
 ```bash
-pnpm lint               # run workspace and project linting
+pnpm lint               # ESLint for every project
 pnpm format             # write Nx formatting
 pnpm format:check       # check formatting
-pnpm typecheck          # generate React Router types + TypeScript checks for apps/web
+pnpm typecheck          # every project: app/lib, spec and storybook configs (scripts/typecheck-project.mjs)
 ```
 
 ### Prisma Operations
