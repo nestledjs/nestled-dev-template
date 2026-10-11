@@ -118,10 +118,6 @@ export function inspectConfigs(ts, configPaths) {
   })
 }
 
-// Build-tool configs at the project root (vite.config.ts, jest.config.ts, ...) are loaded by their
-// tools, not compiled with the project, so they are not required to sit in a checked config.
-const rootToolConfig = /^[^/]+\.config(\.[a-z]+)?\.[cm]?ts$/
-
 // Tracked TypeScript sources under the project that none of its checked configs compile. A test
 // folder no config includes (apps/web/tests) is otherwise invisible to every typecheck.
 export function uncoveredFiles(workspaceRoot, projectRoot, inspected) {
@@ -145,7 +141,6 @@ export function uncoveredFiles(workspaceRoot, projectRoot, inspected) {
     .map(file => resolve(workspaceRoot, file))
     .filter(file => /\.[cm]?tsx?$/.test(file) && !/\.d\.[cm]?ts$/.test(file))
     .filter(file => !covered.has(file))
-    .filter(file => !rootToolConfig.test(relative(projectRoot, file).split(sep).join('/')))
     .filter(file => ![...nestedProjects].some(nested => isInside(nested, file)))
 }
 

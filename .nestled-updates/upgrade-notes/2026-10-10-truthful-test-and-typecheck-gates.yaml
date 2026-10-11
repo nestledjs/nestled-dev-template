@@ -13,8 +13,8 @@ intent: >
   `tsc --noEmit -p tsconfig.lib.json`. The runner checks every config a project's tsconfig.json
   references inside the project (lib/app, spec, storybook) one at a time with `tsc --noEmit`, and
   fails when a config resolves no files, when an `exclude` inherited through `extends` removes files
-  the config's own `include` asks for, or when a tracked .ts/.tsx file under the project (other
-  than root build-tool configs such as vite.config.ts) is in no checked config. Projects whose
+  the config's own `include` asks for, or when a tracked .ts/.tsx file under the project, build-tool
+  configs such as vite.config.ts included, is in no checked config. Projects whose
   typecheck target is written in project.json (apps/api with tsconfig.typecheck.json, apps/web
   after typegen) call the runner too, keeping their dependsOn. Typecheck inputs use `default`, not
   `production`, so spec edits invalidate the cache.
@@ -25,6 +25,11 @@ intent: >
   specs had none, and include test folders outside src (for example apps/web/tests) in the spec
   config that runs them. Then fix the type errors this exposes in tests, stories and tool configs
   rather than excluding files or loosening strict.
+
+  Remove `@react-router/dev` and `@types/node` from apps/web/package.json devDependencies; the root
+  manifest declares both. The app-level copies resolved a second Vite with different peers, whose
+  Plugin type is nominally distinct from the root Vite's, so apps/web/vite.config.ts could not
+  typecheck.
 
   Rename the inferred ESLint target from `eslint:lint` to `lint` in nx.json so `pnpm lint` and CI's
   `nx affected -t lint` reach every project, and fix the lint errors that surfaces.
@@ -44,6 +49,8 @@ affectedPaths:
   - tools/nx-plugins/typecheck.js
   - apps/api/project.json
   - apps/web/project.json
+  - apps/web/package.json
+  - pnpm-lock.yaml
   - apps/web/tsconfig.spec.json
   - apps/api-e2e/tsconfig.spec.json
   - apps/api-e2e/src/support/global-setup.ts
@@ -82,7 +89,9 @@ agentHints:
     resolve only through package exports, so storybook and spec configs that load them need
     moduleResolution bundler.
   - >
-    apps/web/vite.config.ts is not in the spec config: @react-router/dev resolves its own copy of
-    Vite when apps/web's peer set (@types/node, jiti, stylus) differs from the root's, and the two
-    Plugin types are nominally distinct. Do not bridge it with a double cast; de-duplicate Vite
-    instead when the dependency versions are aligned.
+    If apps/web/vite.config.ts fails with two incompatible Vite Plugin types, apps/web still declares
+    its own @react-router/dev or @types/node. Remove them (keep the root versions), run pnpm install,
+    and confirm `ls node_modules/.pnpm | grep '^vite@'` shows one entry. Do not bridge it with a cast.
+  - >
+    Build-tool configs (vite.config.ts, vitest.config.mts, jest.config.ts) must sit in a checked
+    config too, normally the spec config. An unused one can be deleted instead.

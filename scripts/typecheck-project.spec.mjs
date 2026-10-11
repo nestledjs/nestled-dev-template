@@ -100,7 +100,7 @@ describe('typecheck-project', () => {
     assert.match(results[1].problem, /does not exist/)
   })
 
-  it('reports tracked sources no checked config compiles, ignoring root tool configs', () => {
+  it('reports tracked sources no checked config compiles, tool configs included', () => {
     const root = fixture({
       'tsconfig.base.json': base,
       'apps/w/tsconfig.json': { ...solution, references: [{ path: './tsconfig.lib.json' }] },
@@ -115,6 +115,7 @@ describe('typecheck-project', () => {
     const inspected = inspectConfigs(ts, resolveProjectConfigs(ts, projectRoot))
     assert.deepEqual(uncoveredFiles(root, projectRoot, inspected), [
       join(projectRoot, 'tests/main.spec.ts'),
+      join(projectRoot, 'vite.config.ts'),
     ])
   })
 
