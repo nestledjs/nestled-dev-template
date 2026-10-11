@@ -1,5 +1,5 @@
 id: 2026-10-10-truthful-test-and-typecheck-gates
-title: Typecheck and lint gates that check what they claim
+title: Typecheck, lint and e2e gates that check what they claim
 priority: normal
 area: infra
 type: correctness
@@ -42,6 +42,28 @@ intent: >
 
   Rename the inferred ESLint target from `eslint:lint` to `lint` in nx.json so `pnpm lint` and CI's
   `nx affected -t lint` reach every project, and fix the lint errors that surfaces.
+
+  Make the API e2e result mean that the suite ran and passed. `api-e2e:e2e` runs the same wrapper as
+  `api-e2e:test` (apps/api-e2e/run-tests.sh) instead of the Vitest executor, and both targets set
+  `cache: false`. The wrapper reports PASSED only when Vitest exits 0, its summary counts no failure,
+  and at least one test passed, and prints that count; a run with no test file, or with every test
+  skipped, fails. Remove the wrapper's force-kill fallback, which accepted a non-zero exit when a
+  "Cleanup complete" marker appeared: teardown no longer calls process.exit and nothing prints the
+  marker. The e2e Vitest config sets `passWithNoTests: false` and the verbose reporter so the log
+  names every test, and drops both `dangerouslyIgnoreUnhandledErrors` and the onUnhandledError
+  filter for process.exit errors, so every unhandled error fails the run. Remove SKIP_API_CHECK and the
+  `__SKIP_E2E_TESTS__` flag: global setup set it on globalThis, which never reaches the forked test
+  worker, so the option produced a run of failures rather than a skip.
+
+  Resolve the test database URL in one place. apps/api-e2e/src/support/test-db.ts exports
+  testDatabaseUrl (TEST_DATABASE_URL, else `scripts/test-db.sh url`, the same answer the shell
+  runners use); global setup, test setup and specs import it instead of each carrying the template's
+  hard-coded fallback URL. Replace psql with the pg client: test-db.ts runs SQL through
+  apps/api-e2e/src/support/sql-runner.mjs, which keeps `sql()` synchronous and its `psql -At`
+  output (`|`-joined columns, server text values, one row per line, `:'name'` variables quoted as
+  literals, statements run one at a time with autocommit). Global setup's database probe and
+  disposable-database reset, and the wrapper's probe, use it too; the wrapper probe now uses the
+  URL's own credentials rather than postgres:postgres. Add @types/pg to devDependencies.
 why: >
   Spec files were never typechecked in any project: each spec config inherited the base
   `**/*.spec.ts` exclude, so `tsc -p tsconfig.spec.json` compiled only a vite config or nothing.
@@ -51,6 +73,14 @@ why: >
   `pnpm lint`/CI lint ran ESLint for one project because the others' target was named
   `eslint:lint`. Each of these reported green without checking the code. Enabling the checks found
   real defects, including an e2e port wait passing an option the helper ignores.
+
+  The e2e gate had the same shape. `api-e2e:e2e` inherited `cache: true` and `passWithNoTests: true`
+  from the Vitest target defaults, so a green result could be a replay or a run of nothing, and
+  through Nx the log showed only a summary. `dangerouslyIgnoreUnhandledErrors` let any unhandled
+  error pass. The wrapper's probe used fixed postgres:postgres credentials: against CI's prisma
+  login it always failed and started a container the tests never used. test-db.ts needed a psql
+  binary that not every machine has, and three files hard-coded the template's own test URL, so a
+  clone on another port block reached the wrong database when run outside the wrappers.
 affectedPaths:
   - nx.json
   - scripts/typecheck-project.mjs
@@ -76,6 +106,20 @@ affectedPaths:
   - libs/web-ui/src/lib/*.stories.tsx
   - libs/api/prisma/src/lib/seed/diagnose-rbac.ts
   - apps/web/tests/**
+  - apps/api-e2e/project.json
+  - apps/api-e2e/run-tests.sh
+  - apps/api-e2e/vitest.config.mts
+  - apps/api-e2e/vitest.support.config.mts
+  - apps/api-e2e/tsconfig.support.json
+  - apps/api-e2e/README.md
+  - apps/api-e2e/src/support/test-db.ts
+  - apps/api-e2e/src/support/sql-runner.mjs
+  - apps/api-e2e/src/support/sql-runner.spec.ts
+  - apps/api-e2e/src/support/e2e-runner.spec.ts
+  - apps/api-e2e/src/support/global-setup.ts
+  - apps/api-e2e/src/support/test-setup.ts
+  - apps/api-e2e/src/auth/auth-crud-concurrency.spec.ts
+  - package.json
   - .github/workflows/ci.yml
   - AGENTS.md
 verification:
@@ -83,6 +127,8 @@ verification:
   - pnpm exec nx run-many -t typecheck --skip-nx-cache
   - pnpm exec nx run-many -t lint
   - pnpm test
+  - pnpm exec nx run api-e2e:test-support --skip-nx-cache
+  - pnpm exec nx run api-e2e:e2e
 agentHints:
   - >
     Expect the first run to fail with real errors in specs, stories and tool configs that were
@@ -113,3 +159,14 @@ agentHints:
     hand. First search the project for imports of ChapterStats or UserStats (or the file names): if
     the project uses them, keep the files, add them to a checked config, and record the deletion as
     not-applicable. A project with its own stories may have more stale args; fix them the same way.
+  - >
+    Specs that call psql or the pg client themselves, or that read TEST_DATABASE_URL with their own
+    fallback, should import sql and testDatabaseUrl from support/test-db instead. If a spec relied on
+    psql printing command tags (`UPDATE 1`), the pg runner prints rows only; take the rows you need.
+  - >
+    If CI or scripts set SKIP_API_CHECK=true, it never skipped anything; remove it. To skip e2e, do
+    not run the target. If CI calls `nx e2e api-e2e` and a workspace targetDefaults entry caches it,
+    the project.json `cache: false` now overrides it.
+  - >
+    A project whose wrapper differs from the template's must still refuse PASSED when the Vitest
+    summary counts any failure (this fix is in the template since 2026-10-05) or no passed test.
