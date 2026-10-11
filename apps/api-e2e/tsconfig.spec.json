@@ -12,5 +12,5 @@
     "vitest.support.config.mts",
     "src/**/*.ts"
   ],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "src/support/sql-runner.spec.ts"]
 }

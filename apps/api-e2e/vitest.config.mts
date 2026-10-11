@@ -21,7 +21,16 @@ export default defineConfig({
     setupFiles: [resolve(__dirname, './src/support/test-setup.ts')],
     include: [resolve(__dirname, './src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}')],
     // The test-support dependency runs these without starting databases or an API.
-    exclude: ['**/support/api-process.spec.ts', '**/support/e2e-runner.spec.ts'],
+    exclude: [
+      '**/support/api-process.spec.ts',
+      '**/support/e2e-runner.spec.ts',
+      '**/support/sql-runner.spec.ts',
+    ],
+    // Name every test and its result. Under Nx and in CI the output is not a TTY, and the default
+    // reporter then prints only the summary, so a log could not show which tests ran.
+    reporters: ['verbose'],
+    // A run that matches no test file is a failure, not a pass.
+    passWithNoTests: false,
     testTimeout: 30000,
     hookTimeout: 30000,
     teardownTimeout: 30000,
@@ -31,9 +40,8 @@ export default defineConfig({
     pool: 'forks', // Use forks instead of threads for better isolation and cleanup
     maxWorkers: 1, // Run in single fork for sequential test execution
     isolate: false, // Allow process.exit() to work
-    // Don't fail on process.exit() - we use it intentionally for cleanup
-    dangerouslyIgnoreUnhandledErrors: true,
-    // Filter out the process.exit error specifically
+    // Teardown calls process.exit() intentionally; that error alone is filtered below. Any other
+    // unhandled error fails the run (dangerouslyIgnoreUnhandledErrors would let every one pass).
     onUnhandledError(error): boolean | void {
       console.log('🔍 onUnhandledError called:', error.message || String(error))
       // Return true to filter out this error (it won't fail the test run)

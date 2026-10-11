@@ -16,16 +16,14 @@ export DIRECT_URL="$TEST_DATABASE_URL"
 # E2E's own API port so a running dev API can't be attached to; global-setup/test-setup read it.
 export E2E_API_PORT="${E2E_API_PORT:-3100}"
 
-# Probe the DB at the URL's own host/port/name — the URL is the single source of truth. Probing
-# POSTGRES_TEST_PORT instead would mismatch a caller-supplied TEST_DATABASE_URL on a non-default port
-# (e.g. a block-specific 5473), producing a false "not accessible" or a redundant container start.
-_db="${TEST_DATABASE_URL#*://}"                     # strip scheme://
-_db="${_db##*@}"                                     # strip any user:pass@
-_db_hostport="${_db%%/*}"                            # host[:port]
-_db_name="${_db#*/}"; _db_name="${_db_name%%[?]*}"   # dbname (drop ?query if present)
-_db_host="${_db_hostport%%:*}"
-_db_port="${_db_hostport##*:}"
-[ "$_db_port" = "$_db_hostport" ] && _db_port=5432   # no explicit port in the URL
+# Probe the database with the URL itself — its host, port, credentials and name — through the
+# suite's pg runner, so no psql binary is needed. A probe with fixed postgres:postgres credentials
+# failed against any other login (CI's test database uses prisma:prisma) and started a container
+# the tests never used.
+probe_test_database() {
+  node -e 'process.stdout.write(JSON.stringify({ url: process.env.TEST_DATABASE_URL, statement: "SELECT 1" }))' |
+    node apps/api-e2e/src/support/sql-runner.mjs >/dev/null 2>&1
+}
 
 TEST_DB_STARTED=false
 
@@ -38,7 +36,7 @@ cleanup() {
 
 trap cleanup EXIT
 
-if ! PGPASSWORD=postgres psql -U postgres -h "$_db_host" -p "$_db_port" -d "$_db_name" -c "SELECT 1" >/dev/null 2>&1; then
+if ! probe_test_database; then
   if ! docker info >/dev/null 2>&1; then
     echo "❌ Test database is not accessible and Docker is not running"
     echo "   Start Docker or set TEST_DATABASE_URL to an accessible test database"
@@ -66,16 +64,28 @@ if echo "$OUTPUT" | grep -qE '^[[:space:]]*(Test Files|Tests)[[:space:]].*[0-9]+
   SUMMARY_HAS_FAILURES=true
 fi
 
-# Check if tests actually passed by looking for success indicators
+# How many tests passed, from the summary line "Tests  3 failed | 125 passed (128)". A run in which
+# no test passed — no test matched, or every test was skipped — proves nothing, so it never reports
+# PASSED, whatever the exit code.
+PASSED_COUNT=$(echo "$OUTPUT" | grep -E '^[[:space:]]*Tests[[:space:]]' | tail -1 | grep -oE '[0-9]+ passed' | grep -oE '[0-9]+')
+PASSED_COUNT=${PASSED_COUNT:-0}
+
 SEPARATOR="════════════════════════════════════════════════════════════"
 
-if [[ $EXIT_CODE -eq 0 ]]; then
+if [[ "$PASSED_COUNT" -eq 0 ]]; then
+  echo ""
+  echo "$SEPARATOR"
+  echo "❌ E2E Tests FAILED: no test passed (none ran, or all were skipped; Vitest exit code: $EXIT_CODE)"
+  echo "$SEPARATOR"
+  [[ $EXIT_CODE -ne 0 ]] && exit $EXIT_CODE
+  exit 1
+elif [[ $EXIT_CODE -eq 0 ]]; then
   # Vitest exited cleanly — the tests passed. Trust the exit code first: a legitimate pass can exit 0
   # without the custom "Cleanup complete" console line reaching the captured stream, and requiring
   # that marker here printed a false failure banner even though the tests passed.
   echo ""
   echo "$SEPARATOR"
-  echo "✅ E2E Tests PASSED"
+  echo "✅ E2E Tests PASSED ($PASSED_COUNT tests)"
   echo "$SEPARATOR"
   exit 0
 elif [[ "$SUMMARY_HAS_FAILURES" == false ]] && \
@@ -86,7 +96,7 @@ elif [[ "$SUMMARY_HAS_FAILURES" == false ]] && \
   # hanging case. The marker fallback is retained only for this.
   echo ""
   echo "$SEPARATOR"
-  echo "✅ E2E Tests PASSED (exit code adjusted from $EXIT_CODE to 0)"
+  echo "✅ E2E Tests PASSED ($PASSED_COUNT tests; exit code adjusted from $EXIT_CODE to 0)"
   echo "   Process was force-killed to prevent hanging - this is expected"
   echo "$SEPARATOR"
   exit 0
