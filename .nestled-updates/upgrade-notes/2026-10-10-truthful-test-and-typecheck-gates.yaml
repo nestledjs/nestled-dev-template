@@ -31,6 +31,15 @@ intent: >
   Plugin type is nominally distinct from the root Vite's, so apps/web/vite.config.ts could not
   typecheck.
 
+  Delete libs/api/core/data-access/src/lib/models/chapter-stats.ts and user-stats.ts. Nothing
+  imports them and no index exports them; they surfaced once libs/api code had its own typecheck.
+
+  Widen the web-ui social-links `member` prop from `Partial<User>` to `SocialLinkMember` (Partial<User>
+  plus the facebook/twitter/linkedin/instagram/youtube fields the component reads), and fix stories
+  that passed props their components do not have: the data-table `Loading` story becomes `Empty`,
+  and the simple-list-item stories become `NotClickable`/`Clickable` with the `Selected` story
+  removed.
+
   Rename the inferred ESLint target from `eslint:lint` to `lint` in nx.json so `pnpm lint` and CI's
   `nx affected -t lint` reach every project, and fix the lint errors that surfaces.
 why: >
@@ -61,6 +70,10 @@ affectedPaths:
   - libs/web-ui/eslint.config.mjs
   - libs/shared-components/eslint.config.mjs
   - libs/api/prisma/src/lib/seed/seed.ts
+  - libs/api/core/data-access/src/lib/models/chapter-stats.ts
+  - libs/api/core/data-access/src/lib/models/user-stats.ts
+  - libs/web-ui/src/lib/web-ui-social-links.tsx
+  - libs/web-ui/src/lib/*.stories.tsx
   - libs/api/prisma/src/lib/seed/diagnose-rbac.ts
   - apps/web/tests/**
   - .github/workflows/ci.yml
@@ -95,3 +108,8 @@ agentHints:
   - >
     Build-tool configs (vite.config.ts, vitest.config.mts, jest.config.ts) must sit in a checked
     config too, normally the spec config. An unused one can be deleted instead.
+  - >
+    Template promotion and patch apply never delete files, so remove the two stats model files by
+    hand. First search the project for imports of ChapterStats or UserStats (or the file names): if
+    the project uses them, keep the files, add them to a checked config, and record the deletion as
+    not-applicable. A project with its own stories may have more stale args; fix them the same way.
