@@ -45,11 +45,13 @@ intent: >
 
   Make the API e2e result mean that the suite ran and passed. `api-e2e:e2e` runs the same wrapper as
   `api-e2e:test` (apps/api-e2e/run-tests.sh) instead of the Vitest executor, and both targets set
-  `cache: false`. The wrapper reports PASSED only when Vitest's summary counts no failure and at
-  least one passed test, and prints that count; a run with no test file, or with every test skipped,
-  fails. The e2e Vitest config sets `passWithNoTests: false` and the verbose reporter so the log
-  names every test, and drops `dangerouslyIgnoreUnhandledErrors`, keeping only the onUnhandledError
-  filter for teardown's intentional process.exit. Remove SKIP_API_CHECK and the
+  `cache: false`. The wrapper reports PASSED only when Vitest exits 0, its summary counts no failure,
+  and at least one test passed, and prints that count; a run with no test file, or with every test
+  skipped, fails. Remove the wrapper's force-kill fallback, which accepted a non-zero exit when a
+  "Cleanup complete" marker appeared: teardown no longer calls process.exit and nothing prints the
+  marker. The e2e Vitest config sets `passWithNoTests: false` and the verbose reporter so the log
+  names every test, and drops both `dangerouslyIgnoreUnhandledErrors` and the onUnhandledError
+  filter for process.exit errors, so every unhandled error fails the run. Remove SKIP_API_CHECK and the
   `__SKIP_E2E_TESTS__` flag: global setup set it on globalThis, which never reaches the forked test
   worker, so the option produced a run of failures rather than a skip.
 

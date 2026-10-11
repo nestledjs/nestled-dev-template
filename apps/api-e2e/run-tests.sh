@@ -1,7 +1,6 @@
 #!/bin/bash
-# Wrapper script for e2e tests that handles SIGKILL exit properly
-# The tests use SIGKILL to prevent hanging, which causes a non-zero exit code
-# but if all tests passed, we should still report success
+# Runs the API e2e suite against the test database and reports PASSED only when Vitest exited 0, its
+# summary counts no failure, and at least one test passed.
 
 set +e  # Don't exit on error
 
@@ -72,38 +71,23 @@ PASSED_COUNT=${PASSED_COUNT:-0}
 
 SEPARATOR="════════════════════════════════════════════════════════════"
 
-if [[ "$PASSED_COUNT" -eq 0 ]]; then
-  echo ""
-  echo "$SEPARATOR"
-  echo "❌ E2E Tests FAILED: no test passed (none ran, or all were skipped; Vitest exit code: $EXIT_CODE)"
-  echo "$SEPARATOR"
-  [[ $EXIT_CODE -ne 0 ]] && exit $EXIT_CODE
-  exit 1
-elif [[ $EXIT_CODE -eq 0 ]]; then
-  # Vitest exited cleanly — the tests passed. Trust the exit code first: a legitimate pass can exit 0
-  # without the custom "Cleanup complete" console line reaching the captured stream, and requiring
-  # that marker here printed a false failure banner even though the tests passed.
+if [[ $EXIT_CODE -eq 0 && "$SUMMARY_HAS_FAILURES" == false && "$PASSED_COUNT" -gt 0 ]]; then
   echo ""
   echo "$SEPARATOR"
   echo "✅ E2E Tests PASSED ($PASSED_COUNT tests)"
   echo "$SEPARATOR"
   exit 0
-elif [[ "$SUMMARY_HAS_FAILURES" == false ]] && \
-   echo "$OUTPUT" | grep -q "✅ Cleanup complete - all tests passed!" && \
-   echo "$OUTPUT" | grep -qE '^[[:space:]]*Test Files[[:space:]].*passed' && \
-   echo "$OUTPUT" | grep -qE '^[[:space:]]*Tests[[:space:]].*passed'; then
-  # Non-zero exit but the run completed with all tests passing: the intentional SIGKILL-to-prevent-
-  # hanging case. The marker fallback is retained only for this.
-  echo ""
-  echo "$SEPARATOR"
-  echo "✅ E2E Tests PASSED ($PASSED_COUNT tests; exit code adjusted from $EXIT_CODE to 0)"
-  echo "   Process was force-killed to prevent hanging - this is expected"
-  echo "$SEPARATOR"
-  exit 0
-else
-  echo ""
-  echo "$SEPARATOR"
-  echo "❌ E2E Tests FAILED (exit code: $EXIT_CODE)"
-  echo "$SEPARATOR"
-  exit $EXIT_CODE
 fi
+
+echo ""
+echo "$SEPARATOR"
+if [[ "$SUMMARY_HAS_FAILURES" == true ]]; then
+  echo "❌ E2E Tests FAILED (the summary counts a failure; Vitest exit code: $EXIT_CODE)"
+elif [[ "$PASSED_COUNT" -eq 0 ]]; then
+  echo "❌ E2E Tests FAILED: no test passed (none ran, or all were skipped; Vitest exit code: $EXIT_CODE)"
+else
+  echo "❌ E2E Tests FAILED (Vitest exit code: $EXIT_CODE)"
+fi
+echo "$SEPARATOR"
+[[ $EXIT_CODE -ne 0 ]] && exit $EXIT_CODE
+exit 1

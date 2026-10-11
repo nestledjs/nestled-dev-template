@@ -125,11 +125,16 @@ describe('api-e2e test wrapper', () => {
     expect(result.status).toBe(1)
     expect(result.stdout).toContain('E2E Tests FAILED')
   })
-  it('accepts the intentional force-kill only when every test passed', () => {
-    const output = `${summary('5 passed (5)')}✅ Cleanup complete - all tests passed!\n`
-    const { result } = runWrapper(output, 137)
-    expect(result.status).toBe(0)
-    expect(result.stdout).toContain('PASSED (5 tests; exit code adjusted from 137 to 0)')
+  it('fails a zero exit whose summary counts a failure', () => {
+    const { result } = runWrapper(summary('1 failed | 4 passed (5)'), 0)
+    expect(result.status).toBe(1)
+    expect(result.stdout).toContain('the summary counts a failure')
+    expect(result.stdout).not.toContain('PASSED')
+  })
+  it('fails a non-zero exit even when the summary shows only passes', () => {
+    const { result } = runWrapper(summary('5 passed (5)'), 137)
+    expect(result.status).toBe(137)
+    expect(result.stdout).not.toContain('PASSED')
   })
   it('probes the database with the URL and its own credentials, starting no container', () => {
     const { probe, dbCalls } = runWrapper(summary('5 passed (5)'), 0)

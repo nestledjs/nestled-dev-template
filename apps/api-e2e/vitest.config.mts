@@ -39,20 +39,7 @@ export default defineConfig({
     },
     pool: 'forks', // Use forks instead of threads for better isolation and cleanup
     maxWorkers: 1, // Run in single fork for sequential test execution
-    isolate: false, // Allow process.exit() to work
-    // Teardown calls process.exit() intentionally; that error alone is filtered below. Any other
-    // unhandled error fails the run (dangerouslyIgnoreUnhandledErrors would let every one pass).
-    onUnhandledError(error): boolean | void {
-      console.log('🔍 onUnhandledError called:', error.message || String(error))
-      // Return true to filter out this error (it won't fail the test run)
-      const errorStr = String(error.message || error)
-      if (errorStr.includes('process.exit')) {
-        console.log('🔕 Filtering process.exit error')
-        return true
-      }
-      console.log('❌ Not filtering this error')
-      return false
-    },
+    isolate: false, // Spec files share one module context in that fork
     coverage: {
       provider: 'v8',
       reportsDirectory: '../../coverage/apps/api-e2e',
