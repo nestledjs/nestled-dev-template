@@ -11,7 +11,9 @@
   "include": [
     "src/support/api-process.ts",
     "src/support/api-process.spec.ts",
+    "src/support/api-process.native.spec.ts",
     "src/support/e2e-runner.spec.ts",
+    "src/support/process-tree-fixture.mjs",
     "src/support/sql-runner.mjs",
     "src/support/sql-runner.spec.ts"
   ],

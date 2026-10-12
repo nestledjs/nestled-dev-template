@@ -23,6 +23,7 @@ export default defineConfig({
     // The test-support dependency runs these without starting databases or an API.
     exclude: [
       '**/support/api-process.spec.ts',
+      '**/support/api-process.native.spec.ts',
       '**/support/e2e-runner.spec.ts',
       '**/support/sql-runner.spec.ts',
     ],
