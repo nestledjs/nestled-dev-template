@@ -110,10 +110,16 @@ describe('typecheck-project', () => {
       'apps/w/vite.config.ts': 'export default {}\n',
       'apps/w/nested/tsconfig.json': { files: [] },
       'apps/w/nested/other.ts': 'export const other = 1\n',
+      'apps/w/inner/project.json': {},
+      'apps/w/inner/tsconfig.json': { files: [] },
+      'apps/w/inner/own.ts': 'export const own = 1\n',
     })
     const projectRoot = join(root, 'apps/w')
     const inspected = inspectConfigs(ts, resolveProjectConfigs(ts, projectRoot))
+    // inner/ is its own Nx project and checks its own files; nested/ only has a tsconfig.json, which
+    // gets no typecheck target, so its file is uncovered here.
     assert.deepEqual(uncoveredFiles(root, projectRoot, inspected), [
+      join(projectRoot, 'nested/other.ts'),
       join(projectRoot, 'tests/main.spec.ts'),
       join(projectRoot, 'vite.config.ts'),
     ])

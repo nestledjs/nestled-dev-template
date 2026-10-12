@@ -129,11 +129,14 @@ export function uncoveredFiles(workspaceRoot, projectRoot, inspected) {
     throw new Error(`git ls-files failed: ${listed.stderr || listed.error?.message}`)
   }
   const covered = new Set(inspected.flatMap(config => config.fileNames ?? []).map(f => resolve(f)))
+  // A nested Nx project (its own project.json) checks its own files. A nested tsconfig.json alone
+  // is not one: the typecheck plugin gives targets only to project.json roots, so its files would
+  // otherwise be checked nowhere.
   const nestedProjects = new Set()
   const files = listed.stdout.split('\0').filter(Boolean)
   for (const file of files) {
     const directory = dirname(resolve(workspaceRoot, file))
-    if (file.endsWith('/tsconfig.json') && directory !== projectRoot) {
+    if (file.endsWith('/project.json') && directory !== projectRoot) {
       nestedProjects.add(directory)
     }
   }
