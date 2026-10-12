@@ -35,7 +35,9 @@ one test passed. A filter that matches nothing, or a run in which every test is 
      not start unless `E2E_ALLOW_EXISTING_API=1` is set
 3. **Tests** run against that API with axios. `src/support/test-db.ts` runs SQL against the test
    database for setup and assertions.
-4. **Teardown** stops the API process group it started.
+4. **Teardown** stops the API process tree it started: its process group on Linux and macOS, the
+   launcher and its descendants (`taskkill /T`) on Windows. Cancellation (Ctrl+C) and an exit
+   before teardown stop it the same way.
 
 ### Environment Variables
 

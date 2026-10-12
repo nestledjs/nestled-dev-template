@@ -1,7 +1,7 @@
 import { waitForPortOpen } from '@nx/node/utils'
 import { execSync, spawn, spawnSync, type ChildProcess } from 'node:child_process'
 import { createConnection, type Socket } from 'node:net'
-import { killApiProcessTree, registerApiProcessCleanup } from './api-process'
+import { killApiProcessTree, ownedProcessOptions, registerApiProcessCleanup } from './api-process'
 import globalTeardown from './global-teardown'
 import { runSql, testDatabaseUrl } from './test-db'
 
@@ -70,6 +70,8 @@ function runMigrateDeploy(projectRoot: string, testDatabaseUrl: string) {
     cwd: projectRoot,
     env: { ...process.env, DATABASE_URL: testDatabaseUrl, DIRECT_URL: testDatabaseUrl },
     encoding: 'utf8',
+    // pnpm is a .cmd shim on Windows, which Node only runs through a shell.
+    shell: process.platform === 'win32',
   })
   process.stdout.write(result.stdout ?? '')
   process.stderr.write(result.stderr ?? '')
@@ -139,8 +141,8 @@ async function startApiServer(
       NODE_ENV: 'test',
     },
     stdio: ['ignore', 'pipe', 'pipe'],
-    // Its own process group, so teardown can stop `nx serve` and the API it starts, not just pnpm.
-    detached: process.platform !== 'win32',
+    // So teardown can stop `nx serve` and the API it starts, not just pnpm.
+    ...ownedProcessOptions(),
   })
 
   registerApiProcessCleanup(apiProcess)
