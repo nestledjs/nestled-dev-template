@@ -18,7 +18,9 @@ NC='\033[0m' # No Color
 # Cleanup function
 cleanup() {
   echo -e "\n${YELLOW}🧹 Cleaning up...${NC}"
-  ./scripts/test-db.sh stop 2>/dev/null || true
+  if ! ./scripts/test-db.sh stop 2>/dev/null; then
+    echo -e "${RED}⚠️  Could not stop the test database. Stop it with ./scripts/test-db.sh stop.${NC}" >&2
+  fi
   return 0
 }
 
@@ -53,21 +55,21 @@ export DIRECT_URL="$TEST_DATABASE_URL"
 # Run the tests
 echo -e "${BLUE}3. Running E2E tests...${NC}"
 
-# Route through api-e2e:test (the run-tests.sh wrapper), not api-e2e:e2e. The wrapper runs vitest
-# with tee'd output and adjusts the SIGKILL exit code, so a failure surfaces the actual Vitest
-# assertion details; api-e2e:e2e goes through the Nx executor and can exit with only Nx's failure
-# summary. Extra args after `--` reach the wrapper's "$@" and become a vitest file-path filter.
+# api-e2e:e2e runs the run-tests.sh wrapper, which tees Vitest's output and reports PASSED only when
+# Vitest exited 0, its summary counts no failure and at least one test passed. Extra args after `--`
+# reach the wrapper's "$@" and become a Vitest file-path filter. (api-e2e:test is the support suite
+# only, so `nx run-many -t test` never starts this e2e run or its database.)
 # Option 1: Run specific test file
 # set +e so a failing target doesn't abort under `set -e` before we capture its code — otherwise the
 # `$?` check below is unreachable on failure and the run reports success.
 set +e
 if [[ "$1" != "" ]]; then
   echo -e "${YELLOW}Running specific test: $1${NC}"
-  pnpm nx run api-e2e:test -- "$1"
+  pnpm nx run api-e2e:e2e -- "$1"
 # Option 2: Run all tests
 else
   echo -e "${YELLOW}Running all E2E tests...${NC}"
-  pnpm nx run api-e2e:test
+  pnpm nx run api-e2e:e2e
 fi
 E2E_EXIT=$?
 set -e
