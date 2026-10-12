@@ -1,6 +1,10 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest'
-import { TestHelpers, TestUser, type AuthPayload } from '../support/test-helpers'
+import { TestHelpers, TestUser, type AuthUser } from '../support/test-helpers'
 
+// Only the fields the register documents below select.
+type Registered = {
+  register: { token: string; user: Pick<AuthUser, 'id' | 'emails' | 'firstName' | 'lastName'> }
+}
 type Organization = { id: string; name: string }
 type Member = { id: string; userId: string }
 type Preference = { id: string; key: string; value: string }
@@ -58,10 +62,10 @@ describe('CRITICAL: Multi-Tenant Data Isolation', () => {
         }
       }
     `
-    const response1 = await TestHelpers.graphql<{ register: AuthPayload }>(registerMutation, {
+    const response1 = await TestHelpers.graphql<Registered>(registerMutation, {
       input: user1Data,
     })
-    const response2 = await TestHelpers.graphql<{ register: AuthPayload }>(registerMutation, {
+    const response2 = await TestHelpers.graphql<Registered>(registerMutation, {
       input: user2Data,
     })
     if (response1.data.errors) {
@@ -340,7 +344,7 @@ describe('CRITICAL: Multi-Tenant Data Isolation', () => {
         organizationName: 'Initial Org',
       }
       const registerResponse = await TestHelpers.graphql<{
-        register: { token: string; user: Pick<AuthPayload['user'], 'id' | 'emails'> }
+        register: { token: string; user: Pick<AuthUser, 'id' | 'emails'> }
       }>(
         `
         mutation Register($input: RegisterInput!) {

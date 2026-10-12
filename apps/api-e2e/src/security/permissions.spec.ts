@@ -1,7 +1,10 @@
 import { describe, it, expect, beforeAll } from 'vitest'
-import { TestHelpers, TestUser, type AuthPayload } from '../support/test-helpers'
+import { TestHelpers, TestUser, type AuthUser } from '../support/test-helpers'
 
-type Registered = { register: AuthPayload }
+// Each type names only the fields its register document selects.
+type Registered<Field extends keyof AuthUser = 'id' | 'emails' | 'firstName' | 'lastName'> = {
+  register: { token: string; user: Pick<AuthUser, Field> }
+}
 type Organization = { id: string; name: string }
 type Role = {
   id: string
@@ -418,7 +421,7 @@ describe('CRITICAL: Permission Enforcement', () => {
         },
       )
       // Register the temp user
-      const tempUserReg = await TestHelpers.graphql<Registered>(
+      const tempUserReg = await TestHelpers.graphql<Registered<'id'>>(
         `
         mutation Register($input: RegisterInput!) {
           register(input: $input) {
@@ -474,7 +477,7 @@ describe('CRITICAL: Permission Enforcement', () => {
         firstName: 'Temp',
         lastName: 'Owner',
       }
-      const regResponse = await TestHelpers.graphql<Registered>(
+      const regResponse = await TestHelpers.graphql<Registered<'id' | 'emails'>>(
         `
         mutation Register($input: RegisterInput!) {
           register(input: $input) {
