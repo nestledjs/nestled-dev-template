@@ -28,18 +28,23 @@ async function waitUntilStopped(pids: number[]) {
 }
 
 async function startTree() {
-  const launcher = spawn(process.execPath, [fixture], {
-    stdio: ['ignore', 'pipe', 'inherit'],
-    ...ownedProcessOptions(),
-    // A path with spaces must not be split by a shell; global setup's command has none.
-    shell: false,
-  })
+  // Spawned with global setup's own options. On Windows that means through a shell, so the
+  // launcher's PID is cmd.exe's and the fixture runs below it, as pnpm's .cmd shim does. The command
+  // is one quoted string there, so paths with spaces survive the shell.
+  const options = ownedProcessOptions()
+  const stdio: ['ignore', 'pipe', 'inherit'] = ['ignore', 'pipe', 'inherit']
+  const launcher = options.shell
+    ? spawn(`"${process.execPath}" "${fixture}"`, { stdio, ...options })
+    : spawn(process.execPath, [fixture], { stdio, ...options })
   const [data] = await once(launcher.stdout, 'data')
-  const pids = JSON.parse(String(data)) as { launcher: number; descendant: number }
-  started.push(pids.launcher, pids.descendant)
-  expect(pids.launcher).toBe(launcher.pid)
-  expect([pids.launcher, pids.descendant].every(isRunning)).toBe(true)
-  return { launcher, pids: [pids.launcher, pids.descendant] }
+  const fixturePids = JSON.parse(String(data)) as { launcher: number; descendant: number }
+  if (!launcher.pid) throw new Error('the launcher did not start')
+  const pids = [...new Set([launcher.pid, fixturePids.launcher, fixturePids.descendant])]
+  // Through a shell the tree is three processes deep; without one the launcher is the fixture.
+  expect(pids).toHaveLength(options.shell ? 3 : 2)
+  started.push(...pids)
+  expect(pids.every(isRunning)).toBe(true)
+  return { launcher, pids }
 }
 
 afterEach(() => {
