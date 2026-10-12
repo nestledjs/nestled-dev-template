@@ -1,17 +1,25 @@
 import { spawnSync, type ChildProcess } from 'node:child_process'
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { killApiProcessTree, ownedProcessOptions, registerApiProcessCleanup } from './api-process'
 import globalTeardown from './global-teardown'
 
 vi.mock('node:child_process', async importOriginal => {
   const actual = await importOriginal<typeof import('node:child_process')>()
-  return { ...actual, spawnSync: vi.fn(actual.spawnSync) }
+  return {
+    ...actual,
+    spawnSync: vi.fn(() => {
+      throw new Error('unexpected spawnSync')
+    }),
+  }
 })
 
 const originalPlatform = process.platform
 const originalExitCode = process.exitCode
 const setPlatform = (value: string) => Object.defineProperty(process, 'platform', { value })
 const disposers: (() => void)[] = []
+// Every test signals a made-up PID through mocks. Pin POSIX unless a test opts into Windows, so a
+// run on Windows never sends a real taskkill to whatever process holds that PID.
+beforeEach(() => setPlatform('darwin'))
 afterEach(() => {
   disposers.splice(0).forEach(dispose => dispose())
   vi.restoreAllMocks()
