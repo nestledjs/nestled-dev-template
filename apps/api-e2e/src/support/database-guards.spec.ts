@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import {
+  DESTINATION_OVERRIDES,
   assertDisposableTestDatabase,
   databaseProbe,
   describeDatabase,
@@ -22,16 +23,18 @@ describe('test database guards', () => {
     'postgresql://u:p@localhost:5432/test_data',
     'postgresql://u:p@db.example.com:5432/app_test',
     'postgresql://u:p@postgres:5432/app_test',
-    'postgresql://u:p@localhost:5432/app_test?host=db.example.com',
-    'postgresql://u:p@localhost:5432/app_test?hostaddr=10.0.0.5',
-    'postgresql://u:p@localhost:5432/app_test?port=6543',
-    'postgresql://u:p@localhost:5432/app_test?dbname=production',
-    'postgresql://u:p@localhost:5432/app_test?Database=production',
     'not a url',
   ])('refuses %s before setup touches it, naming no password', url => {
     expect(isDisposableTestDatabase(url)).toBe(false)
     expect(() => assertDisposableTestDatabase(url, {})).toThrow(/Refusing to run e2e setup/)
     expect(() => assertDisposableTestDatabase(url, {})).not.toThrow(/u:p@/)
+  })
+
+  it.each(DESTINATION_OVERRIDES)('refuses a URL whose %s parameter overrides the destination', key => {
+    const url = `postgresql://u:p@localhost:5432/app_test?${key}=elsewhere`
+    expect(isDisposableTestDatabase(url)).toBe(false)
+    expect(isDisposableTestDatabase(url.replace(`?${key}=`, `?${key.toUpperCase()}=`))).toBe(false)
+    expect(() => assertDisposableTestDatabase(url, {})).toThrow(/Refusing to run e2e setup/)
   })
 
   it('lets an explicit opt-out through, and only the value 1', () => {

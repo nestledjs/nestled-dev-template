@@ -6,7 +6,15 @@ const LOCAL_DATABASE_HOSTS = new Set(['localhost', '127.0.0.1', '::1', '[::1]'])
 // Query parameters that pg and libpq read as the connection's destination, overriding the URL's
 // host, port or path. A URL carrying one could pass the host and name check and still connect
 // elsewhere.
-const DESTINATION_OVERRIDES = ['host', 'hostaddr', 'port', 'database', 'dbname', 'db', 'service']
+export const DESTINATION_OVERRIDES = [
+  'host',
+  'hostaddr',
+  'port',
+  'database',
+  'dbname',
+  'db',
+  'service',
+] as const
 
 /** The opt-out for a test database that does not look disposable. */
 export const ALLOW_NON_DISPOSABLE_DB = 'E2E_ALLOW_NON_DISPOSABLE_DB'
@@ -32,7 +40,7 @@ export function isDisposableTestDatabase(databaseUrl: string): boolean {
     const url = new URL(databaseUrl)
     const database = decodeURIComponent(url.pathname.slice(1))
     const params = [...url.searchParams.keys()].map(key => key.toLowerCase())
-    if (params.some(key => DESTINATION_OVERRIDES.includes(key))) return false
+    if (params.some(key => (DESTINATION_OVERRIDES as readonly string[]).includes(key))) return false
     return LOCAL_DATABASE_HOSTS.has(url.hostname) && /_test$/i.test(database)
   } catch {
     return false
