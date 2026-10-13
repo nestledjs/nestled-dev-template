@@ -8,6 +8,9 @@ set -euo pipefail
 
 # Use tee to show output in real-time AND capture it
 TMPFILE=$(mktemp)
+# A caller-supplied URL names a database this script does not manage: if it is unreachable the run
+# fails, rather than starting the repo's Compose test database, which would not be at that URL.
+SUPPLIED_TEST_DATABASE_URL="${TEST_DATABASE_URL:-}"
 # Resolve the test DB URL the way scripts/test-db.sh does (it reads POSTGRES_TEST_PORT from the
 # repo-root .env), so a direct `api-e2e:e2e` run doesn't probe/migrate the wrong port.
 export TEST_DATABASE_URL="${TEST_DATABASE_URL:-$(./scripts/test-db.sh url)}"
@@ -43,6 +46,11 @@ cleanup() {
 trap cleanup EXIT
 
 if ! probe_test_database; then
+  if [[ -n "$SUPPLIED_TEST_DATABASE_URL" ]]; then
+    echo "❌ TEST_DATABASE_URL is set but that database is not accessible"
+    echo "   Start it, or unset TEST_DATABASE_URL to use the repo's own test database"
+    exit 1
+  fi
   if ! docker info >/dev/null 2>&1; then
     echo "❌ Test database is not accessible and Docker is not running"
     echo "   Start Docker or set TEST_DATABASE_URL to an accessible test database"
