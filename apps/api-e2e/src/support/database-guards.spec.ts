@@ -22,6 +22,11 @@ describe('test database guards', () => {
     'postgresql://u:p@localhost:5432/test_data',
     'postgresql://u:p@db.example.com:5432/app_test',
     'postgresql://u:p@postgres:5432/app_test',
+    'postgresql://u:p@localhost:5432/app_test?host=db.example.com',
+    'postgresql://u:p@localhost:5432/app_test?hostaddr=10.0.0.5',
+    'postgresql://u:p@localhost:5432/app_test?port=6543',
+    'postgresql://u:p@localhost:5432/app_test?dbname=production',
+    'postgresql://u:p@localhost:5432/app_test?Database=production',
     'not a url',
   ])('refuses %s before setup touches it, naming no password', url => {
     expect(isDisposableTestDatabase(url)).toBe(false)
