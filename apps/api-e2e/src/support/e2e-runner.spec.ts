@@ -44,7 +44,7 @@ describe('e2e shell runner', () => {
   it('delegates migrations to global setup and pins all URLs to the test database', () => {
     const { result, calls } = run(0)
     expect(result.status).toBe(0)
-    expect(calls).toEqual(['nx run api-e2e:test', ...Array(3).fill('postgresql://local/test')])
+    expect(calls).toEqual(['nx run api-e2e:e2e', ...Array(3).fill('postgresql://local/test')])
   })
   it('preserves a caller-provided isolated database URL', () => {
     expect(run(0, 'postgresql://local/isolated_test').calls.slice(1)).toEqual(
@@ -59,7 +59,7 @@ describe('e2e shell runner', () => {
   })
 })
 
-const runWrapper = (vitestOutput: string, vitestExit: number, probeExit = 0) => {
+const runWrapper = (vitestOutput: string, vitestExit: number, probeExit = 0, stopExit = 0) => {
   const root = mkdtempSync(join(tmpdir(), 'e2e-test-wrapper-'))
   roots.push(root)
   mkdirSync(join(root, 'scripts'))
@@ -68,7 +68,8 @@ const runWrapper = (vitestOutput: string, vitestExit: number, probeExit = 0) => 
   copyFileSync(resolve(__dirname, '../../run-tests.sh'), join(root, 'apps/api-e2e/run-tests.sh'))
   writeFileSync(
     join(root, 'scripts/test-db.sh'),
-    '#!/bin/bash\necho "$1" >> db-calls\nif [[ "$1" == url ]]; then echo postgresql://local/test; fi\n',
+    '#!/bin/bash\necho "$1" >> db-calls\nif [[ "$1" == url ]]; then echo postgresql://local/test; fi\n' +
+      `if [[ "$1" == stop ]]; then exit ${stopExit}; fi\n`,
     { mode: 0o755 },
   )
   // Stands in for the pg runner: records the probe request and answers with the probe's result.
@@ -146,5 +147,19 @@ describe('api-e2e test wrapper', () => {
   })
   it('starts the test database when the probe fails', () => {
     expect(runWrapper(summary('5 passed (5)'), 0, 1).dbCalls).toContain('start')
+  })
+  it('stops the test database it started, and warns when that fails without changing the result', () => {
+    const stopped = runWrapper(summary('5 passed (5)'), 0, 1)
+    expect(stopped.dbCalls).toContain('stop')
+    expect(stopped.result.stderr).not.toContain('could not stop')
+    const stuck = runWrapper(summary('5 passed (5)'), 0, 1, 1)
+    expect(stuck.result.status).toBe(0)
+    expect(stuck.result.stderr).toContain('could not stop it')
+  })
+  it('finds a failure in the summary of a long log', () => {
+    const log = `${'✓ a passing test\n'.repeat(20000)}${summary('1 failed | 4 passed (5)')}`
+    const { result } = runWrapper(log, 0)
+    expect(result.status).toBe(1)
+    expect(result.stdout).toContain('the summary counts a failure')
   })
 })

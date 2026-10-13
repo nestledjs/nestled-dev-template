@@ -94,7 +94,7 @@ pnpm nx build <project-name>
 ### Testing
 
 ```bash
-pnpm test                          # run Nx test targets
+pnpm test                          # run Nx test targets (unit/component; never the API e2e)
 pnpm test:e2e                      # scripted end-to-end tests
 pnpm nx test <project-name>        # focused project test
 pnpm nx e2e api-e2e                # API e2e tests
@@ -112,7 +112,8 @@ pnpm test:db:stop
 pnpm lint               # ESLint for every project
 pnpm format             # write Nx formatting
 pnpm format:check       # check formatting
-pnpm typecheck          # every project: app/lib, spec and storybook configs (scripts/typecheck-project.mjs)
+pnpm typecheck          # every project: app/lib, spec and storybook configs (scripts/typecheck-project.mjs),
+                        # then scripts/ and tools/ (pnpm typecheck:workspace)
 ```
 
 ### Prisma Operations
@@ -152,7 +153,7 @@ TypeScript is the default language. Follow `.editorconfig`: UTF-8, two-space ind
 
 ## Testing Guidelines
 
-Unit and component tests use Jest and Vitest through Nx project targets. Place tests next to the source they cover when practical, or in existing folders such as `apps/web/tests` and `apps/api-e2e/src`. Run focused checks with Nx, e.g. `pnpm nx test web-ui` or `pnpm nx e2e api-e2e`.
+Unit and component tests use Jest and Vitest through Nx project targets. Place tests next to the source they cover when practical, or in existing folders such as `apps/web/tests` and `apps/api-e2e/src`. Run focused checks with Nx, e.g. `pnpm nx test web-ui` or `pnpm nx e2e api-e2e`. The API e2e suite runs only through `api-e2e:e2e`; `api-e2e:test` is its database-free support suite, so `nx run-many -t test` never starts the e2e run or a test database.
 
 ## Commit & Pull Request Guidelines
 
