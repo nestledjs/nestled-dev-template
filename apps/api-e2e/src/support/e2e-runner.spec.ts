@@ -18,7 +18,7 @@ const run = (exitCode: number, suppliedUrl?: string) => {
   )
   writeFileSync(
     join(root, 'scripts/test-db.sh'),
-    '#!/bin/bash\nif [[ "$1" == url ]]; then echo postgresql://local/test; fi\n',
+    '#!/bin/bash\necho "$1" >> db-calls\nif [[ "$1" == url ]]; then echo postgresql://local/test; fi\n',
     { mode: 0o755 },
   )
   writeFileSync(join(root, 'bin/docker'), '#!/bin/bash\nexit 0\n', { mode: 0o755 })
@@ -37,7 +37,14 @@ const run = (exitCode: number, suppliedUrl?: string) => {
     },
     encoding: 'utf8',
   })
-  return { result, calls: readFileSync(join(root, 'calls'), 'utf8').trim().split('\n') }
+  const dbCalls = (() => {
+    try {
+      return readFileSync(join(root, 'db-calls'), 'utf8')
+    } catch {
+      return ''
+    }
+  })()
+  return { result, calls: readFileSync(join(root, 'calls'), 'utf8').trim().split('\n'), dbCalls }
 }
 
 describe('e2e shell runner', () => {
@@ -46,10 +53,16 @@ describe('e2e shell runner', () => {
     expect(result.status).toBe(0)
     expect(calls).toEqual(['nx run api-e2e:e2e', ...Array(3).fill('postgresql://local/test')])
   })
-  it('preserves a caller-provided isolated database URL', () => {
-    expect(run(0, 'postgresql://local/isolated_test').calls.slice(1)).toEqual(
-      Array(3).fill('postgresql://local/isolated_test'),
-    )
+  it('starts and stops the repo test database when no URL is supplied', () => {
+    const { dbCalls } = run(0)
+    expect(dbCalls).toContain('start')
+    expect(dbCalls).toContain('stop')
+  })
+  it('preserves a caller-provided isolated database URL without managing a container', () => {
+    const { calls, dbCalls } = run(0, 'postgresql://local/isolated_test')
+    expect(calls.slice(1)).toEqual(Array(3).fill('postgresql://local/isolated_test'))
+    expect(dbCalls).not.toContain('start')
+    expect(dbCalls).not.toContain('stop')
   })
   it('propagates a failing test target instead of reporting success', () => {
     const { result } = run(7)

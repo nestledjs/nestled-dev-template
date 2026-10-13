@@ -13,7 +13,7 @@ database and exercise it over HTTP.
 ## Running E2E Tests
 
 ```bash
-pnpm test:e2e               # starts the test database container, runs the suite, stops it
+pnpm test:e2e               # starts the test database container, runs the suite, stops it (with TEST_DATABASE_URL set, uses that database and manages no container)
 pnpm nx e2e api-e2e         # runs the suite; starts the container only if no TEST_DATABASE_URL is set and the database is unreachable
 pnpm nx e2e api-e2e -- src/auth/auth-generation.spec.ts   # one file
 ```

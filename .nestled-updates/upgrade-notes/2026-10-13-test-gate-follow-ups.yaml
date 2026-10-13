@@ -51,7 +51,9 @@ intent: >
   run-tests.sh. When the caller supplied TEST_DATABASE_URL and that database is unreachable, the
   wrapper fails with a message instead of starting the repo's Docker Compose test database, which
   would not be at that URL and would replace a stopped container the developer owns. It starts its
-  own test database only when no URL was supplied. The wrapper runs under `set -euo pipefail`. The Vitest run is bracketed by `set +e`
+  own test database only when no URL was supplied. scripts/run-e2e-tests.sh (`pnpm test:e2e`)
+  likewise neither starts nor stops the repo's test container when TEST_DATABASE_URL is supplied. The
+  wrapper runs under `set -euo pipefail`. The Vitest run is bracketed by `set +e`
   / `set -e` so its status is still captured from PIPESTATUS. The summary match uses a here-string
   rather than `echo | grep -q`, because under pipefail the writer's SIGPIPE would turn a found
   failure into "no match". The passed-count pipeline ends in `|| true` so no match is a count of

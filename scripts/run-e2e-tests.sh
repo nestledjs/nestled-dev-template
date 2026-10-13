@@ -1,7 +1,9 @@
 #!/bin/bash
 
 # E2E Test Runner
-# Automatically starts test database, runs tests, and cleans up
+# Starts the repo's test database, runs tests, and cleans up. With a caller-supplied
+# TEST_DATABASE_URL it uses that database as is: it neither starts nor stops the repo's own test
+# container, and the run fails if the supplied database is unreachable.
 
 set -e
 
@@ -15,8 +17,17 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
+# A caller-supplied URL names a database this script does not manage.
+MANAGE_TEST_DB=true
+if [[ -n "${TEST_DATABASE_URL:-}" ]]; then
+  MANAGE_TEST_DB=false
+fi
+
 # Cleanup function
 cleanup() {
+  if [[ "$MANAGE_TEST_DB" != true ]]; then
+    return 0
+  fi
   echo -e "\n${YELLOW}🧹 Cleaning up...${NC}"
   if ! ./scripts/test-db.sh stop 2>/dev/null; then
     echo -e "${RED}⚠️  Could not stop the test database. Stop it with ./scripts/test-db.sh stop.${NC}" >&2
@@ -27,15 +38,19 @@ cleanup() {
 # Set up cleanup trap
 trap cleanup EXIT
 
-# Check if Docker is running
-if ! docker info > /dev/null 2>&1; then
-  echo -e "${RED}❌ Docker is not running. Please start Docker first.${NC}"
-  exit 1
-fi
+if [[ "$MANAGE_TEST_DB" = true ]]; then
+  # Check if Docker is running
+  if ! docker info > /dev/null 2>&1; then
+    echo -e "${RED}❌ Docker is not running. Please start Docker first.${NC}"
+    exit 1
+  fi
 
-# Start test database
-echo -e "${BLUE}1. Starting test database...${NC}"
-./scripts/test-db.sh start
+  # Start test database
+  echo -e "${BLUE}1. Starting test database...${NC}"
+  ./scripts/test-db.sh start
+else
+  echo -e "${BLUE}1. Using the supplied TEST_DATABASE_URL; not starting the repo's test database${NC}"
+fi
 
 # Configure the database used by the e2e setup
 echo -e "${BLUE}2. Configuring test database...${NC}"
