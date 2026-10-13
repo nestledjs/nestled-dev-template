@@ -18,7 +18,7 @@ const run = (exitCode: number, suppliedUrl?: string) => {
   )
   writeFileSync(
     join(root, 'scripts/test-db.sh'),
-    '#!/bin/bash\nif [[ "$1" == url ]]; then echo postgresql://local/test; fi\n',
+    '#!/bin/bash\necho "$1" >> db-calls\nif [[ "$1" == url ]]; then echo postgresql://local/test; fi\n',
     { mode: 0o755 },
   )
   writeFileSync(join(root, 'bin/docker'), '#!/bin/bash\nexit 0\n', { mode: 0o755 })
@@ -37,7 +37,14 @@ const run = (exitCode: number, suppliedUrl?: string) => {
     },
     encoding: 'utf8',
   })
-  return { result, calls: readFileSync(join(root, 'calls'), 'utf8').trim().split('\n') }
+  const dbCalls = (() => {
+    try {
+      return readFileSync(join(root, 'db-calls'), 'utf8')
+    } catch {
+      return ''
+    }
+  })()
+  return { result, calls: readFileSync(join(root, 'calls'), 'utf8').trim().split('\n'), dbCalls }
 }
 
 describe('e2e shell runner', () => {
@@ -46,10 +53,16 @@ describe('e2e shell runner', () => {
     expect(result.status).toBe(0)
     expect(calls).toEqual(['nx run api-e2e:e2e', ...Array(3).fill('postgresql://local/test')])
   })
-  it('preserves a caller-provided isolated database URL', () => {
-    expect(run(0, 'postgresql://local/isolated_test').calls.slice(1)).toEqual(
-      Array(3).fill('postgresql://local/isolated_test'),
-    )
+  it('starts and stops the repo test database when no URL is supplied', () => {
+    const { dbCalls } = run(0)
+    expect(dbCalls).toContain('start')
+    expect(dbCalls).toContain('stop')
+  })
+  it('preserves a caller-provided isolated database URL without managing a container', () => {
+    const { calls, dbCalls } = run(0, 'postgresql://local/isolated_test')
+    expect(calls.slice(1)).toEqual(Array(3).fill('postgresql://local/isolated_test'))
+    expect(dbCalls).not.toContain('start')
+    expect(dbCalls).not.toContain('stop')
   })
   it('propagates a failing test target instead of reporting success', () => {
     const { result } = run(7)
@@ -59,7 +72,15 @@ describe('e2e shell runner', () => {
   })
 })
 
-const runWrapper = (vitestOutput: string, vitestExit: number, probeExit = 0, stopExit = 0) => {
+const SUPPLIED_URL = 'postgresql://prisma:secret@db.local:5599/app_test'
+
+const runWrapper = (
+  vitestOutput: string,
+  vitestExit: number,
+  probeExit = 0,
+  stopExit = 0,
+  suppliedUrl = SUPPLIED_URL,
+) => {
   const root = mkdtempSync(join(tmpdir(), 'e2e-test-wrapper-'))
   roots.push(root)
   mkdirSync(join(root, 'scripts'))
@@ -88,7 +109,7 @@ const runWrapper = (vitestOutput: string, vitestExit: number, probeExit = 0, sto
     env: {
       ...process.env,
       PATH: `${root}/bin:${process.env.PATH}`,
-      TEST_DATABASE_URL: 'postgresql://prisma:secret@db.local:5599/app_test',
+      TEST_DATABASE_URL: suppliedUrl,
     },
     encoding: 'utf8',
   })
@@ -145,14 +166,21 @@ describe('api-e2e test wrapper', () => {
     })
     expect(dbCalls).not.toContain('start')
   })
-  it('starts the test database when the probe fails', () => {
-    expect(runWrapper(summary('5 passed (5)'), 0, 1).dbCalls).toContain('start')
+  it('starts its own test database when no URL was supplied and the probe fails', () => {
+    expect(runWrapper(summary('5 passed (5)'), 0, 1, 0, '').dbCalls).toContain('start')
+  })
+  it('fails without starting a container when a supplied URL is unreachable', () => {
+    const { result, dbCalls } = runWrapper(summary('5 passed (5)'), 0, 1)
+    expect(result.status).toBe(1)
+    expect(result.stdout).toContain('TEST_DATABASE_URL is set but that database is not accessible')
+    expect(dbCalls).not.toContain('start')
+    expect(result.stdout).not.toContain('PASSED')
   })
   it('stops the test database it started, and warns when that fails without changing the result', () => {
-    const stopped = runWrapper(summary('5 passed (5)'), 0, 1)
+    const stopped = runWrapper(summary('5 passed (5)'), 0, 1, 0, '')
     expect(stopped.dbCalls).toContain('stop')
     expect(stopped.result.stderr).not.toContain('could not stop')
-    const stuck = runWrapper(summary('5 passed (5)'), 0, 1, 1)
+    const stuck = runWrapper(summary('5 passed (5)'), 0, 1, 1, '')
     expect(stuck.result.status).toBe(0)
     expect(stuck.result.stderr).toContain('could not stop it')
   })

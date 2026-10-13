@@ -13,8 +13,8 @@ database and exercise it over HTTP.
 ## Running E2E Tests
 
 ```bash
-pnpm test:e2e               # starts the test database container, runs the suite, stops it
-pnpm nx e2e api-e2e         # runs the suite; starts the container only if the database is unreachable
+pnpm test:e2e               # starts the test database container, runs the suite, stops it (with TEST_DATABASE_URL set, uses that database and manages no container)
+pnpm nx e2e api-e2e         # runs the suite; starts the container only if no TEST_DATABASE_URL is set and the database is unreachable
 pnpm nx e2e api-e2e -- src/auth/auth-generation.spec.ts   # one file
 ```
 
@@ -28,7 +28,8 @@ one test passed. A filter that matches nothing, or a run in which every test is 
 ## How It Works
 
 1. **Wrapper** (`run-tests.sh`): resolves the test database URL, probes it with its own
-   credentials, starts the test container if it is unreachable, runs Vitest and checks the summary.
+   credentials, and if it is unreachable either fails (a caller-supplied `TEST_DATABASE_URL`) or
+   starts the repo's test container (no URL supplied). It then runs Vitest and checks the summary.
 2. **Global setup** (`src/support/global-setup.ts`):
    - refuses a test database that is not disposable (on this machine and named `*_test`) before it
      connects, unless `E2E_ALLOW_NON_DISPOSABLE_DB=1` is set
