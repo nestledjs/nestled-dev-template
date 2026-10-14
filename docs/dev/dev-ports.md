@@ -72,8 +72,8 @@ SMTP_PORT=1035
 Three of these fail **silently** — the app boots clean and is broken only in the browser, or is
 quietly talking to the wrong database.
 
-| #   | Pair                                                 | What breaks if only one moves                                                                          |
-| --- | ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| #   | Pair                                                | What breaks if only one moves                                                                          |
+| --- | --------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
 | 1   | `PORT` ↔ `VITE_API_URL` (and `API_URL`)             | **Silent.** The API starts fine; the browser calls the old port and every request 404s or hangs.       |
 | 2   | `WEB_PORT` ↔ `ALLOWED_ORIGINS` (and `SITE_URL`)     | **Silent.** Both processes start fine; the API rejects every browser request with a CORS error.        |
 | 3   | `POSTGRES_PORT` ↔ `DATABASE_URL` (and `DIRECT_URL`) | **Silent and worst.** A stale `DATABASE_URL` connects to _another repo's_ database. No error anywhere. |
