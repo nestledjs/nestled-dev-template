@@ -9,16 +9,16 @@
 | `github_slug`           | `nestledjs/nestled-dev-template`                                                                                                                  |
 | `base_branch`           | `develop`                                                                                                                                         |
 | `repo_path`             | resolve at runtime with `git rev-parse --show-toplevel` — portable across Mac (`~/IdeaProjects`) and Linux (`~/workspaces`) hosts; never hardcode |
-| `flightdesk_project_id` | `326668de-9390-422e-a730-64541dc8a173` |
+| `flightdesk_project_id` | `326668de-9390-422e-a730-64541dc8a173`                                                                                                            |
 | `sdk_command`           | included in `pnpm db-update`                                                                                                                      |
 
 ## Deployment
 
-| Field            | Value                                                                                                                                                                                                                                     |
-| ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Field            | Value                                                                                                                                                  |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `auto_merge`     | `true` — the adversarial verifier `MERGE` verdict is the approval; the pipeline merges + deploys directly with no human approval gate (dangerous mode) |
-| `deploy_command` | `none` — template repo — merge only; promotion runs through nestled-upgrader                                                                                                                                                              |
-| `merge_command`  | `gh pr merge <prNumber> --repo nestledjs/nestled-dev-template --merge --delete-branch`                                                                                                                                                    |
+| `deploy_command` | `none` — template repo — merge only; promotion runs through nestled-upgrader                                                                           |
+| `merge_command`  | `gh pr merge <prNumber> --repo nestledjs/nestled-dev-template --merge --delete-branch`                                                                 |
 
 ## Quality Gates
 

@@ -118,9 +118,10 @@ jobs:
 
       # Formatting is checked in CI or it is not checked at all: `nx format:check --base=<ref>`
       # only inspects files a branch CHANGED, so anything already on the default branch is invisible
-      # to a local run. Two unformatted files reached develop that way.
+      # to a local run. Two unformatted files reached develop that way. The whole repository, with
+      # the pinned prettier: a scoped glob let two dozen unformatted files elsewhere through.
       - name: Check formatting
-        run: pnpm exec prettier --check "scripts/**/*.ts" "tools/**/*.ts"
+        run: pnpm exec prettier --check .
 
       - run: pnpm verify:select-coverage
 
