@@ -64,8 +64,8 @@ intent: >
   run) rather than from the previous push. CI also runs every `scripts/*.spec.mjs`, and checks
   formatting on the whole repository (`prettier --check .`), not only scripts/ and tools/. Files
   that did not match the pinned prettier were reformatted. The CI service containers are pulled
-  through Google's Docker Hub mirror, with the same official images and tags: `mirror.gcr.io/library/postgres:16`
-  and `mirror.gcr.io/library/redis:7-alpine`.
+  through Google's Docker Hub mirror, with the same official images and tags:
+  `mirror.gcr.io/library/postgres:16` and `mirror.gcr.io/library/redis:7-alpine`.
 
   Worktree-safe dev Docker stack. scripts/dev-docker.sh and scripts/test-db.sh (through the new
   scripts/dev-checkout.sh) resolve the main checkout with `git rev-parse --git-common-dir`; pnpm
