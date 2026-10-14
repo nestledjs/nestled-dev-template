@@ -75,7 +75,8 @@ intent: >
   .dev/tmp unless the environment or that .env sets it (an empty value counts as unset).
   .dev/docker-compose.yml mounts `${NESTLED_DEV_DATA_DIR:-./tmp}/<service>`, so a single checkout
   behaves exactly as before.
-  test-db.sh reads ports from the same .env and resets the same data directory. db-update runs `up`
+  test-db.sh reads ports from the same .env and resets the same data directory, reading `export`
+  lines and quoted values followed by a comment as compose does. db-update runs `up`
   only for the services that are not already running, so it reuses a running stack instead of
   re-applying its config. .env.example documents the override; scripts/dev-checkout.spec.mjs covers
   a main checkout, a worktree and a folder outside git.
