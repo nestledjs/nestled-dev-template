@@ -9,11 +9,7 @@ import {
   EyeSlashIcon,
   PencilIcon,
 } from '@heroicons/react/24/outline'
-import {
-  formatFieldName,
-  getNestedProperty,
-  renderValue,
-} from '@nestled-template/shared/utils'
+import { formatFieldName, getNestedProperty, renderValue } from '@nestled-template/shared/utils'
 
 /**
  * Declared locally rather than imported from shared/utils, so the emitted declaration stays
