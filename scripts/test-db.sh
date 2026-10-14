@@ -19,8 +19,8 @@ nestled_dev_checkout "$ROOT"
 #
 # MUST STAY IN STEP with readEnvValue() in scripts/doctor.ts — the two parse the same file, and a
 # disagreement means the doctor blesses a .env this script then misreads. Same rules as there:
-# strip quotes only when they wrap the WHOLE value (keeping it verbatim), otherwise drop a
-# dotenv-style inline ` # comment` and trim. A blanket quote-strip would also eat quotes from
+# a quoted value is kept verbatim up to its closing quote (a trailing ` # comment` after it is
+# dropped), otherwise drop a dotenv-style inline ` # comment` and trim. A blanket quote-strip would also eat quotes from
 # inside a value, and leaving the comment in produced URLs like `localhost:5443 # block 1/db`.
 read_env() {
   [[ -n "$NESTLED_DEV_ENV_FILE" ]] || return 0
@@ -32,9 +32,12 @@ read_env() {
   raw="${raw#"${raw%%[![:space:]]*}"}"
   raw="${raw%"${raw##*[![:space:]]}"}"
 
-  local first="${raw:0:1}" last="${raw: -1}"
-  if [[ ${#raw} -ge 2 && "$first" == "$last" && ( "$first" == '"' || "$first" == "'" ) ]]; then
-    printf '%s\n' "${raw:1:${#raw}-2}"
+  # A quoted value runs to its closing quote and is kept verbatim (a `#` inside it included);
+  # anything after the closing quote, such as a ` # comment`, is dropped, as dotenv and compose do.
+  local first="${raw:0:1}"
+  if [[ ( "$first" == '"' || "$first" == "'" ) && "${raw:1}" == *"$first"* ]]; then
+    local quoted="${raw:1}"
+    printf '%s\n' "${quoted%%"$first"*}"
     return 0
   fi
 

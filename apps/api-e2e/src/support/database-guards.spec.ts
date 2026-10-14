@@ -69,6 +69,7 @@ describe('test database guards', () => {
     ...DESTINATION_OVERRIDES.map(key => `postgresql://u:p@postgres:5432/app_test?${key}=elsewhere`),
     'postgresql://u:p@localhost:5432/app_test#elsewhere',
     'mysql://u:p@localhost:5432/app_test',
+    'postgresql://u:p@localhost:5432/app%ZZ_test',
     'not a url',
   ])('refuses %s even with the opt-out, since it could connect elsewhere', url => {
     expect(() => assertDisposableTestDatabase(url, { E2E_ALLOW_NON_DISPOSABLE_DB: '1' })).toThrow(
@@ -91,6 +92,7 @@ describe('test database guards', () => {
     expect(refusal('postgresql://u:p@localhost/app_test?PORT=1')).toContain('?port=')
     expect(refusal('postgresql://u:p@localhost/app_test#x')).toContain('fragment')
     expect(refusal('mysql://u:p@localhost/app_test')).toContain('mysql:')
+    expect(refusal('postgresql://u:p@localhost/app%ZZ_test')).toContain('percent-encoding')
   })
 
   it('describes a database by host and name only', () => {

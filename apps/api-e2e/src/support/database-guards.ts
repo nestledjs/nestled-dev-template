@@ -54,6 +54,13 @@ export function nonDisposableReason(
       overridable: false,
     }
   }
+  let database: string
+  try {
+    database = decodeURIComponent(url.pathname.slice(1))
+  } catch {
+    // new URL() accepts a malformed escape (%ZZ) that decoding then rejects.
+    return { reason: 'its database name is not valid percent-encoding', overridable: false }
+  }
   const params = [...url.searchParams.keys()].map(key => key.toLowerCase())
   const override = params.find(key => (DESTINATION_OVERRIDES as readonly string[]).includes(key))
   if (override) {
@@ -69,7 +76,7 @@ export function nonDisposableReason(
   if (!LOCAL_DATABASE_HOSTS.has(url.hostname)) {
     return { reason: 'its host is not localhost, 127.0.0.1 or ::1', overridable: true }
   }
-  if (!/_test$/i.test(decodeURIComponent(url.pathname.slice(1)))) {
+  if (!/_test$/i.test(database)) {
     return { reason: 'its database name does not end in _test', overridable: true }
   }
   return undefined

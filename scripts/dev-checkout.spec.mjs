@@ -190,6 +190,20 @@ void describe('dev checkout resolution (scripts/dev-docker.sh)', () => {
     assert.equal(existsSync(join(main, '.dev/tmp/postgres-test')), true)
   })
 
+  void it('test-db.sh resets a quoted data directory that has a trailing comment', () => {
+    const { main, bin } = checkouts()
+    const configured = join(main, 'data # with hash')
+    writeFileSync(join(main, '.env'), `NESTLED_DEV_DATA_DIR="${configured}" # shared data\n`)
+    mkdirSync(join(configured, 'postgres-test'), { recursive: true })
+    const reset = spawnSync('bash', [join(main, 'scripts/test-db.sh'), 'reset'], {
+      cwd: main,
+      env: { ...process.env, NESTLED_DEV_DATA_DIR: '', PATH: `${bin}:${process.env.PATH}` },
+      encoding: 'utf8',
+    })
+    assert.equal(reset.status, 0, reset.stderr)
+    assert.equal(existsSync(join(configured, 'postgres-test')), false)
+  })
+
   void it('treats a folder outside git as its own checkout', () => {
     const { outside, bin } = checkouts()
     assert.deepEqual(devDocker(outside, bin), {
