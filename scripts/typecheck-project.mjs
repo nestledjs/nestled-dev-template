@@ -109,14 +109,18 @@ export function inspectConfigs(ts, configPaths, nestedProjects = []) {
     if (config.error) {
       return { configPath, problem: config.error }
     }
-    if (config.inheritedExclusions.length > 0) {
-      const examples = config.inheritedExclusions
+    // A nested project's files (its specs included) are its own target's to check.
+    const inheritedExclusions = config.inheritedExclusions.filter(
+      file => !insideAny(nestedProjects, resolve(file)),
+    )
+    if (inheritedExclusions.length > 0) {
+      const examples = inheritedExclusions
         .slice(0, 3)
         .map(file => relative(dirname(configPath), file))
       return {
         configPath,
         problem:
-          `an exclude inherited through "extends" removes ${config.inheritedExclusions.length} ` +
+          `an exclude inherited through "extends" removes ${inheritedExclusions.length} ` +
           `file(s) its own include asks for (${examples.join(', ')}). Declare "exclude" in this config.`,
       }
     }

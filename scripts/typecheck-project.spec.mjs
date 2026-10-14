@@ -252,6 +252,19 @@ void describe('typecheck-project', () => {
     assert.equal(inspected.nestedFileCount, 1)
     assert.equal(main(['--workspace', 'tools'], root), 0)
     assert.ok(log.mock.calls.some(call => /1 in nested projects/.test(call.arguments[0])))
+    // A nested spec that the base config's inherited exclude drops is the nested project's concern.
+    const withSpec = fixture({
+      ...files,
+      'tools/tsconfig.json': { extends: '../tsconfig.base.json', include: ['**/*.ts'] },
+      'tools/workspace-plugin/src/index.spec.ts': 'export const spec = 1\n',
+    })
+    assert.equal(main(['--workspace', 'tools'], withSpec), 0)
+    const [withSpecInspected] = inspectConfigs(
+      ts,
+      [join(withSpec, 'tools/tsconfig.json')],
+      [join(withSpec, 'tools/workspace-plugin')],
+    )
+    assert.equal(withSpecInspected.problem, undefined)
     // A folder whose only TypeScript is a nested project's has nothing of its own to check.
     assert.equal(main(['--workspace', 'other'], root), 0)
     // The kept files are still compiled: a type error in one fails the run.

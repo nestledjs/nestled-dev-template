@@ -32,12 +32,19 @@ export function mainCheckoutRoot(root) {
 }
 
 /**
+ * Whether a .env file sets `name` to something. An empty or quoted-empty value counts as unset, as
+ * compose's `${NAME:-default}` treats it. Keep in step with NESTLED_DEV_DATA_DIR_SET in
+ * dev-checkout.sh.
+ *
  * @param {string} file
  * @param {string} name
  * @returns {boolean}
  */
-function definesVariable(file, name) {
-  return new RegExp(`^\\s*(?:export\\s+)?${name}\\s*=`, 'm').test(readFileSync(file, 'utf8'))
+export function definesVariable(file, name) {
+  return new RegExp(
+    `^[ \\t]*(?:export[ \\t]+)?${name}[ \\t]*=[ \\t]*(?:[^"'\\s#]|"[^"]|'[^'])`,
+    'm',
+  ).test(readFileSync(file, 'utf8'))
 }
 
 /**

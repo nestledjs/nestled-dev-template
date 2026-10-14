@@ -114,6 +114,21 @@ void describe('dev checkout resolution (node)', () => {
     assert.deepEqual(devDockerSettings(worktree, {}).composeVariables, {})
   })
 
+  void it('treats an empty or quoted-empty .env setting as unset', () => {
+    const { main, worktree } = checkouts()
+    const dataDir = { NESTLED_DEV_DATA_DIR: join(main, '.dev', 'tmp') }
+    for (const line of [
+      'NESTLED_DEV_DATA_DIR=',
+      "NESTLED_DEV_DATA_DIR=''",
+      'NESTLED_DEV_DATA_DIR=""',
+    ]) {
+      writeFileSync(join(main, '.env'), `${line}\n`)
+      assert.deepEqual(devDockerSettings(worktree, {}).composeVariables, dataDir, line)
+    }
+    writeFileSync(join(main, '.env'), 'export NESTLED_DEV_DATA_DIR = "/elsewhere"\n')
+    assert.deepEqual(devDockerSettings(worktree, {}).composeVariables, {})
+  })
+
   void it('has no .env to offer when neither checkout has one', () => {
     const { worktree } = checkouts()
     assert.equal(devDockerSettings(worktree, {}).envFile, undefined)
@@ -142,6 +157,37 @@ void describe('dev checkout resolution (scripts/dev-docker.sh)', () => {
       data: `${main}/.dev/tmp`,
     })
     assert.equal(devDocker(worktree, bin, { NESTLED_DEV_DATA_DIR: '/data' }).data, '/data')
+  })
+
+  void it('treats an empty or quoted-empty .env setting as unset, and honours a real one', () => {
+    const { main, worktree, bin } = checkouts()
+    for (const line of [
+      'NESTLED_DEV_DATA_DIR=',
+      "NESTLED_DEV_DATA_DIR=''",
+      'NESTLED_DEV_DATA_DIR=""',
+    ]) {
+      writeFileSync(join(main, '.env'), `${line}\n`)
+      assert.equal(devDocker(worktree, bin).data, `${main}/.dev/tmp`, line)
+    }
+    writeFileSync(join(main, '.env'), 'export NESTLED_DEV_DATA_DIR=/elsewhere\n')
+    assert.equal(devDocker(worktree, bin).data, '')
+  })
+
+  void it('test-db.sh resets the data directory an `export` line in .env configures', () => {
+    const { main, bin } = checkouts()
+    const configured = join(main, 'configured-data')
+    writeFileSync(join(main, '.env'), `export NESTLED_DEV_DATA_DIR = ${configured}\n`)
+    mkdirSync(join(configured, 'postgres-test'), { recursive: true })
+    mkdirSync(join(main, '.dev/tmp/postgres-test'), { recursive: true })
+    const env = { ...process.env, NESTLED_DEV_DATA_DIR: '', PATH: `${bin}:${process.env.PATH}` }
+    const reset = spawnSync('bash', [join(main, 'scripts/test-db.sh'), 'reset'], {
+      cwd: main,
+      env,
+      encoding: 'utf8',
+    })
+    assert.equal(reset.status, 0, reset.stderr)
+    assert.equal(existsSync(join(configured, 'postgres-test')), false)
+    assert.equal(existsSync(join(main, '.dev/tmp/postgres-test')), true)
   })
 
   void it('treats a folder outside git as its own checkout', () => {

@@ -27,7 +27,8 @@ read_env() {
 
   local key="$1"
   local raw
-  raw="$(grep -m1 "^$key=" "$NESTLED_DEV_ENV_FILE" | cut -d= -f2-)"
+  # An optional `export ` prefix and spaces around the key are accepted, as dotenv and compose do.
+  raw="$(grep -m1 -E "^[[:space:]]*(export[[:space:]]+)?$key[[:space:]]*=" "$NESTLED_DEV_ENV_FILE" | cut -d= -f2-)"
   raw="${raw#"${raw%%[![:space:]]*}"}"
   raw="${raw%"${raw##*[![:space:]]}"}"
 

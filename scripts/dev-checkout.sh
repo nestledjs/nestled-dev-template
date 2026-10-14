@@ -25,6 +25,10 @@ nestled_main_checkout() {
   fi
 }
 
+# A .env line that sets NESTLED_DEV_DATA_DIR to something: an empty or quoted-empty value counts as
+# unset, as compose's ${NESTLED_DEV_DATA_DIR:-./tmp} treats it. Keep in step with dev-checkout.mjs.
+NESTLED_DEV_DATA_DIR_SET='^[[:space:]]*(export[[:space:]]+)?NESTLED_DEV_DATA_DIR[[:space:]]*=[[:space:]]*([^"'"'"'[:space:]#]|"[^"]|'"'"'[^'"'"'])'
+
 nestled_dev_checkout() {
   local root
   root="$(cd "$1" && pwd -P)"
@@ -36,7 +40,7 @@ nestled_dev_checkout() {
     NESTLED_DEV_ENV_FILE="$NESTLED_MAIN_CHECKOUT/.env"
   fi
   if [[ "$NESTLED_MAIN_CHECKOUT" != "$root" && -z "${NESTLED_DEV_DATA_DIR:-}" ]] &&
-    ! { [[ -n "$NESTLED_DEV_ENV_FILE" ]] && grep -qE '^[[:space:]]*(export[[:space:]]+)?NESTLED_DEV_DATA_DIR=' "$NESTLED_DEV_ENV_FILE"; }; then
+    ! { [[ -n "$NESTLED_DEV_ENV_FILE" ]] && grep -qE "$NESTLED_DEV_DATA_DIR_SET" "$NESTLED_DEV_ENV_FILE"; }; then
     export NESTLED_DEV_DATA_DIR="$NESTLED_MAIN_CHECKOUT/.dev/tmp"
   fi
   return 0
