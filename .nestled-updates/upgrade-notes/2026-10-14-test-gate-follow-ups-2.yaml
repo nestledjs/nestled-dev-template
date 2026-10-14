@@ -59,16 +59,20 @@ intent: >
   scripts/delete-user.ts and its `user:delete` package script are removed.
 
   CI. .github/workflows/ci.yml cancels a superseded run on the same ref (`concurrency: ci-${{
-  github.ref }}`, cancel-in-progress), runs every `scripts/*.spec.mjs`, and checks formatting on
+  github.ref }}`, cancel-in-progress). Because a cancelled run never completes, a develop push now
+  takes its Nx affected base from nx-set-shas (`main-branch-name: develop`, the last successful CI
+  run) rather than from the previous push. CI also runs every `scripts/*.spec.mjs`, and checks formatting on
   the whole repository (`prettier --check .`), not only scripts/ and tools/. Files that did not
-  match the pinned prettier were reformatted.
+  match the pinned prettier were reformatted. The CI service containers are pulled through Google's
+  Docker Hub mirror, with the same official images and tags: `mirror.gcr.io/library/postgres:16`
+  and `mirror.gcr.io/library/redis:7-alpine`.
 
   Worktree-safe dev Docker stack. scripts/dev-docker.sh and scripts/test-db.sh (through the new
   scripts/dev-checkout.sh) resolve the main checkout with `git rev-parse --git-common-dir`; pnpm
   db-update (through the new scripts/dev-checkout.mjs) reads it from disk (the worktree's `.git`
   file, then `commondir`) without spawning git. From a worktree, compose gets the main checkout's
   .env when the worktree has none, and NESTLED_DEV_DATA_DIR defaults to the main checkout's
-  .dev/tmp unless the environment or that .env sets it. .dev/docker-compose.yml mounts
+  .dev/tmp unless the environment or that .env sets it (an empty value counts as unset). .dev/docker-compose.yml mounts
   `${NESTLED_DEV_DATA_DIR:-./tmp}/<service>`, so a single checkout behaves exactly as before.
   test-db.sh reads ports from the same .env and resets the same data directory. db-update runs `up`
   only for the services that are not already running, so it reuses a running stack instead of
@@ -84,7 +88,10 @@ why: >
   and its wording claimed a check order the wrapper does not keep. scripts/delete-user.ts cleared
   only some of the relations that block a user delete, outside a transaction, so it could leave a
   half-deleted account; account deletion in the app and a database reset cover its uses.
-  Overlapping develop CI runs let an older commit's Sonar analysis publish after a newer one's. And
+  Overlapping develop CI runs let an older commit's Sonar analysis publish after a newer one's.
+  Hosted runners share IP addresses, so anonymous pulls of the CI service images failed
+  intermittently: Docker Hub answers `toomanyrequests`, and public.ecr.aws, the usual workaround,
+  now answers `toomanyrequests: Data limit exceeded`; mirror.gcr.io serves the same manifests. And
   `docker compose` or `pnpm db-update` run from a git worktree recreated the repo's shared dev
   containers, on default ports when the worktree had no .env, with their data inside the worktree,
   which is deleted along with it.
@@ -175,6 +182,11 @@ agentHints:
     setup has its own pg probe and never calls psql, either route its SQL through
     runOnTestDatabase() or delete the unused psql helpers; do not keep both.
   - >
+    CI concurrency: if the workflow overrides NX_BASE with `github.event.before` on push, remove
+    that override when adding cancel-in-progress and let nx-set-shas pick the last successful run
+    (`main-branch-name` set to the default branch). Otherwise a cancelled push's projects drop out
+    of every completed affected lint and build.
+  - >
     Worktree-safe dev stack: keep the project's own compose project name, container names and
     ports; take only the main-checkout resolution, the NESTLED_DEV_DATA_DIR mounts (use that neutral
     name, never one carrying the project's name), the .env fallback, and db-update starting only
@@ -188,6 +200,16 @@ agentHints:
     {{end}}'` shows a path inside a worktree), copy that data back into the main checkout's
     .dev/tmp/<service>, then recreate the container from the main checkout. Do this before the
     worktree is removed, or its data goes with it.
+  - >
+    CI service and job images: change only the registry prefix and keep the project's own image
+    tags and versions. Both plain Docker Hub names and `public.ecr.aws/docker/library/...` become
+    `mirror.gcr.io/library/...`, so `postgres:15` becomes `mirror.gcr.io/library/postgres:15`. A
+    non-library image such as `pgvector/pgvector:<tag>` becomes
+    `mirror.gcr.io/pgvector/pgvector:<tag>`, but first check that the mirror has it with a manifest
+    HEAD request (`curl -sI -H 'Accept: application/vnd.oci.image.index.v1+json,
+    application/vnd.docker.distribution.manifest.list.v2+json'
+    https://mirror.gcr.io/v2/<repo>/manifests/<tag>`, expecting 200), and keep the original image
+    if it does not resolve. Apply it to every workflow with `services:` or `container:`.
   - >
     Formatting: run `pnpm exec prettier --check .` with the project's pinned prettier and reformat
     what it reports; a file formatted by a newer prettier fails the older one. Widen CI's format
