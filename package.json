@@ -79,7 +79,7 @@
     "sdk:watch": "pnpm sdk --watch",
     "dev:web": "nx serve web",
     "typecheck": "pnpm nx run-many -t typecheck && pnpm typecheck:workspace",
-    "typecheck:workspace": "node scripts/typecheck-project.mjs scripts && node scripts/typecheck-project.mjs tools",
+    "typecheck:workspace": "node scripts/typecheck-project.mjs --workspace scripts tools",
     "typecheck:watch": "cd apps/web && react-router typegen --watch",
     "storybook:web-ui": "nx storybook web-ui"
   },
