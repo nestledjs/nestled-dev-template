@@ -61,10 +61,10 @@ intent: >
   CI. .github/workflows/ci.yml cancels a superseded run on the same ref (`concurrency: ci-${{
   github.ref }}`, cancel-in-progress). Because a cancelled run never completes, a develop push now
   takes its Nx affected base from nx-set-shas (`main-branch-name: develop`, the last successful CI
-  run) rather than from the previous push. CI also runs every `scripts/*.spec.mjs`, and checks formatting on
-  the whole repository (`prettier --check .`), not only scripts/ and tools/. Files that did not
-  match the pinned prettier were reformatted. The CI service containers are pulled through Google's
-  Docker Hub mirror, with the same official images and tags: `mirror.gcr.io/library/postgres:16`
+  run) rather than from the previous push. CI also runs every `scripts/*.spec.mjs`, and checks
+  formatting on the whole repository (`prettier --check .`), not only scripts/ and tools/. Files
+  that did not match the pinned prettier were reformatted. The CI service containers are pulled
+  through Google's Docker Hub mirror, with the same official images and tags: `mirror.gcr.io/library/postgres:16`
   and `mirror.gcr.io/library/redis:7-alpine`.
 
   Worktree-safe dev Docker stack. scripts/dev-docker.sh and scripts/test-db.sh (through the new
@@ -72,8 +72,9 @@ intent: >
   db-update (through the new scripts/dev-checkout.mjs) reads it from disk (the worktree's `.git`
   file, then `commondir`) without spawning git. From a worktree, compose gets the main checkout's
   .env when the worktree has none, and NESTLED_DEV_DATA_DIR defaults to the main checkout's
-  .dev/tmp unless the environment or that .env sets it (an empty value counts as unset). .dev/docker-compose.yml mounts
-  `${NESTLED_DEV_DATA_DIR:-./tmp}/<service>`, so a single checkout behaves exactly as before.
+  .dev/tmp unless the environment or that .env sets it (an empty value counts as unset).
+  .dev/docker-compose.yml mounts `${NESTLED_DEV_DATA_DIR:-./tmp}/<service>`, so a single checkout
+  behaves exactly as before.
   test-db.sh reads ports from the same .env and resets the same data directory. db-update runs `up`
   only for the services that are not already running, so it reuses a running stack instead of
   re-applying its config. .env.example documents the override; scripts/dev-checkout.spec.mjs covers
