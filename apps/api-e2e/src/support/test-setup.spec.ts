@@ -61,6 +61,9 @@ describe('test database logging', () => {
   it.each([
     ['no scheme', `prisma:${PASSWORD}@localhost:55999/app_test`],
     ['a second @ in the host part', `postgresql://prisma:x@y@${PASSWORD}@localhost:55999/app_test`],
+    ['user-info without its @', `postgresql://prisma:${PASSWORD}`],
+    ['a credential in the path', `postgresql://localhost:55999/app_test/${PASSWORD}`],
+    ['a line break', `postgresql://localhost:55999/app_test\n${PASSWORD}`],
   ])('scripts/test-db.sh help shows a placeholder for a URL with %s', (_case, databaseUrl) => {
     const result = spawnSync('bash', [join(workspaceRoot, 'scripts/test-db.sh'), 'help'], {
       cwd: workspaceRoot,
