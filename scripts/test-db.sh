@@ -8,6 +8,10 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 COMPOSE="$SCRIPT_DIR/dev-docker.sh"
+# The .env and data directory dev-docker.sh uses: from a git worktree, the main checkout's.
+# shellcheck source=scripts/dev-checkout.sh
+source "$SCRIPT_DIR/dev-checkout.sh"
+nestled_dev_checkout "$ROOT"
 
 # Read a single key from the repo-root .env. Deliberately NOT `source` — that would execute the
 # file as shell. Returns empty (never non-zero) when the file or the key is absent, so `set -e`
@@ -19,11 +23,11 @@ COMPOSE="$SCRIPT_DIR/dev-docker.sh"
 # dotenv-style inline ` # comment` and trim. A blanket quote-strip would also eat quotes from
 # inside a value, and leaving the comment in produced URLs like `localhost:5443 # block 1/db`.
 read_env() {
-  [[ -f "$ROOT/.env" ]] || return 0
+  [[ -n "$NESTLED_DEV_ENV_FILE" ]] || return 0
 
   local key="$1"
   local raw
-  raw="$(grep -m1 "^$key=" "$ROOT/.env" | cut -d= -f2-)"
+  raw="$(grep -m1 "^$key=" "$NESTLED_DEV_ENV_FILE" | cut -d= -f2-)"
   raw="${raw#"${raw%%[![:space:]]*}"}"
   raw="${raw%"${raw##*[![:space:]]}"}"
 
@@ -57,8 +61,13 @@ TEST_DB_DISPLAY_URL="$(printf '%s' "$TEST_DB_URL" | sed -E 's#^([^:/]+://[^:/@]*
 TEST_DB_CONTAINER="nestled-template_postgres_test"
 # Bind mount backing postgres-test (see the `volumes:` entry in .dev/docker-compose.yml). Compose
 # `down` removes named volumes only with -v, and never touches a bind mount — so recreating the
-# container alone does NOT clear the data and `reset` has to delete this explicitly.
-TEST_DB_DATA_DIR="$ROOT/.dev/tmp/postgres-test"
+# container alone does NOT clear the data and `reset` has to delete this explicitly. Resolved as
+# compose resolves it: NESTLED_DEV_DATA_DIR from the environment or .env (relative to .dev/), else
+# .dev/tmp.
+DEV_DATA_DIR="${NESTLED_DEV_DATA_DIR:-$(read_env NESTLED_DEV_DATA_DIR)}"
+DEV_DATA_DIR="${DEV_DATA_DIR:-./tmp}"
+[[ "$DEV_DATA_DIR" == /* ]] || DEV_DATA_DIR="$ROOT/.dev/$DEV_DATA_DIR"
+TEST_DB_DATA_DIR="$DEV_DATA_DIR/postgres-test"
 
 wait_for_db() {
   echo "⏳ Waiting for test database to be ready..."

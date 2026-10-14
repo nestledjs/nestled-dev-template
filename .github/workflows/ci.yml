@@ -141,8 +141,8 @@ jobs:
       # to be inferred as `eslint:lint`, so this step and `pnpm lint` reached one project.
       - run: pnpm exec nx affected -t lint build
 
-      - name: Test the typecheck runner
-        run: node --test scripts/typecheck-project.spec.mjs
+      - name: Test the workspace scripts (typecheck runner, dev checkout resolution)
+        run: node --test scripts/*.spec.mjs
 
       # run-many, not `nx run web:typecheck`: `nx affected -t build` above compiles the API through
       # webpack, which does not enforce strict. A passing build was never a passing typecheck, and
