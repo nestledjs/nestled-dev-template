@@ -8,6 +8,13 @@ on:
     branches:
       - develop
 
+# One run per ref: a newer push or PR update cancels the run still in progress for the same ref.
+# Overlapping develop runs let an older commit's SonarCloud analysis publish after a newer one's,
+# so the long-lived branch showed stale results. Release and publish workflows must not copy this.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   actions: read
   contents: read
