@@ -116,6 +116,10 @@ pnpm typecheck          # every project: app/lib, spec and storybook configs (sc
                         # then scripts/ and tools/ (pnpm typecheck:workspace)
 ```
 
+A script under `scripts/` that imports a lib (`@nestled-template/...`) runs with
+`pnpm tsx --tsconfig scripts/tsconfig.json scripts/<name>.ts`. tsx reads `./tsconfig.json` by
+default, and the workspace root deliberately has none, so the path aliases would not resolve.
+
 ### Typecheck Memory
 
 `pnpm typecheck` runs one Nx project at a time (`--parallel=1`). Peak memory is roughly the heaviest

@@ -23,6 +23,7 @@ nestled_main_checkout() {
   else
     (cd "$root" && pwd -P)
   fi
+  return 0
 }
 
 # Reading .env as compose does. Compose (and dotenv) let the LAST assignment of a key win, take a
@@ -64,6 +65,7 @@ nestled_env_line() {
     return 1
   fi
   printf '%s\n' "${raw%"${raw##*[![:space:]]}"}"
+  return 0
 }
 
 # nestled_env_ambiguous <key> <raw>: fail, saying why, for an unquoted value that starts with `#`.
@@ -126,6 +128,7 @@ nestled_env_value() {
     return 1
   fi
   printf '%s\n' "$raw"
+  return 0
 }
 
 nestled_dev_checkout() {
