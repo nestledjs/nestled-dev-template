@@ -32,19 +32,48 @@ export function mainCheckoutRoot(root) {
 }
 
 /**
- * Whether a .env file sets `name` to something. An empty or quoted-empty value counts as unset, as
- * compose's `${NAME:-default}` treats it. Keep in step with NESTLED_DEV_DATA_DIR_SET in
- * dev-checkout.sh.
+ * The text after `=` on the last line of a .env that assigns `name` (an `export ` prefix and spaces
+ * around the name allowed), trimmed, or undefined when no line does. Compose and dotenv both let a
+ * later assignment win. Keep in step with nestled_env_line in dev-checkout.sh.
+ *
+ * @param {string} contents
+ * @param {string} name
+ * @returns {string | undefined}
+ */
+export function lastAssignment(contents, name) {
+  let value
+  for (const line of contents.split(/\r?\n/)) {
+    let rest = line.trimStart()
+    if (rest.startsWith('export ') || rest.startsWith('export\t')) rest = rest.slice(6).trimStart()
+    if (!rest.startsWith(name)) continue
+    rest = rest.slice(name.length).trimStart()
+    if (rest.startsWith('=')) value = rest.slice(1).trim()
+  }
+  return value
+}
+
+/**
+ * Whether a .env file gives `name` a non-empty value, which is when compose's `${NAME:-default}`
+ * uses it: the last assignment counts, and an empty or quoted-empty value counts as unset. Throws
+ * on an unquoted value that starts with `#` (`NAME= # note`): compose reads it as `# note`, dotenv
+ * as empty, so neither answer is safe. Keep in step with nestled_env_sets in dev-checkout.sh.
  *
  * @param {string} file
  * @param {string} name
  * @returns {boolean}
  */
 export function definesVariable(file, name) {
-  return new RegExp(
-    `^[ \\t]*(?:export[ \\t]+)?${name}[ \\t]*=[ \\t]*(?:[^"'\\s#]|"[^"]|'[^'])`,
-    'm',
-  ).test(readFileSync(file, 'utf8'))
+  const value = lastAssignment(readFileSync(file, 'utf8'), name)
+  if (value === undefined || value === '' || value.startsWith('""') || value.startsWith("''")) {
+    return false
+  }
+  if (value.startsWith('#')) {
+    throw new Error(
+      `${file} sets ${name} to an unquoted value that starts with '#' (${value}). docker compose ` +
+        `reads that as the value and dotenv as empty. Remove the comment, or quote the value ("" for empty).`,
+    )
+  }
+  return true
 }
 
 /**
