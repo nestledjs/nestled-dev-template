@@ -23,9 +23,9 @@ intent: >
   portable to Windows `cmd`.
 why: >
   With `cancel-in-progress: true` on every event, each push to develop cancelled the develop run
-  still in progress. On a busy repository develop never finished CI: one downstream had six
-  consecutive cancelled develop runs, a merge among them, so neither the build nor the SonarCloud
-  analysis of develop completed. Separately, `pnpm typecheck` on a small development or agent host
+  still in progress. When merges land faster than a CI run takes, every develop run is cancelled
+  by the next one, so neither the build nor the SonarCloud analysis of develop ever completes, and
+  a merge can reach develop with no completed check at all. Separately, `pnpm typecheck` on a small development or agent host
   (3 GB) was killed for running out of memory with Nx's default parallelism.
 affectedPaths:
   - .github/workflows/ci.yml
