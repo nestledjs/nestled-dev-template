@@ -103,7 +103,9 @@ clear_test_data() {
   echo "   Not removable by $(id -un); clearing it through a throwaway $1 container"
   docker run --rm -v "$TEST_DB_DATA_DIR:/target" --entrypoint sh "$1" \
     -c 'find /target -mindepth 1 -delete'
-  rm -rf "${TEST_DB_DATA_DIR:?}"
+  # Best effort: compose may have created the parent as root, so the emptied folder itself can stay.
+  # Postgres initializes an existing empty data directory.
+  rm -rf "${TEST_DB_DATA_DIR:?}" 2>/dev/null || true
 }
 
 wait_for_db() {

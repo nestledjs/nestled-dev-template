@@ -29,12 +29,40 @@ nestled_main_checkout() {
 # quoted value up to its closing quote, and drop an unquoted value's ` # comment`. Keep in step with
 # lastAssignment() and definesVariable() in dev-checkout.mjs.
 
-# nestled_env_line <file> <key>: the text after `=` on the last line that assigns <key> (an
-# `export ` prefix and spaces around the key allowed), trimmed; empty when no line does.
+# nestled_env_line <file> <key>: the text after `=` in the last assignment of <key> (an `export `
+# prefix and spaces around the key allowed), trimmed; empty when there is none. Lines inside another
+# key's multi-line quoted value are not assignments, as compose reads them. A <key> whose own value
+# spans lines is refused (status 1, reason on stderr): no script here needs one.
 nestled_env_line() {
-  local raw
-  raw="$(grep -E "^[[:space:]]*(export[[:space:]]+)?$2[[:space:]]*=" "$1" 2>/dev/null | tail -n 1 | cut -d= -f2-)" || true
-  raw="${raw#"${raw%%[![:space:]]*}"}"
+  local raw status=0
+  raw="$(awk -v key="$2" '
+    # Whether s holds the closing quote q (a backslash escapes a double quote).
+    function closes(s, q,   i, c) {
+      for (i = 1; i <= length(s); i++) {
+        c = substr(s, i, 1)
+        if (q == "\"" && c == "\\") { i++; continue }
+        if (c == q) return 1
+      }
+      return 0
+    }
+    open != "" { if (closes($0, open)) open = ""; next }
+    match($0, /^[ \t]*(export[ \t]+)?[A-Za-z_][A-Za-z0-9_.-]*[ \t]*=/) {
+      name = substr($0, 1, RLENGTH - 1)
+      sub(/^[ \t]*(export[ \t]+)?/, "", name)
+      sub(/[ \t]+$/, "", name)
+      rest = substr($0, RLENGTH + 1)
+      sub(/^[ \t]+/, "", rest)
+      q = substr(rest, 1, 1)
+      opens = (q == "\"" || q == "'"'"'") && !closes(substr(rest, 2), q)
+      if (name == key) { value = rest; multiline = opens }
+      if (opens) open = q
+    }
+    END { if (multiline) exit 3; printf "%s", value }
+  ' "$1" 2>/dev/null)" || status=$?
+  if [[ "$status" -eq 3 ]]; then
+    echo "❌ .env gives $2 a quoted value that spans lines; put it on one line." >&2
+    return 1
+  fi
   printf '%s\n' "${raw%"${raw##*[![:space:]]}"}"
 }
 
@@ -52,7 +80,7 @@ nestled_env_ambiguous() {
 # compose's ${KEY:-default} uses it. Status 0 yes, 1 no, 2 ambiguous (reported on stderr).
 nestled_env_sets() {
   local raw
-  raw="$(nestled_env_line "$1" "$2")"
+  raw="$(nestled_env_line "$1" "$2")" || return 2
   case "$raw" in
     "" | '""'* | "''"*) return 1 ;;
     "#"*)
@@ -70,7 +98,7 @@ nestled_env_sets() {
 # that starts with `#`.
 nestled_env_value() {
   local key="$2" raw first
-  raw="$(nestled_env_line "$1" "$key")"
+  raw="$(nestled_env_line "$1" "$key")" || return 1
   first="${raw:0:1}"
   if [[ "$first" == "'" && "${raw:1}" == *"$first"* ]]; then
     raw="${raw:1}"

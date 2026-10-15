@@ -31,10 +31,23 @@ export function mainCheckoutRoot(root) {
   return basename(commonDir) === '.git' ? dirname(commonDir) : root
 }
 
+const ASSIGNMENT = /^[ \t]*(?:export[ \t]+)?([A-Za-z_][\w.-]*)[ \t]*=/
+
+// The index of the quote that closes a value in `text`, or -1. A backslash escapes a double quote.
+function closingQuote(text, quote) {
+  for (let index = 0; index < text.length; index++) {
+    if (quote === '"' && text[index] === '\\') index++
+    else if (text[index] === quote) return index
+  }
+  return -1
+}
+
 /**
- * The text after `=` on the last line of a .env that assigns `name` (an `export ` prefix and spaces
- * around the name allowed), trimmed, or undefined when no line does. Compose and dotenv both let a
- * later assignment win. Keep in step with nestled_env_line in dev-checkout.sh.
+ * The text after `=` in the last assignment of `name` in a .env (an `export ` prefix and spaces
+ * around the name allowed), trimmed, or undefined when there is none. Compose and dotenv both let a
+ * later assignment win. Lines inside another key's multi-line quoted value are not assignments, as
+ * compose reads them; a `name` whose own value spans lines throws, since no caller needs one. Keep
+ * in step with nestled_env_line in dev-checkout.sh.
  *
  * @param {string} contents
  * @param {string} name
@@ -42,13 +55,26 @@ export function mainCheckoutRoot(root) {
  */
 export function lastAssignment(contents, name) {
   let value
+  let multiline = false
+  let openQuote
   for (const line of contents.split(/\r?\n/)) {
-    let rest = line.trimStart()
-    if (rest.startsWith('export ') || rest.startsWith('export\t')) rest = rest.slice(6).trimStart()
-    if (!rest.startsWith(name)) continue
-    rest = rest.slice(name.length).trimStart()
-    if (rest.startsWith('=')) value = rest.slice(1).trim()
+    if (openQuote) {
+      if (closingQuote(line, openQuote) !== -1) openQuote = undefined
+      continue
+    }
+    const match = ASSIGNMENT.exec(line)
+    if (!match) continue
+    const rest = line.slice(match[0].length).trim()
+    const quote = rest.startsWith('"') || rest.startsWith("'") ? rest[0] : undefined
+    const opens = quote !== undefined && closingQuote(rest.slice(1), quote) === -1
+    if (match[1] === name) {
+      value = rest
+      multiline = opens
+    }
+    if (opens) openQuote = quote
   }
+  if (multiline)
+    throw new Error(`.env gives ${name} a quoted value that spans lines; put it on one line.`)
   return value
 }
 

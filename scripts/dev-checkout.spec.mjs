@@ -169,6 +169,30 @@ void describe('dev checkout resolution (node)', () => {
     assert.deepEqual(devDockerSettings(worktree, {}).composeVariables, {})
   })
 
+  void it("skips assignment-looking lines inside another key's multi-line quoted value", () => {
+    for (const quote of ['"', "'"]) {
+      const contents = [
+        'NESTLED_DEV_DATA_DIR=/actual',
+        `NOTES=${quote}example`,
+        'NESTLED_DEV_DATA_DIR=',
+        `${quote}`,
+        '',
+      ].join('\n')
+      assert.equal(lastAssignment(contents, 'NESTLED_DEV_DATA_DIR'), '/actual', quote)
+    }
+    assert.equal(
+      lastAssignment(
+        'NOTES="a \\" quote\nNESTLED_DEV_DATA_DIR=\n"\nNESTLED_DEV_DATA_DIR=/x\n',
+        'NESTLED_DEV_DATA_DIR',
+      ),
+      '/x',
+    )
+    assert.throws(
+      () => lastAssignment('NESTLED_DEV_DATA_DIR="/a\n/b"\n', 'NESTLED_DEV_DATA_DIR'),
+      /spans lines/,
+    )
+  })
+
   void it('refuses an unquoted value that starts with #, which compose and dotenv read differently', () => {
     const { main, worktree } = checkouts()
     for (const line of ['NESTLED_DEV_DATA_DIR= # shared data', 'NESTLED_DEV_DATA_DIR=#x']) {
@@ -370,6 +394,31 @@ void describe('scripts/test-db.sh reads .env as compose does, and acts only on w
     assert.equal(reset.status, 0, reset.stderr)
     assert.equal(existsSync(join(last, 'postgres-test')), false)
     assert.equal(existsSync(join(first, 'postgres-test')), true)
+  })
+
+  void it('resets the folder compose mounts when a multi-line value holds an assignment-like line', () => {
+    const { main, bin } = checkouts()
+    const actual = join(main, 'actual-data')
+    writeFileSync(
+      join(main, '.env'),
+      `NESTLED_DEV_DATA_DIR=${actual}\nNOTES='example\nNESTLED_DEV_DATA_DIR=\n'\n`,
+    )
+    mkdirSync(join(actual, 'postgres-test'), { recursive: true })
+    mkdirSync(join(main, '.dev/tmp/postgres-test'), { recursive: true })
+    const reset = testDb(main, bin, 'reset')
+    assert.equal(reset.status, 0, reset.stderr)
+    assert.equal(existsSync(join(actual, 'postgres-test')), false)
+    assert.equal(existsSync(join(main, '.dev/tmp/postgres-test')), true)
+  })
+
+  void it('refuses a data directory whose quoted value spans lines', () => {
+    const { main } = checkouts()
+    const { bin, calls } = recordingStubs(main)
+    writeFileSync(join(main, '.env'), 'NESTLED_DEV_DATA_DIR="/a\n/b"\n')
+    const reset = testDb(main, bin, 'reset')
+    assert.notEqual(reset.status, 0)
+    assert.match(reset.stderr, /spans lines/)
+    assert.equal(calls(), '')
   })
 
   void it('refuses an unquoted value that starts with #, before stopping anything', () => {
