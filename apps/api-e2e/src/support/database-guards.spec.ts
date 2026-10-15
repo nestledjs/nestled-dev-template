@@ -182,6 +182,37 @@ describe('runOnTestDatabase', () => {
     expect(psqlEnv.PGSERVICE).toBeUndefined()
   })
 
+  it("includes psql's own error output, so a failure says why", () => {
+    const fake: DatabaseClients = {
+      pg: () => undefined,
+      psql: () => ({
+        status: 2,
+        stderr:
+          'psql: error: connection to server at "localhost", port 5433 failed: Connection refused\n',
+      }),
+    }
+    expect(() =>
+      runOnTestDatabase(url, 'SELECT 1', fake, { env: { E2E_DATABASE_PROBE: 'psql' } }),
+    ).toThrow(
+      'psql failed against localhost:5433/app_test (exit 2):\npsql: error: connection to server at "localhost", port 5433 failed: Connection refused',
+    )
+  })
+
+  it('caps long psql error output', () => {
+    const fake: DatabaseClients = {
+      pg: () => undefined,
+      psql: () => ({ status: 3, stderr: 'x'.repeat(5000) }),
+    }
+    let message = ''
+    try {
+      runOnTestDatabase(url, 'SELECT 1', fake, { env: { E2E_DATABASE_PROBE: 'psql' } })
+    } catch (error) {
+      message = (error as Error).message
+    }
+    expect(message.length).toBeLessThan(2200)
+    expect(message.endsWith('…')).toBe(true)
+  })
+
   it('throws when psql fails, naming the database without its password', () => {
     const { fake } = clients(3)
     expect(() =>
