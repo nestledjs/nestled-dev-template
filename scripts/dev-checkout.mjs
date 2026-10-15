@@ -22,9 +22,15 @@ import { basename, dirname, join, resolve } from 'node:path'
 export function mainCheckoutRoot(root) {
   const dotGit = join(root, '.git')
   if (!existsSync(dotGit) || statSync(dotGit).isDirectory()) return root
-  const gitDirLine = /^gitdir:\s*(.+?)\s*$/m.exec(readFileSync(dotGit, 'utf8'))
-  if (!gitDirLine) return root
-  const gitDir = resolve(root, gitDirLine[1])
+  // A line scan rather than a lazy regex, which backtracks super-linearly on a long line.
+  const gitDirPath = readFileSync(dotGit, 'utf8')
+    .split(/\r?\n/)
+    .map(line => line.trim())
+    .find(line => line.startsWith('gitdir:'))
+    ?.slice('gitdir:'.length)
+    .trim()
+  if (!gitDirPath) return root
+  const gitDir = resolve(root, gitDirPath)
   const commonDirFile = join(gitDir, 'commondir')
   if (!existsSync(commonDirFile)) return root
   const commonDir = resolve(gitDir, readFileSync(commonDirFile, 'utf8').trim())

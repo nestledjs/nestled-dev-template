@@ -24,6 +24,32 @@ import {
 import { gitExecutable } from './typecheck-project.mjs'
 
 const workspaceRoot = dirname(dirname(fileURLToPath(import.meta.url)))
+const scriptsDir = join(workspaceRoot, 'scripts')
+
+// The scripts under test and every helper they source (`source "$X/<name>.sh"`), followed through
+// the helpers, so a new helper is copied into the fixtures without editing this list.
+function scriptsWithHelpers(entryPoints) {
+  const scripts = new Set()
+  const pending = [...entryPoints]
+  while (pending.length > 0) {
+    const script = pending.pop()
+    if (scripts.has(script)) continue
+    scripts.add(script)
+    const text = readFileSync(join(scriptsDir, script), 'utf8')
+    for (const [, helper] of text.matchAll(/^\s*(?:source|\.)\s+"[^"\n]*\/([\w.-]+\.sh)"/gm)) {
+      pending.push(helper)
+    }
+  }
+  return [...scripts]
+}
+
+const fixtureScripts = scriptsWithHelpers(['dev-docker.sh', 'test-db.sh'])
+
+// The test database's default name, as test-db.sh builds its default URL (a clone renames it).
+const testDatabaseName = /localhost:\$\{TEST_DB_PORT\}\/([\w-]+)/.exec(
+  readFileSync(join(scriptsDir, 'test-db.sh'), 'utf8'),
+)?.[1]
+assert.ok(testDatabaseName, 'test-db.sh builds its default URL from TEST_DB_PORT')
 const scratch = []
 
 afterEach(() => {
@@ -55,8 +81,8 @@ function checkouts() {
   for (const root of [main, outside]) {
     mkdirSync(join(root, 'scripts'), { recursive: true })
     mkdirSync(join(root, '.dev'))
-    for (const script of ['dev-docker.sh', 'dev-checkout.sh', 'test-db.sh']) {
-      copyFileSync(join(workspaceRoot, 'scripts', script), join(root, 'scripts', script))
+    for (const script of fixtureScripts) {
+      copyFileSync(join(scriptsDir, script), join(root, 'scripts', script))
     }
     writeFileSync(join(root, '.dev/docker-compose.yml'), 'services: {}\n')
   }
@@ -94,6 +120,10 @@ function devDocker(root, bin, env = {}) {
 }
 
 void describe('dev checkout resolution (node)', () => {
+  void it('copies every helper the scripts source into the fixtures', () => {
+    assert.ok(fixtureScripts.includes('dev-checkout.sh'), fixtureScripts.join(', '))
+  })
+
   void it('resolves a main checkout, a linked worktree and a folder outside git', () => {
     const { main, worktree, outside } = checkouts()
     assert.equal(mainCheckoutRoot(main), main)
@@ -306,7 +336,7 @@ void describe('dev checkout resolution (scripts/dev-docker.sh)', () => {
     })
     assert.equal(
       url.stdout.trim(),
-      'postgresql://postgres:postgres@localhost:55433/nestled_template_test',
+      `postgresql://postgres:postgres@localhost:55433/${testDatabaseName}`,
     )
     const mainData = join(main, '.dev/tmp/postgres-test')
     const worktreeData = join(worktree, '.dev/tmp/postgres-test')
