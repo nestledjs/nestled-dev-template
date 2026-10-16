@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Test Database Management Script
-# Usage: ./scripts/test-db.sh [start|stop|reset|logs]
+# Usage: ./scripts/test-db.sh [start|stop|reset|logs|migrate|url]
 
 set -e
 
@@ -135,13 +135,13 @@ case "$COMMAND" in
     echo "✅ Test database is ready on port $TEST_DB_DISPLAY_PORT"
     echo "📄 Connection string: $TEST_DB_DISPLAY_URL"
     ;;
-    
+
   "stop")
     echo "🛑 Stopping test database..."
     "$COMPOSE" stop postgres-test
     echo "✅ Test database stopped"
     ;;
-    
+
   "reset")
     echo "🔄 Resetting test database (this destroys all test data)..."
     # The image to clear a container-owned data folder with, read before `down` removes the container.
@@ -168,12 +168,12 @@ case "$COMMAND" in
       echo "✅ Test database recreated; no data directory was found to clear"
     fi
     ;;
-    
+
   "logs")
     echo "📋 Test database logs:"
     "$COMPOSE" logs postgres-test
     ;;
-    
+
   "migrate")
     assert_disposable_test_database migrate
     echo "🔄 Running Prisma migrations on test database..."

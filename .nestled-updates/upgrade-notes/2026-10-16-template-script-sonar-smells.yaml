@@ -19,6 +19,8 @@ intent: >
     - scripts/dev-checkout.spec.mjs checks that test-db.sh's default URL names a test database in
       a `before()` hook instead of at module top level, so the assertion runs inside the test
       runner (S8784).
+    - scripts/test-db.sh: the usage comment at the top lists every command the script handles
+      (`start|stop|reset|logs|migrate|url`), and its whitespace-only blank lines are emptied.
 why: >
   Each clone's SonarCloud analysis reported these as new-code smells in files the template ships,
   so a project either carried the findings or fixed them locally and drifted from the template,
