@@ -1,4 +1,5 @@
 import React from 'react'
+import { SvgIcon } from './svg-icon'
 
 export interface ServiceUnavailableProps {
   showRefreshButton?: boolean
@@ -25,7 +26,7 @@ export function ServiceUnavailable({
 
   const content = (
     <div className="flex-grow text-gray-800 w-full p-10 flex flex-col justify-center items-center min-h-screen">
-      <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24">
+      <SvgIcon width="40" height="40" viewBox="0 0 24 24">
         <path
           fill="none"
           stroke="currentColor"
@@ -34,7 +35,7 @@ export function ServiceUnavailable({
           strokeWidth="2"
           d="M18.364 5.636a9 9 0 0 1 0 12.728m0 0l-2.828-2.828m2.828 2.828L21 21M15.536 8.464a5 5 0 0 1 0 7.072m0 0l-2.829-2.829m-4.243 2.829a4.98 4.98 0 0 1-1.414-2.83m-1.414 5.658a9 9 0 0 1-2.167-9.238m7.824 2.167a1 1 0 1 1 1.414 1.414m-1.414-1.414L3 3m8.293 8.293l1.414 1.414"
         />
-      </svg>
+      </SvgIcon>
       <h1 className="pt-6 text-3xl font-bold">{title}</h1>
       <div className="text-center pt-4 max-w-96">{message}</div>
       {showRefreshButton && (

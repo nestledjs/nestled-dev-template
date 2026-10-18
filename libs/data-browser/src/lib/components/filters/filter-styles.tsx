@@ -1,4 +1,5 @@
 import React from 'react'
+import { SvgIcon } from '../SvgIcon'
 
 /**
  * Shared chrome for every control in the data-browser filter panel.
@@ -28,14 +29,14 @@ export const filterControlClasses =
  */
 export function FilterChevron({ isOpen = false }: Readonly<{ isOpen?: boolean }>) {
   return (
-    <svg
+    <SvgIcon
       className={`w-4 h-4 text-gray-400 transition-transform ${isOpen ? 'rotate-180' : ''}`}
       fill="none"
       stroke="currentColor"
       viewBox="0 0 24 24"
     >
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-    </svg>
+    </SvgIcon>
   )
 }
 

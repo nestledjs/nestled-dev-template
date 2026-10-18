@@ -103,7 +103,7 @@ pnpm nx e2e api-e2e                # API e2e tests
 pnpm test:db:start
 pnpm test:db:reset
 pnpm test:db:stop
-./scripts/test-db.sh start|stop|reset|migrate
+./scripts/test-db.sh start|stop|reset|logs|migrate|ensure|url   # ensure: create a missing local *_test database
 ```
 
 ### Linting & Formatting
@@ -118,7 +118,8 @@ pnpm typecheck          # every project: app/lib, spec and storybook configs (sc
 
 A script under `scripts/` that imports a lib (`@nestled-template/...`) runs with
 `pnpm tsx --tsconfig scripts/tsconfig.json scripts/<name>.ts`. tsx reads `./tsconfig.json` by
-default, and the workspace root deliberately has none, so the path aliases would not resolve.
+default. The template's root has none, so without the flag the path aliases would not resolve; a
+project that added a root tsconfig.json would get that file's settings instead of these.
 
 ### Typecheck Memory
 
