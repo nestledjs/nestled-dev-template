@@ -10,8 +10,8 @@ intent: >
   The doctor's `.env` reader now resolves a key assigned more than once to its last assignment,
   the value docker compose and the template's scripts use. It also reads `export KEY=value` lines,
   treats `KEY= # comment` as an empty value, and strips a comment after a closing quote.
-  Commented-out lines are still ignored. No check changes what it reports for a `.env` that
-  assigns each key once.
+  Commented-out lines are still ignored. A `.env` that assigns each key once, without `export ` or
+  a bare `KEY= # comment`, reads exactly as before.
 why: >
   With a key assigned twice, the doctor checked the first value while compose and the scripts used
   the last, so it could pass or fail on a port or database name the project does not actually use.
