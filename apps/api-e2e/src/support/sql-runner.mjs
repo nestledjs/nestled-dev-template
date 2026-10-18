@@ -175,7 +175,30 @@ export function scrubCredentials(message, url) {
       scrubbed = scrubbed.split(secret).join('***')
     }
   }
-  return scrubbed.replaceAll(/([a-z][a-z0-9+.-]*:\/\/)[^@\s/]+@/gi, '$1***@')
+  return dropUserInfo(scrubbed)
+}
+
+/**
+ * Text with the user-info of every `scheme://user:password@host` replaced by `***`. A plain scan
+ * rather than a regex, so a long or malformed message cannot make it backtrack.
+ *
+ * @param {string} text
+ * @returns {string}
+ */
+function dropUserInfo(text) {
+  let result = ''
+  let from = 0
+  let separator = text.indexOf('://')
+  while (separator !== -1) {
+    const start = separator + 3
+    let end = start
+    while (end < text.length && !'@/ \t\r\n'.includes(text[end])) end++
+    const hasUserInfo = text[end] === '@' && end > start
+    result += text.slice(from, start) + (hasUserInfo ? '***' : text.slice(start, end))
+    from = end
+    separator = text.indexOf('://', end)
+  }
+  return result + text.slice(from)
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {

@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import { SvgIcon } from './svg-icon'
 
 export interface ViteCacheErrorProps {
   autoRefresh?: boolean
@@ -37,7 +36,14 @@ export function ViteCacheError({
 
   const content = (
     <div className="flex-grow text-gray-800 w-full p-10 flex flex-col justify-center items-center min-h-screen">
-      <SvgIcon width="40" height="40" viewBox="0 0 24 24">
+      <svg
+        aria-hidden="true"
+        focusable="false"
+        xmlns="http://www.w3.org/2000/svg"
+        width="40"
+        height="40"
+        viewBox="0 0 24 24"
+      >
         <path
           fill="none"
           stroke="currentColor"
@@ -46,7 +52,7 @@ export function ViteCacheError({
           strokeWidth="2"
           d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8M3 16l2.26-2.26A9.75 9.75 0 0 0 12 21a9 9 0 0 0 9-9"
         />
-      </SvgIcon>
+      </svg>
       <h1 className="pt-6 text-3xl font-bold">Refreshing Build</h1>
       <div className="text-center pt-4 max-w-96">
         Development cache needs to be refreshed. The page will reload automatically.

@@ -2,6 +2,7 @@ import assert from 'node:assert/strict'
 import { describe, it } from 'node:test'
 import {
   creatableTestDatabase,
+  dropUserInfo,
   ensureTestDatabase,
   main,
   scrubCredentials,
@@ -141,6 +142,23 @@ void describe('scrubCredentials', () => {
       scrubCredentials('connect ECONNREFUSED 127.0.0.1:55433', LOCAL_URL),
       'connect ECONNREFUSED 127.0.0.1:55433',
     )
+  })
+})
+
+void describe('dropUserInfo', () => {
+  void it('replaces the user-info of every URL and leaves everything else', () => {
+    assert.equal(
+      dropUserInfo('a postgres://u:p@h/db b https://x@y/z c http://host/path d://@e'),
+      'a postgres://***@h/db b https://***@y/z c http://host/path d://@e',
+    )
+    assert.equal(dropUserInfo('no url here'), 'no url here')
+  })
+
+  void it('stays fast on a long message with no @', () => {
+    const long = `x://${'a:'.repeat(200000)}`
+    const started = process.hrtime.bigint()
+    assert.equal(dropUserInfo(long), long)
+    assert.ok(process.hrtime.bigint() - started < 1_000_000_000n)
   })
 })
 

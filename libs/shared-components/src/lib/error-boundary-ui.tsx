@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import JSON5 from 'json5'
-import { SvgIcon } from './svg-icon'
 
 function findJsonBounds(str: string, braceStart: number): number {
   let braceCount = 0
@@ -192,7 +191,9 @@ export function ErrorBoundaryUi({ error }: { readonly error: Error }) {
     <div className="flex justify-center items-center min-h-[60vh]">
       <div className="bg-white rounded-lg p-8 max-w-2xl w-full">
         <div className="flex items-center mb-4">
-          <SvgIcon
+          <svg
+            aria-hidden="true"
+            focusable="false"
             className="w-7 h-7 text-red-500 mr-2"
             fill="none"
             stroke="currentColor"
@@ -204,7 +205,7 @@ export function ErrorBoundaryUi({ error }: { readonly error: Error }) {
               strokeLinejoin="round"
               d="M12 9v2m0 4h.01M21 12A9 9 0 1 1 3 12a9 9 0 0 1 18 0Z"
             />
-          </SvgIcon>
+          </svg>
           <h1 className="text-2xl font-bold text-red-600">Something went wrong</h1>
         </div>
         <p className="mt-2 text-gray-700 text-base">{renderPretty(error.message)}</p>

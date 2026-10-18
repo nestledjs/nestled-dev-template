@@ -20,11 +20,10 @@ import { pathToFileURL } from 'node:url'
 // The same shape test-db.sh accepts: scheme, optional user-info, a host name or bracketed IPv6
 // literal, an optional port and a plain database name, and nothing after it.
 const PLAIN_URL =
-  /^(postgres|postgresql):\/\/([^@/?#]*@)?([A-Za-z0-9.-]+|\[[0-9A-Fa-f:.]+\])(:[0-9]+)?\/([A-Za-z0-9_-]+)$/
+  /^(postgres|postgresql):\/\/([^@/?#]*@)?([A-Za-z0-9.-]+|\[[0-9A-Fa-f:.]+\])(:\d+)?\/([A-Za-z0-9_-]+)$/
 const LOCAL_HOSTS = new Set(['localhost', '127.0.0.1', '[::1]'])
 // PostgreSQL truncates identifiers longer than this, so a longer name would create another database.
 const MAX_IDENTIFIER_BYTES = 63
-const MAINTENANCE_DATABASES = ['postgres', 'template1']
 const DUPLICATE_DATABASE = '42P04'
 const INVALID_CATALOG_NAME = '3D000'
 
@@ -83,7 +82,30 @@ export function scrubCredentials(text, databaseUrl) {
   for (const secret of secrets.filter(Boolean).sort((a, b) => b.length - a.length)) {
     scrubbed = scrubbed.split(secret).join('***')
   }
-  return scrubbed.replaceAll(/([a-z][a-z0-9+.-]*:\/\/)[^@\s/]+@/gi, '$1***@')
+  return dropUserInfo(scrubbed)
+}
+
+/**
+ * Text with the user-info of every `scheme://user:password@host` replaced by `***`. A plain scan
+ * rather than a regex, so a long or malformed message cannot make it backtrack.
+ *
+ * @param {string} text
+ * @returns {string}
+ */
+export function dropUserInfo(text) {
+  let result = ''
+  let from = 0
+  let separator = text.indexOf('://')
+  while (separator !== -1) {
+    const start = separator + 3
+    let end = start
+    while (end < text.length && !'@/ \t\r\n'.includes(text[end])) end++
+    const hasUserInfo = text[end] === '@' && end > start
+    result += text.slice(from, start) + (hasUserInfo ? '***' : text.slice(start, end))
+    from = end
+    separator = text.indexOf('://', end)
+  }
+  return result + text.slice(from)
 }
 
 /**
@@ -106,16 +128,12 @@ async function connectWithPg(connectionString) {
  * @param {Connect} connect
  */
 async function connectToMaintenance(maintenanceUrl, connect) {
-  for (const [index, name] of MAINTENANCE_DATABASES.entries()) {
-    try {
-      return await connect(maintenanceUrl(name))
-    } catch (error) {
-      const last = index === MAINTENANCE_DATABASES.length - 1
-      if (last || /** @type {{ code?: string }} */ (error)?.code !== INVALID_CATALOG_NAME)
-        throw error
-    }
+  try {
+    return await connect(maintenanceUrl('postgres'))
+  } catch (error) {
+    if (/** @type {{ code?: string }} */ (error)?.code !== INVALID_CATALOG_NAME) throw error
+    return connect(maintenanceUrl('template1'))
   }
-  throw new Error('no maintenance database to connect to')
 }
 
 /**
@@ -177,7 +195,5 @@ export async function main(args, env, io = {}) {
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
-  main(process.argv.slice(2), process.env).then(status => {
-    process.exitCode = status
-  })
+  process.exitCode = await main(process.argv.slice(2), process.env)
 }
