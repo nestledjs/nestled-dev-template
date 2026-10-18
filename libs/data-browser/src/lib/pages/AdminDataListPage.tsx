@@ -10,6 +10,7 @@ import { ExportButton } from '../components/ExportButton'
 import { useAdminList } from '../hooks/useAdminList'
 import { getAdminDocuments } from '../utils/graphql-utils'
 import { useAdminDataContext } from '../context/AdminDataContext'
+import { SvgIcon } from '../components/SvgIcon'
 
 interface AdminDataListPageProps {
   /** Optional model name - if not provided, will read from route params */
@@ -531,7 +532,7 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
         <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
           <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
             <div className="text-center">
-              <svg
+              <SvgIcon
                 className="mx-auto h-12 w-12 text-red-400"
                 fill="none"
                 stroke="currentColor"
@@ -543,7 +544,7 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
                   strokeWidth={2}
                   d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                 />
-              </svg>
+              </SvgIcon>
               <h2 className="mt-4 text-lg font-medium text-gray-900">Invalid Data Type</h2>
               <p className="mt-2 text-sm text-gray-600">
                 The data type "{pluralParam}" is not recognized.
@@ -569,7 +570,7 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
         <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
           <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
             <div className="text-center">
-              <svg
+              <SvgIcon
                 className="mx-auto h-12 w-12 text-yellow-400"
                 fill="none"
                 stroke="currentColor"
@@ -581,7 +582,7 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
                   strokeWidth={2}
                   d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.728-.833-2.498 0L5.316 15c-.77.833.192 2.5 1.732 2.5z"
                 />
-              </svg>
+              </SvgIcon>
               <h2 className="mt-4 text-lg font-medium text-gray-900">
                 GraphQL Schema Not Available
               </h2>
@@ -623,18 +624,13 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
         className="inline-flex items-center px-3 py-2 border border-gray-300 dark:border-gray-600 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-web"
       >
         Columns
-        <svg
-          className="-mr-0.5 ml-2 h-4 w-4"
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 20 20"
-          fill="currentColor"
-        >
+        <SvgIcon className="-mr-0.5 ml-2 h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
           <path
             fillRule="evenodd"
             d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
             clipRule="evenodd"
           />
-        </svg>
+        </SvgIcon>
       </button>
 
       {showColumnSelector && (
@@ -702,18 +698,13 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
         className="h-full px-3 border-l border-gray-300 dark:border-gray-600 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 focus:outline-none focus:text-gray-600 dark:focus:text-gray-300"
         aria-label="Configure search fields"
       >
-        <svg
-          className="h-4 w-4"
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 20 20"
-          fill="currentColor"
-        >
+        <SvgIcon className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
           <path
             fillRule="evenodd"
             d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.707a1 1 0 00-1.414-1.414L10 9.586 8.707 8.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
             clipRule="evenodd"
           />
-        </svg>
+        </SvgIcon>
       </button>
 
       {showSearchFieldSelector && (
@@ -801,9 +792,9 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
             onClick={() => setShowFilters(false)}
             className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
           >
-            <svg
+            <SvgIcon
+              label="Close filters"
               className="h-5 w-5"
-              xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 20 20"
               fill="currentColor"
             >
@@ -812,7 +803,7 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
                 d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
                 clipRule="evenodd"
               />
-            </svg>
+            </SvgIcon>
           </button>
         </div>
       </div>
@@ -860,9 +851,8 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
         <div className="relative">
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
             {loading && search !== debouncedSearch ? (
-              <svg
+              <SvgIcon
                 className="animate-spin h-5 w-5 text-gray-400"
-                xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 24 24"
               >
@@ -879,21 +869,15 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
                   fill="currentColor"
                   d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                 ></path>
-              </svg>
+              </SvgIcon>
             ) : (
-              <svg
-                className="h-5 w-5 text-gray-400"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-                aria-hidden="true"
-              >
+              <SvgIcon className="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
                 <path
                   fillRule="evenodd"
                   d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
                   clipRule="evenodd"
                 />
-              </svg>
+              </SvgIcon>
             )}
           </div>
           <input
@@ -922,14 +906,14 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
               : 'border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700'
           }`}
         >
-          <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <SvgIcon className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
               strokeWidth={2}
               d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"
             />
-          </svg>
+          </SvgIcon>
           Filters
           {Object.keys(filters).length > 0 && (
             <span className="ml-1 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-green-web rounded-full">
