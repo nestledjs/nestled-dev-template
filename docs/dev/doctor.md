@@ -169,6 +169,10 @@ surface exposed by its GraphQL type, using the checked-in `api-schema.graphql` e
 model, excluding fields served by `@ResolveField`. The first protects the schema contract clients
 may submit; the second protects fields known application documents already request.
 
-`pnpm db-update` runs Doctor before and after generation. The preflight rejects deprecated
-`@crudAuth` annotations before the installed generator can interpret them; the postflight verifies
-that every emitted resolver still satisfies the admin-only contract.
+`pnpm db-update` runs Doctor before generation and again at the very end. The preflight (the first
+command of `db-update:generate`) rejects deprecated `@crudAuth` annotations before the installed
+generator can interpret them. The postflight runs from `scripts/db-update.mjs` after
+`api-schema.graphql` is refreshed and the SDK is compiled: it verifies that every emitted resolver
+still satisfies the admin-only contract, and checks the SDK contract against the new schema. Run
+any earlier, it would read the previous schema, and a retired generated model's root fields would
+look like missing SDK operations.
