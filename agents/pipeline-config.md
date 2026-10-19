@@ -14,11 +14,11 @@
 
 ## Deployment
 
-| Field            | Value                                                                                                                                                                                                                           |
-| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `auto_merge`     | `true` — green CI on the current head is the approval; the pipeline merges directly with no human approval gate (dangerous mode). There is no verifier step: FlightDesk dropped it on 2026-10-06 (pirateandfox/flightdesk#346). |
-| `deploy_command` | `none` — template repo — merge only; promotion runs through nestled-upgrader                                                                                                                                                    |
-| `merge_command`  | `gh pr merge <prNumber> --repo nestledjs/nestled-dev-template --merge --delete-branch`                                                                                                                                          |
+| Field            | Value                                                                                                                                                                 |
+| ---------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `auto_merge`     | `true` — green CI on the current head is the approval; the pipeline merges directly with no human approval gate (dangerous mode). There is no separate verifier step. |
+| `deploy_command` | `none` — template repo — merge only; promotion runs through nestled-upgrader                                                                                          |
+| `merge_command`  | `gh pr merge <prNumber> --repo nestledjs/nestled-dev-template --merge --delete-branch`                                                                                |
 
 ## Quality Gates
 
