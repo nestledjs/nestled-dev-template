@@ -192,6 +192,8 @@ export function ErrorBoundaryUi({ error }: { readonly error: Error }) {
       <div className="bg-white rounded-lg p-8 max-w-2xl w-full">
         <div className="flex items-center mb-4">
           <svg
+            aria-hidden="true"
+            focusable="false"
             className="w-7 h-7 text-red-500 mr-2"
             fill="none"
             stroke="currentColor"

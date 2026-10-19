@@ -18,7 +18,7 @@ type ProcessWithDiagnostics = NodeJS.Process & {
   _getActiveRequests?: () => unknown[]
 }
 
-module.exports = async function globalTeardown() {
+export default async function globalTeardown() {
   const e2eGlobal = globalThis as E2EGlobalState
 
   // Put clean up logic here (e.g. stopping services, docker-compose, etc.).
@@ -42,17 +42,21 @@ module.exports = async function globalTeardown() {
         // Ignore stream cleanup errors
       }
 
-      // Kill the API server's process group (pnpm, nx serve and the API itself)
-      killApiProcessTree(apiProcess)
-      console.log(`   Killed API server process group ${apiProcess.pid}`)
+      // Kill the API server's process tree (pnpm, nx serve and the API itself)
+      const result = killApiProcessTree(apiProcess)
+      if (result === 'group') console.log(`   Killed API server process group ${apiProcess.pid}`)
+      else if (result === 'tree') console.log(`   Killed API server process tree ${apiProcess.pid}`)
+      else if (result === 'process')
+        console.log(`   Killed API launcher ${apiProcess.pid} (process-group cleanup unavailable)`)
+      else console.log('   API launcher was already stopped; no process tree was killed')
 
       // Brief wait for kill to complete
       await new Promise(resolve => setTimeout(resolve, 100))
 
-      console.log('✅ API server stopped')
+      if (result === 'group' || result === 'tree') console.log('✅ API server process tree stopped')
     } catch (error) {
       console.warn('⚠️  Error stopping API server:', error)
-      // Don't throw - we want tests to complete even if cleanup fails
+      throw error
     }
   } else if (!weStartedApi) {
     console.log('ℹ️  API server was already running - leaving it running')

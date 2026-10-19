@@ -94,7 +94,7 @@ pnpm nx build <project-name>
 ### Testing
 
 ```bash
-pnpm test                          # run Nx test targets
+pnpm test                          # run Nx test targets (unit/component; never the API e2e)
 pnpm test:e2e                      # scripted end-to-end tests
 pnpm nx test <project-name>        # focused project test
 pnpm nx e2e api-e2e                # API e2e tests
@@ -103,17 +103,53 @@ pnpm nx e2e api-e2e                # API e2e tests
 pnpm test:db:start
 pnpm test:db:reset
 pnpm test:db:stop
-./scripts/test-db.sh start|stop|reset|migrate
+./scripts/test-db.sh start|stop|reset|logs|migrate|ensure|url   # ensure: create a missing local *_test database
 ```
 
 ### Linting & Formatting
 
 ```bash
-pnpm lint               # run workspace and project linting
+pnpm lint               # ESLint for every project
 pnpm format             # write Nx formatting
 pnpm format:check       # check formatting
-pnpm typecheck          # generate React Router types + TypeScript checks for apps/web
+pnpm typecheck          # every project: app/lib, spec and storybook configs (scripts/typecheck-project.mjs),
+                        # then scripts/ and tools/ (pnpm typecheck:workspace)
 ```
+
+A script under `scripts/` that imports a lib (`@nestled-template/...`) runs with
+`pnpm tsx --tsconfig scripts/tsconfig.json scripts/<name>.ts`. tsx reads `./tsconfig.json` by
+default. The template's root has none, so without the flag the path aliases would not resolve; a
+project that added a root tsconfig.json would get that file's settings instead of these.
+
+### Typecheck Memory
+
+`pnpm typecheck` runs one Nx project at a time (`--parallel=1`). Peak memory is roughly the heaviest
+compiler times the parallelism, plus about 0.5 GB for Nx, pnpm and the runner. The heaviest config
+in a template clone is `apps/api` (about 1.3 GB, mostly third-party type declarations). Measured on
+a template clone in a 3 GB Linux container, uncached:
+
+| `--parallel`   | process-tree peak                  |
+| -------------- | ---------------------------------- |
+| 1              | about 1.85 GB                      |
+| 2              | about 2.5 GB                       |
+| 3 (Nx default) | over 3.2 GB: out of memory at 3 GB |
+
+- Choose parallelism per host, not per repository: keep 1 on a host with 3 GB or less, use 2 on
+  4 GB, and Nx's default on 5–6 GB or more. A clone with a heavier `apps/api` (more SDK clients)
+  measures before raising it.
+- Measure the peak of the whole process tree, not one process: run
+  `NX_DAEMON=false pnpm exec nx run-many -t typecheck --parallel=<n> --skip-nx-cache` inside a
+  container with a memory limit (`docker run --memory=3g --memory-swap=3g ...`), or sample the summed
+  RSS of the command's process tree every second. `time -l`/`-v` reports a single process only.
+- For a one-off faster run on a large host, pass the flag directly:
+  `pnpm exec nx run-many -t typecheck --parallel=3 && pnpm typecheck:workspace`.
+- `NX_ISOLATE_PLUGINS=false` roughly halves the memory of Nx's project-graph phase (one worker per
+  plugin, about 1.9 GB down to 0.9 GB on a warm cache). It does not lower the uncached peak, which
+  the compilers set. The `typecheck` script does not set it, because an inline `VAR=value` fails in
+  Windows `cmd` and the template has no cross-platform env helper; on a small host set it in the
+  shell (`export NX_ISOLATE_PLUGINS=false`, or `$env:NX_ISOLATE_PLUGINS='false'` in PowerShell).
+  Nx already turns plugin isolation off in the sandboxes it detects.
+- CI keeps Nx's default parallelism (`.github/workflows/ci.yml`); hosted runners have the memory.
 
 ### Prisma Operations
 
@@ -152,20 +188,22 @@ TypeScript is the default language. Follow `.editorconfig`: UTF-8, two-space ind
 
 ## Testing Guidelines
 
-Unit and component tests use Jest and Vitest through Nx project targets. Place tests next to the source they cover when practical, or in existing folders such as `apps/web/tests` and `apps/api-e2e/src`. Run focused checks with Nx, e.g. `pnpm nx test web-ui` or `pnpm nx e2e api-e2e`.
+Unit and component tests use Jest and Vitest through Nx project targets. Place tests next to the source they cover when practical, or in existing folders such as `apps/web/tests` and `apps/api-e2e/src`. Run focused checks with Nx, e.g. `pnpm nx test web-ui` or `pnpm nx e2e api-e2e`. The API e2e suite runs only through `api-e2e:e2e`; `api-e2e:test` is its database-free support suite, so `nx run-many -t test` never starts the e2e run or a test database.
 
 ## Commit & Pull Request Guidelines
 
 Recent history uses short imperative subjects, often Conventional Commit prefixes such as `feat:` and `chore:`. Keep commits scoped and descriptive, e.g. `feat: add billing webhook validation`. Before opening a PR, run relevant lint, test, typecheck, and build commands. PRs should include a concise summary, linked issue or task when available, screenshots for UI changes, and notes for migrations, environment variables, or deployment steps.
 
 **All changes land through a pull request against `develop`. Never push directly to `develop`.**
+Branch from `origin/develop` rather than checking `develop` out: agents run in per-task git
+worktrees, and `git checkout develop` fails there while the main checkout holds it.
 The branch rule requiring PRs can be bypassed by maintainer permissions — a direct push succeeds
 and only prints `remote: Bypassed rule violations for refs/heads/develop`. Treat that message as a
 mistake that needs undoing, not as a normal outcome.
 
 ```bash
-git checkout develop && git pull
-git checkout -b fix/short-slug
+git fetch origin develop
+git switch -c fix/short-slug origin/develop
 # ... commit work ...
 git push -u origin fix/short-slug
 gh pr create --base develop
@@ -200,8 +238,8 @@ Applies to the published packages `@nestledjs/data-browser` (`libs/data-browser`
 ### Phase 1 — version bump, via PR
 
 ```bash
-git checkout develop && git pull
-git checkout -b release/<project>-<version>
+git fetch origin develop
+git switch -c release/<project>-<version> origin/develop
 pnpm nx release version -p <project> --specifier <patch|minor|major> --git-commit --no-git-tag
 git push -u origin release/<project>-<version>
 gh pr create --base develop
@@ -214,7 +252,7 @@ unsure.
 ### Phase 2 — publish, after the PR merges
 
 ```bash
-git checkout develop && git pull
+git fetch origin develop && git switch --detach origin/develop
 pnpm nx run <project>:build --skip-nx-cache
 node -p "require('./dist/libs/<project>/package.json').version"   # sanity-check the built artifact
 cd dist/libs/<project> && npm pack --dry-run                      # inspect what will ship

@@ -1,17 +1,19 @@
 import { Profile, SocialLinks, TYPE_DESKTOP, TYPE_MOBILE } from 'social-links'
 import { User } from '@nestled-template/shared/sdk'
 
-interface SocialLinksProps {
-  readonly member?: Partial<User> | null
-  readonly color?: string
-}
-
+// The social fields are read here but are not part of the generated User model, so the prop type
+// declares them; without them the prop only accepted objects that could never render a link.
 type SocialLinkMember = Partial<User> & {
   facebook?: string | null
   twitter?: string | null
   instagram?: string | null
   linkedin?: string | null
   youtube?: string | null
+}
+
+interface SocialLinksProps {
+  readonly member?: SocialLinkMember | null
+  readonly color?: string
 }
 
 const linkedinCompanyProfile: Profile = {
@@ -43,13 +45,7 @@ export function WebUiSocialLinks(props: SocialLinksProps) {
   function generateLink(
     value: string,
     network:
-      | 'facebook'
-      | 'twitter'
-      | 'instagram'
-      | 'linkedin'
-      | 'linkedin-company'
-      | 'youtube'
-      | 'global',
+      'facebook' | 'twitter' | 'instagram' | 'linkedin' | 'linkedin-company' | 'youtube' | 'global',
   ) {
     if (!value) return null
 
@@ -62,7 +58,7 @@ export function WebUiSocialLinks(props: SocialLinksProps) {
     }
   }
 
-  const member = props.member as SocialLinkMember
+  const member = props.member
 
   const facebookLink = member?.facebook ? generateLink(member.facebook, 'facebook') : null
   const twitterLink = member?.twitter ? generateLink(member.twitter, 'twitter') : null
@@ -80,6 +76,8 @@ export function WebUiSocialLinks(props: SocialLinksProps) {
       {facebookLink ? (
         <a href={facebookLink} target="_blank" rel={'noreferrer'} aria-label="Facebook">
           <svg
+            aria-hidden="true"
+            focusable="false"
             xmlns="http://www.w3.org/2000/svg"
             className="h-5 w-5"
             fill={fill}
@@ -92,6 +90,8 @@ export function WebUiSocialLinks(props: SocialLinksProps) {
       {twitterLink ? (
         <a href={twitterLink} target="_blank" rel={'noreferrer'} aria-label="Twitter">
           <svg
+            aria-hidden="true"
+            focusable="false"
             xmlns="http://www.w3.org/2000/svg"
             className="h-5 w-5"
             fill={fill}
@@ -104,6 +104,8 @@ export function WebUiSocialLinks(props: SocialLinksProps) {
       {youtubeLink ? (
         <a href={youtubeLink} target="_blank" rel={'noreferrer'} aria-label="YouTube">
           <svg
+            aria-hidden="true"
+            focusable="false"
             xmlns="http://www.w3.org/2000/svg"
             className="h-5 w-5"
             fill={fill}
@@ -116,6 +118,8 @@ export function WebUiSocialLinks(props: SocialLinksProps) {
       {linkedinLink ? (
         <a href={linkedinLink} target="_blank" rel={'noreferrer'} aria-label="LinkedIn">
           <svg
+            aria-hidden="true"
+            focusable="false"
             xmlns="http://www.w3.org/2000/svg"
             className="h-5 w-5"
             fill={fill}
@@ -128,6 +132,8 @@ export function WebUiSocialLinks(props: SocialLinksProps) {
       {instagramLink ? (
         <a href={instagramLink} target="_blank" rel={'noreferrer'} aria-label="Instagram">
           <svg
+            aria-hidden="true"
+            focusable="false"
             xmlns="http://www.w3.org/2000/svg"
             className="h-5 w-5"
             fill={fill}

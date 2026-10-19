@@ -1,38 +1,51 @@
 import { waitForPortOpen } from '@nx/node/utils'
 import { execSync, spawn, spawnSync, type ChildProcess } from 'node:child_process'
-import { createConnection } from 'node:net'
-import { killApiProcessTree } from './api-process'
+import { createConnection, type Socket } from 'node:net'
+import { killApiProcessTree, ownedProcessOptions, registerApiProcessCleanup } from './api-process'
+import {
+  ALLOW_NON_DISPOSABLE_DB,
+  assertDisposableTestDatabase,
+  describeDatabase,
+  isDisposableTestDatabase,
+  runOnTestDatabase,
+  type DatabaseClients,
+} from './database-guards'
+import globalTeardown from './global-teardown'
+import { runSql, testDatabaseUrl } from './test-db'
 
 type E2EGlobalState = typeof globalThis & {
   __API_PROCESS__?: ChildProcess | null
   __WE_STARTED_API__?: boolean
-  __SKIP_E2E_TESTS__?: boolean
   __TEARDOWN_MESSAGE__?: string
 }
 
 const e2eGlobal = globalThis as E2EGlobalState
 
-/**
- * Check if database is accessible
- */
-async function isDatabaseAccessible(databaseUrl: string): Promise<boolean> {
-  try {
-    // Parse the URL to extract credentials for direct psql test
-    const url = new URL(databaseUrl)
-    const username = url.username || 'prisma'
-    const password = url.password || 'prisma'
-    const host = url.hostname || 'localhost'
-    const port = url.port || '5432'
-    const database = url.pathname.slice(1) // Remove leading slash
+// The clients global setup's own SQL runs through; E2E_DATABASE_PROBE picks one (see databaseProbe).
+const databaseClients: DatabaseClients = {
+  pg: (databaseUrl, statement, timeout) => {
+    runSql(databaseUrl, statement, {}, timeout)
+  },
+  // stderr is captured so a failure reports psql's own error; stdout is not needed.
+  psql: (args, env, timeout) =>
+    spawnSync('psql', args, {
+      env,
+      stdio: ['ignore', 'ignore', 'pipe'],
+      encoding: 'utf8',
+      timeout,
+    }),
+}
 
-    execSync(`psql -U ${username} -h ${host} -p ${port} -d ${database} -c "SELECT 1"`, {
-      env: { ...process.env, PGPASSWORD: password },
-      stdio: 'pipe',
-      timeout: 2000,
-    })
-    return true
-  } catch {
-    return false
+/**
+ * Check that the database answers `SELECT 1`, with the client E2E_DATABASE_PROBE selects. Returns
+ * undefined when it does, else the client's error, so the failure says why.
+ */
+function databaseAccessError(databaseUrl: string): string | undefined {
+  try {
+    runOnTestDatabase(databaseUrl, 'SELECT 1', databaseClients, { timeout: 10000 })
+    return undefined
+  } catch (error) {
+    return error instanceof Error ? error.message : String(error)
   }
 }
 
@@ -59,28 +72,13 @@ async function isPortInUse(port: number, host = 'localhost'): Promise<boolean> {
   })
 }
 
-const LOCAL_DATABASE_HOSTS = new Set(['localhost', '127.0.0.1', '::1', '[::1]'])
-
-/**
- * Whether a URL names a database this suite may wipe: on this machine (the same rule
- * prisma.config.ts applies to `migrate reset`), and named as a test database
- * (`nestled_template_test` by default).
- */
-function isDisposableTestDatabase(databaseUrl: string): boolean {
-  try {
-    const url = new URL(databaseUrl)
-    const database = decodeURIComponent(url.pathname.slice(1))
-    return LOCAL_DATABASE_HOSTS.has(url.hostname) && /(^|[_-])test([_-]|$)/i.test(database)
-  } catch {
-    return false
-  }
-}
-
 function runMigrateDeploy(projectRoot: string, testDatabaseUrl: string) {
   const result = spawnSync('pnpm', ['prisma', 'migrate', 'deploy'], {
     cwd: projectRoot,
     env: { ...process.env, DATABASE_URL: testDatabaseUrl, DIRECT_URL: testDatabaseUrl },
     encoding: 'utf8',
+    // pnpm is a .cmd shim on Windows, which Node only runs through a shell.
+    shell: process.platform === 'win32',
   })
   process.stdout.write(result.stdout ?? '')
   process.stderr.write(result.stderr ?? '')
@@ -88,31 +86,21 @@ function runMigrateDeploy(projectRoot: string, testDatabaseUrl: string) {
 }
 
 /**
- * Empty the test database's schema, so migrations can build it from scratch. Only for a local
- * database named as a test database; anything else is refused before a connection is made.
+ * Empty the test database's schema, so migrations can build it from scratch. Only for a disposable
+ * database (local, named *_test); anything else is refused before the reset runs, whatever
+ * E2E_ALLOW_NON_DISPOSABLE_DB says.
  */
 function resetTestDatabase(testDatabaseUrl: string) {
   if (!isDisposableTestDatabase(testDatabaseUrl)) {
     throw new Error(
-      `Refusing to reset ${testDatabaseUrl}: only a local database whose name marks it as a test ` +
-        'database (e.g. nestled_template_test) is reset by the e2e setup.',
+      `Refusing to reset ${describeDatabase(testDatabaseUrl)}: only a local database named *_test ` +
+        `(e.g. nestled_template_test) is reset by the e2e setup, ${ALLOW_NON_DISPOSABLE_DB} or not.`,
     )
   }
-  const url = new URL(testDatabaseUrl)
-  const database = decodeURIComponent(url.pathname.slice(1))
-  execSync(
-    'psql -v ON_ERROR_STOP=1 -c "DROP SCHEMA IF EXISTS public CASCADE" -c "CREATE SCHEMA public"',
-    {
-      env: {
-        ...process.env,
-        PGHOST: url.hostname,
-        PGPORT: url.port || '5432',
-        PGUSER: decodeURIComponent(url.username) || 'postgres',
-        PGPASSWORD: decodeURIComponent(url.password),
-        PGDATABASE: database,
-      },
-      stdio: 'inherit',
-    },
+  runOnTestDatabase(
+    testDatabaseUrl,
+    'DROP SCHEMA IF EXISTS public CASCADE; CREATE SCHEMA public;',
+    databaseClients,
   )
 }
 
@@ -165,9 +153,11 @@ async function startApiServer(
       NODE_ENV: 'test',
     },
     stdio: ['ignore', 'pipe', 'pipe'],
-    // Its own process group, so teardown can stop `nx serve` and the API it starts, not just pnpm.
-    detached: process.platform !== 'win32',
+    // So teardown can stop `nx serve` and the API it starts, not just pnpm.
+    ...ownedProcessOptions(),
   })
+
+  registerApiProcessCleanup(apiProcess)
 
   let startupOutput = ''
   apiProcess.stdout?.on('data', data => {
@@ -191,12 +181,15 @@ async function startApiServer(
   })
 
   apiProcess.unref()
-  apiProcess.stdout?.unref()
-  apiProcess.stderr?.unref()
+  // Piped stdio streams are sockets at runtime; ChildProcess types them as plain Readable.
+  ;(apiProcess.stdout as Socket | null)?.unref()
+  ;(apiProcess.stderr as Socket | null)?.unref()
 
   console.log(`⏳ Waiting for API to start...`)
   try {
-    await waitForPortOpen(port, { host, timeout: 45000 })
+    // waitForPortOpen has no `timeout` option; it retries. A `timeout: 45000` here was ignored, so
+    // the wait was always the 120 x 1s default — keep that proven budget and state it.
+    await waitForPortOpen(port, { host, retries: 120, retryDelay: 1000 })
   } catch (portError) {
     console.error('❌ API server did not start within timeout')
     console.error('Last output from API server:')
@@ -228,10 +221,7 @@ module.exports = async function globalSetup() {
   process.env.SIGNUP_THROTTLE_ENABLED = 'false'
   process.env.SIGNUP_REQUIRE_MX = 'false'
 
-  // Always use TEST_DATABASE_URL for E2E tests
-  const testDatabaseUrl =
-    process.env.TEST_DATABASE_URL ||
-    'postgresql://postgres:postgres@localhost:5433/nestled_template_test'
+  // Always use the test database (TEST_DATABASE_URL, or what scripts/test-db.sh resolves from .env)
   process.env.DATABASE_URL = testDatabaseUrl
   // prisma.config.ts prefers DIRECT_URL — pin it too, or db push / seed below (and any Prisma call)
   // could run against the dev database instead of the isolated test DB.
@@ -241,29 +231,30 @@ module.exports = async function globalSetup() {
   // E2E's own port, not the normal PORT from .env — a running dev API on that port would otherwise
   // make waitForPortOpen false-pass and the harness attach to the wrong server.
   const port = process.env.E2E_API_PORT ? Number(process.env.E2E_API_PORT) : 3100
-  const skipApiCheck = process.env.SKIP_API_CHECK === 'true'
 
   // Track if we started the API (so teardown knows to stop it)
   let apiProcess: ChildProcess | null = null
   e2eGlobal.__API_PROCESS__ = null
   e2eGlobal.__WE_STARTED_API__ = false
 
-  if (skipApiCheck) {
-    console.log('⏭️  Skipping E2E tests (SKIP_API_CHECK=true)')
-    e2eGlobal.__SKIP_E2E_TESTS__ = true
-    e2eGlobal.__TEARDOWN_MESSAGE__ = '\n✨ Tearing down E2E tests...\n'
-    return
+  console.log(`📊 Using test database: ${describeDatabase(testDatabaseUrl)}`)
+
+  // Before anything writes to it: setup resets, migrates, pushes and seeds this database.
+  if (assertDisposableTestDatabase(testDatabaseUrl) === 'allowed') {
+    console.log(
+      `⚠️  ${ALLOW_NON_DISPOSABLE_DB}=1: running setup against a database that does not look ` +
+        'disposable. A from-scratch reset, if migrations need one, is still refused.',
+    )
   }
 
-  console.log(`📊 Using test database: ${testDatabaseUrl}`)
-
   // Check if database is accessible
-  const dbAccessible = await isDatabaseAccessible(testDatabaseUrl)
+  const accessError = databaseAccessError(testDatabaseUrl)
 
-  if (!dbAccessible) {
+  if (accessError !== undefined) {
     console.error('❌ Test database is not accessible')
     console.error('   Please ensure PostgreSQL is running and the test database exists')
-    console.error(`   Database URL: ${testDatabaseUrl}`)
+    console.error(`   Database: ${describeDatabase(testDatabaseUrl)}`)
+    console.error(`   ${accessError.replaceAll('\n', '\n   ')}`)
     throw new Error('Test database not accessible')
   }
 
@@ -339,7 +330,6 @@ module.exports = async function globalSetup() {
       '   E2E_ALLOW_EXISTING_API=1 was set — you have asserted it uses the test database.',
     )
     e2eGlobal.__WE_STARTED_API__ = false
-    e2eGlobal.__SKIP_E2E_TESTS__ = false
   } else {
     // Start the API server with the test database
     console.log(`🚀 Starting API server with test database on ${host}:${port}...`)
@@ -350,7 +340,6 @@ module.exports = async function globalSetup() {
       // Store process reference for teardown
       e2eGlobal.__API_PROCESS__ = apiProcess
       e2eGlobal.__WE_STARTED_API__ = true
-      e2eGlobal.__SKIP_E2E_TESTS__ = false
     } catch (error) {
       console.error('❌ Failed to start API server')
       killApiProcessTree(apiProcess)
@@ -360,9 +349,5 @@ module.exports = async function globalSetup() {
 
   // Hint: Use `globalThis` to pass variables to global teardown.
   e2eGlobal.__TEARDOWN_MESSAGE__ = '\n✨ Tearing down E2E tests...\n'
-
-  // Fallback for when globalTeardown doesn't run: stop the API's process group on exit.
-  process.on('exit', () => {
-    killApiProcessTree(e2eGlobal.__API_PROCESS__)
-  })
+  return globalTeardown
 }

@@ -2,6 +2,8 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, waitFor, fireEvent } from '@testing-library/react'
 import { userEvent } from '@testing-library/user-event'
 import { RelationFilterField } from './RelationFilterField'
+import { useClickOutside } from '../../hooks/useClickOutside'
+import { useRelationData } from '../../hooks/useRelationData'
 
 // Mock the hooks
 vi.mock('../../hooks/useClickOutside', () => ({
@@ -11,9 +13,6 @@ vi.mock('../../hooks/useClickOutside', () => ({
 vi.mock('../../hooks/useRelationData', () => ({
   useRelationData: vi.fn(),
 }))
-
-import { useClickOutside } from '../../hooks/useClickOutside'
-import { useRelationData } from '../../hooks/useRelationData'
 
 const mockUseClickOutside = useClickOutside as ReturnType<typeof vi.fn>
 const mockUseRelationData = useRelationData as ReturnType<typeof vi.fn>

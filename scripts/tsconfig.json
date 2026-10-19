@@ -1,0 +1,25 @@
+{
+  "extends": "../tsconfig.base.json",
+  // Module resolution comes from tsconfig.base.json, as for the libs: "bundler" cannot resolve the
+  // deep package imports some libs make (stripe/cjs/..., prisma-graphql-type-decimal). es2023 for
+  // toSorted and friends. useDefineForClassFields is off, as the API's es2021 target implies, so
+  // DTOs that redeclare decorated fields compile (TS2612). A script that imports a lib whose types
+  // rely on declaration shims (libs/**/src/types/*.d.ts) must add those shims to "include".
+  // Running a script that imports a lib: `pnpm tsx --tsconfig scripts/tsconfig.json scripts/x.ts`.
+  // Pass --tsconfig whether or not the workspace root has a tsconfig.json. tsx reads ./tsconfig.json
+  // by default. The template ships none (one would give the root Nx project, ./project.json, a
+  // typecheck target from tools/nx-plugins/typecheck.js), so without the flag the path aliases do
+  // not resolve. A project may have added one, and then tsx uses it instead of this file: its
+  // settings, not these, decide whether the script's imports resolve and compile.
+  "compilerOptions": {
+    "noEmit": true,
+    "strict": true,
+    "target": "es2022",
+    "lib": ["es2023"],
+    "module": "esnext",
+    "useDefineForClassFields": false,
+    "types": ["node"]
+  },
+  "include": ["**/*.ts"],
+  "exclude": ["node_modules"]
+}

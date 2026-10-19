@@ -8,7 +8,7 @@ import {
 } from '@nestjs/common'
 import { ApiCoreDataAccessService } from '@nestled-template/api/core/data-access'
 import { Organization, User } from '@nestled-template/api/core/models'
-import { defaultRoles, type InputJsonValue } from '@nestled-template/api/prisma'
+import { defaultRoles, Prisma, type InputJsonValue } from '@nestled-template/api/prisma'
 import {
   AddOrganizationMemberInput,
   RemoveOrganizationMemberInput,
@@ -28,7 +28,7 @@ import {
 } from './dto'
 import { EmailService } from '@nestled-template/api/integrations'
 import { ConfigService } from '@nestjs/config'
-import { randomBytes } from 'node:crypto'
+import { randomBytes, randomInt } from 'node:crypto'
 import { AuthCacheService } from '@nestled-template/api/utils'
 
 @Injectable()
@@ -39,6 +39,27 @@ export class OrganizationService {
     private readonly config: ConfigService,
     @Optional() private readonly authCache?: AuthCacheService,
   ) {}
+
+  private async retryMembershipTransaction<T>(
+    work: (tx: Prisma.TransactionClient) => Promise<T>,
+    attempt = 0,
+  ): Promise<T> {
+    try {
+      return await this.data.$transaction(work)
+    } catch (error) {
+      if (
+        attempt >= 5 ||
+        !(error instanceof Prisma.PrismaClientKnownRequestError) ||
+        error.code !== 'P2034'
+      ) {
+        throw error
+      }
+      // Memberships can change after the owner snapshot. Start a fresh transaction so its
+      // owner set is refreshed, and repeat every write only after Prisma rolled it all back.
+      await new Promise(resolve => setTimeout(resolve, 50 * 2 ** attempt + randomInt(50)))
+      return this.retryMembershipTransaction(work, attempt + 1)
+    }
+  }
 
   private async recordAuditLog(input: {
     actorUserId: string
@@ -299,7 +320,15 @@ export class OrganizationService {
     // Manually cascade delete related records before deleting organization
     // This is necessary because the database schema doesn't have cascade deletes configured.
     // One transaction, so a failure part-way leaves no organization with half its records gone.
-    await this.data.$transaction(async tx => {
+    await this.retryMembershipTransaction(async tx => {
+      // Take account locks before any membership locks, in the same order as the triggers.
+      // Include members with a different active organization and stale active-context owners.
+      await tx.$queryRaw`
+        SELECT id FROM "User"
+        WHERE id IN (SELECT "userId" FROM "OrganizationMember" WHERE "organizationId" = ${organizationId})
+           OR "activeOrganizationId" = ${organizationId}
+        ORDER BY id FOR NO KEY UPDATE
+      `
       // Delete all pending invitations
       await tx.invite.deleteMany({
         where: { organizationId },
@@ -439,8 +468,16 @@ export class OrganizationService {
 
     // The membership and the removed user's active organization (when it is this one) go together.
     await this.data.$transaction(async tx => {
+      // Lock even when another organization is active: the membership trigger locks its owner
+      // unconditionally. Waiting here holds no membership lock and cannot invert that order.
+      await tx.$queryRaw`SELECT id FROM "User" WHERE id = ${input.userId} FOR NO KEY UPDATE`
       await tx.organizationMember.delete({
-        where: { id: member.id },
+        where: {
+          id: member.id,
+          userId: input.userId,
+          organizationId: input.organizationId,
+          role: { name: { not: 'Owner' } },
+        },
       })
       await tx.user.updateMany({
         where: { id: input.userId, activeOrganizationId: input.organizationId },

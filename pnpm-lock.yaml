@@ -398,8 +398,8 @@ importers:
         specifier: ^11.1.29
         version: 11.1.29(@nestjs/common@11.1.29(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.29)(@nestjs/platform-express@11.1.29)
       '@nestledjs/doctor':
-        specifier: 0.6.2
-        version: 0.6.2(@prisma/internals@7.9.1(magicast@0.5.4)(typescript@5.9.3))
+        specifier: 0.6.5
+        version: 0.6.5(@prisma/internals@7.9.1(magicast@0.5.4)(typescript@5.9.3))
       '@nx/eslint':
         specifier: 22.7.8
         version: 22.7.8(e00af594702c7ddb38c00cf4c1d6d85f)
@@ -511,6 +511,9 @@ importers:
       '@types/passport-jwt':
         specifier: ^4.0.1
         version: 4.0.1
+      '@types/pg':
+        specifier: 8.16.0
+        version: 8.16.0
       '@types/qrcode':
         specifier: ^1.5.6
         version: 1.5.6
@@ -737,12 +740,6 @@ importers:
         specifier: ^8.21.3
         version: 8.21.3
     devDependencies:
-      '@react-router/dev':
-        specifier: 7.18.2
-        version: 7.18.2(@react-router/serve@7.18.2(react-router@7.18.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(typescript@5.9.3))(@types/node@20.19.43)(babel-plugin-macros@3.1.0)(jiti@2.7.0)(less@4.5.1)(lightningcss@1.32.0)(react-router@7.18.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(sass-embedded@1.100.0)(sass@1.102.0)(stylus@0.64.0)(terser@5.49.2)(tsx@4.23.12)(typescript@5.9.3)(vite@7.3.6(@types/node@20.19.43)(jiti@2.7.0)(less@4.5.1)(lightningcss@1.32.0)(sass-embedded@1.100.0)(sass@1.102.0)(stylus@0.64.0)(terser@5.49.2)(tsx@4.23.12)(yaml@2.9.0))(yaml@2.9.0)
-      '@types/node':
-        specifier: ^20.19.43
-        version: 20.19.43
       '@types/react':
         specifier: 19.1.0
         version: 19.1.0
@@ -3620,8 +3617,8 @@ packages:
       '@nestjs/core': ^7.0.0 || ^8.0.0 || ^9.0.0 || ^10.0.0 || ^11.0.0
       reflect-metadata: ^0.1.13 || ^0.2.0
 
-  '@nestledjs/doctor@0.6.2':
-    resolution: {integrity: sha512-n/r2T2in2sjMcHJI19RlHNdMHrxxFSeoXFATWgIywbdutt3RhWIfdkDkA+Mo0JbMdanZVGXH5C72Akn1vC0gCA==}
+  '@nestledjs/doctor@0.6.5':
+    resolution: {integrity: sha512-w3PrknEUuQOREUINe2kDSoJPSex5dWnw8b/ZtuA+Wu7FZGZ8c+KkBRp1ypFOEolScc3qDJSuW2LegXCY8wn0EA==}
     hasBin: true
     peerDependencies:
       '@prisma/internals': '>=6'
@@ -4942,6 +4939,7 @@ packages:
 
   '@react-router/dev@7.18.2':
     resolution: {integrity: sha512-EHd0nt6JzrrJzIQLD0VkomLQ5mRaaVdnvYmY86s2OHSiPvlRIFT4mftn1xzahDgmV1qDEf5lqSs3Yqr0tGELBg==}
+    version: 7.18.2
     engines: {node: '>=20.0.0'}
     hasBin: true
     peerDependencies:
@@ -6133,8 +6131,8 @@ packages:
   '@types/passport@1.0.17':
     resolution: {integrity: sha512-aciLyx+wDwT2t2/kJGJR2AEeBz0nJU4WuRX04Wu9Dqc5lSUtwu0WERPHYsLhF9PtseiAMPBGNUOtFjxZ56prsg==}
 
-  '@types/pg@8.21.0':
-    resolution: {integrity: sha512-AYdtudzabjLZgVgRZmAnU8bAnVUXzuJX2IYHeSIiIHm68olD+LgQYCGWdtcNYnP0uq9c4S4NibVG3Ni7VbKW7Q==}
+  '@types/pg@8.16.0':
+    resolution: {integrity: sha512-RmhMd/wD+CF8Dfo+cVIy3RR5cl8CyfXQ0tGgW6XBL8L4LM/UTEbNXYRbLwU6w+CgrKBNbrQWt4FUtTfaU5jSYQ==}
 
   '@types/pluralize@0.0.33':
     resolution: {integrity: sha512-JOqsl+ZoCpP4e8TDke9W79FDcSgPAR0l6pixx2JHkhnRjvShyYiAYw2LVsnA7K08Y6DeOnaU6ujmENO4os/cYg==}
@@ -13248,11 +13246,6 @@ packages:
     peerDependencies:
       postcss: ^8.5.13
 
-  stylus@0.64.0:
-    resolution: {integrity: sha512-ZIdT8eUv8tegmqy1tTIdJv9We2DumkNZFdCF5mz/Kpq3OcTaxSuCAYZge6HKK2CmNC02G1eJig2RV7XTw5hQrA==}
-    engines: {node: '>=16'}
-    hasBin: true
-
   stylus@https://codeload.github.com/stylus/stylus/tar.gz/1086c6c1fbd7a7fd0ce9ad94f6cf4a62fc79a6e9:
     resolution: {tarball: https://codeload.github.com/stylus/stylus/tar.gz/1086c6c1fbd7a7fd0ce9ad94f6cf4a62fc79a6e9}
     version: 0.64.0
@@ -13971,6 +13964,7 @@ packages:
 
   vite-node@3.2.4:
     resolution: {integrity: sha512-EbKSKh+bh1E1IFxeO0pg1n4dvoOTt0UDiXMd/qn++r98+jPO1xtJilvXldeuQ8giIB5IkpjCgMleHMNEsGH6pg==}
+    version: 3.2.4
     engines: {node: ^18.0.0 || ^20.0.0 || >=22.0.0}
     hasBin: true
 
@@ -18401,7 +18395,7 @@ snapshots:
       '@nestjs/core': 11.1.29(@nestjs/common@11.1.29(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/platform-express@11.1.29)(reflect-metadata@0.2.2)(rxjs@7.8.2)
       reflect-metadata: 0.2.2
 
-  '@nestledjs/doctor@0.6.2(@prisma/internals@7.9.1(magicast@0.5.4)(typescript@5.9.3))':
+  '@nestledjs/doctor@0.6.5(@prisma/internals@7.9.1(magicast@0.5.4)(typescript@5.9.3))':
     dependencies:
       graphql: 16.14.2
       tslib: 2.8.1
@@ -19601,7 +19595,7 @@ snapshots:
   '@prisma/adapter-pg@7.9.1':
     dependencies:
       '@prisma/driver-adapter-utils': 7.9.1
-      '@types/pg': 8.21.0
+      '@types/pg': 8.16.0
       pg: 8.23.0
       postgres-array: 3.0.4
     transitivePeerDependencies:
@@ -20263,56 +20257,6 @@ snapshots:
     dependencies:
       react: 19.1.0
     optional: true
-
-  '@react-router/dev@7.18.2(@react-router/serve@7.18.2(react-router@7.18.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(typescript@5.9.3))(@types/node@20.19.43)(babel-plugin-macros@3.1.0)(jiti@2.7.0)(less@4.5.1)(lightningcss@1.32.0)(react-router@7.18.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(sass-embedded@1.100.0)(sass@1.102.0)(stylus@0.64.0)(terser@5.49.2)(tsx@4.23.12)(typescript@5.9.3)(vite@7.3.6(@types/node@20.19.43)(jiti@2.7.0)(less@4.5.1)(lightningcss@1.32.0)(sass-embedded@1.100.0)(sass@1.102.0)(stylus@0.64.0)(terser@5.49.2)(tsx@4.23.12)(yaml@2.9.0))(yaml@2.9.0)':
-    dependencies:
-      '@babel/core': 7.29.7
-      '@babel/generator': 7.29.8
-      '@babel/parser': 7.29.8
-      '@babel/plugin-syntax-jsx': 7.29.7(@babel/core@7.29.7)
-      '@babel/preset-typescript': 7.29.7(@babel/core@7.29.7)
-      '@babel/traverse': 7.29.8
-      '@babel/types': 7.29.8
-      '@react-router/node': 7.18.2(react-router@7.18.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(typescript@5.9.3)
-      '@remix-run/node-fetch-server': 0.13.3
-      arg: 5.0.2
-      babel-dead-code-elimination: 1.0.12
-      chokidar: 4.0.3
-      dedent: 1.7.2(babel-plugin-macros@3.1.0)
-      es-module-lexer: 1.7.0
-      exit-hook: 2.2.1
-      isbot: 5.1.28
-      jsesc: 3.0.2
-      lodash: 4.18.0
-      p-map: 7.0.6
-      pathe: 1.1.2
-      picocolors: 1.1.1
-      pkg-types: 2.3.1
-      prettier: 3.9.6
-      react-refresh: 0.14.2
-      react-router: 7.18.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
-      semver: 7.8.5
-      tinyglobby: 0.2.17
-      valibot: 1.4.2(typescript@5.9.3)
-      vite: 7.3.6(@types/node@20.19.43)(jiti@2.7.0)(less@4.5.1)(lightningcss@1.32.0)(sass-embedded@1.100.0)(sass@1.102.0)(stylus@0.64.0)(terser@5.49.2)(tsx@4.23.12)(yaml@2.9.0)
-      vite-node: 3.2.4(@types/node@20.19.43)(jiti@2.7.0)(less@4.5.1)(lightningcss@1.32.0)(sass-embedded@1.100.0)(sass@1.102.0)(stylus@0.64.0)(terser@5.49.2)(tsx@4.23.12)(yaml@2.9.0)
-    optionalDependencies:
-      '@react-router/serve': 7.18.2(react-router@7.18.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(typescript@5.9.3)
-      typescript: 5.9.3
-    transitivePeerDependencies:
-      - '@types/node'
-      - babel-plugin-macros
-      - jiti
-      - less
-      - lightningcss
-      - sass
-      - sass-embedded
-      - stylus
-      - sugarss
-      - supports-color
-      - terser
-      - tsx
-      - yaml
 
   '@react-router/dev@7.18.2(@react-router/serve@7.18.2(react-router@7.18.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(typescript@5.9.3))(@types/node@24.13.3)(babel-plugin-macros@3.1.0)(jiti@2.4.2)(less@4.5.1)(lightningcss@1.32.0)(react-router@7.18.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(sass-embedded@1.100.0)(sass@1.102.0)(stylus@https://codeload.github.com/stylus/stylus/tar.gz/1086c6c1fbd7a7fd0ce9ad94f6cf4a62fc79a6e9)(terser@5.49.2)(tsx@4.23.12)(typescript@5.9.3)(vite@7.3.6(@types/node@24.13.3)(jiti@2.4.2)(less@4.5.1)(lightningcss@1.32.0)(sass-embedded@1.100.0)(sass@1.102.0)(stylus@https://codeload.github.com/stylus/stylus/tar.gz/1086c6c1fbd7a7fd0ce9ad94f6cf4a62fc79a6e9)(terser@5.49.2)(tsx@4.23.12)(yaml@2.9.0))(yaml@2.9.0)':
     dependencies:
@@ -21507,7 +21451,7 @@ snapshots:
     dependencies:
       '@types/express': 5.0.6
 
-  '@types/pg@8.21.0':
+  '@types/pg@8.16.0':
     dependencies:
       '@types/node': 24.13.3
       pg-protocol: 1.16.0
@@ -30297,17 +30241,6 @@ snapshots:
       postcss: 8.5.26
       postcss-selector-parser: 7.1.5
 
-  stylus@0.64.0:
-    dependencies:
-      '@adobe/css-tools': 4.3.3
-      debug: 4.4.3(supports-color@7.2.0)
-      glob: 10.5.0
-      sax: 1.4.4
-      source-map: 0.7.6
-    transitivePeerDependencies:
-      - supports-color
-    optional: true
-
   stylus@https://codeload.github.com/stylus/stylus/tar.gz/1086c6c1fbd7a7fd0ce9ad94f6cf4a62fc79a6e9:
     dependencies:
       '@adobe/css-tools': 4.3.3
@@ -31090,27 +31023,6 @@ snapshots:
       '@types/unist': 3.0.3
       vfile-message: 4.0.3
 
-  vite-node@3.2.4(@types/node@20.19.43)(jiti@2.7.0)(less@4.5.1)(lightningcss@1.32.0)(sass-embedded@1.100.0)(sass@1.102.0)(stylus@0.64.0)(terser@5.49.2)(tsx@4.23.12)(yaml@2.9.0):
-    dependencies:
-      cac: 6.7.14
-      debug: 4.4.3(supports-color@7.2.0)
-      es-module-lexer: 1.7.0
-      pathe: 2.0.3
-      vite: 7.3.6(@types/node@20.19.43)(jiti@2.7.0)(less@4.5.1)(lightningcss@1.32.0)(sass-embedded@1.100.0)(sass@1.102.0)(stylus@0.64.0)(terser@5.49.2)(tsx@4.23.12)(yaml@2.9.0)
-    transitivePeerDependencies:
-      - '@types/node'
-      - jiti
-      - less
-      - lightningcss
-      - sass
-      - sass-embedded
-      - stylus
-      - sugarss
-      - supports-color
-      - terser
-      - tsx
-      - yaml
-
   vite-node@3.2.4(@types/node@24.13.3)(jiti@2.4.2)(less@4.5.1)(lightningcss@1.32.0)(sass-embedded@1.100.0)(sass@1.102.0)(stylus@https://codeload.github.com/stylus/stylus/tar.gz/1086c6c1fbd7a7fd0ce9ad94f6cf4a62fc79a6e9)(terser@5.49.2)(tsx@4.23.12)(yaml@2.9.0):
     dependencies:
       cac: 6.7.14
@@ -31161,27 +31073,6 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
       - typescript
-
-  vite@7.3.6(@types/node@20.19.43)(jiti@2.7.0)(less@4.5.1)(lightningcss@1.32.0)(sass-embedded@1.100.0)(sass@1.102.0)(stylus@0.64.0)(terser@5.49.2)(tsx@4.23.12)(yaml@2.9.0):
-    dependencies:
-      esbuild: 0.28.2
-      fdir: 6.5.0(picomatch@4.0.4)
-      picomatch: 4.0.4
-      postcss: 8.5.26
-      rollup: 4.62.4
-      tinyglobby: 0.2.17
-    optionalDependencies:
-      '@types/node': 20.19.43
-      fsevents: 2.3.3
-      jiti: 2.7.0
-      less: 4.5.1
-      lightningcss: 1.32.0
-      sass: 1.102.0
-      sass-embedded: 1.100.0
-      stylus: 0.64.0
-      terser: 5.49.2
-      tsx: 4.23.12
-      yaml: 2.9.0
 
   vite@7.3.6(@types/node@24.13.3)(jiti@2.4.2)(less@4.5.1)(lightningcss@1.32.0)(sass-embedded@1.100.0)(sass@1.102.0)(stylus@https://codeload.github.com/stylus/stylus/tar.gz/1086c6c1fbd7a7fd0ce9ad94f6cf4a62fc79a6e9)(terser@5.49.2)(tsx@4.23.12)(yaml@2.9.0):
     dependencies:

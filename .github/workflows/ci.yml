@@ -8,12 +8,46 @@ on:
     branches:
       - develop
 
+# One run at a time per ref. On a pull request a newer push cancels the run still in progress.
+# On develop runs are never cancelled: they queue behind the running one (GitHub keeps only the
+# newest pending run), so every develop run that starts also finishes. Cancelling them starved a
+# busy develop, where each merge cancelled the last and no CI or SonarCloud analysis completed.
+# Serializing still keeps SonarCloud ordered: an older commit's analysis cannot publish after a
+# newer one's. Release and publish workflows must not copy this.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 permissions:
   actions: read
   contents: read
   pull-requests: read
 
 jobs:
+  # Native Windows has no process groups: e2e teardown stops the API's launcher and descendants
+  # with taskkill. These tests start a real launcher and descendant and check both stop.
+  windows-process-cleanup:
+    runs-on: windows-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+
+      - uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4
+        name: Install pnpm
+        with:
+          run_install: false
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 22.22.1
+          cache: 'pnpm'
+
+      - run: pnpm install --frozen-lockfile --ignore-scripts
+
+      - name: Test API process cleanup on Windows
+        run: pnpm exec vitest run --config apps/api-e2e/vitest.support.config.mts src/support/api-process
+
   main:
     runs-on: ubuntu-latest
     env:
@@ -22,9 +56,12 @@ jobs:
       # Surfaced at job scope so the SonarCloud steps below can gate on its presence.
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
+    # Service images come from Google's Docker Hub mirror (same official images, same tags and
+    # digests). Hosted runners share IP addresses, so anonymous pulls from Docker Hub
+    # (`toomanyrequests`) and public.ecr.aws (`Data limit exceeded`) fail intermittently.
     services:
       postgres:
-        image: postgres:16
+        image: mirror.gcr.io/library/postgres:16
         env:
           POSTGRES_USER: prisma
           POSTGRES_PASSWORD: prisma
@@ -37,10 +74,23 @@ jobs:
         ports:
           - 5432:5432
 
+      redis:
+        image: mirror.gcr.io/library/redis:7-alpine
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 6379:6379
+
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
           fetch-depth: 0
+
+      - name: Test public content guard
+        run: python3 -m unittest discover -s .github/tests -p 'test_*.py'
 
       - uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4
         name: Install pnpm
@@ -65,13 +115,14 @@ jobs:
       - name: Install Playwright Browsers
         run: ./node_modules/.bin/playwright install --with-deps chromium
 
+      # On a develop push, the Nx base is the commit of the last successful CI run on develop, not
+      # the previous push. A queued develop run is replaced when a newer push arrives (see
+      # concurrency above), and a run can fail or be cancelled by hand; basing on the previous push
+      # would leave the projects such a push changed out of every completed affected run. Do not
+      # override NX_BASE with `github.event.before`.
       - uses: nrwl/nx-set-shas@3e9ad7370203c1e93d109be57f3b72eb0eb511b1 # v4
-
-      - name: Use pushed commit range as Nx base
-        if: ${{ github.event_name == 'push' && github.event.before != '0000000000000000000000000000000000000000' }}
-        run: |
-          echo "NX_BASE=${{ github.event.before }}" >> "$GITHUB_ENV"
-          echo "NX_HEAD=${{ github.sha }}" >> "$GITHUB_ENV"
+        with:
+          main-branch-name: develop
 
       - run: pnpm template:validate-upgrade-notes
 
@@ -81,9 +132,10 @@ jobs:
 
       # Formatting is checked in CI or it is not checked at all: `nx format:check --base=<ref>`
       # only inspects files a branch CHANGED, so anything already on the default branch is invisible
-      # to a local run. Two unformatted files reached develop that way.
+      # to a local run. Two unformatted files reached develop that way. The whole repository, with
+      # the pinned prettier: a scoped glob let two dozen unformatted files elsewhere through.
       - name: Check formatting
-        run: pnpm exec prettier --check "scripts/**/*.ts" "tools/**/*.ts"
+        run: pnpm exec prettier --check .
 
       - run: pnpm verify:select-coverage
 
@@ -92,21 +144,46 @@ jobs:
       # Prepend any command with "nx-cloud record --" to record its logs to Nx Cloud
       # - run: pnpm exec nx-cloud record -- echo Hello World
       # Nx Affected runs only tasks affected by the changes in this PR/commit. Learn more: https://nx.dev/ci/features/affected
+      # `lint` is every project's ESLint target (nx.json names the inferred target `lint`). It used
+      # to be inferred as `eslint:lint`, so this step and `pnpm lint` reached one project.
       - run: pnpm exec nx affected -t lint build
+
+      - name: Test the workspace scripts (typecheck runner, dev checkout resolution)
+        run: node --test scripts/*.spec.mjs
 
       # run-many, not `nx run web:typecheck`: `nx affected -t build` above compiles the API through
       # webpack, which does not enforce strict. A passing build was never a passing typecheck, and
       # for the API no typecheck ran at all.
       #
-      # Unscoped: this covers every project with a typecheck target, including the ones Nx infers
-      # from a tsconfig.lib.json. Keep it that way — a scoped list silently stops covering new
-      # projects as they are added.
+      # Unscoped: every project with a tsconfig.json gets a typecheck target from
+      # tools/nx-plugins/typecheck.js, which checks all of its configs (lib/app, spec, storybook) and
+      # fails when a config checks nothing or a tracked source is in no config. Keep it unscoped — a
+      # scoped list silently stops covering new projects as they are added.
+      #
+      # Nx's default parallelism (3) on purpose: hosted runners have the memory for three compilers
+      # at once. The local `pnpm typecheck` runs one project at a time instead (see AGENTS.md).
       - run: pnpm exec nx run-many -t typecheck
 
+      # The workspace root's own TypeScript (scripts/, tools/) belongs to no Nx project; each folder's
+      # tsconfig.json is checked by the same runner, uncovered-file check included.
+      - run: pnpm typecheck:workspace
+
+      # Unit and component tests only: api-e2e's `test` target is its support suite, so this never
+      # starts the API e2e run or a test database.
       - name: Run tests with coverage
         run: pnpm test:coverage
         env:
+          REDIS_URL: redis://127.0.0.1:6379
+          NODE_ENV: test
+          JWT_SECRET: test-jwt-secret-for-ci-only-not-production
+          EMAIL_PROVIDER: mock
+
+      # The API e2e suite, against the service containers above, through its PASSED-checking wrapper.
+      - name: Run API e2e with coverage
+        run: pnpm exec nx run api-e2e:e2e -- --coverage
+        env:
           TEST_DATABASE_URL: postgresql://prisma:prisma@localhost:5432/nestled_template_test
+          REDIS_URL: redis://127.0.0.1:6379
           NODE_ENV: test
           JWT_SECRET: test-jwt-secret-for-ci-only-not-production
           EMAIL_PROVIDER: mock

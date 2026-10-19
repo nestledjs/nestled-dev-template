@@ -9,7 +9,7 @@ vi.mock('@apollo/client/react', () => ({
 }))
 
 describe('ExportButton', () => {
-  const createObjectURL = vi.fn(() => 'blob:csv')
+  const createObjectURL = vi.fn<typeof URL.createObjectURL>(() => 'blob:csv')
   const revokeObjectURL = vi.fn()
 
   beforeEach(() => {
@@ -41,7 +41,9 @@ describe('ExportButton', () => {
         ],
       },
     })
-    const clickSpy = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {})
+    const clickSpy = vi
+      .spyOn(HTMLAnchorElement.prototype, 'click')
+      .mockImplementation(() => undefined)
 
     renderButton()
     fireEvent.click(screen.getByRole('button', { name: 'Export' }))
@@ -64,7 +66,7 @@ describe('ExportButton', () => {
         otherUsers: [{ id: '1', name: 'Ada', email: 'ada@example.com' }],
       },
     })
-    vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {})
+    vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => undefined)
 
     renderButton()
     fireEvent.click(screen.getByRole('button', { name: 'Export' }))

@@ -10,13 +10,12 @@
       "vitest",
       "@nx/react/typings/cssmodule.d.ts",
       "@nx/react/typings/image.d.ts"
-    ]
+    ],
+    "rootDirs": [".", "./.react-router/types"]
   },
   "include": [
     "vite.config.ts",
-    "vite.config.mts",
-    "vitest.config.mts",
-    "vitest.config.mts",
+    "react-router.config.ts",
     "src/**/*.test.ts",
     "src/**/*.spec.ts",
     "src/**/*.test.tsx",
@@ -25,6 +24,11 @@
     "src/**/*.spec.js",
     "src/**/*.test.jsx",
     "src/**/*.spec.jsx",
-    "src/**/*.d.ts"
-  ]
+    "src/**/*.d.ts",
+    "tests/**/*.ts",
+    "tests/**/*.tsx",
+    ".react-router/types/**/*",
+    "app-load-context.d.ts"
+  ],
+  "exclude": ["node_modules"]
 }
