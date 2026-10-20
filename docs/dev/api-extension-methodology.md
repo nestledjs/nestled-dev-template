@@ -227,7 +227,7 @@ from disk. Whenever a resolver, DTO, decorator, or generated model changes the s
 2. Review both the schema and SDK diffs before continuing.
 3. Resolve new API-to-SDK or SDK-to-client contract findings.
 
-`db-update` owns the order: Prisma/Nestled generators → API bootstrap → SDK. It reuses healthy API
+`db-update` owns the order: Prisma/Nestled generators → API bootstrap → SDK → Doctor. It reuses healthy API
 and SDK watchers in this workspace or runs isolated one-shot replacements against disposable local
 dependencies, so do not add another API boot or SDK run.
 

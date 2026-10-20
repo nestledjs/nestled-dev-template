@@ -167,7 +167,7 @@ pnpm prisma:studio      # open Prisma Studio
 ### Code Generation
 
 ```bash
-pnpm db-update          # full sync: Prisma → CRUD/models → API schema → typed SDK
+pnpm db-update          # full sync: Prisma → CRUD/models → API schema → typed SDK → Doctor
 pnpm sdk                # generate GraphQL SDK only
 pnpm sdk:watch          # watch mode for SDK generation
 pnpm generate:models    # generate TypeScript models from Prisma
@@ -503,7 +503,8 @@ After making changes to the Prisma schema:
 
 `pnpm db-update` is the complete, ordered artifact contract. It runs Doctor and the Prisma/Nestled
 generators, then bootstraps the API against a disposable local database long enough to rewrite
-`api-schema.graphql`, and only then compiles the SDK. If this workspace already has healthy
+`api-schema.graphql`, then compiles the SDK, and only then runs Doctor again, so the SDK contract
+is checked against the refreshed schema rather than the previous one. If this workspace already has healthy
 `nx serve api` and/or `sdk:watch` processes, it reuses them and waits for their output instead of
 starting competitors. Otherwise it uses one-shot processes on an ephemeral API port and stops only
 the dependencies it started. Do not add a separate API boot or `pnpm sdk` after it.
