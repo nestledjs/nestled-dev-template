@@ -152,7 +152,7 @@ where admin-form save bugs live:
 - Prisma must generate before API builds (`df04e16`), and `prisma.config.ts` needs a placeholder
   `DATABASE_URL` fallback or CI `prisma generate` throws (`53250bf`).
 - Playwright browsers must be installed in CI for web-ui browser tests (`f01dc19`, `9a4863e`).
-- Node toolchain is pinned: engines `^22.14.0`, CI on 22.22.1 (`9d55aef`); toolchain lock
+- Node toolchain is pinned: engines `>=22.23.4 <23` (a patched floor; `engine-strict` is on), CI, `.tool-versions`, `.nvmrc` and `.dev/Dockerfile` on exactly 22.23.4; toolchain lock
   (`102ad45`, `dc1cca0`).
 - `apps/api-e2e` self-starts its Docker test database on port 5433 (`41f0222`,
   `scripts/test-db.sh`).
