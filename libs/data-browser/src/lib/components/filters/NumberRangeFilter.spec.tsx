@@ -681,7 +681,7 @@ describe('NumberRangeFilter', () => {
 
       const minInput = screen.getByLabelText('Min')
 
-      expect(minInput).toHaveClass('focus:ring-1', 'focus:ring-green-web', 'focus:border-green-web')
+      expect(minInput).toHaveClass('focus:ring-1', 'focus:ring-green-600', 'focus:border-green-600')
     })
   })
 })

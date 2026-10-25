@@ -1,5 +1,10 @@
 import { formatFieldName } from '../../utils/string-utils'
-import { filterControlClasses, filterHelpTextClasses, filterLabelClasses } from './filter-styles'
+import {
+  filterControlClasses,
+  filterHelpTextClasses,
+  filterLabelClasses,
+  filterSubLabelClasses,
+} from './filter-styles'
 
 interface NumberRangeFilterProps {
   fieldName: string
@@ -72,13 +77,10 @@ export function NumberRangeFilter({
   const step = fieldType === 'int' || fieldType === 'bigint' ? '1' : 'any'
 
   return (
-    <div className="space-y-1">
-      <label className={filterLabelClasses}>{formatFieldName(fieldName)}</label>
+    <fieldset className="min-w-0 space-y-1">
+      <legend className={`${filterLabelClasses} w-full`}>{formatFieldName(fieldName)}</legend>
       <div className="grid grid-cols-2 gap-2">
         <div>
-          <label htmlFor={`${fieldName}-min`} className={`${filterHelpTextClasses} block mb-1`}>
-            Min
-          </label>
           <input
             id={`${fieldName}-min`}
             type="number"
@@ -88,11 +90,11 @@ export function NumberRangeFilter({
             placeholder="No minimum"
             className={filterControlClasses}
           />
+          <label htmlFor={`${fieldName}-min`} className={filterSubLabelClasses}>
+            Min
+          </label>
         </div>
         <div>
-          <label htmlFor={`${fieldName}-max`} className={`${filterHelpTextClasses} block mb-1`}>
-            Max
-          </label>
           <input
             id={`${fieldName}-max`}
             type="number"
@@ -102,6 +104,9 @@ export function NumberRangeFilter({
             placeholder="No maximum"
             className={filterControlClasses}
           />
+          <label htmlFor={`${fieldName}-max`} className={filterSubLabelClasses}>
+            Max
+          </label>
         </div>
       </div>
       {(minValue || maxValue) && (
@@ -111,6 +116,6 @@ export function NumberRangeFilter({
           {!minValue && maxValue && `≤ ${maxValue}`}
         </div>
       )}
-    </div>
+    </fieldset>
   )
 }

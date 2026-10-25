@@ -1,5 +1,10 @@
 import { formatFieldName } from '../../utils/string-utils'
-import { filterControlClasses, filterHelpTextClasses, filterLabelClasses } from './filter-styles'
+import {
+  filterControlClasses,
+  filterHelpTextClasses,
+  filterLabelClasses,
+  filterSubLabelClasses,
+} from './filter-styles'
 
 interface DateRangeFilterProps {
   fieldName: string
@@ -61,13 +66,10 @@ export function DateRangeFilter({
   }
 
   return (
-    <div className="space-y-1">
-      <label className={filterLabelClasses}>{formatFieldName(fieldName)}</label>
+    <fieldset className="min-w-0 space-y-1">
+      <legend className={`${filterLabelClasses} w-full`}>{formatFieldName(fieldName)}</legend>
       <div className="grid grid-cols-2 gap-2">
         <div>
-          <label htmlFor={`${fieldName}-from`} className={`${filterHelpTextClasses} block mb-1`}>
-            From
-          </label>
           <input
             id={`${fieldName}-from`}
             type="date"
@@ -75,11 +77,11 @@ export function DateRangeFilter({
             onChange={e => handleFromChange(e.target.value)}
             className={filterControlClasses}
           />
+          <label htmlFor={`${fieldName}-from`} className={filterSubLabelClasses}>
+            From
+          </label>
         </div>
         <div>
-          <label htmlFor={`${fieldName}-to`} className={`${filterHelpTextClasses} block mb-1`}>
-            To
-          </label>
           <input
             id={`${fieldName}-to`}
             type="date"
@@ -87,6 +89,9 @@ export function DateRangeFilter({
             onChange={e => handleToChange(e.target.value)}
             className={filterControlClasses}
           />
+          <label htmlFor={`${fieldName}-to`} className={filterSubLabelClasses}>
+            To
+          </label>
         </div>
       </div>
       {(fromDate || toDate) && (
@@ -96,6 +101,6 @@ export function DateRangeFilter({
           {!fromDate && toDate && `Until ${toDate}`}
         </div>
       )}
-    </div>
+    </fieldset>
   )
 }
