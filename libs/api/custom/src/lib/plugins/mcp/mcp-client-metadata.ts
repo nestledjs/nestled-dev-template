@@ -93,31 +93,37 @@ export function isRegisteredRedirectUri(registered: string[], requested: string)
 
 // Addresses a client metadata fetch must never reach (SSRF): loopback, private, link-local,
 // carrier-grade NAT, unspecified, multicast and reserved ranges, and their IPv6 counterparts.
+// CIDR notation, split at load time.
+const BLOCKED_IPV4_RANGES = [
+  '0.0.0.0/8',
+  '10.0.0.0/8',
+  '100.64.0.0/10',
+  '127.0.0.0/8',
+  '169.254.0.0/16',
+  '172.16.0.0/12',
+  '192.0.0.0/24',
+  '192.168.0.0/16',
+  '198.18.0.0/15',
+  '224.0.0.0/4',
+  '240.0.0.0/4',
+]
+const BLOCKED_IPV6_RANGES = [
+  '::/128',
+  '::1/128',
+  '64:ff9b::/96',
+  'fc00::/7',
+  'fe80::/10',
+  'ff00::/8',
+]
 const BLOCKED_ADDRESSES = new BlockList()
-for (const [network, prefix] of [
-  ['0.0.0.0', 8],
-  ['10.0.0.0', 8],
-  ['100.64.0.0', 10],
-  ['127.0.0.0', 8],
-  ['169.254.0.0', 16],
-  ['172.16.0.0', 12],
-  ['192.0.0.0', 24],
-  ['192.168.0.0', 16],
-  ['198.18.0.0', 15],
-  ['224.0.0.0', 4],
-  ['240.0.0.0', 4],
+for (const [ranges, family] of [
+  [BLOCKED_IPV4_RANGES, 'ipv4'],
+  [BLOCKED_IPV6_RANGES, 'ipv6'],
 ] as const) {
-  BLOCKED_ADDRESSES.addSubnet(network, prefix, 'ipv4')
-}
-for (const [network, prefix] of [
-  ['::', 128],
-  ['::1', 128],
-  ['64:ff9b::', 96],
-  ['fc00::', 7],
-  ['fe80::', 10],
-  ['ff00::', 8],
-] as const) {
-  BLOCKED_ADDRESSES.addSubnet(network, prefix, 'ipv6')
+  for (const range of ranges) {
+    const [network, prefix] = range.split('/')
+    BLOCKED_ADDRESSES.addSubnet(network, Number(prefix), family)
+  }
 }
 
 export function isPublicAddress(address: string): boolean {
@@ -153,18 +159,15 @@ async function readBodyWithLimit(response: Response): Promise<string> {
     throw new ClientMetadataError('Client metadata document is too large')
   if (!response.body) return ''
 
-  const reader = response.body.getReader()
   const chunks: Uint8Array[] = []
   let total = 0
-  for (;;) {
-    const { done, value } = await reader.read()
-    if (done) break
-    total += value.byteLength
+  // Leaving the loop early (the throw) cancels the stream, so the rest is never downloaded.
+  for await (const chunk of response.body as unknown as AsyncIterable<Uint8Array>) {
+    total += chunk.byteLength
     if (total > CIMD_MAX_BYTES) {
-      await reader.cancel()
       throw new ClientMetadataError('Client metadata document is too large')
     }
-    chunks.push(value)
+    chunks.push(chunk)
   }
   return Buffer.concat(chunks).toString('utf8')
 }
@@ -199,7 +202,9 @@ export function parseClientMetadataDocument(clientId: string, raw: string): Clie
   // Only public clients are supported: the token endpoint authenticates no client secret or key.
   const authMethod = fields['token_endpoint_auth_method']
   if (authMethod !== undefined && authMethod !== 'none') {
-    throw new ClientMetadataError(`Unsupported token_endpoint_auth_method: ${String(authMethod)}`)
+    throw new ClientMetadataError(
+      `Unsupported token_endpoint_auth_method: ${JSON.stringify(authMethod)}`,
+    )
   }
   return { clientId, clientName, redirectUris: redirectUris as string[] }
 }

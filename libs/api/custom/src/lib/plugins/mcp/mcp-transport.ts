@@ -37,7 +37,7 @@ export class JsonRequestTransport implements Transport {
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   async start(): Promise<void> {}
 
-  async send(message: JSONRPCMessage): Promise<void> {
+  send(message: JSONRPCMessage): Promise<void> {
     if ('id' in message && message.id !== null && message.id !== undefined) {
       const resolve = this.pending.get(message.id)
       if (resolve) {
@@ -45,10 +45,12 @@ export class JsonRequestTransport implements Transport {
         this.pending.delete(message.id)
       }
     }
+    return Promise.resolve()
   }
 
-  async close(): Promise<void> {
+  close(): Promise<void> {
     this.onclose?.()
+    return Promise.resolve()
   }
 
   async handleBody(body: unknown): Promise<JSONRPCMessage | JSONRPCMessage[] | null> {
