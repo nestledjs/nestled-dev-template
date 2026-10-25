@@ -44,6 +44,7 @@ affectedPaths:
   - apps/web/tests/routes/settings/_layout.spec.tsx
   - apps/web/tests/routes/settings/billing.spec.tsx
   - libs/api/utils/src/lib/services/auth-cache.service.ts
+  - libs/api/utils/src/lib/services/auth-cache.service.redis-options.spec.ts
   - scripts/test-database.mjs
   - scripts/test-database.spec.mjs
   - apps/api-e2e/src/support/sql-runner.mjs
