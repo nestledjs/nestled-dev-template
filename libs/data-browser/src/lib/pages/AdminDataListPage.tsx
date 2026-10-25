@@ -552,7 +552,7 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
               <div className="mt-6">
                 <Link
                   to={basePath}
-                  className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-web hover:bg-green-web-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-web"
+                  className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-600"
                 >
                   Return to Data Browser
                 </Link>
@@ -594,13 +594,13 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
                 <button
                   type="button"
                   onClick={() => globalThis.location.reload()}
-                  className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-web hover:bg-green-web-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-web"
+                  className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-600"
                 >
                   Reload Page
                 </button>
                 <Link
                   to={basePath}
-                  className="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-web"
+                  className="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-600"
                 >
                   Return to Data Browser
                 </Link>
@@ -621,7 +621,7 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
       <button
         type="button"
         onClick={() => setShowColumnSelector(!showColumnSelector)}
-        className="inline-flex items-center px-3 py-2 border border-gray-300 dark:border-gray-600 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-web"
+        className="inline-flex items-center px-3 py-2 border border-gray-300 dark:border-gray-600 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-600"
       >
         Columns
         <SvgIcon className="-mr-0.5 ml-2 h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
@@ -652,7 +652,7 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
                       setVisibleColumns(newColumns)
                       AdminLocalStorage.setColumnVisibility(model.name, newColumns)
                     }}
-                    className="h-4 w-4 mt-0.5 flex-shrink-0 text-green-web focus:ring-green-web border-gray-300 dark:border-gray-600 rounded"
+                    className="h-4 w-4 mt-0.5 flex-shrink-0 text-green-600 focus:ring-green-600 border-gray-300 dark:border-gray-600 rounded"
                   />
                   <span className="text-sm text-gray-700 dark:text-gray-300 leading-5">
                     {formatFieldName(field)}
@@ -667,7 +667,7 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
                   setVisibleColumns(fieldNames)
                   AdminLocalStorage.setColumnVisibility(model.name, fieldNames)
                 }}
-                className="text-xs text-green-web hover:text-green-web-800"
+                className="text-xs text-green-600 hover:text-green-800"
               >
                 Select All
               </button>
@@ -728,7 +728,7 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
                           setSearchFields(newFields)
                           AdminLocalStorage.setSearchFields(model.name, newFields)
                         }}
-                        className="h-4 w-4 mt-0.5 flex-shrink-0 text-green-web focus:ring-green-web border-gray-300 dark:border-gray-600 rounded"
+                        className="h-4 w-4 mt-0.5 flex-shrink-0 text-green-600 focus:ring-green-600 border-gray-300 dark:border-gray-600 rounded"
                       />
                       <span className="text-sm text-gray-700 dark:text-gray-300 leading-5">
                         {formatFieldName(field)}
@@ -743,7 +743,7 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
                       setSearchFields(searchableFieldNames)
                       AdminLocalStorage.setSearchFields(model.name, searchableFieldNames)
                     }}
-                    className="text-xs text-green-web hover:text-green-web-800 mr-3"
+                    className="text-xs text-green-600 hover:text-green-800 mr-3"
                   >
                     Select All
                   </button>
@@ -883,7 +883,7 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
           <input
             id="search"
             name="search"
-            className="block w-full pl-10 pr-12 py-2 border border-gray-300 dark:border-gray-600 rounded-md leading-5 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:placeholder-gray-400 dark:focus:placeholder-gray-500 focus:ring-1 focus:ring-green-web focus:border-green-web sm:text-sm"
+            className="block w-full pl-10 pr-12 py-2 border border-gray-300 dark:border-gray-600 rounded-md leading-5 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:placeholder-gray-400 dark:focus:placeholder-gray-500 focus:ring-1 focus:ring-green-600 focus:border-green-600 sm:text-sm"
             placeholder={`Search ${searchFields.length > 0 ? searchFields.map((field: string) => field.replaceAll(/([a-z])([A-Z])/g, '$1 $2').replace(/^./, (str: string) => str.toUpperCase())).join(', ') : getPluralName(model.name).toLowerCase()}...`}
             type="search"
             value={state.search || ''}
@@ -900,9 +900,9 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
         <button
           type="button"
           onClick={() => setShowFilters(!showFilters)}
-          className={`inline-flex items-center px-3 py-2 border text-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-web ${
+          className={`inline-flex items-center px-3 py-2 border text-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-600 ${
             showFilters || Object.keys(filters).length > 0
-              ? 'border-green-web text-green-web bg-green-50 dark:bg-green-900/30 hover:bg-green-100 dark:hover:bg-green-900/50'
+              ? 'border-green-600 text-green-800 bg-green-50 hover:bg-green-100 dark:border-green-500 dark:text-green-200 dark:bg-green-900/40 dark:hover:bg-green-900/60'
               : 'border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700'
           }`}
         >
@@ -916,7 +916,7 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
           </SvgIcon>
           Filters
           {Object.keys(filters).length > 0 && (
-            <span className="ml-1 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-green-web rounded-full">
+            <span className="ml-1 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-green-600 rounded-full">
               {Object.keys(filters).length}
             </span>
           )}
@@ -936,7 +936,7 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
         <select
           value={pageSize}
           onChange={e => dispatch({ type: 'SET_PAGE_SIZE', payload: Number(e.target.value) })}
-          className="px-3 py-2 border border-gray-300 dark:border-gray-600 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-web"
+          className="px-3 py-2 border border-gray-300 dark:border-gray-600 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-600"
           aria-label="Rows per page"
         >
           <option value={20}>20 / page</option>

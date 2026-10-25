@@ -141,7 +141,7 @@ export function AdminEmptyState({
           <button
             type="button"
             onClick={onAction}
-            className="inline-flex items-center rounded-md bg-green-web px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-web-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-web"
+            className="inline-flex items-center rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
           >
             {actionLabel}
           </button>
@@ -169,7 +169,7 @@ export function AdminLoadingState({
   return (
     <div className={`flex flex-col items-center justify-center p-8 ${className}`}>
       <div
-        className={`animate-spin rounded-full border-b-2 border-green-web ${getSizeClasses()}`}
+        className={`animate-spin rounded-full border-b-2 border-green-600 ${getSizeClasses()}`}
       ></div>
       <h3 className="mt-4 text-sm font-medium text-gray-900">{title}</h3>
       {message && <p className="mt-1 text-sm text-gray-500">{message}</p>}

@@ -51,7 +51,7 @@ export function RelationSearchInput({
         placeholder={`Search ${relatedModelName.toLowerCase()}...`}
         value={searchTerm}
         onChange={e => onSearchChange(e.target.value)}
-        className="w-full px-2 py-1 text-sm text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-green-web"
+        className="w-full px-2 py-1 text-sm text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-green-600"
         autoFocus
       />
     </div>

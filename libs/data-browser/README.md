@@ -285,7 +285,26 @@ Changes all routes to use `/admin/database/*` instead of `/admin/data/*`.
 
 ### Custom Styling
 
-The data browser uses Tailwind CSS classes. Customize via your project's Tailwind config and the `formTheme` export.
+The data browser is styled with Tailwind CSS utility classes and ships no CSS of its own, so your
+app's Tailwind build has to scan the package. Tailwind v4 skips `node_modules` during automatic
+source detection, and a bare `@source` on your repository root does not reach into it either, so
+add the package (and `@nestledjs/shared-components`, which renders the table) explicitly in the
+CSS file that imports Tailwind:
+
+```css
+@import 'tailwindcss';
+@source "../../../../"; /* your repository root, as before */
+@source "../../../../node_modules/@nestledjs/data-browser";
+@source "../../../../node_modules/@nestledjs/shared-components";
+```
+
+The paths are relative to that CSS file; the example is a CSS file four levels below the
+repository root. Without these lines only the classes your own code happens to use are generated,
+and the data browser renders half-styled: dark-mode colours fall back to the light ones (faint
+labels, a white table body), positioning classes go missing (a select's chevron lands on the
+wrong side), and buttons lose their background. The colours are all from Tailwind's default palette,
+so no theme tokens are needed. Customize further via your
+project's Tailwind config and the `formTheme` export.
 
 ## Troubleshooting
 
