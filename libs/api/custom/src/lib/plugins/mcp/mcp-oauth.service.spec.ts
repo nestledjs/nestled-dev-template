@@ -1,7 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing'
 import { ConfigService } from '@nestjs/config'
 import { createHash } from 'node:crypto'
-import { McpOAuthService } from './mcp-oauth.service'
+import { McpOAuthService, OAuthClientError } from './mcp-oauth.service'
+import { ClientMetadataError } from './mcp-client-metadata'
 import { ApiTokensService } from '../api-tokens/api-tokens.service'
 import { ApiCoreDataAccessService } from '@nestled-template/api/core/data-access'
 
@@ -56,6 +57,127 @@ describe('McpOAuthService', () => {
       expect(a.clientId).not.toBe(b.clientId)
       expect(service.getClient(a.clientId)?.clientName).toBe('App A')
       expect(service.getClient(b.clientId)?.clientName).toBe('App B')
+    })
+  })
+
+  describe('Client resolution for /authorize', () => {
+    const cimdUrl = 'https://client.example.com/oauth/client.json'
+
+    it('knows DCR clients and URL-shaped client ids without a network request', () => {
+      const client = service.registerClient('App', ['https://app.example.com/cb'])
+      const resolve = jest.spyOn((service as any).clientMetadata, 'resolve')
+
+      expect(service.isKnownClientId(client.clientId)).toBe(true)
+      expect(service.isKnownClientId(cimdUrl)).toBe(true)
+      expect(service.isKnownClientId('unregistered')).toBe(false)
+      expect(service.isKnownClientId('http://client.example.com/client.json')).toBe(false)
+      expect(resolve).not.toHaveBeenCalled()
+    })
+
+    it('accepts a DCR client only at a redirect_uri it registered', async () => {
+      const client = service.registerClient('App', ['https://app.example.com/cb'])
+
+      await expect(
+        service.resolveClientForRedirect(client.clientId, 'https://app.example.com/cb'),
+      ).resolves.toBe(client)
+      await expect(
+        service.resolveClientForRedirect(client.clientId, 'https://evil.example.com/cb'),
+      ).rejects.toEqual(
+        new OAuthClientError('invalid_request', 'redirect_uri is not registered for this client'),
+      )
+    })
+
+    it('lets a loopback redirect use any port (RFC 8252)', async () => {
+      const client = service.registerClient('CLI', ['http://127.0.0.1:33418/callback'])
+
+      await expect(
+        service.resolveClientForRedirect(client.clientId, 'http://127.0.0.1:50123/callback'),
+      ).resolves.toBe(client)
+      await expect(
+        service.resolveClientForRedirect(client.clientId, 'http://127.0.0.1:50123/other'),
+      ).rejects.toBeInstanceOf(OAuthClientError)
+    })
+
+    it('rejects an unknown DCR client as invalid_client', async () => {
+      await expect(
+        service.resolveClientForRedirect('unknown', 'https://app.example.com/cb'),
+      ).rejects.toMatchObject({ error: 'invalid_client' })
+    })
+
+    it('resolves a CIMD client from its metadata document and checks the redirect against it', async () => {
+      jest.spyOn((service as any).clientMetadata, 'resolve').mockResolvedValue({
+        clientId: cimdUrl,
+        clientName: 'Example Client',
+        redirectUris: ['https://client.example.com/callback'],
+      })
+
+      await expect(
+        service.resolveClientForRedirect(cimdUrl, 'https://client.example.com/callback'),
+      ).resolves.toMatchObject({ clientId: cimdUrl, clientName: 'Example Client' })
+      await expect(
+        service.resolveClientForRedirect(cimdUrl, 'https://other.example.com/callback'),
+      ).rejects.toMatchObject({ error: 'invalid_request' })
+    })
+
+    it('answers a rejected metadata document as invalid_client', async () => {
+      jest
+        .spyOn((service as any).clientMetadata, 'resolve')
+        .mockRejectedValue(
+          new ClientMetadataError('Client metadata document client_id does not match its URL'),
+        )
+
+      await expect(
+        service.resolveClientForRedirect(cimdUrl, 'https://client.example.com/callback'),
+      ).rejects.toEqual(
+        new OAuthClientError(
+          'invalid_client',
+          'Client metadata document client_id does not match its URL',
+        ),
+      )
+    })
+
+    it('validates DCR redirect_uris', () => {
+      expect(service.validateRedirectUris(['https://app.example.com/cb'])).toEqual([
+        'https://app.example.com/cb',
+      ])
+      expect(
+        service.validateRedirectUris(['http://localhost:8080/cb', 'cursor://example.app/oauth']),
+      ).toEqual(['http://localhost:8080/cb', 'cursor://example.app/oauth'])
+      expect(service.validateRedirectUris([])).toBeNull()
+      expect(service.validateRedirectUris(undefined)).toBeNull()
+      expect(service.validateRedirectUris(['http://app.example.com/cb'])).toBeNull()
+      expect(service.validateRedirectUris(['javascript:alert(1)'])).toBeNull()
+      expect(service.validateRedirectUris([42])).toBeNull()
+    })
+  })
+
+  describe('Discovery metadata', () => {
+    const req = {
+      protocol: 'https',
+      get: (name: string) => (name === 'host' ? 'api.example.com' : undefined),
+    }
+
+    it('advertises CIMD, RFC 9207 iss and the deprecated DCR endpoint', () => {
+      expect(service.buildAuthorizationServerMetadata(req)).toEqual(
+        expect.objectContaining({
+          issuer: 'https://api.example.com/api/mcp',
+          authorization_endpoint: 'https://api.example.com/api/mcp/authorize',
+          token_endpoint: 'https://api.example.com/api/mcp/token',
+          registration_endpoint: 'https://api.example.com/api/mcp/register',
+          code_challenge_methods_supported: ['S256'],
+          token_endpoint_auth_methods_supported: ['none'],
+          client_id_metadata_document_supported: true,
+          authorization_response_iss_parameter_supported: true,
+        }),
+      )
+    })
+
+    it('names the authorization server in the protected resource metadata', () => {
+      expect(service.buildProtectedResourceMetadata(req)).toEqual({
+        resource: 'https://api.example.com/api/mcp',
+        authorization_servers: ['https://api.example.com/api/mcp'],
+        bearer_methods_supported: ['header'],
+      })
     })
   })
 

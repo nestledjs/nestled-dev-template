@@ -1,8 +1,19 @@
-import { Controller, Get, Post, Query, Body, Req, Res, HttpCode, Logger } from '@nestjs/common'
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  Logger,
+  Post,
+  Query,
+  Req,
+  Res,
+} from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
 import { Request, Response } from 'express'
 import { ConfigService } from '@nestjs/config'
-import { McpOAuthService } from './mcp-oauth.service'
+import { McpOAuthService, OAuthClientError } from './mcp-oauth.service'
 import { Public } from '@nestled-template/api/utils'
 import { AuthTokenClaims, claimedAuthGeneration } from '../auth/auth-token-claims'
 
@@ -42,12 +53,7 @@ export class McpOAuthController {
   /** Protected Resource Metadata — tells clients which auth server protects this resource */
   @Get('.well-known/oauth-protected-resource')
   getProtectedResourceMetadata(@Req() req: Request) {
-    const base = this.oauth.getMcpBaseUrl(req)
-    return {
-      resource: base,
-      authorization_servers: [base],
-      bearer_methods_supported: ['header'],
-    }
+    return this.oauth.buildProtectedResourceMetadata(req)
   }
 
   /** JWKS endpoint — no JWTs issued but some clients validate jwks_uri exists */
@@ -56,14 +62,22 @@ export class McpOAuthController {
     return { keys: [] }
   }
 
-  /** Dynamic Client Registration (RFC 7591) */
+  /**
+   * Dynamic Client Registration (RFC 7591). Deprecated by MCP 2026-07-28 in favour of Client ID
+   * Metadata Documents, and kept for clients and authorization flows that predate them.
+   */
   @Post('register')
   @HttpCode(201)
   register(@Body() body: Record<string, unknown>) {
     const clientName = typeof body['client_name'] === 'string' ? body['client_name'] : 'MCP Client'
-    const redirectUris = Array.isArray(body['redirect_uris'])
-      ? (body['redirect_uris'] as string[])
-      : []
+    const redirectUris = this.oauth.validateRedirectUris(body['redirect_uris'])
+    if (!redirectUris) {
+      throw new BadRequestException({
+        error: 'invalid_redirect_uri',
+        error_description:
+          'redirect_uris must list at least one https, loopback http, or private-use scheme URI',
+      })
+    }
     const client = this.oauth.registerClient(clientName, redirectUris)
     return {
       client_id: client.clientId,
@@ -79,6 +93,10 @@ export class McpOAuthController {
    * OAuth 2.0 Authorization Endpoint.
    * If the user has a valid session cookie, issues an auth code and redirects.
    * If the user belongs to multiple orgs, redirects to /mcp-connect for org selection.
+   *
+   * `client_id` is either a client registered through /register (DCR) or the HTTPS URL of a Client
+   * ID Metadata Document. The document is fetched only once the caller has signed in, and
+   * `redirect_uri` must be one the client registered before anything redirects to it.
    */
   @Get('authorize')
   async authorize(@Query() query: AuthorizeQuery, @Req() req: Request, @Res() res: Response) {
@@ -100,8 +118,7 @@ export class McpOAuthController {
         .json({ error: 'invalid_request', error_description: 'Missing required parameters' })
     }
 
-    const client = this.oauth.getClient(clientId)
-    if (!client) {
+    if (!this.oauth.isKnownClientId(clientId)) {
       return res
         .status(400)
         .json({ error: 'invalid_client', error_description: 'Unknown client_id' })
@@ -133,6 +150,13 @@ export class McpOAuthController {
       })
     }
 
+    try {
+      await this.oauth.resolveClientForRedirect(clientId, redirectUri)
+    } catch (err) {
+      if (!(err instanceof OAuthClientError)) throw err
+      return res.status(400).json({ error: err.error, error_description: err.message })
+    }
+
     const organizationId = await this.resolveOrganizationId(
       userId,
       orgId,
@@ -153,9 +177,12 @@ export class McpOAuthController {
       scope: scope ?? 'openid',
     })
 
-    const params = new URLSearchParams({ code })
+    // RFC 9207: name the issuer in the response, so a client talking to several authorization
+    // servers can tell which one answered. The metadata advertises it.
+    const params = new URLSearchParams({ code, iss: mcpBase })
     if (state) params.set('state', state)
-    return res.redirect(`${redirectUri}?${params.toString()}`)
+    const separator = redirectUri.includes('?') ? '&' : '?'
+    return res.redirect(`${redirectUri}${separator}${params.toString()}`)
   }
 
   private async resolveOrganizationId(
@@ -258,20 +285,6 @@ export class McpOAuthController {
   }
 
   private buildMetadata(req: Request) {
-    const base = this.oauth.getMcpBaseUrl(req)
-    return {
-      issuer: base,
-      authorization_endpoint: `${base}/authorize`,
-      token_endpoint: `${base}/token`,
-      registration_endpoint: `${base}/register`,
-      jwks_uri: `${base}/jwks`,
-      response_types_supported: ['code'],
-      grant_types_supported: ['authorization_code'],
-      subject_types_supported: ['public'],
-      id_token_signing_alg_values_supported: ['RS256'],
-      code_challenge_methods_supported: ['S256'],
-      token_endpoint_auth_methods_supported: ['none'],
-      scopes_supported: ['openid'],
-    }
+    return this.oauth.buildAuthorizationServerMetadata(req)
   }
 }
