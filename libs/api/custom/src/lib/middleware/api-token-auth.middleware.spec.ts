@@ -58,7 +58,7 @@ describe('ApiTokenAuthMiddleware', () => {
   it.each([
     ['no Authorization header', undefined],
     ['a non-bearer scheme', `Basic ${token}`],
-    ['a token that is not an API token (e.g. a JWT)', 'Bearer eyJhbGciOiJIUzI1NiJ9.e30.sig'],
+    ['a token that is not an API token', 'Bearer not-a-64-character-hex-api-token'],
   ])('leaves the request unauthenticated for %s', async (_label, authorization) => {
     const { req, next } = await run(authorization)
 
