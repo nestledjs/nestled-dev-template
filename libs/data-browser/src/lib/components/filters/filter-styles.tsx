@@ -11,15 +11,27 @@ import { SvgIcon } from '../SvgIcon'
  * instead of re-declaring the classes per filter.
  */
 
-export const filterLabelClasses = 'block text-sm font-medium text-gray-700 dark:text-gray-200'
+/**
+ * A filter's field label. One line (`truncate`), so every label in a row has the same height and
+ * the controls under them start on the same line. Full-strength foreground in both themes: these
+ * name a control, they are not placeholder or disabled text.
+ */
+export const filterLabelClasses =
+  'block truncate text-sm font-medium text-gray-700 dark:text-gray-200'
 
-export const filterHelpTextClasses = 'text-xs text-gray-500 dark:text-gray-400'
+/**
+ * The From/To and Min/Max captions of a range filter. They sit *under* their input, so a range
+ * filter's inputs line up with the single control of every other filter in the row.
+ */
+export const filterSubLabelClasses = 'block mt-1 text-xs text-gray-600 dark:text-gray-300'
+
+export const filterHelpTextClasses = 'text-xs text-gray-600 dark:text-gray-300'
 
 export const filterControlClasses =
-  'w-full px-3 py-2 text-sm rounded-md border border-gray-300 dark:border-gray-600 ' +
-  'bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 ' +
+  'w-full h-10 px-3 py-2 text-sm rounded-md border border-gray-300 dark:border-gray-600 ' +
+  'bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 dark:scheme-dark ' +
   'placeholder-gray-400 dark:placeholder-gray-500 ' +
-  'focus:outline-none focus:ring-1 focus:ring-green-web focus:border-green-web'
+  'focus:outline-none focus:ring-1 focus:ring-green-600 focus:border-green-600'
 
 /**
  * The chevron used by every closed dropdown control. Native <select> arrows are
@@ -30,7 +42,7 @@ export const filterControlClasses =
 export function FilterChevron({ isOpen = false }: Readonly<{ isOpen?: boolean }>) {
   return (
     <SvgIcon
-      className={`w-4 h-4 text-gray-400 transition-transform ${isOpen ? 'rotate-180' : ''}`}
+      className={`w-4 h-4 shrink-0 text-gray-500 dark:text-gray-400 transition-transform ${isOpen ? 'rotate-180' : ''}`}
       fill="none"
       stroke="currentColor"
       viewBox="0 0 24 24"
@@ -59,7 +71,7 @@ export function FilterSelect({ id, value, onChange, children }: FilterSelectProp
       >
         {children}
       </select>
-      <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
+      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
         <FilterChevron />
       </div>
     </div>

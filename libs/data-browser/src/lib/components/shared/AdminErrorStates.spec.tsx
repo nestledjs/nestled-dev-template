@@ -271,7 +271,7 @@ describe('AdminErrorStates', () => {
       it('should have spinner with correct styling', () => {
         const { container } = render(<AdminLoadingState />)
         const spinner = container.querySelector('.animate-spin')
-        expect(spinner).toHaveClass('rounded-full', 'border-b-2', 'border-green-web')
+        expect(spinner).toHaveClass('rounded-full', 'border-b-2', 'border-green-600')
       })
     })
   })

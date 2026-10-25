@@ -383,8 +383,8 @@ describe('DateRangeFilter', () => {
 
       expect(fromInput).toHaveClass(
         'focus:ring-1',
-        'focus:ring-green-web',
-        'focus:border-green-web',
+        'focus:ring-green-600',
+        'focus:border-green-600',
       )
     })
   })
