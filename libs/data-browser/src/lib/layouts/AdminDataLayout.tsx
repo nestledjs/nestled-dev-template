@@ -168,7 +168,7 @@ export function AdminDataLayout() {
                 id="model-selector"
                 value={currentModel?.name || ''}
                 onChange={handleModelChange}
-                className="w-full h-[50px] pl-4 pr-10 py-3 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-web focus:border-green-web text-base appearance-none cursor-pointer"
+                className="w-full h-[50px] pl-4 pr-10 py-3 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-green-600 text-base appearance-none cursor-pointer"
               >
                 <option value="">Choose a model...</option>
                 {sortedModels.map(model => (
@@ -193,7 +193,7 @@ export function AdminDataLayout() {
           {/* Fullscreen Toggle Button */}
           <button
             onClick={toggleFullscreen}
-            className="h-[50px] px-4 py-3 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-green-web focus:border-green-web transition-colors"
+            className="h-[50px] px-4 py-3 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-green-600 transition-colors"
             title={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}
           >
             {isFullscreen ? (
@@ -235,7 +235,7 @@ export function AdminDataLayout() {
           <span className="text-gray-600 dark:text-gray-400">Preferences:</span>
           <button
             onClick={handleExport}
-            className="inline-flex items-center px-3 py-1.5 text-gray-700 dark:text-gray-300 hover:text-green-web dark:hover:text-green-web transition-colors"
+            className="inline-flex items-center px-3 py-1.5 text-gray-700 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-600 transition-colors"
             title="Export your preferences to a file"
           >
             <SvgIcon
@@ -256,7 +256,7 @@ export function AdminDataLayout() {
           <span className="text-gray-300 dark:text-gray-600">|</span>
           <button
             onClick={triggerImport}
-            className="inline-flex items-center px-3 py-1.5 text-gray-700 dark:text-gray-300 hover:text-green-web dark:hover:text-green-web transition-colors"
+            className="inline-flex items-center px-3 py-1.5 text-gray-700 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-600 transition-colors"
             title="Import preferences from a file"
           >
             <SvgIcon
