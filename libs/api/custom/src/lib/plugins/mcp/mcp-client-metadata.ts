@@ -159,15 +159,19 @@ async function readBodyWithLimit(response: Response): Promise<string> {
     throw new ClientMetadataError('Client metadata document is too large')
   if (!response.body) return ''
 
+  const reader = response.body.getReader()
   const chunks: Uint8Array[] = []
   let total = 0
-  // Leaving the loop early (the throw) cancels the stream, so the rest is never downloaded.
-  for await (const chunk of response.body as unknown as AsyncIterable<Uint8Array>) {
-    total += chunk.byteLength
+  // Chunks must be read in order, and reading stops as soon as the limit is passed.
+  for (;;) {
+    const { done, value } = await reader.read() // NOSONAR typescript:S9382 sequential stream read
+    if (done) break
+    total += value.byteLength
     if (total > CIMD_MAX_BYTES) {
+      await reader.cancel()
       throw new ClientMetadataError('Client metadata document is too large')
     }
-    chunks.push(chunk)
+    chunks.push(value)
   }
   return Buffer.concat(chunks).toString('utf8')
 }
