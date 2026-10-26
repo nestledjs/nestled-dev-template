@@ -1,7 +1,12 @@
+import { createServer, request as httpRequest, type Server } from 'node:http'
+import type { AddressInfo } from 'node:net'
 import {
   CIMD_MAX_BYTES,
   ClientMetadataError,
   ClientMetadataResolver,
+  createPinnedFetcher,
+  pinnedLookup,
+  type FetchedDocument,
   isAcceptableRedirectUri,
   isClientMetadataDocumentUrl,
   isPublicAddress,
@@ -21,11 +26,12 @@ const validDocument = (overrides: Record<string, unknown> = {}) => ({
   ...overrides,
 })
 
-function jsonResponse(body: unknown, init: { headers?: Record<string, string> } = {}) {
-  return new Response(typeof body === 'string' ? body : JSON.stringify(body), {
-    status: 200,
-    headers: { 'content-type': 'application/json', ...init.headers },
-  })
+function fetched(body: unknown, init: { status?: number; cacheControl?: string } = {}) {
+  return {
+    status: init.status ?? 200,
+    cacheControl: init.cacheControl ?? null,
+    body: typeof body === 'string' ? body : JSON.stringify(body),
+  } satisfies FetchedDocument
 }
 
 describe('Client ID Metadata Documents', () => {
@@ -147,7 +153,8 @@ describe('Client ID Metadata Documents', () => {
   })
 
   describe('ClientMetadataResolver', () => {
-    const publicHost = jest.fn(async () => ['93.184.215.14'])
+    const PUBLIC_ADDRESS = '93.184.215.14'
+    const publicHost = jest.fn(async () => [PUBLIC_ADDRESS])
     let now: number
     let fetchMock: jest.Mock
 
@@ -155,23 +162,47 @@ describe('Client ID Metadata Documents', () => {
 
     beforeEach(() => {
       now = 1_000_000
-      fetchMock = jest.fn(async () => jsonResponse(validDocument()))
+      fetchMock = jest.fn(async () => fetched(validDocument()))
       publicHost.mockClear()
     })
 
-    it('fetches the document without following redirects, and returns the client', async () => {
+    it('fetches the document from the address it checked, and returns the client', async () => {
       await expect(resolver().resolve(CLIENT_ID)).resolves.toEqual(
         expect.objectContaining({ clientId: CLIENT_ID, clientName: 'Example Client' }),
       )
-      expect(fetchMock).toHaveBeenCalledWith(
-        CLIENT_ID,
-        expect.objectContaining({ method: 'GET', redirect: 'error', signal: expect.anything() }),
-      )
+      expect(publicHost).toHaveBeenCalledTimes(1)
+      expect(publicHost).toHaveBeenCalledWith('client.example.com')
+      expect(fetchMock).toHaveBeenCalledWith(new URL(CLIENT_ID), PUBLIC_ADDRESS)
+    })
+
+    it('resolves the host once, so a later DNS answer cannot redirect the connection', async () => {
+      // A rebinding name: public on the first answer, internal on every one after it.
+      const rebinding = jest
+        .fn()
+        .mockResolvedValueOnce([PUBLIC_ADDRESS])
+        .mockResolvedValue(['127.0.0.1'])
+      const instance = new ClientMetadataResolver(fetchMock as any, rebinding, () => now)
+
+      await instance.resolve(CLIENT_ID)
+
+      expect(rebinding).toHaveBeenCalledTimes(1)
+      expect(fetchMock).toHaveBeenCalledTimes(1)
+      expect(fetchMock.mock.calls[0][1]).toBe(PUBLIC_ADDRESS)
+    })
+
+    it('refuses a host whose answers mix public and private addresses', async () => {
+      const instance = new ClientMetadataResolver(fetchMock as any, async () => [
+        PUBLIC_ADDRESS,
+        '10.0.0.5',
+      ])
+
+      await expect(instance.resolve(CLIENT_ID)).rejects.toThrow('not a public address')
+      expect(fetchMock).not.toHaveBeenCalled()
     })
 
     it('caches a document for its max-age and fetches it again once that has passed', async () => {
       fetchMock.mockImplementation(async () =>
-        jsonResponse(validDocument(), { headers: { 'cache-control': 'max-age=60' } }),
+        fetched(validDocument(), { cacheControl: 'max-age=60' }),
       )
       const instance = resolver()
 
@@ -187,7 +218,7 @@ describe('Client ID Metadata Documents', () => {
 
     it('does not cache a document served with no-store', async () => {
       fetchMock.mockImplementation(async () =>
-        jsonResponse(validDocument(), { headers: { 'cache-control': 'no-store' } }),
+        fetched(validDocument(), { cacheControl: 'no-store' }),
       )
       const instance = resolver()
 
@@ -204,7 +235,7 @@ describe('Client ID Metadata Documents', () => {
       expect(fetchMock).not.toHaveBeenCalled()
     })
 
-    it('refuses an IP-literal host on a private network, without fetching', async () => {
+    it('refuses an IP-literal host on a private network, without resolving or fetching', async () => {
       await expect(resolver().resolve('https://169.254.169.254/latest/meta-data')).rejects.toThrow(
         ClientMetadataError,
       )
@@ -222,41 +253,151 @@ describe('Client ID Metadata Documents', () => {
       expect(fetchMock).not.toHaveBeenCalled()
     })
 
-    it('refuses a non-success response', async () => {
-      fetchMock.mockImplementation(async () => new Response('nope', { status: 404 }))
+    it.each([301, 404, 500])('refuses a %s response, without following redirects', async status => {
+      fetchMock.mockImplementation(async () => fetched('', { status }))
 
-      await expect(resolver().resolve(CLIENT_ID)).rejects.toThrow('fetch failed (404)')
+      await expect(resolver().resolve(CLIENT_ID)).rejects.toThrow(`fetch failed (${status})`)
     })
 
-    it('refuses a fetch that fails, such as a redirect or a timeout', async () => {
-      fetchMock.mockRejectedValue(new TypeError('fetch failed: redirect'))
+    it('refuses a fetch that fails, such as a timeout', async () => {
+      fetchMock.mockRejectedValue(new Error('The operation was aborted due to timeout'))
 
       await expect(resolver().resolve(CLIENT_ID)).rejects.toThrow('could not be fetched')
     })
 
-    it('refuses a document larger than the size limit', async () => {
-      const padding = 'x'.repeat(CIMD_MAX_BYTES)
-      fetchMock.mockImplementation(async () => jsonResponse(validDocument({ padding })))
-
-      await expect(resolver().resolve(CLIENT_ID)).rejects.toThrow('too large')
-    })
-
-    it('refuses a document whose declared length is over the limit before reading it', async () => {
-      fetchMock.mockImplementation(async () =>
-        jsonResponse(validDocument(), {
-          headers: { 'content-length': String(CIMD_MAX_BYTES + 1) },
-        }),
-      )
+    it('passes on a size-limit rejection from the fetcher', async () => {
+      fetchMock.mockRejectedValue(new ClientMetadataError('Client metadata document is too large'))
 
       await expect(resolver().resolve(CLIENT_ID)).rejects.toThrow('too large')
     })
 
     it('refuses a document whose client_id is not the URL it was fetched from', async () => {
       fetchMock.mockImplementation(async () =>
-        jsonResponse(validDocument({ client_id: 'https://attacker.example.com/client.json' })),
+        fetched(validDocument({ client_id: 'https://attacker.example.com/client.json' })),
       )
 
       await expect(resolver().resolve(CLIENT_ID)).rejects.toThrow('does not match its URL')
+    })
+  })
+
+  describe('pinnedLookup', () => {
+    it('answers every lookup with the pinned address, in either callback shape', () => {
+      const lookup = pinnedLookup('93.184.215.14') as any
+      const single = jest.fn()
+      const all = jest.fn()
+
+      lookup('client.example.com', {}, single)
+      lookup('client.example.com', { all: true }, all)
+
+      expect(single).toHaveBeenCalledWith(null, '93.184.215.14', 4)
+      expect(all).toHaveBeenCalledWith(null, [{ address: '93.184.215.14', family: 4 }])
+    })
+
+    it('reports the IPv6 family for an IPv6 address', () => {
+      const callback = jest.fn()
+
+      ;(pinnedLookup('2606:2800:21f:cb07:6820:80da:af6b:8b2c') as any)('h', {}, callback)
+
+      expect(callback).toHaveBeenCalledWith(null, '2606:2800:21f:cb07:6820:80da:af6b:8b2c', 6)
+    })
+  })
+
+  describe('createPinnedFetcher', () => {
+    let server: Server
+    let port: number
+    let received: { host?: string; url?: string }
+    let reply: (res: import('node:http').ServerResponse) => void
+
+    beforeAll(async () => {
+      server = createServer((req, res) => {
+        received = { host: req.headers.host, url: req.url }
+        reply(res)
+      })
+      await new Promise<void>(resolve => server.listen(0, '127.0.0.1', resolve))
+      port = (server.address() as AddressInfo).port
+    })
+
+    afterAll(async () => {
+      await new Promise(resolve => server.close(resolve))
+    })
+
+    beforeEach(() => {
+      received = {}
+      reply = res => {
+        res.setHeader('cache-control', 'max-age=120')
+        res.end(JSON.stringify(validDocument()))
+      }
+    })
+
+    // The real fetcher speaks HTTPS; plain HTTP to a local server shows the same connection logic:
+    // the name in the URL is never looked up, the socket goes to the pinned address, and the
+    // request still names the URL's host.
+    const fetchViaHttp = createPinnedFetcher(httpRequest as any)
+    const urlFor = (path: string) => new URL(`http://unresolvable.invalid:${port}${path}`)
+
+    it('connects to the pinned address and sends the original Host', async () => {
+      const result = await fetchViaHttp(urlFor('/oauth/client.json?v=1'), '127.0.0.1')
+
+      expect(result).toEqual({
+        status: 200,
+        cacheControl: 'max-age=120',
+        body: JSON.stringify(validDocument()),
+      })
+      expect(received).toEqual({
+        host: `unresolvable.invalid:${port}`,
+        url: '/oauth/client.json?v=1',
+      })
+    })
+
+    it('returns a redirect as its status instead of following it', async () => {
+      reply = res => {
+        res.statusCode = 302
+        res.setHeader('location', 'http://127.0.0.1/internal')
+        res.end()
+      }
+
+      await expect(fetchViaHttp(urlFor('/client.json'), '127.0.0.1')).resolves.toEqual(
+        expect.objectContaining({ status: 302 }),
+      )
+    })
+
+    it('stops reading a body larger than the size limit', async () => {
+      reply = res => {
+        res.write('x'.repeat(CIMD_MAX_BYTES))
+        res.end('more')
+      }
+
+      await expect(fetchViaHttp(urlFor('/client.json'), '127.0.0.1')).rejects.toThrow('too large')
+    })
+
+    it('refuses a declared length over the size limit before reading', async () => {
+      reply = res => {
+        res.setHeader('content-length', String(CIMD_MAX_BYTES + 1))
+        res.end()
+      }
+
+      await expect(fetchViaHttp(urlFor('/client.json'), '127.0.0.1')).rejects.toThrow('too large')
+    })
+
+    it('sets SNI to the host name, and leaves it out for an IP literal', async () => {
+      const request = jest.fn((_options: any, _callback: any) => ({
+        on: jest.fn(),
+        end: jest.fn(),
+      }))
+      const fetchVia = createPinnedFetcher(request as any)
+
+      void fetchVia(new URL('https://client.example.com/client.json'), '93.184.215.14')
+      void fetchVia(new URL('https://93.184.215.14/client.json'), '93.184.215.14')
+
+      expect(request.mock.calls[0][0]).toEqual(
+        expect.objectContaining({
+          hostname: 'client.example.com',
+          servername: 'client.example.com',
+          headers: expect.objectContaining({ Host: 'client.example.com' }),
+          agent: false,
+        }),
+      )
+      expect(request.mock.calls[1][0].servername).toBeUndefined()
     })
   })
 })

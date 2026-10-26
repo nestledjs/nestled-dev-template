@@ -1,4 +1,7 @@
 import { lookup } from 'node:dns/promises'
+import type { IncomingMessage } from 'node:http'
+import { request as httpsRequest, type RequestOptions } from 'node:https'
+import type { LookupFunction } from 'node:net'
 import { BlockList, isIP } from 'node:net'
 
 /**
@@ -153,27 +156,102 @@ function cacheLifetimeMs(cacheControl: string | null): number {
   return Math.min(Number(maxAge[1]) * 1000, MAX_CACHE_MS)
 }
 
-async function readBodyWithLimit(response: Response): Promise<string> {
-  const declared = Number(response.headers.get('content-length') ?? '0')
-  if (declared > CIMD_MAX_BYTES)
-    throw new ClientMetadataError('Client metadata document is too large')
-  if (!response.body) return ''
+/** What a metadata document fetch returns. */
+export interface FetchedDocument {
+  status: number
+  cacheControl: string | null
+  body: string
+}
 
-  const reader = response.body.getReader()
-  const chunks: Uint8Array[] = []
-  let total = 0
-  // Chunks must be read in order, and reading stops as soon as the limit is passed.
-  for (;;) {
-    const { done, value } = await reader.read() // NOSONAR typescript:S9382 sequential stream read
-    if (done) break
-    total += value.byteLength
-    if (total > CIMD_MAX_BYTES) {
-      await reader.cancel()
-      throw new ClientMetadataError('Client metadata document is too large')
+/** Fetches `url` from `address`, an address already resolved for `url`'s host and checked. */
+export type PinnedFetcher = (url: URL, address: string) => Promise<FetchedDocument>
+
+type RequestFunction = (
+  options: RequestOptions,
+  callback: (response: IncomingMessage) => void,
+) => ReturnType<typeof httpsRequest>
+
+function bareHostname(url: URL): string {
+  return url.hostname.startsWith('[') && url.hostname.endsWith(']')
+    ? url.hostname.slice(1, -1)
+    : url.hostname
+}
+
+/** A `lookup` that answers every query with `address`, in the shape the caller asked for. */
+export function pinnedLookup(address: string): LookupFunction {
+  const family = isIP(address)
+  return ((
+    _hostname: string,
+    options: { all?: boolean },
+    callback: (...args: unknown[]) => void,
+  ) => {
+    if (options?.all) callback(null, [{ address, family }])
+    else callback(null, address, family)
+  }) as LookupFunction
+}
+
+function readResponse(response: IncomingMessage): Promise<FetchedDocument> {
+  return new Promise((resolve, reject) => {
+    const tooLarge = () => new ClientMetadataError('Client metadata document is too large')
+    if (Number(response.headers['content-length'] ?? '0') > CIMD_MAX_BYTES) {
+      response.destroy()
+      reject(tooLarge())
+      return
     }
-    chunks.push(value)
-  }
-  return Buffer.concat(chunks).toString('utf8')
+    const chunks: Buffer[] = []
+    let total = 0
+    response.on('data', (chunk: Buffer) => {
+      total += chunk.byteLength
+      if (total > CIMD_MAX_BYTES) {
+        response.destroy()
+        reject(tooLarge())
+        return
+      }
+      chunks.push(chunk)
+    })
+    response.on('error', reject)
+    response.on('end', () => {
+      const cacheControl = response.headers['cache-control']
+      resolve({
+        status: response.statusCode ?? 0,
+        cacheControl: typeof cacheControl === 'string' ? cacheControl : null,
+        body: Buffer.concat(chunks).toString('utf8'),
+      })
+    })
+  })
+}
+
+/**
+ * GETs `url` over HTTPS, connecting to `address` and nowhere else. The host name is not looked up
+ * again, so DNS cannot answer differently between the address check and the connection (DNS
+ * rebinding). The request still carries the URL's host in `Host`, and TLS still sends it as SNI
+ * and verifies the certificate against it. Redirects are not followed.
+ */
+export function createPinnedFetcher(request: RequestFunction = httpsRequest): PinnedFetcher {
+  return (url, address) =>
+    new Promise((resolve, reject) => {
+      const hostname = bareHostname(url)
+      const req = request(
+        {
+          protocol: url.protocol,
+          hostname,
+          port: url.port || undefined,
+          path: `${url.pathname}${url.search}`,
+          method: 'GET',
+          headers: { Accept: 'application/json', Host: url.host },
+          // SNI carries a host name, never an IP literal.
+          servername: isIP(hostname) ? undefined : hostname,
+          lookup: pinnedLookup(address),
+          agent: false,
+          signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
+        },
+        response => {
+          readResponse(response).then(resolve, reject)
+        },
+      )
+      req.on('error', reject)
+      req.end()
+    })
 }
 
 /** Checks a fetched document against the URL it was fetched from. */
@@ -220,14 +298,14 @@ interface CacheEntry {
 
 /**
  * Fetches and caches Client ID Metadata Documents. The fetch is bounded (HTTPS only, public
- * addresses only, no redirects, 5 s, 5 KB) because the URL is chosen by whoever starts an
- * authorization request.
+ * addresses only and pinned to the address that was checked, no redirects, 5 s, 5 KB) because the
+ * URL is chosen by whoever starts an authorization request.
  */
 export class ClientMetadataResolver {
   private readonly cache = new Map<string, CacheEntry>()
 
   constructor(
-    private readonly fetchImpl: typeof fetch = globalThis.fetch,
+    private readonly fetchDocument: PinnedFetcher = createPinnedFetcher(),
     private readonly resolveHostname: HostResolver = resolveHost,
     private readonly now: () => number = Date.now,
   ) {}
@@ -242,34 +320,27 @@ export class ClientMetadataResolver {
     this.cache.delete(clientId)
 
     const url = new URL(clientId)
-    // Strip IPv6 brackets: `new URL('https://[::1]/').hostname` is `[::1]`.
-    const hostname =
-      url.hostname.startsWith('[') && url.hostname.endsWith(']')
-        ? url.hostname.slice(1, -1)
-        : url.hostname
+    const hostname = bareHostname(url)
+    // Resolve once. The connection below goes to the address checked here, not to a second lookup.
     const addresses = isIP(hostname) ? [hostname] : await this.resolveHostname(hostname)
     if (addresses.length === 0 || !addresses.every(isPublicAddress)) {
       throw new ClientMetadataError('Client metadata document host is not a public address')
     }
 
-    let response: Response
+    let fetched: FetchedDocument
     try {
-      response = await this.fetchImpl(clientId, {
-        method: 'GET',
-        headers: { Accept: 'application/json' },
-        redirect: 'error',
-        signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
-      })
-    } catch {
+      fetched = await this.fetchDocument(url, addresses[0])
+    } catch (err) {
+      if (err instanceof ClientMetadataError) throw err
       throw new ClientMetadataError('Client metadata document could not be fetched')
     }
-    if (!response.ok) {
-      throw new ClientMetadataError(`Client metadata document fetch failed (${response.status})`)
+    if (fetched.status < 200 || fetched.status >= 300) {
+      throw new ClientMetadataError(`Client metadata document fetch failed (${fetched.status})`)
     }
 
-    const document = parseClientMetadataDocument(clientId, await readBodyWithLimit(response))
+    const document = parseClientMetadataDocument(clientId, fetched.body)
 
-    const lifetime = cacheLifetimeMs(response.headers.get('cache-control'))
+    const lifetime = cacheLifetimeMs(fetched.cacheControl)
     if (lifetime > 0) {
       if (this.cache.size >= MAX_CACHE_ENTRIES) {
         const oldest = this.cache.keys().next().value

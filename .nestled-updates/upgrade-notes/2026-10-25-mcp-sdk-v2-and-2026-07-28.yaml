@@ -57,7 +57,9 @@ intent: >
   `authorization_response_iss_parameter_supported: true`, and keeps `registration_endpoint`.
   `/authorize` accepts as `client_id` either a DCR client or the HTTPS URL of a Client ID Metadata
   Document. The document is fetched only after the user has signed in, with a bounded fetch
-  (https only, public addresses only, no redirects, 5 s, 5 KB, cached per Cache-Control up to 24 h);
+  (https only; the host is resolved once, every address checked public, and the connection made
+  to that checked address with the original Host and SNI, so DNS rebinding cannot redirect it; no
+  redirects, 5 s, 5 KB, cached per Cache-Control up to 24 h);
   its `client_id` must equal the URL, it must name `client_name` and `redirect_uris`, and its
   `token_endpoint_auth_method` must be absent or `none`. For both kinds of client, `redirect_uri`
   must be one the client registered (exact match; a loopback HTTP redirect may use any port, per
