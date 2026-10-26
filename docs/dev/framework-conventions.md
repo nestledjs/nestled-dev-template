@@ -119,6 +119,15 @@ Current MCP auth context includes:
 Future MCP work should add explicit tool scopes and RBAC permission checks before
 tools mutate data or expose cross-organization information.
 
+The plugin is on the v2 MCP SDK (`@modelcontextprotocol/server`) and serves protocol revision
+2026-07-28 next to the 2025-era `initialize` flow, from one stateless endpoint. When writing a tool:
+
+- Import `McpServer` from `@modelcontextprotocol/server`, and `z` from `zod-v4` (an alias of zod 4;
+  the workspace `zod` stays on 3.x for the forms packages, and the SDK cannot convert zod 3 schemas).
+- Pass `inputSchema` as a `z.object({...})`; a tool without arguments uses `z.object({})`.
+- Register tools in a fixed order. `tools/list` returns them in registration order.
+- Do not keep state between requests or rely on a session: every request gets a fresh server.
+
 ## More Detail
 
 - [API Extension Methodology](api-extension-methodology.md)
