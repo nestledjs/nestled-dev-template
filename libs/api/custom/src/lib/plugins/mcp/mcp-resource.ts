@@ -34,11 +34,25 @@ export function canonicalResource(value: string): string | null {
   return `${url.protocol}//${url.host}${path === '/' ? '' : path}${url.search}`
 }
 
+/**
+ * The first value of a forwarding header. A proxy chain can send a comma-separated list
+ * (`https, http`), whose first entry is the one the client used.
+ */
+export function firstForwardedValue(value: string | undefined): string | undefined {
+  const first = value?.split(',')[0]?.trim()
+  return first || undefined
+}
+
+/** The origin (`scheme://host`) a request arrived at, as the client addressed it. */
+export function requestOrigin(req: RequestLike): string {
+  const proto = firstForwardedValue(req.get('x-forwarded-proto')) || req.protocol
+  const host = firstForwardedValue(req.get('x-forwarded-host')) || req.get('host')
+  return `${proto}://${host}`
+}
+
 /** The canonical MCP resource URI for the origin a request arrived at. */
 export function requestMcpResource(req: RequestLike): string {
-  const proto = req.get('x-forwarded-proto') || req.protocol
-  const host = req.get('x-forwarded-host') || req.get('host')
-  const base = `${proto}://${host}${MCP_RESOURCE_PATH}`
+  const base = `${requestOrigin(req)}${MCP_RESOURCE_PATH}`
   return canonicalResource(base) ?? base
 }
 

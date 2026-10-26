@@ -1,4 +1,10 @@
-import { canonicalResource, isSameResource, requestMcpResource } from './mcp-resource'
+import {
+  canonicalResource,
+  firstForwardedValue,
+  isSameResource,
+  requestMcpResource,
+  requestOrigin,
+} from './mcp-resource'
 
 describe('MCP resource indicators', () => {
   it.each([
@@ -46,5 +52,25 @@ describe('MCP resource indicators', () => {
       isSameResource('https://api.example.com/api/mcp', 'https://other.example.com/api/mcp'),
     ).toBe(false)
     expect(isSameResource('not a url', 'not a url')).toBe(false)
+  })
+
+  it('takes the first entry of a comma-separated forwarding header', () => {
+    expect(firstForwardedValue('https, http')).toBe('https')
+    expect(firstForwardedValue(' api.example.com ,internal')).toBe('api.example.com')
+    expect(firstForwardedValue('')).toBeUndefined()
+    expect(firstForwardedValue(' , x')).toBeUndefined()
+    expect(firstForwardedValue(undefined)).toBeUndefined()
+
+    const chained = {
+      protocol: 'http',
+      get: (n: string) =>
+        ({
+          'x-forwarded-proto': 'https,http',
+          'x-forwarded-host': 'api.example.com, lb.internal',
+          host: 'internal:3000',
+        })[n],
+    }
+    expect(requestOrigin(chained)).toBe('https://api.example.com')
+    expect(requestMcpResource(chained)).toBe('https://api.example.com/api/mcp')
   })
 })

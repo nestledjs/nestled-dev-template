@@ -4,6 +4,7 @@ import {
   CIMD_MAX_BYTES,
   ClientMetadataError,
   ClientMetadataResolver,
+  createBoundedLookup,
   createPinnedFetcher,
   pinnedLookup,
   type FetchedDocument,
@@ -50,6 +51,7 @@ describe('Client ID Metadata Documents', () => {
       ['no path', 'https://client.example.com'],
       ['a root path', 'https://client.example.com/'],
       ['a fragment', 'https://client.example.com/client.json#x'],
+      ['a bare trailing #', 'https://client.example.com/client.json#'],
       ['credentials', 'https://user:pass@client.example.com/client.json'],
       ['a dot segment', 'https://client.example.com/a/../client.json'],
       ['a non-canonical host', 'https://CLIENT.example.com/client.json'],
@@ -75,6 +77,8 @@ describe('Client ID Metadata Documents', () => {
       'data:text/html,hi',
       'file:///etc/passwd',
       'https://client.example.com/callback#frag',
+      'https://client.example.com/callback#',
+      'cursor://example.app/oauth#',
       'not a url',
     ])('rejects %s', uri => {
       expect(isAcceptableRedirectUri(uri)).toBe(false)
@@ -113,6 +117,11 @@ describe('Client ID Metadata Documents', () => {
       '::',
       'fd00::1',
       'fe80::1',
+      '::a00:5', // IPv4-compatible 10.0.0.5
+      '::7f00:1', // IPv4-compatible 127.0.0.1
+      '64:ff9b:1::a00:5', // NAT64 local-use
+      '2002:a00:5::1', // 6to4 of 10.0.0.5
+      'fec0::1', // site-local
       '::ffff:127.0.0.1',
       '::ffff:10.0.0.1',
       'not-an-ip',
@@ -153,6 +162,16 @@ describe('Client ID Metadata Documents', () => {
   })
 
   describe('ClientMetadataResolver', () => {
+    it('answers a lookup that fails as a metadata error, without fetching', async () => {
+      const fetchDocument = jest.fn()
+      const instance = new ClientMetadataResolver(fetchDocument, async () => {
+        throw Object.assign(new Error('getaddrinfo ENOTFOUND'), { code: 'ENOTFOUND' })
+      })
+
+      await expect(instance.resolve(CLIENT_ID)).rejects.toThrow('could not be resolved')
+      expect(fetchDocument).not.toHaveBeenCalled()
+    })
+
     const PUBLIC_ADDRESS = '93.184.215.14'
     const publicHost = jest.fn(async () => [PUBLIC_ADDRESS])
     let now: number
@@ -398,6 +417,45 @@ describe('Client ID Metadata Documents', () => {
         }),
       )
       expect(request.mock.calls[1][0].servername).toBeUndefined()
+    })
+  })
+
+  describe('createBoundedLookup', () => {
+    it('gives up on a lookup that takes longer than the timeout', async () => {
+      jest.useFakeTimers()
+      try {
+        const lookup = createBoundedLookup(() => new Promise(() => undefined), {
+          timeoutMs: 1_000,
+          maxConcurrent: 2,
+        })
+        const pending = lookup('slow.example.com')
+        jest.advanceTimersByTime(1_000)
+
+        await expect(pending).rejects.toThrow('timed out')
+      } finally {
+        jest.useRealTimers()
+      }
+    })
+
+    it('refuses a lookup over the concurrency cap, counting timed-out lookups until they settle', async () => {
+      const settle: Array<(addresses: string[]) => void> = []
+      const resolve = jest.fn(() => new Promise<string[]>(done => settle.push(done)))
+      const lookup = createBoundedLookup(resolve, { timeoutMs: 5, maxConcurrent: 2 })
+
+      const first = lookup('a.example.com')
+      const second = lookup('b.example.com')
+      // Both time out, but their lookups still hold threads.
+      await expect(first).rejects.toThrow('timed out')
+      await expect(second).rejects.toThrow('timed out')
+      await expect(lookup('c.example.com')).rejects.toThrow('Too many')
+      expect(resolve).toHaveBeenCalledTimes(2)
+
+      settle[0](['93.184.215.14'])
+      await Promise.resolve()
+      await Promise.resolve()
+      const third = lookup('c.example.com')
+      settle[2](['93.184.215.14'])
+      await expect(third).resolves.toEqual(['93.184.215.14'])
     })
   })
 })

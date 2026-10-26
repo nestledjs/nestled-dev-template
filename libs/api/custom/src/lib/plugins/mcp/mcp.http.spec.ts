@@ -2,6 +2,7 @@ import { INestApplication } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { JwtService } from '@nestjs/jwt'
 import { Test } from '@nestjs/testing'
+import { ThrottlerModule } from '@nestjs/throttler'
 import { Client, StreamableHTTPClientTransport } from '@modelcontextprotocol/client'
 import { ApiCoreDataAccessService } from '@nestled-template/api/core/data-access'
 import * as express from 'express'
@@ -12,6 +13,7 @@ import { McpOAuthController } from './mcp-oauth.controller'
 import { McpOAuthService } from './mcp-oauth.service'
 import { McpServerFactory } from './mcp-server.factory'
 import { mcpRootWellKnownRewrite } from './mcp-well-known'
+import { MCP_REGISTER_LIMIT } from './mcp-oauth.controller'
 
 const VALID_TOKEN = 'ab'.repeat(32)
 const REVOKED_TOKEN = 'cd'.repeat(32)
@@ -35,6 +37,12 @@ describe('MCP over HTTP', () => {
       findFirst: jest.fn().mockResolvedValue({ id: 'org-123', name: 'Example Org', members: [] }),
     },
     organizationMember: { count: jest.fn(), findFirst: jest.fn() },
+    mcpOAuthClient: {
+      create: jest.fn(async ({ data }: any) => data),
+      findUnique: jest.fn(),
+      updateMany: jest.fn(),
+      deleteMany: jest.fn(async () => ({ count: 0 })),
+    },
   }
   const apiTokens = {
     validateApiToken: jest.fn(async (token: string) => {
@@ -51,6 +59,10 @@ describe('MCP over HTTP', () => {
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
+      // As AuthModule configures it in the API: the `signup` throttler /register's guard uses.
+      imports: [
+        ThrottlerModule.forRoot({ throttlers: [{ name: 'signup', ttl: 3_600_000, limit: 3 }] }),
+      ],
       controllers: [McpController, McpOAuthController],
       providers: [
         McpServerFactory,
@@ -128,6 +140,38 @@ describe('MCP over HTTP', () => {
         authorization_response_iss_parameter_supported: true,
       }),
     )
+  })
+
+  it('rate limits dynamic client registration per client IP', async () => {
+    const register = () =>
+      fetch(`${origin}/api/mcp/register`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ client_name: 'Spec', redirect_uris: ['https://c.example.com/cb'] }),
+      })
+
+    for (let i = 0; i < MCP_REGISTER_LIMIT; i += 1) {
+      expect((await register()).status).toBe(201)
+    }
+    const refused = await register()
+
+    expect(refused.status).toBe(429)
+    expect(data.mcpOAuthClient.create).toHaveBeenCalledTimes(MCP_REGISTER_LIMIT)
+  })
+
+  it('answers a request whose forwarded host cannot form a URL with 400, not a 500', async () => {
+    const response = await fetch(`${origin}/api/mcp`, {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+        authorization: `Bearer ${VALID_TOKEN}`,
+        'x-forwarded-host': 'bad host:99999',
+      },
+      body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'tools/list' }),
+    })
+
+    expect(response.status).toBe(400)
+    expect(await response.json()).toEqual({ error: 'Bad Request', message: 'Invalid request host' })
   })
 
   it('answers a revoked or unknown token with 401 invalid_token', async () => {

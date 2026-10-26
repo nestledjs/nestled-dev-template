@@ -15,7 +15,7 @@ import {
   isClientMetadataDocumentUrl,
   isRegisteredRedirectUri,
 } from './mcp-client-metadata'
-import { canonicalResource } from './mcp-resource'
+import { canonicalResource, MCP_RESOURCE_PATH, requestOrigin } from './mcp-resource'
 
 export interface StoredAuthCode {
   userId: string
@@ -51,7 +51,19 @@ export class OAuthClientError extends Error {
 /** Bounds on a dynamic registration, which anyone can make: the record is stored. */
 export const MAX_REGISTERED_REDIRECT_URIS = 10
 const MAX_REDIRECT_URI_LENGTH = 2048
+/** All of a registration's redirect URIs together, in UTF-8 bytes. */
+export const MAX_REDIRECT_URI_BYTES = 4096
 const MAX_CLIENT_NAME_LENGTH = 200
+
+const HOUR_MS = 60 * 60 * 1000
+const DAY_MS = 24 * HOUR_MS
+/** A registration never used for an authorization within this long is pruned. */
+export const UNUSED_CLIENT_TTL_MS = DAY_MS
+/** A registration not used for this long is pruned. */
+export const IDLE_CLIENT_TTL_MS = 30 * DAY_MS
+/** How often (per API instance) a registration may trigger the prune. */
+const CLIENT_PRUNE_INTERVAL_MS = HOUR_MS
+const DCR_CLIENT_ID_PATTERN = /^[a-f0-9]{32}$/
 
 /**
  * An /authorize request waiting for the signed-in user to approve or deny it on the consent page.
@@ -103,6 +115,7 @@ export class McpOAuthService {
   private readonly pendingAuthorizations = new Map<string, PendingAuthorization>()
   private readonly CODE_TTL_MS = 5 * 60 * 1000 // 5 minutes
   private readonly clientMetadata = new ClientMetadataResolver()
+  private lastClientPruneAt = 0
   /** How long the consent page stays usable before the client must start again. */
   readonly PENDING_TTL_MS = 10 * 60 * 1000 // 10 minutes
 
@@ -126,9 +139,7 @@ export class McpOAuthService {
 
   getMcpBaseUrl(req?: { protocol: string; get: (name: string) => string | undefined }): string {
     if (req) {
-      const proto = req.get('x-forwarded-proto') || req.protocol
-      const host = req.get('x-forwarded-host') || req.get('host')
-      return `${proto}://${host}/api/mcp`
+      return `${requestOrigin(req)}${MCP_RESOURCE_PATH}`
     }
     // API_URL is the origin only (no `/api` suffix — see libs/api/config/src/lib/validation.ts),
     // so the `/api/mcp` prefix is appended directly. Trim any trailing slashes defensively (env
@@ -204,12 +215,46 @@ export class McpOAuthService {
       select: { id: true, clientName: true, redirectUris: true },
     })
     this.logger.log(`Registered MCP OAuth client: ${row.clientName} (${row.id})`)
+    // There is no scheduler in the template: registration, the only way rows are added, also
+    // clears out stale ones, at most once an hour per instance and without delaying the response.
+    if (Date.now() - this.lastClientPruneAt >= CLIENT_PRUNE_INTERVAL_MS) {
+      this.lastClientPruneAt = Date.now()
+      this.pruneStaleClients().catch(err =>
+        this.logger.error('Pruning stale MCP OAuth clients failed', err),
+      )
+    }
     return { clientId: row.id, clientName: row.clientName, redirectUris: row.redirectUris }
+  }
+
+  /**
+   * Delete registrations that were never used within a day of being made, or not used for 30
+   * days. A pruned client gets `invalid_client` and registers again. Returns how many went.
+   */
+  async pruneStaleClients(now = Date.now()): Promise<number> {
+    const { count } = await this.data.mcpOAuthClient.deleteMany({
+      where: {
+        OR: [
+          { lastUsedAt: null, createdAt: { lt: new Date(now - UNUSED_CLIENT_TTL_MS) } },
+          { lastUsedAt: { lt: new Date(now - IDLE_CLIENT_TTL_MS) } },
+        ],
+      },
+    })
+    if (count > 0) this.logger.log(`Pruned ${count} stale MCP OAuth client registration(s)`)
+    return count
+  }
+
+  /** Record that a DCR client was used, which keeps it from being pruned. */
+  async touchClient(clientId: string): Promise<void> {
+    if (!DCR_CLIENT_ID_PATTERN.test(clientId)) return
+    await this.data.mcpOAuthClient.updateMany({
+      where: { id: clientId },
+      data: { lastUsedAt: new Date() },
+    })
   }
 
   async getClient(clientId: string): Promise<OAuthClient | undefined> {
     // DCR ids are 32 hex characters; anything else cannot be a row, so skip the query.
-    if (!/^[a-f0-9]{32}$/.test(clientId)) return undefined
+    if (!DCR_CLIENT_ID_PATTERN.test(clientId)) return undefined
     const row = await this.data.mcpOAuthClient.findUnique({
       where: { id: clientId },
       select: { id: true, clientName: true, redirectUris: true },
@@ -260,6 +305,7 @@ export class McpOAuthService {
         'redirect_uri is not registered for this client',
       )
     }
+    await this.touchClient(clientId)
     return client
   }
 
@@ -272,6 +318,11 @@ export class McpOAuthService {
       uri.length <= MAX_REDIRECT_URI_LENGTH &&
       isAcceptableRedirectUri(uri)
     if (!redirectUris.every(acceptable)) return null
+    const totalBytes = redirectUris.reduce(
+      (sum: number, uri: string) => sum + Buffer.byteLength(uri, 'utf8'),
+      0,
+    )
+    if (totalBytes > MAX_REDIRECT_URI_BYTES) return null
     return redirectUris as string[]
   }
 

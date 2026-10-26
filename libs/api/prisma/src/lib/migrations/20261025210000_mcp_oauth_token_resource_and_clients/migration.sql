@@ -11,6 +11,10 @@ CREATE TABLE "McpOAuthClient" (
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "clientName" TEXT NOT NULL,
     "redirectUris" TEXT[],
+    "lastUsedAt" TIMESTAMP(3),
 
     CONSTRAINT "McpOAuthClient_pkey" PRIMARY KEY ("id")
 );
+
+-- CreateIndex
+CREATE INDEX "McpOAuthClient_lastUsedAt_idx" ON "McpOAuthClient"("lastUsedAt");

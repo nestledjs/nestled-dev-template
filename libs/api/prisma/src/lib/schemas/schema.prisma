@@ -61,11 +61,16 @@ model ApiToken {
 /// edit redirect a client's codes, and its tokens with them.
 model McpOAuthClient {
   /// The OAuth client_id: 32 random hex characters.
-  id           String   @id
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id           String    @id
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
   clientName   String
   redirectUris String[]
+  /// When the client last started an authorization or redeemed a code. Registrations never used,
+  /// or unused for 30 days, are pruned.
+  lastUsedAt   DateTime?
+
+  @@index([lastUsedAt])
 }
 
 model AuditLog {

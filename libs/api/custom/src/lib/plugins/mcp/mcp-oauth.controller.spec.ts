@@ -32,6 +32,12 @@ function createClientTable() {
       return rows.get(data.id)
     }),
     findUnique: jest.fn(async ({ where }: any) => rows.get(where.id) ?? null),
+    updateMany: jest.fn(async ({ where, data }: any) => {
+      const row = rows.get(where.id)
+      if (row) Object.assign(row, data)
+      return { count: row ? 1 : 0 }
+    }),
+    deleteMany: jest.fn(async () => ({ count: 0 })),
   }
 }
 
@@ -692,6 +698,18 @@ describe('McpOAuthController', () => {
   }
 
   describe('registered redirect URIs (#64)', () => {
+    it('records the client as used when it redeems a code', async () => {
+      const redirect = await approve(await startAuthorization())
+      data.mcpOAuthClient.updateMany.mockClear()
+
+      await exchange(redirect.searchParams.get('code') as string)
+
+      expect(data.mcpOAuthClient.updateMany).toHaveBeenCalledWith({
+        where: { id: clientId },
+        data: { lastUsedAt: expect.any(Date) },
+      })
+    })
+
     it('refuses a redirect_uri the client did not register, before sign-in and after', async () => {
       for (const cookie of [undefined, SESSION_COOKIE]) {
         const res = createResponse()

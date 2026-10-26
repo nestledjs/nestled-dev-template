@@ -9,7 +9,9 @@ import {
   Query,
   Req,
   Res,
+  UseGuards,
 } from '@nestjs/common'
+import { Throttle, ThrottlerGuard } from '@nestjs/throttler'
 import { JwtService } from '@nestjs/jwt'
 import { Request, Response } from 'express'
 import { ConfigService } from '@nestjs/config'
@@ -41,6 +43,10 @@ const OTHER_SESSION = {
   error: 'access_denied',
   error_description: 'This authorization request belongs to a different session',
 }
+/** Dynamic client registrations allowed per client IP per window. */
+export const MCP_REGISTER_LIMIT = 10
+export const MCP_REGISTER_WINDOW_MS = 60 * 60 * 1000
+
 const INVALID_TARGET = {
   error: 'invalid_target',
   error_description: 'resource must be this MCP endpoint',
@@ -118,7 +124,13 @@ export class McpOAuthController {
    * Metadata Documents, and kept for clients that predate them. Registrations are stored, so they
    * survive restarts and work on every API instance.
    */
+  // Unauthenticated, and every call stores a row, so it is rate limited per client IP: the
+  // `signup` throttler AuthModule configures (SIGNUP_THROTTLE_ENABLED turns it off), with its own
+  // bucket and limit for this route. Keyed on req.ip, which depends on TRUST_PROXY_HOPS being set
+  // correctly (see main.ts and GqlThrottlerGuard).
   @Post('register')
+  @UseGuards(ThrottlerGuard)
+  @Throttle({ signup: { limit: MCP_REGISTER_LIMIT, ttl: MCP_REGISTER_WINDOW_MS } })
   @HttpCode(201)
   async register(@Body() body: Record<string, unknown>) {
     const clientName = typeof body['client_name'] === 'string' ? body['client_name'] : 'MCP Client'
@@ -471,6 +483,7 @@ export class McpOAuthController {
       return res.status(400).json(INVALID_TARGET)
     }
 
+    await this.oauth.touchClient(authCode.clientId)
     const accessToken = await this.oauth.createAccessToken(
       authCode.userId,
       authCode.organizationId,

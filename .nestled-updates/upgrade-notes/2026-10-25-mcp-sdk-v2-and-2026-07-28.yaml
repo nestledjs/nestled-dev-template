@@ -38,6 +38,9 @@ intent: >
   `subscriptions/listen` is refused in-band, so no response is ever a held-open stream.
 
   A `401` for a bearer token that authenticated no one now carries `error="invalid_token"`.
+  A Host or X-Forwarded-Host that cannot form a URL gets `400 Invalid request host` instead of a
+  500. Wherever the MCP base URL, issuer or resource is derived from a request, a comma-separated
+  X-Forwarded-Proto or X-Forwarded-Host (a proxy chain) contributes its first entry, trimmed.
 
   Tools (tools/*.ts, mcp-server.factory.ts). `McpServer` comes from `@modelcontextprotocol/server`,
   `z` from `zod-v4`, and each `inputSchema` is a `z.object({...})` (`z.object({})` for a tool
@@ -57,13 +60,15 @@ intent: >
   `authorization_response_iss_parameter_supported: true`, and keeps `registration_endpoint`.
   `/authorize` accepts as `client_id` either a DCR client or the HTTPS URL of a Client ID Metadata
   Document. The document is fetched only after the user has signed in, with a bounded fetch
-  (https only; the host is resolved once, every address checked public, and the connection made
-  to that checked address with the original Host and SNI, so DNS rebinding cannot redirect it; no
-  redirects, 5 s, 5 KB, cached per Cache-Control up to 24 h);
+  (https only; the host is resolved once, with a 3 s timeout and at most 2 lookups in flight so
+  slow DNS cannot fill libuv's threadpool, every address checked public, including the IPv6
+  forms that embed an IPv4 address (::/96, 64:ff9b::/96, 64:ff9b:1::/48, 2002::/16) and fec0::/10;
+  the connection is made to that checked address with the original Host and SNI, so DNS
+  rebinding cannot redirect it; no redirects, 5 s, 5 KB, cached per Cache-Control up to 24 h);
   its `client_id` must equal the URL, it must name `client_name` and `redirect_uris`, and its
-  `token_endpoint_auth_method` must be absent or `none`. For both kinds of client, `redirect_uri`
-  must be one the client registered (exact match; a loopback HTTP redirect may use any port, per
-  RFC 8252). /authorize checks that before sign-in for a DCR client, and again after sign-in,
+  `token_endpoint_auth_method` must be absent or `none`. No redirect URI or client_id may contain
+  `#`, a bare trailing one included. For both kinds of client, `redirect_uri` must be one the
+  client registered (exact match; a loopback HTTP redirect may use any port, per RFC 8252). /authorize checks that before sign-in for a DCR client, and again after sign-in,
   before it creates the pending authorization of the consent flow
   (2026-10-25-mcp-oauth-consent-and-s256-pkce, which this note builds on and replaces the
   minimal redirect scheme check of). The consent page still shows every client, a metadata
@@ -78,7 +83,15 @@ intent: >
   Stored DCR registrations. Registrations were an in-process Map, lost on every restart and not
   shared between API instances. They are now rows of a new `McpOAuthClient` model
   (`/// @skipCrud`: its redirect URIs are where a client's codes may go, so they change only
-  through registration). getClient and registerClient are async. Pending authorizations and
+  through registration). getClient and registerClient are async. Because anyone can call
+  /register and every call now stores a row: it is rate limited per client IP (10 an hour, through
+  ThrottlerGuard and the `signup` throttler AuthModule already configures, keyed on req.ip and so
+  on TRUST_PROXY_HOPS; SIGNUP_THROTTLE_ENABLED=false turns it off with the signup limit); a
+  registration may store at most 10 redirect URIs of at most 2048 characters and 4096 UTF-8 bytes
+  together; `McpOAuthClient.lastUsedAt` is set when the client starts an authorization (its
+  redirect is resolved) or redeems a code; and registrations never used within a day, or unused
+  for 30 days, are deleted. The template has no scheduler, so registration runs that prune, at
+  most once an hour per instance and without delaying the response. Pending authorizations and
   authorization codes stay in memory (they live 10 and 5 minutes): a deployment with several API
   instances and no sticky routing still needs a shared store for those.
 
@@ -95,7 +108,8 @@ intent: >
   working exactly as before.
 
   Schema and migration (libs/api/prisma): the `ApiToken.resource` column and the `McpOAuthClient`
-  model, in migration `20261025210000_mcp_oauth_token_resource_and_clients`. Both are additive.
+  model (with `lastUsedAt` and an index on it), in migration
+  `20261025210000_mcp_oauth_token_resource_and_clients`. Both are additive.
 
   Tests cover the transport on both eras, discovery metadata, DCR (stored), CIMD, the resource
   binding, and token validation (mcp.controller.spec.ts, mcp.http.spec.ts,
@@ -163,6 +177,12 @@ agentHints:
     project's migration history matches the template's; if the project already has a later
     migration, keep the template's timestamp anyway (Prisma applies pending migrations in name
     order and both statements are independent of other tables). Do not use `prisma db push`.
+  - >
+    /register's throttle uses the `signup` throttler that the template's AuthModule registers with
+    ThrottlerModule (global). A project that renamed or removed it must point `@Throttle` at the
+    throttler it has, or register one; without any, Nest cannot resolve ThrottlerGuard and the API
+    fails to start. Keep the per-route limit (10 an hour) unless the project's clients register
+    more often from one address, and say so in the log entry if you raise it.
   - >
     The resource binding must not touch tokens that already exist. Check that the column is
     nullable with no default and no backfill, that JwtStrategy refuses only a non-null

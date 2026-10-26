@@ -39,7 +39,8 @@ export function isClientMetadataDocumentUrl(clientId: string): boolean {
   } catch {
     return false
   }
-  if (url.protocol !== 'https:' || url.username || url.password || url.hash) return false
+  if (clientId.includes('#')) return false
+  if (url.protocol !== 'https:' || url.username || url.password) return false
   if (url.pathname === '/' || url.pathname === '') return false
   // Dot segments are normalised away by URL; a client_id that contained one is not the URL it names.
   return url.href === clientId
@@ -74,8 +75,11 @@ function isLoopbackHttp(url: URL): boolean {
  * HTTP to any other host, and script or local-file schemes, are refused.
  */
 export function isAcceptableRedirectUri(value: string): boolean {
+  // Any `#`, a bare trailing one included (URL reports an empty hash for it): a redirect URI may
+  // not carry a fragment (RFC 6749 section 3.1.2).
+  if (value.includes('#')) return false
   const url = parseUrl(value)
-  if (!url || url.hash) return false
+  if (!url) return false
   if (FORBIDDEN_REDIRECT_SCHEMES.has(url.protocol)) return false
   if (url.protocol === 'http:') return isLoopbackHttp(url)
   return true
@@ -102,7 +106,9 @@ export function isRegisteredRedirectUri(registered: string[], requested: string)
 }
 
 // Addresses a client metadata fetch must never reach (SSRF): loopback, private, link-local,
-// carrier-grade NAT, unspecified, multicast and reserved ranges, and their IPv6 counterparts.
+// carrier-grade NAT, unspecified, multicast and reserved ranges, and their IPv6 counterparts,
+// including the IPv6 forms that embed an IPv4 address (IPv4-compatible ::/96, NAT64 and 6to4),
+// since those can reach an internal IPv4 host.
 // CIDR notation, split at load time.
 const BLOCKED_IPV4_RANGES = [
   '0.0.0.0/8',
@@ -118,12 +124,14 @@ const BLOCKED_IPV4_RANGES = [
   '240.0.0.0/4',
 ]
 const BLOCKED_IPV6_RANGES = [
-  '::/128',
-  '::1/128',
-  '64:ff9b::/96',
-  'fc00::/7',
-  'fe80::/10',
-  'ff00::/8',
+  '::/96', // unspecified, loopback and IPv4-compatible (deprecated)
+  '64:ff9b::/96', // NAT64, well-known prefix
+  '64:ff9b:1::/48', // NAT64, local-use prefix
+  '2002::/16', // 6to4
+  'fc00::/7', // unique local
+  'fe80::/10', // link-local
+  'fec0::/10', // site-local (deprecated)
+  'ff00::/8', // multicast
 ]
 const BLOCKED_ADDRESSES = new BlockList()
 for (const [ranges, family] of [
@@ -149,9 +157,50 @@ export function isPublicAddress(address: string): boolean {
 
 export type HostResolver = (hostname: string) => Promise<string[]>
 
-const resolveHost: HostResolver = async hostname => {
+/** How long a host name lookup may take before the metadata fetch gives up. */
+export const LOOKUP_TIMEOUT_MS = 3_000
+/**
+ * At most this many lookups at once. `dns.lookup` runs on libuv's threadpool (4 threads by
+ * default) and cannot be cancelled, so a slow resolver must not be able to fill it.
+ */
+export const MAX_CONCURRENT_LOOKUPS = 2
+
+const systemLookup: HostResolver = async hostname => {
   const results = await lookup(hostname, { all: true, verbatim: true })
   return results.map(result => result.address)
+}
+
+/**
+ * Wraps a resolver with a timeout and a concurrency cap. A lookup that times out is answered with
+ * an error at once, but it still counts against the cap until the underlying lookup settles,
+ * because its thread is still busy. When the cap is reached a new lookup fails immediately rather
+ * than queueing.
+ */
+export function createBoundedLookup(
+  resolve: HostResolver = systemLookup,
+  { timeoutMs = LOOKUP_TIMEOUT_MS, maxConcurrent = MAX_CONCURRENT_LOOKUPS } = {},
+): HostResolver {
+  let inFlight = 0
+  return hostname => {
+    if (inFlight >= maxConcurrent) {
+      return Promise.reject(new ClientMetadataError('Too many client metadata lookups at once'))
+    }
+    inFlight += 1
+    const lookupPromise = resolve(hostname)
+    lookupPromise.then(
+      () => (inFlight -= 1),
+      () => (inFlight -= 1),
+    )
+    let timer: ReturnType<typeof setTimeout> | undefined
+    const timeout = new Promise<never>((_, reject) => {
+      timer = setTimeout(
+        () => reject(new ClientMetadataError('Client metadata document host lookup timed out')),
+        timeoutMs,
+      )
+      timer.unref?.()
+    })
+    return Promise.race([lookupPromise, timeout]).finally(() => clearTimeout(timer))
+  }
 }
 
 function cacheLifetimeMs(cacheControl: string | null): number {
@@ -313,7 +362,7 @@ export class ClientMetadataResolver {
 
   constructor(
     private readonly fetchDocument: PinnedFetcher = createPinnedFetcher(),
-    private readonly resolveHostname: HostResolver = resolveHost,
+    private readonly resolveHostname: HostResolver = createBoundedLookup(),
     private readonly now: () => number = Date.now,
   ) {}
 
@@ -329,7 +378,13 @@ export class ClientMetadataResolver {
     const url = new URL(clientId)
     const hostname = bareHostname(url)
     // Resolve once. The connection below goes to the address checked here, not to a second lookup.
-    const addresses = isIP(hostname) ? [hostname] : await this.resolveHostname(hostname)
+    let addresses: string[]
+    try {
+      addresses = isIP(hostname) ? [hostname] : await this.resolveHostname(hostname)
+    } catch (err) {
+      if (err instanceof ClientMetadataError) throw err
+      throw new ClientMetadataError('Client metadata document host could not be resolved')
+    }
     if (addresses.length === 0 || !addresses.every(isPublicAddress)) {
       throw new ClientMetadataError('Client metadata document host is not a public address')
     }

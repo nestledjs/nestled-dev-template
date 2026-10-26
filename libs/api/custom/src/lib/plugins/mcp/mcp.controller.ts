@@ -12,6 +12,7 @@ import { McpServerFactory } from './mcp-server.factory'
 import { McpAuthContext } from './mcp-auth'
 import { JsonRequestTransport, sendWebResponse, toWebRequest } from './mcp-transport'
 import { Public } from '@nestled-template/api/utils'
+import { requestOrigin } from './mcp-resource'
 
 type McpAuthenticatedRequest = Request & {
   user?: {
@@ -23,12 +24,6 @@ type McpAuthenticatedRequest = Request & {
 
 /** Key under `AuthInfo.extra` that carries the caller into the per-request server factory. */
 const MCP_AUTH_EXTRA_KEY = 'nestledMcpAuth'
-
-function requestOrigin(req: Request): string {
-  const proto = (req.get('x-forwarded-proto') || req.protocol) as string
-  const host = (req.get('x-forwarded-host') || req.get('host')) as string
-  return `${proto}://${host}`
-}
 
 function bearerToken(req: Request): string {
   const header = req.headers?.authorization ?? ''
@@ -110,13 +105,21 @@ export class McpController implements OnModuleDestroy {
       isSuperAdmin: Boolean(user.isSuperAdmin),
     }
 
-    const webRequest = toWebRequest(req, requestOrigin(req))
-    if (await isLegacyRequest(webRequest, req.body)) {
-      await this.handleLegacy(req, res, auth)
+    let webRequest: globalThis.Request
+    try {
+      webRequest = toWebRequest(req, requestOrigin(req))
+    } catch {
+      // A Host or X-Forwarded-Host that cannot form a URL (spaces, a bad port, ...).
+      res.status(400).json({ error: 'Bad Request', message: 'Invalid request host' })
       return
     }
 
     try {
+      if (await isLegacyRequest(webRequest, req.body)) {
+        await this.handleLegacy(req, res, auth)
+        return
+      }
+
       const authInfo: AuthInfo = {
         token: bearerToken(req),
         clientId: auth.userId,

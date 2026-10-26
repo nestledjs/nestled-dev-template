@@ -21,6 +21,12 @@ describe('McpOAuthService', () => {
           return clientRows.get(data.id)
         }),
         findUnique: jest.fn(async ({ where }: any) => clientRows.get(where.id) ?? null),
+        updateMany: jest.fn(async ({ where, data }: any) => {
+          const row = clientRows.get(where.id)
+          if (row) Object.assign(row, data)
+          return { count: row ? 1 : 0 }
+        }),
+        deleteMany: jest.fn(async () => ({ count: 0 })),
       },
       organizationMember: {
         findMany: jest.fn(),
@@ -88,6 +94,73 @@ describe('McpOAuthService', () => {
       expect((await service.registerClient('   ', ['https://a.example.com/cb'])).clientName).toBe(
         'MCP Client',
       )
+    })
+  })
+
+  describe('Stored registrations: use and pruning', () => {
+    it('records use when a client is resolved for a redirect, and only for DCR ids', async () => {
+      const client = await service.registerClient('App', ['https://app.example.com/cb'])
+      mockData.mcpOAuthClient.updateMany.mockClear()
+
+      await service.resolveClientForRedirect(client.clientId, 'https://app.example.com/cb')
+      await service.touchClient('https://client.example.com/client.json')
+
+      expect(mockData.mcpOAuthClient.updateMany).toHaveBeenCalledTimes(1)
+      expect(mockData.mcpOAuthClient.updateMany).toHaveBeenCalledWith({
+        where: { id: client.clientId },
+        data: { lastUsedAt: expect.any(Date) },
+      })
+    })
+
+    it('does not record use for a redirect the client did not register', async () => {
+      const client = await service.registerClient('App', ['https://app.example.com/cb'])
+      mockData.mcpOAuthClient.updateMany.mockClear()
+
+      await expect(
+        service.resolveClientForRedirect(client.clientId, 'https://evil.example.com/cb'),
+      ).rejects.toBeInstanceOf(OAuthClientError)
+      expect(mockData.mcpOAuthClient.updateMany).not.toHaveBeenCalled()
+    })
+
+    it('prunes registrations never used within a day, or unused for 30 days', async () => {
+      mockData.mcpOAuthClient.deleteMany.mockResolvedValue({ count: 4 })
+      const now = Date.UTC(2026, 9, 26)
+
+      await expect(service.pruneStaleClients(now)).resolves.toBe(4)
+
+      expect(mockData.mcpOAuthClient.deleteMany).toHaveBeenCalledWith({
+        where: {
+          OR: [
+            { lastUsedAt: null, createdAt: { lt: new Date(now - 24 * 60 * 60 * 1000) } },
+            { lastUsedAt: { lt: new Date(now - 30 * 24 * 60 * 60 * 1000) } },
+          ],
+        },
+      })
+    })
+
+    it('prunes from registration at most once an hour, without failing the registration', async () => {
+      const prune = jest.spyOn(service, 'pruneStaleClients').mockRejectedValue(new Error('db down'))
+      const now = jest.spyOn(Date, 'now').mockReturnValue(Date.UTC(2026, 9, 26, 12))
+      try {
+        await service.registerClient('A', ['https://a.example.com/cb'])
+        await service.registerClient('B', ['https://b.example.com/cb'])
+        expect(prune).toHaveBeenCalledTimes(1)
+
+        now.mockReturnValue(Date.UTC(2026, 9, 26, 13))
+        await expect(service.registerClient('C', ['https://c.example.com/cb'])).resolves.toEqual(
+          expect.objectContaining({ clientName: 'C' }),
+        )
+        expect(prune).toHaveBeenCalledTimes(2)
+      } finally {
+        now.mockRestore()
+      }
+    })
+
+    it("caps the total size of a registration's redirect URIs", () => {
+      const uri = (i: number) =>
+        `https://a.example.com/${String(i).padStart(4, '0')}${'x'.repeat(1000)}`
+      expect(service.validateRedirectUris([uri(1), uri(2), uri(3)])).not.toBeNull()
+      expect(service.validateRedirectUris([uri(1), uri(2), uri(3), uri(4)])).toBeNull()
     })
   })
 
@@ -491,6 +564,21 @@ describe('McpOAuthService', () => {
         },
       } as any
       expect(service.getMcpBaseUrl(req)).toBe('https://app.example.com/api/mcp')
+    })
+
+    it('should use the first entry of a comma-separated forwarding header', () => {
+      const req = {
+        protocol: 'http',
+        get: (h: string) => {
+          if (h === 'x-forwarded-proto') return 'https, http'
+          if (h === 'x-forwarded-host') return ' app.example.com , internal.example.com'
+          return 'internal:3000'
+        },
+      } as any
+      expect(service.getMcpBaseUrl(req)).toBe('https://app.example.com/api/mcp')
+      expect(service.buildAuthorizationServerMetadata(req).issuer).toBe(
+        'https://app.example.com/api/mcp',
+      )
     })
 
     it('should fall back to config apiUrl when no request provided', () => {
