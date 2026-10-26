@@ -46,6 +46,12 @@ const INVALID_TARGET = {
   error_description: 'resource must be this MCP endpoint',
 }
 
+/** The OAuth error body for a client or redirect check that failed; anything else is rethrown. */
+function clientErrorBody(err: unknown): Record<string, string> {
+  if (!(err instanceof OAuthClientError)) throw err
+  return { error: err.error, error_description: err.message }
+}
+
 /** The host a redirect URI points at, or its scheme for a private-use URI with no host. */
 function redirectHostOf(redirectUri: string): string {
   const url = new URL(redirectUri)
@@ -150,71 +156,20 @@ export class McpOAuthController {
    */
   @Get('authorize')
   async authorize(@Query() query: AuthorizeQuery, @Req() req: Request, @Res() res: Response) {
-    const {
-      client_id: clientId,
-      redirect_uri: redirectUri,
-      state,
-      code_challenge: codeChallenge,
-      code_challenge_method: codeChallengeMethod,
-      scope,
-      org: orgId,
-      resource: requestedResource,
-    } = query
     const siteUrl = this.config.get<string>('siteUrl') || 'http://localhost:4200'
     const mcpBase = this.oauth.getMcpBaseUrl(req)
 
-    if (!clientId || !redirectUri || !codeChallenge) {
-      return res
-        .status(400)
-        .json({ error: 'invalid_request', error_description: 'Missing required parameters' })
+    const checked = await this.checkAuthorizeRequest(query, mcpBase)
+    if ('error' in checked) {
+      return res.status(400).json(checked.error)
     }
-
-    // A repeated query parameter arrives as an array; every parameter here must be a single value.
-    if (Object.values(query).some(value => value !== undefined && typeof value !== 'string')) {
-      return res
-        .status(400)
-        .json({ error: 'invalid_request', error_description: 'Repeated parameters' })
-    }
-
-    // PKCE is mandatory for every client and only S256 is accepted. A missing method means
-    // `plain` (RFC 7636 section 4.3), so it is refused too.
-    if (!this.oauth.isAcceptablePkce(codeChallenge, codeChallengeMethod)) {
-      return res.status(400).json({
-        error: 'invalid_request',
-        error_description: 'code_challenge_method must be S256 with a valid code_challenge',
-      })
-    }
-
-    const resource = this.oauth.resolveResource(requestedResource, mcpBase)
-    if (!resource) {
-      return res.status(400).json(INVALID_TARGET)
-    }
-
-    // No network request yet: a DCR client and its redirect are checked now, a metadata
-    // document's well-formedness too; the document itself is fetched after sign-in.
-    try {
-      await this.oauth.precheckClient(clientId, redirectUri)
-    } catch (err) {
-      if (!(err instanceof OAuthClientError)) throw err
-      return res.status(400).json({ error: err.error, error_description: err.message })
-    }
+    const { client_id: clientId, redirect_uri: redirectUri, state, scope, org: orgId } = query
 
     const session = await this.getSessionFromCookie(req)
     const userId = session?.userId
 
     if (!session || !userId) {
-      const authorizeParams = new URLSearchParams({
-        client_id: clientId,
-        redirect_uri: redirectUri,
-        code_challenge: codeChallenge,
-        code_challenge_method: PKCE_METHOD,
-        ...(state ? { state } : {}),
-        ...(scope ? { scope } : {}),
-        ...(orgId ? { org: orgId } : {}),
-        ...(requestedResource ? { resource: requestedResource } : {}),
-      })
-      const authorizeUrl = `${mcpBase}/authorize?${authorizeParams.toString()}`
-      return res.redirect(`${siteUrl}/login?redirect=${encodeURIComponent(authorizeUrl)}`)
+      return res.redirect(this.loginRedirectFor(query, siteUrl, mcpBase))
     }
 
     // A client authorized here gets a long-lived credential of its own. Under emulation that would
@@ -234,8 +189,7 @@ export class McpOAuthController {
     try {
       client = await this.oauth.resolveClientForRedirect(clientId, redirectUri)
     } catch (err) {
-      if (!(err instanceof OAuthClientError)) throw err
-      return res.status(400).json({ error: err.error, error_description: err.message })
+      return res.status(400).json(clientErrorBody(err))
     }
 
     const pending = this.oauth.createPendingAuthorization({
@@ -246,14 +200,82 @@ export class McpOAuthController {
       clientName: client.clientName,
       redirectUri,
       state: state ?? null,
-      codeChallenge,
+      codeChallenge: query.code_challenge,
       scope: scope ?? 'openid',
       requestedOrganizationId: orgId ?? null,
       issuer: mcpBase,
-      resource,
+      resource: checked.resource,
     })
 
     return res.redirect(`${siteUrl}/mcp-connect?request=${encodeURIComponent(pending.id)}`)
+  }
+
+  /**
+   * Everything /authorize can check before it knows who is asking: required and single-valued
+   * parameters, S256 PKCE, the RFC 8707 resource, and the client and redirect URI without a
+   * network request (a metadata document is fetched only after sign-in). Returns the error body
+   * to answer with, or the resource the token will be bound to.
+   */
+  private async checkAuthorizeRequest(
+    query: AuthorizeQuery,
+    mcpBase: string,
+  ): Promise<{ error: Record<string, string> } | { resource: string }> {
+    const { client_id: clientId, redirect_uri: redirectUri, code_challenge: codeChallenge } = query
+
+    if (!clientId || !redirectUri || !codeChallenge) {
+      return {
+        error: { error: 'invalid_request', error_description: 'Missing required parameters' },
+      }
+    }
+
+    // A repeated query parameter arrives as an array; every parameter here must be a single value.
+    if (Object.values(query).some(value => value !== undefined && typeof value !== 'string')) {
+      return { error: { error: 'invalid_request', error_description: 'Repeated parameters' } }
+    }
+
+    // PKCE is mandatory for every client and only S256 is accepted. A missing method means
+    // `plain` (RFC 7636 section 4.3), so it is refused too.
+    if (!this.oauth.isAcceptablePkce(codeChallenge, query.code_challenge_method)) {
+      return {
+        error: {
+          error: 'invalid_request',
+          error_description: 'code_challenge_method must be S256 with a valid code_challenge',
+        },
+      }
+    }
+
+    const resource = this.oauth.resolveResource(query.resource, mcpBase)
+    if (!resource) {
+      return { error: INVALID_TARGET }
+    }
+
+    try {
+      await this.oauth.precheckClient(clientId, redirectUri)
+    } catch (err) {
+      return { error: clientErrorBody(err) }
+    }
+    return { resource }
+  }
+
+  /** The login page, coming back to this same authorization request once signed in. */
+  private loginRedirectFor(query: AuthorizeQuery, siteUrl: string, mcpBase: string): string {
+    const optional: Record<string, string | undefined> = {
+      state: query.state,
+      scope: query.scope,
+      org: query.org,
+      resource: query.resource,
+    }
+    const authorizeParams = new URLSearchParams({
+      client_id: query.client_id,
+      redirect_uri: query.redirect_uri,
+      code_challenge: query.code_challenge,
+      code_challenge_method: PKCE_METHOD,
+    })
+    for (const [name, value] of Object.entries(optional)) {
+      if (value) authorizeParams.set(name, value)
+    }
+    const authorizeUrl = `${mcpBase}/authorize?${authorizeParams.toString()}`
+    return `${siteUrl}/login?redirect=${encodeURIComponent(authorizeUrl)}`
   }
 
   /**
