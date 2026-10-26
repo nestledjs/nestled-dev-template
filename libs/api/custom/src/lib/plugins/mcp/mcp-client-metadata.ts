@@ -47,7 +47,14 @@ export function isClientMetadataDocumentUrl(clientId: string): boolean {
 
 const LOOPBACK_HOSTS = new Set(['localhost', '127.0.0.1', '[::1]'])
 // Schemes that can never be a redirect target: they run script or read local data in the browser.
-const FORBIDDEN_REDIRECT_SCHEMES = new Set(['javascript:', 'data:', 'vbscript:', 'file:', 'blob:'])
+const FORBIDDEN_REDIRECT_SCHEMES = new Set([
+  'javascript:',
+  'data:',
+  'vbscript:',
+  'file:',
+  'blob:',
+  'about:',
+])
 
 function parseUrl(value: string): URL | null {
   try {

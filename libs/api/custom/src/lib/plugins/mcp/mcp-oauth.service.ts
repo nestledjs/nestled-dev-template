@@ -1,9 +1,13 @@
 import { Injectable, Logger } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
-import { randomBytes, createHash } from 'node:crypto'
+import { randomBytes, createHash, timingSafeEqual } from 'node:crypto'
 import { ApiTokensService } from '../api-tokens/api-tokens.service'
 import { ApiCoreDataAccessService } from '@nestled-template/api/core/data-access'
-import { AuthTokenClaims, isAuthTokenCurrent } from '../auth/auth-token-claims'
+import {
+  AuthTokenClaims,
+  claimedAuthGeneration,
+  isAuthTokenCurrent,
+} from '../auth/auth-token-claims'
 import {
   ClientMetadataError,
   ClientMetadataResolver,
@@ -11,6 +15,7 @@ import {
   isClientMetadataDocumentUrl,
   isRegisteredRedirectUri,
 } from './mcp-client-metadata'
+import { canonicalResource } from './mcp-resource'
 
 export interface StoredAuthCode {
   userId: string
@@ -22,6 +27,8 @@ export interface StoredAuthCode {
   codeChallenge: string
   codeChallengeMethod: string
   scope: string
+  /** The canonical MCP resource URI the token will be bound to (RFC 8707). */
+  resource: string
   expiresAt: Date
 }
 
@@ -41,13 +48,63 @@ export class OAuthClientError extends Error {
   }
 }
 
+/** Bounds on a dynamic registration, which anyone can make: the record is stored. */
+export const MAX_REGISTERED_REDIRECT_URIS = 10
+const MAX_REDIRECT_URI_LENGTH = 2048
+const MAX_CLIENT_NAME_LENGTH = 200
+
+/**
+ * An /authorize request waiting for the signed-in user to approve or deny it on the consent page.
+ * Bound to the session that made the request; single use; short-lived.
+ */
+export interface PendingAuthorization {
+  /** Opaque, unguessable id carried in the consent page URL. */
+  id: string
+  /** Second secret, only handed to the session the record is bound to, and required to decide. */
+  csrfToken: string
+  userId: string
+  /** The session that made the request, when the session token names one. */
+  sessionId: string | null
+  authGeneration: number
+  clientId: string
+  clientName: string
+  redirectUri: string
+  state: string | null
+  codeChallenge: string
+  scope: string
+  /** An organization the client asked for with `org=`, already checked for membership. */
+  requestedOrganizationId: string | null
+  /**
+   * The issuer the client saw when it started (RFC 9207 `iss`). Recorded here because the decision
+   * arrives from the web app's server, possibly through another host name.
+   */
+  issuer: string
+  /** The canonical MCP resource URI the token will be bound to (RFC 8707). */
+  resource: string
+  expiresAt: Date
+}
+
+export interface ConsentOrganization {
+  id: string
+  name: string
+}
+
+/** The only PKCE method accepted: RFC 7636 S256. `plain` and a missing method are refused. */
+export const PKCE_METHOD = 'S256'
+
+// RFC 7636 section 4.2: a code challenge is 43-128 characters of the unreserved set; an S256
+// challenge is the 43-character base64url SHA-256 of the verifier.
+const PKCE_CHALLENGE_PATTERN = /^[A-Za-z0-9\-._~]{43,128}$/
+
 @Injectable()
 export class McpOAuthService {
   private readonly logger = new Logger(McpOAuthService.name)
   private readonly authCodes = new Map<string, StoredAuthCode>()
-  private readonly clients = new Map<string, OAuthClient>()
+  private readonly pendingAuthorizations = new Map<string, PendingAuthorization>()
   private readonly CODE_TTL_MS = 5 * 60 * 1000 // 5 minutes
   private readonly clientMetadata = new ClientMetadataResolver()
+  /** How long the consent page stays usable before the client must start again. */
+  readonly PENDING_TTL_MS = 10 * 60 * 1000 // 10 minutes
 
   constructor(
     private readonly config: ConfigService,
@@ -101,7 +158,7 @@ export class McpOAuthService {
       grant_types_supported: ['authorization_code'],
       subject_types_supported: ['public'],
       id_token_signing_alg_values_supported: ['RS256'],
-      code_challenge_methods_supported: ['S256'],
+      code_challenge_methods_supported: [PKCE_METHOD],
       token_endpoint_auth_methods_supported: ['none'],
       scopes_supported: ['openid'],
       // Client ID Metadata Documents: a client may use the HTTPS URL of its metadata as client_id.
@@ -124,31 +181,64 @@ export class McpOAuthService {
     }
   }
 
-  registerClient(clientName: string, redirectUris: string[]): OAuthClient {
-    const clientId = randomBytes(16).toString('hex')
-    const client: OAuthClient = { clientId, clientName, redirectUris }
-    this.clients.set(clientId, client)
-    this.logger.log(`Registered MCP OAuth client: ${clientName} (${clientId})`)
-    return client
-  }
-
-  getClient(clientId: string): OAuthClient | undefined {
-    return this.clients.get(clientId)
+  /**
+   * The resource a token for this request is bound to: this server's MCP endpoint. A client may
+   * name it with `resource` (RFC 8707); naming anything else is refused (null).
+   */
+  resolveResource(requested: string | undefined, mcpBase: string): string | null {
+    const ours = canonicalResource(mcpBase)
+    if (!ours) return null
+    if (requested === undefined || requested === '') return ours
+    return canonicalResource(requested) === ours ? ours : null
   }
 
   /**
-   * Whether `clientId` can be looked up at all: a client registered here (DCR), or a Client ID
-   * Metadata Document URL. Cheap, and makes no network request — /authorize uses it before the
-   * caller has signed in.
+   * Store a Dynamic Client Registration. Registrations are rows (McpOAuthClient), so they survive
+   * restarts and are shared by every API instance.
    */
-  isKnownClientId(clientId: string): boolean {
-    return this.clients.has(clientId) || isClientMetadataDocumentUrl(clientId)
+  async registerClient(clientName: string, redirectUris: string[]): Promise<OAuthClient> {
+    const clientId = randomBytes(16).toString('hex')
+    const name = clientName.trim().slice(0, MAX_CLIENT_NAME_LENGTH) || 'MCP Client'
+    const row = await this.data.mcpOAuthClient.create({
+      data: { id: clientId, clientName: name, redirectUris },
+      select: { id: true, clientName: true, redirectUris: true },
+    })
+    this.logger.log(`Registered MCP OAuth client: ${row.clientName} (${row.id})`)
+    return { clientId: row.id, clientName: row.clientName, redirectUris: row.redirectUris }
+  }
+
+  async getClient(clientId: string): Promise<OAuthClient | undefined> {
+    // DCR ids are 32 hex characters; anything else cannot be a row, so skip the query.
+    if (!/^[a-f0-9]{32}$/.test(clientId)) return undefined
+    const row = await this.data.mcpOAuthClient.findUnique({
+      where: { id: clientId },
+      select: { id: true, clientName: true, redirectUris: true },
+    })
+    return row
+      ? { clientId: row.id, clientName: row.clientName, redirectUris: row.redirectUris }
+      : undefined
+  }
+
+  /**
+   * The checks /authorize can make before the caller has signed in, without a network request:
+   * a DCR client must exist and `redirectUri` must be one it registered; a Client ID Metadata
+   * Document URL must be well-formed and `redirectUri` acceptable in form (its document is fetched
+   * only after sign-in, by {@link resolveClientForRedirect}).
+   */
+  async precheckClient(clientId: string, redirectUri: string): Promise<void> {
+    if (isClientMetadataDocumentUrl(clientId)) {
+      if (!isAcceptableRedirectUri(redirectUri)) {
+        throw new OAuthClientError('invalid_request', 'Unacceptable redirect_uri')
+      }
+      return
+    }
+    await this.resolveClientForRedirect(clientId, redirectUri)
   }
 
   /**
    * The client behind `clientId`, after checking that `redirectUri` is one it registered (exact
-   * match). A URL-shaped client_id is resolved by fetching its Client ID Metadata Document;
-   * anything else must have been registered through DCR on this instance.
+   * match; a loopback redirect may use any port). A URL-shaped client_id is resolved by fetching
+   * its Client ID Metadata Document; anything else must be a stored DCR registration.
    */
   async resolveClientForRedirect(clientId: string, redirectUri: string): Promise<OAuthClient> {
     let client: OAuthClient | undefined
@@ -161,7 +251,7 @@ export class McpOAuthService {
         throw new OAuthClientError('invalid_client', reason)
       }
     } else {
-      client = this.clients.get(clientId)
+      client = await this.getClient(clientId)
     }
     if (!client) throw new OAuthClientError('invalid_client', 'Unknown client_id')
     if (!isRegisteredRedirectUri(client.redirectUris, redirectUri)) {
@@ -176,9 +266,12 @@ export class McpOAuthService {
   /** The redirect URIs a DCR request may register, or null when any of them is unacceptable. */
   validateRedirectUris(redirectUris: unknown): string[] | null {
     if (!Array.isArray(redirectUris) || redirectUris.length === 0) return null
-    if (!redirectUris.every(uri => typeof uri === 'string' && isAcceptableRedirectUri(uri))) {
-      return null
-    }
+    if (redirectUris.length > MAX_REGISTERED_REDIRECT_URIS) return null
+    const acceptable = (uri: unknown) =>
+      typeof uri === 'string' &&
+      uri.length <= MAX_REDIRECT_URI_LENGTH &&
+      isAcceptableRedirectUri(uri)
+    if (!redirectUris.every(acceptable)) return null
     return redirectUris as string[]
   }
 
@@ -202,25 +295,110 @@ export class McpOAuthService {
     return authCode
   }
 
+  /** Whether `method` and `challenge` are an acceptable PKCE request: S256 only. */
+  isAcceptablePkce(challenge: string | undefined, method: string | undefined): boolean {
+    return (
+      method === PKCE_METHOD &&
+      typeof challenge === 'string' &&
+      PKCE_CHALLENGE_PATTERN.test(challenge)
+    )
+  }
+
   verifyPkce(codeVerifier: string, codeChallenge: string, method: string): boolean {
-    if (method === 'S256') {
-      const hash = createHash('sha256').update(codeVerifier).digest('base64url')
-      return hash === codeChallenge
+    if (method !== PKCE_METHOD || typeof codeVerifier !== 'string') return false
+    const hash = createHash('sha256').update(codeVerifier).digest('base64url')
+    return hash === codeChallenge
+  }
+
+  /**
+   * Store a request for the consent page. Nothing is issued until the bound session approves it
+   * through {@link takePendingAuthorization}.
+   */
+  createPendingAuthorization(
+    params: Omit<PendingAuthorization, 'id' | 'csrfToken' | 'expiresAt'>,
+  ): PendingAuthorization {
+    this.sweepExpiredPendingAuthorizations()
+    const pending: PendingAuthorization = {
+      ...params,
+      id: randomBytes(32).toString('base64url'),
+      csrfToken: randomBytes(32).toString('base64url'),
+      expiresAt: new Date(Date.now() + this.PENDING_TTL_MS),
     }
-    return codeVerifier === codeChallenge
+    this.pendingAuthorizations.set(pending.id, pending)
+    return pending
   }
 
-  async countUserOrganizations(userId: string): Promise<number> {
-    return this.data.organizationMember.count({ where: { userId } })
+  /** The pending request, without using it up, or null when it is unknown or expired. */
+  getPendingAuthorization(id: string): PendingAuthorization | null {
+    const pending = this.pendingAuthorizations.get(id)
+    if (!pending) return null
+    if (pending.expiresAt.getTime() <= Date.now()) {
+      this.pendingAuthorizations.delete(id)
+      return null
+    }
+    return pending
   }
 
-  async resolveOrganizationId(userId: string): Promise<string | null> {
-    const membership = await this.data.organizationMember.findFirst({
+  /**
+   * Remove and return the pending request. Every decision attempt uses the record up, whether or
+   * not it then succeeds, so a record can be decided at most once.
+   */
+  takePendingAuthorization(id: string): PendingAuthorization | null {
+    const pending = this.getPendingAuthorization(id)
+    if (pending) this.pendingAuthorizations.delete(id)
+    return pending
+  }
+
+  /** Whether the verified session `claims` are the session the pending request is bound to. */
+  isPendingBoundTo(pending: PendingAuthorization, claims: AuthTokenClaims): boolean {
+    return (
+      pending.userId === claims.userId &&
+      pending.sessionId === (claims.sessionId ?? null) &&
+      pending.authGeneration === claimedAuthGeneration(claims.authGeneration)
+    )
+  }
+
+  /** Constant-time comparison of the submitted CSRF token with the record's. */
+  isCsrfTokenValid(pending: PendingAuthorization, submitted: unknown): boolean {
+    if (typeof submitted !== 'string' || submitted.length === 0) return false
+    const expected = Buffer.from(pending.csrfToken)
+    const actual = Buffer.from(submitted)
+    return expected.length === actual.length && timingSafeEqual(expected, actual)
+  }
+
+  private sweepExpiredPendingAuthorizations(): void {
+    const now = Date.now()
+    for (const [id, pending] of this.pendingAuthorizations) {
+      if (pending.expiresAt.getTime() <= now) this.pendingAuthorizations.delete(id)
+    }
+  }
+
+  /** The organizations the user can grant a client access to, oldest membership first. */
+  async listUserOrganizations(userId: string): Promise<ConsentOrganization[]> {
+    const memberships = await this.data.organizationMember.findMany({
       where: { userId },
       orderBy: { createdAt: 'asc' },
-      select: { organizationId: true },
+      select: { organization: { select: { id: true, name: true } } },
     })
-    return membership?.organizationId ?? null
+    return memberships.map(m => ({ id: m.organization.id, name: m.organization.name }))
+  }
+
+  /** Who is signed in, for the consent page: display name and primary email. */
+  async getAccountSummary(userId: string): Promise<{ name: string | null; email: string | null }> {
+    const user = await this.data.user.findUnique({
+      where: { id: userId },
+      select: {
+        firstName: true,
+        lastName: true,
+        emails: {
+          orderBy: [{ primary: 'desc' }, { createdAt: 'asc' }],
+          take: 1,
+          select: { email: true },
+        },
+      },
+    })
+    const name = [user?.firstName, user?.lastName].filter(Boolean).join(' ').trim()
+    return { name: name || null, email: user?.emails[0]?.email ?? null }
   }
 
   async validateOrgMembership(userId: string, organizationId: string): Promise<boolean> {
@@ -231,10 +409,15 @@ export class McpOAuthService {
     return !!membership
   }
 
+  /**
+   * An API token for the MCP client, bound to `resource` (the MCP endpoint): it is accepted at
+   * `/api/mcp` and nowhere else.
+   */
   async createAccessToken(
     userId: string,
     organizationId: string | null,
     authGeneration: number,
+    resource: string,
   ): Promise<string> {
     const result = await this.apiTokensService.generateApiToken(
       userId,
@@ -243,6 +426,7 @@ export class McpOAuthService {
         organizationId: organizationId ?? undefined,
       },
       authGeneration,
+      { resource },
     )
     return result.token
   }

@@ -10,8 +10,12 @@ describe('ApiTokenAuthMiddleware', () => {
   let data: { user: { findUnique: jest.Mock } }
   let middleware: ApiTokenAuthMiddleware
 
-  const run = async (authorization?: string) => {
-    const req: any = { headers: authorization ? { authorization } : {} }
+  const run = async (authorization?: string, host = 'api.example.com') => {
+    const req: any = {
+      headers: authorization ? { authorization } : {},
+      protocol: 'https',
+      get: (name: string) => (name === 'host' ? host : undefined),
+    }
     const next = jest.fn()
     await middleware.use(req, {} as any, next)
     return { req, next }
@@ -83,6 +87,57 @@ describe('ApiTokenAuthMiddleware', () => {
 
     expect(req.user).toBeUndefined()
     expect(req.apiTokenOrganizationId).toBeUndefined()
+  })
+
+  describe('resource binding (RFC 8707)', () => {
+    const bound = (resource: string) => ({
+      tokenId: 'token-3',
+      userId: 'user-123',
+      organizationId: 'org-123',
+      resource,
+    })
+
+    it('accepts a token bound to the MCP endpoint this request reached', async () => {
+      apiTokensService.validateApiToken.mockResolvedValue(bound('https://api.example.com/api/mcp'))
+
+      const { req } = await run(`Bearer ${token}`)
+
+      expect(req.user).toBe(user)
+    })
+
+    it('compares the binding in canonical form', async () => {
+      apiTokensService.validateApiToken.mockResolvedValue(bound('https://API.example.com/api/mcp/'))
+
+      const { req } = await run(`Bearer ${token}`)
+
+      expect(req.user).toBe(user)
+    })
+
+    it.each([
+      ['another host', 'https://other.example.com/api/mcp', 'api.example.com'],
+      ['another resource on this host', 'https://api.example.com/api/other', 'api.example.com'],
+      [
+        'this resource reached through another host',
+        'https://api.example.com/api/mcp',
+        'alias.example.com',
+      ],
+    ])('refuses a token bound to %s', async (_label, resource, host) => {
+      apiTokensService.validateApiToken.mockResolvedValue(bound(resource))
+
+      const { req, next } = await run(`Bearer ${token}`, host)
+
+      expect(req.user).toBeUndefined()
+      expect(data.user.findUnique).not.toHaveBeenCalled()
+      expect(next).toHaveBeenCalledTimes(1)
+    })
+
+    it('still accepts a token issued before binding existed (resource null)', async () => {
+      apiTokensService.validateApiToken.mockResolvedValue({ ...bound(''), resource: null })
+
+      const { req } = await run(`Bearer ${token}`)
+
+      expect(req.user).toBe(user)
+    })
   })
 
   it('fails closed when validation throws', async () => {

@@ -13,10 +13,21 @@ describe('McpOAuthService', () => {
   let mockConfig: jest.Mocked<Pick<ConfigService, 'get'>>
 
   beforeEach(async () => {
+    const clientRows = new Map<string, any>()
     mockData = {
+      mcpOAuthClient: {
+        create: jest.fn(async ({ data }: any) => {
+          clientRows.set(data.id, { ...data })
+          return clientRows.get(data.id)
+        }),
+        findUnique: jest.fn(async ({ where }: any) => clientRows.get(where.id) ?? null),
+      },
       organizationMember: {
-        count: jest.fn(),
+        findMany: jest.fn(),
         findFirst: jest.fn(),
+      },
+      user: {
+        findUnique: jest.fn(),
       },
     }
     mockApiTokensService = {
@@ -39,47 +50,84 @@ describe('McpOAuthService', () => {
   })
 
   describe('Client Registration', () => {
-    it('should register a client and return it by id', () => {
-      const client = service.registerClient('Test App', ['https://example.com/callback'])
+    it('should store a client and return it by id', async () => {
+      const client = await service.registerClient('Test App', ['https://example.com/callback'])
       expect(client.clientName).toBe('Test App')
       expect(client.redirectUris).toEqual(['https://example.com/callback'])
-      expect(client.clientId).toHaveLength(32)
-      expect(service.getClient(client.clientId)).toBe(client)
+      expect(client.clientId).toMatch(/^[a-f0-9]{32}$/)
+      expect(mockData.mcpOAuthClient.create).toHaveBeenCalledWith({
+        data: {
+          id: client.clientId,
+          clientName: 'Test App',
+          redirectUris: ['https://example.com/callback'],
+        },
+        select: { id: true, clientName: true, redirectUris: true },
+      })
+      await expect(service.getClient(client.clientId)).resolves.toEqual(client)
     })
 
-    it('should return undefined for unknown client id', () => {
-      expect(service.getClient('nonexistent')).toBeUndefined()
+    it('should return undefined for an unknown client id, without a query for a non-DCR id', async () => {
+      await expect(service.getClient('0'.repeat(32))).resolves.toBeUndefined()
+      await expect(service.getClient('nonexistent')).resolves.toBeUndefined()
+      expect(mockData.mcpOAuthClient.findUnique).toHaveBeenCalledTimes(1)
     })
 
-    it('should register multiple clients independently', () => {
-      const a = service.registerClient('App A', [])
-      const b = service.registerClient('App B', [])
+    it('should register multiple clients independently', async () => {
+      const a = await service.registerClient('App A', ['https://a.example.com/cb'])
+      const b = await service.registerClient('App B', ['https://b.example.com/cb'])
       expect(a.clientId).not.toBe(b.clientId)
-      expect(service.getClient(a.clientId)?.clientName).toBe('App A')
-      expect(service.getClient(b.clientId)?.clientName).toBe('App B')
+      expect((await service.getClient(a.clientId))?.clientName).toBe('App A')
+      expect((await service.getClient(b.clientId))?.clientName).toBe('App B')
+    })
+
+    it('should bound the stored client name', async () => {
+      const client = await service.registerClient(`  ${'x'.repeat(500)}  `, [
+        'https://a.example.com/cb',
+      ])
+      expect(client.clientName).toHaveLength(200)
+      expect((await service.registerClient('   ', ['https://a.example.com/cb'])).clientName).toBe(
+        'MCP Client',
+      )
     })
   })
 
   describe('Client resolution for /authorize', () => {
     const cimdUrl = 'https://client.example.com/oauth/client.json'
 
-    it('knows DCR clients and URL-shaped client ids without a network request', () => {
-      const client = service.registerClient('App', ['https://app.example.com/cb'])
+    it('prechecks DCR clients and URL-shaped client ids without a network request', async () => {
+      const client = await service.registerClient('App', ['https://app.example.com/cb'])
       const resolve = jest.spyOn((service as any).clientMetadata, 'resolve')
 
-      expect(service.isKnownClientId(client.clientId)).toBe(true)
-      expect(service.isKnownClientId(cimdUrl)).toBe(true)
-      expect(service.isKnownClientId('unregistered')).toBe(false)
-      expect(service.isKnownClientId('http://client.example.com/client.json')).toBe(false)
+      await expect(
+        service.precheckClient(client.clientId, 'https://app.example.com/cb'),
+      ).resolves.toBeUndefined()
+      await expect(
+        service.precheckClient(client.clientId, 'https://evil.example.com/cb'),
+      ).rejects.toMatchObject({ error: 'invalid_request' })
+      await expect(
+        service.precheckClient(cimdUrl, 'https://client.example.com/cb'),
+      ).resolves.toBeUndefined()
+      await expect(service.precheckClient(cimdUrl, 'javascript:alert(1)')).rejects.toMatchObject({
+        error: 'invalid_request',
+      })
+      await expect(
+        service.precheckClient('unregistered', 'https://app.example.com/cb'),
+      ).rejects.toMatchObject({ error: 'invalid_client' })
+      await expect(
+        service.precheckClient(
+          'http://client.example.com/client.json',
+          'https://app.example.com/cb',
+        ),
+      ).rejects.toMatchObject({ error: 'invalid_client' })
       expect(resolve).not.toHaveBeenCalled()
     })
 
     it('accepts a DCR client only at a redirect_uri it registered', async () => {
-      const client = service.registerClient('App', ['https://app.example.com/cb'])
+      const client = await service.registerClient('App', ['https://app.example.com/cb'])
 
       await expect(
         service.resolveClientForRedirect(client.clientId, 'https://app.example.com/cb'),
-      ).resolves.toBe(client)
+      ).resolves.toEqual(client)
       await expect(
         service.resolveClientForRedirect(client.clientId, 'https://evil.example.com/cb'),
       ).rejects.toEqual(
@@ -88,11 +136,11 @@ describe('McpOAuthService', () => {
     })
 
     it('lets a loopback redirect use any port (RFC 8252)', async () => {
-      const client = service.registerClient('CLI', ['http://127.0.0.1:33418/callback'])
+      const client = await service.registerClient('CLI', ['http://127.0.0.1:33418/callback'])
 
       await expect(
         service.resolveClientForRedirect(client.clientId, 'http://127.0.0.1:50123/callback'),
-      ).resolves.toBe(client)
+      ).resolves.toEqual(client)
       await expect(
         service.resolveClientForRedirect(client.clientId, 'http://127.0.0.1:50123/other'),
       ).rejects.toBeInstanceOf(OAuthClientError)
@@ -148,6 +196,12 @@ describe('McpOAuthService', () => {
       expect(service.validateRedirectUris(['http://app.example.com/cb'])).toBeNull()
       expect(service.validateRedirectUris(['javascript:alert(1)'])).toBeNull()
       expect(service.validateRedirectUris([42])).toBeNull()
+      expect(service.validateRedirectUris([`https://a.example.com/${'x'.repeat(2048)}`])).toBeNull()
+      expect(
+        service.validateRedirectUris(
+          Array.from({ length: 11 }, (_, i) => `https://a.example.com/${i}`),
+        ),
+      ).toBeNull()
     })
   })
 
@@ -189,8 +243,9 @@ describe('McpOAuthService', () => {
       clientId: 'client-1',
       redirectUri: 'https://example.com/cb',
       codeChallenge: 'challenge',
-      codeChallengeMethod: 'plain',
+      codeChallengeMethod: 'S256',
       scope: 'openid',
+      resource: 'https://api.example.com/api/mcp',
     }
 
     it('should create and consume an auth code', () => {
@@ -237,34 +292,141 @@ describe('McpOAuthService', () => {
       expect(service.verifyPkce('wrong', challenge, 'S256')).toBe(false)
     })
 
-    it('should verify plain code challenge correctly', () => {
-      expect(service.verifyPkce('secret', 'secret', 'plain')).toBe(true)
+    it('should refuse the plain method even when verifier equals challenge', () => {
+      expect(service.verifyPkce('secret', 'secret', 'plain')).toBe(false)
     })
 
-    it('should reject wrong verifier for plain', () => {
-      expect(service.verifyPkce('wrong', 'secret', 'plain')).toBe(false)
+    it('should accept only S256 with a well-formed challenge', () => {
+      const challenge = createHash('sha256').update('verifier').digest('base64url')
+      expect(service.isAcceptablePkce(challenge, 'S256')).toBe(true)
+      expect(service.isAcceptablePkce(challenge, 'plain')).toBe(false)
+      expect(service.isAcceptablePkce(challenge, undefined)).toBe(false)
+      expect(service.isAcceptablePkce(undefined, 'S256')).toBe(false)
+      expect(service.isAcceptablePkce('too-short', 'S256')).toBe(false)
+    })
+  })
+
+  describe('Pending Authorizations', () => {
+    const params = {
+      userId: 'user-1',
+      sessionId: 'session-1',
+      authGeneration: 2,
+      clientId: 'client-1',
+      clientName: 'Client',
+      redirectUri: 'https://example.com/cb',
+      state: null,
+      codeChallenge: 'challenge',
+      scope: 'openid',
+      requestedOrganizationId: null,
+      issuer: 'https://api.example.com/api/mcp',
+      resource: 'https://api.example.com/api/mcp',
+    }
+
+    it('should create a record with distinct random id and CSRF token and a 10 minute TTL', () => {
+      const before = Date.now()
+      const pending = service.createPendingAuthorization(params)
+      expect(pending.id).not.toBe(pending.csrfToken)
+      expect(pending.id.length).toBeGreaterThanOrEqual(43)
+      expect(pending.expiresAt.getTime() - before).toBeGreaterThanOrEqual(service.PENDING_TTL_MS)
+      expect(pending.expiresAt.getTime() - before).toBeLessThan(service.PENDING_TTL_MS + 1000)
+      expect(service.getPendingAuthorization(pending.id)).toBe(pending)
+    })
+
+    it('should be taken at most once', () => {
+      const pending = service.createPendingAuthorization(params)
+      expect(service.takePendingAuthorization(pending.id)).toBe(pending)
+      expect(service.takePendingAuthorization(pending.id)).toBeNull()
+      expect(service.getPendingAuthorization(pending.id)).toBeNull()
+    })
+
+    it('should expire', () => {
+      const pending = service.createPendingAuthorization(params)
+      const now = jest.spyOn(Date, 'now').mockReturnValue(pending.expiresAt.getTime())
+      try {
+        expect(service.takePendingAuthorization(pending.id)).toBeNull()
+      } finally {
+        now.mockRestore()
+      }
+    })
+
+    it('should bind to the user, session and auth generation that made it', () => {
+      const pending = service.createPendingAuthorization(params)
+      const claims = { userId: 'user-1', sessionId: 'session-1', authGeneration: 2 }
+      expect(service.isPendingBoundTo(pending, claims)).toBe(true)
+      expect(service.isPendingBoundTo(pending, { ...claims, userId: 'user-2' })).toBe(false)
+      expect(service.isPendingBoundTo(pending, { ...claims, sessionId: 'session-2' })).toBe(false)
+      expect(service.isPendingBoundTo(pending, { ...claims, sessionId: undefined })).toBe(false)
+      expect(service.isPendingBoundTo(pending, { ...claims, authGeneration: 3 })).toBe(false)
+    })
+
+    it('should compare the CSRF token exactly', () => {
+      const pending = service.createPendingAuthorization(params)
+      expect(service.isCsrfTokenValid(pending, pending.csrfToken)).toBe(true)
+      expect(service.isCsrfTokenValid(pending, `${pending.csrfToken}x`)).toBe(false)
+      expect(service.isCsrfTokenValid(pending, '')).toBe(false)
+      expect(service.isCsrfTokenValid(pending, undefined)).toBe(false)
+    })
+  })
+
+  describe('Redirect URI safety', () => {
+    // #64: the acceptable-form rule moved to validateRedirectUris (DCR) and precheckClient.
+    it.each(['https://example.com/cb', 'http://127.0.0.1:3333/cb', 'cursor://anysphere/cb'])(
+      'should accept %s',
+      uri => expect(service.validateRedirectUris([uri])).toEqual([uri]),
+    )
+
+    it.each([
+      'javascript:alert(1)',
+      'data:text/html,x',
+      'about:blank',
+      'not a url',
+      'https://example.com/cb#frag',
+    ])('should refuse %s', uri => expect(service.validateRedirectUris([uri])).toBeNull())
+  })
+
+  describe('Resource indicators (RFC 8707)', () => {
+    const base = 'https://api.example.com/api/mcp'
+
+    it('binds to this endpoint when resource is omitted or names it', () => {
+      expect(service.resolveResource(undefined, base)).toBe(base)
+      expect(service.resolveResource('', base)).toBe(base)
+      expect(service.resolveResource(base, base)).toBe(base)
+      expect(service.resolveResource('HTTPS://API.EXAMPLE.COM/api/mcp/', base)).toBe(base)
+    })
+
+    it('refuses any other resource', () => {
+      expect(service.resolveResource('https://api.example.com', base)).toBeNull()
+      expect(service.resolveResource('https://evil.example.com/api/mcp', base)).toBeNull()
+      expect(service.resolveResource(`${base}#x`, base)).toBeNull()
+      expect(service.resolveResource('mcp', base)).toBeNull()
     })
   })
 
   describe('Organization Resolution', () => {
-    it('should count user organizations', async () => {
-      mockData.organizationMember.count.mockResolvedValue(3)
-      const count = await service.countUserOrganizations('user-1')
-      expect(count).toBe(3)
-      expect(mockData.organizationMember.count).toHaveBeenCalledWith({
-        where: { userId: 'user-1' },
+    it('should list the user organizations oldest membership first', async () => {
+      mockData.organizationMember.findMany.mockResolvedValue([
+        { organization: { id: 'org-a', name: 'A' } },
+        { organization: { id: 'org-b', name: 'B' } },
+      ])
+      await expect(service.listUserOrganizations('user-1')).resolves.toEqual([
+        { id: 'org-a', name: 'A' },
+        { id: 'org-b', name: 'B' },
+      ])
+      expect(mockData.organizationMember.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({ where: { userId: 'user-1' }, orderBy: { createdAt: 'asc' } }),
+      )
+    })
+
+    it('should summarise the account with its primary email', async () => {
+      mockData.user.findUnique.mockResolvedValue({
+        firstName: 'Ada',
+        lastName: null,
+        emails: [{ email: 'ada@example.com' }],
       })
-    })
-
-    it('should resolve organization id for single-org user', async () => {
-      mockData.organizationMember.findFirst.mockResolvedValue({ organizationId: 'org-abc' })
-      const orgId = await service.resolveOrganizationId('user-1')
-      expect(orgId).toBe('org-abc')
-    })
-
-    it('should return null when user has no organizations', async () => {
-      mockData.organizationMember.findFirst.mockResolvedValue(null)
-      expect(await service.resolveOrganizationId('user-1')).toBeNull()
+      await expect(service.getAccountSummary('user-1')).resolves.toEqual({
+        name: 'Ada',
+        email: 'ada@example.com',
+      })
     })
 
     it('should validate org membership when member exists', async () => {
@@ -281,23 +443,31 @@ describe('McpOAuthService', () => {
   describe('Access Token Creation', () => {
     it('should create an org-scoped API token', async () => {
       mockApiTokensService.generateApiToken.mockResolvedValue({ token: 'plain-token-abc' } as any)
-      const token = await service.createAccessToken('user-1', 'org-1', 2)
+      const token = await service.createAccessToken(
+        'user-1',
+        'org-1',
+        2,
+        'https://api.example.com/api/mcp',
+      )
       expect(token).toBe('plain-token-abc')
-      // The token is bound to the generation of the session that authorized the code.
+      // The token is bound to the generation of the session that authorized the code, and to the
+      // MCP endpoint (RFC 8707).
       expect(mockApiTokensService.generateApiToken).toHaveBeenCalledWith(
         'user-1',
         expect.objectContaining({ organizationId: 'org-1' }),
         2,
+        { resource: 'https://api.example.com/api/mcp' },
       )
     })
 
     it('should create a token without org scope when organizationId is null', async () => {
       mockApiTokensService.generateApiToken.mockResolvedValue({ token: 'plain-token-xyz' } as any)
-      await service.createAccessToken('user-1', null, 0)
+      await service.createAccessToken('user-1', null, 0, 'https://api.example.com/api/mcp')
       expect(mockApiTokensService.generateApiToken).toHaveBeenCalledWith(
         'user-1',
         expect.objectContaining({ organizationId: undefined }),
         0,
+        { resource: 'https://api.example.com/api/mcp' },
       )
     })
   })

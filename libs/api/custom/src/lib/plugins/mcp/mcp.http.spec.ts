@@ -15,6 +15,8 @@ import { mcpRootWellKnownRewrite } from './mcp-well-known'
 
 const VALID_TOKEN = 'ab'.repeat(32)
 const REVOKED_TOKEN = 'cd'.repeat(32)
+const BOUND_HERE_TOKEN = 'ef'.repeat(32)
+const BOUND_ELSEWHERE_TOKEN = '12'.repeat(32)
 
 /**
  * The MCP endpoint over real HTTP: Express, the API's `api` prefix, its JSON body parser, the
@@ -35,11 +37,15 @@ describe('MCP over HTTP', () => {
     organizationMember: { count: jest.fn(), findFirst: jest.fn() },
   }
   const apiTokens = {
-    validateApiToken: jest.fn(async (token: string) =>
-      token === VALID_TOKEN
-        ? { tokenId: 'token-1', userId: 'user-123', organizationId: 'org-123' }
-        : null,
-    ),
+    validateApiToken: jest.fn(async (token: string) => {
+      const base = { tokenId: 'token-1', userId: 'user-123', organizationId: 'org-123' }
+      if (token === VALID_TOKEN) return { ...base, resource: null }
+      if (token === BOUND_HERE_TOKEN) return { ...base, resource: `${origin}/api/mcp` }
+      if (token === BOUND_ELSEWHERE_TOKEN) {
+        return { ...base, resource: 'https://other.example.com/api/mcp' }
+      }
+      return null
+    }),
     generateApiToken: jest.fn(),
   }
 
@@ -133,6 +139,20 @@ describe('MCP over HTTP', () => {
 
     expect(response.status).toBe(401)
     expect(response.headers.get('www-authenticate')).toContain('error="invalid_token"')
+  })
+
+  it('accepts a token bound to this MCP endpoint, and refuses one bound elsewhere', async () => {
+    const call = (token: string) =>
+      fetch(`${origin}/api/mcp`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json', authorization: `Bearer ${token}` },
+        body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'tools/list' }),
+      })
+
+    expect((await call(BOUND_HERE_TOKEN)).status).toBe(200)
+    const elsewhere = await call(BOUND_ELSEWHERE_TOKEN)
+    expect(elsewhere.status).toBe(401)
+    expect(elsewhere.headers.get('www-authenticate')).toContain('error="invalid_token"')
   })
 
   it('negotiates 2026-07-28 with server/discover and calls a tool', async () => {
