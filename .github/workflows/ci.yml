@@ -53,6 +53,11 @@ jobs:
     env:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
       NX_DAEMON: false
+      # Nx Cloud remote cache, per Nx's recommendation: pushes to develop (a protected branch) use the
+      # read-write token; pull requests use the read-only token, which gives each PR its own scoped
+      # cache so PR code can never write into the cache develop trusts. A fork's PR gets no secrets
+      # and runs with the anonymous access the workspace allows (none).
+      NX_CLOUD_ACCESS_TOKEN: ${{ github.event_name == 'push' && secrets.NX_CLOUD_ACCESS_TOKEN || secrets.NX_CLOUD_ACCESS_TOKEN_READ }}
       # Surfaced at job scope so the SonarCloud steps below can gate on its presence.
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
