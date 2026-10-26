@@ -376,30 +376,9 @@ export class ClientMetadataResolver {
     this.cache.delete(clientId)
 
     const url = new URL(clientId)
-    const hostname = bareHostname(url)
     // Resolve once. The connection below goes to the address checked here, not to a second lookup.
-    let addresses: string[]
-    try {
-      addresses = isIP(hostname) ? [hostname] : await this.resolveHostname(hostname)
-    } catch (err) {
-      if (err instanceof ClientMetadataError) throw err
-      throw new ClientMetadataError('Client metadata document host could not be resolved')
-    }
-    if (addresses.length === 0 || !addresses.every(isPublicAddress)) {
-      throw new ClientMetadataError('Client metadata document host is not a public address')
-    }
-
-    let fetched: FetchedDocument
-    try {
-      fetched = await this.fetchDocument(url, addresses[0])
-    } catch (err) {
-      if (err instanceof ClientMetadataError) throw err
-      throw new ClientMetadataError('Client metadata document could not be fetched')
-    }
-    if (fetched.status < 200 || fetched.status >= 300) {
-      throw new ClientMetadataError(`Client metadata document fetch failed (${fetched.status})`)
-    }
-
+    const address = await this.checkedAddress(bareHostname(url))
+    const fetched = await this.fetchFrom(url, address)
     const document = parseClientMetadataDocument(clientId, fetched.body)
 
     const lifetime = cacheLifetimeMs(fetched.cacheControl)
@@ -411,5 +390,35 @@ export class ClientMetadataResolver {
       this.cache.set(clientId, { document, expiresAt: this.now() + lifetime })
     }
     return document
+  }
+
+  /** The address to connect to: the host's own, after checking every address it resolves to. */
+  private async checkedAddress(hostname: string): Promise<string> {
+    let addresses: string[]
+    try {
+      addresses = isIP(hostname) ? [hostname] : await this.resolveHostname(hostname)
+    } catch (err) {
+      if (err instanceof ClientMetadataError) throw err
+      throw new ClientMetadataError('Client metadata document host could not be resolved')
+    }
+    if (addresses.length === 0 || !addresses.every(isPublicAddress)) {
+      throw new ClientMetadataError('Client metadata document host is not a public address')
+    }
+    return addresses[0]
+  }
+
+  /** The document fetched from `address`, which must answer 2xx. */
+  private async fetchFrom(url: URL, address: string): Promise<FetchedDocument> {
+    let fetched: FetchedDocument
+    try {
+      fetched = await this.fetchDocument(url, address)
+    } catch (err) {
+      if (err instanceof ClientMetadataError) throw err
+      throw new ClientMetadataError('Client metadata document could not be fetched')
+    }
+    if (fetched.status < 200 || fetched.status >= 300) {
+      throw new ClientMetadataError(`Client metadata document fetch failed (${fetched.status})`)
+    }
+    return fetched
   }
 }

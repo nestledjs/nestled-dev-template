@@ -162,16 +162,6 @@ describe('Client ID Metadata Documents', () => {
   })
 
   describe('ClientMetadataResolver', () => {
-    it('answers a lookup that fails as a metadata error, without fetching', async () => {
-      const fetchDocument = jest.fn()
-      const instance = new ClientMetadataResolver(fetchDocument, async () => {
-        throw Object.assign(new Error('getaddrinfo ENOTFOUND'), { code: 'ENOTFOUND' })
-      })
-
-      await expect(instance.resolve(CLIENT_ID)).rejects.toThrow('could not be resolved')
-      expect(fetchDocument).not.toHaveBeenCalled()
-    })
-
     const PUBLIC_ADDRESS = '93.184.215.14'
     const publicHost = jest.fn(async () => [PUBLIC_ADDRESS])
     let now: number
@@ -183,6 +173,16 @@ describe('Client ID Metadata Documents', () => {
       now = 1_000_000
       fetchMock = jest.fn(async () => fetched(validDocument()))
       publicHost.mockClear()
+    })
+
+    it('answers a lookup that fails as a metadata error, without fetching', async () => {
+      const fetchDocument = jest.fn()
+      const instance = new ClientMetadataResolver(fetchDocument, async () => {
+        throw Object.assign(new Error('getaddrinfo ENOTFOUND'), { code: 'ENOTFOUND' })
+      })
+
+      await expect(instance.resolve(CLIENT_ID)).rejects.toThrow('could not be resolved')
+      expect(fetchDocument).not.toHaveBeenCalled()
     })
 
     it('fetches the document from the address it checked, and returns the client', async () => {
