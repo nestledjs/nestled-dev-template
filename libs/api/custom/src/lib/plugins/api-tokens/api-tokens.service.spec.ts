@@ -611,7 +611,9 @@ describe('ApiTokensService', () => {
     })
     it('should handle lastUsedAt update failure gracefully', async () => {
       mockData.apiToken.update.mockRejectedValue(new Error('Database error'))
-      const logError = jest.spyOn((service as any).logger, 'error').mockImplementation(() => {})
+      const logError = jest
+        .spyOn((service as any).logger, 'error')
+        .mockImplementation(() => undefined)
 
       expect(() => service.recordTokenUse('token-123')).not.toThrow()
       await new Promise(resolve => setImmediate(resolve))
