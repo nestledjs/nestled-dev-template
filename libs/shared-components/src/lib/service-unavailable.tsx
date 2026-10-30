@@ -6,7 +6,14 @@ export interface ServiceUnavailableProps {
   title?: string
   message?: string
   header?: React.ReactNode
+  /**
+   * The button's text. Defaults to "Refresh Page"; pass something like "Try again" when
+   * `onRefresh` retries instead of reloading.
+   */
+  refreshLabel?: string
 }
+
+const DEFAULT_REFRESH_LABEL = 'Refresh Page'
 
 export function ServiceUnavailable({
   showRefreshButton = true,
@@ -14,6 +21,7 @@ export function ServiceUnavailable({
   title = 'Service Unavailable',
   message = 'Our servers are currently unreachable. Please check your internet connection or try again in a few minutes.',
   header,
+  refreshLabel = DEFAULT_REFRESH_LABEL,
 }: Readonly<ServiceUnavailableProps>) {
   const handleRefresh = () => {
     if (onRefresh) {
@@ -49,7 +57,7 @@ export function ServiceUnavailable({
           onClick={handleRefresh}
           className="mt-6 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
         >
-          Refresh Page
+          {refreshLabel}
         </button>
       )}
     </div>

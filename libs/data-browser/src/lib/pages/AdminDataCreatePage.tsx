@@ -2,7 +2,10 @@ import React, { useEffect, useMemo, useState } from 'react'
 import { gql } from '@apollo/client'
 import { useMutation } from '@apollo/client/react'
 import { CheckCircleIcon, ExclamationCircleIcon } from '@heroicons/react/24/outline'
-import { ErrorBoundary } from '@nestledjs/shared-components'
+import {
+  AdminRouteErrorBoundary,
+  type AdminDataErrorBoundaryProps,
+} from '../components/AdminRecoveringErrorBoundary'
 import { Form } from '@nestledjs/forms'
 import { useAdminDataContext } from '../context/AdminDataContext'
 import { Link, useNavigate, useParams } from 'react-router'
@@ -421,6 +424,7 @@ function AdminDataCreatePageContent({
   )
 }
 
-export function AdminDataCreateErrorBoundary({ error }: Readonly<{ error: Error }>) {
-  return <ErrorBoundary error={error} />
+/** Route error boundary: a network error recovers by itself (see AdminRouteErrorBoundary). */
+export function AdminDataCreateErrorBoundary({ error, probe }: AdminDataErrorBoundaryProps) {
+  return <AdminRouteErrorBoundary error={error} probe={probe} />
 }
