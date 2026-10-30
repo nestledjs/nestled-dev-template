@@ -4,7 +4,10 @@ import { useMutation, useQuery } from '@apollo/client/react'
 import { loadDevMessages, loadErrorMessages } from '@apollo/client/dev'
 import { CheckCircleIcon, ExclamationCircleIcon } from '@heroicons/react/24/outline'
 import { TrashIcon } from '@heroicons/react/24/solid'
-import { ErrorBoundary } from '@nestledjs/shared-components'
+import {
+  AdminRouteErrorBoundary,
+  type AdminDataErrorBoundaryProps,
+} from '../components/AdminRecoveringErrorBoundary'
 import { Form } from '@nestledjs/forms'
 import { formatLocalDateTime } from '@nestledjs/forms-core'
 import { useAdminDataContext } from '../context/AdminDataContext'
@@ -881,6 +884,7 @@ function AdminDataEditPageContent({
   )
 }
 
-export function AdminDataEditErrorBoundary({ error }: Readonly<{ error: Error }>) {
-  return <ErrorBoundary error={error} />
+/** Route error boundary: a network error recovers by itself (see AdminRouteErrorBoundary). */
+export function AdminDataEditErrorBoundary({ error, probe }: AdminDataErrorBoundaryProps) {
+  return <AdminRouteErrorBoundary error={error} probe={probe} />
 }
