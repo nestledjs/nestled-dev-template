@@ -4,7 +4,7 @@ title: >-
   and an MCP plugin README on Cloudflare bot protection
 priority: low
 area: api
-type: maintenance
+type: cleanup
 delivery: code-patch
 
 intent: >
