@@ -60,7 +60,9 @@ intent: >
     Apollo query whose last result is a transport error (not `CombinedGraphQLErrors`, so a
     forbidden or validation error is not retried), and `useRefetchFailedQueries()` does it on the
     browser `online` event and when the tab becomes visible, and returns a function to do it on
-    demand. `useApiAvailability` takes a new `onBlipCleared` callback, called when a reported
+    demand. Refetches are spaced with the probe's backoff (2 s doubling to 30 s), reset only when a
+    pass finds no failed query, and a request inside the window is deferred, not dropped; without
+    that, an API whose /api/uptime answers while /graphql keeps failing refetched in a tight loop. `useApiAvailability` takes a new `onBlipCleared` callback, called when a reported
     failure turns out to be a blip (the API answered before the screen went up).
   - apps/web/app/app.tsx: `App` calls `useRefetchFailedQueries()` and passes it as
     `onBlipCleared` and from `onRecover`. Before this, a query that failed during a blip too short

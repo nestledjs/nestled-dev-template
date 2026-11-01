@@ -19,7 +19,9 @@ import {
   retryDelayMs,
   trimTrailingSlashes,
   useApiAvailability,
+  useRefetchFailedQueries,
 } from '../app/api-availability'
+import { ApolloProvider } from '@apollo/client/react'
 import { CombinedGraphQLErrors } from '@apollo/client'
 import { RecoveringApiUnavailable } from '../app/api-unavailable'
 
@@ -342,6 +344,63 @@ describe('refetchFailedQueries', () => {
     expect(network.refetch).toHaveBeenCalledTimes(1)
     expect(graphql.refetch).not.toHaveBeenCalled()
     expect(healthy.refetch).not.toHaveBeenCalled()
+  })
+})
+
+describe('useRefetchFailedQueries', () => {
+  beforeEach(() => {
+    vi.useFakeTimers()
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
+  it('backs off while the same queries keep failing, and resets once they succeed', async () => {
+    let failing = true
+    const failed = {
+      getCurrentResult: () => ({ error: failing ? new TypeError('Failed to fetch') : undefined }),
+      refetch: vi.fn().mockResolvedValue({}),
+    }
+    const client = { getObservableQueries: () => new Set([failed]) }
+    let refetch: () => void = () => undefined
+    function Harness() {
+      refetch = useRefetchFailedQueries()
+      return null
+    }
+    // Only the client's getObservableQueries is used; the rest of ApolloClient is not needed.
+    render(
+      <ApolloProvider client={client as never}>
+        <Harness />
+      </ApolloProvider>,
+    )
+
+    // A burst of requests (each a "blip" from a failing /graphql) refetches once, not each time.
+    act(() => {
+      refetch()
+      refetch()
+      refetch()
+    })
+    expect(failed.refetch).toHaveBeenCalledTimes(1)
+
+    // The next is deferred to the end of the 2 s window, then 4 s.
+    act(() => refetch())
+    expect(failed.refetch).toHaveBeenCalledTimes(1)
+    await advance(retryDelayMs(0))
+    expect(failed.refetch).toHaveBeenCalledTimes(2)
+    act(() => refetch())
+    await advance(retryDelayMs(1) - 1)
+    expect(failed.refetch).toHaveBeenCalledTimes(2)
+    await advance(1)
+    expect(failed.refetch).toHaveBeenCalledTimes(3)
+
+    // Once nothing is failing the backoff resets: the next request runs at once.
+    failing = false
+    await advance(retryDelayMs(2))
+    act(() => refetch())
+    failing = true
+    act(() => refetch())
+    expect(failed.refetch).toHaveBeenCalledTimes(4)
   })
 })
 

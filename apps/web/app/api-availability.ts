@@ -280,12 +280,37 @@ export function refetchFailedQueries(client: Pick<ApolloClient, 'getObservableQu
  * Refetch failed queries when the browser comes back online or the tab is shown again, and hand
  * back a function to do it on demand (after a blip, or when the outage screen clears). A no-op
  * outside an ApolloProvider.
+ *
+ * Refetches are spaced with the same backoff as the probe (2 s doubling to 30 s), reset only when
+ * a pass finds no failed query left. Without it, an API whose liveness route answers while
+ * GraphQL keeps failing looped: each failure reported a blip, the probe succeeded at once, and
+ * the same queries were refetched straight away, forever. A request that arrives inside the
+ * backoff window is deferred to the end of it, not dropped.
  */
 export function useRefetchFailedQueries(): () => void {
   const client = useContext(getApolloContext()).client
-  const refetch = useCallback(() => {
-    if (client) refetchFailedQueries(client)
+  const attemptRef = useRef(0)
+  const nextAllowedAtRef = useRef(0)
+  const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
+
+  const run = useCallback(() => {
+    timerRef.current = undefined
+    if (!client) return
+    if (refetchFailedQueries(client) === 0) {
+      attemptRef.current = 0
+      nextAllowedAtRef.current = 0
+      return
+    }
+    nextAllowedAtRef.current = Date.now() + retryDelayMs(attemptRef.current)
+    attemptRef.current += 1
   }, [client])
+
+  const refetch = useCallback(() => {
+    if (timerRef.current !== undefined) return
+    const wait = nextAllowedAtRef.current - Date.now()
+    if (wait <= 0) run()
+    else timerRef.current = setTimeout(run, wait)
+  }, [run])
 
   useEffect(() => {
     const handleVisible = () => {
@@ -296,6 +321,8 @@ export function useRefetchFailedQueries(): () => void {
     return () => {
       globalThis.removeEventListener('online', refetch)
       document.removeEventListener('visibilitychange', handleVisible)
+      if (timerRef.current !== undefined) clearTimeout(timerRef.current)
+      timerRef.current = undefined
     }
   }, [refetch])
 
