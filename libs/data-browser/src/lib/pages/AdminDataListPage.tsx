@@ -1,6 +1,10 @@
 import React, { useCallback, useEffect, useMemo } from 'react'
 import { useQuery } from '@apollo/client/react'
-import { DataTable, ErrorBoundary } from '@nestledjs/shared-components'
+import { DataTable } from '@nestledjs/shared-components'
+import {
+  AdminRouteErrorBoundary,
+  type AdminDataErrorBoundaryProps,
+} from '../components/AdminRecoveringErrorBoundary'
 import { getPluralName } from '../utils/get-plural-names'
 import { AdminLocalStorage } from '../utils/secure-storage'
 import { formatFieldName, kebabCase } from '../utils/string-utils'
@@ -970,6 +974,7 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
   )
 }
 
-export function AdminDataErrorBoundary({ error }: Readonly<{ error: Error }>) {
-  return <ErrorBoundary error={error} />
+/** Route error boundary: a network error recovers by itself (see AdminRouteErrorBoundary). */
+export function AdminDataErrorBoundary({ error, probe }: AdminDataErrorBoundaryProps) {
+  return <AdminRouteErrorBoundary error={error} probe={probe} />
 }

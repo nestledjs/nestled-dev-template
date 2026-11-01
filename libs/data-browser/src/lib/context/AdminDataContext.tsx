@@ -12,6 +12,12 @@ export interface DisplayFieldConfig {
   }
 }
 
+/**
+ * Resolves true when the API answers. The admin error boundary calls it, with backoff, while it
+ * shows "Can't reach the server", and revalidates the route once it succeeds.
+ */
+export type AdminApiProbe = () => Promise<boolean>
+
 export interface AdminDataContextValue {
   /** The SDK namespace for dynamic GraphQL document lookups */
   sdk: any
@@ -23,6 +29,8 @@ export interface AdminDataContextValue {
   formTheme: any
   /** Optional configuration for display and search fields per model */
   displayFieldConfig?: DisplayFieldConfig
+  /** Optional API reachability check for the admin error boundary's recovery */
+  probe?: AdminApiProbe
 }
 
 const AdminDataContext = createContext<AdminDataContextValue | null>(null)
@@ -39,6 +47,13 @@ export interface AdminDataProviderProps {
   formTheme: any
   /** Optional configuration for display and search fields per model */
   displayFieldConfig?: DisplayFieldConfig
+  /**
+   * Optional API reachability check (resolves true when the API answers) used by the admin error
+   * boundary to recover from "Can't reach the server" by itself. Pass the app's own probe, for
+   * example one that GETs the API's public `/api/uptime`. Without it the boundary retries by
+   * revalidating the route with backoff while the browser is online.
+   */
+  probe?: AdminApiProbe
 }
 
 /**
@@ -67,10 +82,11 @@ export function AdminDataProvider({
   basePath = '/admin/data',
   formTheme,
   displayFieldConfig,
+  probe,
 }: Readonly<AdminDataProviderProps>) {
   const value = useMemo(
-    () => ({ sdk, databaseModels, basePath, formTheme, displayFieldConfig }),
-    [sdk, databaseModels, basePath, formTheme, displayFieldConfig],
+    () => ({ sdk, databaseModels, basePath, formTheme, displayFieldConfig, probe }),
+    [sdk, databaseModels, basePath, formTheme, displayFieldConfig, probe],
   )
 
   return <AdminDataContext.Provider value={value}>{children}</AdminDataContext.Provider>
@@ -89,4 +105,9 @@ export function useAdminDataContext() {
     )
   }
   return context
+}
+
+/** The admin data context, or null outside AdminDataProvider (error boundaries use this). */
+export function useOptionalAdminDataContext(): AdminDataContextValue | null {
+  return useContext(AdminDataContext)
 }
