@@ -429,4 +429,10 @@ describe('subscriptionRetryDelayMs', () => {
   it('adds under a second of jitter', () => {
     expect(subscriptionRetryDelayMs(0, 0.999)).toBe(2999)
   })
+
+  it('draws the default jitter from the platform CSPRNG', () => {
+    const delay = subscriptionRetryDelayMs(0)
+    expect(delay).toBeGreaterThanOrEqual(2000)
+    expect(delay).toBeLessThan(3000)
+  })
 })
