@@ -187,7 +187,6 @@
     "stylus": "github:stylus/stylus#0.64.0",
     "tailwind-merge": "^3.6.0",
     "twilio": "^6.0.2",
-    "type-graphql": "2.0.0-rc.3",
     "uuid": "^14.0.1",
     "ws": "^8.21.3",
     "zod": "3.25.56",
@@ -369,7 +368,6 @@
       "nx",
       "prisma",
       "prisma-graphql-type-decimal",
-      "type-graphql",
       "unrs-resolver"
     ]
   },
