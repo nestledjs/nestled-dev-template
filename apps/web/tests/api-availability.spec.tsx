@@ -663,7 +663,9 @@ describe('signed-in user after a connectivity blip', () => {
   it('signs the user back in once the API answers, without a navigation', async () => {
     apiUp()
     const app = await renderSignedIn([fails(new TypeError('Failed to fetch')), signedIn])
-    expect(screen.getByText('Signed out')).toBeInTheDocument()
+    // Waiting on the retry, not rendered as signed out (which a signed-in layout turns into logout).
+    expect(screen.getByRole('heading', { name: SERVER_DOWN })).toBeInTheDocument()
+    expect(screen.queryByText('Signed out')).not.toBeInTheDocument()
 
     await advance(CONFIRM_WINDOW_MS)
 

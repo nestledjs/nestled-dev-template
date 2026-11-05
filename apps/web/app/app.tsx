@@ -19,16 +19,25 @@ type MeQueryErrorBoundaryProps = {
   resetKey?: unknown
   /** Told what the Me query failed with, so a connectivity failure can be retried on recovery. */
   onError?: (error: unknown) => void
+  /**
+   * Rendered while a Me query that failed for want of a connection waits to be retried. It must
+   * not be the signed-out outlet: a signed-in layout reads `user: null` as "not authenticated" and
+   * sends the browser to /force-logout, which clears the session cookie before the retry can sign
+   * the user back in.
+   */
+  recoveringFallback?: ReactNode
 }
 
-class MeQueryErrorBoundary extends Component<MeQueryErrorBoundaryProps, { hasError: boolean }> {
+type MeQueryErrorBoundaryState = { hasError: boolean; connectivityFailure: boolean }
+
+class MeQueryErrorBoundary extends Component<MeQueryErrorBoundaryProps, MeQueryErrorBoundaryState> {
   constructor(props: MeQueryErrorBoundaryProps) {
     super(props)
-    this.state = { hasError: false }
+    this.state = { hasError: false, connectivityFailure: false }
   }
 
-  static getDerivedStateFromError() {
-    return { hasError: true }
+  static getDerivedStateFromError(error: unknown): MeQueryErrorBoundaryState {
+    return { hasError: true, connectivityFailure: isRetryableConnectivityError(error) }
   }
 
   componentDidCatch(error: unknown) {
@@ -39,11 +48,16 @@ class MeQueryErrorBoundary extends Component<MeQueryErrorBoundaryProps, { hasErr
   // preload left the whole session rendering as signed out until a full page load.
   componentDidUpdate(prevProps: MeQueryErrorBoundaryProps) {
     if (this.state.hasError && prevProps.resetKey !== this.props.resetKey) {
-      this.setState({ hasError: false })
+      this.setState({ hasError: false, connectivityFailure: false })
     }
   }
 
   render() {
+    if (this.state.hasError && this.state.connectivityFailure && this.props.recoveringFallback) {
+      return this.props.recoveringFallback
+    }
+    // Any other failure (a 401 among them) renders as signed out, as before: the error link and the
+    // signed-in layout's redirect take it through logout.
     if (this.state.hasError) {
       return (
         <GlobalContextProvider user={null}>
@@ -99,6 +113,15 @@ export function App() {
       meFailedOfflineRef.current = false
       void revalidator.revalidate()
     }, delay)
+  }
+  // The recovering screen's button: retry the Me query now instead of waiting out the backoff.
+  // While the failure is still being confirmed there is no timer yet and the probe decides.
+  const retryMeQueryNow = () => {
+    if (!meFailedOfflineRef.current || meRetry.current.timer === undefined) return
+    clearTimeout(meRetry.current.timer)
+    meRetry.current.timer = undefined
+    meFailedOfflineRef.current = false
+    void revalidator.revalidate()
   }
   useEffect(() => {
     const retry = meRetry.current
@@ -237,7 +260,19 @@ export function App() {
   }
   // Only call useReadQuery if meQueryRef is present
   return (
-    <MeQueryErrorBoundary resetKey={meQueryRef} onError={handleMeQueryError}>
+    <MeQueryErrorBoundary
+      resetKey={meQueryRef}
+      onError={handleMeQueryError}
+      recoveringFallback={
+        <ApiUnavailableScreen
+          offline={api.offline}
+          onRetry={() => {
+            api.retryNow()
+            retryMeQueryNow()
+          }}
+        />
+      }
+    >
       <AppWithUser meQueryRef={meQueryRef} onLoaded={handleMeLoaded} />
     </MeQueryErrorBoundary>
   )
