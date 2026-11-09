@@ -890,6 +890,49 @@ describe('probeConnectivity', () => {
   })
 })
 
+describe('useApiAvailability reason ordering', () => {
+  beforeEach(() => {
+    vi.useFakeTimers()
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+    vi.restoreAllMocks()
+  })
+
+  it('keeps offline when a probe started online finishes after the offline event', async () => {
+    let finishProbe: (result: { reachable: boolean; reason: 'server' }) => void = () => undefined
+    const probe = vi.fn(
+      () =>
+        new Promise<{ reachable: boolean; reason: 'server' }>(resolve => {
+          finishProbe = resolve
+        }),
+    )
+    let report: () => void = () => undefined
+    function Harness() {
+      const api = useApiAvailability({ probe })
+      report = api.reportConnectivityError
+      return <p>reason: {api.reason}</p>
+    }
+    render(<Harness />)
+
+    await act(async () => report())
+    await advance(0)
+    expect(probe).toHaveBeenCalledTimes(1)
+
+    // The connection drops while that probe is still in flight.
+    vi.spyOn(navigator, 'onLine', 'get').mockReturnValue(false)
+    await act(async () => {
+      globalThis.dispatchEvent(new Event('offline'))
+    })
+    expect(screen.getByText('reason: offline')).toBeInTheDocument()
+
+    // The older probe then answers with a proxy's 503 ("server").
+    await act(async () => finishProbe({ reachable: false, reason: 'server' }))
+    expect(screen.getByText('reason: offline')).toBeInTheDocument()
+  })
+})
+
 describe('useApiAvailability after an effect replay', () => {
   beforeEach(() => {
     vi.useFakeTimers()

@@ -251,8 +251,9 @@ export function useApiAvailability(options: ApiAvailabilityOptions = {}): ApiAva
     if (!mountedRef.current) return
     const reachable = result.reachable
     // Re-checked on every probe, so the message follows the user from offline to server trouble
-    // and back as conditions change.
-    if (!reachable) setReason(result.reason ?? (browserIsOffline() ? 'offline' : 'server'))
+    // and back as conditions change. The browser's offline flag wins over the probe's answer: a
+    // probe started while online can finish (with a proxy's 503, say) after the `offline` event.
+    if (!reachable) setReason(browserIsOffline() ? 'offline' : (result.reason ?? 'server'))
 
     const current = phaseRef.current
     if (reachable) {
