@@ -38,7 +38,11 @@ intent: >
   - `api-e2e`: the API e2e run with the Postgres and Redis services, 6 GB heap,
     `E2E_API_START_TIMEOUT_SECONDS: 300`. On a pull request it runs only when `affected` says so.
   - `generated-artifacts`: runs `pnpm db-update` (with the compose images pulled from Google's
-    Docker Hub mirror and retagged) and fails if any tracked file changed.
+    Docker Hub mirror and retagged) and fails if any tracked file changed. scripts/db-update.mjs
+    now drops `NX_CLOUD_ACCESS_TOKEN` and `NX_CLOUD_AUTH_TOKEN` from the environment of its API
+    build and sets `NX_NO_CLOUD=true`, instead of replacing them with the `db-update-disabled`
+    placeholder it gives every other credential: with the placeholder, Nx refused to run
+    ("Workspace is unable to be authorized"), in CI and on any machine with the token in `.env`.
   - `sonar`: needs only the three test jobs, runs when none failed or was cancelled (a skipped
     `api-e2e` is fine), downloads `coverage-*` with `merge-multiple: true`, normalizes the lcov
     paths and scans with `SonarSource/sonarqube-scan-action` (the deprecated
@@ -80,6 +84,7 @@ affectedPaths:
   - .github/actions/setup/action.yml
   - .github/actions/nx-base/action.yml
   - .gitleaks.toml
+  - scripts/db-update.mjs
   - apps/api-e2e/src/support/global-setup.ts
   - apps/api-e2e/src/support/api-readiness.ts
   - apps/api-e2e/src/support/api-readiness.spec.ts
