@@ -54,5 +54,3 @@ ships.
   projects.
 - If something identifying is published anyway, edit it out and tell a maintainer. Edited text keeps
   its revision history, and only an owner can delete that.
-
-<!-- temporary: CI affected-gate check, reverted in the next commit -->
