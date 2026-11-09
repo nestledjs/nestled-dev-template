@@ -13,7 +13,7 @@ intent: >
   these jobs:
 
   - `affected` (Affected): on a pull request, asks Nx whether `api-e2e` is affected
-    (`nx show projects --affected` and an exact-line membership check, not `--projects`, which
+    (`nx show projects --affected --json | jq -r '.[]'` and an exact-line membership check, not `--projects`, which
     `nx affected` forwards to every task as an override). On a push it always says yes.
   - `static` (Static checks): the nxCloudId guard, the public content guard tests,
     `template:validate-upgrade-notes`, `nestled-doctor`, `prettier --check .`, the three

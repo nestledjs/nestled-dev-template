@@ -78,7 +78,8 @@ jobs:
       - uses: ./.github/actions/setup
       - uses: ./.github/actions/nx-base
       # A membership check, not `--projects`: `nx affected` forwards an unknown --projects flag to
-      # every task as an override instead of filtering by it.
+      # every task as an override instead of filtering by it. --json, because Nx prints a JSON array
+      # instead of one name per line when it detects an AI agent's environment.
       - id: affected
         run: |
           set -euo pipefail
@@ -87,7 +88,7 @@ jobs:
             echo "Not a pull request: every suite runs."
             exit 0
           fi
-          projects="$(pnpm exec nx show projects --affected)"
+          projects="$(pnpm exec nx show projects --affected --json | jq -r '.[]')"
           echo "Affected projects:"; echo "$projects"
           if printf '%s\n' "$projects" | grep -qx api-e2e; then
             echo "api_e2e=true" >> "$GITHUB_OUTPUT"
@@ -229,7 +230,7 @@ jobs:
       - name: Build api when affected
         run: |
           set -euo pipefail
-          projects="$(pnpm exec nx show projects --affected -t build)"
+          projects="$(pnpm exec nx show projects --affected -t build --json | jq -r '.[]')"
           if printf '%s\n' "$projects" | grep -qx api; then
             pnpm exec nx run api:build
           else
