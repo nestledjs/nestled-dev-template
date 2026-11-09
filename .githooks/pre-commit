@@ -39,7 +39,7 @@ fi
 # .gitleaks.toml at the repository root. A finding blocks the commit: remove the secret from the
 # staged change (and rotate it if it was real). A false positive goes in .gitleaks.toml's allowlist.
 if command -v gitleaks >/dev/null 2>&1; then
-  gitleaks git --pre-commit --staged --redact --no-banner --log-level warn
+  gitleaks git --pre-commit --staged --redact --no-banner --verbose --log-level warn
 else
   echo "pre-commit: gitleaks is not installed; secret scan skipped (CI runs it)." >&2
 fi
