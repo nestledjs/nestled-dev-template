@@ -13,8 +13,8 @@
 // anonymously; a private one needs SONAR_TOKEN in the environment (a user token with Browse on the
 // project). SONAR_HOST_URL overrides https://sonarcloud.io for a self-hosted SonarQube.
 
-import { readFileSync, writeFileSync } from 'node:fs'
-import { dirname, join } from 'node:path'
+import { readFileSync, realpathSync, writeFileSync } from 'node:fs'
+import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const workspaceRoot = dirname(dirname(fileURLToPath(import.meta.url)))
@@ -40,6 +40,21 @@ export const DEFAULT_EXCLUDE_TAGS = [
   'sinon',
   'underscore.js',
   'vue',
+]
+
+// A rule tagged for an unused framework is still kept when it is also tagged for one this codebase
+// does use: a test rule tagged `mocha` and `jest` applies to the Jest and Vitest specs here.
+export const KEEP_TAGS = [
+  'express.js',
+  'jest',
+  'jsx',
+  'node',
+  'nodejs',
+  'playwright',
+  'react',
+  'supertest',
+  'testing-library',
+  'vitest',
 ]
 
 const SEVERITY_ORDER = ['BLOCKER', 'CRITICAL', 'MAJOR', 'MINOR', 'INFO']
@@ -99,10 +114,12 @@ export function compareRules(a, b) {
   return bySeverity || ruleNumber(a.key) - ruleNumber(b.key) || a.key.localeCompare(b.key)
 }
 
-/** Splits the rules into the digest's sections, leaving out the excluded tags. */
+/** Splits the rules into the digest's sections, leaving out rules only for excluded frameworks. */
 export function groupRules(rules, excludeTags = DEFAULT_EXCLUDE_TAGS) {
   const excluded = new Set(excludeTags)
-  const kept = rules.filter(rule => !rule.tags.some(tag => excluded.has(tag)))
+  const isExcluded = rule =>
+    rule.tags.some(tag => excluded.has(tag)) && !rule.tags.some(tag => KEEP_TAGS.includes(tag))
+  const kept = rules.filter(rule => !isExcluded(rule))
   const sections = SECTIONS.map(section => ({ title: section.title, rules: [] }))
   for (const rule of kept) {
     const index = SECTIONS.findIndex(section => section.matches(rule))
@@ -280,5 +297,8 @@ export async function main(
   return 0
 }
 
-const isMain = process.argv[1] && import.meta.url === new URL(`file://${process.argv[1]}`).href
+// Compared as real filesystem paths: a URL built from argv would misread `#` or `%` in the checkout
+// path, and Node resolves a symlinked script to its target.
+const isMain =
+  process.argv[1] && fileURLToPath(import.meta.url) === realpathSync(resolve(process.argv[1]))
 if (isMain) process.exitCode = await main()

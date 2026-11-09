@@ -33,9 +33,10 @@ permissions:
 # large job-wide heap with three compilers running lets the machine run out of memory first; the
 # runner then stops answering ("The hosted runner lost communication with the server") and GitHub
 # gives up on it only much later. Each job below sets a per-process heap that its parallelism fits
-# into the machine (heap x parallelism + 1 GB stays under 7.9 GB): 2-3 GB where two or three run at
-# once, more only for a process that is alone on its machine. Raise a heap only together with a
-# lower --parallel.
+# into the machine (heap x parallelism + 1 GB stays under 7.9 GB): 2 GB at three at once, 3 GB at
+# two at once, more only for a process that is alone on its machine. Raise a heap only together
+# with a lower --parallel. Test runners start worker processes that inherit NODE_OPTIONS; the cap
+# bounds each one, and none comes near it in practice.
 #
 # The runner label comes from the CI_RUNNER repository variable (Settings > Secrets and variables >
 # Actions > Variables), so moving every job to another runner is a setting, not a workflow change.
@@ -80,6 +81,7 @@ jobs:
       # every task as an override instead of filtering by it.
       - id: affected
         run: |
+          set -euo pipefail
           if [ "$GITHUB_EVENT_NAME" != "pull_request" ]; then
             echo "api_e2e=true" >> "$GITHUB_OUTPUT"
             echo "Not a pull request: every suite runs."
@@ -207,7 +209,7 @@ jobs:
       - run: pnpm exec nx affected -t lint --parallel=3
 
   # The API's webpack build is the heaviest single process, so it builds alone with a larger heap;
-  # every other build shares a machine at 3 GB each. Both are `affected`, so a build the diff does not
+  # every other build shares a machine, two at a time at 3 GB each. Both are `affected`, so a build the diff does not
   # touch is skipped, not replayed.
   build-api:
     name: Build (api)
@@ -222,9 +224,13 @@ jobs:
       - uses: ./.github/actions/nx-base
       # `nx affected` has no project filter (it forwards --projects to every task as an override),
       # so the membership test is explicit: build only when api is in the affected set.
+      # The project list is captured first, under errexit: inside the `if`, a failing
+      # `nx show projects` would read as "api is not affected" and skip the build silently.
       - name: Build api when affected
         run: |
-          if pnpm exec nx show projects --affected -t build | grep -qx api; then
+          set -euo pipefail
+          projects="$(pnpm exec nx show projects --affected -t build)"
+          if printf '%s\n' "$projects" | grep -qx api; then
             pnpm exec nx run api:build
           else
             echo "api is not affected by this change; nothing to build."
@@ -241,7 +247,7 @@ jobs:
           fetch-depth: 0
       - uses: ./.github/actions/setup
       - uses: ./.github/actions/nx-base
-      - run: pnpm exec nx affected -t build --exclude=api --parallel=3
+      - run: pnpm exec nx affected -t build --exclude=api --parallel=2
 
   # run-many, not affected, and unscoped: every project with a tsconfig.json gets a typecheck target
   # from tools/nx-plugins/typecheck.js, which checks all of its configs (lib/app, spec, storybook) and
@@ -287,7 +293,7 @@ jobs:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
       - uses: ./.github/actions/setup
       - name: Run tests with coverage
-        run: pnpm exec nx run-many -t test --parallel=3 --exclude="$WEB_TEST_PROJECTS" -- --coverage
+        run: pnpm exec nx run-many -t test --parallel=2 --exclude="$WEB_TEST_PROJECTS" -- --coverage
         env:
           REDIS_URL: redis://127.0.0.1:6379
           NODE_ENV: test
@@ -323,7 +329,7 @@ jobs:
       - name: Install Playwright Chromium
         run: pnpm exec playwright install --with-deps chromium
       - name: Run tests with coverage
-        run: pnpm exec nx run-many -t test --parallel=3 --projects="$WEB_TEST_PROJECTS" -- --coverage
+        run: pnpm exec nx run-many -t test --parallel=2 --projects="$WEB_TEST_PROJECTS" -- --coverage
         env:
           NODE_ENV: test
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2

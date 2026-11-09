@@ -27,9 +27,9 @@ intent: >
     used because it needs a paid licence on organisation repositories.
   - `lint`: `nx affected -t lint --parallel=3`, 2 GB heap.
   - `build-api` and `build`: the API's webpack build alone with a 6 GB heap (only when `api` is
-    affected), and `nx affected -t build --exclude=api --parallel=3` with 3 GB.
+    affected), and `nx affected -t build --exclude=api --parallel=2` with 3 GB.
   - `typecheck`: `nx run-many -t typecheck --parallel=3`, 2 GB heap, unscoped.
-  - `tests-api` and `tests-web`: `nx run-many -t test -- --coverage`, split by a workflow-level
+  - `tests-api` and `tests-web`: `nx run-many -t test --parallel=2 -- --coverage` (3 GB), split by a workflow-level
     `WEB_TEST_PROJECTS` list. `tests-web` runs that list with `--projects`; `tests-api` runs every
     other project with `--exclude`, so a new project is tested without being listed. `tests-api`
     has the Redis service; `tests-web` is the only job that installs Playwright Chromium (web-ui's

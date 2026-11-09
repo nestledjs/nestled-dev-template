@@ -17,8 +17,12 @@
 # file has its unstaged hunks staged too: stage whole files, or commit the hunks you mean. Never
 # bypass this hook with --no-verify.
 set -e
-staged="$(git diff --cached --name-only --diff-filter=ACMR)"
-[ -n "$staged" ] || exit 0
+# -z: NUL-separated and never C-quoted, so a path with spaces or non-ASCII characters reaches
+# Prettier and `git add` as it is. Without it git quotes such paths ("docs/caf\303\251.md").
+staged_paths() {
+  git diff --cached --name-only --diff-filter=ACMR -z
+}
+[ -n "$(staged_paths | tr '\0' '\n')" ] || exit 0
 
 # A missing formatter must not wedge the commit. Called unconditionally, the hook would abort with
 # `xargs: node_modules/.bin/prettier: No such file or directory` in any checkout without
@@ -26,9 +30,8 @@ staged="$(git diff --cached --name-only --diff-filter=ACMR)"
 # failing hook is --no-verify, which this repository forbids. Say what is wrong and let the commit
 # through: the blocking gate is CI's `prettier --check .`, not this.
 if [ -x node_modules/.bin/prettier ]; then
-  printf '%s\n' "$staged" | tr '\n' '\0' \
-    | xargs -0 node_modules/.bin/prettier --write --ignore-unknown --log-level warn --
-  printf '%s\n' "$staged" | tr '\n' '\0' | xargs -0 git add --
+  staged_paths | xargs -0 node_modules/.bin/prettier --write --ignore-unknown --log-level warn --
+  staged_paths | xargs -0 git add --
 else
   echo "pre-commit: NOT FORMATTED. node_modules/.bin/prettier is missing, so the staged files" >&2
   echo "were left as they are. Run \`pnpm install\`, or \`pnpm exec prettier --write\` on the files" >&2

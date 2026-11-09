@@ -104,6 +104,21 @@ describe('groupRules', () => {
     )
   })
 
+  it('keeps a rule tagged for an excluded framework when it is also tagged for a used one', () => {
+    const { sections, skipped } = groupRules(
+      [
+        rule('typescript:S6426', { tags: ['tests', 'mocha', 'jest', 'vitest'] }),
+        rule('typescript:S2', { tags: ['mocha'] }),
+      ],
+      ['mocha'],
+    )
+    assert.equal(skipped, 1)
+    assert.deepEqual(
+      sections.flatMap(section => section.rules.map(r => r.key)),
+      ['typescript:S6426'],
+    )
+  })
+
   it('drops empty sections', () => {
     const { sections } = groupRules([rule('typescript:S1')], [])
     assert.deepEqual(

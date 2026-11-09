@@ -9,7 +9,7 @@ delivery: code-patch
 
 intent: >
   1. New `.githooks/pre-commit` (executable, POSIX sh). On the staged files only
-  (`git diff --cached --name-only --diff-filter=ACMR`) it runs `node_modules/.bin/prettier --write
+  (`git diff --cached --name-only --diff-filter=ACMR -z`, NUL-separated so unusual paths are not quoted) it runs `node_modules/.bin/prettier --write
   --ignore-unknown` and re-stages them with `git add`. When node_modules has no Prettier it prints
   that the files were not formatted and lets the commit through (CI's `prettier --check .` is the
   gate; a hook that fails there would push people to --no-verify). Then, if `gitleaks` is on the
@@ -27,8 +27,8 @@ intent: >
   `.claude/settings.json` (matcher `startup|resume`, command
   `sh "$CLAUDE_PROJECT_DIR/.claude/hooks/session-start.sh"`, timeout 600). It does nothing unless
   `CLAUDE_CODE_REMOTE=true` (a Claude Code cloud session). It skips when
-  `node_modules/.session-start-lockfile-hash` matches `git hash-object pnpm-lock.yaml`, the Prisma
-  client exists and `core.hooksPath` is `.githooks`. Otherwise it runs `pnpm install
+  `node_modules/.session-start-lockfile-hash` matches `git hash-object` of pnpm-lock.yaml and the
+  Prisma schema, the Prisma client exists and `core.hooksPath` is `.githooks`. Otherwise it runs `pnpm install
   --frozen-lockfile` (with scripts, so `prepare` wires the hook; `npm_config_engine_strict=false`
   so a patch-level Node difference in the cloud image does not refuse the install, while a
   different major still stops it) and `pnpm prisma:generate`, then writes the marker. On any
@@ -82,7 +82,8 @@ agentHints:
   - >
     Merge the SessionStart entry into the project's existing `.claude/settings.json`; keep its
     plugins, MCP servers, permissions and sandbox settings. If the project's Prisma client is
-    generated somewhere other than `libs/api/prisma/src/lib/prisma-generated`, or it has another
+    generated somewhere other than `libs/api/prisma/src/lib/prisma-generated` (or its schema is not
+    `libs/api/prisma/src/lib/schemas/schema.prisma`), or it has another
     codegen step an agent needs before its first build, change the script's check and steps to
     match.
   - >

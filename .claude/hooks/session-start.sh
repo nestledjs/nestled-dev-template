@@ -9,7 +9,8 @@
 # `pnpm install` runs the `prepare` script. Installing here makes that hook, and a formatted
 # commit, the default.
 #
-# Skips when node_modules already matches the lockfile, so a resumed session pays nothing.
+# Skips when node_modules already matches the lockfile and the Prisma schema, so a resumed session
+# pays nothing.
 # `--frozen-lockfile` without `--ignore-scripts` on purpose: `prepare` must run. The one-line
 # summary on stdout is added to the session's context.
 set -eu
@@ -49,8 +50,10 @@ if [ "${have%%.*}" != "$want_major" ]; then
 fi
 export npm_config_engine_strict=false
 
+# The marker fingerprints the lockfile AND the Prisma schema: a resumed checkout whose schema
+# changed with no dependency change still needs the client regenerated.
 marker=node_modules/.session-start-lockfile-hash
-want="$(git hash-object pnpm-lock.yaml)"
+want="$(git hash-object pnpm-lock.yaml libs/api/prisma/src/lib/schemas/schema.prisma | tr '\n' ' ')"
 if [ -f "$marker" ] && [ "$(cat "$marker")" = "$want" ] \
   && [ -d libs/api/prisma/src/lib/prisma-generated ] \
   && [ "$(git config core.hooksPath || true)" = ".githooks" ]; then
