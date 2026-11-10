@@ -66,6 +66,11 @@ intent: >
     `"module": "esnext"` and `"moduleResolution": "bundler"`. Vite 8 publishes exports-only types.
     A vitest config checked by a CommonJS tsconfig fails on `import.meta.dirname`: move it to an
     ESM tsconfig.
+  - Jest now runs from each project's root, not the workspace root, because the inferred
+    `@nx/jest/plugin` target sets `cwd` to the project. A path or glob key in `coverageThreshold`
+    is resolved against that directory. A key written from the workspace root
+    (`'libs/api/custom/src/...'`) fails `--coverage` runs with "Coverage data for ... was not
+    found". Make it project-relative (`'./src/...'`).
   - The root `vitest.workspace.ts` becomes a root `vitest.config.ts` with `test.projects`. `.nx/migrate-runs` is added to .gitignore.
   - A Vite plugin typed against Rollup's `OutputBundle` gets a Rolldown bundle. Type only the
     fields it reads.
@@ -165,6 +170,7 @@ affectedPaths:
   - libs/api/integrations/src/lib/email/providers/smtp.provider.ts
   - libs/api/integrations/src/lib/email/template-manager-simple.ts
   - libs/api/custom/project.json
+  - libs/api/custom/jest.config.ts
   - libs/shared/apollo/src/lib/apollo.ts
   - libs/shared/apollo/vite.config.ts
   - libs/shared/apollo/tsconfig.spec.json
