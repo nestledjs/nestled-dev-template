@@ -29,8 +29,9 @@ function rejectDevelopmentJsx(): Plugin {
   }
 }
 
-// The published package ships README.md and LICENSE (package.json `files`). Nx 24 removed
-// nxCopyAssetsPlugin, which copied them, so this copies them into the build output instead.
+// The package is published from the build output, so it needs package.json there, plus
+// README.md and LICENSE (package.json `files`). Nx 24 removed nxCopyAssetsPlugin, which
+// copied the last two, so this copies all three into the build output instead.
 function copyPackageFiles(files: string[]): Plugin {
   let outDir = ''
   return {
@@ -57,7 +58,7 @@ export default defineConfig(() => ({
     react({ jsxRuntime: 'automatic' }),
     rejectDevelopmentJsx(),
     retainExtractedCssImport(),
-    copyPackageFiles(['README.md', 'LICENSE']),
+    copyPackageFiles(['README.md', 'LICENSE', 'package.json']),
     dts({
       entryRoot: 'src',
       tsconfigPath: path.join(import.meta.dirname, 'tsconfig.lib.json'),
