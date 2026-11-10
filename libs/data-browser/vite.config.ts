@@ -9,15 +9,15 @@ export default defineConfig({
       jsxRuntime: 'automatic',
     }),
     dts({
-      outDir: resolve(__dirname, '../../dist/libs/data-browser'),
-      entryRoot: resolve(__dirname, 'src'),
-      tsconfigPath: resolve(__dirname, './tsconfig.lib.json'),
+      outDir: resolve(import.meta.dirname, '../../dist/libs/data-browser'),
+      entryRoot: resolve(import.meta.dirname, 'src'),
+      tsconfigPath: resolve(import.meta.dirname, './tsconfig.lib.json'),
     }),
   ],
   mode: 'production',
   build: {
     lib: {
-      entry: resolve(__dirname, 'src/index.ts'),
+      entry: resolve(import.meta.dirname, 'src/index.ts'),
       formats: ['es'],
       fileName: () => 'index.js',
     },
@@ -28,12 +28,12 @@ export default defineConfig({
       },
       output: {
         preserveModules: true,
-        preserveModulesRoot: resolve(__dirname, 'src'),
+        preserveModulesRoot: resolve(import.meta.dirname, 'src'),
         entryFileNames: '[name].js',
       },
     },
     minify: false, // Disable minification to prevent SSR issues
-    outDir: resolve(__dirname, '../../dist/libs/data-browser'),
+    outDir: resolve(import.meta.dirname, '../../dist/libs/data-browser'),
     emptyOutDir: true,
   },
 })

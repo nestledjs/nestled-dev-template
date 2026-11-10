@@ -3,8 +3,7 @@ import { defineConfig, type Plugin } from 'vite'
 import react from '@vitejs/plugin-react'
 import dts from 'vite-plugin-dts'
 import * as path from 'path'
-import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin'
-import { nxCopyAssetsPlugin } from '@nx/vite/plugins/nx-copy-assets.plugin'
+import { copyFileSync } from 'node:fs'
 import { attachExtractedCssImport } from './build-css-import.mts'
 
 function retainExtractedCssImport(): Plugin {
@@ -30,15 +29,35 @@ function rejectDevelopmentJsx(): Plugin {
   }
 }
 
+// The published package ships README.md and LICENSE (package.json `files`). Nx 24 removed
+// nxCopyAssetsPlugin, which copied them, so this copies them into the build output instead.
+function copyPackageFiles(files: string[]): Plugin {
+  let outDir = ''
+  return {
+    name: 'copy-package-files',
+    apply: 'build',
+    configResolved(config) {
+      outDir = path.resolve(config.root, config.build.outDir)
+    },
+    writeBundle() {
+      for (const file of files) {
+        copyFileSync(path.join(import.meta.dirname, file), path.join(outDir, file))
+      }
+    },
+  }
+}
+
 export default defineConfig(() => ({
+  resolve: {
+    tsconfigPaths: true,
+  },
   root: import.meta.dirname,
   cacheDir: '../../node_modules/.vite/libs/access-control',
   plugins: [
     react({ jsxRuntime: 'automatic' }),
     rejectDevelopmentJsx(),
     retainExtractedCssImport(),
-    nxViteTsPaths(),
-    nxCopyAssetsPlugin(['*.md', 'LICENSE']),
+    copyPackageFiles(['README.md', 'LICENSE']),
     dts({
       entryRoot: 'src',
       tsconfigPath: path.join(import.meta.dirname, 'tsconfig.lib.json'),
@@ -47,7 +66,7 @@ export default defineConfig(() => ({
   ],
   // Uncomment this if you are using workers.
   // worker: {
-  //   plugins: () => [ nxViteTsPaths() ],
+  //  plugins: [],
   // },
   // Configuration for building your library.
   // See: https://vite.dev/guide/build.html#library-mode

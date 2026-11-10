@@ -2,15 +2,13 @@
 import mdx from '@mdx-js/rollup'
 import { defineConfig } from 'vite'
 import { reactRouter } from '@react-router/dev/vite'
-import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin'
-import { nxCopyAssetsPlugin } from '@nx/vite/plugins/nx-copy-assets.plugin'
 import tailwindcss from '@tailwindcss/vite'
 import path from 'node:path'
 import remarkFrontmatter from 'remark-frontmatter'
 import remarkMdxFrontmatter from 'remark-mdx-frontmatter'
 
 export default defineConfig(() => ({
-  root: __dirname,
+  root: import.meta.dirname,
   cacheDir: '../../node_modules/.vite/apps/web',
   assetsInclude: ['**/*.node'],
   define: {
@@ -21,9 +19,10 @@ export default defineConfig(() => ({
     'process.env.VITE_COOKIE_NAME': JSON.stringify(process.env.VITE_COOKIE_NAME || '__session'),
   },
   resolve: {
+    tsconfigPaths: true,
     alias: {
       // Ensure React Router generated types are properly resolved
-      '~': path.resolve(__dirname, './app'),
+      '~': path.resolve(import.meta.dirname, './app'),
     },
   },
   // Dev/preview ports come from the repo-root `.env` so several nestled apps can run side by side
@@ -35,7 +34,10 @@ export default defineConfig(() => ({
     port: Number(process.env.WEB_PORT) || 4200,
     host: process.env.VITE_HOST || 'localhost',
     fs: {
-      allow: [path.resolve(__dirname, '../../libs'), path.resolve(__dirname, './.react-router')],
+      allow: [
+        path.resolve(import.meta.dirname, '../../libs'),
+        path.resolve(import.meta.dirname, './.react-router'),
+      ],
     },
   },
   preview: {
@@ -48,8 +50,6 @@ export default defineConfig(() => ({
       remarkPlugins: [remarkFrontmatter, [remarkMdxFrontmatter, { name: 'attributes' }]],
     }),
     !process.env.VITEST && reactRouter(),
-    nxViteTsPaths(),
-    nxCopyAssetsPlugin(['*.md']),
     tailwindcss(),
   ],
   optimizeDeps: {

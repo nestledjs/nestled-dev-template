@@ -1,11 +1,13 @@
 import { defineConfig } from 'vitest/config'
 import react from '@vitejs/plugin-react'
-import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin'
 
 export default defineConfig({
+  resolve: {
+    tsconfigPaths: true,
+  },
   root: import.meta.dirname,
   cacheDir: '../../node_modules/.vite/libs/shared-components',
-  plugins: [react(), nxViteTsPaths()],
+  plugins: [react()],
   test: {
     watch: false,
     globals: true,
