@@ -466,6 +466,48 @@ describe('AcceptInvitation Component', () => {
       expect(mockAcceptInvitation).toHaveBeenCalledTimes(1)
     })
 
+    it('keeps observing a pending acceptance after moving to another invitation and back', async () => {
+      vi.mocked(useGlobalCtx).mockReturnValue(loggedInUser())
+      let resolveFirst: (value: unknown) => void = () => undefined
+      mockAcceptInvitation
+        .mockReturnValueOnce(
+          new Promise(resolve => {
+            resolveFirst = resolve
+          }),
+        )
+        .mockReturnValueOnce(new Promise(() => undefined))
+        .mockRejectedValue(new Error('Invitation already used'))
+
+      const ReactRouterStub = createTestRouter([
+        {
+          path: '/accept-invitation',
+          Component: () => (
+            <>
+              <Link to="/accept-invitation?token=second-token">Second invitation</Link>
+              <Link to="/accept-invitation?token=test-token">First invitation</Link>
+              <AcceptInvitation />
+            </>
+          ),
+        },
+        { path: '/members', Component: () => <p>Members area</p> },
+      ])
+      render(<ReactRouterStub initialEntries={['/accept-invitation?token=test-token']} />)
+
+      await waitFor(() => expect(mockAcceptInvitation).toHaveBeenCalledTimes(1))
+      await userEvent.click(screen.getByText('Second invitation'))
+      await waitFor(() => expect(mockAcceptInvitation).toHaveBeenCalledTimes(2))
+      await userEvent.click(screen.getByText('First invitation'))
+
+      // The first invitation's original request is still the one observed; it succeeds.
+      resolveFirst({ data: { acceptOrganizationInvitation: { success: true } } })
+
+      await waitFor(() => expect(screen.getByText('Members area')).toBeInTheDocument(), {
+        timeout: 3000,
+      })
+      expect(mockAcceptInvitation).toHaveBeenCalledTimes(2)
+      expect(screen.queryByText('Invitation already used')).not.toBeInTheDocument()
+    })
+
     it('shows a failed acceptance once instead of retrying it on a re-render', async () => {
       vi.mocked(useGlobalCtx).mockImplementation(loggedInUser)
       mockAcceptInvitation.mockRejectedValue(new Error('Invitation expired'))

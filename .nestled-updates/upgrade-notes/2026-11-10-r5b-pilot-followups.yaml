@@ -16,10 +16,11 @@ intent: >
   development, and a new `user` or `invitationDetails` object re-runs it in any build), every run
   sent its own acceptance. The token is single-use, so the second request was rejected as already
   used and showed an error to a user who had just joined, and the first request's redirect was
-  dropped because its run had been superseded. The acceptance is now kept per token in
-  `acceptanceRef = useRef<{ token: string; result: Promise<unknown> } | null>(null)`. Inside
-  `acceptInvitationAsync(isCurrent)` a request starts only when
-  `acceptanceRef.current?.token !== token`, as
+  dropped because its run had been superseded. Each token's acceptance is now kept for the
+  route's lifetime in `acceptancesRef = useRef(new Map<string, Promise<unknown>>())`. Inside
+  `acceptInvitationAsync(isCurrent)` a request starts only when the map has no entry for the
+  token (so moving to another invitation link and back while the first is pending does not send
+  a second acceptance either), as
   `Promise.resolve().then(() => acceptInvitation(...))` (a synchronous throw still becomes a
   rejection, and no state is set synchronously in the effect; this replaces the
   `new Promise(resolve => resolve(call()))` wrapper). Every run chains its own `isCurrent`-guarded
@@ -28,7 +29,9 @@ intent: >
   than retrying in a loop. The per-token `failedToken` derivation and the `isCurrent` guard are
   unchanged. apps/web/tests/routes/accept-invitation.spec.tsx: new cases for a StrictMode render
   and for a re-render with a new `user` object (each sends exactly one acceptance and redirects to
-  `/members`), and for a failed acceptance that a re-render does not retry.
+  `/members`), for moving to another invitation link and back while the first acceptance is
+  pending (still one request for it, and its success redirects), and for a failed acceptance that a
+  re-render does not retry.
 
   2. eslint-plugin-react-hooks v7's `recommended` set leaves `incompatible-library` and
   `unsupported-syntax` at warn, and `nx.configs['flat/react']` passes that set through, so both were
@@ -108,9 +111,10 @@ agentHints:
     token, observed by every effect run) marks part 1 `superseded`.
   - >
     A project with its own invitation flow (a different route, or a hook that accepts on mount)
-    applies the same rule there: one acceptance request per token, stored outside the effect, and
-    every effect run observes that stored request with its own `isCurrent` guard. Add a StrictMode
-    test that expects exactly one acceptance and the redirect.
+    applies the same rule there: one acceptance request per token, stored outside the effect for
+    the component's lifetime (a map keyed by token, not only the latest token), and every effect
+    run observes that stored request with its own `isCurrent` guard. Add a StrictMode test that
+    expects exactly one acceptance and the redirect.
   - >
     Part 3 is made by hand: nx.json is not mirrored by promotion. Add the `targetDefaults.lint`
     block above, listing the lint plugins the project actually has in package.json (drop any it

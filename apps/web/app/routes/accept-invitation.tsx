@@ -127,10 +127,11 @@ export default function AcceptInvitation() {
 
   // An invitation token is single-use, so it is accepted once per token however often the effect
   // below re-runs for it (React StrictMode replays effects, and a new `user` or `invitationDetails`
-  // object re-runs it too). The request is stored with its token and every run observes that one
-  // request; only a different token starts a new one. A failed attempt stays stored, so a re-run
-  // shows its error rather than retrying in a loop.
-  const acceptanceRef = useRef<{ token: string; result: Promise<unknown> } | null>(null)
+  // object re-runs it too). Each token's request is stored for the route's lifetime, and every run
+  // for that token observes that one request, including a run after moving to another invitation
+  // link and back while it is still pending. A failed attempt stays stored, so a re-run shows its
+  // error rather than retrying in a loop.
+  const acceptancesRef = useRef(new Map<string, Promise<unknown>>())
 
   // Settles in promise callbacks, which always run after the effect that starts it returns, so no
   // state is set synchronously inside that effect. A synchronous throw from the mutation still
@@ -142,20 +143,19 @@ export default function AcceptInvitation() {
     (isCurrent: () => boolean) => {
       if (!token) return Promise.resolve()
 
-      if (acceptanceRef.current?.token !== token) {
-        acceptanceRef.current = {
-          token,
-          result: Promise.resolve().then(() =>
-            acceptInvitation({
-              variables: {
-                input: { token },
-              },
-            }),
-          ),
-        }
+      let acceptance = acceptancesRef.current.get(token)
+      if (!acceptance) {
+        acceptance = Promise.resolve().then(() =>
+          acceptInvitation({
+            variables: {
+              input: { token },
+            },
+          }),
+        )
+        acceptancesRef.current.set(token, acceptance)
       }
 
-      return acceptanceRef.current.result
+      return acceptance
         .then(() => {
           if (!isCurrent()) return
           // Redirect to members area
