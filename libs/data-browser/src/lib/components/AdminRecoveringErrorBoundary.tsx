@@ -73,15 +73,18 @@ function fallbackReason(): AdminUnavailableReason {
 }
 
 /**
- * A probe's answer in one shape. A plain boolean (the pre-1.0.27 probe) and a result without a
- * reason take the reason from `navigator.onLine`, so an existing probe keeps working.
+ * A probe's answer in one shape, read when the probe settles. A plain boolean (the pre-1.0.27
+ * probe) and a result without a reason take the reason from `navigator.onLine`, so an existing
+ * probe keeps working. A browser that says it is offline wins over the probe's reason: a probe
+ * started before the `offline` event may settle after it with a stale `server`.
  */
 export function normalizeAdminProbeResult(
   result: boolean | AdminApiProbeResult | null | undefined,
 ): Required<AdminApiProbeResult> {
   const reachable = typeof result === 'boolean' ? result : Boolean(result?.reachable)
   if (reachable) return { reachable: true, reason: 'server' }
-  const reason = typeof result === 'object' && result?.reason ? result.reason : fallbackReason()
+  if (browserIsOffline()) return { reachable: false, reason: 'offline' }
+  const reason = typeof result === 'object' && result?.reason ? result.reason : 'server'
   return { reachable: false, reason }
 }
 

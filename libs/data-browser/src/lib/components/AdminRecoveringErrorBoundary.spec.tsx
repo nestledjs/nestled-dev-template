@@ -262,6 +262,31 @@ describe('AdminRouteErrorBoundary', () => {
       expect(probe).toHaveBeenCalledTimes(1)
     })
 
+    it('keeps offline when a probe started before the offline event settles after it', async () => {
+      let settle: (value: { reachable: boolean; reason: 'server' }) => void = () => undefined
+      const probe = vi.fn(
+        () =>
+          new Promise<{ reachable: boolean; reason: 'server' }>(resolve => {
+            settle = resolve
+          }),
+      )
+      render(<AdminApiUnavailable probe={probe} />)
+      await advance(2000)
+      expect(probe).toHaveBeenCalledTimes(1)
+
+      setOnline(false)
+      await act(async () => {
+        globalThis.dispatchEvent(new Event('offline'))
+      })
+      expect(screen.getByText(ADMIN_OFFLINE_TITLE)).toBeInTheDocument()
+
+      await act(async () => {
+        settle({ reachable: false, reason: 'server' })
+      })
+      expect(screen.getByText(ADMIN_OFFLINE_TITLE)).toBeInTheDocument()
+      expect(screen.queryByText(ADMIN_SERVER_TROUBLE_TITLE)).not.toBeInTheDocument()
+    })
+
     it('lets the probe triggered by the online event correct the reason', async () => {
       const probe = vi.fn().mockResolvedValue({ reachable: false, reason: 'offline' })
       setOnline(false)
@@ -377,9 +402,18 @@ describe('normalizeAdminProbeResult', () => {
     expect(normalizeAdminProbeResult(undefined)).toEqual({ reachable: false, reason: 'offline' })
   })
 
-  it('keeps the reason a probe gives', () => {
+  it('keeps the reason a probe gives, unless the browser says it is offline', () => {
     setOnline(true)
     expect(normalizeAdminProbeResult({ reachable: false, reason: 'offline' })).toEqual({
+      reachable: false,
+      reason: 'offline',
+    })
+    expect(normalizeAdminProbeResult({ reachable: false, reason: 'server' })).toEqual({
+      reachable: false,
+      reason: 'server',
+    })
+    setOnline(false)
+    expect(normalizeAdminProbeResult({ reachable: false, reason: 'server' })).toEqual({
       reachable: false,
       reason: 'offline',
     })
