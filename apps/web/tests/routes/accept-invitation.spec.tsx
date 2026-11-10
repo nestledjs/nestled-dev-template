@@ -399,6 +399,88 @@ describe('AcceptInvitation Component', () => {
     })
   })
 
+  describe('One acceptance per invitation token', () => {
+    const loggedInUser = () => ({
+      user: { id: 'user-123', firstName: 'Test', lastName: 'User' } as any,
+      organizations: [],
+      activeOrganization: null,
+      activeOrganizationMember: null,
+    })
+
+    // Renders the route beside a button that re-renders it, and a /members route to redirect to.
+    function RerenderableAcceptInvitation() {
+      const [, setRenders] = React.useState(0)
+      return (
+        <>
+          <button type="button" onClick={() => setRenders(count => count + 1)}>
+            Re-render
+          </button>
+          <AcceptInvitation />
+        </>
+      )
+    }
+
+    const renderWithMembersRoute = (strict: boolean) => {
+      const ReactRouterStub = createTestRouter([
+        { path: '/accept-invitation', Component: RerenderableAcceptInvitation },
+        { path: '/members', Component: () => <p>Members area</p> },
+      ])
+      const router = <ReactRouterStub initialEntries={['/accept-invitation?token=test-token']} />
+      return render(strict ? <React.StrictMode>{router}</React.StrictMode> : router)
+    }
+
+    it('sends one acceptance under StrictMode and still redirects to /members', async () => {
+      vi.mocked(useGlobalCtx).mockReturnValue(loggedInUser())
+      mockAcceptInvitation.mockResolvedValue({
+        data: { acceptOrganizationInvitation: { success: true } },
+      })
+
+      renderWithMembersRoute(true)
+
+      await waitFor(() => expect(screen.getByText('Members area')).toBeInTheDocument(), {
+        timeout: 3000,
+      })
+      expect(mockAcceptInvitation).toHaveBeenCalledTimes(1)
+    })
+
+    it('sends one acceptance when a re-render brings a new user object, then redirects', async () => {
+      // A fresh user object on every render, as a context that rebuilds its value gives.
+      vi.mocked(useGlobalCtx).mockImplementation(loggedInUser)
+      let resolveAcceptance: (value: unknown) => void = () => undefined
+      mockAcceptInvitation.mockReturnValue(
+        new Promise(resolve => {
+          resolveAcceptance = resolve
+        }),
+      )
+
+      renderWithMembersRoute(false)
+      await waitFor(() => expect(mockAcceptInvitation).toHaveBeenCalledTimes(1))
+
+      // The effect re-runs for the same invitation while its acceptance is in flight.
+      await userEvent.click(screen.getByText('Re-render'))
+      resolveAcceptance({ data: { acceptOrganizationInvitation: { success: true } } })
+
+      await waitFor(() => expect(screen.getByText('Members area')).toBeInTheDocument(), {
+        timeout: 3000,
+      })
+      expect(mockAcceptInvitation).toHaveBeenCalledTimes(1)
+    })
+
+    it('shows a failed acceptance once instead of retrying it on a re-render', async () => {
+      vi.mocked(useGlobalCtx).mockImplementation(loggedInUser)
+      mockAcceptInvitation.mockRejectedValue(new Error('Invitation expired'))
+
+      renderWithMembersRoute(false)
+      await waitFor(() => expect(screen.getByText('Invitation expired')).toBeInTheDocument())
+
+      await userEvent.click(screen.getByText('Re-render'))
+      await new Promise(resolve => setTimeout(resolve, 0))
+
+      expect(screen.getByText('Invitation expired')).toBeInTheDocument()
+      expect(mockAcceptInvitation).toHaveBeenCalledTimes(1)
+    })
+  })
+
   describe('Signup Flow', () => {
     it('builds invitation registration input from the invitation email', () => {
       expect(
