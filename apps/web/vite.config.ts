@@ -6,6 +6,7 @@ import tailwindcss from '@tailwindcss/vite'
 import path from 'node:path'
 import remarkFrontmatter from 'remark-frontmatter'
 import remarkMdxFrontmatter from 'remark-mdx-frontmatter'
+import { nxReadySignal } from '@nx/vite/plugins/nx-ready-signal.plugin'
 
 export default defineConfig(() => ({
   root: import.meta.dirname,
@@ -51,6 +52,7 @@ export default defineConfig(() => ({
     }),
     !process.env.VITEST && reactRouter(),
     tailwindcss(),
+    nxReadySignal(),
   ],
   optimizeDeps: {
     include: ['@apollo/client', '@apollo/client/react'],
