@@ -3,10 +3,17 @@ import { act, fireEvent, render, screen } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { AdminDataProvider } from '../context/AdminDataContext'
 import {
+  ADMIN_API_UNAVAILABLE_COPY,
+  ADMIN_OFFLINE_MESSAGE,
   ADMIN_OFFLINE_TITLE,
+  ADMIN_SERVER_DOWN_MESSAGE,
   ADMIN_SERVER_DOWN_TITLE,
+  ADMIN_SERVER_TROUBLE_MESSAGE,
+  ADMIN_SERVER_TROUBLE_TITLE,
   AdminApiUnavailable,
   AdminRouteErrorBoundary,
+  normalizeAdminProbeResult,
+  probeAdminConnectivity,
   resetAdminRecoveryBackoff,
 } from './AdminRecoveringErrorBoundary'
 
@@ -46,6 +53,7 @@ describe('AdminRouteErrorBoundary', () => {
 
   afterEach(() => {
     vi.useRealTimers()
+    vi.unstubAllGlobals()
     setOnline(true)
   })
 
@@ -56,7 +64,8 @@ describe('AdminRouteErrorBoundary', () => {
 
   it('shows the recovering panel for a network error', () => {
     render(<AdminRouteErrorBoundary error={new TypeError('Failed to fetch')} probe={vi.fn()} />)
-    expect(screen.getByText(ADMIN_SERVER_DOWN_TITLE)).toBeInTheDocument()
+    expect(screen.getByText(ADMIN_SERVER_TROUBLE_TITLE)).toBeInTheDocument()
+    expect(screen.getByText(ADMIN_SERVER_TROUBLE_MESSAGE)).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Try Again' })).toBeInTheDocument()
   })
 
@@ -132,19 +141,36 @@ describe('AdminRouteErrorBoundary', () => {
   })
 
   it('without any probe, revalidates while online and waits while offline', async () => {
+    const fetchMock = vi.fn().mockResolvedValue(new Response(null, { status: 404 }))
+    vi.stubGlobal('fetch', fetchMock)
     setOnline(false)
     render(<AdminApiUnavailable />)
     expect(screen.getByText(ADMIN_OFFLINE_TITLE)).toBeInTheDocument()
 
     await advance(2000)
     expect(revalidate).not.toHaveBeenCalled()
+    expect(fetchMock).not.toHaveBeenCalled()
 
     setOnline(true)
     await act(async () => {
       globalThis.dispatchEvent(new Event('online'))
     })
+    expect(fetchMock).toHaveBeenCalledWith(
+      expect.stringMatching(/\/favicon\.ico$/),
+      expect.objectContaining({ method: 'HEAD' }),
+    )
     expect(revalidate).toHaveBeenCalledTimes(1)
-    expect(screen.getByText(ADMIN_SERVER_DOWN_TITLE)).toBeInTheDocument()
+    expect(screen.getByText(ADMIN_SERVER_TROUBLE_TITLE)).toBeInTheDocument()
+  })
+
+  it('without any probe, shows offline when the web app origin does not answer either', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new TypeError('Failed to fetch')))
+    render(<AdminApiUnavailable />)
+    expect(screen.getByText(ADMIN_SERVER_TROUBLE_TITLE)).toBeInTheDocument()
+
+    await advance(2000)
+    expect(revalidate).not.toHaveBeenCalled()
+    expect(screen.getByText(ADMIN_OFFLINE_TITLE)).toBeInTheDocument()
   })
 
   it('keeps the widened backoff when the route fails again and the boundary remounts', async () => {
@@ -170,5 +196,220 @@ describe('AdminRouteErrorBoundary', () => {
     view.unmount()
     await advance(60000)
     expect(probe).not.toHaveBeenCalled()
+  })
+
+  describe('offline vs server trouble', () => {
+    it('shows offline when the probe says so', async () => {
+      const probe = vi.fn().mockResolvedValue({ reachable: false, reason: 'offline' })
+      render(<AdminApiUnavailable probe={probe} />)
+      await advance(2000)
+      expect(screen.getByText(ADMIN_OFFLINE_TITLE)).toBeInTheDocument()
+      expect(screen.getByText(ADMIN_OFFLINE_MESSAGE)).toBeInTheDocument()
+      expect(screen.queryByText(ADMIN_SERVER_TROUBLE_TITLE)).not.toBeInTheDocument()
+    })
+
+    it('shows server trouble when the probe says so', async () => {
+      const probe = vi.fn().mockResolvedValue({ reachable: false, reason: 'server' })
+      render(<AdminApiUnavailable probe={probe} />)
+      await advance(2000)
+      expect(screen.getByText(ADMIN_SERVER_TROUBLE_TITLE)).toBeInTheDocument()
+      expect(screen.getByText(ADMIN_SERVER_TROUBLE_MESSAGE)).toBeInTheDocument()
+      expect(screen.queryByText(ADMIN_OFFLINE_TITLE)).not.toBeInTheDocument()
+    })
+
+    it('starts offline when the browser is offline, before any probe', () => {
+      setOnline(false)
+      render(<AdminApiUnavailable probe={vi.fn()} />)
+      expect(screen.getByText(ADMIN_OFFLINE_TITLE)).toBeInTheDocument()
+    })
+
+    it('re-checks the reason on every retry', async () => {
+      const probe = vi
+        .fn()
+        .mockResolvedValueOnce({ reachable: false, reason: 'offline' })
+        .mockResolvedValueOnce({ reachable: false, reason: 'server' })
+        .mockResolvedValueOnce({ reachable: false, reason: 'offline' })
+      render(<AdminApiUnavailable probe={probe} />)
+
+      await advance(2000)
+      expect(screen.getByText(ADMIN_OFFLINE_TITLE)).toBeInTheDocument()
+      await advance(4000)
+      expect(screen.getByText(ADMIN_SERVER_TROUBLE_TITLE)).toBeInTheDocument()
+      await act(async () => {
+        fireEvent.click(screen.getByRole('button', { name: 'Try Again' }))
+      })
+      expect(probe).toHaveBeenCalledTimes(3)
+      expect(screen.getByText(ADMIN_OFFLINE_TITLE)).toBeInTheDocument()
+    })
+
+    it('switches at once on the offline and online events', async () => {
+      // A probe that never settles, so only the events change the reason.
+      const probe = vi.fn(() => new Promise<boolean>(() => undefined))
+      render(<AdminApiUnavailable probe={probe} />)
+      expect(screen.getByText(ADMIN_SERVER_TROUBLE_TITLE)).toBeInTheDocument()
+
+      setOnline(false)
+      await act(async () => {
+        globalThis.dispatchEvent(new Event('offline'))
+      })
+      expect(screen.getByText(ADMIN_OFFLINE_TITLE)).toBeInTheDocument()
+
+      setOnline(true)
+      await act(async () => {
+        globalThis.dispatchEvent(new Event('online'))
+      })
+      expect(screen.getByText(ADMIN_SERVER_TROUBLE_TITLE)).toBeInTheDocument()
+      expect(probe).toHaveBeenCalledTimes(1)
+    })
+
+    it('lets the probe triggered by the online event correct the reason', async () => {
+      const probe = vi.fn().mockResolvedValue({ reachable: false, reason: 'offline' })
+      setOnline(false)
+      render(<AdminApiUnavailable probe={probe} />)
+      setOnline(true)
+      await act(async () => {
+        globalThis.dispatchEvent(new Event('online'))
+      })
+      expect(probe).toHaveBeenCalledTimes(1)
+      expect(screen.getByText(ADMIN_OFFLINE_TITLE)).toBeInTheDocument()
+    })
+  })
+
+  describe('a legacy boolean probe', () => {
+    it('shows server trouble while the browser is online, and still recovers', async () => {
+      const probe = vi.fn().mockResolvedValueOnce(false).mockResolvedValue(true)
+      render(<AdminRouteErrorBoundary error={new TypeError('Failed to fetch')} probe={probe} />)
+
+      await advance(2000)
+      expect(screen.getByText(ADMIN_SERVER_TROUBLE_TITLE)).toBeInTheDocument()
+      expect(revalidate).not.toHaveBeenCalled()
+      await advance(4000)
+      expect(revalidate).toHaveBeenCalledTimes(1)
+    })
+
+    it('shows offline when navigator.onLine is false', async () => {
+      const probe = vi.fn().mockResolvedValue(false)
+      render(<AdminApiUnavailable probe={probe} />)
+      await advance(2000)
+      expect(screen.getByText(ADMIN_SERVER_TROUBLE_TITLE)).toBeInTheDocument()
+
+      setOnline(false)
+      await advance(4000)
+      expect(probe).toHaveBeenCalledTimes(2)
+      expect(screen.getByText(ADMIN_OFFLINE_TITLE)).toBeInTheDocument()
+    })
+
+    it('treats a rejected probe as unreachable', async () => {
+      const probe = vi.fn().mockRejectedValue(new Error('boom'))
+      render(<AdminApiUnavailable probe={probe} />)
+      await advance(2000)
+      expect(revalidate).not.toHaveBeenCalled()
+      expect(screen.getByText(ADMIN_SERVER_TROUBLE_TITLE)).toBeInTheDocument()
+    })
+
+    it('keeps exporting the deprecated server-down constants', () => {
+      expect(ADMIN_SERVER_DOWN_TITLE).toBe('Can’t reach the server')
+      expect(ADMIN_SERVER_DOWN_MESSAGE).toMatch(/Retrying automatically/)
+    })
+  })
+
+  describe('copy', () => {
+    const translated = {
+      offlineTitle: 'Sin conexión',
+      offlineMessage: 'Nos reconectaremos automáticamente.',
+      serverTitle: 'Problemas con nuestros servidores',
+      serverMessage: 'Reintentando automáticamente.',
+      retryLabel: 'Reintentar',
+      backLinkLabel: 'Volver',
+    }
+
+    it('takes translated strings from the copy prop', async () => {
+      const probe = vi.fn().mockResolvedValue({ reachable: false, reason: 'server' })
+      render(<AdminApiUnavailable probe={probe} copy={translated} />)
+      expect(screen.getByText('Problemas con nuestros servidores')).toBeInTheDocument()
+      expect(screen.getByText('Reintentando automáticamente.')).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: 'Reintentar' })).toBeInTheDocument()
+      expect(screen.getByRole('link', { name: 'Volver' })).toBeInTheDocument()
+
+      setOnline(false)
+      await act(async () => {
+        globalThis.dispatchEvent(new Event('offline'))
+      })
+      expect(screen.getByText('Sin conexión')).toBeInTheDocument()
+      expect(screen.getByText('Nos reconectaremos automáticamente.')).toBeInTheDocument()
+    })
+
+    it('takes copy from AdminDataProvider, lets the boundary override it, and falls back to English', () => {
+      render(
+        <AdminDataProvider
+          sdk={{}}
+          databaseModels={[]}
+          formTheme={{}}
+          probe={vi.fn()}
+          unavailableCopy={{ serverTitle: 'Provider title', retryLabel: 'Provider retry' }}
+        >
+          <AdminRouteErrorBoundary
+            error={new TypeError('Failed to fetch')}
+            copy={{ retryLabel: 'Boundary retry' }}
+          />
+        </AdminDataProvider>,
+      )
+      expect(screen.getByText('Provider title')).toBeInTheDocument()
+      expect(screen.getByText(ADMIN_API_UNAVAILABLE_COPY.serverMessage)).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: 'Boundary retry' })).toBeInTheDocument()
+    })
+  })
+})
+
+describe('normalizeAdminProbeResult', () => {
+  afterEach(() => setOnline(true))
+
+  it('maps a boolean and a result without a reason through navigator.onLine', () => {
+    setOnline(true)
+    expect(normalizeAdminProbeResult(true)).toEqual({ reachable: true, reason: 'server' })
+    expect(normalizeAdminProbeResult(false)).toEqual({ reachable: false, reason: 'server' })
+    expect(normalizeAdminProbeResult({ reachable: false })).toEqual({
+      reachable: false,
+      reason: 'server',
+    })
+    setOnline(false)
+    expect(normalizeAdminProbeResult(false)).toEqual({ reachable: false, reason: 'offline' })
+    expect(normalizeAdminProbeResult(undefined)).toEqual({ reachable: false, reason: 'offline' })
+  })
+
+  it('keeps the reason a probe gives', () => {
+    setOnline(true)
+    expect(normalizeAdminProbeResult({ reachable: false, reason: 'offline' })).toEqual({
+      reachable: false,
+      reason: 'offline',
+    })
+  })
+})
+
+describe('probeAdminConnectivity', () => {
+  afterEach(() => {
+    vi.unstubAllGlobals()
+    setOnline(true)
+  })
+
+  it('reports offline without a request when navigator.onLine is false', async () => {
+    const fetchMock = vi.fn()
+    vi.stubGlobal('fetch', fetchMock)
+    setOnline(false)
+    await expect(probeAdminConnectivity()).resolves.toEqual({ reachable: false, reason: 'offline' })
+    expect(fetchMock).not.toHaveBeenCalled()
+  })
+
+  it('counts any answer from the web app origin as a working connection', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response(null, { status: 404 })))
+    await expect(probeAdminConnectivity('/favicon.ico')).resolves.toEqual({ reachable: true })
+  })
+
+  it('reports offline when the web app origin does not answer', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new TypeError('Failed to fetch')))
+    await expect(probeAdminConnectivity('/favicon.ico')).resolves.toEqual({
+      reachable: false,
+      reason: 'offline',
+    })
   })
 })

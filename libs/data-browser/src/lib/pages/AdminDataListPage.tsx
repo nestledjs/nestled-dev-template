@@ -975,6 +975,6 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
 }
 
 /** Route error boundary: a network error recovers by itself (see AdminRouteErrorBoundary). */
-export function AdminDataErrorBoundary({ error, probe }: AdminDataErrorBoundaryProps) {
-  return <AdminRouteErrorBoundary error={error} probe={probe} />
+export function AdminDataErrorBoundary(props: AdminDataErrorBoundaryProps) {
+  return <AdminRouteErrorBoundary {...props} />
 }

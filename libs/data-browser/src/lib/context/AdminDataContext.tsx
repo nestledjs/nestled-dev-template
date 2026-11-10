@@ -13,10 +13,47 @@ export interface DisplayFieldConfig {
 }
 
 /**
- * Resolves true when the API answers. The admin error boundary calls it, with backoff, while it
- * shows "Can't reach the server", and revalidates the route once it succeeds.
+ * Why the admin data routes cannot reach the API, as the recovering panel tells the user:
+ * - `offline`: the browser has no connection;
+ * - `server`: the connection works but the API does not answer (or a proxy answers for it with
+ *   502/503/504).
  */
-export type AdminApiProbe = () => Promise<boolean>
+export type AdminUnavailableReason = 'offline' | 'server'
+
+/** What a reason-aware probe reports. The same shape as the template app's `probeConnectivity()`. */
+export interface AdminApiProbeResult {
+  /** The API answered. */
+  reachable: boolean
+  /** When it did not, why. Left out, the browser's online flag decides. */
+  reason?: AdminUnavailableReason
+}
+
+/**
+ * Checks whether the API answers. The admin error boundary calls it, with backoff, while it shows
+ * the recovering panel, and revalidates the route once it succeeds.
+ *
+ * It may resolve a plain boolean (true when the API answers), as before 1.0.27; the panel then
+ * shows "offline" when `navigator.onLine` is false and "server trouble" otherwise. A reason-aware
+ * probe resolves `{ reachable, reason }` and the panel shows that reason.
+ */
+export type AdminApiProbe = () => Promise<boolean | AdminApiProbeResult>
+
+/**
+ * The recovering panel's text, one key per string, so an app with i18n can pass its own. Keys left
+ * out fall back to the English in `ADMIN_API_UNAVAILABLE_COPY`. The first five keys match the web
+ * app shell's `ApiUnavailableCopy`.
+ */
+export interface AdminApiUnavailableCopy {
+  /** The browser has no connection. */
+  offlineTitle: string
+  offlineMessage: string
+  /** The connection works but our servers do not answer (or answer 502/503/504). */
+  serverTitle: string
+  serverMessage: string
+  retryLabel: string
+  /** The link back to the data browser's index. */
+  backLinkLabel: string
+}
 
 export interface AdminDataContextValue {
   /** The SDK namespace for dynamic GraphQL document lookups */
@@ -31,6 +68,8 @@ export interface AdminDataContextValue {
   displayFieldConfig?: DisplayFieldConfig
   /** Optional API reachability check for the admin error boundary's recovery */
   probe?: AdminApiProbe
+  /** Optional translated text for the admin error boundary's recovering panel */
+  unavailableCopy?: Partial<AdminApiUnavailableCopy>
 }
 
 const AdminDataContext = createContext<AdminDataContextValue | null>(null)
@@ -48,12 +87,19 @@ export interface AdminDataProviderProps {
   /** Optional configuration for display and search fields per model */
   displayFieldConfig?: DisplayFieldConfig
   /**
-   * Optional API reachability check (resolves true when the API answers) used by the admin error
-   * boundary to recover from "Can't reach the server" by itself. Pass the app's own probe, for
-   * example one that GETs the API's public `/api/uptime`. Without it the boundary retries by
-   * revalidating the route with backoff while the browser is online.
+   * Optional API reachability check used by the admin error boundary to recover by itself and to
+   * tell "you're offline" from "our servers are in trouble". Pass the app's own probe, ideally a
+   * reason-aware one resolving `{ reachable, reason }` (the template's `probeConnectivity()`); a
+   * probe resolving a plain boolean still works, with the reason taken from `navigator.onLine`.
+   * Without it the boundary uses `probeAdminConnectivity()`: offline when `navigator.onLine` is
+   * false or the web app's own origin does not answer, otherwise it revalidates the route.
    */
   probe?: AdminApiProbe
+  /**
+   * Optional text for the recovering panel (for i18n). Keys left out fall back to the English in
+   * `ADMIN_API_UNAVAILABLE_COPY`. A boundary's own `copy` prop overrides it key by key.
+   */
+  unavailableCopy?: Partial<AdminApiUnavailableCopy>
 }
 
 /**
@@ -83,10 +129,19 @@ export function AdminDataProvider({
   formTheme,
   displayFieldConfig,
   probe,
+  unavailableCopy,
 }: Readonly<AdminDataProviderProps>) {
   const value = useMemo(
-    () => ({ sdk, databaseModels, basePath, formTheme, displayFieldConfig, probe }),
-    [sdk, databaseModels, basePath, formTheme, displayFieldConfig, probe],
+    () => ({
+      sdk,
+      databaseModels,
+      basePath,
+      formTheme,
+      displayFieldConfig,
+      probe,
+      unavailableCopy,
+    }),
+    [sdk, databaseModels, basePath, formTheme, displayFieldConfig, probe, unavailableCopy],
   )
 
   return <AdminDataContext.Provider value={value}>{children}</AdminDataContext.Provider>
