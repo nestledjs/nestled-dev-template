@@ -885,6 +885,6 @@ function AdminDataEditPageContent({
 }
 
 /** Route error boundary: a network error recovers by itself (see AdminRouteErrorBoundary). */
-export function AdminDataEditErrorBoundary({ error, probe }: AdminDataErrorBoundaryProps) {
-  return <AdminRouteErrorBoundary error={error} probe={probe} />
+export function AdminDataEditErrorBoundary(props: AdminDataErrorBoundaryProps) {
+  return <AdminRouteErrorBoundary {...props} />
 }

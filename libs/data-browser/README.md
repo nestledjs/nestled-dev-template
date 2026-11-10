@@ -157,6 +157,17 @@ export function ErrorBoundary({ error }: Readonly<{ error: Error }>) {
 }
 ```
 
+#### Offline and server-trouble messages
+
+For a network error the boundaries show a panel that retries by itself and says either "You’re
+offline" or "We’re having trouble reaching our servers". Pass a reason-aware `probe` to
+`AdminDataProvider` (resolving `{ reachable, reason: 'offline' | 'server' }`, like the template's
+`probeConnectivity()`); a probe resolving a plain boolean still works, with the reason taken from
+`navigator.onLine`. Without a probe the panel checks `navigator.onLine` and the web app's own
+origin. For i18n pass `unavailableCopy` (or `copy` on a boundary) with any of `offlineTitle`,
+`offlineMessage`, `serverTitle`, `serverMessage`, `retryLabel` and `backLinkLabel`; the English
+defaults are exported as `ADMIN_API_UNAVAILABLE_COPY`.
+
 ### Step 4: Register Routes
 
 In `apps/web/app/routes.tsx`:
