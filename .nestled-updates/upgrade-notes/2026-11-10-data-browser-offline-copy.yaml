@@ -64,6 +64,8 @@ affectedPaths:
 packageReleases:
   - name: '@nestledjs/data-browser'
     sourcePath: libs/data-browser
+    targetVersion: 1.0.27
+    versionRange: ^1.0.27
 
 skipIf:
   - The project has no admin data routes (no `@nestledjs/data-browser` dependency).
@@ -84,8 +86,7 @@ verification:
 agentHints:
   - >
     Update package.json and the lockfile to the published version; do not copy files from
-    libs/data-browser. `targetVersion` is left out until 1.0.27 is published; the upgrader holds
-    the note until then.
+    libs/data-browser.
   - >
     A project with i18n adds translation keys for the admin panel's two strings that changed (the
     server-trouble title and message; reuse the shell's keys from 2026-11-09-error-recovery-r3 if
