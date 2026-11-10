@@ -54,8 +54,8 @@
   },
   "type": "module",
   "devDependencies": {
-    "@nestledjs/forms": "0.9.1",
-    "@nestledjs/forms-core": "0.9.1",
+    "@nestledjs/forms": "0.9.2",
+    "@nestledjs/forms-core": "0.9.2",
     "graphql": "16.14.2"
   }
 }
