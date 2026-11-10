@@ -82,7 +82,8 @@
     {
       "plugin": "@nx/vitest",
       "options": {
-        "testTargetName": "test"
+        "testTargetName": "test",
+        "testMode": "run"
       }
     },
     "./tools/nx-plugins/typecheck.js",
@@ -130,10 +131,6 @@
       "cache": true,
       "dependsOn": ["^build"],
       "inputs": ["production", "^production"]
-    },
-    "@nx/vitest:test": {
-      "cache": true,
-      "inputs": ["default", "^production"]
     },
     "test": [
       {

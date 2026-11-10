@@ -106,10 +106,12 @@
       }
     },
     "test": {
-      "executor": "@nx/vitest:test",
-      "outputs": ["{options.reportsDirectory}"],
+      "outputs": [
+        "{projectRoot}/{options.coverage.reportsDirectory}",
+        "{workspaceRoot}/coverage/apps/web"
+      ],
       "options": {
-        "reportsDirectory": "{projectRoot}/../../coverage/apps/web"
+        "coverage.reportsDirectory": "../../coverage/apps/web"
       }
     },
     "serve-static": {

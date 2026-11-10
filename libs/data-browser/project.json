@@ -6,12 +6,10 @@
   "tags": ["publishable"],
   "targets": {
     "test": {
-      "executor": "@nx/vitest:test",
-      "outputs": ["{workspaceRoot}/coverage/libs/data-browser"],
       "options": {
         "passWithNoTests": false,
-        "reportsDirectory": "{projectRoot}/../../coverage/libs/data-browser",
-        "configFile": "libs/data-browser/vitest.config.mts"
+        "config": "./vitest.config.mts",
+        "coverage.reportsDirectory": "../../coverage/libs/data-browser"
       }
     },
     "build": {
