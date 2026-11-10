@@ -39,7 +39,11 @@
       "@nestledjs/shared-components": ["libs/shared-components/src/index.ts"],
       "@nestledjs/access-control": ["libs/access-control/src/index.ts"]
     },
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "strict": false,
+    "noUncheckedSideEffectImports": false,
+    "types": ["*"],
+    "ignoreDeprecations": "6.0"
   },
   "exclude": [
     "node_modules",
