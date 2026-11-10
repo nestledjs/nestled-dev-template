@@ -9,9 +9,9 @@ export default defineConfig({
       jsxRuntime: 'automatic',
     }),
     dts({
-      outDir: resolve(__dirname, '../../dist/libs/shared-components'),
-      entryRoot: resolve(__dirname, 'src'),
-      tsconfigPath: resolve(__dirname, './tsconfig.lib.json'),
+      outDir: resolve(import.meta.dirname, '../../dist/libs/shared-components'),
+      entryRoot: resolve(import.meta.dirname, 'src'),
+      tsconfigPath: resolve(import.meta.dirname, './tsconfig.lib.json'),
     }),
   ],
   mode: 'production',
@@ -20,16 +20,19 @@ export default defineConfig({
       // The workspace alias must RESOLVE here so rollup can inline it. Consumers install this
       // package from npm and have no such path, so anything left as a bare specifier is an
       // unresolvable import in every downstream repo.
-      '@nestled-template/shared/utils': resolve(__dirname, '../shared/utils/src/index.ts'),
+      '@nestled-template/shared/utils': resolve(
+        import.meta.dirname,
+        '../shared/utils/src/index.ts',
+      ),
     },
   },
   build: {
     lib: {
-      entry: resolve(__dirname, 'src/index.ts'),
+      entry: resolve(import.meta.dirname, 'src/index.ts'),
       formats: ['es'],
       fileName: () => 'index.js',
     },
-    rollupOptions: {
+    rolldownOptions: {
       external: id => {
         // Workspace code is BUNDLED, never externalized: `@nestled-template/*` is a tsconfig
         // path that exists only in this repo. Externalizing it published
@@ -41,11 +44,11 @@ export default defineConfig({
       },
       output: {
         preserveModules: true,
-        preserveModulesRoot: resolve(__dirname, 'src'),
+        preserveModulesRoot: resolve(import.meta.dirname, 'src'),
         entryFileNames: '[name].js',
       },
     },
-    outDir: resolve(__dirname, '../../dist/libs/shared-components'),
+    outDir: resolve(import.meta.dirname, '../../dist/libs/shared-components'),
     emptyOutDir: true,
   },
 })

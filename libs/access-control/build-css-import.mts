@@ -1,5 +1,20 @@
 import * as path from 'path'
-import type { OutputBundle, OutputChunk } from 'rollup'
+
+// Structural types: the parts of a bundle this needs. Vite 8 hands generateBundle a Rolldown bundle,
+// whose types differ from Rollup's in fields this never reads, so neither package's type is named here.
+interface OutputAsset {
+  type: 'asset'
+  fileName: string
+}
+
+interface OutputChunk {
+  type: 'chunk'
+  fileName: string
+  isEntry: boolean
+  code: string
+}
+
+type OutputBundle = Record<string, OutputAsset | OutputChunk>
 
 const CSS_FILE_NAME = 'index.css'
 

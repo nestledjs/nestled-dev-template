@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useRevalidator } from 'react-router'
 import { ErrorBoundary, isNetworkError } from '@nestledjs/shared-components'
 import {
@@ -151,12 +151,18 @@ export interface AdminApiRecovery {
  */
 export function useAdminApiRecovery(probe: AdminApiProbe, onRecover: () => void): AdminApiRecovery {
   const [reason, setReason] = useState<AdminUnavailableReason>('server')
-  const attemptRef = useRef(initialAttempt(Date.now()))
+  // Read the clock once, on mount: a render must not call Date.now().
+  const [firstAttempt] = useState(() => initialAttempt(Date.now()))
+  const attemptRef = useRef(firstAttempt)
   const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
   const probingRef = useRef(false)
   const mountedRef = useRef(true)
   const latest = useRef({ probe, onRecover })
-  latest.current = { probe, onRecover }
+  // Refs are written after commit, not during render. A layout effect runs before any effect,
+  // timer or event handler that reads them, so they always see this render's values.
+  useLayoutEffect(() => {
+    latest.current = { probe, onRecover }
+  })
 
   const clearTimer = useCallback(() => {
     if (timerRef.current !== undefined) {
@@ -197,9 +203,11 @@ export function useAdminApiRecovery(probe: AdminApiProbe, onRecover: () => void)
     scheduleNext()
   }, [scheduleNext])
 
-  runProbeRef.current = () => {
-    void runProbe()
-  }
+  useLayoutEffect(() => {
+    runProbeRef.current = () => {
+      void runProbe()
+    }
+  }, [runProbe])
 
   const retryNow = useCallback(() => {
     clearTimer()
@@ -208,6 +216,9 @@ export function useAdminApiRecovery(probe: AdminApiProbe, onRecover: () => void)
 
   useEffect(() => {
     mountedRef.current = true
+    // navigator.onLine is browser-only. Read during render, it would make the hydrated HTML differ
+    // from the server's, so it is read once after mount and kept current by the listeners below.
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- syncs browser-only state after hydration
     setReason(fallbackReason())
     scheduleNext()
 

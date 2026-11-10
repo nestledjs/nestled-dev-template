@@ -1,4 +1,4 @@
-import { useCallback, useContext, useEffect, useRef, useState } from 'react'
+import { useCallback, useContext, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import type { ApolloClient } from '@apollo/client'
 import { getApolloContext } from '@apollo/client/react'
 import { isRetryableConnectivityError } from '@nestled-template/shared/apollo'
@@ -204,7 +204,11 @@ export function useApiAvailability(options: ApiAvailabilityOptions = {}): ApiAva
   const probingRef = useRef(false)
   const mountedRef = useRef(true)
   const optionsRef = useRef(options)
-  optionsRef.current = options
+  // Refs are written after commit, not during render. A layout effect runs before any effect,
+  // timer or event handler that reads them, so they always see this render's values.
+  useLayoutEffect(() => {
+    optionsRef.current = options
+  })
 
   const changePhase = useCallback((next: ApiAvailabilityPhase) => {
     phaseRef.current = next
@@ -274,9 +278,11 @@ export function useApiAvailability(options: ApiAvailabilityOptions = {}): ApiAva
     if (phaseRef.current === 'unavailable') scheduleRetry()
   }, [clearTimer, schedule, scheduleRetry, changePhase])
 
-  runProbeRef.current = () => {
-    void runProbe()
-  }
+  useLayoutEffect(() => {
+    runProbeRef.current = () => {
+      void runProbe()
+    }
+  }, [runProbe])
 
   const reportConnectivityError = useCallback(() => {
     if (phaseRef.current !== 'available') return
@@ -303,6 +309,9 @@ export function useApiAvailability(options: ApiAvailabilityOptions = {}): ApiAva
 
   useEffect(() => {
     mountedRef.current = true
+    // navigator.onLine is browser-only. Read during render, it would make the hydrated HTML differ
+    // from the server's, so it is read once after mount and kept current by the listeners below.
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- syncs browser-only state after hydration
     if (browserIsOffline()) setReason('offline')
     // Re-arm whatever the phase was waiting on. The cleanup below cancels the pending timer, so
     // without this an effect replay (React StrictMode in development, or any re-run) while a report

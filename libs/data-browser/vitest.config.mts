@@ -1,17 +1,17 @@
 import { defineConfig } from 'vitest/config'
 import react from '@vitejs/plugin-react'
-import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin'
 import path from 'node:path'
 
 export default defineConfig({
-  root: __dirname,
+  root: import.meta.dirname,
   cacheDir: '../../node_modules/.vite/libs/data-browser',
 
-  plugins: [react(), nxViteTsPaths()],
+  plugins: [react()],
 
   resolve: {
+    tsconfigPaths: true,
     alias: {
-      '@nestledjs/data-browser': path.resolve(__dirname, './src/index.ts'),
+      '@nestledjs/data-browser': path.resolve(import.meta.dirname, './src/index.ts'),
     },
   },
 
