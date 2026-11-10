@@ -29,7 +29,7 @@ export default defineConfig({
       formats: ['es'],
       fileName: () => 'index.js',
     },
-    rollupOptions: {
+    rolldownOptions: {
       external: id => {
         // Workspace code is BUNDLED, never externalized: `@nestled-template/*` is a tsconfig
         // path that exists only in this repo. Externalizing it published

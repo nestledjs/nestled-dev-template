@@ -73,7 +73,7 @@ export default defineConfig(() => ({
     commonjsOptions: {
       transformMixedEsModules: true,
     },
-    rollupOptions: {
+    rolldownOptions: {
       external: id => {
         // Exclude problematic Node.js build tools and Nx generators from bundling
         if (id.includes('@nx/nest') || id.includes('@nx/js') || id.includes('@swc-node/register')) {

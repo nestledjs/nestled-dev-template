@@ -79,7 +79,7 @@
     {
       "plugin": "@nx/vitest",
       "options": {
-        "testTargetName": "vite:test"
+        "testTargetName": "test"
       }
     },
     "./tools/nx-plugins/typecheck.js"
