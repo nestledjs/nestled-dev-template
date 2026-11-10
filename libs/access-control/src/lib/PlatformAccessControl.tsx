@@ -266,27 +266,43 @@ export function PlatformAccessControl({
     [onError],
   )
 
+  // Settles in promise callbacks, which always run after the effect that starts it returns, so no
+  // state is set synchronously inside that effect. A synchronous throw from the adapter still
+  // reaches reportError: the Promise constructor turns it into a rejection.
+  const fetchSnapshot = useCallback(
+    () =>
+      new Promise<AccessControlSnapshot>(resolve => resolve(adapter.load()))
+        .then(next => {
+          setSnapshot(next)
+          setSelectedRoleId(current =>
+            current && next.roles.some(role => role.id === current)
+              ? current
+              : (next.roles[0]?.id ?? null),
+          )
+        })
+        .catch(reportError)
+        .finally(() => setLoading(false)),
+    [adapter, reportError],
+  )
+
   const load = useCallback(async () => {
     setLoading(true)
     setError(null)
-    try {
-      const next = await adapter.load()
-      setSnapshot(next)
-      setSelectedRoleId(current =>
-        current && next.roles.some(role => role.id === current)
-          ? current
-          : (next.roles[0]?.id ?? null),
-      )
-    } catch (reason) {
-      reportError(reason)
-    } finally {
-      setLoading(false)
-    }
-  }, [adapter, reportError])
+    await fetchSnapshot()
+  }, [fetchSnapshot])
+
+  // A new adapter (or error handler) loads again. Its loading state is set while rendering, so the
+  // effect below only fetches and never sets state synchronously.
+  const [loadedWith, setLoadedWith] = useState({ adapter, reportError })
+  if (loadedWith.adapter !== adapter || loadedWith.reportError !== reportError) {
+    setLoadedWith({ adapter, reportError })
+    setLoading(true)
+    setError(null)
+  }
 
   useEffect(() => {
-    void load()
-  }, [load])
+    void fetchSnapshot()
+  }, [fetchSnapshot])
 
   const selectedRole = snapshot?.roles.find(role => role.id === selectedRoleId) ?? null
   const customRoles = snapshot?.roles.filter(role => !role.isSystem).length ?? 0

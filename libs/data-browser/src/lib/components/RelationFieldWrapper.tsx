@@ -24,21 +24,19 @@ export function RelationFieldWrapper({
   fieldName,
   basePath = '/admin/data',
 }: RelationFieldWrapperProps) {
-  const [currentValue, setCurrentValue] = useState(initialValue || '')
+  const [selectedValue, setCurrentValue] = useState(initialValue || '')
+  // An empty selection falls back to the initial value, derived while rendering.
+  const currentValue = selectedValue || initialValue || ''
 
   // Monitor the select field for changes
   useEffect(() => {
-    // Set initial value if it exists and currentValue is empty
-    if (initialValue && !currentValue) {
-      setCurrentValue(initialValue)
-    }
-
     if (fieldName) {
       // Find the select element and attach event listener
       const selectElement = document.querySelector<HTMLSelectElement>(`[name="${fieldName}"]`)
 
       // Set initial value if needed
       if (selectElement?.value && selectElement.value !== currentValue) {
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- reads a <select> another component renders, which exists only after commit
         setCurrentValue(selectElement.value)
       }
 
@@ -56,7 +54,7 @@ export function RelationFieldWrapper({
         }
       }
     }
-  }, [fieldName, currentValue, initialValue])
+  }, [fieldName, currentValue])
 
   // Only show the view link if we have a relation type and value
   const showViewLink = !!(relationType && currentValue && currentValue !== '')

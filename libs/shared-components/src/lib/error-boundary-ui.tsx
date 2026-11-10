@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useSyncExternalStore } from 'react'
 import JSON5 from 'json5'
 
 function findJsonBounds(str: string, braceStart: number): number {
@@ -175,12 +175,14 @@ function extraErrorEntries(error: unknown): [string, unknown][] {
   return Object.entries(error).filter(([key]) => !['message', 'stack', 'name'].includes(key))
 }
 
-export function ErrorBoundaryUi({ error }: { readonly error: Error }) {
-  const [showDetails, setShowDetails] = useState(false)
+// The details are client-only: false while rendering on the server and hydrating, true once in
+// the browser. useSyncExternalStore gives exactly that without setting state from an effect.
+const subscribeToNothing = () => () => undefined
+const onClient = () => true
+const onServer = () => false
 
-  useEffect(() => {
-    setShowDetails(true)
-  }, [])
+export function ErrorBoundaryUi({ error }: { readonly error: Error }) {
+  const showDetails = useSyncExternalStore(subscribeToNothing, onClient, onServer)
 
   // Log the full error object for debugging
   console.error('Route ErrorBoundary caught:', error)

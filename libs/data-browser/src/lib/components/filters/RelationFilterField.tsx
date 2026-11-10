@@ -43,9 +43,10 @@ export function RelationFilterField({
   )
 
   // Find current item to display
+  const currentValueId = currentValue?.id
   const currentItem = useMemo(
-    () => (currentValue?.id ? relatedItems.find((item: any) => item.id === currentValue.id) : null),
-    [currentValue?.id, relatedItems],
+    () => (currentValueId ? relatedItems.find((item: any) => item.id === currentValueId) : null),
+    [currentValueId, relatedItems],
   )
 
   // Event handlers

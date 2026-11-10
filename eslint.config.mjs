@@ -78,14 +78,6 @@ export default [
       '@typescript-eslint/no-unused-vars': 'off',
     },
   },
-  // TEMPORARY, pending the owner's decision: rules ESLint 10 added to eslint:recommended. They
-  // report as warnings until the owner chooses whether they are errors. See reactHooksV7Pending.
-  {
-    rules: {
-      'no-useless-assignment': 'warn',
-      'preserve-caught-error': 'warn',
-    },
-  },
 ]
 
 // eslint-plugin-react (through `nx.configs['flat/react']`) sets `react.version: 'detect'`, and its
@@ -94,28 +86,4 @@ export default [
 // Spread this after `nx.configs['flat/react']`. Remove it once eslint-plugin-react supports ESLint 10.
 export const reactVersionSettings = {
   settings: { react: { version: createRequire(import.meta.url)('react/package.json').version } },
-}
-
-// TEMPORARY, pending the owner's decision on which eslint-plugin-react-hooks v7 rules are on.
-// v7's `recommended` set (applied by `nx.configs['flat/react']`) adds 14 React Compiler rules to
-// rules-of-hooks and exhaustive-deps, most of them errors. Until the owner chooses, every new rule
-// reports as a warning so lint stays green; rules-of-hooks and exhaustive-deps keep their v5
-// levels. Spread this after `nx.configs['flat/react']`. Replace it with the chosen config.
-export const reactHooksV7Pending = {
-  rules: {
-    'react-hooks/static-components': 'warn',
-    'react-hooks/use-memo': 'warn',
-    'react-hooks/preserve-manual-memoization': 'warn',
-    'react-hooks/incompatible-library': 'warn',
-    'react-hooks/immutability': 'warn',
-    'react-hooks/globals': 'warn',
-    'react-hooks/refs': 'warn',
-    'react-hooks/set-state-in-effect': 'warn',
-    'react-hooks/error-boundaries': 'warn',
-    'react-hooks/purity': 'warn',
-    'react-hooks/set-state-in-render': 'warn',
-    'react-hooks/unsupported-syntax': 'warn',
-    'react-hooks/config': 'warn',
-    'react-hooks/gating': 'warn',
-  },
 }
