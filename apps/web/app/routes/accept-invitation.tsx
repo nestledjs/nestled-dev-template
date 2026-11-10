@@ -120,9 +120,10 @@ export default function AcceptInvitation() {
 
   // A signed-in user's invitation is accepted automatically (the effect below). The accepting
   // screen shows from the first render that can start it until it fails, derived here rather than
-  // set from the effect.
-  const [autoAcceptFailed, setAutoAcceptFailed] = useState(false)
-  const autoAccepting = Boolean(user && token && invitationDetails) && !autoAcceptFailed
+  // set from the effect. The failure is recorded per token, so moving to another invitation link
+  // in the same tab shows that invitation's own accepting state.
+  const [failedToken, setFailedToken] = useState<string | null>(null)
+  const autoAccepting = Boolean(user && token && invitationDetails) && failedToken !== token
 
   // Settles in promise callbacks, which always run after the effect that starts it returns, so no
   // state is set synchronously inside that effect. A synchronous throw from the mutation still
@@ -149,7 +150,7 @@ export default function AcceptInvitation() {
         setFormError(
           getInvitationErrorMessage(error, 'Failed to accept invitation. Please try again.'),
         )
-        setAutoAcceptFailed(true)
+        setFailedToken(token)
       })
   }, [acceptInvitation, navigate, token])
 

@@ -2,6 +2,7 @@ import React from 'react'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { createTestRouter } from '../helpers/createTestRouter'
+import { Link } from 'react-router'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import AcceptInvitation, {
   buildRegisterWithInvitationInput,
@@ -312,6 +313,46 @@ describe('AcceptInvitation Component', () => {
       await waitFor(() => {
         expect(screen.getByText('Already a member')).toBeInTheDocument()
       })
+    })
+
+    it('shows the accepting state for a new invitation link after an earlier one failed', async () => {
+      vi.mocked(useGlobalCtx).mockReturnValue({
+        user: { id: 'user-123', firstName: 'Test', lastName: 'User' } as any,
+        organizations: [],
+        activeOrganization: null,
+        activeOrganizationMember: null,
+      })
+      // The first invitation fails; the second stays in flight, so the accepting screen must show.
+      mockAcceptInvitation
+        .mockRejectedValueOnce(new Error('Already a member'))
+        .mockReturnValueOnce(new Promise(() => undefined))
+
+      const ReactRouterStub = createTestRouter([
+        {
+          path: '/accept-invitation',
+          Component: () => (
+            <>
+              <Link to="/accept-invitation?token=second-token">Next invitation</Link>
+              <AcceptInvitation />
+            </>
+          ),
+        },
+      ])
+      render(<ReactRouterStub initialEntries={['/accept-invitation?token=test-token']} />)
+
+      await waitFor(() => {
+        expect(screen.getByText('Already a member')).toBeInTheDocument()
+      })
+      expect(screen.queryByText('Welcome!')).not.toBeInTheDocument()
+
+      await userEvent.click(screen.getByText('Next invitation'))
+
+      await waitFor(() => {
+        expect(mockAcceptInvitation).toHaveBeenLastCalledWith({
+          variables: { input: { token: 'second-token' } },
+        })
+      })
+      expect(screen.getByText('Welcome!')).toBeInTheDocument()
     })
   })
 
