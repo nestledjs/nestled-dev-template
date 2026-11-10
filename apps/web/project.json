@@ -135,6 +135,9 @@
       "options": {
         "buildTarget": "web:build",
         "spa": true
+      },
+      "readyWhen": {
+        "signal": true
       }
     }
   }
