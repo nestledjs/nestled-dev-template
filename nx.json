@@ -177,5 +177,8 @@
     }
   },
   "analytics": true,
-  "nxCloudId": "6adf2a3de0f3af887ed7d048"
+  "nxCloudId": "6adf2a3de0f3af887ed7d048",
+  "affected": {
+    "legacy": true
+  }
 }
