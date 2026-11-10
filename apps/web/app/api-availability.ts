@@ -149,7 +149,6 @@ export function browserIsOffline(): boolean {
 }
 
 export type ApiAvailabilityPhase = 'available' | 'confirming' | 'unavailable'
-type Phase = ApiAvailabilityPhase
 
 export interface ApiAvailabilityOptions {
   /** Called once each time the API answers again after the screen was up. */
@@ -193,12 +192,12 @@ export interface ApiAvailability {
 }
 
 export function useApiAvailability(options: ApiAvailabilityOptions = {}): ApiAvailability {
-  const [phase, setPhase] = useState<Phase>(
+  const [phase, setPhase] = useState<ApiAvailabilityPhase>(
     options.initiallyUnavailable ? 'unavailable' : 'available',
   )
   const [reason, setReason] = useState<UnavailableReason>(options.initialReason ?? 'server')
 
-  const phaseRef = useRef<Phase>(phase)
+  const phaseRef = useRef<ApiAvailabilityPhase>(phase)
   const confirmAttemptRef = useRef(0)
   const retryAttemptRef = useRef(0)
   const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
@@ -207,7 +206,7 @@ export function useApiAvailability(options: ApiAvailabilityOptions = {}): ApiAva
   const optionsRef = useRef(options)
   optionsRef.current = options
 
-  const changePhase = useCallback((next: Phase) => {
+  const changePhase = useCallback((next: ApiAvailabilityPhase) => {
     phaseRef.current = next
     setPhase(next)
   }, [])
@@ -241,7 +240,7 @@ export function useApiAvailability(options: ApiAvailabilityOptions = {}): ApiAva
   const runProbe = useCallback(async () => {
     if (probingRef.current || phaseRef.current === 'available') return
     probingRef.current = true
-    let result: ConnectivityProbeResult = { reachable: false }
+    let result: ConnectivityProbeResult
     try {
       const outcome = await (optionsRef.current.probe ?? probeConnectivity)()
       result = typeof outcome === 'boolean' ? { reachable: outcome } : outcome
