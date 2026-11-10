@@ -165,7 +165,7 @@ export default function AcceptInvitation() {
   useEffect(() => {
     if (!(user && token && invitationDetails)) return
     let current = true
-    acceptInvitationAsync(() => current)
+    void acceptInvitationAsync(() => current)
     return () => {
       current = false
     }
