@@ -78,6 +78,14 @@ export default [
       '@typescript-eslint/no-unused-vars': 'off',
     },
   },
+  // TEMPORARY, pending the owner's decision: rules ESLint 10 added to eslint:recommended. They
+  // report as warnings until the owner chooses whether they are errors. See reactHooksV7Pending.
+  {
+    rules: {
+      'no-useless-assignment': 'warn',
+      'preserve-caught-error': 'warn',
+    },
+  },
 ]
 
 // eslint-plugin-react (through `nx.configs['flat/react']`) sets `react.version: 'detect'`, and its
