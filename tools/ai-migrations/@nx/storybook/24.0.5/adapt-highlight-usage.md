@@ -56,28 +56,28 @@ emit(HIGHLIGHT, {
       },
     ],
   ],
-});
+})
 
 channel.on('my-addon/show-details', (itemId, details) => {
-  showDetails(itemId, details);
-});
+  showDetails(itemId, details)
+})
 ```
 
 **After:**
 
 ```ts
-import { HIGHLIGHT, HIGHLIGHT_MENU_CLICK } from 'storybook/highlight';
+import { HIGHLIGHT, HIGHLIGHT_MENU_CLICK } from 'storybook/highlight'
 
 emit(HIGHLIGHT, {
   id: 'my-addon/headings',
   selectors: ['h2'],
   menu: [[{ id: 'details', title: 'Show details', clickable: true }]],
-});
+})
 
 channel.on(HIGHLIGHT_MENU_CLICK, (highlightId, itemId, details) => {
-  if (highlightId !== 'my-addon/headings') return;
-  showDetails(itemId, details);
-});
+  if (highlightId !== 'my-addon/headings') return
+  showDetails(itemId, details)
+})
 ```
 
 ## Step 4: Stop reading `outerHTML` and `attributes`
