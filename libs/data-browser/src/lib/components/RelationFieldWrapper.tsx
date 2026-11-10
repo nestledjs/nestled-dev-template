@@ -54,7 +54,9 @@ export function RelationFieldWrapper({
         }
       }
     }
-  }, [fieldName, currentValue])
+    // initialValue stays a dependency: when it changes, the effect re-reads the select, which may
+    // have been updated to the new record programmatically.
+  }, [fieldName, currentValue, initialValue])
 
   // Only show the view link if we have a relation type and value
   const showViewLink = !!(relationType && currentValue && currentValue !== '')

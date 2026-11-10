@@ -8,7 +8,7 @@ import remarkFrontmatter from 'remark-frontmatter'
 import remarkMdxFrontmatter from 'remark-mdx-frontmatter'
 import { nxReadySignal } from '@nx/vite/plugins/nx-ready-signal.plugin'
 
-export default defineConfig(() => ({
+export default defineConfig(({ mode }) => ({
   root: import.meta.dirname,
   cacheDir: '../../node_modules/.vite/apps/web',
   assetsInclude: ['**/*.node'],
@@ -34,6 +34,9 @@ export default defineConfig(() => ({
   server: {
     port: Number(process.env.WEB_PORT) || 4200,
     host: process.env.VITE_HOST || 'localhost',
+    // `nx serve web --configuration=production` serves without HMR, as the removed
+    // @nx/vite:dev-server production configuration did (hmr: false); every other mode keeps it.
+    hmr: mode !== 'production',
     fs: {
       allow: [
         path.resolve(import.meta.dirname, '../../libs'),
