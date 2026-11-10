@@ -228,7 +228,8 @@ packageReleases:
 skipIf:
   - >-
     The project already runs Nx 24, TypeScript 6 and ESLint 10, with every hooks v7 rule and both
-    new ESLint 10 rules at error level and `nx run-many -t lint` passing.
+    new ESLint 10 rules at error level and `nx run-many -t lint` passing, and every package in
+    packageReleases that it declares is already at that release's targetVersion or later.
 
 verification:
   - pnpm exec nx report (nx and every @nx/* package on 24.0.5, typescript 6.0.3)
