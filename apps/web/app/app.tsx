@@ -20,6 +20,7 @@ import {
   classifyApiFailure,
   isApiOutageSignalled,
   isRetryableConnectivityError,
+  takeDeferredAuthFailure,
 } from '@nestled-template/shared/apollo'
 import { AccessDenied } from './access-denied'
 import { retryDelayMs, useApiAvailability, useRefetchFailedQueries } from './api-availability'
@@ -28,8 +29,11 @@ import { ApiUnavailableScreen } from './api-unavailable'
 type MeQueryErrorBoundaryProps = {
   children: ReactNode
   resetKey?: unknown
-  /** Told what the Me query failed with, so a connectivity failure can be retried on recovery. */
-  onError?: (error: unknown) => void
+  /**
+   * Told what the Me query failed with, and whether it waits for the API to recover (see
+   * `meFailureAwaitsRecovery`), so that failure can be retried on recovery.
+   */
+  onError?: (error: unknown, awaitsRecovery: boolean) => void
   /**
    * Rendered while a Me query that failed for want of a connection (or with a 401 during an
    * outage, see `meFailureAwaitsRecovery`) waits to be retried. It must not be the signed-out
@@ -39,7 +43,7 @@ type MeQueryErrorBoundaryProps = {
   recoveringFallback?: ReactNode
 }
 
-type MeQueryErrorBoundaryState = { hasError: boolean; awaitsRecovery: boolean }
+type MeQueryErrorBoundaryState = { hasError: boolean; awaitsRecovery: boolean; resetKey?: unknown }
 
 /**
  * A Me failure that must not sign the user out, and is retried once the API answers instead: a
@@ -54,30 +58,53 @@ function meFailureAwaitsRecovery(error: unknown): boolean {
   )
 }
 
+// Me query refs whose failure was judged to wait for recovery. The decision sticks to the ref: once
+// the outage clears, App mounts the boundary again with the same failed ref until the retry brings
+// a new one, and by then nothing signals an outage, so judging its 401 afresh would sign the user
+// out without a new answer from the API.
+const meRefsAwaitingRecovery = new WeakSet<object>()
+
 class MeQueryErrorBoundary extends Component<MeQueryErrorBoundaryProps, MeQueryErrorBoundaryState> {
   constructor(props: MeQueryErrorBoundaryProps) {
     super(props)
-    this.state = { hasError: false, awaitsRecovery: false }
+    this.state = { hasError: false, awaitsRecovery: false, resetKey: props.resetKey }
   }
 
-  static getDerivedStateFromError(error: unknown): MeQueryErrorBoundaryState {
+  static getDerivedStateFromError(error: unknown): Partial<MeQueryErrorBoundaryState> {
     return { hasError: true, awaitsRecovery: meFailureAwaitsRecovery(error) }
   }
 
-  componentDidCatch(error: unknown) {
-    this.props.onError?.(error)
+  // A new Me query (the root loader ran again) gets a fresh chance. Without this, one failed Me
+  // preload left the whole session rendering as signed out until a full page load. Reset while
+  // rendering the new ref, not after: resetting in componentDidUpdate rendered the old failure
+  // against the new ref first, for one frame, as signed out.
+  static getDerivedStateFromProps(
+    props: MeQueryErrorBoundaryProps,
+    state: MeQueryErrorBoundaryState,
+  ): Partial<MeQueryErrorBoundaryState> | null {
+    if (props.resetKey === state.resetKey) return null
+    return { hasError: false, awaitsRecovery: false, resetKey: props.resetKey }
   }
 
-  // A new Me query (the root loader ran again) gets a fresh chance. Without this, one failed Me
-  // preload left the whole session rendering as signed out until a full page load.
-  componentDidUpdate(prevProps: MeQueryErrorBoundaryProps) {
-    if (this.state.hasError && prevProps.resetKey !== this.props.resetKey) {
-      this.setState({ hasError: false, awaitsRecovery: false })
+  componentDidCatch(error: unknown) {
+    const awaitsRecovery = this.awaitsRecovery()
+    const { resetKey } = this.props
+    if (awaitsRecovery && typeof resetKey === 'object' && resetKey !== null) {
+      meRefsAwaitingRecovery.add(resetKey)
     }
+    this.props.onError?.(error, awaitsRecovery)
+  }
+
+  private awaitsRecovery(): boolean {
+    const { resetKey } = this.props
+    return (
+      this.state.awaitsRecovery ||
+      (typeof resetKey === 'object' && resetKey !== null && meRefsAwaitingRecovery.has(resetKey))
+    )
   }
 
   render() {
-    if (this.state.hasError && this.state.awaitsRecovery && this.props.recoveringFallback) {
+    if (this.state.hasError && this.awaitsRecovery() && this.props.recoveringFallback) {
       return this.props.recoveringFallback
     }
     // Any other failure (a 401 with no outage among them) renders as signed out, as before: the
@@ -187,18 +214,19 @@ export function App() {
       } else {
         retryMeQuery()
       }
-      refetchFailedQueries()
+      // Queries left holding a 401 the error link let pass during the outage get a fresh answer.
+      refetchFailedQueries({ includeAuthFailures: takeDeferredAuthFailure() })
     },
     onBlipCleared: () => {
       retryMeQuery()
-      refetchFailedQueries()
+      refetchFailedQueries({ includeAuthFailures: takeDeferredAuthFailure() })
     },
   })
   const { reportConnectivityError, markUnavailable } = api
 
   const handleMeQueryError = useCallback(
-    (error: unknown) => {
-      if (!meFailureAwaitsRecovery(error)) return
+    (_error: unknown, awaitsRecovery: boolean) => {
+      if (!awaitsRecovery) return
       meFailedOfflineRef.current = true
       // Confirm the failure with the probe; whichever way it clears (a blip, or the outage screen
       // coming down) calls back above. During SSR the error link reports nothing, so this is the

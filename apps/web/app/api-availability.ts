@@ -1,7 +1,11 @@
 import { useCallback, useContext, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import type { ApolloClient } from '@apollo/client'
 import { getApolloContext } from '@apollo/client/react'
-import { isRetryableConnectivityError, signalApiOutage } from '@nestled-template/shared/apollo'
+import {
+  classifyApiFailure,
+  isRetryableConnectivityError,
+  signalApiOutage,
+} from '@nestled-template/shared/apollo'
 
 /**
  * Whether the browser can reach the API, and the "API unavailable" screen's lifecycle.
@@ -379,12 +383,22 @@ export function useApiAvailability(options: ApiAvailabilityOptions = {}): ApiAva
  * user to log in, or to the access-denied screen), any other answered HTTP status, and an error
  * thrown by application code. Refetching those on every return to the tab replayed the same auth
  * failure, and with it the same logout redirect or access-denied screen, again and again.
+ *
+ * The one exception is `includeAuthFailures`, passed once an outage clears when the error link let
+ * a 401 pass during it (`takeDeferredAuthFailure`): those queries were never sent to logout, so
+ * they are refetched for a fresh answer, and a 401 then, with no outage, logs out as usual.
  */
-export function refetchFailedQueries(client: Pick<ApolloClient, 'getObservableQueries'>): number {
+export function refetchFailedQueries(
+  client: Pick<ApolloClient, 'getObservableQueries'>,
+  options: { includeAuthFailures?: boolean } = {},
+): number {
   let refetched = 0
   for (const query of client.getObservableQueries('active')) {
     const { error } = query.getCurrentResult()
-    if (isRetryableConnectivityError(error)) {
+    if (
+      isRetryableConnectivityError(error) ||
+      (options.includeAuthFailures && error && classifyApiFailure(error) === 'unauthenticated')
+    ) {
       refetched += 1
       query.refetch().catch(() => undefined)
     }
@@ -414,8 +428,10 @@ export const RETURN_TRIGGER_DEBOUNCE_MS = 250
  * the same queries were refetched straight away, forever. A request that arrives inside the
  * backoff window is deferred to the end of it, not dropped.
  */
-export function useRefetchFailedQueries(): () => void {
+export function useRefetchFailedQueries(): (options?: { includeAuthFailures?: boolean }) => void {
   const client = useContext(getApolloContext()).client
+  // Kept until the next pass runs, so a request deferred by the backoff does not lose it.
+  const includeAuthFailuresRef = useRef(false)
   const attemptRef = useRef(0)
   const nextAllowedAtRef = useRef(0)
   const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
@@ -424,7 +440,9 @@ export function useRefetchFailedQueries(): () => void {
   const run = useCallback(() => {
     timerRef.current = undefined
     if (!client) return
-    if (refetchFailedQueries(client) === 0) {
+    const includeAuthFailures = includeAuthFailuresRef.current
+    includeAuthFailuresRef.current = false
+    if (refetchFailedQueries(client, { includeAuthFailures }) === 0) {
       attemptRef.current = 0
       nextAllowedAtRef.current = 0
       return
@@ -433,12 +451,16 @@ export function useRefetchFailedQueries(): () => void {
     attemptRef.current += 1
   }, [client])
 
-  const refetch = useCallback(() => {
-    if (timerRef.current !== undefined) return
-    const wait = nextAllowedAtRef.current - Date.now()
-    if (wait <= 0) run()
-    else timerRef.current = setTimeout(run, wait)
-  }, [run])
+  const refetch = useCallback(
+    (options?: { includeAuthFailures?: boolean }) => {
+      if (options?.includeAuthFailures) includeAuthFailuresRef.current = true
+      if (timerRef.current !== undefined) return
+      const wait = nextAllowedAtRef.current - Date.now()
+      if (wait <= 0) run()
+      else timerRef.current = setTimeout(run, wait)
+    },
+    [run],
+  )
 
   useEffect(() => {
     const handleReturn = () => {

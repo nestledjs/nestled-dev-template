@@ -38,15 +38,28 @@ intent: >
   confirming an outage or showing the recovering screen.
   - libs/shared/apollo/src/lib/apollo.ts: new `signalApiOutage(source, active)` and
     `isApiOutageSignalled()` (a set of sources, so several mounted checks do not clear each
-    other). The error link's 401 handling does nothing while any outage is signalled.
+    other). The error link's 401 handling does nothing while any outage is signalled, and records
+    that it let one pass; new `takeDeferredAuthFailure()` returns and clears that record.
+  - apps/web/app/api-availability.ts `refetchFailedQueries(client, { includeAuthFailures })` also
+    refetches queries holding a 401 / UNAUTHENTICATED error when asked; `useRefetchFailedQueries`
+    returns `(options?) => void` and keeps the request across a backoff deferral. App's
+    `onRecover` and `onBlipCleared` pass `includeAuthFailures: takeDeferredAuthFailure()`, so a
+    query whose 401 was let pass during the outage gets a fresh answer: data, or a 401 with no
+    outage that logs out as usual. Return-to-tab refetches still never replay a 401.
   - apps/web/app/api-availability.ts `useApiAvailability` signals an outage, keyed by the hook
     instance, whenever its phase is `confirming` or `unavailable`, and clears it on `available`
     and on unmount.
   - apps/web/app/app.tsx: `MeQueryErrorBoundary` and `handleMeQueryError` use a new
     `meFailureAwaitsRecovery(error)`: a connectivity failure, or a 401 while an outage is
     signalled, shows the recovering fallback and retries Me once the API answers (the boundary's
-    state field `connectivityFailure` is renamed `awaitsRecovery`). A 401 with no outage
-    signalled renders as signed out, as before.
+    state field `connectivityFailure` is renamed `awaitsRecovery`, and `onError` receives it as a
+    second argument). The decision sticks to the Me query ref (a module WeakSet): once the outage
+    clears, App mounts the boundary again with the same failed ref until the retry brings a new
+    one, and judging that old 401 afresh, with no outage signalled any more, would sign the user
+    out without a new answer. The boundary now resets on a new ref in
+    `getDerivedStateFromProps` instead of `componentDidUpdate`, which rendered the old failure
+    against the new ref for one frame. A 401 with no outage signalled renders as signed out, as
+    before.
   - apps/web/app/root.tsx `ErrorBoundary`: an unauthorized error while an outage is signalled
     renders `<RecoveringApiUnavailable initialReason="server" />` instead of going to
     /force-logout; it reloads once the API answers and the server render decides again.
@@ -57,7 +70,9 @@ intent: >
   an outage in the same loader (either order), for `mergeApiFailureCauses`, and for the error
   link keeping the session while an outage is signalled. apps/web/tests/api-availability.spec.tsx:
   new tests for the hook's outage signal, for a Me 401 during an outage (kept, then signed back
-  in, or logged out by a clean 401 after recovery), and for the root ErrorBoundary.
+  in; kept when the outage is confirmed and the retry's loader is still running as the screen
+  comes down; or logged out by a clean 401 after recovery), for refetching deferred 401s, and for
+  the root ErrorBoundary.
 
 why: >
   Owner decision: log people out only when we absolutely have to. A 401 alongside an outage is

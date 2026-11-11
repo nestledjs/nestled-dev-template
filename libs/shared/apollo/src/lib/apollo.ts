@@ -226,8 +226,23 @@ export function isApiOutageSignalled(): boolean {
   return apiOutageSignals.size > 0
 }
 
+// Set when the error link lets a 401 pass because an outage was signalled.
+let authFailureDeferred = false
+
+/**
+ * Whether the error link has let a 401 pass because an outage was signalled, since the last call;
+ * the call clears it. Once the outage clears, the app refetches the queries left holding such a
+ * 401, so each gets a fresh answer: data, or a 401 with no outage that logs out as usual.
+ */
+export function takeDeferredAuthFailure(): boolean {
+  const deferred = authFailureDeferred
+  authFailureDeferred = false
+  return deferred
+}
+
 function handleAuthenticationError(): void {
   if (isApiOutageSignalled()) {
+    authFailureDeferred = true
     console.log('[Apollo] Authentication error during an API outage, keeping the session for now')
     return
   }

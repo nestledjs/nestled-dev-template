@@ -9,6 +9,7 @@ import {
   makeClient,
   signalApiOutage,
   subscriptionRetryDelayMs,
+  takeDeferredAuthFailure,
 } from './apollo'
 import { apolloLoader, mergeApiFailureCauses, ssrApiFailureCause } from './apollo-loader'
 
@@ -386,23 +387,30 @@ describe('makeClient', () => {
       signalApiOutage(first, true)
       signalApiOutage(second, true)
       expect(isApiOutageSignalled()).toBe(true)
+      expect(takeDeferredAuthFailure()).toBe(false)
       await makeClient(undefined, { apiUrl: 'https://api.example.com/graphql' }).query({ query })
       expect(testWindow.location.href).toBe('')
       expect(consoleLog).toHaveBeenCalledWith(
         '[Apollo] Authentication error during an API outage, keeping the session for now',
       )
+      // Recorded once, for the app to refetch the query after the outage, then cleared.
+      expect(takeDeferredAuthFailure()).toBe(true)
+      expect(takeDeferredAuthFailure()).toBe(false)
 
       // One source clearing does not clear another's evidence.
       signalApiOutage(first, false)
       expect(isApiOutageSignalled()).toBe(true)
       await makeClient(undefined, { apiUrl: 'https://api.example.com/graphql' }).query({ query })
       expect(testWindow.location.href).toBe('')
+      expect(takeDeferredAuthFailure()).toBe(true)
 
       signalApiOutage(second, false)
       expect(isApiOutageSignalled()).toBe(false)
       await makeClient(undefined, { apiUrl: 'https://api.example.com/graphql' }).query({ query })
       expect(testWindow.location.href).toBe('/logout?return_url=%2Fmembers')
+      expect(takeDeferredAuthFailure()).toBe(false)
     } finally {
+      takeDeferredAuthFailure()
       signalApiOutage(first, false)
       signalApiOutage(second, false)
     }
