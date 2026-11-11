@@ -138,9 +138,15 @@ export default function AcceptInvitation() {
   // lands in the catch: starting it inside `.then` turns it into a rejection. A run that a newer
   // one has superseded (the effect re-ran, for the same invitation or for another invitation link)
   // settles without touching state or navigating, so a late result can't overwrite the current
-  // run's, and the current run still sees the shared request through to its redirect.
+  // run's, and the current run still sees the shared request through to its redirect. The
+  // redirect is delayed, so its timer checks `isCurrent()` again when it fires and is cleared when
+  // the run is superseded: a run that has moved on (to another invitation link, away from the
+  // route, or to an effect re-run after acceptance) never navigates, and only one run redirects.
   const acceptInvitationAsync = useCallback(
-    (isCurrent: () => boolean) => {
+    (
+      isCurrent: () => boolean,
+      onRedirectScheduled: (timer: ReturnType<typeof setTimeout>) => void,
+    ) => {
       if (!token) return Promise.resolve()
 
       let acceptance = acceptancesRef.current.get(token)
@@ -159,9 +165,12 @@ export default function AcceptInvitation() {
         .then(() => {
           if (!isCurrent()) return
           // Redirect to members area
-          setTimeout(() => {
-            navigate('/members', { replace: true })
-          }, 1500)
+          onRedirectScheduled(
+            setTimeout(() => {
+              if (!isCurrent()) return
+              navigate('/members', { replace: true })
+            }, 1500),
+          )
         })
         .catch(error => {
           if (!isCurrent()) return
@@ -178,9 +187,16 @@ export default function AcceptInvitation() {
   useEffect(() => {
     if (!(user && token && invitationDetails)) return
     let current = true
-    void acceptInvitationAsync(() => current)
+    let redirectTimer: ReturnType<typeof setTimeout> | undefined
+    void acceptInvitationAsync(
+      () => current,
+      timer => {
+        redirectTimer = timer
+      },
+    )
     return () => {
       current = false
+      clearTimeout(redirectTimer)
     }
   }, [acceptInvitationAsync, invitationDetails, token, user])
 

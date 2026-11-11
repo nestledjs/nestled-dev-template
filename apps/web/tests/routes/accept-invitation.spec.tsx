@@ -2,7 +2,7 @@ import React from 'react'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { createTestRouter } from '../helpers/createTestRouter'
-import { Link } from 'react-router'
+import { Link, useLocation } from 'react-router'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import AcceptInvitation, {
   buildRegisterWithInvitationInput,
@@ -506,6 +506,77 @@ describe('AcceptInvitation Component', () => {
       })
       expect(mockAcceptInvitation).toHaveBeenCalledTimes(2)
       expect(screen.queryByText('Invitation already used')).not.toBeInTheDocument()
+    })
+
+    it('does not redirect for an accepted invitation the user has moved away from', async () => {
+      vi.mocked(useGlobalCtx).mockReturnValue(loggedInUser())
+      // The first invitation is accepted at once; the second stays in flight.
+      mockAcceptInvitation
+        .mockResolvedValueOnce({ data: { acceptOrganizationInvitation: { success: true } } })
+        .mockReturnValueOnce(new Promise(() => undefined))
+
+      const ReactRouterStub = createTestRouter([
+        {
+          path: '/accept-invitation',
+          Component: () => (
+            <>
+              <Link to="/accept-invitation?token=second-token">Second invitation</Link>
+              <AcceptInvitation />
+            </>
+          ),
+        },
+        { path: '/members', Component: () => <p>Members area</p> },
+      ])
+      render(<ReactRouterStub initialEntries={['/accept-invitation?token=test-token']} />)
+
+      await waitFor(() => expect(mockAcceptInvitation).toHaveBeenCalledTimes(1))
+      // Let the first acceptance resolve and schedule its redirect, then follow the second link
+      // within the redirect delay.
+      await new Promise(resolve => setTimeout(resolve, 50))
+      await userEvent.click(screen.getByText('Second invitation'))
+      await waitFor(() => expect(mockAcceptInvitation).toHaveBeenCalledTimes(2))
+
+      await new Promise(resolve => setTimeout(resolve, 1800))
+
+      expect(screen.queryByText('Members area')).not.toBeInTheDocument()
+      expect(screen.getByText('Welcome!')).toBeInTheDocument()
+    })
+
+    it('redirects once when the effect re-runs after the acceptance succeeded', async () => {
+      // A fresh user object on every render, so a re-render re-runs the acceptance effect.
+      vi.mocked(useGlobalCtx).mockImplementation(loggedInUser)
+      mockAcceptInvitation.mockResolvedValue({
+        data: { acceptOrganizationInvitation: { success: true } },
+      })
+      // Every navigation to /members gives a new location key; one key means one redirect.
+      const membersLocationKeys = new Set<string>()
+      function MembersArea() {
+        const { key } = useLocation()
+        React.useEffect(() => {
+          membersLocationKeys.add(key)
+        }, [key])
+        return <p>Members area</p>
+      }
+
+      const ReactRouterStub = createTestRouter([
+        { path: '/accept-invitation', Component: RerenderableAcceptInvitation },
+        { path: '/members', Component: MembersArea },
+      ])
+      render(<ReactRouterStub initialEntries={['/accept-invitation?token=test-token']} />)
+
+      await waitFor(() => expect(mockAcceptInvitation).toHaveBeenCalledTimes(1))
+      // The acceptance has resolved and its redirect is scheduled when the effect re-runs.
+      await new Promise(resolve => setTimeout(resolve, 50))
+      await userEvent.click(screen.getByText('Re-render'))
+
+      await waitFor(() => expect(screen.getByText('Members area')).toBeInTheDocument(), {
+        timeout: 3000,
+      })
+      // Long enough for a second, superseded redirect timer to have fired.
+      await new Promise(resolve => setTimeout(resolve, 1700))
+
+      expect(membersLocationKeys.size).toBe(1)
+      expect(mockAcceptInvitation).toHaveBeenCalledTimes(1)
     })
 
     it('shows a failed acceptance once instead of retrying it on a re-render', async () => {

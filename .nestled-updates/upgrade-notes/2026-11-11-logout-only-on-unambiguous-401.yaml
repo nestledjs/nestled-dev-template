@@ -1,7 +1,8 @@
 id: 2026-11-11-logout-only-on-unambiguous-401
 title: >-
   Log out only on an unambiguous 401: outage evidence anywhere in a request (or, in the browser,
-  while an outage is being shown) keeps the session instead of signing the user out
+  while an outage is being shown), or a Me query that fails with any answered error but a 401,
+  keeps the session instead of signing the user out
 priority: high
 area: web
 type: correctness
@@ -64,6 +65,26 @@ intent: >
     renders `<RecoveringApiUnavailable initialReason="server" />` instead of going to
     /force-logout; it reloads once the API answers and the server render decides again.
 
+  3. Browser, with no outage. A Me query that failed with an answered error other than a 401 (a
+  500, an unparsable response, or a GraphQL error that is not UNAUTHENTICATED) still rendered as
+  signed out, and on a signed-in route the layout turned that into /force-logout. Nothing about
+  such an answer says the session is bad. apps/web/app/app.tsx gains
+  `isAnsweredApiFailure(error)`: a `CombinedGraphQLErrors`, `ServerError` or `ServerParseError`
+  that `classifyApiFailure` calls `other`. `meFailureAwaitsRecovery` now also returns true for it,
+  so the Me boundary shows the recovering fallback and keeps the session. `handleMeQueryError`
+  retries Me at once for it (`retryMeQuery`, read through a ref so the callback keeps its
+  identity) instead of reporting a connectivity error: the API answered, so there is no outage to
+  confirm, and no outage is signalled meanwhile. A Me that keeps failing is retried on the
+  existing backoff (`retryDelayMs`), and the first Me the network answers resets it. Logout stays
+  only for a 401 / UNAUTHENTICATED with no outage signalled. An error thrown by the app's own code
+  (not an API answer) is handled as before.
+  Affected paths: apps/web/app/app.tsx, apps/web/tests/api-availability.spec.tsx.
+  Verification: `pnpm exec nx test web --skip-nx-cache` (the "an answered error other than a 401"
+  cases: a Me 500 keeps the session and signs back in when Me succeeds, with no connectivity
+  probe; a Me that keeps failing shows the recovering screen and retries with backoff; a
+  non-UNAUTHENTICATED GraphQL error keeps the session; an UNAUTHENTICATED GraphQL error with no
+  outage still logs out), `pnpm exec nx run web:typecheck`.
+
   Tests: apps/web/tests/entry-server-shell-error.spec.tsx replaces the `shellErrorOutcome` table
   with the full 4 x 4 table above. libs/shared/apollo/src/lib/apollo.spec.ts: the loader-record
   test now expects `unavailable` for a 401 and an outage in two loaders; new tests for a 401 and
@@ -78,7 +99,9 @@ why: >
   Owner decision: log people out only when we absolutely have to. A 401 alongside an outage is
   not proof the session is bad (the API may have failed to look it up, or a request may have
   reached an instance that was not ready), and being wrong that way signs out a user whose session
-  was fine. Being wrong the other way only delays a logout until the API recovers.
+  was fine. Being wrong the other way only delays a logout until the API recovers. The same holds
+  for a Me query the API answered with a 500 or a non-authentication GraphQL error: it says
+  nothing about the session, yet it signed the user out (part 3, found in the R5b fleet rollout).
 
 affectedPaths:
   - libs/shared/apollo/src/lib/apollo-loader.ts
@@ -125,3 +148,9 @@ agentHints:
     more: each instance signals its own outage. Code of the project's own that logs out on a 401
     in the browser (its own error link, a signed-in guard that reads a 401 directly) checks
     `isApiOutageSignalled()` first and keeps the session while it is true.
+  - >
+    Part 3: a project whose signed-in guard or Me handling differs applies the same rule there:
+    any Me failure the API answered with, other than a 401 or UNAUTHENTICATED, keeps the session,
+    shows an error or recovering state, and retries Me with backoff. Check the project's own
+    signed-in layout: it must not read a failed Me as "no user". A project that already keeps the
+    session on such failures marks part 3 `superseded`.
