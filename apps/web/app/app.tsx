@@ -44,7 +44,13 @@ type MeQueryErrorBoundaryProps = {
   recoveringFallback?: ReactNode
 }
 
-type MeQueryErrorBoundaryState = { hasError: boolean; awaitsRecovery: boolean; resetKey?: unknown }
+type MeQueryErrorBoundaryState = {
+  hasError: boolean
+  awaitsRecovery: boolean
+  resetKey?: unknown
+  /** An error that is not a Me/session failure, passed on to the app's error screen. */
+  appError?: { error: unknown }
+}
 
 /**
  * The API answered the request with an error that says nothing about the session: a 500 (or any
@@ -72,6 +78,23 @@ function meFailureAwaitsRecovery(error: unknown): boolean {
   )
 }
 
+/**
+ * Something the Me query can fail with, and so the only thing the Me boundary may treat as a
+ * session failure: an answer from the API (an HTTP error, an unparsable response, a GraphQL error)
+ * or a request that never got one. Anything else -- an `Error` thrown by a route's own render or
+ * effect, say -- is a bug in the app, not a verdict on the session. Judged by the error itself, not
+ * by where it was caught: the boundary also sits above every route that has no error boundary of
+ * its own.
+ */
+function isMeSessionFailure(error: unknown): boolean {
+  return (
+    CombinedGraphQLErrors.is(error) ||
+    ServerError.is(error) ||
+    ServerParseError.is(error) ||
+    isRetryableConnectivityError(error)
+  )
+}
+
 // Me query refs whose failure was judged to wait for recovery. The decision sticks to the ref: once
 // the outage clears, App mounts the boundary again with the same failed ref until the retry brings
 // a new one, and by then nothing signals an outage, so judging its 401 afresh would sign the user
@@ -85,7 +108,8 @@ class MeQueryErrorBoundary extends Component<MeQueryErrorBoundaryProps, MeQueryE
   }
 
   static getDerivedStateFromError(error: unknown): Partial<MeQueryErrorBoundaryState> {
-    return { hasError: true, awaitsRecovery: meFailureAwaitsRecovery(error) }
+    if (!isMeSessionFailure(error)) return { appError: { error } }
+    return { hasError: true, awaitsRecovery: meFailureAwaitsRecovery(error), appError: undefined }
   }
 
   // A new Me query (the root loader ran again) gets a fresh chance. Without this, one failed Me
@@ -97,10 +121,12 @@ class MeQueryErrorBoundary extends Component<MeQueryErrorBoundaryProps, MeQueryE
     state: MeQueryErrorBoundaryState,
   ): Partial<MeQueryErrorBoundaryState> | null {
     if (props.resetKey === state.resetKey) return null
-    return { hasError: false, awaitsRecovery: false, resetKey: props.resetKey }
+    return { hasError: false, awaitsRecovery: false, resetKey: props.resetKey, appError: undefined }
   }
 
   componentDidCatch(error: unknown) {
+    // Not a session failure: render() passes it on, and nothing about the session is retried.
+    if (!isMeSessionFailure(error)) return
     const awaitsRecovery = this.awaitsRecovery()
     const { resetKey } = this.props
     if (awaitsRecovery && typeof resetKey === 'object' && resetKey !== null) {
@@ -118,12 +144,15 @@ class MeQueryErrorBoundary extends Component<MeQueryErrorBoundaryProps, MeQueryE
   }
 
   render() {
+    // An error from the app's own code goes on to the next error boundary up (the root
+    // ErrorBoundary's error screen), with the session untouched. Rendering it as signed out sent a
+    // signed-in route through /force-logout, which cleared the session cookie over a render bug.
+    if (this.state.appError) throw this.state.appError.error
     if (this.state.hasError && this.awaitsRecovery() && this.props.recoveringFallback) {
       return this.props.recoveringFallback
     }
-    // Any other failure (a 401 with no outage among them) renders as signed out, as before: the
-    // error link and the signed-in layout's redirect take it through logout. An error thrown by
-    // the app's own code (not an API answer) also lands here, as it did before.
+    // Any other Me/session failure (a 401 with no outage among them) renders as signed out: the
+    // error link and the signed-in layout's redirect take it through logout.
     if (this.state.hasError) {
       return (
         <GlobalContextProvider user={null}>

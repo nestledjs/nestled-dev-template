@@ -1,9 +1,12 @@
-import { StrictMode, Suspense, useEffect } from 'react'
+import { type ReactNode, StrictMode, Suspense, useEffect } from 'react'
 import { act, fireEvent, render, screen } from '@testing-library/react'
 import {
   createMemoryRouter,
+  Navigate,
+  Outlet,
   RouterProvider,
   UNSAFE_ErrorResponseImpl as ErrorResponseImpl,
+  useRouteError,
 } from 'react-router'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
@@ -987,6 +990,96 @@ describe('signed-in user after a connectivity blip', () => {
 
       expect(app.loaderCalls()).toBe(2)
       expect(screen.getByText('Signed out')).toBeInTheDocument()
+    })
+  })
+
+  describe("an error thrown by the app's own code", () => {
+    // A signed-in layout that, like the real one, sends a signed-out render to /force-logout.
+    function SignedInLayout() {
+      const { user } = useGlobalCtx()
+      seen.push(user ? `Signed in as ${user.id}` : 'Signed out')
+      if (!user) return <Navigate to="/force-logout" replace />
+      return <Outlet />
+    }
+
+    function ThrowsInRender(): never {
+      throw new Error('Cannot read properties of undefined')
+    }
+
+    function ThrowsInEffect() {
+      useEffect(() => {
+        throw new Error('Cannot read properties of undefined')
+      }, [])
+      return <p>Broken page</p>
+    }
+
+    const forceLogout = vi.fn()
+
+    async function renderBrokenRoute(Broken: () => ReactNode) {
+      const assign = vi.fn()
+      vi.stubGlobal('location', { ...globalThis.location, assign, reload: vi.fn() })
+      const link = new ApolloLink(() => signedIn())
+      const client = new ApolloClient({ link, cache: new InMemoryCache() })
+      const preload = createQueryPreloader(client)
+      const router = createMemoryRouter(
+        [
+          {
+            path: '/',
+            loader: async () => {
+              const meQueryRef = preload(ME)
+              await preload.toPromise(meQueryRef).catch(() => undefined)
+              return { meQueryRef }
+            },
+            element: <App />,
+            ErrorBoundary: () => <ErrorBoundary error={useRouteError()} />,
+            children: [
+              {
+                element: <SignedInLayout />,
+                children: [{ path: 'broken', element: <Broken /> }],
+              },
+              {
+                path: 'force-logout',
+                Component: () => {
+                  forceLogout()
+                  return <p>Force logout</p>
+                },
+              },
+            ],
+          },
+        ],
+        { initialEntries: ['/broken'] },
+      )
+      await act(async () => {
+        render(
+          <ApolloProvider client={client}>
+            <RouterProvider router={router} />
+          </ApolloProvider>,
+        )
+      })
+      await advance(CONFIRM_WINDOW_MS + retryDelayMs(3))
+      return { router, assign }
+    }
+
+    beforeEach(() => {
+      forceLogout.mockReset()
+    })
+
+    it.each([
+      ['during render', ThrowsInRender],
+      ['in an effect', ThrowsInEffect],
+    ])('keeps the session and shows the error screen for an error thrown %s', async (_, Broken) => {
+      apiUp()
+      const { router, assign } = await renderBrokenRoute(Broken)
+
+      expect(screen.getByText('Something went wrong')).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: 'Try again' })).toBeInTheDocument()
+      // Never rendered as signed out, and never sent through logout.
+      expect(seen).not.toContain('Signed out')
+      expect(forceLogout).not.toHaveBeenCalled()
+      expect(assign).not.toHaveBeenCalled()
+      expect(router.state.location.pathname).toBe('/broken')
+      // Nothing about the session was retried either: the API was never in doubt.
+      expect(apiProbeCalls()).toHaveLength(0)
     })
   })
 })

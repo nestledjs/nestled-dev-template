@@ -77,13 +77,34 @@ intent: >
   confirm, and no outage is signalled meanwhile. A Me that keeps failing is retried on the
   existing backoff (`retryDelayMs`), and the first Me the network answers resets it. Logout stays
   only for a 401 / UNAUTHENTICATED with no outage signalled. An error thrown by the app's own code
-  (not an API answer) is handled as before.
+  (not an API answer) is part 4's.
   Affected paths: apps/web/app/app.tsx, apps/web/tests/api-availability.spec.tsx.
   Verification: `pnpm exec nx test web --skip-nx-cache` (the "an answered error other than a 401"
   cases: a Me 500 keeps the session and signs back in when Me succeeds, with no connectivity
   probe; a Me that keeps failing shows the recovering screen and retries with backoff; a
   non-UNAUTHENTICATED GraphQL error keeps the session; an UNAUTHENTICATED GraphQL error with no
   outage still logs out), `pnpm exec nx run web:typecheck`.
+
+  4. Browser: an error from the app's own code. `MeQueryErrorBoundary` sits above every route that
+  has no error boundary of its own, so it also caught an `Error` thrown by a route's render or
+  effect, and rendered it as signed out (`user: null`). On a signed-in route the layout turned that
+  into /force-logout, which cleared the session cookie: a render bug logged the user out. Only a
+  Me/session failure may render as signed out. apps/web/app/app.tsx gains
+  `isMeSessionFailure(error)`, judged by the error itself: a `CombinedGraphQLErrors`,
+  `ServerError` or `ServerParseError` (an answer from the API), or `isRetryableConnectivityError`
+  (a request that never got one). `getDerivedStateFromError` stores anything else as `appError`,
+  and `render()` re-throws it, so it reaches the next error boundary up (the root `ErrorBoundary`'s
+  error screen, or a route-level one) with the user still signed in: no /force-logout, no cookie
+  change, no cache reset, and no Me retry or connectivity probe (`componentDidCatch` ignores it,
+  so `onError` is not called). A new Me query ref still resets the boundary. Every Me/session
+  failure is handled as in parts 2 and 3: connectivity, answered non-401 and outage-401 failures
+  show the recovering screen, and a 401 / UNAUTHENTICATED with no outage renders as signed out
+  and logs out.
+  Affected paths: apps/web/app/app.tsx, apps/web/tests/api-availability.spec.tsx.
+  Verification: `pnpm exec nx test web --skip-nx-cache` (the "an error thrown by the app's own
+  code" cases: a signed-in child route that throws a plain `Error` during render, or in an effect,
+  shows the root error screen, never renders as signed out and never reaches /force-logout or
+  `location.assign`), `pnpm exec nx run web:typecheck`.
 
   Tests: apps/web/tests/entry-server-shell-error.spec.tsx replaces the `shellErrorOutcome` table
   with the full 4 x 4 table above. libs/shared/apollo/src/lib/apollo.spec.ts: the loader-record
@@ -101,7 +122,9 @@ why: >
   reached an instance that was not ready), and being wrong that way signs out a user whose session
   was fine. Being wrong the other way only delays a logout until the API recovers. The same holds
   for a Me query the API answered with a 500 or a non-authentication GraphQL error: it says
-  nothing about the session, yet it signed the user out (part 3, found in the R5b fleet rollout).
+  nothing about the session, yet it signed the user out (part 3, found in the R5b fleet rollout),
+  and for an error thrown by the app's own code, which is a bug to show, not a session to end
+  (part 4).
 
 affectedPaths:
   - libs/shared/apollo/src/lib/apollo-loader.ts
@@ -154,3 +177,11 @@ agentHints:
     shows an error or recovering state, and retries Me with backoff. Check the project's own
     signed-in layout: it must not read a failed Me as "no user". A project that already keeps the
     session on such failures marks part 3 `superseded`.
+  - >
+    Part 4: a project whose Me boundary or root error handling differs keeps its structure but ends
+    with the same rule: only a Me/session auth failure renders as signed out. Classify by the error
+    itself (an API answer or a connectivity failure is a Me/session failure; anything else is not),
+    not by where it was caught, and pass any other error on to the app's error screen (re-throw it
+    from the boundary, or render the root error screen) with the session, the cookie and the Apollo
+    cache untouched. A project whose Me boundary wraps only the Me read, so a route's error never
+    reaches it, marks part 4 `superseded`.
