@@ -95,6 +95,16 @@ function isMeSessionFailure(error: unknown): boolean {
   )
 }
 
+// Errors the Me boundary judged to come from the app's own code and passed on. The root
+// ErrorBoundary reads this (`isAppCodeError`) so that an app error whose message happens to say
+// "Unauthorized" is still shown as an error instead of being taken for a rejected session.
+const appCodeErrors = new WeakSet<object>()
+
+/** The Me boundary passed this error on as one from the app's own code, not a session failure. */
+export function isAppCodeError(error: unknown): boolean {
+  return typeof error === 'object' && error !== null && appCodeErrors.has(error)
+}
+
 // Me query refs whose failure was judged to wait for recovery. The decision sticks to the ref: once
 // the outage clears, App mounts the boundary again with the same failed ref until the retry brings
 // a new one, and by then nothing signals an outage, so judging its 401 afresh would sign the user
@@ -108,7 +118,10 @@ class MeQueryErrorBoundary extends Component<MeQueryErrorBoundaryProps, MeQueryE
   }
 
   static getDerivedStateFromError(error: unknown): Partial<MeQueryErrorBoundaryState> {
-    if (!isMeSessionFailure(error)) return { appError: { error } }
+    if (!isMeSessionFailure(error)) {
+      if (typeof error === 'object' && error !== null) appCodeErrors.add(error)
+      return { appError: { error } }
+    }
     return { hasError: true, awaitsRecovery: meFailureAwaitsRecovery(error), appError: undefined }
   }
 

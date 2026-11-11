@@ -100,11 +100,17 @@ intent: >
   failure is handled as in parts 2 and 3: connectivity, answered non-401 and outage-401 failures
   show the recovering screen, and a 401 / UNAUTHENTICATED with no outage renders as signed out
   and logs out.
-  Affected paths: apps/web/app/app.tsx, apps/web/tests/api-availability.spec.tsx.
+  The boundary also records the error (a module WeakSet read by the new exported
+  `isAppCodeError(error)`), and apps/web/app/root.tsx `ErrorBoundary` never treats such an error
+  as unauthorized: its message checks ("Unauthorized", "Session has been invalidated") are for
+  API failures, and an app error that happens to say either must not reach /force-logout.
+  Affected paths: apps/web/app/app.tsx, apps/web/app/root.tsx,
+  apps/web/tests/api-availability.spec.tsx.
   Verification: `pnpm exec nx test web --skip-nx-cache` (the "an error thrown by the app's own
   code" cases: a signed-in child route that throws a plain `Error` during render, or in an effect,
   shows the root error screen, never renders as signed out and never reaches /force-logout or
-  `location.assign`), `pnpm exec nx run web:typecheck`.
+  `location.assign`, including when its message says "Unauthorized" or "Session has been
+  invalidated"), `pnpm exec nx run web:typecheck`.
 
   Tests: apps/web/tests/entry-server-shell-error.spec.tsx replaces the `shellErrorOutcome` table
   with the full 4 x 4 table above. libs/shared/apollo/src/lib/apollo.spec.ts: the loader-record

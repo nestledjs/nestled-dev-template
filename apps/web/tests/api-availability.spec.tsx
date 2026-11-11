@@ -1006,6 +1006,15 @@ describe('signed-in user after a connectivity blip', () => {
       throw new Error('Cannot read properties of undefined')
     }
 
+    // App errors whose message reads like a rejected session: only the API can reject one.
+    function ThrowsUnauthorizedInRender(): never {
+      throw new Error('Unauthorized operation in local component')
+    }
+
+    function ThrowsSessionInvalidatedInRender(): never {
+      throw new Error('Session has been invalidated in a stale local cache')
+    }
+
     function ThrowsInEffect() {
       useEffect(() => {
         throw new Error('Cannot read properties of undefined')
@@ -1067,6 +1076,8 @@ describe('signed-in user after a connectivity blip', () => {
     it.each([
       ['during render', ThrowsInRender],
       ['in an effect', ThrowsInEffect],
+      ['with "Unauthorized" in its message', ThrowsUnauthorizedInRender],
+      ['with "Session has been invalidated" in its message', ThrowsSessionInvalidatedInRender],
     ])('keeps the session and shows the error screen for an error thrown %s', async (_, Broken) => {
       apiUp()
       const { router, assign } = await renderBrokenRoute(Broken)
