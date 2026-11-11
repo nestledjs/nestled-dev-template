@@ -1,7 +1,7 @@
 import { useCallback, useContext, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import type { ApolloClient } from '@apollo/client'
 import { getApolloContext } from '@apollo/client/react'
-import { isRetryableConnectivityError } from '@nestled-template/shared/apollo'
+import { isRetryableConnectivityError, signalApiOutage } from '@nestled-template/shared/apollo'
 
 /**
  * Whether the browser can reach the API, and the "API unavailable" screen's lifecycle.
@@ -210,8 +210,12 @@ export function useApiAvailability(options: ApiAvailabilityOptions = {}): ApiAva
     optionsRef.current = options
   })
 
+  // Any phase but `available` is outage evidence: while it lasts, a 401 does not log the user out
+  // (`signalApiOutage`, keyed by this instance so several mounted checks do not clear each other).
+  const outageSignalRef = useRef({})
   const changePhase = useCallback((next: ApiAvailabilityPhase) => {
     phaseRef.current = next
+    signalApiOutage(outageSignalRef.current, next !== 'available')
     setPhase(next)
   }, [])
 
@@ -309,6 +313,8 @@ export function useApiAvailability(options: ApiAvailabilityOptions = {}): ApiAva
 
   useEffect(() => {
     mountedRef.current = true
+    const outageSignal = outageSignalRef.current
+    signalApiOutage(outageSignal, phaseRef.current !== 'available')
     // navigator.onLine is browser-only. Read during render, it would make the hydrated HTML differ
     // from the server's, so it is read once after mount and kept current by the listeners below.
     // eslint-disable-next-line react-hooks/set-state-in-effect -- syncs browser-only state after hydration
@@ -342,6 +348,7 @@ export function useApiAvailability(options: ApiAvailabilityOptions = {}): ApiAva
     document.addEventListener('visibilitychange', handleVisible)
     return () => {
       mountedRef.current = false
+      signalApiOutage(outageSignal, false)
       clearTimer()
       globalThis.removeEventListener('online', handleOnline)
       globalThis.removeEventListener('offline', handleOffline)

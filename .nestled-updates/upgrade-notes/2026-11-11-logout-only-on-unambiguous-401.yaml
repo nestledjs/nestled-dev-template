@@ -1,0 +1,112 @@
+id: 2026-11-11-logout-only-on-unambiguous-401
+title: >-
+  Log out only on an unambiguous 401: outage evidence anywhere in a request (or, in the browser,
+  while an outage is being shown) keeps the session instead of signing the user out
+priority: high
+area: web
+type: correctness
+delivery: code-patch
+
+intent: >
+  Follow-up to 2026-11-09-error-recovery-r3 and 2026-11-10-r3-followups-web (apply both first;
+  this note changes the code they added). The rule: log out only when the API has definitely
+  rejected the session, that is at least one 401 or UNAUTHENTICATED answer and no outage evidence
+  (unreachable, 502/503/504, or a redacted stream error with nothing recorded). With mixed
+  evidence keep the session: the self-recovering 503 screen retries, and if the session really has
+  expired the first load after recovery gets a clean 401 and logs out then. No package changes.
+
+  1. Server render. libs/shared/apollo/src/lib/apollo-loader.ts ranked recorded causes
+  `other < unavailable < unauthenticated`, so one 401 in any preload outranked an outage in
+  another. The rank is now `other < unauthenticated < unavailable`, exposed as the new exported
+  `mergeApiFailureCauses(a, b)`, which the per-request record and `ssrApiFailureCause` both use.
+  apps/web/app/entry.server.tsx `shellErrorOutcome(error, cause)` let the recorded cause replace
+  the shell error's own (`effectiveCause = cause ?? ownCause`), so an `unavailable` shell error
+  still logged out when another preload recorded a 401, and a 401 shell error gave 503 or 500
+  depending on what was recorded. It now combines them: `mergeApiFailureCauses(ownCause, cause)`,
+  with the redacted Apollo stream error contributing no own cause, and a result of undefined
+  (redacted, nothing recorded) still meaning `unavailable`. A shell error that is not an API
+  failure (`classifyApiFailure` says `other`) is still `error` (a plain 500, no cookie change)
+  whatever was recorded, as 2026-11-10-r3-followups-web made it. Outcomes, shell error x
+  recorded cause (none / unauthenticated / unavailable / other):
+  401 -> force-logout / force-logout / unavailable / force-logout;
+  unreachable or 502/503/504 -> unavailable in every column;
+  plain render error -> error in every column;
+  redacted stream error -> unavailable / force-logout / unavailable / error.
+
+  2. Browser. The error link logged out on any 401, and the Me error boundary rendered a 401 as
+  signed out (which the signed-in layout turns into /force-logout), even while the app was
+  confirming an outage or showing the recovering screen.
+  - libs/shared/apollo/src/lib/apollo.ts: new `signalApiOutage(source, active)` and
+    `isApiOutageSignalled()` (a set of sources, so several mounted checks do not clear each
+    other). The error link's 401 handling does nothing while any outage is signalled.
+  - apps/web/app/api-availability.ts `useApiAvailability` signals an outage, keyed by the hook
+    instance, whenever its phase is `confirming` or `unavailable`, and clears it on `available`
+    and on unmount.
+  - apps/web/app/app.tsx: `MeQueryErrorBoundary` and `handleMeQueryError` use a new
+    `meFailureAwaitsRecovery(error)`: a connectivity failure, or a 401 while an outage is
+    signalled, shows the recovering fallback and retries Me once the API answers (the boundary's
+    state field `connectivityFailure` is renamed `awaitsRecovery`). A 401 with no outage
+    signalled renders as signed out, as before.
+  - apps/web/app/root.tsx `ErrorBoundary`: an unauthorized error while an outage is signalled
+    renders `<RecoveringApiUnavailable initialReason="server" />` instead of going to
+    /force-logout; it reloads once the API answers and the server render decides again.
+
+  Tests: apps/web/tests/entry-server-shell-error.spec.tsx replaces the `shellErrorOutcome` table
+  with the full 4 x 4 table above. libs/shared/apollo/src/lib/apollo.spec.ts: the loader-record
+  test now expects `unavailable` for a 401 and an outage in two loaders; new tests for a 401 and
+  an outage in the same loader (either order), for `mergeApiFailureCauses`, and for the error
+  link keeping the session while an outage is signalled. apps/web/tests/api-availability.spec.tsx:
+  new tests for the hook's outage signal, for a Me 401 during an outage (kept, then signed back
+  in, or logged out by a clean 401 after recovery), and for the root ErrorBoundary.
+
+why: >
+  Owner decision: log people out only when we absolutely have to. A 401 alongside an outage is
+  not proof the session is bad (the API may have failed to look it up, or a request may have
+  reached an instance that was not ready), and being wrong that way signs out a user whose session
+  was fine. Being wrong the other way only delays a logout until the API recovers.
+
+affectedPaths:
+  - libs/shared/apollo/src/lib/apollo-loader.ts
+  - libs/shared/apollo/src/lib/apollo.ts
+  - libs/shared/apollo/src/lib/apollo.spec.ts
+  - apps/web/app/entry.server.tsx
+  - apps/web/app/api-availability.ts
+  - apps/web/app/app.tsx
+  - apps/web/app/root.tsx
+  - apps/web/tests/entry-server-shell-error.spec.tsx
+  - apps/web/tests/api-availability.spec.tsx
+
+skipIf:
+  - The project has no web app.
+
+verification:
+  - pnpm typecheck
+  - pnpm exec nx test web --skip-nx-cache
+  - pnpm exec nx test apollo --skip-nx-cache
+  - pnpm exec nx build web --skip-nx-cache
+  - pnpm run nestled-doctor
+
+agentHints:
+  - >
+    A project whose entry.server.tsx or loader helper differs keeps its own structure, but ends
+    with the same rule: combine the shell error's own cause with every recorded cause, any
+    `unavailable` means 503 and keep the cookie, `unauthenticated` with no `unavailable` means
+    force-logout, a shell error that is not an API failure is a plain 500 with no cookie change.
+    Port the 4 x 4 `shellErrorOutcome` table to the project's own handler.
+  - >
+    A project that already maps `unauthenticated` to something other than a logout (a local
+    deviation, for example a re-authentication screen) keeps that mapping, applies the outage
+    ranking around it, and records the logout parts of this note as `superseded`.
+  - >
+    A project that already adopted 2026-11-10-r3-followups-web applies this on top of it: keep the
+    early `return 'error'` for a shell error `classifyApiFailure` calls `other`; only the line that
+    picks the effective cause changes.
+  - >
+    Existing tests that expected `unauthenticated` to outrank `unavailable` (a recorded 401 and an
+    outage giving `unauthenticated`, or `force-logout` for an outage shell error with a recorded
+    401) encoded the old rule; change them to expect `unavailable`, do not keep them.
+  - >
+    A project that uses `useApiAvailability` in more than the template's places needs nothing
+    more: each instance signals its own outage. Code of the project's own that logs out on a 401
+    in the browser (its own error link, a signed-in guard that reads a 401 directly) checks
+    `isApiOutageSignalled()` first and keeps the session while it is true.

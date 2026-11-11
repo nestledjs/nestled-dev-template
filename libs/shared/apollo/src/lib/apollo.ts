@@ -205,7 +205,32 @@ function handleAuthorizationError(operation: ApolloLink.Operation): void {
   )
 }
 
+// Browser only. Whoever currently has outage evidence: in the web app, each mounted availability
+// check that is confirming a connectivity failure or showing the recovering screen. Never set
+// during a server render.
+const apiOutageSignals = new Set<object>()
+
+/**
+ * Tells the error link whether `source` (any object, such as a component's ref) currently has
+ * outage evidence. While any source does, a 401 does not log the user out: a 401 alongside an
+ * outage is not proof the session is bad. The app retries once the API recovers, and a 401 then,
+ * with no outage, logs out as usual.
+ */
+export function signalApiOutage(source: object, active: boolean): void {
+  if (active) apiOutageSignals.add(source)
+  else apiOutageSignals.delete(source)
+}
+
+/** Whether any source has signalled an outage (`signalApiOutage`) that is still in effect. */
+export function isApiOutageSignalled(): boolean {
+  return apiOutageSignals.size > 0
+}
+
 function handleAuthenticationError(): void {
+  if (isApiOutageSignalled()) {
+    console.log('[Apollo] Authentication error during an API outage, keeping the session for now')
+    return
+  }
   console.log('[Apollo] Authentication error detected, redirecting to logout then login')
 
   // Redirect through logout to clear server-side session (client-side only)
