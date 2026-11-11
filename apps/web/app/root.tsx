@@ -201,24 +201,36 @@ type ErrorWithGraphQLErrors = Error & {
   graphQLErrors?: GraphQLErrorLike[]
 }
 
+/**
+ * Whether the error says the API rejected the session. An error the Me boundary passed on as the
+ * app's own (a render or effect bug) never does, whatever its message says: only the API can
+ * reject the session.
+ */
+function isUnauthorizedError(
+  error: unknown,
+  normalizedError: Error,
+  routeStatus: number | undefined,
+): boolean {
+  if (isAppCodeError(error)) return false
+  const graphQLError = normalizedError as ErrorWithGraphQLErrors
+  return (
+    routeStatus === 401 ||
+    normalizedError.message.includes('Unauthorized') ||
+    normalizedError.message.includes('Session has been invalidated') ||
+    !!graphQLError.graphQLErrors?.some(
+      e =>
+        (e.message || '').includes('Unauthorized') ||
+        (e.message || '').includes('Session has been invalidated') ||
+        e.extensions?.code === 'UNAUTHENTICATED',
+    )
+  )
+}
+
 export function ErrorBoundary({ error }: Readonly<{ error: unknown }>) {
   // Auth errors should send the user through logout to clear their session
   const normalizedError = error instanceof Error ? error : new Error('An unexpected error occurred')
-  const graphQLError = normalizedError as ErrorWithGraphQLErrors
   const routeStatus = isRouteErrorResponse(error) ? error.status : undefined
-  // An error the Me boundary passed on as the app's own (a render or effect bug) is never taken for
-  // a rejected session, whatever its message says: only the API can reject the session.
-  const isUnauthorized =
-    !isAppCodeError(error) &&
-    (routeStatus === 401 ||
-      normalizedError.message.includes('Unauthorized') ||
-      normalizedError.message.includes('Session has been invalidated') ||
-      graphQLError.graphQLErrors?.some(
-        e =>
-          (e.message || '').includes('Unauthorized') ||
-          (e.message || '').includes('Session has been invalidated') ||
-          e.extensions?.code === 'UNAUTHENTICATED',
-      ))
+  const isUnauthorized = isUnauthorizedError(error, normalizedError, routeStatus)
 
   // Log out only on an unambiguous 401. While the app has outage evidence, a 401 is not proof the
   // session is bad: keep it and show the recovering screen, which reloads once the API answers;
