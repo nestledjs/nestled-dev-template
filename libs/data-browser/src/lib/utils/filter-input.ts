@@ -179,52 +179,81 @@ interface RelationFilterParts {
   relation?: Record<string, unknown>
 }
 
+/** What one to-one relation needs to know to convert its value. */
+interface RelationContext {
+  /** The scalar foreign key to filter on for the relation's id, when one is usable. */
+  foreignKey?: FilterModelField
+  relatedField: (name: string) => FilterModelField | undefined
+}
+
+/** A bare id or list of ids, e.g. `{ user: 'u1' }`. */
+function bareRelationFilter(ctx: RelationContext, value: unknown): RelationFilterParts {
+  if (ctx.foreignKey) {
+    const filter = equalsFilter(ctx.foreignKey, value)
+    return filter === undefined ? {} : { foreignKey: { name: ctx.foreignKey.name, filter } }
+  }
+  const filter = equalsFilter(ctx.relatedField('id'), value)
+  return filter === undefined ? {} : { relation: { id: filter } }
+}
+
+/** Converts one entry of a relation's object value, e.g. `id` or a related enum. */
+function relationEntryFilter(ctx: RelationContext, key: string, entry: unknown): unknown {
+  if (key === 'is' || key === 'isNot' || LOGICAL_KEYS.has(key)) return entry
+  return relatedFieldFilter(ctx.relatedField(key), entry)
+}
+
 /**
  * Splits a to-one relation's UI value into a foreign-key filter (for the selected id) and a
  * relation filter (for fields of the related model, such as a related enum). The foreign key is
  * preferred for the id: it is a plain column on the model's own filter input, so it does not
  * depend on the relation being reachable within the API's filter depth.
  */
-function relationFilter(
-  model: FilterModel,
-  relation: FilterModelField,
-  value: unknown,
-  relatedModel: FilterModel | undefined,
-  occupiedKeys: Set<string>,
-): RelationFilterParts {
-  const relatedFieldNamed = (name: string) =>
-    relatedModel?.fields.find(field => field.name === name)
-  const foreignKey = foreignKeyFor(model, relation)
-  const canUseForeignKey = foreignKey !== undefined && !occupiedKeys.has(foreignKey.name)
-
-  // A bare id or list of ids, e.g. `{ user: 'u1' }`.
-  if (!isPlainObject(value)) {
-    if (canUseForeignKey) {
-      const filter = equalsFilter(foreignKey, value)
-      return filter === undefined ? {} : { foreignKey: { name: foreignKey.name, filter } }
-    }
-    const filter = equalsFilter(relatedFieldNamed('id'), value)
-    return filter === undefined ? {} : { relation: { id: filter } }
-  }
+function relationFilter(ctx: RelationContext, value: unknown): RelationFilterParts {
+  if (!isPlainObject(value)) return bareRelationFilter(ctx, value)
 
   const parts: RelationFilterParts = {}
   const relationEntries: Record<string, unknown> = {}
   for (const [key, entry] of Object.entries(value)) {
     if (isEmptyValue(entry)) continue
-    if (key === 'is' || key === 'isNot' || LOGICAL_KEYS.has(key)) {
-      relationEntries[key] = entry
+    if (key === 'id' && ctx.foreignKey && !isPlainObject(entry)) {
+      Object.assign(parts, bareRelationFilter(ctx, entry))
       continue
     }
-    if (key === 'id' && canUseForeignKey && !isPlainObject(entry)) {
-      const filter = equalsFilter(foreignKey, entry)
-      if (filter !== undefined) parts.foreignKey = { name: foreignKey.name, filter }
-      continue
-    }
-    const filter = relatedFieldFilter(relatedFieldNamed(key), entry)
+    const filter = relationEntryFilter(ctx, key, entry)
     if (filter !== undefined) relationEntries[key] = filter
   }
   if (Object.keys(relationEntries).length > 0) parts.relation = relationEntries
   return parts
+}
+
+/** Converts one filter key of `model`; returns the entries it contributes to the input. */
+function convertEntry(
+  model: FilterModel,
+  field: FilterModelField,
+  value: unknown,
+  databaseModels: readonly FilterModel[],
+  occupiedKeys: Set<string>,
+): FilterInput {
+  if (!isRelationField(field)) {
+    const filter = scalarFilter(field, value)
+    return filter === undefined ? {} : { [field.name]: filter }
+  }
+  // List relations take `{ some, every, none }`; there is no bare UI shape to convert.
+  if (field.isList) return isOperatorShape(value) ? { [field.name]: value } : {}
+
+  const relatedModel = databaseModels.find(candidate => candidate.name === field.type)
+  const foreignKey = foreignKeyFor(model, field)
+  const parts = relationFilter(
+    {
+      foreignKey: foreignKey && !occupiedKeys.has(foreignKey.name) ? foreignKey : undefined,
+      relatedField: name => relatedModel?.fields.find(candidate => candidate.name === name),
+    },
+    value,
+  )
+  const entries: FilterInput = {}
+  if (parts.foreignKey) entries[parts.foreignKey.name] = parts.foreignKey.filter
+  if (parts.relation) entries[field.name] = parts.relation
+  return entries
 }
 
 /**
@@ -263,29 +292,14 @@ export function toFilterInput(
 
   for (const [key, value] of Object.entries(filters)) {
     if (isEmptyValue(value)) continue
-
-    const field = model?.fields.find(candidate => candidate.name === key)
-
-    if (!field || LOGICAL_KEYS.has(key)) {
+    const field = LOGICAL_KEYS.has(key)
+      ? undefined
+      : model?.fields.find(candidate => candidate.name === key)
+    if (model && field) {
+      Object.assign(result, convertEntry(model, field, value, databaseModels, occupiedKeys))
+    } else {
       result[key] = value
-      continue
     }
-
-    if (isRelationField(field)) {
-      if (field.isList) {
-        // List relations take `{ some, every, none }`; there is no bare UI shape to convert.
-        if (isOperatorShape(value)) result[key] = value
-        continue
-      }
-      const relatedModel = databaseModels.find(candidate => candidate.name === field.type)
-      const parts = relationFilter(model as FilterModel, field, value, relatedModel, occupiedKeys)
-      if (parts.foreignKey) result[parts.foreignKey.name] = parts.foreignKey.filter
-      if (parts.relation) result[key] = parts.relation
-      continue
-    }
-
-    const filter = scalarFilter(field, value)
-    if (filter !== undefined) result[key] = filter
   }
 
   return Object.keys(result).length > 0 ? result : undefined
