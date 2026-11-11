@@ -55,6 +55,8 @@ affectedPaths:
 packageReleases:
   - name: '@nestledjs/data-browser'
     sourcePath: libs/data-browser
+    targetVersion: 1.0.28
+    versionRange: ^1.0.28
 
 skipIf:
   - The project has no admin data routes (no `@nestledjs/data-browser` dependency).
@@ -75,8 +77,7 @@ verification:
 agentHints:
   - >
     Update package.json and the lockfile to the published version; do not copy files from
-    libs/data-browser. `targetVersion` is left out until 1.0.28 is published; the upgrader holds
-    the note until then.
+    libs/data-browser.
   - >
     Optional, recommended: copy apps/web/tests/routes/admin-data-filters-schema.spec.ts from the
     template. It sends what every filter control produces for every model through GraphQL variable
