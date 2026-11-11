@@ -752,6 +752,7 @@ describe('signed-in user after a connectivity blip', () => {
 
   beforeEach(() => {
     vi.useFakeTimers()
+    seen.length = 0
     fetchMock.mockReset()
     vi.stubGlobal('fetch', fetchMock)
     vi.spyOn(console, 'error').mockImplementation(() => undefined)
@@ -838,6 +839,79 @@ describe('signed-in user after a connectivity blip', () => {
     expect(fetchMock).not.toHaveBeenCalled()
     expect(app.loaderCalls()).toBe(1)
     expect(screen.getByText('Signed out')).toBeInTheDocument()
+  })
+
+  describe('an answered error other than a 401', () => {
+    const serverError = () =>
+      fails(
+        new ServerError('Response not successful', {
+          response: new Response(null, { status: 500 }),
+          bodyText: '',
+        }),
+      )
+    const graphQLError = (code: string) => () =>
+      new Observable<ApolloLink.Result>(o => {
+        o.next({
+          data: null,
+          errors: [{ message: 'Something went wrong', extensions: { code } }],
+        })
+        o.complete()
+      })
+
+    it('keeps the session on a Me 500 and signs back in when Me succeeds', async () => {
+      apiUp()
+      const app = await renderSignedIn([serverError(), signedIn])
+
+      // Retried at once (the API answered, so there is no outage to confirm), never signed out.
+      await advance(0)
+
+      expect(seen).not.toContain('Signed out')
+      expect(app.loaderCalls()).toBe(2)
+      expect(screen.getByText('Signed in as user-1')).toBeInTheDocument()
+      // No connectivity probe: the API's answer already proved it reachable.
+      expect(apiProbeCalls()).toHaveLength(0)
+    })
+
+    it('shows the recovering screen while Me keeps failing, retrying with backoff', async () => {
+      apiUp()
+      const app = await renderSignedIn([serverError(), serverError(), serverError(), signedIn])
+
+      await advance(0)
+      expect(app.loaderCalls()).toBe(2)
+      expect(screen.getByRole('heading', { name: SERVER_DOWN })).toBeInTheDocument()
+
+      // The next retry waits out the backoff instead of revalidating in a loop.
+      await advance(retryDelayMs(0) - 1)
+      expect(app.loaderCalls()).toBe(2)
+      await advance(1)
+      expect(app.loaderCalls()).toBe(3)
+
+      await advance(retryDelayMs(1))
+      expect(app.loaderCalls()).toBe(4)
+      expect(seen).not.toContain('Signed out')
+      expect(screen.getByText('Signed in as user-1')).toBeInTheDocument()
+    })
+
+    it('keeps the session on a GraphQL error that is not UNAUTHENTICATED', async () => {
+      apiUp()
+      const app = await renderSignedIn([graphQLError('INTERNAL_SERVER_ERROR'), signedIn])
+
+      await advance(0)
+
+      expect(seen).not.toContain('Signed out')
+      expect(app.loaderCalls()).toBe(2)
+      expect(screen.getByText('Signed in as user-1')).toBeInTheDocument()
+    })
+
+    it('still logs out on an UNAUTHENTICATED GraphQL error with no outage', async () => {
+      apiUp()
+      const app = await renderSignedIn([graphQLError('UNAUTHENTICATED'), signedIn])
+
+      await advance(CONFIRM_WINDOW_MS + retryDelayMs(3))
+
+      expect(app.loaderCalls()).toBe(1)
+      expect(screen.getByText('Signed out')).toBeInTheDocument()
+    })
   })
 
   describe('a 401 while the app has outage evidence', () => {

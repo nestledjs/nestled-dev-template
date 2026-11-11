@@ -1,6 +1,6 @@
 import { Outlet, useLoaderData, useLocation, useRevalidator } from 'react-router'
 import { GlobalContextProvider } from '@nestled-template/web'
-import { NetworkStatus } from '@apollo/client'
+import { CombinedGraphQLErrors, NetworkStatus, ServerError, ServerParseError } from '@apollo/client'
 import { useReadQuery, type QueryRef } from '@apollo/client/react'
 import type { MeQuery } from '@nestled-template/shared/sdk'
 import {
@@ -35,10 +35,11 @@ type MeQueryErrorBoundaryProps = {
    */
   onError?: (error: unknown, awaitsRecovery: boolean) => void
   /**
-   * Rendered while a Me query that failed for want of a connection (or with a 401 during an
-   * outage, see `meFailureAwaitsRecovery`) waits to be retried. It must not be the signed-out
-   * outlet: a signed-in layout reads `user: null` as "not authenticated" and sends the browser to
-   * /force-logout, which clears the session cookie before the retry can sign the user back in.
+   * Rendered while a Me query that failed for want of a connection, with an answered error other
+   * than a 401, or with a 401 during an outage (see `meFailureAwaitsRecovery`) waits to be retried.
+   * It must not be the signed-out outlet: a signed-in layout reads `user: null` as "not
+   * authenticated" and sends the browser to /force-logout, which clears the session cookie before
+   * the retry can sign the user back in.
    */
   recoveringFallback?: ReactNode
 }
@@ -46,14 +47,27 @@ type MeQueryErrorBoundaryProps = {
 type MeQueryErrorBoundaryState = { hasError: boolean; awaitsRecovery: boolean; resetKey?: unknown }
 
 /**
- * A Me failure that must not sign the user out, and is retried once the API answers instead: a
- * connectivity failure, or a 401 while the app has outage evidence (`isApiOutageSignalled`). Log
- * out only on an unambiguous 401; if the session really has expired, the retry after recovery gets
- * a 401 with no outage and logs out then.
+ * The API answered the request with an error that says nothing about the session: a 500 (or any
+ * status but 401 and a proxy's 502/503/504), an unparsable response, or a GraphQL error that is
+ * not UNAUTHENTICATED. The API is reachable, so Me is retried straight away (with backoff) rather
+ * than after a connectivity probe.
+ */
+function isAnsweredApiFailure(error: unknown): boolean {
+  const fromApi =
+    CombinedGraphQLErrors.is(error) || ServerError.is(error) || ServerParseError.is(error)
+  return fromApi && classifyApiFailure(error) === 'other'
+}
+
+/**
+ * A Me failure that must not sign the user out, and is retried instead: a connectivity failure, an
+ * answered error other than a 401 (`isAnsweredApiFailure`), or a 401 while the app has outage
+ * evidence (`isApiOutageSignalled`). Log out only on an unambiguous 401; if the session really has
+ * expired, the retry gets a 401 with no outage and logs out then.
  */
 function meFailureAwaitsRecovery(error: unknown): boolean {
   return (
     isRetryableConnectivityError(error) ||
+    isAnsweredApiFailure(error) ||
     (classifyApiFailure(error) === 'unauthenticated' && isApiOutageSignalled())
   )
 }
@@ -108,7 +122,8 @@ class MeQueryErrorBoundary extends Component<MeQueryErrorBoundaryProps, MeQueryE
       return this.props.recoveringFallback
     }
     // Any other failure (a 401 with no outage among them) renders as signed out, as before: the
-    // error link and the signed-in layout's redirect take it through logout.
+    // error link and the signed-in layout's redirect take it through logout. An error thrown by
+    // the app's own code (not an API answer) also lands here, as it did before.
     if (this.state.hasError) {
       return (
         <GlobalContextProvider user={null}>
@@ -163,8 +178,9 @@ export function App() {
   // signed out because of it. The query ref cannot be read again (it holds the error), so once the
   // API answers the root loader runs again for a fresh one, and the boundary resets on the new ref.
   // Without this a short blip left a signed-in user looking signed out until they navigated.
-  // Only connectivity failures, and a 401 during an outage, are retried: any other 401 still goes
-  // through the error link's logout.
+  // Connectivity failures, answered errors other than a 401 (a 500, a GraphQL error that is not
+  // UNAUTHENTICATED), and a 401 during an outage are retried: any other 401 still goes through the
+  // error link's logout.
   // Retries back off like the refetches, so a /graphql that keeps failing while the liveness route
   // answers cannot turn this into a revalidation loop.
   const meFailedOfflineRef = useRef(false)
@@ -192,6 +208,11 @@ export function App() {
     const retry = meRetry.current
     return () => clearTimeout(retry.timer)
   }, [])
+  // For the Me boundary's error callback, which keeps one identity across renders.
+  const retryMeQueryRef = useRef(retryMeQuery)
+  useLayoutEffect(() => {
+    retryMeQueryRef.current = retryMeQuery
+  })
   // Me has been answered by the network (AppWithUser only calls this then, never for a cached
   // result that a still-pending request may yet turn into a failure). The outage is over: reset the
   // backoff, and drop a retry still queued from it, which would otherwise revalidate every loader
@@ -225,9 +246,15 @@ export function App() {
   const { reportConnectivityError, markUnavailable } = api
 
   const handleMeQueryError = useCallback(
-    (_error: unknown, awaitsRecovery: boolean) => {
+    (error: unknown, awaitsRecovery: boolean) => {
       if (!awaitsRecovery) return
       meFailedOfflineRef.current = true
+      // The API answered (a 500, say): there is no outage to confirm, so retry Me at once, backing
+      // off while it keeps failing. The recovering screen stays up meanwhile, and the session too.
+      if (isAnsweredApiFailure(error)) {
+        retryMeQueryRef.current()
+        return
+      }
       // Confirm the failure with the probe; whichever way it clears (a blip, or the outage screen
       // coming down) calls back above. During SSR the error link reports nothing, so this is the
       // only report a Me query that failed on the server gets.
