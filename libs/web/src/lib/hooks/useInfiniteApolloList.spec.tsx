@@ -31,7 +31,7 @@ class FakeIntersectionObserver {
 
   static latest(): FakeIntersectionObserver {
     const live = FakeIntersectionObserver.instances.filter(observer => !observer.disconnected)
-    const latest = live.at(-1)
+    const [latest] = live.slice(-1)
     if (!latest) throw new Error('no live IntersectionObserver')
     return latest
   }
