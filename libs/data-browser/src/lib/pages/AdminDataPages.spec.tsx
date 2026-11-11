@@ -123,6 +123,14 @@ function renderWithProvider(ui: React.ReactElement) {
   )
 }
 
+/** Filters sent by the most recent list query (the relation filter control runs its own query). */
+function lastListQueryFilters() {
+  const listCalls = useQuery.mock.calls.filter(
+    ([, options]) => options?.variables?.input?.orderBy !== undefined,
+  )
+  return listCalls[listCalls.length - 1]?.[1].variables.input.filters
+}
+
 describe('admin data pages', () => {
   beforeEach(() => {
     vi.useRealTimers()
@@ -161,6 +169,39 @@ describe('admin data pages', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Next page' }))
 
     await waitFor(() => expect(useQuery).toHaveBeenCalled())
+  })
+
+  it('sends URL foreign-key filters to the list query in operator shape', async () => {
+    routeParams = { dataTypePlural: 'users' }
+    routeSearchParams = new URLSearchParams('organizationId=org-1&active=true')
+
+    renderWithProvider(<AdminDataListPage />)
+
+    // The list query's filters must match the API's typed UserFilterInput, not the UI state
+    // (`{ organization: { id } }`, `{ active: 'true' }`) that the filter controls work with.
+    await waitFor(() =>
+      expect(lastListQueryFilters()).toEqual({
+        organization: { id: { equals: 'org-1' } },
+        active: { equals: true },
+      }),
+    )
+  })
+
+  it('sends filter panel selections to the list query in operator shape', async () => {
+    routeParams = { dataTypePlural: 'users' }
+
+    renderWithProvider(<AdminDataListPage />)
+
+    fireEvent.click(await screen.findByRole('button', { name: /Filters/ }))
+    fireEvent.change(screen.getByLabelText('Active'), { target: { value: 'false' } })
+    fireEvent.change(screen.getByLabelText('Status'), { target: { value: 'ACTIVE' } })
+
+    await waitFor(() =>
+      expect(lastListQueryFilters()).toEqual({
+        active: { equals: false },
+        status: { equals: 'ACTIVE' },
+      }),
+    )
   })
 
   it('shows list page errors for invalid models and missing documents', () => {

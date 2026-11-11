@@ -216,6 +216,30 @@ Shows all available database models with a searchable list.
 - **Columns**: Show/hide columns via column selector
 - **Pagination**: Navigate through large datasets
 
+A link such as `/admin/data/organization-members?userId=<id>` opens the list already filtered by
+that foreign key (or by any other scalar field named in the query string).
+
+#### Filters and the typed filter input
+
+Generated list queries take a typed `<Model>FilterInput` (`StringFilterInput { equals, contains,
+in, not, startsWith, endsWith }`, `BooleanFilterInput`, enum and range inputs, relation filters).
+The filter controls keep simple values; `toFilterInput(model, filters, databaseModels)` converts
+them where the list and export queries are built:
+
+| Filter control / URL value            | Sent as                                    |
+| ------------------------------------- | ------------------------------------------ |
+| text                                  | `{ field: { contains: 'ada' } }`           |
+| boolean (or `'true'` from the URL)    | `{ field: { equals: true } }`              |
+| enum                                  | `{ field: { equals: 'ACTIVE' } }`          |
+| number from the URL                   | `{ field: { equals: 5 } }`                 |
+| date / number range                   | `{ field: { gte, lte } }` (unchanged)      |
+| relation `{ user: { id } }`           | `{ userId: { equals: id } }` (foreign key) |
+| relation without a scalar foreign key | `{ user: { id: { equals: id } } }`         |
+| related enum `user.role`              | `{ user: { role: { equals: 'ADMIN' } } }`  |
+
+It is idempotent: a value already in operator shape (`{ equals }`, `{ contains }`, `{ gte }`, ...)
+passes through unchanged. An app with its own list page that builds `filters` can call it too.
+
 ### Create (`/admin/data/user/create`)
 
 Auto-generated form based on your Prisma model schema with:
