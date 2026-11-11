@@ -1,6 +1,6 @@
 import { ApolloHydrationHelper } from '@apollo/client-integration-react-router'
 import '@nestled-template/shared/styles'
-import { apolloLoader } from '@nestled-template/shared/apollo'
+import { apolloLoader, isApiOutageSignalled } from '@nestled-template/shared/apollo'
 import { Me, type MeQuery } from '@nestled-template/shared/sdk'
 import {
   getCookie,
@@ -216,6 +216,13 @@ export function ErrorBoundary({ error }: Readonly<{ error: unknown }>) {
         (e.message || '').includes('Session has been invalidated') ||
         e.extensions?.code === 'UNAUTHENTICATED',
     )
+
+  // Log out only on an unambiguous 401. While the app has outage evidence, a 401 is not proof the
+  // session is bad: keep it and show the recovering screen, which reloads once the API answers;
+  // the server render then decides again with a clean answer.
+  if (isUnauthorized && isApiOutageSignalled()) {
+    return <RecoveringApiUnavailable initialReason="server" />
+  }
 
   if (isUnauthorized && globalThis.window !== undefined) {
     const currentPath = `${globalThis.location.pathname}${globalThis.location.search}${globalThis.location.hash}`

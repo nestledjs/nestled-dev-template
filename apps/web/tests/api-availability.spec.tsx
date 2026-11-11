@@ -9,6 +9,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   APOLLO_ACCESS_FORBIDDEN_EVENT,
   APOLLO_SERVICE_UNAVAILABLE_EVENT,
+  isApiOutageSignalled,
+  signalApiOutage,
 } from '@nestled-template/shared/apollo'
 import { App } from '../app/app'
 import { ErrorBoundary } from '../app/root'
@@ -302,6 +304,18 @@ describe('root error boundary for a network error', () => {
     expect(screen.getByRole('heading', { name: SERVER_DOWN })).toBeInTheDocument()
   })
 
+  it('keeps the session on a 401 while the app has outage evidence', () => {
+    vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new TypeError('Failed to fetch')))
+    const elsewhere = {}
+    signalApiOutage(elsewhere, true)
+    try {
+      render(<ErrorBoundary error={new Error('Unauthorized')} />)
+      expect(screen.getByRole('heading', { name: SERVER_DOWN })).toBeInTheDocument()
+    } finally {
+      signalApiOutage(elsewhere, false)
+    }
+  })
+
   it('labels the button "Try again", not "Refresh Page"', () => {
     vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new TypeError('Failed to fetch')))
     render(<ErrorBoundary error={new TypeError('Load failed')} />)
@@ -376,6 +390,30 @@ describe('refetchFailedQueries', () => {
     expect(graphql.refetch).not.toHaveBeenCalled()
     expect(healthy.refetch).not.toHaveBeenCalled()
   })
+
+  it('refetches 401s only when told an outage let them pass', () => {
+    const unauthorized = query(
+      new ServerError('Response not successful', {
+        response: new Response(null, { status: 401 }),
+        bodyText: '',
+      }),
+    )
+    const unauthenticated = query(
+      new CombinedGraphQLErrors({
+        errors: [{ message: 'Unauthorized', extensions: { code: 'UNAUTHENTICATED' } }],
+      }),
+    )
+    const forbidden = query(new CombinedGraphQLErrors({ errors: [{ message: 'Forbidden' }] }))
+    const client = {
+      getObservableQueries: () => new Set([unauthorized, unauthenticated, forbidden]),
+    }
+
+    expect(refetchFailedQueries(client as never)).toBe(0)
+    expect(refetchFailedQueries(client as never, { includeAuthFailures: true })).toBe(2)
+    expect(unauthorized.refetch).toHaveBeenCalledTimes(1)
+    expect(unauthenticated.refetch).toHaveBeenCalledTimes(1)
+    expect(forbidden.refetch).not.toHaveBeenCalled()
+  })
 })
 
 describe('useRefetchFailedQueries', () => {
@@ -433,6 +471,49 @@ describe('useRefetchFailedQueries', () => {
     act(() => refetch())
     expect(failed.refetch).toHaveBeenCalledTimes(4)
   })
+
+  it('refetches a 401 only on the pass it is asked to, even when that pass is deferred', async () => {
+    const unauthorized = {
+      getCurrentResult: () => ({
+        error: new ServerError('Response not successful', {
+          response: new Response(null, { status: 401 }),
+          bodyText: '',
+        }),
+      }),
+      refetch: vi.fn().mockResolvedValue({}),
+    }
+    const network = {
+      getCurrentResult: () => ({ error: new TypeError('Failed to fetch') }),
+      refetch: vi.fn().mockResolvedValue({}),
+    }
+    const client = { getObservableQueries: () => new Set([unauthorized, network]) }
+    let refetch: (options?: { includeAuthFailures?: boolean }) => void = () => undefined
+    function Harness() {
+      refetch = useRefetchFailedQueries()
+      return null
+    }
+    render(
+      <ApolloProvider client={client as never}>
+        <Harness />
+      </ApolloProvider>,
+    )
+
+    act(() => refetch())
+    expect(network.refetch).toHaveBeenCalledTimes(1)
+    expect(unauthorized.refetch).not.toHaveBeenCalled()
+
+    // Inside the backoff window: deferred, and it keeps the request to include the 401.
+    act(() => refetch({ includeAuthFailures: true }))
+    expect(unauthorized.refetch).not.toHaveBeenCalled()
+    await advance(retryDelayMs(0))
+    expect(unauthorized.refetch).toHaveBeenCalledTimes(1)
+
+    // The next pass, not asked to, leaves it alone again.
+    await advance(retryDelayMs(1))
+    act(() => refetch())
+    await advance(retryDelayMs(2))
+    expect(unauthorized.refetch).toHaveBeenCalledTimes(1)
+  })
 })
 
 describe('useApiAvailability onBlipCleared', () => {
@@ -461,6 +542,46 @@ describe('useApiAvailability onBlipCleared', () => {
     expect(screen.getByText('up')).toBeInTheDocument()
     expect(onBlipCleared).toHaveBeenCalledTimes(1)
     expect(onRecover).not.toHaveBeenCalled()
+  })
+})
+
+describe('useApiAvailability outage signal', () => {
+  beforeEach(() => {
+    vi.useFakeTimers()
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
+  it('signals an outage while confirming or unavailable, and stops on recovery and unmount', async () => {
+    const probe = vi.fn().mockResolvedValue(false)
+    let report: () => void = () => undefined
+    function Harness() {
+      const api = useApiAvailability({ probe })
+      report = api.reportConnectivityError
+      return <p>{api.phase}</p>
+    }
+    const view = render(<Harness />)
+    expect(isApiOutageSignalled()).toBe(false)
+
+    await act(async () => report())
+    expect(screen.getByText('confirming')).toBeInTheDocument()
+    expect(isApiOutageSignalled()).toBe(true)
+
+    await advance(CONFIRM_WINDOW_MS)
+    expect(screen.getByText('unavailable')).toBeInTheDocument()
+    expect(isApiOutageSignalled()).toBe(true)
+
+    probe.mockResolvedValue(true)
+    await advance(retryDelayMs(0))
+    expect(screen.getByText('available')).toBeInTheDocument()
+    expect(isApiOutageSignalled()).toBe(false)
+
+    await act(async () => report())
+    expect(isApiOutageSignalled()).toBe(true)
+    view.unmount()
+    expect(isApiOutageSignalled()).toBe(false)
   })
 })
 
@@ -619,9 +740,14 @@ describe('signed-in user after a connectivity blip', () => {
     }
   `
 
+  // Every state CurrentUser rendered, so a signed-out render in passing is caught too.
+  const seen: string[] = []
+
   function CurrentUser() {
     const { user } = useGlobalCtx()
-    return <p>{user ? `Signed in as ${user.id}` : 'Signed out'}</p>
+    const label = user ? `Signed in as ${user.id}` : 'Signed out'
+    seen.push(label)
+    return <p>{label}</p>
   }
 
   beforeEach(() => {
@@ -638,7 +764,11 @@ describe('signed-in user after a connectivity blip', () => {
     sessionStorage.clear()
   })
 
-  async function renderSignedIn(responses: Array<() => Observable<ApolloLink.Result>>) {
+  async function renderSignedIn(
+    responses: Array<() => Observable<ApolloLink.Result>>,
+    // Held, every loader run after the first waits for it before preloading Me again.
+    retryGate?: Promise<void>,
+  ) {
     let requests = 0
     const link = new ApolloLink(() => {
       const respond = responses[Math.min(requests, responses.length - 1)]
@@ -654,6 +784,7 @@ describe('signed-in user after a connectivity blip', () => {
           path: '/',
           loader: async () => {
             loaderCalls += 1
+            if (loaderCalls > 1 && retryGate) await retryGate
             const meQueryRef = preload(ME)
             await preload.toPromise(meQueryRef).catch(() => undefined)
             return { meQueryRef }
@@ -707,6 +838,82 @@ describe('signed-in user after a connectivity blip', () => {
     expect(fetchMock).not.toHaveBeenCalled()
     expect(app.loaderCalls()).toBe(1)
     expect(screen.getByText('Signed out')).toBeInTheDocument()
+  })
+
+  describe('a 401 while the app has outage evidence', () => {
+    // Another part of the app (a route's recovering screen, say) is already showing an outage.
+    const elsewhere = {}
+    const unauthorized = () =>
+      fails(
+        new ServerError('Response not successful', {
+          response: new Response(null, { status: 401 }),
+          bodyText: '',
+        }),
+      )
+
+    afterEach(() => {
+      signalApiOutage(elsewhere, false)
+    })
+
+    it('keeps the session and retries Me once the API answers', async () => {
+      apiUp()
+      signalApiOutage(elsewhere, true)
+      const app = await renderSignedIn([unauthorized(), signedIn])
+
+      // Not rendered as signed out, which a signed-in layout turns into a logout.
+      expect(screen.getByRole('heading', { name: SERVER_DOWN })).toBeInTheDocument()
+      expect(screen.queryByText('Signed out')).not.toBeInTheDocument()
+
+      signalApiOutage(elsewhere, false)
+      await advance(CONFIRM_WINDOW_MS)
+
+      expect(app.loaderCalls()).toBe(2)
+      expect(screen.getByText('Signed in as user-1')).toBeInTheDocument()
+    })
+
+    it('keeps the session when the outage is confirmed before the API recovers', async () => {
+      // The probe fails through the whole confirmation window, so the outage screen goes up and
+      // the boundary unmounts. When the API answers, App mounts it again with the same failed Me
+      // ref (the retry has not brought a new one yet) and nothing signals an outage any more: the
+      // old 401 must still not render as signed out.
+      apiDown()
+      signalApiOutage(elsewhere, true)
+      // The retry's loader takes a while, as a real one can, so the failed Me ref is still the
+      // current one when the outage screen comes down.
+      let releaseRetry: () => void = () => undefined
+      const retryGate = new Promise<void>(resolve => {
+        releaseRetry = resolve
+      })
+      const app = await renderSignedIn([unauthorized(), signedIn], retryGate)
+      signalApiOutage(elsewhere, false)
+      await advance(CONFIRM_WINDOW_MS)
+      expect(screen.getByRole('heading', { name: SERVER_DOWN })).toBeInTheDocument()
+      expect(isApiOutageSignalled()).toBe(true)
+
+      apiUp()
+      seen.length = 0
+      await advance(retryDelayMs(1))
+      expect(app.loaderCalls()).toBe(2)
+      expect(seen).not.toContain('Signed out')
+
+      await act(async () => releaseRetry())
+      await advance(0)
+      expect(seen).not.toContain('Signed out')
+      expect(screen.getByText('Signed in as user-1')).toBeInTheDocument()
+    })
+
+    it('logs out when the retry after recovery gets a 401 with no outage', async () => {
+      apiUp()
+      signalApiOutage(elsewhere, true)
+      const app = await renderSignedIn([unauthorized(), unauthorized()])
+      expect(screen.queryByText('Signed out')).not.toBeInTheDocument()
+
+      signalApiOutage(elsewhere, false)
+      await advance(CONFIRM_WINDOW_MS + retryDelayMs(3))
+
+      expect(app.loaderCalls()).toBe(2)
+      expect(screen.getByText('Signed out')).toBeInTheDocument()
+    })
   })
 })
 

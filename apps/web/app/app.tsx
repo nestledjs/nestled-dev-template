@@ -17,7 +17,10 @@ import { ViteCacheError } from '@nestledjs/shared-components'
 import {
   APOLLO_ACCESS_FORBIDDEN_EVENT,
   APOLLO_SERVICE_UNAVAILABLE_EVENT,
+  classifyApiFailure,
+  isApiOutageSignalled,
   isRetryableConnectivityError,
+  takeDeferredAuthFailure,
 } from '@nestled-template/shared/apollo'
 import { AccessDenied } from './access-denied'
 import { retryDelayMs, useApiAvailability, useRefetchFailedQueries } from './api-availability'
@@ -26,47 +29,86 @@ import { ApiUnavailableScreen } from './api-unavailable'
 type MeQueryErrorBoundaryProps = {
   children: ReactNode
   resetKey?: unknown
-  /** Told what the Me query failed with, so a connectivity failure can be retried on recovery. */
-  onError?: (error: unknown) => void
   /**
-   * Rendered while a Me query that failed for want of a connection waits to be retried. It must
-   * not be the signed-out outlet: a signed-in layout reads `user: null` as "not authenticated" and
-   * sends the browser to /force-logout, which clears the session cookie before the retry can sign
-   * the user back in.
+   * Told what the Me query failed with, and whether it waits for the API to recover (see
+   * `meFailureAwaitsRecovery`), so that failure can be retried on recovery.
+   */
+  onError?: (error: unknown, awaitsRecovery: boolean) => void
+  /**
+   * Rendered while a Me query that failed for want of a connection (or with a 401 during an
+   * outage, see `meFailureAwaitsRecovery`) waits to be retried. It must not be the signed-out
+   * outlet: a signed-in layout reads `user: null` as "not authenticated" and sends the browser to
+   * /force-logout, which clears the session cookie before the retry can sign the user back in.
    */
   recoveringFallback?: ReactNode
 }
 
-type MeQueryErrorBoundaryState = { hasError: boolean; connectivityFailure: boolean }
+type MeQueryErrorBoundaryState = { hasError: boolean; awaitsRecovery: boolean; resetKey?: unknown }
+
+/**
+ * A Me failure that must not sign the user out, and is retried once the API answers instead: a
+ * connectivity failure, or a 401 while the app has outage evidence (`isApiOutageSignalled`). Log
+ * out only on an unambiguous 401; if the session really has expired, the retry after recovery gets
+ * a 401 with no outage and logs out then.
+ */
+function meFailureAwaitsRecovery(error: unknown): boolean {
+  return (
+    isRetryableConnectivityError(error) ||
+    (classifyApiFailure(error) === 'unauthenticated' && isApiOutageSignalled())
+  )
+}
+
+// Me query refs whose failure was judged to wait for recovery. The decision sticks to the ref: once
+// the outage clears, App mounts the boundary again with the same failed ref until the retry brings
+// a new one, and by then nothing signals an outage, so judging its 401 afresh would sign the user
+// out without a new answer from the API.
+const meRefsAwaitingRecovery = new WeakSet<object>()
 
 class MeQueryErrorBoundary extends Component<MeQueryErrorBoundaryProps, MeQueryErrorBoundaryState> {
   constructor(props: MeQueryErrorBoundaryProps) {
     super(props)
-    this.state = { hasError: false, connectivityFailure: false }
+    this.state = { hasError: false, awaitsRecovery: false, resetKey: props.resetKey }
   }
 
-  static getDerivedStateFromError(error: unknown): MeQueryErrorBoundaryState {
-    return { hasError: true, connectivityFailure: isRetryableConnectivityError(error) }
-  }
-
-  componentDidCatch(error: unknown) {
-    this.props.onError?.(error)
+  static getDerivedStateFromError(error: unknown): Partial<MeQueryErrorBoundaryState> {
+    return { hasError: true, awaitsRecovery: meFailureAwaitsRecovery(error) }
   }
 
   // A new Me query (the root loader ran again) gets a fresh chance. Without this, one failed Me
-  // preload left the whole session rendering as signed out until a full page load.
-  componentDidUpdate(prevProps: MeQueryErrorBoundaryProps) {
-    if (this.state.hasError && prevProps.resetKey !== this.props.resetKey) {
-      this.setState({ hasError: false, connectivityFailure: false })
+  // preload left the whole session rendering as signed out until a full page load. Reset while
+  // rendering the new ref, not after: resetting in componentDidUpdate rendered the old failure
+  // against the new ref first, for one frame, as signed out.
+  static getDerivedStateFromProps(
+    props: MeQueryErrorBoundaryProps,
+    state: MeQueryErrorBoundaryState,
+  ): Partial<MeQueryErrorBoundaryState> | null {
+    if (props.resetKey === state.resetKey) return null
+    return { hasError: false, awaitsRecovery: false, resetKey: props.resetKey }
+  }
+
+  componentDidCatch(error: unknown) {
+    const awaitsRecovery = this.awaitsRecovery()
+    const { resetKey } = this.props
+    if (awaitsRecovery && typeof resetKey === 'object' && resetKey !== null) {
+      meRefsAwaitingRecovery.add(resetKey)
     }
+    this.props.onError?.(error, awaitsRecovery)
+  }
+
+  private awaitsRecovery(): boolean {
+    const { resetKey } = this.props
+    return (
+      this.state.awaitsRecovery ||
+      (typeof resetKey === 'object' && resetKey !== null && meRefsAwaitingRecovery.has(resetKey))
+    )
   }
 
   render() {
-    if (this.state.hasError && this.state.connectivityFailure && this.props.recoveringFallback) {
+    if (this.state.hasError && this.awaitsRecovery() && this.props.recoveringFallback) {
       return this.props.recoveringFallback
     }
-    // Any other failure (a 401 among them) renders as signed out, as before: the error link and the
-    // signed-in layout's redirect take it through logout.
+    // Any other failure (a 401 with no outage among them) renders as signed out, as before: the
+    // error link and the signed-in layout's redirect take it through logout.
     if (this.state.hasError) {
       return (
         <GlobalContextProvider user={null}>
@@ -121,7 +163,8 @@ export function App() {
   // signed out because of it. The query ref cannot be read again (it holds the error), so once the
   // API answers the root loader runs again for a fresh one, and the boundary resets on the new ref.
   // Without this a short blip left a signed-in user looking signed out until they navigated.
-  // Only connectivity failures are retried: a 401 still goes through the error link's logout.
+  // Only connectivity failures, and a 401 during an outage, are retried: any other 401 still goes
+  // through the error link's logout.
   // Retries back off like the refetches, so a /graphql that keeps failing while the liveness route
   // answers cannot turn this into a revalidation loop.
   const meFailedOfflineRef = useRef(false)
@@ -171,18 +214,19 @@ export function App() {
       } else {
         retryMeQuery()
       }
-      refetchFailedQueries()
+      // Queries left holding a 401 the error link let pass during the outage get a fresh answer.
+      refetchFailedQueries({ includeAuthFailures: takeDeferredAuthFailure() })
     },
     onBlipCleared: () => {
       retryMeQuery()
-      refetchFailedQueries()
+      refetchFailedQueries({ includeAuthFailures: takeDeferredAuthFailure() })
     },
   })
   const { reportConnectivityError, markUnavailable } = api
 
   const handleMeQueryError = useCallback(
-    (error: unknown) => {
-      if (!isRetryableConnectivityError(error)) return
+    (_error: unknown, awaitsRecovery: boolean) => {
+      if (!awaitsRecovery) return
       meFailedOfflineRef.current = true
       // Confirm the failure with the probe; whichever way it clears (a blip, or the outage screen
       // coming down) calls back above. During SSR the error link reports nothing, so this is the
