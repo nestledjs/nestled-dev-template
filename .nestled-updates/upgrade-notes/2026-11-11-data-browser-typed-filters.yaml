@@ -29,7 +29,8 @@ intent: >
     `{ <relation>: { id: { equals: id } } }`;
   - a related enum (`relation.enumField`) → `{ <relation>: { <enumField>: { equals } } }`;
   - date and number ranges (`{ gte, lte }`), `AND` / `OR` / `NOT`, and keys that are not fields of
-    the model pass through; empty values are dropped; Json and scalar-list columns, which have no
+    the model pass through; empty UI values are dropped (explicit operands such as `{ equals: null }`
+    or `{ is: null }` are kept); Json and scalar-list columns, which have no
     filter input, are dropped.
   It is idempotent: a value already in operator shape (an object whose keys are all operators,
   such as `{ equals }`, `{ contains }`, `{ gte }`, `{ is }`) passes through unchanged. The filter

@@ -89,11 +89,15 @@ export function isOperatorShape(value: unknown): value is Record<string, unknown
   return keys.length > 0 && keys.every(key => OPERATOR_KEYS.has(key))
 }
 
-/** Drops operators whose value is empty, so `{ gte: '2024-01-01', lte: undefined }` stays valid. */
+/**
+ * Drops operators whose operand is `undefined`, so `{ gte: '2024-01-01', lte: undefined }` stays
+ * valid. Any other operand is an explicit predicate and is kept: `{ equals: null }` (is null),
+ * `{ not: null }`, `{ equals: '' }` and `{ isNot: {} }` all restrict the list.
+ */
 function compactOperators(value: Record<string, unknown>): Record<string, unknown> | undefined {
   const compacted: Record<string, unknown> = {}
   for (const [key, operand] of Object.entries(value)) {
-    if (operand !== undefined && operand !== null && operand !== '') compacted[key] = operand
+    if (operand !== undefined) compacted[key] = operand
   }
   return Object.keys(compacted).length > 0 ? compacted : undefined
 }
@@ -167,7 +171,11 @@ function foreignKeyFor(
 /** Filter for one field of a related model, used inside a to-one relation filter. */
 function relatedFieldFilter(relatedField: FilterModelField | undefined, value: unknown): unknown {
   if (isOperatorShape(value)) return compactOperators(value)
-  if (isPlainObject(value)) return undefined
+  // A nested relation (or a field the metadata does not describe) is already typed by the caller,
+  // e.g. `{ organization: { subscription: { id: { equals } } } }`; the API validates it.
+  if (isPlainObject(value)) {
+    return !relatedField || isRelationField(relatedField) ? value : undefined
+  }
   // Values selected from a related model's list (an id, an enum value) are exact matches.
   return equalsFilter(relatedField, value)
 }
@@ -198,9 +206,13 @@ function bareRelationFilter(ctx: RelationContext, value: unknown): RelationFilte
 
 /** Converts one entry of a relation's object value, e.g. `id` or a related enum. */
 function relationEntryFilter(ctx: RelationContext, key: string, entry: unknown): unknown {
-  if (key === 'is' || key === 'isNot' || LOGICAL_KEYS.has(key)) return entry
+  if (isEmptyValue(entry)) return undefined
   return relatedFieldFilter(ctx.relatedField(key), entry)
 }
+
+/** `is` / `isNot` / `AND` / `OR` / `NOT` are explicit predicates: `{ is: null }` and `{ isNot: {} }` count. */
+const isRelationPredicateKey = (key: string) =>
+  key === 'is' || key === 'isNot' || LOGICAL_KEYS.has(key)
 
 /**
  * Splits a to-one relation's UI value into a foreign-key filter (for the selected id) and a
@@ -214,8 +226,12 @@ function relationFilter(ctx: RelationContext, value: unknown): RelationFilterPar
   const parts: RelationFilterParts = {}
   const relationEntries: Record<string, unknown> = {}
   for (const [key, entry] of Object.entries(value)) {
-    if (isEmptyValue(entry)) continue
-    if (key === 'id' && ctx.foreignKey && !isPlainObject(entry)) {
+    if (entry === undefined) continue
+    if (isRelationPredicateKey(key)) {
+      relationEntries[key] = entry
+      continue
+    }
+    if (key === 'id' && ctx.foreignKey && !isPlainObject(entry) && !isEmptyValue(entry)) {
       Object.assign(parts, bareRelationFilter(ctx, entry))
       continue
     }

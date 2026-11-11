@@ -7,6 +7,7 @@ const organizationModel: FilterModel = {
     { name: 'id', type: 'String', kind: 'scalar' },
     { name: 'name', type: 'String', kind: 'scalar' },
     { name: 'status', type: 'OrganizationStatus', kind: 'enum' },
+    { name: 'owner', type: 'User', kind: 'object', relationName: 'OrganizationOwner' },
   ],
 }
 
@@ -138,6 +139,32 @@ describe('toFilterInput', () => {
       { posts: { some: { id: { equals: 'p1' } } } },
     ],
     ['list relation without operators is dropped', { posts: 'p1' }, undefined],
+    [
+      'explicit null and empty-string operands are kept',
+      { organizationId: { equals: null }, name: { not: null }, status: { equals: '' } },
+      { organizationId: { equals: null }, name: { not: null }, status: { equals: '' } },
+    ],
+    ['relation is: null is kept', { organization: { is: null } }, { organization: { is: null } }],
+    [
+      'relation isNot: {} is kept',
+      { organization: { isNot: {} } },
+      { organization: { isNot: {} } },
+    ],
+    [
+      'already-typed nested relation filter is kept',
+      { team: { members: { some: { id: { equals: 'm1' } } } } },
+      { team: { members: { some: { id: { equals: 'm1' } } } } },
+    ],
+    [
+      'nested relation filter on a related relation field is kept',
+      { organization: { owner: { id: { equals: 'u1' } } } },
+      { organization: { owner: { id: { equals: 'u1' } } } },
+    ],
+    [
+      'non-operator object on a related scalar is dropped',
+      { organization: { name: { foo: 'bar' } } },
+      undefined,
+    ],
     [
       'logical operators pass through',
       { OR: [{ name: { contains: 'a' } }, { name: { contains: 'b' } }] },
