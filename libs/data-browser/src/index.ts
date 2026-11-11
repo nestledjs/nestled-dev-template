@@ -24,6 +24,7 @@ export * from './lib/components'
 
 // Utilities
 export * from './lib/utils/graphql-utils'
+export * from './lib/utils/filter-input'
 export * from './lib/utils/secure-storage'
 export * from './lib/utils/string-utils'
 export * from './lib/utils/get-plural-names'

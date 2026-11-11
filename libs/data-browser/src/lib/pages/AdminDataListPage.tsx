@@ -13,6 +13,7 @@ import { FilterField } from '../components/FilterField'
 import { ExportButton } from '../components/ExportButton'
 import { useAdminList } from '../hooks/useAdminList'
 import { getAdminDocuments } from '../utils/graphql-utils'
+import { toFilterInput } from '../utils/filter-input'
 import { useAdminDataContext } from '../context/AdminDataContext'
 import { SvgIcon } from '../components/SvgIcon'
 
@@ -74,22 +75,24 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
 
       if (value === undefined || value === null || value === '') {
         // Remove the enum filter
+        // Copy before editing: the previous filter state (and the URL filters it may have come
+        // from) must not change underneath React.
         const relationFilter = newFilters[relationName]
         if (relationFilter && typeof relationFilter === 'object') {
-          delete relationFilter[enumFieldName]
+          const { [enumFieldName]: _removed, ...rest } = relationFilter
           // If the relation filter is now empty, remove it entirely
-          if (Object.keys(relationFilter).length === 0) {
+          if (Object.keys(rest).length === 0) {
             delete newFilters[relationName]
+          } else {
+            newFilters[relationName] = rest
           }
         }
       } else {
         // Add or update the enum filter
-        if (!newFilters[relationName]) {
-          newFilters[relationName] = {}
-        }
         const relationFilter = newFilters[relationName]
-        if (relationFilter && typeof relationFilter === 'object') {
-          relationFilter[enumFieldName] = value
+        newFilters[relationName] = {
+          ...(relationFilter && typeof relationFilter === 'object' ? relationFilter : {}),
+          [enumFieldName]: value,
         }
       }
 
@@ -443,6 +446,13 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
     }
   }, [showColumnSelector, showSearchFieldSelector, handleClickOutside])
 
+  // The filter controls keep the bare UI shape; the API takes the model's typed filter input.
+  // Converting here covers both the list query and the export, which reuses these variables.
+  const filterInput = useMemo(
+    () => toFilterInput(model, filters, databaseModels),
+    [model, filters, databaseModels],
+  )
+
   const variables = {
     input: {
       take: pageSize,
@@ -451,7 +461,7 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
       searchFields: searchFields.length > 0 ? searchFields : undefined,
       orderBy: sort.orderBy,
       orderDirection: sort.orderDirection,
-      filters: Object.keys(filters).length > 0 ? filters : undefined,
+      filters: filterInput,
     },
   }
 
