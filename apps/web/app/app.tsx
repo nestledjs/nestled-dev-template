@@ -226,29 +226,53 @@ export function App() {
   // Retries back off like the refetches, so a /graphql that keeps failing while the liveness route
   // answers cannot turn this into a revalidation loop.
   const meFailedOfflineRef = useRef(false)
-  const meRetry = useRef<{ attempt: number; timer?: ReturnType<typeof setTimeout> }>({ attempt: 0 })
+  // `delay` is the queued retry's delay, kept until it runs or is dropped, so an effect replay that
+  // cancelled its timer can queue it again.
+  const meRetry = useRef<{
+    attempt: number
+    timer?: ReturnType<typeof setTimeout>
+    delay?: number
+  }>({ attempt: 0 })
+  const runMeRetry = () => {
+    meRetry.current.timer = undefined
+    meRetry.current.delay = undefined
+    meFailedOfflineRef.current = false
+    void revalidator.revalidate()
+  }
+  // Read when the timer fires, so it always revalidates through this render's revalidator.
+  const runMeRetryRef = useRef(runMeRetry)
+  useLayoutEffect(() => {
+    runMeRetryRef.current = runMeRetry
+  })
+  const queueMeRetry = (delay: number) => {
+    meRetry.current.delay = delay
+    meRetry.current.timer = setTimeout(() => runMeRetryRef.current(), delay)
+  }
   const retryMeQuery = () => {
     if (!meFailedOfflineRef.current || meRetry.current.timer !== undefined) return
     const delay = meRetry.current.attempt === 0 ? 0 : retryDelayMs(meRetry.current.attempt - 1)
     meRetry.current.attempt += 1
-    meRetry.current.timer = setTimeout(() => {
-      meRetry.current.timer = undefined
-      meFailedOfflineRef.current = false
-      void revalidator.revalidate()
-    }, delay)
+    queueMeRetry(delay)
   }
   // The recovering screen's button: retry the Me query now instead of waiting out the backoff.
   // While the failure is still being confirmed there is no timer yet and the probe decides.
   const retryMeQueryNow = () => {
     if (!meFailedOfflineRef.current || meRetry.current.timer === undefined) return
     clearTimeout(meRetry.current.timer)
-    meRetry.current.timer = undefined
-    meFailedOfflineRef.current = false
-    void revalidator.revalidate()
+    runMeRetry()
   }
+  const queueMeRetryRef = useRef(queueMeRetry)
   useEffect(() => {
     const retry = meRetry.current
-    return () => clearTimeout(retry.timer)
+    // Queue again a retry that the cleanup below cancelled. React StrictMode (development) replays
+    // effects on mount: when Me failed on the first render, the boundary queued its retry while
+    // mounting, the replayed cleanup cancelled the timer and left it recorded as pending, and every
+    // later retry saw it pending and gave up, so the recovering screen stayed up for good.
+    if (retry.timer === undefined && retry.delay !== undefined) queueMeRetryRef.current(retry.delay)
+    return () => {
+      clearTimeout(retry.timer)
+      retry.timer = undefined
+    }
   }, [])
   // For the Me boundary's error callback, which keeps one identity across renders.
   const retryMeQueryRef = useRef(retryMeQuery)
@@ -265,6 +289,7 @@ export function App() {
       clearTimeout(meRetry.current.timer)
       meRetry.current.timer = undefined
     }
+    meRetry.current.delay = undefined
     meFailedOfflineRef.current = false
   }, [])
 

@@ -817,8 +817,15 @@ describe('signed-in user after a connectivity blip', () => {
 
   async function renderSignedIn(
     responses: Array<() => Observable<ApolloLink.Result>>,
-    // Held, every loader run after the first waits for it before preloading Me again.
-    retryGate?: Promise<void>,
+    {
+      retryGate,
+      strict = false,
+    }: {
+      // Held, every loader run after the first waits for it before preloading Me again.
+      retryGate?: Promise<void>
+      // Render under <StrictMode>, which replays effects on mount as development does.
+      strict?: boolean
+    } = {},
   ) {
     let requests = 0
     const link = new ApolloLink(() => {
@@ -846,14 +853,16 @@ describe('signed-in user after a connectivity blip', () => {
       ],
       { initialEntries: ['/'] },
     )
+    const tree = (
+      <ApolloProvider client={client}>
+        <RouterProvider router={router} />
+      </ApolloProvider>
+    )
+    let unmount: () => void = () => undefined
     await act(async () => {
-      render(
-        <ApolloProvider client={client}>
-          <RouterProvider router={router} />
-        </ApolloProvider>,
-      )
+      unmount = render(strict ? <StrictMode>{tree}</StrictMode> : tree).unmount
     })
-    return { loaderCalls: () => loaderCalls }
+    return { loaderCalls: () => loaderCalls, unmount }
   }
 
   const fails = (error: Error) => () => new Observable<ApolloLink.Result>(o => o.error(error))
@@ -942,6 +951,53 @@ describe('signed-in user after a connectivity blip', () => {
       expect(screen.getByText('Signed in as user-1')).toBeInTheDocument()
     })
 
+    describe('under StrictMode, which replays effects on mount', () => {
+      it('recovers from a Me 500 on the first render once Me succeeds', async () => {
+        apiUp()
+        const app = await renderSignedIn([serverError(), signedIn], { strict: true })
+
+        await advance(0)
+
+        expect(app.loaderCalls()).toBe(2)
+        expect(seen).not.toContain('Signed out')
+        expect(screen.getByText('Signed in as user-1')).toBeInTheDocument()
+      })
+
+      it('keeps retrying with backoff while Me keeps failing', async () => {
+        apiUp()
+        const app = await renderSignedIn([serverError(), serverError(), serverError(), signedIn], {
+          strict: true,
+        })
+
+        await advance(0)
+        expect(app.loaderCalls()).toBe(2)
+        expect(screen.getByRole('heading', { name: SERVER_DOWN })).toBeInTheDocument()
+
+        await advance(retryDelayMs(0) - 1)
+        expect(app.loaderCalls()).toBe(2)
+        await advance(1)
+        expect(app.loaderCalls()).toBe(3)
+
+        await advance(retryDelayMs(1))
+        expect(app.loaderCalls()).toBe(4)
+        expect(seen).not.toContain('Signed out')
+        expect(screen.getByText('Signed in as user-1')).toBeInTheDocument()
+      })
+
+      it('cancels a queued retry on unmount', async () => {
+        apiUp()
+        const app = await renderSignedIn([serverError()], { strict: true })
+        await advance(0)
+        expect(app.loaderCalls()).toBe(2)
+
+        // The next retry is queued behind the backoff; unmounting drops it.
+        act(() => app.unmount())
+        await advance(retryDelayMs(0) + retryDelayMs(1) + retryDelayMs(2))
+
+        expect(app.loaderCalls()).toBe(2)
+      })
+    })
+
     it('keeps the session on a GraphQL error that is not UNAUTHENTICATED', async () => {
       apiUp()
       const app = await renderSignedIn([graphQLError('INTERNAL_SERVER_ERROR'), signedIn])
@@ -1024,7 +1080,7 @@ describe('signed-in user after a connectivity blip', () => {
       const retryGate = new Promise<void>(resolve => {
         releaseRetry = resolve
       })
-      const app = await renderSignedIn([unauthorized(), signedIn], retryGate)
+      const app = await renderSignedIn([unauthorized(), signedIn], { retryGate })
       signalApiOutage(elsewhere, false)
       await advance(CONFIRM_WINDOW_MS)
       expect(screen.getByRole('heading', { name: SERVER_DOWN })).toBeInTheDocument()
