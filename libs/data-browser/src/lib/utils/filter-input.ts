@@ -141,9 +141,18 @@ function equalsFilter(field: FilterModelField | undefined, value: unknown): unkn
   return coerced === undefined ? undefined : { equals: coerced }
 }
 
+/**
+ * A list-valued scalar or enum column (`String[]`, `Role[]`). Prisma filters these with
+ * `has` / `hasSome` / `hasEvery`, which the generated filter inputs do not declare, so the input
+ * has no field for them at all and any value sent for one makes GraphQL reject the query.
+ */
+export function isListValuedColumn(field: FilterModelField): boolean {
+  return Boolean(field.isList) && !isRelationField(field)
+}
+
 /** Filter for a scalar or enum column on the model being listed. */
 function scalarFilter(field: FilterModelField, value: unknown): unknown {
-  if (field.isList) return undefined
+  if (isListValuedColumn(field)) return undefined
   const type = field.type.toLowerCase()
   if (UNFILTERABLE_TYPES.has(type)) return undefined
   if (isOperatorShape(value)) return compactOperators(value)
@@ -170,6 +179,8 @@ function foreignKeyFor(
 
 /** Filter for one field of a related model, used inside a to-one relation filter. */
 function relatedFieldFilter(relatedField: FilterModelField | undefined, value: unknown): unknown {
+  // Not even in operator shape (`{ has }`): the related model's filter input has no such field.
+  if (relatedField && isListValuedColumn(relatedField)) return undefined
   if (isOperatorShape(value)) return compactOperators(value)
   // A nested relation (or a field the metadata does not describe) is already typed by the caller,
   // e.g. `{ organization: { subscription: { id: { equals } } } }`; the API validates it.
@@ -285,6 +296,8 @@ function convertEntry(
  * | relation `{ user: { id: 'u1' } }`          | `{ userId: { equals: 'u1' } }`                   |
  * | ...without a single scalar foreign key     | `{ user: { id: { equals: 'u1' } } }`             |
  * | related enum `{ user: { role: 'ADMIN' } }` | `{ user: { role: { equals: 'ADMIN' } } }`        |
+ * | list column `{ roles: 'ADMIN' }`           | dropped (no list operators in the input)         |
+ * | ...on a relation `{ user: { roles: … } }`  | dropped, even in operator shape (`{ has }`)      |
  * | already-converted `{ equals: ... }` etc.   | unchanged                                        |
  * | `AND` / `OR` / `NOT`                       | unchanged                                        |
  * | `undefined`, `null`, `''`, `[]`, `{}`      | dropped                                          |

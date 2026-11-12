@@ -14,6 +14,7 @@ import { ExportButton } from '../components/ExportButton'
 import { useAdminList } from '../hooks/useAdminList'
 import { getAdminDocuments } from '../utils/graphql-utils'
 import { toFilterInput } from '../utils/filter-input'
+import { getFilterableFieldNames, parseUrlFilters } from '../utils/filter-fields'
 import { useAdminDataContext } from '../context/AdminDataContext'
 import { SvgIcon } from '../components/SvgIcon'
 
@@ -194,36 +195,10 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
 
   // Parse URL filter parameters (e.g., ?userId=abc-123)
   // Must come AFTER model is defined
-  const urlFilters = useMemo(() => {
-    if (!model) return {}
-
-    const filters: Record<string, any> = {}
-    for (const [key, value] of searchParams.entries()) {
-      // Skip pagination and search params
-      if (key !== 'page' && key !== 'search' && key !== 'sort') {
-        // Check if this is a foreign key field (e.g., userId)
-        // If so, find the corresponding relation field (e.g., user)
-        const relationField = model.fields.find(
-          (f: any) => f.relationName && !f.isList && f.relationFromFields?.[0] === key,
-        )
-
-        if (relationField) {
-          // This is a foreign key - map it to the relation field for the UI
-          // e.g., userId -> user: { id: "..." }
-          filters[relationField.name] = { id: value }
-        } else {
-          // Check if this is a regular scalar field that exists on the model
-          const hasScalarField = model.fields.some((f: any) => f.name === key && !f.relationName)
-          if (hasScalarField) {
-            // Regular scalar field that exists on the model
-            filters[key] = value
-          }
-          // Field doesn't exist on this model - skip it
-        }
-      }
-    }
-    return filters
-  }, [searchParams, model])
+  const urlFilters = useMemo(
+    () => parseUrlFilters(model, searchParams.entries()),
+    [searchParams, model],
+  )
 
   // Track URL filters to apply them after model initialization
   const hasUrlFilters = Object.keys(urlFilters).length > 0
@@ -266,45 +241,10 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
   }, [model])
 
   // Get filterable field names (excluding text fields - use search for those)
-  const filterableFieldNames = useMemo(() => {
-    if (!model) return []
-
-    const directFields = model.fields
-      .filter((field: any) => {
-        // Include simple scalar fields that are good for filtering
-        if (field.relationName && !field.isList) return true // Single relations
-        if (field.relationName) return false // Skip list relations
-        if (field.isList) return false
-        if (['id', 'createdAt', 'updatedAt'].includes(field.name)) return false
-
-        const fieldType = field.type.toLowerCase()
-        // Removed 'string' from filterable types - use search instead for text fields
-        return (
-          ['boolean', 'int', 'float', 'date', 'datetime'].includes(fieldType) ||
-          field.kind === 'enum'
-        )
-      })
-      .map((field: any) => field.name)
-
-    // Also include enum fields from single-relation models
-    const relatedEnumFields: string[] = []
-    model.fields.forEach((field: any) => {
-      if (field.relationName && !field.isList) {
-        // This is a single relation - check if the related model has enum fields
-        const relatedModel = databaseModels.find((m: any) => m.name === field.type)
-        if (relatedModel) {
-          relatedModel.fields.forEach((relatedField: any) => {
-            if (relatedField.kind === 'enum') {
-              // Add as "relationName.enumFieldName"
-              relatedEnumFields.push(`${field.name}.${relatedField.name}`)
-            }
-          })
-        }
-      }
-    })
-
-    return [...directFields, ...relatedEnumFields]
-  }, [model, databaseModels])
+  const filterableFieldNames = useMemo(
+    () => getFilterableFieldNames(model, databaseModels),
+    [model, databaseModels],
+  )
 
   // Get searchable field names for text search
   const searchableFieldNames = useMemo(() => {
