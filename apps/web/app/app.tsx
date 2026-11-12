@@ -99,7 +99,7 @@ function isMeSessionFailure(error: unknown): boolean {
   )
 }
 
-export { isAppCodeError }
+export { AppCodeErrorMarker, isAppCodeError }
 
 // Me query refs whose failure was judged to wait for recovery. The decision sticks to the ref: once
 // the outage clears, App mounts the boundary again with the same failed ref until the retry brings
@@ -165,7 +165,9 @@ class MeQueryErrorBoundary extends Component<MeQueryErrorBoundaryProps, MeQueryE
     if (this.state.hasError) {
       return (
         <GlobalContextProvider user={null}>
-          <Outlet />
+          <AppCodeErrorMarker>
+            <Outlet />
+          </AppCodeErrorMarker>
         </GlobalContextProvider>
       )
     }
@@ -408,10 +410,13 @@ export function App() {
   }
 
   if (!meQueryRef) {
-    // Always provide the context, user is null
+    // Always provide the context, user is null. No Me boundary here, so the marker is what keeps a
+    // route's error from reaching the root ErrorBoundary looking like a rejected session.
     return (
       <GlobalContextProvider user={null}>
-        <Outlet />
+        <AppCodeErrorMarker>
+          <Outlet />
+        </AppCodeErrorMarker>
       </GlobalContextProvider>
     )
   }

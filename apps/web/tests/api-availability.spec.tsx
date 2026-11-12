@@ -15,7 +15,7 @@ import {
   isApiOutageSignalled,
   signalApiOutage,
 } from '@nestled-template/shared/apollo'
-import { App } from '../app/app'
+import { App, AppCodeErrorMarker, isAppCodeError } from '../app/app'
 import { ErrorBoundary } from '../app/root'
 import {
   CONFIRM_DELAYS_MS,
@@ -1295,6 +1295,103 @@ describe('signed-in user after a connectivity blip', () => {
         },
       )
     })
+  })
+})
+
+describe('AppCodeErrorMarker', () => {
+  // A route's own query rejected with a 401, thrown during render. The error link deals with the
+  // 401 itself; the error screen must not read the thrown error as a verdict on the session.
+  const thrownByARoute = () =>
+    new ServerError('Response not successful', {
+      response: new Response(null, { status: 401 }),
+      bodyText: '',
+    })
+
+  const forceLogout = vi.fn()
+
+  async function renderRoutes(rootElement: ReactNode, error: Error) {
+    vi.spyOn(console, 'error').mockImplementation(() => undefined)
+    const assign = vi.fn()
+    vi.stubGlobal('location', { ...globalThis.location, assign, reload: vi.fn() })
+    function Broken(): never {
+      throw error
+    }
+    const router = createMemoryRouter(
+      [
+        {
+          path: '/',
+          // No Me query: a signed-out visitor, or an app whose root loader resolved Me already.
+          loader: () => ({}),
+          element: rootElement,
+          ErrorBoundary: () => <ErrorBoundary error={useRouteError()} />,
+          children: [
+            { path: 'broken', element: <Broken /> },
+            {
+              path: 'force-logout',
+              Component: () => {
+                forceLogout()
+                return <p>Force logout</p>
+              },
+            },
+          ],
+        },
+      ],
+      { initialEntries: ['/broken'] },
+    )
+    await act(async () => {
+      render(<RouterProvider router={router} />)
+    })
+    return { assign }
+  }
+
+  beforeEach(() => {
+    forceLogout.mockReset()
+  })
+
+  afterEach(() => {
+    vi.unstubAllGlobals()
+    vi.restoreAllMocks()
+  })
+
+  it('keeps the session for a route error in an app that resolves Me in its root loader', async () => {
+    // No Me boundary: the root route wraps its outlet with the marker.
+    const { assign } = await renderRoutes(
+      <AppCodeErrorMarker>
+        <Outlet />
+      </AppCodeErrorMarker>,
+      thrownByARoute(),
+    )
+
+    expect(screen.getByText('Something went wrong')).toBeInTheDocument()
+    expect(assign).not.toHaveBeenCalled()
+    expect(forceLogout).not.toHaveBeenCalled()
+  })
+
+  it('without it, the same error reaches the root ErrorBoundary as a rejected session', async () => {
+    const { assign } = await renderRoutes(<Outlet />, thrownByARoute())
+
+    expect(assign).toHaveBeenCalledWith('/force-logout')
+  })
+
+  it("keeps the session for a route error under the template's App with no Me query", async () => {
+    // A public route for a signed-out visitor: App renders the routes without a Me boundary.
+    const { assign } = await renderRoutes(<App />, thrownByARoute())
+
+    expect(screen.getByText('Something went wrong')).toBeInTheDocument()
+    expect(assign).not.toHaveBeenCalled()
+  })
+
+  it('passes the error on unchanged and marks it', async () => {
+    const error = thrownByARoute()
+    await renderRoutes(
+      <AppCodeErrorMarker>
+        <Outlet />
+      </AppCodeErrorMarker>,
+      error,
+    )
+
+    expect(isAppCodeError(error)).toBe(true)
+    expect(isAppCodeError(thrownByARoute())).toBe(false)
   })
 })
 

@@ -203,8 +203,9 @@ type ErrorWithGraphQLErrors = Error & {
  * Whether the error says the API rejected the session: a route response with status 401, an HTTP
  * 401, or a GraphQL error whose `extensions.code` is `UNAUTHENTICATED` (`classifyApiFailure`, plus
  * the older `graphQLErrors` shape). The message is never read: an error that merely says
- * "Unauthorized" is not evidence of a dead session. An error the Me boundary passed on as the
- * app's own (`isAppCodeError`) never is either: only the API can reject the session.
+ * "Unauthorized" is not evidence of a dead session. An error thrown by the app's own code, below an
+ * `AppCodeErrorMarker` or passed on by the Me boundary (`isAppCodeError`), never is either, whatever
+ * it carries: only the session query, or a loader, may decide a logout.
  */
 function isUnauthorizedError(error: unknown, routeStatus: number | undefined): boolean {
   if (isAppCodeError(error)) return false
