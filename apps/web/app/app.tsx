@@ -25,6 +25,7 @@ import {
 import { AccessDenied } from './access-denied'
 import { retryDelayMs, useApiAvailability, useRefetchFailedQueries } from './api-availability'
 import { ApiUnavailableScreen } from './api-unavailable'
+import { AppCodeErrorMarker, isAppCodeError, markAppCodeError } from './app-code-error-marker'
 
 type MeQueryErrorBoundaryProps = {
   children: ReactNode
@@ -79,14 +80,17 @@ function meFailureAwaitsRecovery(error: unknown): boolean {
 }
 
 /**
- * Something the Me query can fail with, and so the only thing the Me boundary may treat as a
- * session failure: an answer from the API (an HTTP error, an unparsable response, a GraphQL error)
- * or a request that never got one. Anything else -- an `Error` thrown by a route's own render or
- * effect, say -- is a bug in the app, not a verdict on the session. Judged by the error itself, not
- * by where it was caught: the boundary also sits above every route that has no error boundary of
- * its own.
+ * A failure of the Me query itself, and so the only thing the Me boundary may treat as a session
+ * matter. The routes render inside an `AppCodeErrorMarker`, so anything they throw (a render or
+ * effect bug, or a failure of a route's own API query) arrives marked (`isAppCodeError`) and is
+ * passed on to the route's or the root error boundary with the session kept: it says nothing about
+ * the session, and treating a route query's 500 as a Me failure put up the recovering screen and
+ * retried Me instead of showing the route's error. What is left is what the Me read threw; of that,
+ * only an answer from the API (an HTTP error, an unparsable response, a GraphQL error) or a request
+ * that never got one is a session failure. Anything else is a bug, passed on too.
  */
 function isMeSessionFailure(error: unknown): boolean {
+  if (isAppCodeError(error)) return false
   return (
     CombinedGraphQLErrors.is(error) ||
     ServerError.is(error) ||
@@ -95,15 +99,7 @@ function isMeSessionFailure(error: unknown): boolean {
   )
 }
 
-// Errors the Me boundary judged to come from the app's own code and passed on. The root
-// ErrorBoundary reads this (`isAppCodeError`) so that an app error whose message happens to say
-// "Unauthorized" is still shown as an error instead of being taken for a rejected session.
-const appCodeErrors = new WeakSet<object>()
-
-/** The Me boundary passed this error on as one from the app's own code, not a session failure. */
-export function isAppCodeError(error: unknown): boolean {
-  return typeof error === 'object' && error !== null && appCodeErrors.has(error)
-}
+export { isAppCodeError }
 
 // Me query refs whose failure was judged to wait for recovery. The decision sticks to the ref: once
 // the outage clears, App mounts the boundary again with the same failed ref until the retry brings
@@ -119,7 +115,7 @@ class MeQueryErrorBoundary extends Component<MeQueryErrorBoundaryProps, MeQueryE
 
   static getDerivedStateFromError(error: unknown): Partial<MeQueryErrorBoundaryState> {
     if (!isMeSessionFailure(error)) {
-      if (typeof error === 'object' && error !== null) appCodeErrors.add(error)
+      markAppCodeError(error)
       return { appError: { error } }
     }
     return { hasError: true, awaitsRecovery: meFailureAwaitsRecovery(error), appError: undefined }
@@ -454,7 +450,10 @@ function AppWithUser({
   }, [meQueryRef, answered, onLoaded])
   return (
     <GlobalContextProvider key={user?.id ?? 'nouser'} user={user}>
-      <Outlet />
+      {/* Below the Me read: what the routes throw is theirs, not a failure of the session query. */}
+      <AppCodeErrorMarker>
+        <Outlet />
+      </AppCodeErrorMarker>
     </GlobalContextProvider>
   )
 }

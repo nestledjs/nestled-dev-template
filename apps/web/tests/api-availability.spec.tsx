@@ -1147,17 +1147,22 @@ describe('signed-in user after a connectivity blip', () => {
 
     const forceLogout = vi.fn()
 
-    async function renderBrokenRoute(Broken: () => ReactNode) {
+    async function renderBrokenRoute(
+      Broken: () => ReactNode,
+      { routeErrorBoundary = false }: { routeErrorBoundary?: boolean } = {},
+    ) {
       const assign = vi.fn()
       vi.stubGlobal('location', { ...globalThis.location, assign, reload: vi.fn() })
       const link = new ApolloLink(() => signedIn())
       const client = new ApolloClient({ link, cache: new InMemoryCache() })
       const preload = createQueryPreloader(client)
+      let loaderCalls = 0
       const router = createMemoryRouter(
         [
           {
             path: '/',
             loader: async () => {
+              loaderCalls += 1
               const meQueryRef = preload(ME)
               await preload.toPromise(meQueryRef).catch(() => undefined)
               return { meQueryRef }
@@ -1167,7 +1172,15 @@ describe('signed-in user after a connectivity blip', () => {
             children: [
               {
                 element: <SignedInLayout />,
-                children: [{ path: 'broken', element: <Broken /> }],
+                children: [
+                  {
+                    path: 'broken',
+                    element: <Broken />,
+                    ...(routeErrorBoundary && {
+                      ErrorBoundary: () => <p>The route&apos;s own error screen</p>,
+                    }),
+                  },
+                ],
               },
               {
                 path: 'force-logout',
@@ -1189,7 +1202,7 @@ describe('signed-in user after a connectivity blip', () => {
         )
       })
       await advance(CONFIRM_WINDOW_MS + retryDelayMs(3))
-      return { router, assign }
+      return { router, assign, loaderCalls: () => loaderCalls }
     }
 
     beforeEach(() => {
@@ -1215,6 +1228,72 @@ describe('signed-in user after a connectivity blip', () => {
       expect(router.state.location.pathname).toBe('/broken')
       // Nothing about the session was retried either: the API was never in doubt.
       expect(apiProbeCalls()).toHaveLength(0)
+    })
+
+    describe("a failure of a route's own API query, not of Me", () => {
+      // What a route's useSuspenseQuery throws when its own query fails.
+      const routeQueryFailures = [
+        [
+          'a 500',
+          new ServerError('Response not successful', {
+            response: new Response(null, { status: 500 }),
+            bodyText: '',
+          }),
+        ],
+        [
+          'a GraphQL error that is not UNAUTHENTICATED',
+          new CombinedGraphQLErrors({
+            data: null,
+            errors: [{ message: 'Boom', extensions: { code: 'INTERNAL_SERVER_ERROR' } }],
+          }),
+        ],
+        [
+          'an UNAUTHENTICATED GraphQL error',
+          new CombinedGraphQLErrors({
+            data: null,
+            errors: [{ message: 'Expired', extensions: { code: 'UNAUTHENTICATED' } }],
+          }),
+        ],
+      ] as const
+
+      it.each(routeQueryFailures)(
+        'shows the root error screen for %s, keeping the session and leaving Me alone',
+        async (_label, error) => {
+          apiUp()
+          const { router, assign, loaderCalls } = await renderBrokenRoute(() => {
+            throw error
+          })
+
+          expect(screen.getByText('Something went wrong')).toBeInTheDocument()
+          // Not the Me boundary's recovering screen, and Me was not retried.
+          expect(screen.queryByRole('heading', { name: SERVER_DOWN })).not.toBeInTheDocument()
+          expect(loaderCalls()).toBe(1)
+          expect(apiProbeCalls()).toHaveLength(0)
+          expect(seen).not.toContain('Signed out')
+          expect(forceLogout).not.toHaveBeenCalled()
+          expect(assign).not.toHaveBeenCalled()
+          expect(router.state.location.pathname).toBe('/broken')
+        },
+      )
+
+      it.each(routeQueryFailures)(
+        "leaves %s to the route's own error boundary",
+        async (_label, error) => {
+          apiUp()
+          const { assign, loaderCalls } = await renderBrokenRoute(
+            () => {
+              throw error
+            },
+            { routeErrorBoundary: true },
+          )
+
+          expect(screen.getByText("The route's own error screen")).toBeInTheDocument()
+          expect(screen.queryByRole('heading', { name: SERVER_DOWN })).not.toBeInTheDocument()
+          expect(loaderCalls()).toBe(1)
+          expect(forceLogout).not.toHaveBeenCalled()
+          expect(assign).not.toHaveBeenCalled()
+        },
+      )
     })
   })
 })
