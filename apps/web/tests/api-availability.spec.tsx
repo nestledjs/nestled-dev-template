@@ -312,11 +312,58 @@ describe('root error boundary for a network error', () => {
     const elsewhere = {}
     signalApiOutage(elsewhere, true)
     try {
-      render(<ErrorBoundary error={new Error('Unauthorized')} />)
+      render(<ErrorBoundary error={new ErrorResponseImpl(401, 'Unauthorized', null)} />)
       expect(screen.getByRole('heading', { name: SERVER_DOWN })).toBeInTheDocument()
     } finally {
       signalApiOutage(elsewhere, false)
     }
+  })
+
+  describe('deciding a logout by status and code, never by message text', () => {
+    function renderWithAssign(error: unknown) {
+      vi.spyOn(console, 'error').mockImplementation(() => undefined)
+      const assign = vi.fn()
+      vi.stubGlobal('location', { ...globalThis.location, pathname: '/members', assign })
+      render(<ErrorBoundary error={error} />)
+      return assign
+    }
+
+    it.each([
+      ['exactly "Unauthorized"', new Error('Unauthorized')],
+      ['"401"', new Error('Request failed with status 401')],
+      ['"Session has been invalidated"', new Error('Session has been invalidated.')],
+      [
+        '"Unauthorized" in a GraphQL error with no UNAUTHENTICATED code',
+        new CombinedGraphQLErrors({ data: null, errors: [{ message: 'Unauthorized' }] }),
+      ],
+    ])('shows the error screen for an error whose message says %s', (_label, error) => {
+      const assign = renderWithAssign(error)
+
+      expect(screen.getByText('Something went wrong')).toBeInTheDocument()
+      expect(assign).not.toHaveBeenCalled()
+    })
+
+    it.each([
+      ['a route response with status 401', new ErrorResponseImpl(401, 'Unauthorized', null)],
+      [
+        'an HTTP 401',
+        new ServerError('Response not successful', {
+          response: new Response(null, { status: 401 }),
+          bodyText: '',
+        }),
+      ],
+      [
+        'an UNAUTHENTICATED GraphQL error',
+        new CombinedGraphQLErrors({
+          data: null,
+          errors: [{ message: 'Expired', extensions: { code: 'UNAUTHENTICATED' } }],
+        }),
+      ],
+    ])('still logs out on %s with no outage', (_label, error) => {
+      const assign = renderWithAssign(error)
+
+      expect(assign).toHaveBeenCalledWith('/force-logout?return_url=%2Fmembers')
+    })
   })
 
   it('labels the button "Try again", not "Refresh Page"', () => {
@@ -906,6 +953,22 @@ describe('signed-in user after a connectivity blip', () => {
       expect(screen.getByText('Signed in as user-1')).toBeInTheDocument()
     })
 
+    it('keeps the session on a Me GraphQL error that only says "Unauthorized", with no code', async () => {
+      apiUp()
+      const saysUnauthorized = () =>
+        new Observable<ApolloLink.Result>(o => {
+          o.next({ data: null, errors: [{ message: 'Unauthorized' }] })
+          o.complete()
+        })
+      const app = await renderSignedIn([saysUnauthorized, signedIn])
+
+      await advance(0)
+
+      expect(seen).not.toContain('Signed out')
+      expect(app.loaderCalls()).toBe(2)
+      expect(screen.getByText('Signed in as user-1')).toBeInTheDocument()
+    })
+
     it('still logs out on an UNAUTHENTICATED GraphQL error with no outage', async () => {
       apiUp()
       const app = await renderSignedIn([graphQLError('UNAUTHENTICATED'), signedIn])
@@ -1011,6 +1074,10 @@ describe('signed-in user after a connectivity blip', () => {
       throw new Error('Unauthorized operation in local component')
     }
 
+    function ThrowsExactlyUnauthorizedInRender(): never {
+      throw new Error('Unauthorized')
+    }
+
     function ThrowsSessionInvalidatedInRender(): never {
       throw new Error('Session has been invalidated in a stale local cache')
     }
@@ -1077,6 +1144,7 @@ describe('signed-in user after a connectivity blip', () => {
       ['during render', ThrowsInRender],
       ['in an effect', ThrowsInEffect],
       ['with "Unauthorized" in its message', ThrowsUnauthorizedInRender],
+      ['with exactly "Unauthorized" as its message', ThrowsExactlyUnauthorizedInRender],
       ['with "Session has been invalidated" in its message', ThrowsSessionInvalidatedInRender],
     ])('keeps the session and shows the error screen for an error thrown %s', async (_, Broken) => {
       apiUp()

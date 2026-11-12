@@ -89,8 +89,8 @@ export type ClientOptions = {
 
 /**
  * Why an operation against the API failed:
- * - `unauthenticated`: the API rejected the session (HTTP 401, or a GraphQL authentication error
- *   such as `UNAUTHENTICATED`);
+ * - `unauthenticated`: the API rejected the session (HTTP 401, or a GraphQL error whose
+ *   `extensions.code` is `UNAUTHENTICATED`; never judged by message text);
  * - `unavailable`: no HTTP response, or a proxy's 502/503/504 (`isRetryableConnectivityError`);
  * - `other`: the API answered with some other error (a 403, a 500, a resolver or validation error).
  */
@@ -176,14 +176,14 @@ function resolveAuthToken(request?: Request, options?: ClientOptions): string | 
   return null
 }
 
-function isAuthenticationError(message: string, extensions?: any): boolean {
-  return (
-    message.includes('Unauthorized') ||
-    message.includes('User from token not found') ||
-    message.includes('Invalid JWT') ||
-    message.includes('Session has been invalidated') ||
-    extensions?.code === 'UNAUTHENTICATED'
-  )
+/**
+ * A GraphQL error that rejects the session: its `extensions.code` is `UNAUTHENTICATED`, which the
+ * API sets for every 401 (Nest maps an `UnauthorizedException` to it). The message is never read:
+ * text such as "Unauthorized" or "Session has been invalidated" is not evidence of a dead session
+ * (owner rule, 2026-11-12), and matching it logged users out over errors that only said so.
+ */
+function isAuthenticationError(extensions?: { code?: unknown }): boolean {
+  return extensions?.code === 'UNAUTHENTICATED'
 }
 
 function isForbiddenError(extensions?: { code?: unknown }): boolean {
@@ -285,9 +285,7 @@ function errorFromUnknown(value: unknown): Error {
 /** Classifies an Apollo link error; see `ApiFailureCause`. */
 export function classifyApiFailure(error: unknown): ApiFailureCause {
   if (CombinedGraphQLErrors.is(error)) {
-    return error.errors.some(({ message, extensions }) =>
-      isAuthenticationError(message ?? '', extensions),
-    )
+    return error.errors.some(({ extensions }) => isAuthenticationError(extensions))
       ? 'unauthenticated'
       : 'other'
   }
@@ -304,7 +302,7 @@ function createErrorLink(onApiFailure?: (cause: ApiFailureCause) => void): Apoll
       for (const { message, path, extensions } of error.errors) {
         console.error(`[GraphQL error]: Message: ${message}, Path: ${path}`)
 
-        if (isAuthenticationError(message, extensions)) {
+        if (isAuthenticationError(extensions)) {
           handleAuthenticationError()
         } else if (isForbiddenError(extensions)) {
           handleAuthorizationError(operation)

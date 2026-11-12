@@ -364,6 +364,34 @@ describe('makeClient', () => {
     )
   })
 
+  it('keeps the session on a GraphQL error that only says "Unauthorized", with no code', async () => {
+    vi.spyOn(console, 'log').mockImplementation(() => undefined)
+    vi.spyOn(console, 'error').mockImplementation(() => undefined)
+    const testWindow = { location: { pathname: '/members', search: '', hash: '', href: '' } }
+    vi.stubGlobal('window', testWindow)
+    globalThis.fetch = vi.fn().mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          data: null,
+          errors: [{ message: 'Unauthorized' }, { message: 'Session has been invalidated.' }],
+        }),
+        { status: 200, headers: { 'content-type': 'application/json' } },
+      ),
+    )
+
+    await makeClient(undefined, { apiUrl: 'https://api.example.com/graphql' })
+      .query({
+        query: gql`
+          query PrivateData {
+            privateData
+          }
+        `,
+      })
+      .catch(() => undefined)
+
+    expect(testWindow.location.href).toBe('')
+  })
+
   it('keeps the session on a 401 while an outage is signalled, and logs out once it clears', async () => {
     const consoleLog = vi.spyOn(console, 'log').mockImplementation(() => undefined)
     vi.spyOn(console, 'error').mockImplementation(() => undefined)
@@ -560,6 +588,22 @@ describe('classifyApiFailure', () => {
       'other',
     ],
     ['an application TypeError', new TypeError('Cannot read properties of undefined'), 'other'],
+    // Message text is never evidence of a dead session: only the status or the code.
+    ...[
+      'Unauthorized',
+      'User from token not found or invalid.',
+      'Invalid JWT payload.',
+      'Session has been invalidated.',
+      'Request failed with status 401',
+    ].map(
+      message =>
+        [
+          `a GraphQL error that only says "${message}"`,
+          new CombinedGraphQLErrors({ errors: [{ message }] }),
+          'other',
+        ] as const,
+    ),
+    ['an Error that only says "Unauthorized"', new Error('Unauthorized'), 'other'],
   ] as const)('classifies %s as %s', (_label, error, cause) => {
     expect(classifyApiFailure(error)).toBe(cause)
   })
