@@ -4,6 +4,7 @@ import {
   APOLLO_ACCESS_FORBIDDEN_EVENT,
   APOLLO_SERVICE_UNAVAILABLE_EVENT,
   classifyApiFailure,
+  clearApiOutage,
   isApiOutageSignalled,
   isRetryableConnectivityError,
   makeClient,
@@ -412,8 +413,8 @@ describe('makeClient', () => {
     const first = {}
     const second = {}
     try {
-      signalApiOutage(first, true)
-      signalApiOutage(second, true)
+      signalApiOutage(first)
+      signalApiOutage(second)
       expect(isApiOutageSignalled()).toBe(true)
       expect(takeDeferredAuthFailure()).toBe(false)
       await makeClient(undefined, { apiUrl: 'https://api.example.com/graphql' }).query({ query })
@@ -426,21 +427,21 @@ describe('makeClient', () => {
       expect(takeDeferredAuthFailure()).toBe(false)
 
       // One source clearing does not clear another's evidence.
-      signalApiOutage(first, false)
+      clearApiOutage(first)
       expect(isApiOutageSignalled()).toBe(true)
       await makeClient(undefined, { apiUrl: 'https://api.example.com/graphql' }).query({ query })
       expect(testWindow.location.href).toBe('')
       expect(takeDeferredAuthFailure()).toBe(true)
 
-      signalApiOutage(second, false)
+      clearApiOutage(second)
       expect(isApiOutageSignalled()).toBe(false)
       await makeClient(undefined, { apiUrl: 'https://api.example.com/graphql' }).query({ query })
       expect(testWindow.location.href).toBe('/logout?return_url=%2Fmembers')
       expect(takeDeferredAuthFailure()).toBe(false)
     } finally {
       takeDeferredAuthFailure()
-      signalApiOutage(first, false)
-      signalApiOutage(second, false)
+      clearApiOutage(first)
+      clearApiOutage(second)
     }
   })
 
@@ -502,6 +503,36 @@ describe('makeClient', () => {
 
     expect(forbiddenHandler).not.toHaveBeenCalled()
     globalThis.removeEventListener(APOLLO_ACCESS_FORBIDDEN_EVENT, forbiddenHandler)
+  })
+})
+
+describe('signalApiOutage / clearApiOutage', () => {
+  it('signals per source, and clearing one source keeps the others', () => {
+    const first = {}
+    const second = {}
+    try {
+      expect(isApiOutageSignalled()).toBe(false)
+      signalApiOutage(first)
+      signalApiOutage(first)
+      signalApiOutage(second)
+      expect(isApiOutageSignalled()).toBe(true)
+
+      clearApiOutage(first)
+      expect(isApiOutageSignalled()).toBe(true)
+      clearApiOutage(second)
+      expect(isApiOutageSignalled()).toBe(false)
+      // Clearing a source that signalled nothing is harmless.
+      clearApiOutage({})
+      expect(isApiOutageSignalled()).toBe(false)
+    } finally {
+      clearApiOutage(first)
+      clearApiOutage(second)
+    }
+  })
+
+  it('takes the source alone: no boolean flag (Sonar S2301)', () => {
+    expect(signalApiOutage).toHaveLength(1)
+    expect(clearApiOutage).toHaveLength(1)
   })
 })
 

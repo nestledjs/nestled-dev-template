@@ -12,6 +12,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   APOLLO_ACCESS_FORBIDDEN_EVENT,
   APOLLO_SERVICE_UNAVAILABLE_EVENT,
+  clearApiOutage,
   isApiOutageSignalled,
   signalApiOutage,
 } from '@nestled-template/shared/apollo'
@@ -310,12 +311,12 @@ describe('root error boundary for a network error', () => {
   it('keeps the session on a 401 while the app has outage evidence', () => {
     vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new TypeError('Failed to fetch')))
     const elsewhere = {}
-    signalApiOutage(elsewhere, true)
+    signalApiOutage(elsewhere)
     try {
       render(<ErrorBoundary error={new ErrorResponseImpl(401, 'Unauthorized', null)} />)
       expect(screen.getByRole('heading', { name: SERVER_DOWN })).toBeInTheDocument()
     } finally {
-      signalApiOutage(elsewhere, false)
+      clearApiOutage(elsewhere)
     }
   })
 
@@ -1048,19 +1049,19 @@ describe('signed-in user after a connectivity blip', () => {
       )
 
     afterEach(() => {
-      signalApiOutage(elsewhere, false)
+      clearApiOutage(elsewhere)
     })
 
     it('keeps the session and retries Me once the API answers', async () => {
       apiUp()
-      signalApiOutage(elsewhere, true)
+      signalApiOutage(elsewhere)
       const app = await renderSignedIn([unauthorized(), signedIn])
 
       // Not rendered as signed out, which a signed-in layout turns into a logout.
       expect(screen.getByRole('heading', { name: SERVER_DOWN })).toBeInTheDocument()
       expect(screen.queryByText('Signed out')).not.toBeInTheDocument()
 
-      signalApiOutage(elsewhere, false)
+      clearApiOutage(elsewhere)
       await advance(CONFIRM_WINDOW_MS)
 
       expect(app.loaderCalls()).toBe(2)
@@ -1073,7 +1074,7 @@ describe('signed-in user after a connectivity blip', () => {
       // ref (the retry has not brought a new one yet) and nothing signals an outage any more: the
       // old 401 must still not render as signed out.
       apiDown()
-      signalApiOutage(elsewhere, true)
+      signalApiOutage(elsewhere)
       // The retry's loader takes a while, as a real one can, so the failed Me ref is still the
       // current one when the outage screen comes down.
       let releaseRetry: () => void = () => undefined
@@ -1081,7 +1082,7 @@ describe('signed-in user after a connectivity blip', () => {
         releaseRetry = resolve
       })
       const app = await renderSignedIn([unauthorized(), signedIn], { retryGate })
-      signalApiOutage(elsewhere, false)
+      clearApiOutage(elsewhere)
       await advance(CONFIRM_WINDOW_MS)
       expect(screen.getByRole('heading', { name: SERVER_DOWN })).toBeInTheDocument()
       expect(isApiOutageSignalled()).toBe(true)
@@ -1100,11 +1101,11 @@ describe('signed-in user after a connectivity blip', () => {
 
     it('logs out when the retry after recovery gets a 401 with no outage', async () => {
       apiUp()
-      signalApiOutage(elsewhere, true)
+      signalApiOutage(elsewhere)
       const app = await renderSignedIn([unauthorized(), unauthorized()])
       expect(screen.queryByText('Signed out')).not.toBeInTheDocument()
 
-      signalApiOutage(elsewhere, false)
+      clearApiOutage(elsewhere)
       await advance(CONFIRM_WINDOW_MS + retryDelayMs(3))
 
       expect(app.loaderCalls()).toBe(2)

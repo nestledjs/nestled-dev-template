@@ -211,14 +211,18 @@ function handleAuthorizationError(operation: ApolloLink.Operation): void {
 const apiOutageSignals = new Set<object>()
 
 /**
- * Tells the error link whether `source` (any object, such as a component's ref) currently has
- * outage evidence. While any source does, a 401 does not log the user out: a 401 alongside an
- * outage is not proof the session is bad. The app retries once the API recovers, and a 401 then,
- * with no outage, logs out as usual.
+ * Tells the error link that `source` (any object, such as a component's ref) has outage evidence,
+ * until `clearApiOutage(source)`. While any source does, a 401 does not log the user out: a 401
+ * alongside an outage is not proof the session is bad. The app retries once the API recovers, and
+ * a 401 then, with no outage, logs out as usual. Signalling the same source twice is one signal.
  */
-export function signalApiOutage(source: object, active: boolean): void {
-  if (active) apiOutageSignals.add(source)
-  else apiOutageSignals.delete(source)
+export function signalApiOutage(source: object): void {
+  apiOutageSignals.add(source)
+}
+
+/** Withdraws `source`'s outage evidence (`signalApiOutage`); other sources' evidence stays. */
+export function clearApiOutage(source: object): void {
+  apiOutageSignals.delete(source)
 }
 
 /** Whether any source has signalled an outage (`signalApiOutage`) that is still in effect. */
