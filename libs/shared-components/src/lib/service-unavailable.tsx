@@ -32,7 +32,7 @@ export function ServiceUnavailable({
   }
 
   const content = (
-    <div className="flex-grow text-gray-800 w-full p-10 flex flex-col justify-center items-center min-h-screen">
+    <div className="flex-grow text-gray-800 dark:text-gray-100 w-full p-10 flex flex-col justify-center items-center min-h-screen">
       <svg
         aria-hidden="true"
         focusable="false"
@@ -51,7 +51,7 @@ export function ServiceUnavailable({
         />
       </svg>
       <h1 className="pt-6 text-3xl font-bold">{title}</h1>
-      <div className="text-center pt-4 max-w-96">{message}</div>
+      <div className="text-center pt-4 max-w-96 text-gray-600 dark:text-gray-300">{message}</div>
       {showRefreshButton && (
         <button
           onClick={handleRefresh}

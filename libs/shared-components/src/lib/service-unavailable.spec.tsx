@@ -24,4 +24,14 @@ describe('ServiceUnavailable', () => {
 
     expect(screen.queryByRole('button')).toBeNull()
   })
+
+  it('stays readable in dark mode: the title, icon and message have dark-mode text colours', () => {
+    render(<ServiceUnavailable title="Down" message="Retrying automatically." />)
+
+    const heading = screen.getByRole('heading', { name: 'Down' })
+    // The title and icon inherit the container's colour; the message sets its own.
+    const container = heading.parentElement as HTMLElement
+    expect(container.className).toContain('dark:text-gray-100')
+    expect(screen.getByText('Retrying automatically.').className).toContain('dark:text-gray-300')
+  })
 })
