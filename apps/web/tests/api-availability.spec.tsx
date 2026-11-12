@@ -11,10 +11,13 @@ import {
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   APOLLO_ACCESS_FORBIDDEN_EVENT,
+  APOLLO_DEFERRED_AUTH_FAILURE_EVENT,
   APOLLO_SERVICE_UNAVAILABLE_EVENT,
   clearApiOutage,
   isApiOutageSignalled,
+  makeClient,
   signalApiOutage,
+  takeDeferredAuthFailure,
 } from '@nestled-template/shared/apollo'
 import { App, AppCodeErrorMarker, isAppCodeError } from '../app/app'
 import { ErrorBoundary } from '../app/root'
@@ -401,6 +404,66 @@ describe('root error boundary for a network error', () => {
     await advance(retryDelayMs(0))
     expect(probe).toHaveBeenCalledTimes(1)
     expect(reload).toHaveBeenCalledTimes(1)
+  })
+})
+
+describe('App after an in-flight retry ends with a 401 let pass', () => {
+  afterEach(() => {
+    vi.unstubAllGlobals()
+    vi.restoreAllMocks()
+    takeDeferredAuthFailure()
+  })
+
+  it('refetches the query holding that 401 without being asked', async () => {
+    vi.spyOn(console, 'log').mockImplementation(() => undefined)
+    vi.spyOn(console, 'error').mockImplementation(() => undefined)
+    // The error link lets a 401 pass while an outage is signalled (here, a retry in flight).
+    const retryInFlight = {}
+    signalApiOutage(retryInFlight)
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(
+        new Response(JSON.stringify({ message: 'Unauthorized' }), {
+          status: 401,
+          headers: { 'content-type': 'application/json' },
+        }),
+      ),
+    )
+    await makeClient(undefined, { apiUrl: 'https://api.example.com/graphql' })
+      .query({ query: gql('query Data { data }') })
+      .catch(() => undefined)
+    clearApiOutage(retryInFlight)
+
+    // The query that got it, still active and holding the 401.
+    const held = {
+      getCurrentResult: () => ({
+        error: new ServerError('Response not successful', {
+          response: new Response(null, { status: 401 }),
+          bodyText: '',
+        }),
+      }),
+      refetch: vi.fn().mockResolvedValue({}),
+    }
+    const client = new ApolloClient({ link: ApolloLink.empty(), cache: new InMemoryCache() })
+    vi.spyOn(client, 'getObservableQueries').mockReturnValue(new Set([held]) as never)
+    const router = createMemoryRouter(
+      [{ path: '/', loader: () => ({}), element: <App />, children: [{ index: true }] }],
+      { initialEntries: ['/'] },
+    )
+    await act(async () => {
+      render(
+        <ApolloProvider client={client}>
+          <RouterProvider router={router} />
+        </ApolloProvider>,
+      )
+    })
+
+    await act(async () => {
+      globalThis.dispatchEvent(new CustomEvent(APOLLO_DEFERRED_AUTH_FAILURE_EVENT))
+    })
+
+    expect(held.refetch).toHaveBeenCalledTimes(1)
+    expect(takeDeferredAuthFailure()).toBe(false)
   })
 })
 

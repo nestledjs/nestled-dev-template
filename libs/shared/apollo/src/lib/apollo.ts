@@ -291,20 +291,47 @@ function operationKey(operation: ApolloLink.Operation): string {
  * sees it: a retried call that gets a 401 is judged like any other. Queries only (a subscription
  * stays open, and would hold the evidence as long as it lives); never during a server render.
  */
+const CANCELLED = Symbol('cancelled')
+
+/**
+ * Dispatched on `window` when the last outage evidence an in-flight retry held is withdrawn
+ * (`createOutageRetryLink`) while the error link has let a 401 pass because of it
+ * (`takeDeferredAuthFailure`). Nothing else marks the end of that evidence: the availability
+ * check never left `available`, so it calls no recovery callback. The web app listens and
+ * refetches the queries holding such a 401, for a fresh answer.
+ */
+export const APOLLO_DEFERRED_AUTH_FAILURE_EVENT = 'apollo-deferred-auth-failure'
+
+function releaseRetryEvidence(evidence: object): void {
+  clearApiOutage(evidence)
+  if (isApiOutageSignalled() || !authFailureDeferred || globalThis.window === undefined) return
+  globalThis.window.dispatchEvent(new CustomEvent(APOLLO_DEFERRED_AUTH_FAILURE_EVENT))
+}
+
 function createOutageRetryLink(): ApolloLink {
   return new ApolloLink((operation, forward) => {
     if (globalThis.window === undefined || !isQueryOperation(operation)) return forward(operation)
     const key = operationKey(operation)
     return new Observable(observer => {
       const evidence = {}
-      if (unreachableOperations.has(key)) signalApiOutage(evidence)
+      const retrying = unreachableOperations.has(key)
+      if (retrying) signalApiOutage(evidence)
+      let settled = false
+      // Once per attempt: the first answer, error or cancellation decides.
       const settle = (error?: unknown) => {
+        if (settled) return
+        settled = true
         if (isRetryableConnectivityError(error)) unreachableOperations.add(key)
-        else unreachableOperations.delete(key)
-        clearApiOutage(evidence)
+        else if (error !== CANCELLED) unreachableOperations.delete(key)
+        if (retrying) releaseRetryEvidence(evidence)
       }
       const subscription = forward(operation).subscribe({
-        next: result => observer.next(result),
+        // An answer (an HTTP 200 carrying an UNAUTHENTICATED error among them) settles the attempt
+        // before the error link above judges it, so a clean rejection is not deferred.
+        next: result => {
+          settle()
+          observer.next(result)
+        },
         error: error => {
           settle(error)
           observer.error(error)
@@ -315,7 +342,7 @@ function createOutageRetryLink(): ApolloLink {
         },
       })
       return () => {
-        clearApiOutage(evidence)
+        settle(CANCELLED)
         subscription.unsubscribe()
       }
     })

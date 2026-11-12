@@ -2,6 +2,7 @@ import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest'
 import { CombinedGraphQLErrors, gql, ServerError } from '@apollo/client'
 import {
   APOLLO_ACCESS_FORBIDDEN_EVENT,
+  APOLLO_DEFERRED_AUTH_FAILURE_EVENT,
   APOLLO_SERVICE_UNAVAILABLE_EVENT,
   classifyApiFailure,
   clearApiOutage,
@@ -462,6 +463,64 @@ describe('makeClient', () => {
       expect(isApiOutageSignalled()).toBe(false)
 
       await run(ME)
+      expect(testWindow.location.href).toBe('/logout?return_url=%2Fmembers')
+    })
+
+    it('announces the end of the evidence when a 401 was let pass meanwhile', async () => {
+      let answerRetry: () => void = () => undefined
+      const { testWindow, run } = setUp([
+        () => Promise.reject(new TypeError('Failed to fetch')),
+        () =>
+          new Promise<Response>(resolve => {
+            answerRetry = () => resolve(json(200, { data: { flaky: 'ok' } }))
+          }),
+      ])
+      const announced = () =>
+        testWindow.dispatchEvent.mock.calls.filter(
+          ([event]) => (event as Event).type === APOLLO_DEFERRED_AUTH_FAILURE_EVENT,
+        )
+      await run(FLAKY)
+      const retry = run(FLAKY)
+      await vi.waitFor(() => expect(isApiOutageSignalled()).toBe(true))
+      await run(ME)
+      expect(announced()).toHaveLength(0)
+
+      answerRetry()
+      await retry
+
+      // Nothing else would tell the app to refetch the query left holding the deferred 401.
+      expect(announced()).toHaveLength(1)
+    })
+
+    it('does not announce anything when no 401 was let pass', async () => {
+      const { testWindow, run } = setUp([
+        () => Promise.reject(new TypeError('Failed to fetch')),
+        async () => json(200, { data: { flaky: 'ok' } }),
+      ])
+      await run(FLAKY)
+      await run(FLAKY)
+
+      expect(
+        testWindow.dispatchEvent.mock.calls.filter(
+          ([event]) => (event as Event).type === APOLLO_DEFERRED_AUTH_FAILURE_EVENT,
+        ),
+      ).toHaveLength(0)
+    })
+
+    it('logs out when the retry itself is answered 200 with an UNAUTHENTICATED error', async () => {
+      const { testWindow, run } = setUp([
+        () => Promise.reject(new TypeError('Failed to fetch')),
+        async () =>
+          json(200, {
+            data: null,
+            errors: [{ message: 'Expired', extensions: { code: 'UNAUTHENTICATED' } }],
+          }),
+      ])
+      await run(FLAKY)
+
+      await run(FLAKY)
+
+      expect(isApiOutageSignalled()).toBe(false)
       expect(testWindow.location.href).toBe('/logout?return_url=%2Fmembers')
     })
 

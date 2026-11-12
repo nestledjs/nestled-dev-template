@@ -106,17 +106,28 @@ intent: >
   below the error link (`createOutageRetryLink`) that remembers query operations, keyed by
   operation name and variables, whose last attempt failed with `isRetryableConnectivityError`
   (no answer, or a proxy's 502/503/504). While such an operation is sent again it signals an
-  outage (`signalApiOutage`) until the attempt settles: an answer clears it and forgets the
-  operation, a second connectivity failure is reported by the error link as before. Because it
-  sits below the error link, a retried call's own failure clears its evidence before the error
-  link judges it, so the retried call's own 401 is handled as usual. Browser only (never during a
+  outage (`signalApiOutage`) until the attempt settles: the first answer (any result, an HTTP 200
+  carrying an UNAUTHENTICATED error included) clears it and forgets the operation, a second
+  connectivity failure is reported by the error link as before. Because it sits below the error
+  link, a retried call's own answer or failure clears its evidence before the error link judges
+  it, so the retried call's own 401 or UNAUTHENTICATED is handled as usual. When the last
+  evidence a retry held is withdrawn and the error link let a 401 pass meanwhile, the link
+  dispatches the new `APOLLO_DEFERRED_AUTH_FAILURE_EVENT` on `window`: no availability check left
+  `available`, so no recovery callback would otherwise refetch the query left holding that 401.
+  apps/web/app/app.tsx listens for it and calls
+  `refetchFailedQueries({ includeAuthFailures: takeDeferredAuthFailure() })`, so that query gets
+  a fresh answer (data, or a 401 with no outage that logs out as usual). Browser only (never during a
   server render, which makes no retries) and queries only (a subscription would hold the evidence
   as long as it stays open). A 500 is not outage evidence, as in `classifyApiFailure`.
-  Affected paths: libs/shared/apollo/src/lib/apollo.ts, libs/shared/apollo/src/lib/apollo.spec.ts.
+  Affected paths: libs/shared/apollo/src/lib/apollo.ts, libs/shared/apollo/src/lib/apollo.spec.ts,
+  apps/web/app/app.tsx, apps/web/tests/api-availability.spec.tsx.
   Verification: `pnpm exec nx test apollo --skip-nx-cache` (the "a 401 while a retry of an
   unreachable call is still in flight" cases: kept while the retry is in flight and logged out by
-  a clean 401 once it settles; a call that never failed does not count; a retried call's own 401
-  logs out).
+  a clean 401 once it settles; the end of the evidence is announced only when a 401 was let pass;
+  a call that never failed does not count; a retried call's own HTTP 401, or its own HTTP 200
+  with an UNAUTHENTICATED error, logs out); `pnpm exec nx test web --skip-nx-cache` ("App after
+  an in-flight retry ends with a 401 let pass": the query holding the 401 is refetched without a
+  manual request).
 
 
   5. Sonar S2301 (boolean selector parameter) on `signalApiOutage(source, active)`. It is split:
@@ -224,8 +235,11 @@ agentHints:
     rule to it: while a retry of a call that failed to reach the API (no answer, or 502/503/504)
     is in flight, signal an outage (`signalApiOutage`) and clear it when the retry settles, so a
     401 in the meantime keeps the session. Keep the link below the error link so a retried call's
-    own 401 is still judged. A project whose error link is not in the shared Apollo library adds
-    the link next to its own error link.
+    own 401 is still judged, and settle on the first result, not on completion, so a 200 carrying
+    UNAUTHENTICATED is judged with the evidence already gone. A project whose error link is not in
+    the shared Apollo library adds the link next to its own error link. A project whose App has no
+    `useRefetchFailedQueries` still listens for `APOLLO_DEFERRED_AUTH_FAILURE_EVENT` and refetches
+    the active queries holding a 401 (or reloads) when it fires.
   - >
     Part 5: rename every caller, including the project's own code and tests:
     `signalApiOutage(x, true)` → `signalApiOutage(x)`, `signalApiOutage(x, false)` →

@@ -16,6 +16,7 @@ import { isViteCacheError, isNetworkError } from '@nestled-template/shared/utils
 import { ViteCacheError } from '@nestledjs/shared-components'
 import {
   APOLLO_ACCESS_FORBIDDEN_EVENT,
+  APOLLO_DEFERRED_AUTH_FAILURE_EVENT,
   APOLLO_SERVICE_UNAVAILABLE_EVENT,
   classifyApiFailure,
   isApiOutageSignalled,
@@ -339,6 +340,10 @@ export function App() {
   useEffect(() => {
     const handleServiceUnavailable = () => reportConnectivityError()
     const handleAccessForbidden = () => setAccessForbidden(true)
+    // An in-flight retry's outage evidence ended with no outage on screen, and a 401 was let pass
+    // meanwhile: refetch the queries holding it, as recovering from an outage does.
+    const handleDeferredAuthFailure = () =>
+      refetchFailedQueries({ includeAuthFailures: takeDeferredAuthFailure() })
 
     const handleGlobalError = (event: ErrorEvent) => {
       const error = event.error
@@ -381,6 +386,7 @@ export function App() {
     // Listen for Apollo service unavailable events
     globalThis.addEventListener(APOLLO_SERVICE_UNAVAILABLE_EVENT, handleServiceUnavailable)
     globalThis.addEventListener(APOLLO_ACCESS_FORBIDDEN_EVENT, handleAccessForbidden)
+    globalThis.addEventListener(APOLLO_DEFERRED_AUTH_FAILURE_EVENT, handleDeferredAuthFailure)
 
     // Fallback: Listen for global errors
     globalThis.addEventListener('error', handleGlobalError)
@@ -390,10 +396,11 @@ export function App() {
       // noisy during normal usage
       globalThis.removeEventListener(APOLLO_SERVICE_UNAVAILABLE_EVENT, handleServiceUnavailable)
       globalThis.removeEventListener(APOLLO_ACCESS_FORBIDDEN_EVENT, handleAccessForbidden)
+      globalThis.removeEventListener(APOLLO_DEFERRED_AUTH_FAILURE_EVENT, handleDeferredAuthFailure)
       globalThis.removeEventListener('error', handleGlobalError)
       globalThis.removeEventListener('unhandledrejection', handleUnhandledRejection)
     }
-  }, [reportConnectivityError])
+  }, [reportConnectivityError, refetchFailedQueries])
 
   // Show Vite cache error UI if detected
   if (viteCacheError) {
