@@ -393,6 +393,109 @@ describe('makeClient', () => {
     expect(testWindow.location.href).toBe('')
   })
 
+  describe('a 401 while a retry of an unreachable call is still in flight', () => {
+    const FLAKY = gql`
+      query Flaky {
+        flaky
+      }
+    `
+    const ME = gql`
+      query Me {
+        me {
+          id
+        }
+      }
+    `
+    const json = (status: number, body: unknown) =>
+      new Response(JSON.stringify(body), {
+        status,
+        headers: { 'content-type': 'application/json' },
+      })
+
+    function setUp(flakyAttempts: Array<() => Promise<Response>>) {
+      vi.spyOn(console, 'log').mockImplementation(() => undefined)
+      vi.spyOn(console, 'error').mockImplementation(() => undefined)
+      const testWindow = {
+        location: { pathname: '/members', search: '', hash: '', href: '' },
+        dispatchEvent: vi.fn(),
+      }
+      vi.stubGlobal('window', testWindow)
+      let flakyCalls = 0
+      globalThis.fetch = vi.fn().mockImplementation(async (_url: unknown, init?: RequestInit) => {
+        const { operationName } = JSON.parse(String(init?.body))
+        if (operationName === 'Me') return json(401, { message: 'Unauthorized' })
+        const attempt = flakyAttempts[Math.min(flakyCalls, flakyAttempts.length - 1)]
+        flakyCalls += 1
+        return attempt()
+      })
+      const client = makeClient(undefined, { apiUrl: 'https://api.example.com/graphql' })
+      const run = (query: typeof ME) =>
+        client.query({ query, fetchPolicy: 'network-only' }).catch(() => undefined)
+      return { testWindow, run }
+    }
+
+    afterEach(() => {
+      takeDeferredAuthFailure()
+    })
+
+    it('keeps the session until the retry settles, then logs out on a clean 401', async () => {
+      let answerRetry: () => void = () => undefined
+      const { testWindow, run } = setUp([
+        () => Promise.reject(new TypeError('Failed to fetch')),
+        () =>
+          new Promise<Response>(resolve => {
+            answerRetry = () => resolve(json(200, { data: { flaky: 'ok' } }))
+          }),
+      ])
+      await run(FLAKY)
+
+      const retry = run(FLAKY)
+      await vi.waitFor(() => expect(isApiOutageSignalled()).toBe(true))
+      await run(ME)
+
+      // The 401 came back while the unreachable call was still being retried: kept.
+      expect(testWindow.location.href).toBe('')
+      expect(takeDeferredAuthFailure()).toBe(true)
+
+      answerRetry()
+      await retry
+      expect(isApiOutageSignalled()).toBe(false)
+
+      await run(ME)
+      expect(testWindow.location.href).toBe('/logout?return_url=%2Fmembers')
+    })
+
+    it('does not count a call that never failed to reach the API', async () => {
+      let answerFirst: () => void = () => undefined
+      const { testWindow, run } = setUp([
+        () =>
+          new Promise<Response>(resolve => {
+            answerFirst = () => resolve(json(200, { data: { flaky: 'ok' } }))
+          }),
+      ])
+
+      const inFlight = run(FLAKY)
+      await run(ME)
+
+      expect(testWindow.location.href).toBe('/logout?return_url=%2Fmembers')
+      answerFirst()
+      await inFlight
+    })
+
+    it("judges a retried call's own 401 like any other", async () => {
+      const { testWindow, run } = setUp([
+        () => Promise.reject(new TypeError('Failed to fetch')),
+        async () => json(401, { message: 'Unauthorized' }),
+      ])
+      await run(FLAKY)
+
+      await run(FLAKY)
+
+      expect(isApiOutageSignalled()).toBe(false)
+      expect(testWindow.location.href).toBe('/logout?return_url=%2Fmembers')
+    })
+  })
+
   it('keeps the session on a 401 while an outage is signalled, and logs out once it clears', async () => {
     const consoleLog = vi.spyOn(console, 'log').mockImplementation(() => undefined)
     vi.spyOn(console, 'error').mockImplementation(() => undefined)

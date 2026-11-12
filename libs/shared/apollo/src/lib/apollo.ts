@@ -69,6 +69,7 @@ import { SetContextLink } from '@apollo/client/link/context'
 import { ErrorLink } from '@apollo/client/link/error'
 import { GraphQLWsLink } from '@apollo/client/link/subscriptions'
 import { getMainDefinition } from '@apollo/client/utilities'
+import { print } from 'graphql'
 import { createClient } from 'graphql-ws'
 import UploadHttpLink from 'apollo-upload-client/UploadHttpLink.mjs'
 import { decodeCookieValue, isFetchFailure, pickNewestJwt } from '@nestled-template/shared/utils'
@@ -267,6 +268,58 @@ function handleAuthenticationError(): void {
   } else {
     globalThis.window.location.href = '/logout'
   }
+}
+
+// Browser only. Query operations (by name and variables) whose last attempt got no answer, or a
+// proxy's 502/503/504 (`isRetryableConnectivityError`); forgotten once one is answered.
+const unreachableOperations = new Set<string>()
+
+function operationKey(operation: ApolloLink.Operation): string {
+  const name = operation.operationName || print(operation.query)
+  return `${name}:${JSON.stringify(operation.variables ?? {})}`
+}
+
+/**
+ * Counts a retry of an unreachable call, while it is in flight, as outage evidence
+ * (`signalApiOutage`). Without it, a 401 that came back while another call was still being retried
+ * after failing to reach the API (a refetch once a blip cleared, or a loader's preload when Me is
+ * revalidated) logged the user out before that retry could fail again and record the outage. The
+ * evidence lasts until the retry settles: an answer clears it (and the 401s after it are judged
+ * as usual), and a second connectivity failure is reported by the error link in the same tick.
+ *
+ * Sits below the error link, so a retry's own failure clears its evidence before the error link
+ * sees it: a retried call that gets a 401 is judged like any other. Queries only (a subscription
+ * stays open, and would hold the evidence as long as it lives); never during a server render.
+ */
+function createOutageRetryLink(): ApolloLink {
+  return new ApolloLink((operation, forward) => {
+    if (globalThis.window === undefined || !isQueryOperation(operation)) return forward(operation)
+    const key = operationKey(operation)
+    return new Observable(observer => {
+      const evidence = {}
+      if (unreachableOperations.has(key)) signalApiOutage(evidence)
+      const settle = (error?: unknown) => {
+        if (isRetryableConnectivityError(error)) unreachableOperations.add(key)
+        else unreachableOperations.delete(key)
+        clearApiOutage(evidence)
+      }
+      const subscription = forward(operation).subscribe({
+        next: result => observer.next(result),
+        error: error => {
+          settle(error)
+          observer.error(error)
+        },
+        complete: () => {
+          settle()
+          observer.complete()
+        },
+      })
+      return () => {
+        clearApiOutage(evidence)
+        subscription.unsubscribe()
+      }
+    })
+  })
 }
 
 function logDevelopmentExtensions(extensions: any): void {
@@ -518,6 +571,7 @@ function createLinkChain(
 
   const links = [
     createErrorLink(onApiFailure),
+    createOutageRetryLink(),
     ...(isDev ? [createLogLink()] : []),
     createAuthLink(token),
     splitLink,
