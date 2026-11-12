@@ -22,6 +22,8 @@ why: >
 packageReleases:
   - name: '@nestledjs/shared-components'
     sourcePath: libs/shared-components
+    targetVersion: 1.0.21
+    versionRange: ^1.0.21
 
 verification:
   - pnpm install
@@ -33,8 +35,6 @@ verification:
     clearly readable.
 
 agentHints:
-  - >
-    `targetVersion` is left out until 1.0.21 is published; the upgrader holds the note until then.
   - >
     The `dark:` classes work only if the app's CSS defines the class-based dark variant
     (`@custom-variant dark (&:where(.dark, .dark *));`) and its Tailwind entry has an `@source` for
