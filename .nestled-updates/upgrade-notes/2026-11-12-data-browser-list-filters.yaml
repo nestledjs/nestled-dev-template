@@ -26,6 +26,8 @@ why: >
 packageReleases:
   - name: '@nestledjs/data-browser'
     sourcePath: libs/data-browser
+    targetVersion: 1.0.29
+    versionRange: ^1.0.29
 
 skipIf:
   - The project has no admin data routes (no `@nestledjs/data-browser` dependency).
@@ -45,8 +47,7 @@ verification:
 agentHints:
   - >
     Update package.json and the lockfile to the published version; do not copy files from
-    libs/data-browser. `targetVersion` is left out until 1.0.29 is published; the upgrader holds the
-    note until then.
+    libs/data-browser.
   - >
     An app with its own client-side filter conversion (a wrapper around the list page, a patched copy
     of it, a hand-written list page, or a custom Apollo link) should check that it also skips
