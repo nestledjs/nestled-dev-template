@@ -104,17 +104,40 @@ const organizationModel = {
   ],
 }
 
+// The same models with list-valued columns, which the generated filter inputs have no field for.
+const userModelWithLists = {
+  ...userModel,
+  fields: [
+    ...userModel.fields,
+    { name: 'roles', type: 'UserRole', kind: 'enum', isList: true },
+    { name: 'tags', type: 'String', isList: true },
+  ],
+}
+
+const organizationModelWithLists = {
+  ...organizationModel,
+  fields: [
+    ...organizationModel.fields,
+    { name: 'categories', type: 'OrganizationCategory', kind: 'enum', isList: true },
+  ],
+}
+
 const sdk = {
   __AdminUsersDocument: { kind: 'Document', definitions: [] },
   UserStatus: { ACTIVE: 'ACTIVE', DISABLED: 'DISABLED' },
   OrganizationStatus: { ACTIVE: 'ACTIVE' },
+  UserRole: { ADMIN: 'ADMIN', MEMBER: 'MEMBER' },
+  OrganizationCategory: { PARTNER: 'PARTNER' },
 }
 
-function renderWithProvider(ui: React.ReactElement) {
+function renderWithProvider(
+  ui: React.ReactElement,
+  databaseModels: any[] = [userModel, organizationModel],
+) {
   return render(
     <AdminDataProvider
       sdk={sdk}
-      databaseModels={[userModel, organizationModel]}
+      databaseModels={databaseModels}
       basePath="/admin/data"
       formTheme={{}}
     >
@@ -202,6 +225,32 @@ describe('admin data pages', () => {
         status: { equals: 'ACTIVE' },
       }),
     )
+  })
+
+  it('does not offer list-valued columns in the filter panel', async () => {
+    routeParams = { dataTypePlural: 'users' }
+
+    renderWithProvider(<AdminDataListPage />, [userModelWithLists, organizationModelWithLists])
+
+    fireEvent.click(await screen.findByRole('button', { name: /Filters/ }))
+    // Single-valued enums, own and related, are offered...
+    expect(screen.getByLabelText('Status')).toBeInTheDocument()
+    expect(screen.getByLabelText('Organization Status')).toBeInTheDocument()
+    // ...list-valued ones are not: UserFilterInput has no field to send them in.
+    expect(screen.queryByLabelText('Roles')).not.toBeInTheDocument()
+    expect(screen.queryByLabelText('Tags')).not.toBeInTheDocument()
+    expect(screen.queryByLabelText('Organization Categories')).not.toBeInTheDocument()
+  })
+
+  it('drops URL parameters naming a list-valued column', async () => {
+    routeParams = { dataTypePlural: 'users' }
+    routeSearchParams = new URLSearchParams('roles=ADMIN&tags=x&active=true')
+
+    renderWithProvider(<AdminDataListPage />, [userModelWithLists, organizationModelWithLists])
+
+    await waitFor(() => expect(lastListQueryFilters()).toEqual({ active: { equals: true } }))
+    // Not held as filter state either, so the panel does not count a filter it cannot send.
+    expect(screen.getByRole('button', { name: /Filters/ })).toHaveTextContent(/^Filters1$/)
   })
 
   it('shows list page errors for invalid models and missing documents', () => {

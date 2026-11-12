@@ -7,6 +7,9 @@ const organizationModel: FilterModel = {
     { name: 'id', type: 'String', kind: 'scalar' },
     { name: 'name', type: 'String', kind: 'scalar' },
     { name: 'status', type: 'OrganizationStatus', kind: 'enum' },
+    // List-valued columns on a related model, reached as `organization.categories` etc.
+    { name: 'categories', type: 'OrganizationCategory', kind: 'enum', isList: true },
+    { name: 'domains', type: 'String', kind: 'scalar', isList: true },
     { name: 'owner', type: 'User', kind: 'object', relationName: 'OrganizationOwner' },
   ],
 }
@@ -28,6 +31,7 @@ const userModel: FilterModel = {
     { name: 'createdAt', type: 'DateTime', kind: 'scalar' },
     { name: 'settings', type: 'Json', kind: 'scalar' },
     { name: 'tags', type: 'String', kind: 'scalar', isList: true },
+    { name: 'roles', type: 'UserRole', kind: 'enum', isList: true },
     { name: 'organizationId', type: 'String', kind: 'scalar' },
     {
       name: 'organization',
@@ -173,6 +177,28 @@ describe('toFilterInput', () => {
     ['unknown keys pass through', { custom: { equals: 1 } }, { custom: { equals: 1 } }],
     ['Json columns are not filterable', { settings: 'x' }, undefined],
     ['scalar list columns are not filterable', { tags: 'x' }, undefined],
+    // The generated filter inputs declare no field for list-valued columns (no has/hasSome), so
+    // nothing may be sent for one, whatever shape it is in.
+    ['enum list columns are not filterable', { roles: 'ADMIN' }, undefined],
+    ['enum list column with several values', { roles: ['ADMIN', 'MEMBER'] }, undefined],
+    ['enum list column in list-operator shape', { roles: { has: 'ADMIN' } }, undefined],
+    ['related enum list is dropped', { organization: { categories: 'PARTNER' } }, undefined],
+    [
+      'related enum list with several values is dropped',
+      { organization: { categories: ['PARTNER', 'VENDOR'] } },
+      undefined,
+    ],
+    [
+      'related enum list in list-operator shape is dropped',
+      { organization: { categories: { hasSome: ['PARTNER'] } } },
+      undefined,
+    ],
+    ['related scalar list is dropped', { organization: { domains: 'example.com' } }, undefined],
+    [
+      'related list column is dropped beside a related enum and id',
+      { organization: { id: 'org-1', status: 'ACTIVE', categories: 'PARTNER' }, roles: 'ADMIN' },
+      { organizationId: { equals: 'org-1' }, organization: { status: { equals: 'ACTIVE' } } },
+    ],
     ['non-operator object on a scalar is dropped', { name: { foo: 'bar' } }, undefined],
     ['non-numeric string on a number column is dropped', { failedLoginCount: 'abc' }, undefined],
     [
