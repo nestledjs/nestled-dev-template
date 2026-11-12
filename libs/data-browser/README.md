@@ -217,7 +217,7 @@ Shows all available database models with a searchable list.
 - **Pagination**: Navigate through large datasets
 
 A link such as `/admin/data/organization-members?userId=<id>` opens the list already filtered by
-that foreign key (or by any other scalar field named in the query string).
+that foreign key (or by any other single-valued scalar or enum field named in the query string).
 
 #### Filters and the typed filter input
 
@@ -239,6 +239,12 @@ them where the list and export queries are built:
 
 It is idempotent: a value already in operator shape (`{ equals }`, `{ contains }`, `{ gte }`, ...)
 passes through unchanged. An app with its own list page that builds `filters` can call it too.
+
+List-valued columns (`String[]`, an enum list such as `Role[]`), on the model or on a related
+model, are never filtered: the generated filter inputs declare no list operators (`has`,
+`hasSome`, `hasEvery`) and no field for them. The filter panel does not offer them, a URL
+parameter naming one is ignored, and `toFilterInput` drops any value for one, even in operator
+shape, rather than send a key GraphQL would reject.
 
 ### Create (`/admin/data/user/create`)
 
