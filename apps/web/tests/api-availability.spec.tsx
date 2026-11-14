@@ -22,6 +22,7 @@ import {
 } from '@nestled-template/shared/apollo'
 import { App, AppCodeErrorMarker, isAppCodeError } from '../app/app'
 import { ErrorBoundary } from '../app/root'
+import { OUTAGE_EVIDENCE_RECHECK_MS } from '../app/deferred-auth-recovery'
 import {
   CONFIRM_DELAYS_MS,
   RETURN_TRIGGER_DEBOUNCE_MS,
@@ -1709,6 +1710,37 @@ describe('root error boundary for an UNAUTHENTICATED error a route threw during 
 
     expect(screen.getByText('Route recovered')).toBeInTheDocument()
     expect(globalThis.location.reload).not.toHaveBeenCalled()
+  })
+
+  it('recovers when the outage evidence held elsewhere ends after its probe, with no event', async () => {
+    apiUp()
+    signalApiOutage(outage)
+    const router = createMemoryRouter(
+      [
+        {
+          path: '/',
+          loader: () => ({}),
+          element: <App />,
+          ErrorBoundary: () => <ErrorBoundary error={boundaryError(useRouteError())} />,
+          children: [{ path: 'page', Component: Route }],
+        },
+      ],
+      { initialEntries: ['/page'] },
+    )
+    await act(async () => {
+      render(<RouterProvider router={router} />)
+    })
+
+    // The screen's own probe answers, but another source still holds evidence: it waits.
+    await advance(retryDelayMs(0))
+    expect(screen.getByRole('heading', { name: SERVER_DOWN })).toBeInTheDocument()
+
+    // That evidence ends without any announcement; the screen notices on its own.
+    failing = false
+    clearApiOutage(outage)
+    await advance(OUTAGE_EVIDENCE_RECHECK_MS)
+
+    expect(screen.getByText('Route recovered')).toBeInTheDocument()
   })
 
   it('still shows the error screen for the same error with no outage', async () => {

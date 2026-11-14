@@ -12,6 +12,9 @@ import {
 } from './api-availability'
 import { ApiUnavailableScreen, type ApiUnavailableCopy } from './api-unavailable'
 
+/** How often a recovered screen checks again for outage evidence still held elsewhere. */
+export const OUTAGE_EVIDENCE_RECHECK_MS = 1000
+
 /**
  * The root error boundary's screen for a 401 that cannot be judged yet: one that came back while
  * the app had outage evidence (a confirmed outage, a failure being confirmed, or an in-flight retry
@@ -76,34 +79,63 @@ export function DeferredAuthRecovery({
     revalidateRoute()
   }, [revalidateRoute])
 
+  // Set the moment this screen's own probe gets an answer (in `onRecover`, before any render), so
+  // the event handler below never sees a stale "still unavailable".
+  const recoveredRef = useRef(false)
+  const waitTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
+  // The queued re-check calls the current callback through this.
+  const revalidateWhenClearRef = useRef<() => void>(() => undefined)
+
   // Revalidate only once nothing signals an outage any more: a revalidation while an in-flight
-  // retry still holds evidence would only have its 401 let pass again.
+  // retry still holds evidence would only have its 401 let pass again. While other evidence is
+  // left, check again every `OUTAGE_EVIDENCE_RECHECK_MS`: the retry link announces the end of its
+  // evidence only when it let a 401 pass, and other sources (another mounted availability check)
+  // announce nothing, so waiting on the event alone could leave the screen up for good.
   const revalidateWhenClear = useCallback(() => {
-    if (!isApiOutageSignalled()) revalidateRoute()
+    clearTimeout(waitTimerRef.current)
+    waitTimerRef.current = undefined
+    if (!isApiOutageSignalled()) {
+      revalidateRoute()
+      return
+    }
+    waitTimerRef.current = setTimeout(
+      () => revalidateWhenClearRef.current(),
+      OUTAGE_EVIDENCE_RECHECK_MS,
+    )
   }, [revalidateRoute])
+  useLayoutEffect(() => {
+    revalidateWhenClearRef.current = revalidateWhenClear
+  }, [revalidateWhenClear])
 
   const { unavailable, reason, retryNow } = useApiAvailability({
     initiallyUnavailable: true,
     initialReason,
     probe,
-    onRecover: revalidateWhenClear,
-  })
-  const unavailableRef = useRef(unavailable)
-  useLayoutEffect(() => {
-    unavailableRef.current = unavailable
+    onRecover: () => {
+      recoveredRef.current = true
+      revalidateWhenClear()
+    },
   })
 
   useEffect(() => {
     // The last evidence an in-flight retry held is gone, with a 401 let pass meanwhile. While this
-    // screen's own probe still says unavailable, its recovery decides instead.
+    // screen's own probe has not got an answer yet, its recovery decides instead.
     const handleDeferredAuthFailure = () => {
-      if (!unavailableRef.current) revalidateWhenClear()
+      if (recoveredRef.current) revalidateWhenClear()
     }
     globalThis.addEventListener(APOLLO_DEFERRED_AUTH_FAILURE_EVENT, handleDeferredAuthFailure)
     return () => {
       globalThis.removeEventListener(APOLLO_DEFERRED_AUTH_FAILURE_EVENT, handleDeferredAuthFailure)
     }
   }, [revalidateWhenClear])
+
+  useEffect(
+    () => () => {
+      clearTimeout(waitTimerRef.current)
+      waitTimerRef.current = undefined
+    },
+    [],
+  )
 
   // The button probes while the API looks unreachable; once it answers, it revalidates at once.
   const onRetry = unavailable ? retryNow : revalidateNow

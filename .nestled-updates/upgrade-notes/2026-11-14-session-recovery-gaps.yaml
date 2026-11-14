@@ -45,8 +45,11 @@ intent: >
     screen (`ApiUnavailableScreen`) driven by its own `useApiAvailability({ initiallyUnavailable:
     true })`, so it holds outage evidence while it is up and probes the API with backoff. When the
     probe recovers and `isApiOutageSignalled()` is false it revalidates the route; when other
-    evidence is still held (an in-flight retry) it waits for `APOLLO_DEFERRED_AUTH_FAILURE_EVENT`
-    and revalidates then. It revalidates with a same-URL replace navigation
+    evidence is still held (an in-flight retry, another availability check) it revalidates on
+    `APOLLO_DEFERRED_AUTH_FAILURE_EVENT` or, since that event fires only when a 401 was let pass
+    and other sources announce nothing, on a re-check every `OUTAGE_EVIDENCE_RECHECK_MS` (1 s,
+    cleared on unmount), whichever finds the evidence gone first. A flag set in `onRecover`
+    itself, not a value written after render, tells the event handler the probe has answered. It revalidates with a same-URL replace navigation
     (`router.navigate({ pathname, search, hash }, { replace: true, preventScrollReset: true })`
     through `UNSAFE_DataRouterContext`), not `router.revalidate()`: a same-URL navigation reruns
     every loader just the same, and its new location is what resets React Router's error
@@ -73,7 +76,8 @@ intent: >
   Verification: `pnpm exec nx test web --skip-nx-cache` ("root error boundary for a 401 a route
   threw while the app had outage evidence": the recovering screen, not the error screen; once the
   held retry settles the route renders fresh data with no reload; a confirmed 401 then sends the
-  user to /logout; when the retry settled first the screen's own probe revalidates);
+  user to /logout; when the retry settled first the screen's own probe revalidates; evidence that
+  ends with no event is noticed by the re-check);
   `pnpm exec nx test apollo --skip-nx-cache` ("isAuthFailureDeferred").
 
 
