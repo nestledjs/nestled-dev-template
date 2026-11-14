@@ -59,12 +59,19 @@ export function configImports(source) {
   return specifiers.map(match => match[1]).filter(specifier => CONFIG_REFERENCE.test(specifier))
 }
 
-/** Config paths a Vitest config lists as strings (the root config's `projects`), ignoring comments. */
+/**
+ * Config paths a Vitest config lists as strings (the root config's `projects`), ignoring comments.
+ * A `./` or `../` path is kept: the caller resolves it against the listing file's directory. Import
+ * specifiers are left out, since `configImports` checks those with extension substitution.
+ */
 export function listedConfigPaths(source) {
-  const code = source.replace(/\/\*[\s\S]*?\*\//g, '').replace(/(^|[^:])\/\/.*$/gm, '$1')
-  return [...code.matchAll(/['"]([\w./-]+\/(?:vite|vitest)\.config\.[cm]?[jt]s)['"]/g)]
-    .map(match => match[1])
-    .filter(path => !path.startsWith('.'))
+  const code = source
+    .replace(/\/\*[\s\S]*?\*\//g, '')
+    .replace(/(^|[^:])\/\/.*$/gm, '$1')
+    .replace(/(?:\bfrom|\bimport\s*\(?)\s*['"][^'"]*['"]/g, '')
+  return [...code.matchAll(/['"]([\w./-]+\/(?:vite|vitest)\.config\.[cm]?[jt]s)['"]/g)].map(
+    match => match[1],
+  )
 }
 
 /** The TypeScript sources an import's JavaScript extension may resolve to. */
@@ -207,6 +214,25 @@ describe('references to vite and vitest configs', () => {
   it('reads a Vitest project path literally, with no extension substitution', () => {
     assert.deepEqual(check('vitest.config.ts', "projects: ['libs/ui/vite.config.mjs']\n"), [
       'vitest.config.ts names libs/ui/vite.config.mjs, which is no tracked config',
+    ])
+  })
+
+  it('resolves a ./ or ../ project path against the listing file, still literally', () => {
+    assert.deepEqual(check('vitest.config.ts', "projects: ['./libs/ui/vite.config.ts']\n"), [
+      'vitest.config.ts names ./libs/ui/vite.config.ts, which is no tracked config',
+    ])
+    assert.deepEqual(check('vitest.config.ts', "projects: ['./libs/ui/vite.config.mts']\n"), [])
+    assert.deepEqual(check('libs/ui/vitest.workspace.ts', "['../../apps/a/vite.config.ts']\n"), [])
+    assert.deepEqual(check('libs/ui/vitest.workspace.ts', "['../../apps/a/vite.config.mts']\n"), [
+      'libs/ui/vitest.workspace.ts names ../../apps/a/vite.config.mts, which is no tracked config',
+    ])
+  })
+
+  it('leaves an import in a Vitest config to the import rule, reported once', () => {
+    const file = 'libs/ui/vitest.config.mts'
+    assert.deepEqual(check(file, "import c from './vite.config.mjs'\n"), [])
+    assert.deepEqual(check(file, "import c from './vite.config.ts'\n"), [
+      `${file} names ./vite.config.ts, which is no tracked config`,
     ])
   })
 
