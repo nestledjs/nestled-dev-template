@@ -5,6 +5,13 @@ import { AccessDenied } from '../app/access-denied'
 import { App } from '../app/app'
 import { ErrorBoundary } from '../app/root'
 
+/**
+ * The root ErrorBoundary's own `error` prop type, whatever the app declares it as (`unknown` here;
+ * an app may type it `Error`), so these tests compile against either.
+ */
+type BoundaryError = Parameters<typeof ErrorBoundary>[0]['error']
+const boundaryError = (error: unknown) => error as BoundaryError
+
 describe('authentication and authorization error navigation', () => {
   it('renders a clear access-denied page with a safe destination', () => {
     render(
@@ -30,7 +37,7 @@ describe('authentication and authorization error navigation', () => {
       data: null,
     }
 
-    render(<MemoryRouter>{ErrorBoundary({ error: routeError })}</MemoryRouter>)
+    render(<MemoryRouter>{ErrorBoundary({ error: boundaryError(routeError) })}</MemoryRouter>)
 
     expect(
       screen.getByRole('heading', { name: 'You don’t have permission to view this page' }),

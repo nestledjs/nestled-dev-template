@@ -58,6 +58,13 @@ import {
   SERVER_TROUBLE_TITLE,
 } from '../app/api-unavailable'
 
+/**
+ * The root ErrorBoundary's own `error` prop type, whatever the app declares it as (`unknown` here;
+ * an app may type it `Error`), so these tests compile against either.
+ */
+type BoundaryError = Parameters<typeof ErrorBoundary>[0]['error']
+const boundaryError = (error: unknown) => error as BoundaryError
+
 const CONFIRM_WINDOW_MS = CONFIRM_DELAYS_MS.reduce((total, delay) => total + delay, 0)
 const SERVER_DOWN = SERVER_TROUBLE_TITLE
 const OFFLINE = OFFLINE_TITLE
@@ -313,7 +320,7 @@ describe('root error boundary for a network error', () => {
 
   it('renders the recovering screen instead of a static one', () => {
     vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new TypeError('Failed to fetch')))
-    render(<ErrorBoundary error={new TypeError('Failed to fetch')} />)
+    render(<ErrorBoundary error={boundaryError(new TypeError('Failed to fetch'))} />)
     expect(screen.getByRole('heading', { name: SERVER_DOWN })).toBeInTheDocument()
   })
 
@@ -322,7 +329,9 @@ describe('root error boundary for a network error', () => {
     const elsewhere = {}
     signalApiOutage(elsewhere)
     try {
-      render(<ErrorBoundary error={new ErrorResponseImpl(401, 'Unauthorized', null)} />)
+      render(
+        <ErrorBoundary error={boundaryError(new ErrorResponseImpl(401, 'Unauthorized', null))} />,
+      )
       expect(screen.getByRole('heading', { name: SERVER_DOWN })).toBeInTheDocument()
     } finally {
       clearApiOutage(elsewhere)
@@ -334,7 +343,7 @@ describe('root error boundary for a network error', () => {
       vi.spyOn(console, 'error').mockImplementation(() => undefined)
       const assign = vi.fn()
       vi.stubGlobal('location', { ...globalThis.location, pathname: '/members', assign })
-      render(<ErrorBoundary error={error} />)
+      render(<ErrorBoundary error={boundaryError(error)} />)
       return assign
     }
 
@@ -378,14 +387,18 @@ describe('root error boundary for a network error', () => {
 
   it('labels the button "Try again", not "Refresh Page"', () => {
     vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new TypeError('Failed to fetch')))
-    render(<ErrorBoundary error={new TypeError('Load failed')} />)
+    render(<ErrorBoundary error={boundaryError(new TypeError('Load failed'))} />)
     expect(screen.getByRole('button', { name: 'Try again' })).toBeInTheDocument()
     expect(screen.queryByText(/refresh/i)).not.toBeInTheDocument()
   })
 
   it('treats a proxy 503 route response as a connectivity failure', () => {
     vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new TypeError('Failed to fetch')))
-    render(<ErrorBoundary error={new ErrorResponseImpl(503, 'Service Unavailable', null)} />)
+    render(
+      <ErrorBoundary
+        error={boundaryError(new ErrorResponseImpl(503, 'Service Unavailable', null))}
+      />,
+    )
     expect(screen.getByRole('heading', { name: SERVER_DOWN })).toBeInTheDocument()
   })
 
@@ -393,7 +406,9 @@ describe('root error boundary for a network error', () => {
     vi.spyOn(console, 'error').mockImplementation(() => undefined)
     const reload = vi.fn()
     vi.stubGlobal('location', { ...globalThis.location, reload })
-    render(<ErrorBoundary error={new Error('Cannot read properties of undefined')} />)
+    render(
+      <ErrorBoundary error={boundaryError(new Error('Cannot read properties of undefined'))} />,
+    )
 
     expect(screen.getByText('Something went wrong')).toBeInTheDocument()
     expect(screen.queryByRole('heading', { name: SERVER_DOWN })).not.toBeInTheDocument()
@@ -1238,7 +1253,7 @@ describe('signed-in user after a connectivity blip', () => {
               return { meQueryRef }
             },
             element: <App />,
-            ErrorBoundary: () => <ErrorBoundary error={useRouteError()} />,
+            ErrorBoundary: () => <ErrorBoundary error={boundaryError(useRouteError())} />,
             children: [
               {
                 element: <SignedInLayout />,
@@ -1393,7 +1408,7 @@ describe('AppCodeErrorMarker', () => {
           // No Me query: a signed-out visitor, or an app whose root loader resolved Me already.
           loader: () => ({}),
           element: rootElement,
-          ErrorBoundary: () => <ErrorBoundary error={useRouteError()} />,
+          ErrorBoundary: () => <ErrorBoundary error={boundaryError(useRouteError())} />,
           children: [
             { path: 'broken', element: <Broken /> },
             {
@@ -1548,7 +1563,7 @@ describe('root error boundary for a 401 a route threw while the app had outage e
           path: '/',
           loader: () => ({}),
           element: <App />,
-          ErrorBoundary: () => <ErrorBoundary error={useRouteError()} />,
+          ErrorBoundary: () => <ErrorBoundary error={boundaryError(useRouteError())} />,
           children: [
             {
               path: 'data',
@@ -1672,7 +1687,7 @@ describe('root error boundary for an UNAUTHENTICATED error a route threw during 
           path: '/',
           loader: () => ({}),
           element: <App />,
-          ErrorBoundary: () => <ErrorBoundary error={useRouteError()} />,
+          ErrorBoundary: () => <ErrorBoundary error={boundaryError(useRouteError())} />,
           children: [{ path: 'page', Component: Route }],
         },
       ],
@@ -1703,7 +1718,7 @@ describe('root error boundary for an UNAUTHENTICATED error a route threw during 
           path: '/',
           loader: () => ({}),
           element: <App />,
-          ErrorBoundary: () => <ErrorBoundary error={useRouteError()} />,
+          ErrorBoundary: () => <ErrorBoundary error={boundaryError(useRouteError())} />,
           children: [{ path: 'page', Component: Route }],
         },
       ],
@@ -1724,7 +1739,7 @@ describe('root error boundary for a route error response', () => {
   })
 
   it('shows a not-found page for a 404', () => {
-    render(<ErrorBoundary error={new ErrorResponseImpl(404, 'Not Found', null)} />)
+    render(<ErrorBoundary error={boundaryError(new ErrorResponseImpl(404, 'Not Found', null))} />)
 
     expect(screen.getByRole('heading', { name: 'Page not found' })).toBeInTheDocument()
     expect(screen.getByText('404')).toBeInTheDocument()
@@ -1735,7 +1750,11 @@ describe('root error boundary for a route error response', () => {
   it('shows the status and its text for a 500', () => {
     const reload = vi.fn()
     vi.stubGlobal('location', { ...globalThis.location, reload })
-    render(<ErrorBoundary error={new ErrorResponseImpl(500, 'Internal Server Error', null)} />)
+    render(
+      <ErrorBoundary
+        error={boundaryError(new ErrorResponseImpl(500, 'Internal Server Error', null))}
+      />,
+    )
 
     expect(screen.getByText('500')).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'Internal Server Error' })).toBeInTheDocument()
@@ -1813,7 +1832,11 @@ describe('offline vs server trouble', () => {
 
   it('says server trouble for the server-rendered 503 (the page reached the browser)', () => {
     networkDown()
-    render(<ErrorBoundary error={new ErrorResponseImpl(503, 'Service Unavailable', null)} />)
+    render(
+      <ErrorBoundary
+        error={boundaryError(new ErrorResponseImpl(503, 'Service Unavailable', null))}
+      />,
+    )
 
     expect(screen.getByRole('heading', { name: SERVER_TROUBLE_TITLE })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Try again' })).toBeInTheDocument()
