@@ -20,7 +20,11 @@ intent: >
   kept; `staleConfigReferences` already resolves each listed path against the listing file's
   directory, still literally (no extension substitution). Import specifiers (`from '...'`,
   `import('...')`) are stripped before matching, so an import inside a Vitest config is checked
-  once, by the import rule, with its `.mjs` → `.mts` substitution. Two new cases.
+  once, by the import rule, with its `.mjs` → `.mts` substitution. Only project paths are read:
+  the strings inside a config's `projects: [...]` (brackets matched), or anywhere in a
+  vitest.workspace file, whose export is the project list. Other strings, such as a coverage
+  exclusion naming a config that may legitimately be absent, are no longer checked. Three new
+  cases.
 
 
   2. scripts/gitignore-test-output.spec.mjs, "ignores no tracked file": it failed in projects that
