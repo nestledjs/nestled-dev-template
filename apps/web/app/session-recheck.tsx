@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useApolloClient } from '@apollo/client/react'
 import { Me, type MeQuery } from '@nestled-template/shared/sdk'
 import { classifyApiFailure, isApiOutageSignalled } from '@nestled-template/shared/apollo'
@@ -55,6 +55,8 @@ export function useSessionRecheck(needed: boolean): SessionRecheck {
   const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
   // Bumped by every check and by the cleanup, so a late answer to an earlier one is ignored.
   const runRef = useRef(0)
+  // The queued retry calls the check through this, which always holds the current one.
+  const checkRef = useRef<() => void>(() => undefined)
 
   const check = useCallback(() => {
     clearTimeout(timerRef.current)
@@ -72,7 +74,7 @@ export function useSessionRecheck(needed: boolean): SessionRecheck {
         setState({ status: 'rejected' })
       } else {
         setState({ status: 'retrying' })
-        timerRef.current = setTimeout(check, retryDelayMs(attemptRef.current))
+        timerRef.current = setTimeout(() => checkRef.current(), retryDelayMs(attemptRef.current))
         attemptRef.current += 1
       }
     }
@@ -81,6 +83,10 @@ export function useSessionRecheck(needed: boolean): SessionRecheck {
       error => settle({ error }),
     )
   }, [client])
+
+  useLayoutEffect(() => {
+    checkRef.current = check
+  }, [check])
 
   useEffect(() => {
     if (!needed) return
