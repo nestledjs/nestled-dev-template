@@ -29,6 +29,7 @@ import {
 import { GTMNoScript, GTMScript } from './gtm'
 import App, { isAppCodeError } from './app'
 import { AccessDenied } from './access-denied'
+import { isOrganizationContextRequired, OrganizationRequired } from './organization-required'
 import { RecoveringApiUnavailable, RETRY_LABEL } from './api-unavailable'
 
 export const meta: MetaFunction = () => [
@@ -239,6 +240,11 @@ export function ErrorBoundary({ error }: Readonly<{ error: unknown }>) {
 
   if (routeStatus === 403) {
     return <AccessDenied />
+  }
+
+  // Signed in, but the page needs an organization and none is active: keep the session.
+  if (isOrganizationContextRequired(error)) {
+    return <OrganizationRequired />
   }
 
   // A connectivity failure (no response from the API, or a proxy's 502/503/504 while it

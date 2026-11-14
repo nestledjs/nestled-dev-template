@@ -187,8 +187,23 @@ function isAuthenticationError(extensions?: { code?: unknown }): boolean {
   return extensions?.code === 'UNAUTHENTICATED'
 }
 
-function isForbiddenError(extensions?: { code?: unknown }): boolean {
-  return extensions?.code === 'FORBIDDEN'
+/**
+ * The API's 403 for a signed-in request with no active organization (or a stale one). The session
+ * is fine: the app shows its own screen for it (apps/web/app/organization-required.tsx), never a
+ * logout and never the access-denied screen.
+ */
+export const ORGANIZATION_CONTEXT_REQUIRED_CODE = 'ORGANIZATION_CONTEXT_REQUIRED'
+
+/**
+ * A permission refusal, shown as access denied: `FORBIDDEN`, or any other code the API gave a 403
+ * (`forbiddenWithCode` keeps the code and the 403 in `originalError.statusCode`), except
+ * `ORGANIZATION_CONTEXT_REQUIRED`, which has its own screen. None of them is ever a logout.
+ */
+function isForbiddenError(extensions?: { code?: unknown; originalError?: unknown }): boolean {
+  if (extensions?.code === 'FORBIDDEN') return true
+  if (extensions?.code === ORGANIZATION_CONTEXT_REQUIRED_CODE) return false
+  const originalError = extensions?.originalError as { statusCode?: unknown } | null | undefined
+  return originalError?.statusCode === 403
 }
 
 function isQueryOperation(operation: ApolloLink.Operation): boolean {

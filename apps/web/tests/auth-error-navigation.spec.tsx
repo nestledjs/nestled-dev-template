@@ -1,4 +1,5 @@
 import { act, render, screen } from '@testing-library/react'
+import { CombinedGraphQLErrors } from '@apollo/client'
 import { createMemoryRouter, MemoryRouter, RouterProvider } from 'react-router'
 import { APOLLO_ACCESS_FORBIDDEN_EVENT } from '@nestled-template/shared/apollo'
 import { AccessDenied } from '../app/access-denied'
@@ -35,6 +36,39 @@ describe('authentication and authorization error navigation', () => {
     expect(
       screen.getByRole('heading', { name: 'You don’t have permission to view this page' }),
     ).toBeInTheDocument()
+  })
+
+  it('keeps the session and explains a missing organization (ORGANIZATION_CONTEXT_REQUIRED)', () => {
+    const assign = vi.fn()
+    vi.stubGlobal('location', { ...globalThis.location, assign })
+    try {
+      const error = new CombinedGraphQLErrors({
+        data: null,
+        errors: [
+          {
+            message: 'Organization context required.',
+            extensions: {
+              code: 'ORGANIZATION_CONTEXT_REQUIRED',
+              originalError: { statusCode: 403, code: 'ORGANIZATION_CONTEXT_REQUIRED' },
+            },
+          },
+        ],
+      })
+
+      render(<MemoryRouter>{ErrorBoundary({ error })}</MemoryRouter>)
+
+      expect(
+        screen.getByRole('heading', { name: 'This page needs an organization' }),
+      ).toBeInTheDocument()
+      expect(screen.getByText(/You are still signed in/)).toBeInTheDocument()
+      expect(screen.getByRole('link', { name: 'Return to dashboard' })).toHaveAttribute(
+        'href',
+        '/members/dashboard',
+      )
+      expect(assign).not.toHaveBeenCalled()
+    } finally {
+      vi.unstubAllGlobals()
+    }
   })
 
   it('replaces a protected query page with access denied after a forbidden event', async () => {
