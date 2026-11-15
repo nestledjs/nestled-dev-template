@@ -99,23 +99,42 @@ intent: >
   whole 403 family as access denied: `FORBIDDEN`, or any other code whose
   `extensions.originalError.statusCode` is 403 (what `forbiddenWithCode` produces), except
   `ORGANIZATION_CONTEXT_REQUIRED`. Only `UNAUTHENTICATED` or an HTTP 401 ever logs out, as before,
-  so none of these do. New apps/web/app/organization-required.tsx: `isOrganizationContextRequired(error)`
-  (a `CombinedGraphQLErrors`, or the older `graphQLErrors` shape, carrying the code) and an
-  `OrganizationRequired` screen ("This page needs an organization", says the user is still
-  signed in, links back to the dashboard). apps/web/app/root.tsx `ErrorBoundary` renders it for
-  that code, after the 401 and route-403 checks. A query whose code is handled inline (the
-  subscription context's `useQuery`s) keeps its error in its own state, as before. The template
-  has no organization picker (`switchOrganization` in libs/web auth.context.tsx is not mounted
-  anywhere), so the screen explains rather than offering one.
+  so none of these do. A query refused with `ORGANIZATION_CONTEXT_REQUIRED` (for example
+  `currentSubscriptionActive`, which the signed-in layout's subscription context runs on every page)
+  dispatches the new `APOLLO_ORGANIZATION_REQUIRED_EVENT`; a mutation is left to the UI that called
+  it. New apps/web/app/organization-required.tsx: `isOrganizationContextRequired(error)` (a
+  `CombinedGraphQLErrors`, or the older `graphQLErrors` shape, carrying the code) and the
+  `OrganizationRequired` picker. It lists the user's organizations (`myOrganizations`); choosing
+  one calls `switchActiveOrganization`, stores the id as `activeOrganizationId` in localStorage (the
+  client sends it as `X-Organization-ID`, which the API reads before the user's active organization,
+  so a stale stored id would keep the refusal) and reloads. With no organizations it says so and
+  offers a normal sign-out (a link to /logout). A failed switch shows a message and leaves the
+  list up to try again; a failed list load shows a message and "Try again". The session is kept in
+  every case. It is shown from three places:
+  - apps/web/app/app.tsx: on `APOLLO_ORGANIZATION_REQUIRED_EVENT` (state cleared on navigation,
+    like the access-denied state), ahead of the access-denied screen;
+  - apps/web/app/root.tsx `ErrorBoundary` (`refusalScreen`): for that code from a loader or
+    suspense query, after the 401 / deferred-auth recovery checks of
+    2026-11-14-session-recovery-gaps, which are unchanged;
+  - the signed-in layout's Me re-check (2026-11-14-session-recovery-gaps): apps/web/app/session-recheck.tsx
+    `sessionRecheckOutcome` returns `organization-required` for that code, and
+    apps/web/app/routes/_authenticated/_layout.tsx renders the picker for it: no /force-logout, and
+    no retry, since asking again gets the same answer until an organization is chosen.
   Affected paths: libs/shared/apollo/src/lib/apollo.ts, libs/shared/apollo/src/lib/apollo.spec.ts,
-  apps/web/app/organization-required.tsx, apps/web/app/root.tsx,
-  apps/web/tests/auth-error-navigation.spec.tsx.
-  Verification: `pnpm exec nx test apollo --skip-nx-cache` (a query answered with
-  `ORGANIZATION_CONTEXT_REQUIRED` neither logs out nor dispatches the access-forbidden event; a
-  query answered with another coded 403 dispatches it and does not log out;
-  `classifyApiFailure` calls `ORGANIZATION_CONTEXT_REQUIRED` `other`); `pnpm exec nx test web
-  --skip-nx-cache` (the root `ErrorBoundary` renders "This page needs an organization" for that
-  code and never calls `location.assign`).
+  apps/web/app/organization-required.tsx, apps/web/app/app.tsx, apps/web/app/root.tsx,
+  apps/web/app/session-recheck.tsx, apps/web/app/routes/_authenticated/_layout.tsx,
+  apps/web/tests/organization-required.spec.tsx, apps/web/tests/auth-error-navigation.spec.tsx,
+  apps/web/tests/routes/authenticated-layout-me-recovery.spec.tsx.
+  Verification: `pnpm exec nx test apollo --skip-nx-cache` (a `CurrentSubscriptionActive` query
+  answered with `ORGANIZATION_CONTEXT_REQUIRED` dispatches the organization-required event and does
+  not log out; a mutation answered with it dispatches nothing; another coded 403 dispatches
+  access-forbidden and does not log out; `classifyApiFailure` calls the code `other`);
+  `pnpm exec nx test web --skip-nx-cache` (organization-required.spec.tsx: the list renders;
+  choosing one switches, stores the id and reloads; with none, the copy and the Sign out link to
+  /logout appear; a failed switch shows the message, keeps the list and never reloads or logs out;
+  auth-error-navigation.spec.tsx: the root `ErrorBoundary` and the App event both show the picker,
+  never `location.assign`; authenticated-layout-me-recovery.spec.tsx: a Me re-check answered with
+  the code shows the picker, stays on the page and asks Me only once).
 
 why: >
   Since 2026.11.6 clients trust the code, not the message: `UNAUTHENTICATED` means the session is
@@ -140,8 +159,13 @@ affectedPaths:
   - libs/shared/apollo/src/lib/apollo.ts
   - libs/shared/apollo/src/lib/apollo.spec.ts
   - apps/web/app/organization-required.tsx
+  - apps/web/app/app.tsx
   - apps/web/app/root.tsx
+  - apps/web/app/session-recheck.tsx
+  - apps/web/app/routes/_authenticated/_layout.tsx
+  - apps/web/tests/organization-required.spec.tsx
   - apps/web/tests/auth-error-navigation.spec.tsx
+  - apps/web/tests/routes/authenticated-layout-me-recovery.spec.tsx
 
 skipIf:
   - The project's API throws no `UnauthorizedException` (or 401) for anything but a missing,
@@ -169,6 +193,12 @@ agentHints:
     (!organizationId)`, `req.organizationContext` reads, a project guard) and throw
     `organizationContextRequired()` from each, so clients see one code for one condition.
   - >
+    Part 1 and 3: the template answers `ORGANIZATION_CONTEXT_REQUIRED` with its own organization
+    picker (list `myOrganizations`, `switchActiveOrganization`, reload; with none, say so and offer
+    a normal sign-out). A project that already has an organization picker or onboarding route
+    sends the code there instead of adopting `OrganizationRequired` (from the error-link event, the
+    root error boundary and the signed-in layout's Me re-check), and keeps the session either way.
+  - >
     Part 2: projects add their own `UnauthorizedException`s. Grep the whole API (`grep -rn
     "UnauthorizedException\|AuthenticationError\|HttpStatus.UNAUTHORIZED\|status(401)" apps libs`)
     and give each the template's verdict: a missing, invalid or expired session or token stays a
@@ -187,7 +217,7 @@ agentHints:
     session and reach the user as a message or screen, not a blank page. Report a mobile client
     that needs a change rather than changing it when the app's owner has mobile work in flight.
   - >
-    Part 3: a project with an organization picker or onboarding route sends the user there for
-    `ORGANIZATION_CONTEXT_REQUIRED` instead of rendering `OrganizationRequired`, and keeps the
-    session either way. A project whose error link already treats every 403 as access denied
-    keeps that, as long as `ORGANIZATION_CONTEXT_REQUIRED` is excluded or routed to the picker.
+    Part 3: a project whose error link already treats every 403 as access denied keeps that, as
+    long as `ORGANIZATION_CONTEXT_REQUIRED` is excluded from it and routed to the picker. A project
+    that stores the active organization somewhere other than localStorage `activeOrganizationId`
+    updates its own store before reloading, or the stale header keeps the refusal.

@@ -3,6 +3,7 @@ import { useApolloClient } from '@apollo/client/react'
 import { Me, type MeQuery } from '@nestled-template/shared/sdk'
 import { classifyApiFailure, isApiOutageSignalled } from '@nestled-template/shared/apollo'
 import { retryDelayMs } from './api-availability'
+import { isOrganizationContextRequired } from './organization-required'
 
 export type SessionUser = NonNullable<MeQuery['me']>
 
@@ -14,6 +15,9 @@ export type SessionUser = NonNullable<MeQuery['me']>
  *   a root loader that did not preload Me on a public route);
  * - `rejected`: the API rejected the session (an HTTP 401 or UNAUTHENTICATED) with no outage
  *   evidence: the only outcome that may log the user out;
+ * - `organization-required`: the API answered a 403 ORGANIZATION_CONTEXT_REQUIRED: the session is
+ *   fine but has no active organization, so the layout shows the organization picker (no logout,
+ *   and no retry: asking again gets the same answer until an organization is chosen);
  * - `retrying`: anything else (no answer, a 502/503/504, a 500, a 401 during an outage, an answer
  *   with no user); the session is kept and Me is asked again with backoff, or now via `retryNow`.
  */
@@ -21,6 +25,7 @@ export type SessionRecheck =
   | { status: 'checking' }
   | { status: 'signed-in'; user: SessionUser }
   | { status: 'rejected' }
+  | { status: 'organization-required' }
   | { status: 'retrying'; retryNow: () => void }
 
 type RecheckState = Exclude<SessionRecheck, { status: 'retrying' }> | { status: 'retrying' }
@@ -29,8 +34,9 @@ type RecheckState = Exclude<SessionRecheck, { status: 'retrying' }> | { status: 
 export function sessionRecheckOutcome(answer: {
   user?: SessionUser | null
   error?: unknown
-}): 'signed-in' | 'rejected' | 'retry' {
+}): 'signed-in' | 'rejected' | 'organization-required' | 'retry' {
   if (answer.error === undefined) return answer.user ? 'signed-in' : 'retry'
+  if (isOrganizationContextRequired(answer.error)) return 'organization-required'
   if (classifyApiFailure(answer.error) === 'unauthenticated' && !isApiOutageSignalled()) {
     return 'rejected'
   }
@@ -72,6 +78,8 @@ export function useSessionRecheck(needed: boolean): SessionRecheck {
         setState({ status: 'signed-in', user: answer.user })
       } else if (outcome === 'rejected') {
         setState({ status: 'rejected' })
+      } else if (outcome === 'organization-required') {
+        setState({ status: 'organization-required' })
       } else {
         setState({ status: 'retrying' })
         timerRef.current = setTimeout(() => checkRef.current(), retryDelayMs(attemptRef.current))

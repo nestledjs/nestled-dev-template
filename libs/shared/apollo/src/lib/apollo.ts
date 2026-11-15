@@ -100,6 +100,13 @@ export type ApiFailureCause = 'unauthenticated' | 'unavailable' | 'other'
 export const APOLLO_ACCESS_FORBIDDEN_EVENT = 'apollo-access-forbidden'
 
 /**
+ * Dispatched on `window` when a query is refused with `ORGANIZATION_CONTEXT_REQUIRED`: the user is
+ * signed in but has no active organization (or a stale one). The web app shows its organization
+ * picker; the session is kept.
+ */
+export const APOLLO_ORGANIZATION_REQUIRED_EVENT = 'apollo-organization-required'
+
+/**
  * Dispatched on `window` when a request fails without reaching the server. It is a report, not a
  * verdict: the web app confirms it with its own reachability probe before showing anything, and
  * clears the screen again by itself once the API answers (apps/web/app/api-availability.ts).
@@ -189,8 +196,9 @@ function isAuthenticationError(extensions?: { code?: unknown }): boolean {
 
 /**
  * The API's 403 for a signed-in request with no active organization (or a stale one). The session
- * is fine: the app shows its own screen for it (apps/web/app/organization-required.tsx), never a
- * logout and never the access-denied screen.
+ * is fine: a query refused with it dispatches `APOLLO_ORGANIZATION_REQUIRED_EVENT`, and the app
+ * shows its organization picker (apps/web/app/organization-required.tsx), never a logout and never
+ * the access-denied screen.
  */
 export const ORGANIZATION_CONTEXT_REQUIRED_CODE = 'ORGANIZATION_CONTEXT_REQUIRED'
 
@@ -219,6 +227,16 @@ export function isQueryOperation(operation: ApolloLink.Operation): boolean {
 function isSubscriptionOperation(operation: ApolloLink.Operation): boolean {
   const definition = getMainDefinition(operation.query)
   return definition.kind === 'OperationDefinition' && definition.operation === 'subscription'
+}
+
+function handleOrganizationRequired(operation: ApolloLink.Operation): void {
+  if (globalThis.window === undefined || !isQueryOperation(operation)) return
+
+  globalThis.window.dispatchEvent(
+    new CustomEvent(APOLLO_ORGANIZATION_REQUIRED_EVENT, {
+      detail: { operation: operation.operationName },
+    }),
+  )
 }
 
 function handleAuthorizationError(operation: ApolloLink.Operation): void {
@@ -441,6 +459,8 @@ function createErrorLink(onApiFailure?: (cause: ApiFailureCause) => void): Apoll
 
         if (isAuthenticationError(extensions)) {
           handleAuthenticationError()
+        } else if (extensions?.code === ORGANIZATION_CONTEXT_REQUIRED_CODE) {
+          handleOrganizationRequired(operation)
         } else if (isForbiddenError(extensions)) {
           handleAuthorizationError(operation)
         }

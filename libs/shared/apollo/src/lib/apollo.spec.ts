@@ -11,6 +11,7 @@ import {
 import { RetryLink } from '@apollo/client/link/retry'
 import {
   APOLLO_ACCESS_FORBIDDEN_EVENT,
+  APOLLO_ORGANIZATION_REQUIRED_EVENT,
   APOLLO_DEFERRED_AUTH_FAILURE_EVENT,
   APOLLO_SERVICE_UNAVAILABLE_EVENT,
   classifyApiFailure,
@@ -708,18 +709,43 @@ describe('makeClient', () => {
       vi.stubGlobal('window', testWindow)
       await makeClient(undefined, { apiUrl: 'https://api.example.com/graphql' }).query({
         query: gql`
-          query OrganizationMembers {
-            organizationMembers
+          query CurrentSubscriptionActive {
+            currentSubscriptionActive
           }
         `,
       })
       return { testWindow, dispatchEvent }
     }
 
-    it('keeps the session and leaves ORGANIZATION_CONTEXT_REQUIRED to its own screen', async () => {
+    it('keeps the session and sends ORGANIZATION_CONTEXT_REQUIRED to the organization picker', async () => {
       answerWith(ORGANIZATION_CONTEXT_REQUIRED_CODE)
 
       const { testWindow, dispatchEvent } = await queryAsSignedInUser()
+
+      expect(testWindow.location.href).toBe('')
+      expect(dispatchEvent).toHaveBeenCalledTimes(1)
+      expect(dispatchEvent.mock.calls[0][0].type).toBe(APOLLO_ORGANIZATION_REQUIRED_EVENT)
+    })
+
+    it('leaves a mutation refused with ORGANIZATION_CONTEXT_REQUIRED to the invoking UI', async () => {
+      answerWith(ORGANIZATION_CONTEXT_REQUIRED_CODE)
+      vi.spyOn(console, 'error').mockImplementation(() => undefined)
+      const dispatchEvent = vi.fn()
+      const testWindow = {
+        location: { pathname: '/settings/members', search: '', hash: '', href: '' },
+        dispatchEvent,
+      }
+      vi.stubGlobal('window', testWindow)
+
+      await makeClient(undefined, { apiUrl: 'https://api.example.com/graphql' })
+        .mutate({
+          mutation: gql`
+            mutation CancelSubscription {
+              cancelSubscription
+            }
+          `,
+        })
+        .catch(() => undefined)
 
       expect(testWindow.location.href).toBe('')
       expect(dispatchEvent).not.toHaveBeenCalled()

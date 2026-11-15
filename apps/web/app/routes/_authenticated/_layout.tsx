@@ -17,6 +17,7 @@ import { useReadQuery, type QueryRef } from '@apollo/client/react'
 import { browserIsOffline } from '../../api-availability'
 import { ApiUnavailableScreen } from '../../api-unavailable'
 import { useSessionRecheck } from '../../session-recheck'
+import { OrganizationRequired } from '../../organization-required'
 
 type UserWithActiveOrganization = NonNullable<MeQuery['me']> & {
   activeOrganizationId?: string | null
@@ -53,6 +54,7 @@ export default function AuthenticatedLayout() {
       const returnUrl = `${location.pathname}${location.search}`
       return <Navigate to={`/force-logout?return_url=${encodeURIComponent(returnUrl)}`} replace />
     }
+    if (recheck.status === 'organization-required') return <OrganizationRequired />
     if (recheck.status === 'retrying') {
       return (
         <ApiUnavailableScreen
