@@ -51,6 +51,8 @@ priority: normal
 area: api
 type: correctness
 delivery: code-patch
+# Optional: ids of notes this one must be applied after, when its change builds on theirs.
+# applyAfter: [YYYY-MM-DD-earlier-note]
 
 intent: >
   Describe the downstream behavior or invariant this change should preserve.
