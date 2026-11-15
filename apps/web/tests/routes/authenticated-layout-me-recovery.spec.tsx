@@ -17,6 +17,7 @@ import { App } from '../../app/app'
 import AuthenticatedLayout from '../../app/routes/_authenticated/_layout'
 import { CONFIRM_DELAYS_MS, retryDelayMs } from '../../app/api-availability'
 import { SERVER_TROUBLE_TITLE } from '../../app/api-unavailable'
+import { NO_ORGANIZATIONS_TITLE } from '../../app/organization-required'
 
 // The layout's chrome is not under test; only what it does with no user is.
 vi.mock('@nestled-template/web-ui', () => ({
@@ -208,6 +209,36 @@ describe('authenticated layout with no user', () => {
     expect(app.meRequests()).toBe(1)
     expect(screen.getByText('Members page')).toBeInTheDocument()
     expect(screen.queryByText('Force logout page')).not.toBeInTheDocument()
+    expect(app.router.state.location.pathname).toBe('/members')
+  })
+
+  it('shows the organization picker, with no logout and no retry loop, when Me again gets ORGANIZATION_CONTEXT_REQUIRED', async () => {
+    const organizationRequired = () =>
+      new Observable<ApolloLink.Result>(o => {
+        o.next({
+          data: null,
+          errors: [
+            {
+              message: 'Organization context required.',
+              extensions: {
+                code: 'ORGANIZATION_CONTEXT_REQUIRED',
+                originalError: { statusCode: 403, code: 'ORGANIZATION_CONTEXT_REQUIRED' },
+              },
+            },
+          ],
+        } as never)
+        o.complete()
+      })
+    const app = await renderMembersPage([organizationRequired], { rootPreloadsMe: false })
+    await advance(0)
+
+    // The link answers `myOrganizations` with none, so the picker says so and offers sign-out.
+    expect(screen.getByRole('heading', { name: NO_ORGANIZATIONS_TITLE })).toBeInTheDocument()
+    expect(app.router.state.location.pathname).toBe('/members')
+    expect(screen.queryByText('Force logout page')).not.toBeInTheDocument()
+
+    await advance(retryDelayMs(0) + retryDelayMs(1) + retryDelayMs(2))
+    expect(app.meRequests()).toBe(1)
     expect(app.router.state.location.pathname).toBe('/members')
   })
 

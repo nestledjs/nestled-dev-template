@@ -11,6 +11,7 @@ import {
 import { RetryLink } from '@apollo/client/link/retry'
 import {
   APOLLO_ACCESS_FORBIDDEN_EVENT,
+  APOLLO_ORGANIZATION_REQUIRED_EVENT,
   APOLLO_DEFERRED_AUTH_FAILURE_EVENT,
   APOLLO_SERVICE_UNAVAILABLE_EVENT,
   classifyApiFailure,
@@ -21,6 +22,7 @@ import {
   isQueryOperation,
   isRetryableConnectivityError,
   makeClient,
+  ORGANIZATION_CONTEXT_REQUIRED_CODE,
   signalApiOutage,
   subscriptionRetryDelayMs,
   takeDeferredAuthFailure,
@@ -678,6 +680,87 @@ describe('makeClient', () => {
     expect(forbiddenHandler).not.toHaveBeenCalled()
     globalThis.removeEventListener(APOLLO_ACCESS_FORBIDDEN_EVENT, forbiddenHandler)
   })
+
+  describe('a 403 with its own code', () => {
+    function answerWith(code: string) {
+      globalThis.fetch = vi.fn().mockResolvedValue(
+        new Response(
+          JSON.stringify({
+            data: null,
+            errors: [
+              {
+                message: 'Refused',
+                extensions: { code, originalError: { statusCode: 403, code } },
+              },
+            ],
+          }),
+          { status: 200, headers: { 'content-type': 'application/json' } },
+        ),
+      )
+    }
+
+    async function queryAsSignedInUser() {
+      vi.spyOn(console, 'error').mockImplementation(() => undefined)
+      const dispatchEvent = vi.fn()
+      const testWindow = {
+        location: { pathname: '/settings/members', search: '', hash: '', href: '' },
+        dispatchEvent,
+      }
+      vi.stubGlobal('window', testWindow)
+      await makeClient(undefined, { apiUrl: 'https://api.example.com/graphql' }).query({
+        query: gql`
+          query CurrentSubscriptionActive {
+            currentSubscriptionActive
+          }
+        `,
+      })
+      return { testWindow, dispatchEvent }
+    }
+
+    it('keeps the session and sends ORGANIZATION_CONTEXT_REQUIRED to the organization picker', async () => {
+      answerWith(ORGANIZATION_CONTEXT_REQUIRED_CODE)
+
+      const { testWindow, dispatchEvent } = await queryAsSignedInUser()
+
+      expect(testWindow.location.href).toBe('')
+      expect(dispatchEvent).toHaveBeenCalledTimes(1)
+      expect(dispatchEvent.mock.calls[0][0].type).toBe(APOLLO_ORGANIZATION_REQUIRED_EVENT)
+    })
+
+    it('leaves a mutation refused with ORGANIZATION_CONTEXT_REQUIRED to the invoking UI', async () => {
+      answerWith(ORGANIZATION_CONTEXT_REQUIRED_CODE)
+      vi.spyOn(console, 'error').mockImplementation(() => undefined)
+      const dispatchEvent = vi.fn()
+      const testWindow = {
+        location: { pathname: '/settings/members', search: '', hash: '', href: '' },
+        dispatchEvent,
+      }
+      vi.stubGlobal('window', testWindow)
+
+      await makeClient(undefined, { apiUrl: 'https://api.example.com/graphql' })
+        .mutate({
+          mutation: gql`
+            mutation CancelSubscription {
+              cancelSubscription
+            }
+          `,
+        })
+        .catch(() => undefined)
+
+      expect(testWindow.location.href).toBe('')
+      expect(dispatchEvent).not.toHaveBeenCalled()
+    })
+
+    it('treats any other coded 403 as access denied, never a logout', async () => {
+      answerWith('PLAN_LIMIT_REACHED')
+
+      const { testWindow, dispatchEvent } = await queryAsSignedInUser()
+
+      expect(testWindow.location.href).toBe('')
+      expect(dispatchEvent).toHaveBeenCalledTimes(1)
+      expect(dispatchEvent.mock.calls[0][0].type).toBe(APOLLO_ACCESS_FORBIDDEN_EVENT)
+    })
+  })
 })
 
 describe('isQueryOperation', () => {
@@ -989,6 +1072,21 @@ describe('classifyApiFailure', () => {
     [
       'a FORBIDDEN GraphQL error',
       new CombinedGraphQLErrors({ errors: [{ message: 'No', extensions: { code: 'FORBIDDEN' } }] }),
+      'other',
+    ],
+    [
+      'an ORGANIZATION_CONTEXT_REQUIRED GraphQL error',
+      new CombinedGraphQLErrors({
+        errors: [
+          {
+            message: 'Organization context required.',
+            extensions: {
+              code: 'ORGANIZATION_CONTEXT_REQUIRED',
+              originalError: { statusCode: 403 },
+            },
+          },
+        ],
+      }),
       'other',
     ],
     ['an application TypeError', new TypeError('Cannot read properties of undefined'), 'other'],

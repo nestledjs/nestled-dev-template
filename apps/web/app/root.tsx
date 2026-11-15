@@ -30,6 +30,7 @@ import {
 import { GTMNoScript, GTMScript } from './gtm'
 import App, { isAppCodeError } from './app'
 import { AccessDenied } from './access-denied'
+import { isOrganizationContextRequired, OrganizationRequired } from './organization-required'
 import { RecoveringApiUnavailable, RETRY_LABEL } from './api-unavailable'
 import { DeferredAuthRecovery } from './deferred-auth-recovery'
 
@@ -279,9 +280,8 @@ export function ErrorBoundary({ error }: Readonly<{ error: unknown }>) {
     return null
   }
 
-  if (routeStatus === 403) {
-    return <AccessDenied />
-  }
+  const refusal = refusalScreen(error, routeStatus)
+  if (refusal) return refusal
 
   // A connectivity failure (no response from the API, or a proxy's 502/503/504 while it
   // restarts) gets the screen that probes the API and reloads by itself once it answers. A route
@@ -306,6 +306,17 @@ export function ErrorBoundary({ error }: Readonly<{ error: unknown }>) {
   }
 
   return <RootErrorScreen error={normalizedError} />
+}
+
+/**
+ * The screen for a signed-in request the API refused, which never logs out: access denied for a
+ * route-level 403, or, when the page needs an organization and none is active, the
+ * organization-required screen.
+ */
+function refusalScreen(error: unknown, routeStatus: number | undefined): ReactNode {
+  if (routeStatus === 403) return <AccessDenied />
+  if (isOrganizationContextRequired(error)) return <OrganizationRequired />
+  return null
 }
 
 const GATEWAY_UNAVAILABLE_STATUSES = new Set([502, 503, 504])
