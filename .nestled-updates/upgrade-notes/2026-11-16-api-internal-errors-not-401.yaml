@@ -146,12 +146,14 @@ intent: >
   access-policy guard refuses first with a plain 403 `FORBIDDEN`). It now reads the schema
   (introspection, else the `api-schema.graphql` the API writes at the workspace root) and builds
   `query { field }` / `query { field { __typename } }` for every query whose arguments are all
-  optional. A bad bearer: the first of them that is not public answers `UNAUTHENTICATED` with
-  `originalError.statusCode` 401. A signed-in outsider sending `x-organization-id` for another
-  user's organization (read from `OrganizationMember`): no query answers 401 or
-  `UNAUTHENTICATED`, at least one refuses with a 403 (any code), every
-  `ORGANIZATION_CONTEXT_REQUIRED` carries 403, and at least one query answers without errors, so
-  the session is shown to be good.
+  optional. A bad bearer: the queries that need a session are the ones it gets
+  `UNAUTHENTICATED` for (with `originalError.statusCode` 401), and there must be at least one. A
+  signed-in outsider sending `x-organization-id` for another user's organization (read from
+  `OrganizationMember`): none of those queries answers 401 or `UNAUTHENTICATED`, every
+  `ORGANIZATION_CONTEXT_REQUIRED` carries 403, and at least one of them answers the outsider
+  without errors in its own organization yet refuses it with a 403 (any code) in the foreign one.
+  That control comparison keeps admin-only refusals and public queries from satisfying the check:
+  with the header ignored, the spec fails.
   Affected paths: apps/api-e2e/src/auth/auth-error-codes.spec.ts.
   Verification: the API e2e suite (`pnpm exec nx run api-e2e:e2e`, or CI).
 

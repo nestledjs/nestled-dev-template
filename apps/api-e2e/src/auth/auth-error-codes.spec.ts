@@ -83,25 +83,37 @@ const isUnauthenticated = (error: GraphQLErrorResponse) =>
 const statusCodeOf = (error: GraphQLErrorResponse) =>
   (error.extensions?.['originalError'] as { statusCode?: unknown } | undefined)?.statusCode
 
+const BAD_BEARER: Headers = { Authorization: 'Bearer not-a-real-token' }
+
+const errorsOf = async (headers: Headers, query: string) => {
+  const response = await post(headers, query)
+  return { status: response.status, errors: response.data.errors ?? [] }
+}
+
 describe('API auth error codes', () => {
   let queries: string[]
+  // The queries a bad bearer is refused with UNAUTHENTICATED: the ones that need a session.
+  let sessionQueries: string[]
+  let badBearerRefusal: GraphQLErrorResponse | undefined
 
   beforeAll(async () => {
     queries = argumentFreeQueries(await loadSchema())
     expect(queries.length).toBeGreaterThan(0)
+
+    sessionQueries = []
+    for (const query of queries) {
+      const refusal = (await errorsOf(BAD_BEARER, query)).errors.find(isUnauthenticated)
+      if (refusal) {
+        sessionQueries.push(query)
+        badBearerRefusal ??= refusal
+      }
+    }
   })
 
-  it('answers a bad bearer with UNAUTHENTICATED (a 401)', async () => {
-    // Any authenticated query will do; the first one that is not public answers.
-    let refusal: GraphQLErrorResponse | undefined
-    for (const query of queries) {
-      const response = await post({ Authorization: 'Bearer not-a-real-token' }, query)
-      refusal = response.data.errors?.find(isUnauthenticated)
-      if (refusal) break
-    }
-
-    expect(refusal?.extensions?.['code']).toBe('UNAUTHENTICATED')
-    expect(refusal?.extensions?.['originalError']).toMatchObject({ statusCode: 401 })
+  it('answers a bad bearer with UNAUTHENTICATED (a 401)', () => {
+    expect(sessionQueries.length).toBeGreaterThan(0)
+    expect(badBearerRefusal?.extensions?.['code']).toBe('UNAUTHENTICATED')
+    expect(badBearerRefusal?.extensions?.['originalError']).toMatchObject({ statusCode: 401 })
   })
 
   it('never answers a signed-in request with no organization context with a 401', async () => {
@@ -115,30 +127,35 @@ describe('API auth error codes', () => {
 
     // The outsider is signed in, but asks for an organization it does not belong to. The header is
     // the explicit choice, so an API that repairs a stale saved organization cannot repair it away.
-    const headers = { ...bearer(outsider), 'x-organization-id': ownersOrganizationId }
+    const ownOrganization = bearer(outsider)
+    const foreignOrganization = { ...ownOrganization, 'x-organization-id': ownersOrganizationId }
 
     const unauthenticated: string[] = []
-    const refusedWith403: string[] = []
-    let answered = 0
-    for (const query of queries) {
-      const response = await post(headers, query)
-      const errors = response.data.errors ?? []
-      if (response.status === 401 || errors.some(isUnauthenticated)) unauthenticated.push(query)
-      if (errors.some(error => statusCodeOf(error) === 403)) refusedWith403.push(query)
-      if (errors.length === 0) answered += 1
-
-      for (const error of errors) {
+    // Needs a session, answers the outsider in its own organization, and refuses it with a 403 in
+    // the foreign one: an organization-context refusal, not an admin-only or public query.
+    const refusedForTheOrganization: string[] = []
+    for (const query of sessionQueries) {
+      const foreign = await errorsOf(foreignOrganization, query)
+      if (foreign.status === 401 || foreign.errors.some(isUnauthenticated)) {
+        unauthenticated.push(query)
+      }
+      for (const error of foreign.errors) {
         if (error.extensions?.['code'] === 'ORGANIZATION_CONTEXT_REQUIRED') {
           expect(statusCodeOf(error), query).toBe(403)
         }
       }
+
+      const refusedWith403 =
+        foreign.errors.length > 0 && foreign.errors.every(error => statusCodeOf(error) === 403)
+      if (refusedWith403 && (await errorsOf(ownOrganization, query)).errors.length === 0) {
+        refusedForTheOrganization.push(query)
+      }
     }
 
-    // Nothing logs the outsider out.
+    // Nothing logs the outsider out, across every query that needs a session.
     expect(unauthenticated).toEqual([])
-    // It really was refused for the organization somewhere, so the check above measured something.
-    expect(refusedWith403.length).toBeGreaterThan(0)
-    // And the session itself is still good: some query answers it.
-    expect(answered).toBeGreaterThan(0)
+    // And the check measured an organization refusal: a query the outsider's session can run in
+    // its own organization is refused with a 403 in one it does not belong to.
+    expect(refusedForTheOrganization.length).toBeGreaterThan(0)
   })
 })
