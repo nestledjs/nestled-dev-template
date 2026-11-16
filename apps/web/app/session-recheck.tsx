@@ -34,14 +34,25 @@ export type SessionRecheck =
 
 type RecheckState = Exclude<SessionRecheck, { status: 'retrying' }> | { status: 'retrying' }
 
-/** How one answer to the Me re-check is judged (see `SessionRecheck`). */
-export function sessionRecheckOutcome(answer: {
-  user?: SessionUser | null
-  error?: unknown
-}): 'signed-in' | 'rejected' | 'organization-required' | 'retry' {
+/**
+ * How one answer to the Me re-check is judged (see `SessionRecheck`). `loaderOutage` is the root
+ * loader's own outage flag (`useRootLoaderOutage`), outage evidence like a signalled outage: a 401
+ * while either stands is retried, not a rejection.
+ */
+export function sessionRecheckOutcome(
+  answer: {
+    user?: SessionUser | null
+    error?: unknown
+  },
+  loaderOutage = false,
+): 'signed-in' | 'rejected' | 'organization-required' | 'retry' {
   if (answer.error === undefined) return answer.user ? 'signed-in' : 'retry'
   if (isOrganizationContextRequired(answer.error)) return 'organization-required'
-  if (classifyApiFailure(answer.error) === 'unauthenticated' && !isApiOutageSignalled()) {
+  if (
+    classifyApiFailure(answer.error) === 'unauthenticated' &&
+    !loaderOutage &&
+    !isApiOutageSignalled()
+  ) {
     return 'rejected'
   }
   return 'retry'
@@ -61,11 +72,18 @@ export function sessionRecheckOutcome(answer: {
  * reacts to a 401 or 403 (a logout, or an event that puts up access denied) would otherwise act
  * first, on an answer this hook may judge differently (a 401 during an outage is retried here).
  *
+ * `loaderOutage` (the root loader's outage flag) is read when each answer arrives, so a 401 while
+ * it stands is retried.
+ *
  * The user it returns is a snapshot (`no-cache`): the layout that asked brings the live, cached Me
  * back once this recovers (see the signed-in layout), so later edits to the user show.
  */
-export function useSessionRecheck(needed: boolean): SessionRecheck {
+export function useSessionRecheck(needed: boolean, loaderOutage = false): SessionRecheck {
   const client = useApolloClient()
+  const loaderOutageRef = useRef(loaderOutage)
+  useLayoutEffect(() => {
+    loaderOutageRef.current = loaderOutage
+  }, [loaderOutage])
   const [state, setState] = useState<RecheckState>({ status: 'checking' })
   const attemptRef = useRef(0)
   const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
@@ -82,7 +100,7 @@ export function useSessionRecheck(needed: boolean): SessionRecheck {
     const settle = (answer: { user?: SessionUser | null; error?: unknown }) => {
       // A newer check, or the layout no longer needing one, supersedes this answer.
       if (run !== runRef.current) return
-      const outcome = sessionRecheckOutcome(answer)
+      const outcome = sessionRecheckOutcome(answer, loaderOutageRef.current)
       if (outcome === 'signed-in' && answer.user) {
         attemptRef.current = 0
         setState({ status: 'signed-in', user: answer.user })
