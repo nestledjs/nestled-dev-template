@@ -1551,7 +1551,7 @@ describe('root error boundary for a 401 a route threw while the app had outage e
    * meanwhile the route's own query gets a 401: the error link lets it pass, the route throws it,
    * and the root error boundary takes over from App.
    */
-  async function renderWhileRetryInFlight() {
+  async function renderWhileRetryInFlight(initialEntry = '/data') {
     const client = makeClient(undefined, { apiUrl: 'https://api.example.com/graphql' })
     await client.query({ query: FLAKY, fetchPolicy: 'network-only' }).catch(() => undefined)
     void client.query({ query: FLAKY, fetchPolicy: 'network-only' }).catch(() => undefined)
@@ -1578,7 +1578,7 @@ describe('root error boundary for a 401 a route threw while the app had outage e
           ],
         },
       ],
-      { initialEntries: ['/data'] },
+      { initialEntries: [initialEntry] },
     )
     await act(async () => {
       render(
@@ -1629,6 +1629,20 @@ describe('root error boundary for a 401 a route threw while the app had outage e
     // No outage evidence left: the error link sends the user through logout.
     expect(globalThis.location.href).toBe('/logout?return_url=%2Fdata')
     expect(isApiOutageSignalled()).toBe(false)
+    expect(reload).not.toHaveBeenCalled()
+  })
+
+  it('recovers a URL with a #fragment too, where a same-URL navigation runs no loader', async () => {
+    dataResponses = [unauthorized, dataOk]
+    const router = await renderWhileRetryInFlight('/data#details')
+
+    await advance(retryDelayMs(0))
+    await act(async () => answerRetry())
+    await advance(0)
+
+    expect(screen.getByText('Data: fresh')).toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: SERVER_DOWN })).not.toBeInTheDocument()
+    expect(router.state.location).toMatchObject({ pathname: '/data', hash: '#details' })
     expect(reload).not.toHaveBeenCalled()
   })
 
