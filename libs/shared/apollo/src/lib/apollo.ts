@@ -317,8 +317,12 @@ export function isAuthFailureDeferred(): boolean {
   return authFailureDeferred
 }
 
-function handleAuthenticationError(): void {
-  if (isApiOutageSignalled()) {
+/**
+ * `outage`: the same answer carried outage evidence of its own (a GraphQL 502/503/504 beside the
+ * UNAUTHENTICATED error), which nothing has signalled yet; the 401 is let pass as during any outage.
+ */
+function handleAuthenticationError(outage = false): void {
+  if (outage || isApiOutageSignalled()) {
     authFailureDeferred = true
     console.log('[Apollo] Authentication error during an API outage, keeping the session for now')
     return
@@ -352,6 +356,7 @@ function operationKey(operation: ApolloLink.Operation): string {
 }
 
 const CANCELLED = Symbol('cancelled')
+const GATEWAY_UNAVAILABLE_ANSWER = Symbol('gateway-unavailable-answer')
 
 /**
  * Dispatched on `window` when the last outage evidence an in-flight retry held is withdrawn
@@ -418,15 +423,19 @@ export function createOutageRetryLink(
       const settle = (error?: unknown) => {
         if (settled) return
         settled = true
-        if (isRetryableConnectivityError(error)) unreachableOperations.add(key)
-        else if (error !== CANCELLED) unreachableOperations.delete(key)
+        if (error === GATEWAY_UNAVAILABLE_ANSWER || isRetryableConnectivityError(error)) {
+          unreachableOperations.add(key)
+        } else if (error !== CANCELLED) unreachableOperations.delete(key)
         if (retrying) releaseApiOutage(evidence)
       }
       const subscription = forward(operation).subscribe({
         // An answer (an HTTP 200 carrying an UNAUTHENTICATED error among them) settles the attempt
-        // before the error link above judges it, so a clean rejection is not deferred.
+        // before the error link above judges it, so a clean rejection is not deferred. An answer
+        // carrying a 502/503/504 of its own counts as unreachable, like a proxy's.
         next: result => {
-          settle()
+          settle(
+            hasGatewayUnavailableStatus(result.errors) ? GATEWAY_UNAVAILABLE_ANSWER : undefined,
+          )
           observer.next(result)
         },
         error: error => {
@@ -463,9 +472,14 @@ function errorFromUnknown(value: unknown): Error {
   }
 }
 
-/** Classifies an Apollo link error; see `ApiFailureCause`. */
+/**
+ * Classifies an Apollo link error; see `ApiFailureCause`. A GraphQL answer that carries a 502, 503
+ * or 504 (`isGatewayUnavailableGraphQLError`) is `unavailable` even when another error in it is
+ * UNAUTHENTICATED: outage evidence outranks a 401.
+ */
 export function classifyApiFailure(error: unknown): ApiFailureCause {
   if (CombinedGraphQLErrors.is(error)) {
+    if (isGatewayUnavailableGraphQLError(error)) return 'unavailable'
     return error.errors.some(({ extensions }) => isAuthenticationError(extensions))
       ? 'unauthenticated'
       : 'other'
@@ -493,9 +507,10 @@ function skipsAuthErrorReport(operation: ApolloLink.Operation): boolean {
 function reportGraphQLError(
   extensions: { code?: unknown; originalError?: unknown } | undefined,
   operation: ApolloLink.Operation,
+  outage: boolean,
 ): void {
   if (isAuthenticationError(extensions)) {
-    handleAuthenticationError()
+    handleAuthenticationError(outage)
   } else if (extensions?.code === ORGANIZATION_CONTEXT_REQUIRED_CODE) {
     handleOrganizationRequired(operation)
   } else if (isForbiddenError(extensions)) {
@@ -547,10 +562,14 @@ function createErrorLink(
     const report = !skipsAuthErrorReport(operation)
 
     if (CombinedGraphQLErrors.is(error)) {
+      // The API answered, but with a 502/503/504 (a failed lookup it could not complete): outage
+      // evidence, reported like a proxy's, and it keeps the session over a 401 in the same answer.
+      const outage = isGatewayUnavailableGraphQLError(error)
+      if (outage) dispatchServiceUnavailableEvent(error, operation)
       for (const { message, path, extensions } of error.errors) {
         console.error(`[GraphQL error]: Message: ${message}, Path: ${path}`)
 
-        if (report) reportGraphQLError(extensions, operation)
+        if (report) reportGraphQLError(extensions, operation, outage)
 
         logDevelopmentExtensions(extensions)
       }
@@ -596,6 +615,40 @@ function networkErrorStatus(networkError: Error): number | undefined {
 
 const GATEWAY_UNAVAILABLE_STATUSES = new Set([502, 503, 504])
 
+type GraphQLErrorExtensions = { status?: unknown; originalError?: unknown } | undefined
+
+/**
+ * The HTTP status a GraphQL error was thrown with: `extensions.status`, which Nest sets for an
+ * internal failure (a `ServiceUnavailableException` arrives as `INTERNAL_SERVER_ERROR` with
+ * `status: 503`, in an HTTP 200), else the original exception's `statusCode`.
+ */
+function graphQLErrorStatus(extensions: GraphQLErrorExtensions): number | undefined {
+  if (typeof extensions?.status === 'number') return extensions.status
+  const originalError = extensions?.originalError as { statusCode?: unknown } | null | undefined
+  return typeof originalError?.statusCode === 'number' ? originalError.statusCode : undefined
+}
+
+function hasGatewayUnavailableStatus(
+  errors: readonly { extensions?: GraphQLErrorExtensions }[] | undefined,
+): boolean {
+  return !!errors?.some(({ extensions }) => {
+    const status = graphQLErrorStatus(extensions)
+    return status !== undefined && GATEWAY_UNAVAILABLE_STATUSES.has(status)
+  })
+}
+
+/**
+ * A GraphQL answer in which the API says it could not complete the request: an error whose status
+ * (`extensions.status`, or the original exception's `statusCode`) is 502, 503 or 504. The API
+ * throws a 503 when a lookup it needs fails (the API-token lookup in `JwtStrategy`, say). It is
+ * outage evidence exactly as a proxy's 502/503/504 is (`isRetryableConnectivityError`): it is
+ * reported, retried once the API answers, and it outranks a 401. A plain `INTERNAL_SERVER_ERROR`
+ * (a 500, or no status) is not.
+ */
+export function isGatewayUnavailableGraphQLError(error: unknown): boolean {
+  return CombinedGraphQLErrors.is(error) && hasGatewayUnavailableStatus(error.errors)
+}
+
 /**
  * A request that never got an HTTP response, or got a proxy's 502/503/504 while the API restarts:
  * the only failures worth retrying, because the same request may well succeed once the API is
@@ -603,14 +656,15 @@ const GATEWAY_UNAVAILABLE_STATUSES = new Set([502, 503, 504])
  * containing "fetch" or "event stream", so one unrelated failure was enough to report the API as
  * down. An error that carries any other HTTP status is an answered request and does not count
  * (401 and 403 included: retrying them only fails again), and neither does a `TypeError` thrown by
- * application code, nor a GraphQL error.
+ * application code, nor a GraphQL error, except one that carries a 502/503/504 of its own
+ * (`isGatewayUnavailableGraphQLError`): the API answered that it could not complete the request.
  *
  * The error link uses this to decide when to report an outage, and the web app uses it to decide
  * which failed queries to refetch once connectivity returns, so the two cannot drift apart.
  */
 export function isRetryableConnectivityError(error: unknown): boolean {
   if (!(error instanceof Error)) return false
-  if (CombinedGraphQLErrors.is(error)) return false
+  if (CombinedGraphQLErrors.is(error)) return isGatewayUnavailableGraphQLError(error)
 
   const status = networkErrorStatus(error)
   if (typeof status === 'number' && status > 0) return GATEWAY_UNAVAILABLE_STATUSES.has(status)
