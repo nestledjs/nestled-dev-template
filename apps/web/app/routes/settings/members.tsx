@@ -224,18 +224,25 @@ export default function MembersSettings() {
     onConfirm: () => void
   } | null>(null)
 
+  // Throw on a GraphQL error so the catch below sees it (the client default is 'all').
   const [inviteMember] = useMutation<CreateOrganizationInvitationMutation>(
     CreateOrganizationInvitation,
+    { errorPolicy: 'none' },
   )
   const [resendInvitation] = useMutation<ResendOrganizationInvitationMutation>(
     ResendOrganizationInvitation,
+    { errorPolicy: 'none' },
   )
   const [cancelInvitation] = useMutation<CancelOrganizationInvitationMutation>(
     CancelOrganizationInvitation,
+    { errorPolicy: 'none' },
   )
-  const [removeMember] = useMutation<RemoveOrganizationMemberMutation>(RemoveOrganizationMember)
+  const [removeMember] = useMutation<RemoveOrganizationMemberMutation>(RemoveOrganizationMember, {
+    errorPolicy: 'none',
+  })
   const [updateMemberRole] = useMutation<UpdateOrganizationMemberRoleMutation>(
     UpdateOrganizationMemberRole,
+    { errorPolicy: 'none' },
   )
 
   const { data, loading, error, refetch } = useQuery<UserOrganizationMembersQuery>(
