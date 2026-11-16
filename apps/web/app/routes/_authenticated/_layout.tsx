@@ -70,7 +70,7 @@ export default function AuthenticatedLayout() {
   const { activeOrganization, reconciling } = useActiveOrganization(
     organizations,
     user?.activeOrganizationId,
-    { enabled: !!user, afterSwitch: () => revalidator.revalidate() },
+    { enabled: !!user, sessionKey: user?.id, afterSwitch: () => revalidator.revalidate() },
   )
 
   if (!user) {

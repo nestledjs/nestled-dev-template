@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { hydrateRoot } from 'react-dom/client'
+import { hydrateRoot, type Root } from 'react-dom/client'
 import { renderToString } from 'react-dom/server'
 import { act, fireEvent, render, screen } from '@testing-library/react'
 import { createMemoryRouter, MemoryRouter, RouterProvider } from 'react-router'
@@ -183,6 +183,9 @@ function pageRequestOrganization(api: ReturnType<typeof fakeApi>) {
  * then the browser, which has `stored` in storage, hydrates it. Both render from the same loader
  * data, as the streamed query refs give them. Returns the hydration errors React reported.
  */
+// Hydrated roots, unmounted after each test: Testing Library's cleanup does not know about them.
+const hydratedRoots: Root[] = []
+
 async function reloadAndHydrate(stored: string | null) {
   const client = makeClient(undefined, { apiUrl: 'https://api.example.com/graphql' })
   const preload = createQueryPreloader(client)
@@ -229,9 +232,11 @@ async function reloadAndHydrate(stored: string | null) {
   const hydrationErrors: unknown[] = []
   let firstClientHtml = ''
   await act(async () => {
-    hydrateRoot(container, tree(), {
-      onRecoverableError: error => hydrationErrors.push(error),
-    })
+    hydratedRoots.push(
+      hydrateRoot(container, tree(), {
+        onRecoverableError: error => hydrationErrors.push(error),
+      }),
+    )
     // What the hydrating render committed, before anything after hydration ran.
     firstClientHtml = container.innerHTML
   })
@@ -246,6 +251,9 @@ describe('the active organization across a server render and hydration', () => {
   })
 
   afterEach(() => {
+    act(() => {
+      for (const root of hydratedRoots.splice(0)) root.unmount()
+    })
     vi.unstubAllGlobals()
     vi.restoreAllMocks()
     localStorage.clear()

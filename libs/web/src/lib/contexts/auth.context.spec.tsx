@@ -188,6 +188,35 @@ describe('AuthProvider', () => {
     expect(localStorage.getItem('activeOrganizationId')).toBe('org-2')
   })
 
+  it('starts over after logout: a choice restored for one session is not carried into the next', async () => {
+    const second = { id: 'org-2', name: 'Second Org', members: [member] }
+    useQuery.mockReturnValue({
+      data: { myOrganizations: [organization, second] },
+      loading: false,
+      refetch: vi.fn(),
+    })
+    const switchOrg = vi.fn().mockResolvedValue({
+      data: { switchActiveOrganization: { activeOrganizationId: 'org-2' } },
+    })
+    useMutation.mockReturnValue([switchOrg])
+    localStorage.setItem('activeOrganizationId', 'org-2')
+
+    const { result } = renderHook(() => useAuth(), {
+      wrapper: wrapper({ id: 'user-1', activeOrganizationId: null }),
+    })
+    await waitFor(() => expect(result.current.activeOrganization?.id).toBe('org-2'))
+
+    act(() => result.current.logout())
+    expect(localStorage.getItem('activeOrganizationId')).toBeNull()
+    act(() => result.current.login({ id: 'user-1', activeOrganizationId: null } as any))
+
+    // Nothing stored any more: the server's choice, the first, with no switch.
+    await waitFor(() => expect(result.current.isLoading).toBe(false))
+    expect(result.current.activeOrganization?.id).toBe('org-1')
+    expect(localStorage.getItem('activeOrganizationId')).toBe('org-1')
+    expect(switchOrg).toHaveBeenCalledTimes(1)
+  })
+
   it('throws when auth hooks are used outside the provider', () => {
     const { result } = renderHook(() => {
       try {

@@ -22,6 +22,12 @@ export interface ActiveOrganizationOptions {
    * switch mutation passes one that only stores the id, without reloading.
    */
   switchOrganization?: (organizationId: string) => Promise<string>
+  /**
+   * Who is signed in (the user's id). A change, or `enabled` turning false, starts over: a choice
+   * restored for one session is never carried into the next, and a restore still in flight for it
+   * is dropped.
+   */
+  sessionKey?: string | null
 }
 
 export interface ActiveOrganizationState<T> {
@@ -62,9 +68,17 @@ export function useActiveOrganization<T extends { id: string }>(
   const enabled = options.enabled ?? true
   const sharedSwitch = useSwitchActiveOrganization()
   const switchActiveOrganization = options.switchOrganization ?? sharedSwitch
+  const sessionKey = enabled ? (options.sessionKey ?? '') : null
   // undefined: not settled yet; null: settled, the server's choice stands; an id: the restored one.
   const [chosen, setChosen] = useState<string | null | undefined>(undefined)
   const [switching, setSwitching] = useState(false)
+  // A new session (sign-out, or another user) starts over, while rendering rather than after.
+  const [settledFor, setSettledFor] = useState(sessionKey)
+  if (settledFor !== sessionKey) {
+    setSettledFor(sessionKey)
+    setChosen(undefined)
+    setSwitching(false)
+  }
   const ambiguous =
     enabled && isActiveOrganizationAmbiguous(organizations, serverActiveOrganizationId)
   const reconciling = (ambiguous && chosen === undefined) || switching
@@ -78,12 +92,19 @@ export function useActiveOrganization<T extends { id: string }>(
   useLayoutEffect(() => {
     afterSwitchRef.current = options.afterSwitch
   })
-  const startedRef = useRef(false)
-  const pending = ambiguous && chosen === undefined
+  // The session a restore was started for, and the session now; a restore whose session is gone by
+  // the time it finishes is dropped.
+  const startedForRef = useRef<string | null | undefined>(undefined)
+  const sessionKeyRef = useRef(sessionKey)
+  useLayoutEffect(() => {
+    sessionKeyRef.current = sessionKey
+    startedForRef.current = undefined
+  }, [sessionKey])
+  const pending = ambiguous && chosen === undefined && settledFor === sessionKey
 
   useEffect(() => {
-    if (!pending || startedRef.current) return
-    startedRef.current = true
+    if (!pending || startedForRef.current === sessionKey) return
+    startedForRef.current = sessionKey
     const first = organizations[0]?.id
     const stored = getStoredActiveOrganizationId()
     const restore =
@@ -97,6 +118,7 @@ export function useActiveOrganization<T extends { id: string }>(
     }
     setSwitching(true)
     void (async () => {
+      const stillCurrent = () => sessionKeyRef.current === sessionKey
       let restored: string | null = null
       try {
         restored = await switchActiveOrganization(restore)
@@ -106,6 +128,7 @@ export function useActiveOrganization<T extends { id: string }>(
           error,
         )
       }
+      if (!stillCurrent()) return
       if (restored) {
         try {
           await afterSwitchRef.current?.()
@@ -113,10 +136,11 @@ export function useActiveOrganization<T extends { id: string }>(
           console.error('[ActiveOrganization] Refreshing after the switch failed', error)
         }
       }
+      if (!stillCurrent()) return
       setChosen(restored)
       setSwitching(false)
     })()
-  }, [pending, organizations, switchActiveOrganization])
+  }, [pending, organizations, sessionKey, switchActiveOrganization])
 
   return { activeOrganization, reconciling }
 }

@@ -268,7 +268,7 @@ intent: >
     organization and no valid server active one, the only case in which the stored choice can
     differ from what the server renders.
   - New libs/web/src/lib/organization/active-organization.ts, `useActiveOrganization(organizations,
-    serverActiveOrganizationId, { enabled, afterSwitch, switchOrganization })`, returning
+    serverActiveOrganizationId, { enabled, sessionKey, afterSwitch, switchOrganization })`, returning
     `{ activeOrganization, reconciling }`. The first render, on the server and in the browser, shows
     the server's choice; when the choice is ambiguous `reconciling` is true from the first render
     (on both sides, so they agree) and the caller holds organization-scoped content back. After
@@ -278,9 +278,11 @@ intent: >
     `reconciling`; otherwise the server's choice stands. A refused or failed switch keeps the
     server's choice and stores it, so the screen and the header still agree. It stores what it
     shows for `x-organization-id` while rendering (`rememberActiveOrganization`), except while
-    reconciling.
+    reconciling. It starts over when `sessionKey` (the user's id) changes or `enabled` turns false,
+    and drops a restore still in flight for the previous session, so a provider that stays mounted
+    across logout and login never carries one session's choice into the next.
   - apps/web/app/routes/_authenticated/_layout.tsx uses it, before its early returns, with
-    `enabled: !!user` and `afterSwitch: () => revalidator.revalidate()`, so the loaders run again
+    `enabled: !!user`, `sessionKey: user?.id` and `afterSwitch: () => revalidator.revalidate()`, so the loaders run again
     for the restored organization. While `reconciling` it renders the header (the server's choice),
     a placeholder instead of `<Outlet />`, and neither `SubscriptionProvider` nor
     `SubscriptionStatusBanner` (their queries are organization-scoped).
@@ -313,7 +315,7 @@ intent: >
   render and hydration": no hydration error and a first client render equal to the server HTML,
   then the UI and the next request use the stored organization; a refused switch keeps the
   server's choice); `pnpm exec nx test web-components --skip-nx-cache` ("restores a stored
-  organization the server does not know"); `pnpm exec nx test apollo --skip-nx-cache` ("is never
+  organization the server does not know", "starts over after logout"); `pnpm exec nx test apollo --skip-nx-cache` ("is never
   read by resolveActiveOrganization").
 
 why: >

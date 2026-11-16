@@ -100,7 +100,11 @@ export function AuthProvider({ children, initialUser = null }: AuthProviderProps
   const { activeOrganization, reconciling } = useActiveOrganization(
     organizations,
     user?.activeOrganizationId,
-    { enabled: !!user, afterSwitch: () => client.refetchQueries({ include: 'active' }) },
+    {
+      enabled: !!user,
+      sessionKey: user?.id,
+      afterSwitch: () => client.refetchQueries({ include: 'active' }),
+    },
   )
 
   // Find the current user's membership in the active organization
