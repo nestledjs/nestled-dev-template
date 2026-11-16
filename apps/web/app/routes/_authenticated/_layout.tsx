@@ -1,4 +1,5 @@
-import { Navigate, Outlet, useLoaderData, useLocation } from 'react-router'
+import { useEffect, useRef } from 'react'
+import { Navigate, Outlet, useLoaderData, useLocation, useRevalidator } from 'react-router'
 import {
   GlobalContextProvider,
   useGlobalCtx,
@@ -7,10 +8,13 @@ import {
   EmulationBanner,
 } from '@nestled-template/web'
 import { WebUiFooter, WebUiHeader } from '@nestled-template/web-ui'
-import { apolloLoader } from '@nestled-template/shared/apollo'
+import {
+  apolloLoader,
+  rememberActiveOrganization,
+  resolveActiveOrganization,
+} from '@nestled-template/shared/apollo'
 import {
   MyOrganizationsWithMembers,
-  type MeQuery,
   type MyOrganizationsWithMembersQuery,
 } from '@nestled-template/shared/sdk'
 import { useReadQuery, type QueryRef } from '@apollo/client/react'
@@ -18,10 +22,6 @@ import { browserIsOffline } from '../../api-availability'
 import { ApiUnavailableScreen } from '../../api-unavailable'
 import { useSessionRecheck } from '../../session-recheck'
 import { OrganizationRequired } from '../../organization-required'
-
-type UserWithActiveOrganization = NonNullable<MeQuery['me']> & {
-  activeOrganizationId?: string | null
-}
 
 export const loader = apolloLoader()(({ preloadQuery }) => {
   const myOrganizationsQueryRef = preloadQuery<MyOrganizationsWithMembersQuery>(
@@ -49,6 +49,20 @@ export default function AuthenticatedLayout() {
   // session cookie (and appends `expired=1`, so /login renders the form instead of looping).
   const recheck = useSessionRecheck(!contextUser)
   const user = contextUser ?? (recheck.status === 'signed-in' ? recheck.user : null)
+
+  // The re-checked user is a snapshot (the re-check skips the cache), so once it recovers, run the
+  // root loader again for a Me query of its own: the user then comes from the cache like any other
+  // query and follows later changes (a profile edit, an organization switch). Once per recovery;
+  // if the loader still brings no Me, the snapshot stays.
+  const revalidator = useRevalidator()
+  const recoveredUserRef = useRef<unknown>(null)
+  const recheckedUser = !contextUser && recheck.status === 'signed-in' ? recheck.user : null
+  useEffect(() => {
+    if (!recheckedUser || recoveredUserRef.current === recheckedUser) return
+    recoveredUserRef.current = recheckedUser
+    void revalidator.revalidate()
+  }, [recheckedUser, revalidator])
+
   if (!user) {
     if (recheck.status === 'rejected') {
       const returnUrl = `${location.pathname}${location.search}`
@@ -67,11 +81,11 @@ export default function AuthenticatedLayout() {
   }
 
   const organizations = orgsData?.myOrganizations || []
-  const userWithActiveOrganization = user as UserWithActiveOrganization
-  const activeOrganization =
-    organizations.find(org => org.id === userWithActiveOrganization.activeOrganizationId) ||
-    organizations[0] ||
-    null
+  // The server's active organization (from Me, the re-checked one included), else the stored one,
+  // and stored before the pages below send a request: the organization on screen is the one every
+  // request is sent for (`x-organization-id`).
+  const activeOrganization = resolveActiveOrganization(organizations, user.activeOrganizationId)
+  rememberActiveOrganization(activeOrganization?.id)
   const activeOrganizationMember =
     activeOrganization?.members?.find(member => member.userId === user?.id) || null
 

@@ -58,6 +58,7 @@ import {
   SERVER_TROUBLE_MESSAGE,
   SERVER_TROUBLE_TITLE,
 } from '../app/api-unavailable'
+import { unauthenticatedResponse } from './helpers/api-rejection'
 
 /**
  * The root ErrorBoundary's own `error` prop type, whatever the app declares it as (`unknown` here;
@@ -1494,7 +1495,10 @@ describe('root error boundary for a 401 a route threw while the app had outage e
   `
   const json = (status: number, body: unknown) =>
     new Response(JSON.stringify(body), { status, headers: { 'content-type': 'application/json' } })
-  const unauthorized = () => json(401, { message: 'Unauthorized' })
+  // The API's own rejection (HTTP 200, UNAUTHENTICATED): the logout below must not depend on an
+  // error link that signs out on an HTTP 401, which several apps' links never do.
+  const unauthorized = unauthenticatedResponse
+  const httpUnauthorized = () => json(401, { message: 'Unauthorized' })
   const dataOk = () => json(200, { data: { data: 'fresh' } })
 
   let dataResponses: Array<() => Response> = []
@@ -1590,8 +1594,11 @@ describe('root error boundary for a 401 a route threw while the app had outage e
     return router
   }
 
-  it('shows the self-recovering screen, not the error screen', async () => {
-    dataResponses = [unauthorized]
+  it.each([
+    ['the API’s UNAUTHENTICATED answer', unauthorized],
+    ['an HTTP 401', httpUnauthorized],
+  ])('shows the self-recovering screen for %s, not the error screen', async (_label, rejected) => {
+    dataResponses = [rejected]
     await renderWhileRetryInFlight()
 
     expect(screen.getByRole('heading', { name: SERVER_DOWN })).toBeInTheDocument()
