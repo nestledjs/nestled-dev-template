@@ -183,7 +183,7 @@ intent: >
   `'none'` rejects. A call site whose only error handling is `try { await mutate() } catch` therefore
   never sees the error and runs its success path ("Saved", a redirect, a closed modal) on a refusal
   or an outage. The default is unchanged (a fleet-wide behaviour change is the owner's call); the
-  template's own call sites that relied on a throw now pass `errorPolicy: 'none'` (47 hook and
+  template's own call sites that relied on a throw now pass `errorPolicy: 'none'` (53 hook and
   `client.mutate` calls across the public auth pages, accept-invitation, pricing, the admin billing
   and access-control pages, every settings page, and libs/web's upgrade and transfer-ownership
   modals). Sites that read `result.error`, or use `onError`/`onCompleted`, are left as they are.
