@@ -65,14 +65,18 @@ export function DeferredAuthRecovery({
       // after a revalidation only if it rendered the revalidation's loading state, which a fast
       // answer can skip, leaving the error screen up over a route that would now render.
       const { router } = dataRouter
-      const { pathname, search, hash } = router.state.location
+      const { pathname, search, hash, key } = router.state.location
       const resetToSameUrl = () =>
         router.navigate({ pathname, search, hash }, { replace: true, preventScrollReset: true })
       if (hash) {
         // With a fragment, React Router takes a navigation to the same URL for a hash-only change
         // and runs no loader, so the failed query would never get a fresh answer. Run the loaders
-        // first; the navigation after it still resets the boundary, onto the fresh data.
-        void router.revalidate().then(resetToSameUrl)
+        // first; the navigation after it still resets the boundary, onto the fresh data. Only if
+        // the user is still there: a navigation away (or a loader's redirect) meanwhile wins.
+        void router.revalidate().then(() => {
+          const { location, navigation } = router.state
+          if (location.key === key && navigation.state === 'idle') void resetToSameUrl()
+        })
       } else {
         void resetToSameUrl()
       }

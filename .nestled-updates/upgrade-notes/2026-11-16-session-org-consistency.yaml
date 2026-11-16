@@ -38,7 +38,8 @@ intent: >
   and runs no loader, so the failed query never got a fresh answer and the recovering screen stayed
   up after the API came back. When the location has a hash it now calls `router.revalidate()` first
   and navigates to the same URL once that settles (the navigation is still what resets the error
-  boundary); without a hash nothing changes. An app that revalidates with `useRevalidator()` instead
+  boundary), but only if the location key is unchanged and no navigation is in progress, so a user
+  who left meanwhile, or a loader's redirect, is not taken back; without a hash nothing changes. An app that revalidates with `useRevalidator()` instead
   has no such gap, but check that its error boundary resets after a revalidation that finishes
   quickly.
   Verification: `pnpm exec nx test web --skip-nx-cache` ("recovers a URL with a #fragment too").
@@ -83,8 +84,9 @@ intent: >
     `rememberActiveOrganization` while rendering, before its children's queries start: the
     organization on screen is the one the next request is sent for. A layout effect is too late
     for queries that start during render.
-  - apps/web/app/routes/settings/_settings-access.ts, settings/organization.tsx and
-    settings/roles.tsx use `resolveActiveOrganization` instead of their own `organizations[0]`
+  - apps/web/app/routes/settings/_settings-access.ts, settings/organization.tsx,
+    settings/members.tsx (which managed the first organization's members, invitations and roles)
+    and settings/roles.tsx use `resolveActiveOrganization` instead of their own `organizations[0]`
     fallbacks; `AuthProvider` (libs/web/src/lib/contexts/auth.context.tsx) does too, and stores
     through `rememberActiveOrganization` / `storeActiveOrganizationId(null)` on logout.
   - apps/web/app/routes/logout.tsx forgets the stored organization, so the next user's first

@@ -1420,4 +1420,14 @@ describe('the stored active organization', () => {
     expect(getStoredActiveOrganizationId()).toBeNull()
     expect(() => storeActiveOrganizationId('org-2')).not.toThrow()
   })
+
+  it('never throws when reading localStorage itself throws', () => {
+    vi.spyOn(globalThis, 'localStorage', 'get').mockImplementation(() => {
+      throw new DOMException('blocked', 'SecurityError')
+    })
+
+    expect(getStoredActiveOrganizationId()).toBeNull()
+    expect(() => storeActiveOrganizationId('org-2')).not.toThrow()
+    expect(() => storeActiveOrganizationId(null)).not.toThrow()
+  })
 })

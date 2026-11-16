@@ -1653,6 +1653,29 @@ describe('root error boundary for a 401 a route threw while the app had outage e
     expect(reload).not.toHaveBeenCalled()
   })
 
+  it('does not take the user back to a #fragment URL they left while it was recovering', async () => {
+    let answerData: () => void = () => undefined
+    const heldData = () =>
+      new Promise<Response>(resolve => {
+        answerData = () => resolve(dataOk())
+      }) as unknown as Response
+    dataResponses = [unauthorized, heldData]
+    const router = await renderWhileRetryInFlight('/data#details')
+
+    await advance(retryDelayMs(0))
+    await act(async () => answerRetry())
+    await advance(0)
+    // The revalidation's loader is waiting on the API; the user goes elsewhere meanwhile.
+    await act(async () => {
+      await router.navigate('/')
+    })
+    await act(async () => answerData())
+    await advance(0)
+
+    expect(router.state.location.pathname).toBe('/')
+    expect(router.state.location.hash).toBe('')
+  })
+
   it('revalidates once the screen’s own probe recovers when the retry settled first', async () => {
     dataResponses = [unauthorized, dataOk]
     await renderWhileRetryInFlight()

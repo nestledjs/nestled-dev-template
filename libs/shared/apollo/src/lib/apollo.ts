@@ -597,8 +597,10 @@ export const ACTIVE_ORGANIZATION_STORAGE_KEY = 'activeOrganizationId'
  * next request is answered for.
  */
 export function getStoredActiveOrganizationId(): string | null {
-  if (globalThis.window === undefined || typeof localStorage === 'undefined') return null
+  if (globalThis.window === undefined) return null
+  // Inside the try: where storage is blocked, reading `localStorage` itself throws.
   try {
+    if (typeof localStorage === 'undefined') return null
     return localStorage.getItem(ACTIVE_ORGANIZATION_STORAGE_KEY)
   } catch {
     return null
@@ -611,8 +613,9 @@ export function getStoredActiveOrganizationId(): string | null {
  * disagree. A no-op during a server render or with storage blocked.
  */
 export function storeActiveOrganizationId(organizationId: string | null): void {
-  if (globalThis.window === undefined || typeof localStorage === 'undefined') return
+  if (globalThis.window === undefined) return
   try {
+    if (typeof localStorage === 'undefined') return
     if (organizationId) localStorage.setItem(ACTIVE_ORGANIZATION_STORAGE_KEY, organizationId)
     else localStorage.removeItem(ACTIVE_ORGANIZATION_STORAGE_KEY)
   } catch {
