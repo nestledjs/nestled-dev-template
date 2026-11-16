@@ -1479,7 +1479,12 @@ describe('SKIP_AUTH_ERROR_REPORT_CONTEXT', () => {
     dispatchEvent: ReturnType<typeof vi.fn>
   }
 
-  beforeEach(() => {
+  // A fresh copy of the module: earlier tests in this file can leave a retry's outage evidence
+  // behind, and with it every 401 here would be deferred instead of acted on.
+  let apollo: typeof import('./apollo')
+  beforeEach(async () => {
+    vi.resetModules()
+    apollo = await import('./apollo')
     vi.spyOn(console, 'error').mockImplementation(() => undefined)
     vi.spyOn(console, 'log').mockImplementation(() => undefined)
     testWindow = {
@@ -1500,13 +1505,14 @@ describe('SKIP_AUTH_ERROR_REPORT_CONTEXT', () => {
       'fetch',
       vi.fn().mockImplementation(async () => answer()),
     )
-    await makeClient(undefined, { apiUrl: 'https://api.example.com/graphql' })
+    await apollo
+      .makeClient(undefined, { apiUrl: 'https://api.example.com/graphql' })
       .query({ query, fetchPolicy: 'no-cache', errorPolicy: 'none', context })
       .catch(() => undefined)
   }
 
   it.each(answers)('takes no action on %s for a request that asks so', async (_label, answer) => {
-    await run(answer, SKIP_AUTH_ERROR_REPORT_CONTEXT)
+    await run(answer, apollo.SKIP_AUTH_ERROR_REPORT_CONTEXT)
 
     expect(testWindow.location.href).toBe('')
     expect(testWindow.dispatchEvent).not.toHaveBeenCalled()
@@ -1521,23 +1527,24 @@ describe('SKIP_AUTH_ERROR_REPORT_CONTEXT', () => {
 
   it('records no deferred 401 for it during an outage, since its caller decides', async () => {
     const outage = {}
-    signalApiOutage(outage)
+    apollo.signalApiOutage(outage)
     try {
-      await run(coded('UNAUTHENTICATED', 401), SKIP_AUTH_ERROR_REPORT_CONTEXT)
-      expect(isAuthFailureDeferred()).toBe(false)
+      await run(coded('UNAUTHENTICATED', 401), apollo.SKIP_AUTH_ERROR_REPORT_CONTEXT)
+      expect(apollo.isAuthFailureDeferred()).toBe(false)
     } finally {
-      clearApiOutage(outage)
+      apollo.clearApiOutage(outage)
     }
   })
 
   it('still reports a request that never reached the API', async () => {
     vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new TypeError('Failed to fetch')))
-    await makeClient(undefined, { apiUrl: 'https://api.example.com/graphql' })
-      .query({ query, context: SKIP_AUTH_ERROR_REPORT_CONTEXT })
+    await apollo
+      .makeClient(undefined, { apiUrl: 'https://api.example.com/graphql' })
+      .query({ query, context: apollo.SKIP_AUTH_ERROR_REPORT_CONTEXT })
       .catch(() => undefined)
 
     expect(testWindow.dispatchEvent).toHaveBeenCalledWith(
-      expect.objectContaining({ type: APOLLO_SERVICE_UNAVAILABLE_EVENT }),
+      expect.objectContaining({ type: apollo.APOLLO_SERVICE_UNAVAILABLE_EVENT }),
     )
   })
 })
