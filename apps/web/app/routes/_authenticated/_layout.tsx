@@ -4,6 +4,8 @@ import {
   GlobalContextProvider,
   useActiveOrganization,
   useGlobalCtx,
+  withRestoredOrganization,
+  type RestoredOrganization,
   SubscriptionProvider,
   SubscriptionStatusBanner,
   EmulationBanner,
@@ -30,20 +32,6 @@ export const loader = apolloLoader()(({ preloadQuery }) => {
   )
   return { myOrganizationsQueryRef }
 })
-
-/**
- * `user`, with the organization restored for it as its `activeOrganizationId` when its own is
- * missing or no longer one of `organizations`; otherwise `user` unchanged.
- */
-function withRestoredOrganization<U extends { id: string; activeOrganizationId?: string | null }>(
-  user: U | null,
-  organizations: readonly { id: string }[],
-  restored: { userId: string; organizationId: string } | null,
-): U | null {
-  if (!user || restored?.userId !== user.id) return user
-  if (organizations.some(organization => organization.id === user.activeOrganizationId)) return user
-  return { ...user, activeOrganizationId: restored.organizationId }
-}
 
 export default function AuthenticatedLayout() {
   const { user: contextUser } = useGlobalCtx()
@@ -86,7 +74,7 @@ export default function AuthenticatedLayout() {
   // re-check's snapshot does not (and stays when the root loader brings no Me), so the restore is
   // applied to it here, for the user it was restored for, and only while that user's own active
   // organization is unknown or not theirs: one the server knows always wins.
-  const [restored, setRestored] = useState<{ userId: string; organizationId: string } | null>(null)
+  const [restored, setRestored] = useState<RestoredOrganization | null>(null)
   // Memoized: a new object on every render would re-render every consumer of the shell's context.
   const user = useMemo(
     () => withRestoredOrganization(sessionUser, organizations, restored),

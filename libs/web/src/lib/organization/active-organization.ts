@@ -180,3 +180,31 @@ export function useActiveOrganization<T extends { id: string }>(
 
   return { activeOrganization, reconciling }
 }
+
+/** An organization restored for a user (`onRestored`), kept by a caller whose user is a snapshot. */
+export interface RestoredOrganization {
+  userId: string
+  organizationId: string
+}
+
+/**
+ * `user` with `restored` applied as its `activeOrganizationId`, for a user `useActiveOrganization`
+ * cannot update itself (a no-cache snapshot of Me), so `user.activeOrganizationId` and the shown
+ * organization agree after a restore. Applied only for the user it was restored for, while that
+ * user's own active organization is missing or not one of `organizations` (one the server knows
+ * wins), and while the restored one still is (a later list without it falls back as
+ * `resolveActiveOrganization` does, and so does the user). Otherwise `user` unchanged.
+ */
+export function withRestoredOrganization<
+  U extends { id: string; activeOrganizationId?: string | null },
+>(
+  user: U | null,
+  organizations: readonly { id: string }[],
+  restored: RestoredOrganization | null,
+): U | null {
+  if (!user || restored?.userId !== user.id) return user
+  const isMember = (id: string | null | undefined) =>
+    organizations.some(organization => organization.id === id)
+  if (isMember(user.activeOrganizationId) || !isMember(restored.organizationId)) return user
+  return { ...user, activeOrganizationId: restored.organizationId }
+}

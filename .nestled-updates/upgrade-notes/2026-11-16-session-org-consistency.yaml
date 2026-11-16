@@ -355,9 +355,11 @@ intent: >
     current, as content is let through (never for a refused, failed or superseded one).
     `AuthProvider` sets the restored id on its user there, for that user only (the same guard as
     the explicit switch). apps/web/app/routes/_authenticated/_layout.tsx keeps the restored id per
-    user and applies it to the user it hands its pages only while that user's own
-    `activeOrganizationId` is missing or not one of their organizations, so a live Me (which the
-    cache write already updated) always wins.
+    user and applies it with the new `withRestoredOrganization(user, organizations, restored)`
+    (libs/web) to the user it hands its pages: only for that user, only while their own
+    `activeOrganizationId` is missing or not one of their organizations (a live Me, which the cache
+    write already updated, always wins), and only while the restored organization is still in the
+    list (otherwise the user falls back as the shown organization does).
   - The picker (apps/web/app/organization-required.tsx) neither reloads nor shows its failure
     message for a superseded switch. `OrganizationSwitcher` already reloads only when the switch
     resolves; its doc now says the switch must reject for a dropped answer too.

@@ -6,6 +6,7 @@ import { ApolloProvider } from '@apollo/client/react'
 import { makeClient } from '@nestled-template/shared/apollo'
 import { AuthProvider, useAuth, type AuthContextType } from '../contexts/auth.context'
 import { isOrganizationSwitchSuperseded } from './switch-active-organization'
+import { withRestoredOrganization } from './active-organization'
 
 // The organizations query, cut down to what the provider reads; the switch mutation is the real one.
 vi.mock('@nestled-template/shared/sdk', async importOriginal => ({
@@ -237,5 +238,29 @@ describe('a switch answered after its session ended', () => {
     expect(localStorage.getItem(STORAGE_KEY)).toBe('org-2')
     expect(cachedUser(client)).toMatchObject({ activeOrganizationId: 'org-2' })
     expect(refetchQueries).toHaveBeenCalledWith({ include: 'active' })
+  })
+})
+
+describe('withRestoredOrganization', () => {
+  const organizations = [{ id: 'org-1' }, { id: 'org-2' }]
+  const restored = { userId: 'user-1', organizationId: 'org-2' }
+
+  it('applies the restore to the user it was for while their own active organization is unknown', () => {
+    const user = { id: 'user-1', activeOrganizationId: null }
+    expect(withRestoredOrganization(user, organizations, restored)?.activeOrganizationId).toBe(
+      'org-2',
+    )
+  })
+
+  it('leaves another user, and an active organization the server knows, as they are', () => {
+    const other = { id: 'user-2', activeOrganizationId: null }
+    const known = { id: 'user-1', activeOrganizationId: 'org-1' }
+    expect(withRestoredOrganization(other, organizations, restored)).toBe(other)
+    expect(withRestoredOrganization(known, organizations, restored)).toBe(known)
+  })
+
+  it('drops the restore once the restored organization is no longer in the list', () => {
+    const user = { id: 'user-1', activeOrganizationId: null }
+    expect(withRestoredOrganization(user, [{ id: 'org-1' }, { id: 'org-3' }], restored)).toBe(user)
   })
 })
