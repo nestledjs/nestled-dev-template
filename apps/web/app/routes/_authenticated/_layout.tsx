@@ -94,46 +94,16 @@ export default function AuthenticatedLayout() {
     activeOrganization?.members?.find(member => member.userId === user?.id) || null
 
   const isAdminRoute = location.pathname === '/admin' || location.pathname.startsWith('/admin/')
-  const primaryEmail = user.emails?.find(email => email.primary)?.email ?? user.emails?.[0]?.email
-  const userName =
-    `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.displayName || primaryEmail
-  const userAvatarUrl = user.avatar?.publicUrl ?? user.avatar?.url ?? null
-  const activeOrganizationRoleName = activeOrganizationMember?.role?.name
-  const canViewBilling =
-    user.isSuperAdmin ||
-    activeOrganizationRoleName === 'Owner' ||
-    activeOrganizationRoleName === 'Admin' ||
-    !!activeOrganizationMember?.role?.permissions?.some(
-      permission => permission.subject === 'billing' && permission.action === 'read',
-    )
-
   // Held back while the active organization is being reconciled: the page and the subscription
   // queries are organization-scoped, and would be sent for an organization about to change.
-  const content = reconciling ? <ActiveOrganizationPending /> : <Outlet />
-  const shell = isAdminRoute ? (
-    <div className="flex min-h-screen flex-col bg-zinc-950">
-      <EmulationBanner />
-      <main className="flex-1">{content}</main>
-    </div>
-  ) : (
-    <div className="flex flex-col min-h-screen">
-      <EmulationBanner />
-      <WebUiHeader
-        logo={'/logo.png'}
-        icon={'/icon.png'}
-        siteName={activeOrganization?.name || 'Demo Site'}
-        navigation={[]}
-        isAuthenticated={true}
-        userName={userName}
-        userEmail={primaryEmail}
-        userAvatarUrl={userAvatarUrl}
-        isSuperAdmin={user.isSuperAdmin}
-        canViewBilling={canViewBilling}
-      />
-      {reconciling ? null : <SubscriptionStatusBanner />}
-      <main className="flex-1 flex flex-col">{content}</main>
-      <WebUiFooter />
-    </div>
+  const shell = (
+    <SignedInShell
+      user={user}
+      activeOrganizationName={activeOrganization?.name}
+      activeOrganizationMember={activeOrganizationMember}
+      isAdminRoute={isAdminRoute}
+      reconciling={reconciling}
+    />
   )
 
   return (
@@ -145,6 +115,71 @@ export default function AuthenticatedLayout() {
     >
       {reconciling ? shell : <SubscriptionProvider>{shell}</SubscriptionProvider>}
     </GlobalContextProvider>
+  )
+}
+
+type ShellUser = NonNullable<ReturnType<typeof useGlobalCtx>['user']>
+type ShellMember = NonNullable<
+  MyOrganizationsWithMembersQuery['myOrganizations'][number]['members']
+>[number]
+
+function canViewBilling(user: ShellUser, member: ShellMember | null): boolean {
+  const roleName = member?.role?.name
+  return (
+    !!user.isSuperAdmin ||
+    roleName === 'Owner' ||
+    roleName === 'Admin' ||
+    !!member?.role?.permissions?.some(
+      permission => permission.subject === 'billing' && permission.action === 'read',
+    )
+  )
+}
+
+/** The signed-in chrome around the page; the page is held back while `reconciling`. */
+function SignedInShell({
+  user,
+  activeOrganizationName,
+  activeOrganizationMember,
+  isAdminRoute,
+  reconciling,
+}: Readonly<{
+  user: ShellUser
+  activeOrganizationName: string | undefined
+  activeOrganizationMember: ShellMember | null
+  isAdminRoute: boolean
+  reconciling: boolean
+}>) {
+  const content = reconciling ? <ActiveOrganizationPending /> : <Outlet />
+  if (isAdminRoute) {
+    return (
+      <div className="flex min-h-screen flex-col bg-zinc-950">
+        <EmulationBanner />
+        <main className="flex-1">{content}</main>
+      </div>
+    )
+  }
+  const primaryEmail = user.emails?.find(email => email.primary)?.email ?? user.emails?.[0]?.email
+  const userName =
+    `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.displayName || primaryEmail
+  return (
+    <div className="flex flex-col min-h-screen">
+      <EmulationBanner />
+      <WebUiHeader
+        logo={'/logo.png'}
+        icon={'/icon.png'}
+        siteName={activeOrganizationName || 'Demo Site'}
+        navigation={[]}
+        isAuthenticated={true}
+        userName={userName}
+        userEmail={primaryEmail}
+        userAvatarUrl={user.avatar?.publicUrl ?? user.avatar?.url ?? null}
+        isSuperAdmin={user.isSuperAdmin}
+        canViewBilling={canViewBilling(user, activeOrganizationMember)}
+      />
+      {reconciling ? null : <SubscriptionStatusBanner />}
+      <main className="flex-1 flex flex-col">{content}</main>
+      <WebUiFooter />
+    </div>
   )
 }
 

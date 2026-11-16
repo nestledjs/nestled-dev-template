@@ -615,14 +615,14 @@ function networkErrorStatus(networkError: Error): number | undefined {
 
 const GATEWAY_UNAVAILABLE_STATUSES = new Set([502, 503, 504])
 
-type GraphQLErrorExtensions = { status?: unknown; originalError?: unknown } | undefined
+type GraphQLErrorExtensions = { status?: unknown; originalError?: unknown }
 
 /**
  * The HTTP status a GraphQL error was thrown with: `extensions.status`, which Nest sets for an
  * internal failure (a `ServiceUnavailableException` arrives as `INTERNAL_SERVER_ERROR` with
  * `status: 503`, in an HTTP 200), else the original exception's `statusCode`.
  */
-function graphQLErrorStatus(extensions: GraphQLErrorExtensions): number | undefined {
+function graphQLErrorStatus(extensions: GraphQLErrorExtensions | undefined): number | undefined {
   if (typeof extensions?.status === 'number') return extensions.status
   const originalError = extensions?.originalError as { statusCode?: unknown } | null | undefined
   return typeof originalError?.statusCode === 'number' ? originalError.statusCode : undefined
