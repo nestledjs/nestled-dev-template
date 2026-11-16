@@ -16,6 +16,12 @@ export interface ActiveOrganizationOptions {
    * queries. Content stays gated until it settles.
    */
   afterSwitch?: () => unknown
+  /**
+   * Makes the stored organization active and resolves with the id now active; it must reject on a
+   * refusal. Defaults to the shared switch (`useSwitchActiveOrganization`). An app whose API has no
+   * switch mutation passes one that only stores the id, without reloading.
+   */
+  switchOrganization?: (organizationId: string) => Promise<string>
 }
 
 export interface ActiveOrganizationState<T> {
@@ -54,7 +60,8 @@ export function useActiveOrganization<T extends { id: string }>(
   options: ActiveOrganizationOptions = {},
 ): ActiveOrganizationState<T> {
   const enabled = options.enabled ?? true
-  const switchActiveOrganization = useSwitchActiveOrganization()
+  const sharedSwitch = useSwitchActiveOrganization()
+  const switchActiveOrganization = options.switchOrganization ?? sharedSwitch
   // undefined: not settled yet; null: settled, the server's choice stands; an id: the restored one.
   const [chosen, setChosen] = useState<string | null | undefined>(undefined)
   const [switching, setSwitching] = useState(false)
