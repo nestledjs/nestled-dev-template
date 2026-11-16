@@ -223,7 +223,7 @@ describe('a switch answered after its session ended', () => {
     expect(await nextRequestOrganization(client, api)).toBeUndefined()
   })
 
-  it('a switch answered while its session is current is stored and cached as before', async () => {
+  it('a restore answered while its session is current is stored and cached, and the user follows it', async () => {
     const api = fakeApi()
     const { client, auth, refetchQueries } = renderProvider()
     await waitFor(() => expect(api.switchRequests).toEqual(['org-2']))
@@ -231,6 +231,9 @@ describe('a switch answered after its session ended', () => {
     await answerSwitch(api)
 
     await waitFor(() => expect(auth.current?.activeOrganization?.id).toBe('org-2'))
+    // The provider's own user follows the restore: both organization ids it exposes agree.
+    expect(auth.current?.user?.activeOrganizationId).toBe('org-2')
+    expect(auth.current?.user?.activeOrganizationId).toBe(auth.current?.activeOrganization?.id)
     expect(localStorage.getItem(STORAGE_KEY)).toBe('org-2')
     expect(cachedUser(client)).toMatchObject({ activeOrganizationId: 'org-2' })
     expect(refetchQueries).toHaveBeenCalledWith({ include: 'active' })

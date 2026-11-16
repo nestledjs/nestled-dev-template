@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Navigate, Outlet, useLoaderData, useLocation, useRevalidator } from 'react-router'
 import {
   GlobalContextProvider,
@@ -31,6 +31,20 @@ export const loader = apolloLoader()(({ preloadQuery }) => {
   return { myOrganizationsQueryRef }
 })
 
+/**
+ * `user`, with the organization restored for it as its `activeOrganizationId` when its own is
+ * missing or no longer one of `organizations`; otherwise `user` unchanged.
+ */
+function withRestoredOrganization<U extends { id: string; activeOrganizationId?: string | null }>(
+  user: U | null,
+  organizations: readonly { id: string }[],
+  restored: { userId: string; organizationId: string } | null,
+): U | null {
+  if (!user || restored?.userId !== user.id) return user
+  if (organizations.some(organization => organization.id === user.activeOrganizationId)) return user
+  return { ...user, activeOrganizationId: restored.organizationId }
+}
+
 export default function AuthenticatedLayout() {
   const { user: contextUser } = useGlobalCtx()
   const location = useLocation()
@@ -47,7 +61,7 @@ export default function AuthenticatedLayout() {
   // session cookie (and appends `expired=1`, so /login renders the form instead of looping). The
   // root loader's outage flag counts as outage evidence: a 401 while it stands is retried.
   const recheck = useSessionRecheck(!contextUser, useRootLoaderOutage())
-  const user = contextUser ?? (recheck.status === 'signed-in' ? recheck.user : null)
+  const sessionUser = contextUser ?? (recheck.status === 'signed-in' ? recheck.user : null)
 
   // The re-checked user is a snapshot (the re-check skips the cache), so once it recovers, run the
   // root loader again for a Me query of its own: the user then comes from the cache like any other
@@ -67,10 +81,26 @@ export default function AuthenticatedLayout() {
   // hydrating one. A choice this browser stored is restored after hydration, through the shared
   // switch, and the loaders run again for it; organization-scoped content waits meanwhile.
   const organizations = orgsData?.myOrganizations || []
+  // A restored organization must reach the user the pages get too, so `user.activeOrganizationId`
+  // and `activeOrganization.id` agree. A live Me follows the switch's cache write by itself; the
+  // re-check's snapshot does not (and stays when the root loader brings no Me), so the restore is
+  // applied to it here, for the user it was restored for, and only while that user's own active
+  // organization is unknown or not theirs: one the server knows always wins.
+  const [restored, setRestored] = useState<{ userId: string; organizationId: string } | null>(null)
+  // Memoized: a new object on every render would re-render every consumer of the shell's context.
+  const user = useMemo(
+    () => withRestoredOrganization(sessionUser, organizations, restored),
+    [sessionUser, organizations, restored],
+  )
   const { activeOrganization, reconciling } = useActiveOrganization(
     organizations,
     user?.activeOrganizationId,
-    { enabled: !!user, sessionKey: user?.id, afterSwitch: () => revalidator.revalidate() },
+    {
+      enabled: !!user,
+      sessionKey: user?.id,
+      afterSwitch: () => revalidator.revalidate(),
+      onRestored: (organizationId, userId) => setRestored({ userId, organizationId }),
+    },
   )
 
   if (!user) {
