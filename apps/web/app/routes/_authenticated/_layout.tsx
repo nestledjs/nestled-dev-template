@@ -2,17 +2,14 @@ import { useEffect, useRef } from 'react'
 import { Navigate, Outlet, useLoaderData, useLocation, useRevalidator } from 'react-router'
 import {
   GlobalContextProvider,
+  useActiveOrganization,
   useGlobalCtx,
   SubscriptionProvider,
   SubscriptionStatusBanner,
   EmulationBanner,
 } from '@nestled-template/web'
 import { WebUiFooter, WebUiHeader } from '@nestled-template/web-ui'
-import {
-  apolloLoader,
-  rememberActiveOrganization,
-  resolveActiveOrganization,
-} from '@nestled-template/shared/apollo'
+import { apolloLoader } from '@nestled-template/shared/apollo'
 import {
   MyOrganizationsWithMembers,
   type MyOrganizationsWithMembersQuery,
@@ -65,6 +62,17 @@ export default function AuthenticatedLayout() {
     void revalidator.revalidate()
   }, [recheckedUser, revalidator])
 
+  // The organization shown, and every request's `x-organization-id`: the server's active one (from
+  // Me, the re-checked one included), else the first, identical in the server render and the
+  // hydrating one. A choice this browser stored is restored after hydration, through the shared
+  // switch, and the loaders run again for it; organization-scoped content waits meanwhile.
+  const organizations = orgsData?.myOrganizations || []
+  const { activeOrganization, reconciling } = useActiveOrganization(
+    organizations,
+    user?.activeOrganizationId,
+    { enabled: !!user, afterSwitch: () => revalidator.revalidate() },
+  )
+
   if (!user) {
     if (recheck.status === 'rejected') {
       const returnUrl = `${location.pathname}${location.search}`
@@ -82,12 +90,6 @@ export default function AuthenticatedLayout() {
     return null
   }
 
-  const organizations = orgsData?.myOrganizations || []
-  // The server's active organization (from Me, the re-checked one included), else the stored one,
-  // and stored before the pages below send a request: the organization on screen is the one every
-  // request is sent for (`x-organization-id`).
-  const activeOrganization = resolveActiveOrganization(organizations, user.activeOrganizationId)
-  rememberActiveOrganization(activeOrganization?.id)
   const activeOrganizationMember =
     activeOrganization?.members?.find(member => member.userId === user?.id) || null
 
@@ -105,6 +107,35 @@ export default function AuthenticatedLayout() {
       permission => permission.subject === 'billing' && permission.action === 'read',
     )
 
+  // Held back while the active organization is being reconciled: the page and the subscription
+  // queries are organization-scoped, and would be sent for an organization about to change.
+  const content = reconciling ? <ActiveOrganizationPending /> : <Outlet />
+  const shell = isAdminRoute ? (
+    <div className="flex min-h-screen flex-col bg-zinc-950">
+      <EmulationBanner />
+      <main className="flex-1">{content}</main>
+    </div>
+  ) : (
+    <div className="flex flex-col min-h-screen">
+      <EmulationBanner />
+      <WebUiHeader
+        logo={'/logo.png'}
+        icon={'/icon.png'}
+        siteName={activeOrganization?.name || 'Demo Site'}
+        navigation={[]}
+        isAuthenticated={true}
+        userName={userName}
+        userEmail={primaryEmail}
+        userAvatarUrl={userAvatarUrl}
+        isSuperAdmin={user.isSuperAdmin}
+        canViewBilling={canViewBilling}
+      />
+      {reconciling ? null : <SubscriptionStatusBanner />}
+      <main className="flex-1 flex flex-col">{content}</main>
+      <WebUiFooter />
+    </div>
+  )
+
   return (
     <GlobalContextProvider
       user={user}
@@ -112,37 +143,16 @@ export default function AuthenticatedLayout() {
       activeOrganization={activeOrganization}
       activeOrganizationMember={activeOrganizationMember}
     >
-      <SubscriptionProvider>
-        {isAdminRoute ? (
-          <div className="flex min-h-screen flex-col bg-zinc-950">
-            <EmulationBanner />
-            <main className="flex-1">
-              <Outlet />
-            </main>
-          </div>
-        ) : (
-          <div className="flex flex-col min-h-screen">
-            <EmulationBanner />
-            <WebUiHeader
-              logo={'/logo.png'}
-              icon={'/icon.png'}
-              siteName={activeOrganization?.name || 'Demo Site'}
-              navigation={[]}
-              isAuthenticated={true}
-              userName={userName}
-              userEmail={primaryEmail}
-              userAvatarUrl={userAvatarUrl}
-              isSuperAdmin={user.isSuperAdmin}
-              canViewBilling={canViewBilling}
-            />
-            <SubscriptionStatusBanner />
-            <main className="flex-1 flex flex-col">
-              <Outlet />
-            </main>
-            <WebUiFooter />
-          </div>
-        )}
-      </SubscriptionProvider>
+      {reconciling ? shell : <SubscriptionProvider>{shell}</SubscriptionProvider>}
     </GlobalContextProvider>
+  )
+}
+
+/** Shown in place of the page while the active organization is being reconciled. */
+function ActiveOrganizationPending() {
+  return (
+    <div className="flex flex-1 items-center justify-center p-8" aria-busy="true">
+      <span className="sr-only">Loading your organization…</span>
+    </div>
   )
 }

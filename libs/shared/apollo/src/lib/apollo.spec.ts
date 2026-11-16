@@ -19,12 +19,14 @@ import {
   createOutageRetryLink,
   getStoredActiveOrganizationId,
   isApiOutageSignalled,
+  isActiveOrganizationAmbiguous,
   isAuthFailureDeferred,
   isOrganizationContextRequiredError,
   isQueryOperation,
   isRetryableConnectivityError,
   makeClient,
   ORGANIZATION_CONTEXT_REQUIRED_CODE,
+  resolveActiveOrganization,
   signalApiOutage,
   SKIP_AUTH_ERROR_REPORT_CONTEXT,
   storeActiveOrganizationId,
@@ -1791,6 +1793,30 @@ describe('the stored active organization', () => {
     expect(getStoredActiveOrganizationId()).toBeNull()
     await client.query({ query: ping, fetchPolicy: 'no-cache' })
     expect(fetchMock.mock.calls[1][1].headers['x-organization-id']).toBeUndefined()
+  })
+
+  it('is never read by resolveActiveOrganization, which a server render could not match', () => {
+    const organizations = [{ id: 'org-1' }, { id: 'org-2' }, { id: 'org-3' }]
+    storeActiveOrganizationId('org-2')
+
+    // Server-visible inputs only: the server's active one, else the first.
+    expect(resolveActiveOrganization(organizations, 'org-3')?.id).toBe('org-3')
+    expect(resolveActiveOrganization(organizations, null)?.id).toBe('org-1')
+    expect(resolveActiveOrganization(organizations, 'gone')?.id).toBe('org-1')
+    // A choice settled after hydration is passed in, and the server's active one still wins.
+    expect(resolveActiveOrganization(organizations, null, 'org-2')?.id).toBe('org-2')
+    expect(resolveActiveOrganization(organizations, 'org-3', 'org-2')?.id).toBe('org-3')
+    expect(resolveActiveOrganization(organizations, null, 'gone')?.id).toBe('org-1')
+    expect(resolveActiveOrganization([], null)).toBeNull()
+  })
+
+  it('leaves the organization open only with several and no server active one of them', () => {
+    const two = [{ id: 'org-1' }, { id: 'org-2' }]
+    expect(isActiveOrganizationAmbiguous(two, null)).toBe(true)
+    expect(isActiveOrganizationAmbiguous(two, 'gone')).toBe(true)
+    expect(isActiveOrganizationAmbiguous(two, 'org-2')).toBe(false)
+    expect(isActiveOrganizationAmbiguous([{ id: 'org-1' }], null)).toBe(false)
+    expect(isActiveOrganizationAmbiguous([], undefined)).toBe(false)
   })
 
   it('never throws when storage is blocked', () => {

@@ -745,8 +745,15 @@ export function storeActiveOrganizationId(organizationId: string | null): void {
  * The organization a signed-in shell shows, from the user's organizations:
  * 1. the server's active organization (`User.activeOrganizationId`, from Me), when the user is
  *    still a member of it;
- * 2. else the one this browser has stored (`getStoredActiveOrganizationId`), when still a member;
- * 3. else the first, only when nothing else is known; null with no organizations.
+ * 2. else `chosenOrganizationId`, when still a member: the organization this browser chose, once
+ *    a reconciliation after hydration has settled it (`useActiveOrganization` in
+ *    `@nestled-template/web`);
+ * 3. else the first; null with no organizations.
+ *
+ * It never reads browser storage by itself: a server render cannot see it, so a stored choice
+ * picked here while rendering made the hydrating render differ from the server's HTML (another
+ * organization's name and permissions). Pass only what both renders know; a stored choice is
+ * applied after hydration (see `isActiveOrganizationAmbiguous`).
  *
  * Whatever it returns must also be what the requests are sent for: a shell stores it
  * (`rememberActiveOrganization`) so the `x-organization-id` header, the server's answer and the UI
@@ -757,13 +764,29 @@ export function storeActiveOrganizationId(organizationId: string | null): void {
 export function resolveActiveOrganization<T extends { id: string }>(
   organizations: readonly T[],
   serverActiveOrganizationId: string | null | undefined,
-  storedOrganizationId: string | null = getStoredActiveOrganizationId(),
+  chosenOrganizationId: string | null = null,
 ): T | null {
   const member = (id: string | null | undefined) =>
     id ? organizations.find(organization => organization.id === id) : undefined
   return (
-    member(serverActiveOrganizationId) ?? member(storedOrganizationId) ?? organizations[0] ?? null
+    member(serverActiveOrganizationId) ?? member(chosenOrganizationId) ?? organizations[0] ?? null
   )
+}
+
+/**
+ * Whether the server's own information leaves the active organization open: the user has more
+ * than one organization and the server's active one (`User.activeOrganizationId`) is missing or no
+ * longer theirs. The server renders the first then, but this browser may have stored another
+ * (`getStoredActiveOrganizationId`). A shell renders organization-scoped content only once that is
+ * settled after hydration, on both sides the same way, so the server HTML and the first browser
+ * render agree and no query is sent for an organization the screen does not show.
+ */
+export function isActiveOrganizationAmbiguous(
+  organizations: readonly { id: string }[],
+  serverActiveOrganizationId: string | null | undefined,
+): boolean {
+  if (organizations.length < 2) return false
+  return !organizations.some(organization => organization.id === serverActiveOrganizationId)
 }
 
 /**
