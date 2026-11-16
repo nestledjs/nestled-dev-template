@@ -42,8 +42,8 @@ intent: >
   `cleanup()` first. `cleanup()` is idempotent, so the later automatic cleanup finds nothing to
   unmount. No individual spec needs its own `cleanup()` call any more; the ones that have one keep
   working. New apps/web/tests/setup-teardown-order.spec.tsx stubs a global, unstubs it in
-  afterEach, and checks in afterAll that the component saw the stub when it unmounted. It fails
-  without the setup change on every run.
+  afterEach, and checks right after the unstub that the component has unmounted and saw the
+  stub. It fails without the setup change on every run, and each test can run alone.
 
 
   3. .nestled-updates/upgrade-notes/README.md, "Before you publish a note": three authoring rules.
@@ -74,9 +74,9 @@ affectedPaths:
 verification:
   - node --test scripts/*.spec.mjs
   - pnpm exec nx test web --skip-nx-cache
-  - >-
-    for s in 1 2 3; do pnpm exec vitest run --config apps/web/vite.config.ts --sequence.shuffle
-    --sequence.seed=$s || break; done
+  - pnpm exec vitest run --config apps/web/vite.config.ts --sequence.shuffle --sequence.seed=1
+  - pnpm exec vitest run --config apps/web/vite.config.ts --sequence.shuffle --sequence.seed=2
+  - pnpm exec vitest run --config apps/web/vite.config.ts --sequence.shuffle --sequence.seed=3
   - pnpm exec nx run-many -t lint --skip-nx-cache
   - pnpm run nestled-doctor
 

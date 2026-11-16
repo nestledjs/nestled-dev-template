@@ -1,9 +1,10 @@
 import { render } from '@testing-library/react'
 import { useEffect } from 'react'
-import { afterAll, afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 // tests/setup.ts unmounts rendered trees before a spec's own vi.unstubAllGlobals() runs. Without
-// it, the spec's afterEach unstubs first and the unmount below meets the real (absent) global.
+// it, the spec's afterEach unstubs first, nothing has unmounted yet when it checks, and the later
+// unmount meets the real (absent) global.
 
 declare global {
   // eslint-disable-next-line no-var
@@ -19,15 +20,16 @@ function UsesStubbedGlobal() {
 
 describe('teardown order for a spec that unstubs globals in afterEach', () => {
   beforeEach(() => {
+    seenOnUnmount.length = 0
     vi.stubGlobal('teardownProbe', { name: 'stub' })
   })
 
+  // The usual spec teardown, then the check: by the time vi.unstubAllGlobals() returns, the tree
+  // has unmounted and its effect cleanup saw the stub. Each test checks its own unmount, so either
+  // can run alone (`-t`) or in any order.
   afterEach(() => {
     vi.unstubAllGlobals()
-  })
-
-  afterAll(() => {
-    expect(seenOnUnmount).toEqual(['stub', 'stub'])
+    expect(seenOnUnmount).toEqual(['stub'])
     expect(globalThis.teardownProbe).toBeUndefined()
   })
 

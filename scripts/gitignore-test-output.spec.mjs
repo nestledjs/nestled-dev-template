@@ -49,10 +49,14 @@ const git = args => ['-c', 'core.excludesFile=/dev/null', ...args]
 export function notIgnored(paths, cwd = root) {
   if (paths.length === 0) return []
   // One git call for every path; exit 1 only means none of them is ignored.
+  const input = paths.join('\0') + '\0'
   const result = spawnSync('git', git(['check-ignore', '--no-index', '--stdin', '-z']), {
     cwd,
-    input: paths.join('\0') + '\0',
+    input,
     encoding: 'utf8',
+    // Git echoes each ignored path, so the output is at most the input: size the buffer for it,
+    // not spawnSync's 1 MiB default, which a repository with many folders would exceed.
+    maxBuffer: Buffer.byteLength(input) + 1024 * 1024,
   })
   if (result.status !== 0 && result.status !== 1) {
     throw new Error(`git check-ignore failed: ${result.stderr || result.error}`)
