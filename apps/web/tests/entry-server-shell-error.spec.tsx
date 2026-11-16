@@ -2,6 +2,7 @@
 import type { ReactNode } from 'react'
 import {
   createRequestHandler,
+  isRouteErrorResponse,
   type LoaderFunctionArgs,
   Outlet,
   useLoaderData,
@@ -18,6 +19,7 @@ import {
   recordedLoaderCause,
   routeErrorOutcome,
   SSR_API_SETTLE_MS,
+  shellErrorForErrorPage,
   shellErrorOutcome,
 } from '../app/entry.server'
 import * as rootModule from '../app/root'
@@ -731,15 +733,15 @@ describe('server render sign-out decisions with the whole request in view', () =
       expect(shellErrorOutcome(redacted, 'unavailable', true)).toBe('unavailable')
       expect(shellErrorOutcome(redacted, 'unauthenticated', true)).toBe('force-logout')
       expect(shellErrorOutcome(new Error('A render bug'), undefined, true)).toBe('error')
-      expect(
-        shellErrorOutcome(
-          new CombinedGraphQLErrors({
-            data: null,
-            errors: [{ message: 'x', extensions: { code: 'ORGANIZATION_CONTEXT_REQUIRED' } }],
-          }),
-          undefined,
-        ),
-      ).toBe('organization-required')
+      // The refusal as the shell error itself goes through the same precedence.
+      const refusal = new CombinedGraphQLErrors({
+        data: null,
+        errors: [{ message: 'x', extensions: { code: 'ORGANIZATION_CONTEXT_REQUIRED' } }],
+      })
+      expect(shellErrorOutcome(refusal, undefined)).toBe('organization-required')
+      expect(shellErrorOutcome(refusal, 'other')).toBe('organization-required')
+      expect(shellErrorOutcome(refusal, 'unavailable')).toBe('unavailable')
+      expect(shellErrorOutcome(refusal, 'unauthenticated')).toBe('force-logout')
     })
   })
 
@@ -757,7 +759,20 @@ describe('server render sign-out decisions with the whole request in view', () =
 
       expect(response.headers.get('Location')).toBeNull()
       expect(clearsTheCookie(response)).toBe(false)
-      expect(response.status).toBe(401)
+      // Nor does the page carry a 401 route error to the browser, whose root error boundary would
+      // read it as the API rejecting the session and go to /force-logout after hydration.
+      expect(response.status).toBe(500)
+      expect(await response.text()).not.toMatch(/ErrorResponse[^\]]*401/)
+    })
+
+    it('passes a render 401 on as a plain error, and keeps every other status', () => {
+      const thrown401 = shellErrorForErrorPage(new Response(null, { status: 401 }))
+      expect(thrown401).toBeInstanceOf(Error)
+      expect(isRouteErrorResponse(thrown401)).toBe(false)
+      const notFound = new Response(null, { status: 404 })
+      expect(shellErrorForErrorPage(notFound)).toBe(notFound)
+      const bug = new Error('A render bug')
+      expect(shellErrorForErrorPage(bug)).toBe(bug)
     })
   })
 })

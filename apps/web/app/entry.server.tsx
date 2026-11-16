@@ -102,17 +102,31 @@ export function shellErrorOutcome(
 ): 'force-logout' | 'unavailable' | 'organization-required' | 'error' {
   // Apollo's redacted stream error says nothing about the cause by itself.
   let ownCause: ApiFailureCause | undefined
+  let refusedForOrganization = organizationRequired
   if (!isRedactedApolloStreamError(error)) {
     ownCause = classifyApiFailure(error)
-    if (ownCause === 'other') {
-      return isOrganizationContextRequired(error) ? 'organization-required' : 'error'
-    }
+    // The organization refusal is an API failure like the others: it goes through the same
+    // precedence below (an outage, or a clean 401, recorded in the request still outranks it).
+    if (isOrganizationContextRequired(error)) refusedForOrganization = true
+    else if (ownCause === 'other') return 'error'
   }
   // Nothing known at all (a redacted error, nothing recorded): fail safe, keep the session.
   const effectiveCause = mergeApiFailureCauses(ownCause, cause) ?? 'unavailable'
   if (effectiveCause === 'unavailable') return 'unavailable'
   if (effectiveCause === 'unauthenticated') return 'force-logout'
-  return organizationRequired ? 'organization-required' : 'error'
+  return refusedForOrganization ? 'organization-required' : 'error'
+}
+
+/**
+ * The error the error page is rendered for after a shell error that is not an API failure. A
+ * component that throws a `Response` would otherwise reach the error page as a route error response
+ * with that status, and a 401 there reads, in the browser's root error boundary, as the API
+ * rejecting the session. A render's own 401 says nothing about the session, so it is passed on as a
+ * plain error (the generic error page, a 500); any other status is kept.
+ */
+export function shellErrorForErrorPage(error: unknown): unknown {
+  const status = error instanceof Response || isRouteErrorResponse(error) ? error.status : undefined
+  return status === 401 ? new Error('A render threw a 401 response') : error
 }
 
 const GATEWAY_UNAVAILABLE_STATUSES = new Set([502, 503, 504])
@@ -368,9 +382,10 @@ export default function handleRequest(
             reject(organizationRequiredResponse()) // NOSONAR: a Response on purpose, as above
           } else {
             // React Router renders the error page for this by calling `handleRequest` again with
-            // the shell error as the route error. That render must not decide again.
+            // the shell error as the route error. That render must not decide again, and the page
+            // must not carry a render's 401 to the browser as the API's (shellErrorForErrorPage).
             servedErrorResponse.add(request)
-            reject(error)
+            reject(shellErrorForErrorPage(error))
           }
         },
         onError(error: unknown) {

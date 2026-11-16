@@ -384,6 +384,14 @@ describe('root error boundary for a network error', () => {
 
       expect(assign).toHaveBeenCalledWith('/force-logout?return_url=%2Fmembers')
     })
+    it("does not log out over the error page served after a render's own 401", () => {
+      // The server passes a render's 401 on as a plain error (shellErrorForErrorPage), which the
+      // browser hydrates as React Router's sanitized error.
+      const assign = renderWithAssign(new Error('Unexpected Server Error'))
+
+      expect(screen.getByText('Something went wrong')).toBeInTheDocument()
+      expect(assign).not.toHaveBeenCalled()
+    })
   })
 
   it('labels the button "Try again", not "Refresh Page"', () => {

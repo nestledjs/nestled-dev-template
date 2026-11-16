@@ -30,7 +30,8 @@ intent: >
   `ORGANIZATION_CONTEXT_REQUIRED` now gets the organization picker (403, cookie kept) instead of a
   500 (part 3). (d) A Me 401 that arrived while outage evidence stood is retried instead of
   rendering the user as signed out, and the error page after a failed shell render no longer
-  decides a sign-out a second time (part 4). Nothing here logs out in a case that did not log out
+  decides a sign-out a second time; a render that throws a 401 Response gets the generic error page
+  (500) instead of a 401 page the browser read as a sign-out (part 4). Nothing here logs out in a case that did not log out
   before.
 
 
@@ -119,8 +120,9 @@ intent: >
   - apollo-loader.ts: the record keeps `organizationRequired` (a flag, never the error or its
     message) from `onApiFailure`'s error; new `ssrOrganizationRequired(loaderData)`.
   - entry.server.tsx: `shellErrorOutcome(error, cause, organizationRequired = false)` returns
-    `organization-required` when the shell error is itself that refusal, or when nothing outranks
-    the recorded flag (an outage is still `unavailable`, a clean 401 still `force-logout`; a plain
+    `organization-required` when the shell error is itself that refusal or the recorded flag is set,
+    and nothing in the request outranks it (a recorded outage is still `unavailable`, a recorded
+    clean 401 still `force-logout`, whether the refusal is the shell error or recorded; a plain
     render bug is still `error`). `onShellError` rejects with `organizationRequiredResponse()` and
     marks the request in `servedErrorResponse`; the root ErrorBoundary already renders the picker
     for it.
@@ -142,12 +144,17 @@ intent: >
     the shell error itself (the `error` outcome), not only with a Response. React Router renders the
     error page by calling `handleRequest` again with that error as the route error, and the loader
     check then judged it as a loader's error, without the evidence the shell decision had: a shell
-    error carrying a 401 status (a thrown 401 Response, for one) signed the user out.
+    error carrying a 401 status (a thrown 401 Response, for one) signed the user out. The shell
+    error is also passed through new `shellErrorForErrorPage(error)` first: a render's own 401 (a
+    `Response` or route error response with status 401) becomes a plain Error, so the error page is
+    the generic one (a 500) rather than a 401 route error that the browser's root error boundary,
+    after hydration, would read as the API rejecting the session. Any other status is kept.
   Affected paths: apps/web/app/app.tsx, apps/web/app/entry.server.tsx,
   apps/web/tests/api-availability.spec.tsx, apps/web/tests/entry-server-shell-error.spec.tsx.
   Verification: `pnpm exec nx test web --skip-nx-cache` ("keeps the session when the evidence ended
-  before the boundary judged the 401"; "the second render after a shell error": the error page,
-  status 401, no Set-Cookie and no Location, where it was a 302 to /force-logout).
+  before the boundary judged the 401"; "the second render after a shell error": the generic error page,
+  status 500 with no 401 route error in the page, no Set-Cookie and no Location, where it was a 302
+  to /force-logout; "does not log out over the error page served after a render's own 401").
 
 why: >
   Owner rule of 2026-11-11 and 2026-11-12, owner-approved for the whole fleet on 2026-11-16. The
