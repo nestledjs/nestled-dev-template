@@ -1,4 +1,5 @@
 import {
+  ForbiddenException,
   Injectable,
   Logger,
   ServiceUnavailableException,
@@ -9,7 +10,12 @@ import { Request } from 'express'
 import { ExtractJwt, Strategy } from 'passport-jwt'
 import { JwtService } from '@nestjs/jwt'
 import { User } from '@nestled-template/api/core/models'
-import { requestCookieValues, selectSessionToken } from '@nestled-template/api/utils'
+import {
+  API_ERROR_CODES,
+  forbiddenWithCode,
+  requestCookieValues,
+  selectSessionToken,
+} from '@nestled-template/api/utils'
 import { AuthService } from '../auth.service'
 import { ApiTokensService } from '../../api-tokens/api-tokens.service'
 import type { AuthTokenClaims } from '../auth-token-claims'
@@ -26,8 +32,13 @@ type TokenExtractor = (req: Request) => string | null
 
 type ValidatedApiToken = NonNullable<Awaited<ReturnType<ApiTokensService['validateApiToken']>>>
 
-/** A refusal of the token: `fail` with this message and status. */
-type ApiTokenRefusal = { rejected: string; status: 401 | 403 }
+/**
+ * A refusal. `rejected`: the credential is no good (unknown, revoked, expired, its owner gone or
+ * disabled), a 401 through passport's `fail`. `forbidden`: the credential is valid but not allowed
+ * here, a 403 the client must not read as "drop the token". It goes through passport's `error`,
+ * because AuthGuard turns every `fail` into an UnauthorizedException whatever status it carries.
+ */
+type ApiTokenRefusal = { rejected: string } | { forbidden: ForbiddenException }
 
 type ApiTokenVerdict = ApiTokenRefusal | { user: User; result: ValidatedApiToken }
 
@@ -154,7 +165,10 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     }
 
     if ('rejected' in verdict) {
-      return this.fail({ message: verdict.rejected }, verdict.status)
+      return this.fail({ message: verdict.rejected }, 401)
+    }
+    if ('forbidden' in verdict) {
+      return this.error(verdict.forbidden)
     }
 
     const { user, result } = verdict
@@ -173,14 +187,21 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   private async checkApiToken(req: ApiTokenRequest, token: string): Promise<ApiTokenVerdict> {
     const result = await this.apiTokensService.validateApiToken(token)
     if (!result) {
-      return { rejected: 'Invalid or expired API token', status: 401 }
+      return { rejected: 'Invalid or expired API token' }
     }
 
     // A token bound to a resource (RFC 8707) — the MCP endpoint, for tokens MCP OAuth issues —
-    // is accepted only there (ApiTokenAuthMiddleware), never by the rest of the API.
+    // is accepted only there (ApiTokenAuthMiddleware), never by the rest of the API. The token
+    // itself is valid, so this is a 403: a 401 would tell the client to throw away a token that
+    // still works at the MCP endpoint.
     if (result.resource) {
       this.logger.warn(`API token ${result.tokenId} is bound to ${result.resource}; refused here`)
-      return { rejected: 'API token is not valid for this resource', status: 401 }
+      return {
+        forbidden: forbiddenWithCode(
+          API_ERROR_CODES.API_TOKEN_RESOURCE_MISMATCH,
+          'API token is not valid for this resource',
+        ),
+      }
     }
 
     const scopeRefusal = this.bindOrganizationScope(req, result)
@@ -190,7 +211,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
     const user = await this.auth.validateUser(result.userId)
     if (!user || user.isActive === false) {
-      return { rejected: 'User not found for API token', status: 401 }
+      return { rejected: 'User not found for API token' }
     }
 
     return { user, result }
@@ -219,7 +240,14 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       this.logger.warn(
         `API token ${result.tokenId} is scoped to organization ${result.organizationId} but the request asked for ${requestedOrganizationId}`,
       )
-      return { rejected: 'API token is not scoped to the requested organization', status: 403 }
+      // A 403 with a code, not a 401: the token is valid for its own organization, and an
+      // API-token client (MCP, scripts) must not drop it.
+      return {
+        forbidden: forbiddenWithCode(
+          API_ERROR_CODES.API_TOKEN_ORGANIZATION_MISMATCH,
+          'API token is not scoped to the requested organization',
+        ),
+      }
     }
 
     // Assigned unconditionally, and that is deliberate — it does two jobs. When the header was
