@@ -860,13 +860,16 @@ describe('makeClient', () => {
     )
     const client = makeClient(undefined, { apiUrl: 'https://api.example.com/graphql' })
 
-    await client.mutate({
-      mutation: gql`
-        mutation UpdatePrivateData {
-          updatePrivateData
-        }
-      `,
-    })
+    // The refusal goes back to the caller (it rejects under the 'none' mutation default).
+    await expect(
+      client.mutate({
+        mutation: gql`
+          mutation UpdatePrivateData {
+            updatePrivateData
+          }
+        `,
+      }),
+    ).rejects.toThrow('Forbidden')
 
     expect(forbiddenHandler).not.toHaveBeenCalled()
     globalThis.removeEventListener(APOLLO_ACCESS_FORBIDDEN_EVENT, forbiddenHandler)
