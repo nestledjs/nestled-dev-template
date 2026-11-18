@@ -25,7 +25,8 @@ intent: >
   web service (owner action).
 
 
-  Behaviour changes, plainly: (a) signing in, registering, and starting or ending an emulation forget
+  Behaviour changes, plainly: (a) signing in, registering (on their own pages and on the invitation page), and starting or
+  ending an emulation forget
   the organization stored for `x-organization-id` (part 1); (b) the login form forgets it when it opens
   from a rejected session (`expired=1`), which covers /force-logout (part 2); (c) every sign-out the web server performs expires the session
   cookie both for the cookie domain and host-only, and the web server knows the domain from
@@ -43,6 +44,9 @@ intent: >
   apps/web/app/routes/_public/login.tsx calls `storeActiveOrganizationId(null)` before it navigates
   after a password sign-in and after the two-factor step (`signedIn()`);
   apps/web/app/routes/_public/register.tsx after a registration that returns a token;
+  apps/web/app/routes/accept-invitation.tsx after its password sign-in (before it accepts the
+  invitation) and after its registration, since an invitation link opened after a session expired
+  never passes the login form;
   apps/web/app/routes/admin/users/_index.tsx in the emulate mutation's `onCompleted`, before
   `location.href` moves to the emulated session; libs/web/src/lib/components/emulation-banner.tsx in
   the end-emulation `onCompleted`, before going back to the admin's session. A failed sign-in keeps
@@ -52,7 +56,7 @@ intent: >
   `signedIn()`.
   - An app with OAuth provider buttons: forget the organization in the button's click handler,
     before the browser leaves for the provider (the success route cannot).
-  - An app whose verify-email, magic-link, invitation-accept or OAuth flow signs the user in on the
+  - An app whose verify-email, magic-link or OAuth flow signs the user in on the
     client: forget the organization there too, before navigating.
   - An app that keeps the organization somewhere else (user-scoped storage, an httpOnly cookie the
     API sets, a jotai atom): clear that on every sign-in instead; with an httpOnly cookie, the API
@@ -61,7 +65,7 @@ intent: >
     not-applicable.
   - An app with no emulation: skip those two sites.
   Verification: `pnpm exec nx test web --skip-nx-cache` (tests/routes/_public/sign-in-forgets-organization.spec.tsx:
-  password, two-factor, failed sign-in, register; admin/users "forgets the admin's stored organization
+  password, two-factor, failed sign-in, register, invitation sign-in and registration; admin/users "forgets the admin's stored organization
   before switching to the emulated session"); `pnpm exec nx test web-components --skip-nx-cache`
   (emulation-banner.spec.tsx).
 
@@ -181,6 +185,7 @@ why: >
 affectedPaths:
   - apps/web/app/routes/_public/login.tsx
   - apps/web/app/routes/_public/register.tsx
+  - apps/web/app/routes/accept-invitation.tsx
   - apps/web/app/routes/admin/users/_index.tsx
   - apps/web/app/routes/force-logout.tsx
   - apps/web/app/session-cookie.ts

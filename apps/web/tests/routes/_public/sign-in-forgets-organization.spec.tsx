@@ -7,10 +7,17 @@ import {
   getStoredActiveOrganizationId,
   storeActiveOrganizationId,
 } from '@nestled-template/shared/apollo'
-import { Complete2FaLogin, Login, Register } from '@nestled-template/shared/sdk'
+import {
+  AcceptOrganizationInvitation,
+  Complete2FaLogin,
+  Login,
+  Register,
+  RegisterWithInvitation,
+} from '@nestled-template/shared/sdk'
 import { createTestRouter } from '../../helpers/createTestRouter'
 import LoginPage from '../../../app/routes/_public/login'
 import RegisterPage from '../../../app/routes/_public/register'
+import AcceptInvitationPage from '../../../app/routes/accept-invitation'
 
 // A new session must not be sent for the organization the browser stored for whoever was signed in
 // before (`x-organization-id`): a shared browser, or a session that ended without a logout (it
@@ -18,7 +25,26 @@ import RegisterPage from '../../../app/routes/_public/register'
 // forgets the stored organization, and so does the login form opened from a rejected session
 // (`expired=1`); any other visit to the form keeps it.
 
-vi.mock('@apollo/client/react', () => ({ useMutation: vi.fn() }))
+vi.mock('@apollo/client/react', () => ({
+  useMutation: vi.fn(),
+  // The invitation page reads its invitation; nothing else here queries.
+  useQuery: () => ({
+    data: {
+      getInvitationDetails: {
+        id: 'inv-1',
+        token: 'invitation-token',
+        email: 'invitee@example.com',
+        organizationName: 'Invited Org',
+        organizationId: 'invited-org',
+        inviterName: 'Inviter',
+        roleName: 'Member',
+        expiresAt: new Date(Date.now() + 86_400_000).toISOString(),
+        status: 'PENDING',
+      },
+    },
+    loading: false,
+  }),
+}))
 
 vi.mock('@nestled-template/web', () => ({
   AuthLayout: ({ children, title }: { children: React.ReactNode; title: string }) => (
@@ -28,6 +54,7 @@ vi.mock('@nestled-template/web', () => ({
     </div>
   ),
   turnstileSiteKey: () => undefined,
+  useGlobalCtx: () => ({ user: null }),
   TurnstileWidget: () => null,
 }))
 
@@ -186,6 +213,47 @@ describe('signing in forgets the organization stored for the previous user', () 
     await userEvent.click(await screen.findByRole('button', { name: 'Create Account' }))
 
     await screen.findByText('Dashboard')
+    await waitFor(() => expect(getStoredActiveOrganizationId()).toBeNull())
+  })
+
+  it('signing in on the invitation page forgets it before the invitation is accepted', async () => {
+    storeActiveOrganizationId(PREVIOUS_USERS_ORGANIZATION)
+    // An invitation link opened straight after a previous session expired skips the login form.
+    let storedWhenAccepting: string | null = 'not accepted'
+    answerMutations(
+      new Map<unknown, MutationAnswer>([
+        [Login, () => ({ login: { user: { id: 'user-2' } } })],
+        [
+          AcceptOrganizationInvitation,
+          () => {
+            storedWhenAccepting = getStoredActiveOrganizationId()
+            return { acceptOrganizationInvitation: { success: true } }
+          },
+        ],
+      ]),
+    )
+    renderAt('/accept-invitation?token=invitation-token', AcceptInvitationPage)
+
+    await userEvent.click(await screen.findByRole('button', { name: 'Login' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Login & Accept Invitation' }))
+
+    await waitFor(() => expect(storedWhenAccepting).toBeNull())
+    expect(getStoredActiveOrganizationId()).toBeNull()
+  })
+
+  it('registering on the invitation page forgets it', async () => {
+    storeActiveOrganizationId(PREVIOUS_USERS_ORGANIZATION)
+    answerMutations(
+      new Map<unknown, MutationAnswer>([
+        [RegisterWithInvitation, () => ({ registerWithInvitation: { user: { id: 'user-2' } } })],
+      ]),
+    )
+    renderAt('/accept-invitation?token=invitation-token', AcceptInvitationPage)
+
+    await userEvent.click(
+      await screen.findByRole('button', { name: 'Sign Up & Accept Invitation' }),
+    )
+
     await waitFor(() => expect(getStoredActiveOrganizationId()).toBeNull())
   })
 })
