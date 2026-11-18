@@ -587,7 +587,9 @@ in the built image, with the service's runtime variables, before the new contain
 traffic. A failing migration aborts the deploy and the previous version keeps running. The `api`
 service also carries a Railway health check on `/api/uptime` (300s) so a container that fails to
 boot never takes traffic. Neither `build:api` nor `start:api` touches the database, and the
-`web` service has no database URL and no pre-deploy.
+`web` service has no database URL and no pre-deploy. The `web` service's health check is
+`/healthz`: it answers 200 `ok` from the web server alone (no API call, no session work, no
+layout loader), so a web deploy does not wait on, or fail with, the API.
 
 These are service settings in Railway, not files in the repo. Railway reads nothing from the
 repository for them: do not add a `railway.json` (config-as-code is deprecated, is not read for
@@ -607,6 +609,7 @@ Infrastructure-as-Code file to apply. Set them in the Railway dashboard and chec
 3. `web` service:
    - build command `npm run build:web`, start command `npm run start:web`;
    - public domain on port `3000` (`PORT=3000`);
+   - health check path `/healthz` (beside the api's `/api/uptime`);
    - no pre-deploy command and no database URL.
 4. `api` variables: `DATABASE_URL` and `REDIS_URL` / `REDIS_PASSWORD` (referenced from the
    `Postgres` and `Redis` services), `JWT_SECRET`, `NODE_ENV`, `HOST`, `ALLOWED_ORIGINS`,
