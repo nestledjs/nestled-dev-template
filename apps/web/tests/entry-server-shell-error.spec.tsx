@@ -14,6 +14,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { CombinedGraphQLErrors, gql, ServerError } from '@apollo/client'
 import { useReadQuery, type QueryRef } from '@apollo/client/react'
 import { apolloLoader, makeClient } from '@nestled-template/shared/apollo'
+import { Me } from '@nestled-template/shared/sdk'
 import * as entryServer from '../app/entry.server'
 import {
   recordedLoaderCause,
@@ -786,6 +787,62 @@ describe('server render sign-out decisions with the whole request in view', () =
           recordedLoaderCause({ root: { serviceUnavailable: true } }),
         ),
       ).toBe('unavailable')
+    })
+  })
+
+  // The template's root loader returns its Me preload unawaited, so Me's 401 surfaces in the
+  // render. An app that awaits Me in the root loader meets it in the loader instead, and the race
+  // specs above must hold for it too: its own 401 is judged with the whole request in view.
+  describe('a root loader that awaits Me', () => {
+    const rootAwaitsMe = async () => {
+      try {
+        await makeClient(undefined, { apiUrl: 'http://localhost:3000/graphql' }).query({
+          query: Me,
+          fetchPolicy: 'network-only',
+          errorPolicy: 'none',
+        })
+        return { theme: 'dark' }
+      } catch (error) {
+        return rootModule.privateRouteMeFailure(error, 'dark')
+      }
+    }
+
+    it("keeps the session and serves the recovering 503 when its 401 comes before another loader's 503", async () => {
+      // Signing out from the root loader on its own 401 missed the members loader's outage.
+      answer({ Me: unauthorized, MembersData: later(50, proxy503) })
+
+      const response = await reloadSignedIn(
+        '/members/dashboard',
+        build(undefined, preloadsQuery, { rootLoader: rootAwaitsMe }),
+      )
+
+      expectRecovering503(response, await response.text())
+    })
+
+    it('still signs out through /force-logout on its 401 once the other calls are answered', async () => {
+      answer({ Me: unauthorized, MembersData: later(50, json(200, { data: { membersData: 1 } })) })
+
+      const response = await reloadSignedIn(
+        '/members/dashboard',
+        build(undefined, preloadsQuery, { rootLoader: rootAwaitsMe }),
+      )
+
+      expect(response.status).toBe(302)
+      expect(response.headers.get('Location')).toBe(
+        `/force-logout?return_url=${encodeURIComponent('/members/dashboard')}`,
+      )
+      expect(clearsTheCookie(response)).toBe(true)
+    })
+
+    it("keeps the session when a child loader's 401 comes beside the root's Me outage", async () => {
+      answer({ Me: later(50, proxy503), MembersData: unauthorized })
+
+      const response = await reloadSignedIn(
+        '/members/dashboard',
+        build(undefined, awaitsQuery, { rootLoader: rootAwaitsMe }),
+      )
+
+      expectRecovering503(response, await response.text())
     })
   })
 
