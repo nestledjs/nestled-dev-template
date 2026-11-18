@@ -224,3 +224,5 @@ agentHints:
     db-update), move them to the same major as compose. Check the tag exists on your mirror.
   - >-
     Part 7: comment only; if your project does run a pooler, keep your own description.
+
+applyAfter: [2026-11-19-mutation-errorpolicy-none]
