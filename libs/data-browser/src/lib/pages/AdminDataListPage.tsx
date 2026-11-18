@@ -439,7 +439,7 @@ export function AdminDataListPage({ modelName: propModelName }: AdminDataListPag
   })
 
   // Comprehensive data validation and error handling
-  const { validatedItems, validatedPagination, dataError } = useMemo(() => {
+  const { validatedItems, validatedPagination } = useMemo(() => {
     if (!data) {
       return {
         validatedItems: [],

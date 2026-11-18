@@ -45,7 +45,7 @@ function mutationErrorMessage(result: unknown): string | null {
 // Validation functions moved into component to access databaseModels from context
 
 // Check if user has access to this data type (basic implementation)
-function checkAccess(dataType: string): boolean {
+function checkAccess(_dataType: string): boolean {
   // For now, allow access to all data types in admin
   // In a real app, this would check user permissions
   return true
