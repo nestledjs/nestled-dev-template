@@ -1,5 +1,5 @@
 import { Logger } from '@nestjs/common'
-import { JwtService } from '@nestjs/jwt'
+import { JsonWebTokenError, JwtService } from '@nestjs/jwt'
 import { rawHeaderCookieValues, selectSessionToken } from '@nestled-template/api/utils'
 
 type WsContextExtra = {
@@ -8,14 +8,20 @@ type WsContextExtra = {
   }
 }
 
-/** The JWT_SECRET signature check, or null when the token (or the configuration) does not verify. */
+/**
+ * The JWT_SECRET signature check, or null when the token (or the configuration) does not verify.
+ * Only a credential failure (`JsonWebTokenError`, which covers a bad signature, a malformed token,
+ * `TokenExpiredError` and `NotBeforeError`) is null; anything else is a server failure and is
+ * rethrown, so authorizeWsConnection answers it with 1013, not 4401.
+ */
 function verifyWithJwtSecret(token: string): object | null {
   const secret = process.env['JWT_SECRET']
   if (!secret) return null
   try {
     return new JwtService({ secret }).verify<object>(token)
-  } catch {
-    return null
+  } catch (error) {
+    if (error instanceof JsonWebTokenError) return null
+    throw error
   }
 }
 

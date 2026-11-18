@@ -136,7 +136,10 @@ intent: >
   - no session cookie, or one whose signature or expiry does not verify: closes the socket with
     4401 `Unauthorized` (graphql-ws's own code; the client does not retry it);
   - `JWT_SECRET` unset or any unexpected throw: logs it and closes with 1013 `Try Again Later`
-    (graphql-ws clients retry it; it says nothing about the session);
+    (graphql-ws clients retry it; it says nothing about the session). `verifyWithJwtSecret` now
+    answers null only for a `JsonWebTokenError` (bad signature, malformed, expired, not yet
+    valid) and rethrows anything else, so an unexpected verifier failure is 1013, also during
+    duplicate-cookie selection;
   - it closes `extra.socket` itself (graphql-ws's recipe for a custom code) and returns `false`;
     without a socket in `extra` (another transport) the `false` still refuses, as 4403.
   Revocation is not checked at connect: every operation still goes through the guards.
@@ -149,7 +152,8 @@ intent: >
   libs/api/core/feature/src/lib/api-core-feature.module.ts.
   Verification: `pnpm exec nx test api-core-feature --skip-nx-cache` (ws-session-token.spec.ts,
   through graphql-ws's `makeServer` and a `connection_init`: no cookie and a forged cookie close
-  with 4401, no `JWT_SECRET` with 1013, a verifying session is admitted with no close).
+  with 4401, no `JWT_SECRET` and a verifier throwing a plain `Error` (one cookie or duplicates)
+  with 1013, a verifying session is admitted with no close).
 
 
   6. API: GraphQL stack traces only on a local opt-in.

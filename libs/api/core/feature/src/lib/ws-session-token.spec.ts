@@ -119,6 +119,23 @@ describe('authorizeWsConnection', () => {
     await expect(closeCodeFor('__session=anything')).resolves.toBe(WS_CLOSE_TRY_AGAIN_LATER)
   })
 
+  // An unexpected verifier failure is the server's, not the session's: 1013, not the fatal 4401.
+  // Also through duplicate-cookie selection, which verifies each candidate.
+  it.each([
+    ['one cookie', (token: string) => `__session=${token}`],
+    ['duplicate cookies', (token: string) => `__session=${token}; __session=${token}x`],
+  ])('closes with 1013 when the verifier throws a plain Error (%s)', async (_label, header) => {
+    const session = new JwtService({ secret: 'test-secret' }).sign({ userId: 'u1' })
+    const verify = jest.spyOn(JwtService.prototype, 'verify').mockImplementation(() => {
+      throw new Error('crypto backend unavailable')
+    })
+    try {
+      await expect(closeCodeFor(header(session))).resolves.toBe(WS_CLOSE_TRY_AGAIN_LATER)
+    } finally {
+      verify.mockRestore()
+    }
+  })
+
   it('refuses without a socket to close (another transport)', () => {
     expect(authorizeWsConnection({ request: { rawHeaders: [] } })).toBe(false)
   })
