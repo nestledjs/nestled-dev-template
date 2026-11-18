@@ -35,7 +35,7 @@ export function AdminBreadcrumbs({
     )
   }
 
-  const renderBreadcrumbItem = (item: BreadcrumbItem, index: number, isLast: boolean) => {
+  const renderBreadcrumbItem = (item: BreadcrumbItem, index: number, _isLast: boolean) => {
     const content =
       item.href && !item.isActive ? (
         <Link to={item.href} className="text-sm font-medium text-gray-500 hover:text-gray-700">

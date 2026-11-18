@@ -48,7 +48,7 @@ describe('Admin Users Management Page', () => {
 
     // Default mock for useMutation that calls onCompleted/onError callbacks
     mockUseMutation.mockImplementation((_document, options) => {
-      const mutationFn = vi.fn().mockImplementation(async args => {
+      const mutationFn = vi.fn().mockImplementation(async () => {
         try {
           const result = { data: {} }
           if (options?.onCompleted) {
