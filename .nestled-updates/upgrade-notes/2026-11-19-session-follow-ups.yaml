@@ -96,8 +96,9 @@ intent: >
   entry.server.tsx `forceLogoutResponse`. docs/template/README.md and .env.example say the web
   service needs the API's value.
   Owner action: on each deploy whose API sets `API_COOKIE_DOMAIN` (split web and API subdomains),
-  set the web service's `VITE_COOKIE_DOMAIN` to the API's value; on Railway use the reference
-  `${{api.API_COOKIE_DOMAIN}}` (adjust `api` to the API service's name). Redeploy the web service.
+  set `API_COOKIE_DOMAIN` on the web service too, the same name the API uses; on Railway use the
+  reference `${{api.API_COOKIE_DOMAIN}}` (adjust `api` to the API service's name). Redeploy the web
+  service. `VITE_COOKIE_DOMAIN` on the web service also works, and wins if both are set.
   - An app whose sign-out cookie code lives elsewhere (a `/logout` server action, a session helper,
     the root boundary): use the helper there too; search for `Expires=Thu, 01 Jan 1970` and
     `Set-Cookie` in apps/web.

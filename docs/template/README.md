@@ -144,14 +144,15 @@ API are deployed on different subdomains (e.g. `app.example.com` +
 API_COOKIE_DOMAIN=.example.com
 ```
 
-On such a split-subdomain deploy the web service **must** know the same value,
-as `VITE_COOKIE_DOMAIN` or as `API_COOKIE_DOMAIN` itself (the web server reads
-`VITE_COOKIE_DOMAIN` first, then `API_COOKIE_DOMAIN`). On Railway, reference
-the API's variable from the web service:
+On such a split-subdomain deploy the web service **must** know the same value.
+Set `API_COOKIE_DOMAIN` on the web service too, the same name the API uses. On
+Railway, reference the API's variable from the web service:
 
 ```bash
-VITE_COOKIE_DOMAIN=${{api.API_COOKIE_DOMAIN}}
+API_COOKIE_DOMAIN=${{api.API_COOKIE_DOMAIN}}
 ```
+
+`VITE_COOKIE_DOMAIN` also works, and wins if both are set on the web service.
 
 Every sign-out the web server performs (`/force-logout`, the server render's
 sign-out on a rejected session, the root loader's redirect to `/login`) expires

@@ -4,8 +4,8 @@
  * is given it too). Undefined for a host-only cookie: nothing set, `localhost`, or an IP address,
  * which the API never uses as a cookie domain either.
  *
- * The web service must be given the same value as the API (on Railway, set it to
- * `${{api.API_COOKIE_DOMAIN}}`): a cookie the API set for the parent domain survives a sign-out
+ * The web service must be given the same value as the API: set `API_COOKIE_DOMAIN` on it too (on
+ * Railway, `${{api.API_COOKIE_DOMAIN}}`): a cookie the API set for the parent domain survives a sign-out
  * that only expires the host-only one, and the user is signed straight back in.
  */
 export function sessionCookieDomain(): string | undefined {
