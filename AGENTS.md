@@ -619,6 +619,17 @@ Infrastructure-as-Code file to apply. Set them in the Railway dashboard and chec
 5. `web` variables: `PORT`, `VITE_API_URL`, `VITE_COOKIE_NAME` (the same value as on `api`).
    `VITE_*` values are compiled in at build time, so changing one needs a rebuild, not a restart.
 
+**Database and Redis versions.** The Railway template runs **Postgres 18** and **Redis 8.2**.
+There is no connection pooler (PgBouncer is gone): `DATABASE_URL` is the database's direct
+private-network URL, `DIRECT_URL` stays unset, and `PGBOUNCER_ENABLED` is unset or `false`. The
+local and CI Postgres pins follow production: `.dev/docker-compose.yml` (both `postgres` and
+`postgres-test`) and the Postgres images in `.github/workflows/ci.yml` are `postgres:18`. Change them together, and only when production
+changes. An app whose production database runs another major pins that major instead: read it
+from production with `SHOW server_version`, never infer it. Redis is not pinned to a major
+(`redis:alpine` locally, `redis:7-alpine` in CI); pin it to production's if a difference ever
+matters. Moving the local Postgres to another major needs a dump and restore, or a fresh data
+folder: the 18 image refuses to start on a data folder another major wrote.
+
 Schema changes are migrations, not pushes: edit the schema, run `pnpm prisma:migrate` against
 the local database to create and apply a migration, commit the new folder under
 `libs/api/prisma/src/lib/migrations/`, and let the deploy apply it. `pnpm prisma:db-push` is
