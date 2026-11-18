@@ -225,6 +225,29 @@ describe('server render when the Me preload fails', () => {
     expect(clearsTheCookie(response)).toBe(true)
   })
 
+  it('expires both the cookie-domain cookie and the host-only one when it signs out', async () => {
+    // The API set the cookie for its cookie domain; the web service may know it only as the API's
+    // own variable. Expiring the domain cookie alone left a host-only one, and the reverse a
+    // parent-domain one, either of which signed the user straight back in.
+    vi.stubEnv('VITE_COOKIE_DOMAIN', '')
+    vi.stubEnv('API_COOKIE_DOMAIN', '.example.com')
+    graphqlAnswers(401, { message: 'Unauthorized' })
+
+    try {
+      const response = await reloadSignedIn('/members/dashboard')
+
+      expect(response.status).toBe(302)
+      const cleared = response.headers
+        .getSetCookie()
+        .filter(cookie => cookie.startsWith(`${COOKIE_NAME}=;`))
+      expect(cleared).toHaveLength(2)
+      expect(cleared.filter(cookie => cookie.endsWith('; Domain=.example.com'))).toHaveLength(1)
+      expect(cleared.filter(cookie => !cookie.includes('Domain='))).toHaveLength(1)
+    } finally {
+      vi.unstubAllEnvs()
+    }
+  })
+
   it.each([
     ['"Unauthorized"', 'Unauthorized'],
     ['"401"', 'Request failed with status 401'],

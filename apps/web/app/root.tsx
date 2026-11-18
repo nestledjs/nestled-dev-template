@@ -34,6 +34,7 @@ import { isOrganizationContextRequired, OrganizationRequired } from './organizat
 import { RecoveringApiUnavailable, RETRY_LABEL } from './api-unavailable'
 import { DeferredAuthRecovery } from './deferred-auth-recovery'
 import { useRootLoaderOutage } from './loader-outage'
+import { expiredSessionCookies } from './session-cookie'
 
 export const meta: MetaFunction = () => [
   {
@@ -51,14 +52,8 @@ export const links: LinksFunction = () => [
 ]
 
 function clearSessionCookieHeaders(cookieName: string): Headers {
-  const expired = 'Expires=Thu, 01 Jan 1970 00:00:00 GMT'
-  const base = `${cookieName}=; Path=/; ${expired}; HttpOnly; SameSite=Lax`
-  const domain = process.env.VITE_COOKIE_DOMAIN
   const headers = new Headers()
-  if (domain && domain !== 'localhost' && !domain.startsWith('127.')) {
-    headers.append('Set-Cookie', `${base}; Domain=${domain}`)
-  }
-  headers.append('Set-Cookie', base)
+  for (const cookie of expiredSessionCookies(cookieName)) headers.append('Set-Cookie', cookie)
   return headers
 }
 

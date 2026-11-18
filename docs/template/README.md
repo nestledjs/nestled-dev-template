@@ -144,19 +144,22 @@ API are deployed on different subdomains (e.g. `app.example.com` +
 API_COOKIE_DOMAIN=.example.com
 ```
 
-On such a split-subdomain deploy you **must** also set `VITE_COOKIE_DOMAIN` on
-the web service to the same value:
+On such a split-subdomain deploy the web service **must** know the same value,
+as `VITE_COOKIE_DOMAIN` or as `API_COOKIE_DOMAIN` itself (the web server reads
+`VITE_COOKIE_DOMAIN` first, then `API_COOKIE_DOMAIN`). On Railway, reference
+the API's variable from the web service:
 
 ```bash
-VITE_COOKIE_DOMAIN=.example.com
+VITE_COOKIE_DOMAIN=${{api.API_COOKIE_DOMAIN}}
 ```
 
-The web app can only clear a domain-scoped cookie when `VITE_COOKIE_DOMAIN`
-matches `API_COOKIE_DOMAIN`. If they diverge, a rejected/stale session cookie
-becomes un-clearable by the web app and can trigger a login↔dashboard redirect
-loop. The `expired=1` circuit breaker in the login/root/force-logout
-loaders prevents the loop from sustaining itself even when the cookie cannot be
-cleared, but matching the domains is required for a clean logout. Leave both
+Every sign-out the web server performs (`/force-logout`, the server render's
+sign-out on a rejected session, the root loader's redirect to `/login`) expires
+the session cookie both for that domain and host-only. If the web service does
+not know the domain, the parent-domain cookie the API set survives a sign-out
+and signs the user straight back in. The `expired=1` circuit breaker in the
+login/root/force-logout loaders stops that turning into a login↔dashboard
+redirect loop, but only a matching domain gives a clean logout. Leave both
 unset/`localhost` for single-host or local deploys.
 
 Common variables:
