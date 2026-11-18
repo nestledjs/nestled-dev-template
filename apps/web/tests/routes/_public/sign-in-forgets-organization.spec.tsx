@@ -15,7 +15,7 @@ import RegisterPage from '../../../app/routes/_public/register'
 // A new session must not be sent for the organization the browser stored for whoever was signed in
 // before (`x-organization-id`): a shared browser, or a session that ended without a logout (it
 // expired, or went through /force-logout, which cannot reach localStorage). Every sign-in path
-// forgets the stored organization.
+// forgets the stored organization, and so does the login form as it opens.
 
 vi.mock('@apollo/client/react', () => ({ useMutation: vi.fn() }))
 
@@ -105,6 +105,16 @@ describe('signing in forgets the organization stored for the previous user', () 
   afterEach(() => {
     vi.restoreAllMocks()
     localStorage.clear()
+  })
+
+  it('the login form forgets it as it opens (a /force-logout lands here with expired=1)', async () => {
+    storeActiveOrganizationId(PREVIOUS_USERS_ORGANIZATION)
+    answerMutations(new Map())
+
+    renderAt('/login', LoginPage)
+    await screen.findByRole('heading', { name: 'Welcome Back' })
+
+    expect(getStoredActiveOrganizationId()).toBeNull()
   })
 
   it('a password sign-in forgets an organization stored after the form opened', async () => {

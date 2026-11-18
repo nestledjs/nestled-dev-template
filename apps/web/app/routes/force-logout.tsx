@@ -16,6 +16,8 @@ export async function loader({ request }: { request: Request }) {
   const cookieName = getSessionCookieName()
   const url = new URL(request.url)
   const returnUrl = url.searchParams.get('return_url')
+  // The organization stored for `x-organization-id` lives in localStorage, which a server redirect
+  // cannot reach: the login form this lands on forgets it as it opens, as /logout does.
   // Always append `expired=1`. Even after clearing the cookie (which can fail when the
   // web service lacks VITE_COOKIE_DOMAIN on a split-subdomain deploy), the login page
   // must not auto-redirect back to the dashboard.
