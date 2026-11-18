@@ -11,7 +11,7 @@ import { ApiCoreFeatureResolver } from './api-core-feature.resolver'
 import { ApiCoreFeatureService } from './api-core-feature.service'
 import { ComplexityPlugin } from './plugins/complexity.plugin'
 import { NoCachePlugin } from './plugins/no-cache.plugin'
-import { extractTokenFromWsContext } from './ws-session-token'
+import { authorizeWsConnection } from './ws-session-token'
 
 interface ConnectionParameters {
   headers?: Record<string, string>
@@ -32,14 +32,10 @@ const redisPubSubProvider = {
       },
       subscriptions: {
         'graphql-ws': {
-          onConnect: async (context: Context<Record<string, unknown> | undefined>) => {
-            const { extra } = context
-            const token = extractTokenFromWsContext(extra)
-            if (token === '') {
-              throw new Error('Authentication token is missing')
-            }
-            return true
-          },
+          // 4401 for a missing or unverifiable session, 1013 (try again later) for an internal
+          // failure; see authorizeWsConnection.
+          onConnect: (context: Context<Record<string, unknown> | undefined>) =>
+            authorizeWsConnection(context.extra),
         },
       },
       context: ({
