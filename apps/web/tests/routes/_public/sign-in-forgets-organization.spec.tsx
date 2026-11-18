@@ -1,5 +1,5 @@
 import React from 'react'
-import { render, screen, waitFor } from '@testing-library/react'
+import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { useMutation } from '@apollo/client/react'
@@ -115,7 +115,8 @@ describe('signing in forgets the organization stored for the previous user', () 
     renderAt('/login?expired=1', LoginPage)
     await screen.findByRole('heading', { name: 'Welcome Back' })
 
-    expect(getStoredActiveOrganizationId()).toBeNull()
+    // A passive effect: it may run after the heading is on screen.
+    await waitFor(() => expect(getStoredActiveOrganizationId()).toBeNull())
   })
 
   it('any other visit to the login form keeps the stored organization until a sign-in', async () => {
@@ -125,6 +126,10 @@ describe('signing in forgets the organization stored for the previous user', () 
 
     renderAt('/login', LoginPage)
     await screen.findByRole('heading', { name: 'Welcome Back' })
+    // Let the form's effects run before judging that nothing was cleared.
+    await act(async () => {
+      await new Promise(resolve => setTimeout(resolve, 0))
+    })
 
     expect(getStoredActiveOrganizationId()).toBe(PREVIOUS_USERS_ORGANIZATION)
   })
