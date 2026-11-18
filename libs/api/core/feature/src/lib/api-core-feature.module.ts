@@ -4,11 +4,11 @@ import { GraphQLModule } from '@nestjs/graphql'
 import { join } from 'node:path'
 import { Request, Response } from 'express'
 import { apiCorePubSub } from '@nestled-template/api/core/data-access'
-import { formatApiError } from '@nestled-template/api/utils'
 import { Context } from 'graphql-ws'
 import { ApiCoreFeatureController } from './api-core-feature.controller'
 import { ApiCoreFeatureResolver } from './api-core-feature.resolver'
 import { ApiCoreFeatureService } from './api-core-feature.service'
+import { graphqlErrorOptions } from './graphql-error-options'
 import { ComplexityPlugin } from './plugins/complexity.plugin'
 import { NoCachePlugin } from './plugins/no-cache.plugin'
 import { authorizeWsConnection } from './ws-session-token'
@@ -53,9 +53,8 @@ const redisPubSubProvider = {
         }
         return { req, res }
       },
-      // Keeps the code a 403 was thrown with (`forbiddenWithCode`), so a client can tell "pick an
-      // organization" from "no permission". Nest's own HTTP-status mapping runs before it.
-      formatError: formatApiError,
+      // formatApiError, and stack traces only on a local opt-in (GRAPHQL_INCLUDE_STACKTRACE).
+      ...graphqlErrorOptions(),
       sortSchema: true,
       buildSchemaOptions: {
         dateScalarMode: 'isoDate',
