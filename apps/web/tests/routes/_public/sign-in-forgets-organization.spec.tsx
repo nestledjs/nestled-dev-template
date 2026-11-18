@@ -15,7 +15,8 @@ import RegisterPage from '../../../app/routes/_public/register'
 // A new session must not be sent for the organization the browser stored for whoever was signed in
 // before (`x-organization-id`): a shared browser, or a session that ended without a logout (it
 // expired, or went through /force-logout, which cannot reach localStorage). Every sign-in path
-// forgets the stored organization, and so does the login form as it opens.
+// forgets the stored organization, and so does the login form opened from a rejected session
+// (`expired=1`); any other visit to the form keeps it.
 
 vi.mock('@apollo/client/react', () => ({ useMutation: vi.fn() }))
 
@@ -90,7 +91,7 @@ function answerMutations(answers: Map<unknown, MutationAnswer>) {
 
 function renderAt(path: string, Component: React.ComponentType) {
   const Stub = createTestRouter([
-    { path, Component, loader: () => ({}) },
+    { path: path.split('?')[0], Component, loader: () => ({}) },
     { path: '/members/dashboard', Component: () => <p>Dashboard</p> },
   ])
   return render(<Stub initialEntries={[path]} />)
@@ -107,14 +108,25 @@ describe('signing in forgets the organization stored for the previous user', () 
     localStorage.clear()
   })
 
-  it('the login form forgets it as it opens (a /force-logout lands here with expired=1)', async () => {
+  it('the login form forgets it as it opens after a rejected session (/force-logout lands here with expired=1)', async () => {
+    storeActiveOrganizationId(PREVIOUS_USERS_ORGANIZATION)
+    answerMutations(new Map())
+
+    renderAt('/login?expired=1', LoginPage)
+    await screen.findByRole('heading', { name: 'Welcome Back' })
+
+    expect(getStoredActiveOrganizationId()).toBeNull()
+  })
+
+  it('any other visit to the login form keeps the stored organization until a sign-in', async () => {
+    // A signed-in user who reaches /login (and is sent on to the app) keeps their organization.
     storeActiveOrganizationId(PREVIOUS_USERS_ORGANIZATION)
     answerMutations(new Map())
 
     renderAt('/login', LoginPage)
     await screen.findByRole('heading', { name: 'Welcome Back' })
 
-    expect(getStoredActiveOrganizationId()).toBeNull()
+    expect(getStoredActiveOrganizationId()).toBe(PREVIOUS_USERS_ORGANIZATION)
   })
 
   it('a password sign-in forgets an organization stored after the form opened', async () => {

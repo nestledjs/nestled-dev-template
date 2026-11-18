@@ -101,13 +101,14 @@ export default function LoginPage() {
   const [tempToken, setTempToken] = useState<string | null>(oauth2FAToken)
   const [twoFACode, setTwoFACode] = useState('')
 
-  // Nobody is signed in on this form (the loader sends a live session on to the dashboard). A
-  // session that ended without the client-side logout, through /force-logout (which lands here
-  // with `expired=1` and, being a server redirect, cannot reach localStorage) or by expiring, left
-  // its organization stored for `x-organization-id`: forget it, as /logout does.
+  // A form opened from a rejected session: /force-logout (a server redirect, which cannot reach
+  // localStorage) and the server render's sign-out land here with `expired=1`, and the session they
+  // ended left its organization stored for `x-organization-id`. Forget it, as /logout does. Any
+  // other visit keeps it: only a sign-in (`signedIn()`) replaces the session.
+  const openedFromRejectedSession = searchParams.has('expired')
   useEffect(() => {
-    storeActiveOrganizationId(null)
-  }, [])
+    if (openedFromRejectedSession) storeActiveOrganizationId(null)
+  }, [openedFromRejectedSession])
 
   // Once the token is held in component state, strip it from the address bar. It is a
   // credential — short-lived and still gated on the second factor, but it should not persist in

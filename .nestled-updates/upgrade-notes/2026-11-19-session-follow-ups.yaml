@@ -7,7 +7,12 @@ priority: high
 area: web
 type: correctness
 delivery: code-patch
-applyAfter: [2026-11-16-session-org-consistency, 2026-11-16-ssr-signout-outage]
+applyAfter:
+  [
+    2026-11-16-session-org-consistency,
+    2026-11-16-ssr-signout-outage,
+    2026-11-19-mutation-errorpolicy-none,
+  ]
 
 intent: >
   Follow-up to 2026-11-16-session-org-consistency (the stored organization, the shared switch) and
@@ -21,8 +26,8 @@ intent: >
 
 
   Behaviour changes, plainly: (a) signing in, registering, and starting or ending an emulation forget
-  the organization stored for `x-organization-id` (part 1); (b) the login form forgets it as it opens,
-  which covers /force-logout (part 2); (c) every sign-out the web server performs expires the session
+  the organization stored for `x-organization-id` (part 1); (b) the login form forgets it when it opens
+  from a rejected session (`expired=1`), which covers /force-logout (part 2); (c) every sign-out the web server performs expires the session
   cookie both for the cookie domain and host-only, and the web server knows the domain from
   `VITE_COOKIE_DOMAIN` or `API_COOKIE_DOMAIN` (part 3); (d) a root loader that meets Me's 401 itself
   no longer signs out on the spot: it throws a 401 route error and the request's decision applies,
@@ -42,8 +47,11 @@ intent: >
   `location.href` moves to the emulated session; libs/web/src/lib/components/emulation-banner.tsx in
   the end-emulation `onCompleted`, before going back to the admin's session. A failed sign-in keeps
   what is stored. The verify-email page does not sign in (it says "You can now log in"), and the
-  OAuth success route is a server redirect that cannot reach localStorage; the provider buttons
-  start on the login form, which part 2 covers.
+  OAuth success route is a server redirect that cannot reach localStorage. The template has no
+  provider buttons yet; a two-factor OAuth sign-in returns to the login form and goes through
+  `signedIn()`.
+  - An app with OAuth provider buttons: forget the organization in the button's click handler,
+    before the browser leaves for the provider (the success route cannot).
   - An app whose verify-email, magic-link, invitation-accept or OAuth flow signs the user in on the
     client: forget the organization there too, before navigating.
   - An app that keeps the organization somewhere else (user-scoped storage, an httpOnly cookie the
@@ -60,17 +68,19 @@ intent: >
 
   2. /force-logout forgets the stored organization. /force-logout is a server loader that answers
   302 to `/login?expired=1`; it cannot reach localStorage, so the organization survived it. The login
-  form now forgets it as it opens (a `useEffect` with `storeActiveOrganizationId(null)`), as /logout
-  does. Nobody is signed in on the form (its loader sends a live session on to the dashboard), so
-  this is always safe, and it also covers a session that simply expired. A comment in
-  apps/web/app/routes/force-logout.tsx says where the organization is forgotten.
-  - An app with no /force-logout (its server sign-out redirects straight to /login): the same
-    effect on the login form covers it.
+  form now forgets it when it opens with `expired=1` (a `useEffect` with
+  `storeActiveOrganizationId(null)`), as /logout does; the server render's sign-out lands there the
+  same way. Any other visit to the form keeps the stored organization (only a sign-in, part 1,
+  replaces it), so a signed-in user who reaches /login and is sent on keeps their choice. A comment
+  in apps/web/app/routes/force-logout.tsx says where the organization is forgotten.
+  - An app with no /force-logout (its server sign-out redirects straight to /login): make that
+    redirect carry `expired=1` (or its own marker) and clear on it; never clear on every visit.
   - An app whose login is a modal or lives inside another layout: put the effect where the signed-out
     form mounts, and keep part 1's clears on success.
   - An app whose forced sign-out lands somewhere other than its login form: clear the organization
     where it lands, in the browser.
-  Verification: `pnpm exec nx test web --skip-nx-cache` ("the login form forgets it as it opens").
+  Verification: `pnpm exec nx test web --skip-nx-cache` ("the login form forgets it as it opens
+  after a rejected session", "any other visit to the login form keeps the stored organization").
 
 
   3. Sign-out expires the session cookie on its domain and host-only. The API sets the session
