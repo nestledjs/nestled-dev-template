@@ -34,8 +34,11 @@ intent: >
     node scripts/audit-mutation-error-reads.mjs            (scans apps and libs; or pass folders)
     node scripts/audit-mutation-error-reads.mjs --json
   It looks at `useMutation(doc, options)`, generated `useXxxMutation(options)` hooks and
-  `client.mutate(options)`, skips every call whose options set `errorPolicy`, follows an executor
-  into a helper of the same file it is handed to, and sorts each read into:
+  `client.mutate(options)`, skips every call whose hook or executor options set `errorPolicy`
+  (`save({ errorPolicy })` wins over the hook's), follows an executor into a helper of the same
+  file it is handed to (a catch around that helper call counts), counts a `try` only when the call
+  is awaited inside it (a promise merely started there rejects after the `try` is over), and sorts
+  each read into:
   - `uncaught`: nothing catches the rejection. Fix it: move the handling into a `catch` (show the
     API's message, keep the form or dialog open, do not navigate or show success). The script exits
     1 while any is left.
@@ -111,7 +114,7 @@ verification:
 
 agentHints:
   - >
-    Part 1: copy both script files as they are; they read only git's tracked files under the
+    Part 1: copy both script files as they are; they read the TypeScript sources under the
     folders given (default apps and libs) and need no config. Run the script before and after, and
     put its counts by verdict (and each `uncaught` site you fixed) in the PR. For each fix, add or
     adapt a test that answers the mutation with a GraphQL error through a client with the app's

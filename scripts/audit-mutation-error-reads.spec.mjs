@@ -110,6 +110,74 @@ describe('audit-mutation-error-reads', () => {
     ])
   })
 
+  it('counts a try only when the promise is awaited inside it', () => {
+    const text = [
+      'export function Page() {',
+      '  const [save] = useMutation(Save)',
+      '  const a = () => {',
+      '    try {',
+      '      save().then(result => show(result.error))',
+      '    } catch (error) {',
+      '      show(error)',
+      '    }',
+      '  }',
+      '  const b = async () => {',
+      '    try {',
+      '      await save().then(result => show(result.error))',
+      '    } catch (error) {',
+      '      show(error)',
+      '    }',
+      '  }',
+      '}',
+    ].join('\n')
+    assert.deepEqual(
+      verdicts(text).map(finding => finding.verdict),
+      ['uncaught', 'dead-read'],
+    )
+  })
+
+  it('counts a catch around the helper call that the executor was handed to', () => {
+    const text = [
+      'async function runUpdate(update: any, id: string) {',
+      '  const result = await update({ variables: { id } })',
+      '  return !result.errors',
+      '}',
+      'export function Page() {',
+      '  const [update] = useMutation(Update)',
+      '  const a = async () => {',
+      '    try {',
+      '      await runUpdate(update, "1")',
+      '    } catch (error) {',
+      '      show(error)',
+      '    }',
+      '  }',
+      '}',
+    ].join('\n')
+    assert.deepEqual(verdicts(text), [
+      { line: 2, read: 'reads result.errors', verdict: 'dead-read' },
+    ])
+  })
+
+  it('reads an errorPolicy passed to the executor itself', () => {
+    const text = [
+      'export function Page(options: any) {',
+      '  const [save] = useMutation(Save)',
+      "  const [keep] = useMutation(Keep, { errorPolicy: 'none' })",
+      '  const a = async () => {',
+      "    const result = await save({ errorPolicy: 'all' })",
+      '    if (result.error) return',
+      '    const second = await save(options)',
+      '    if (second.error) return',
+      "    const third = await keep({ variables: {}, errorPolicy: 'all' })",
+      '    if (third.error) return',
+      '  }',
+      '}',
+    ].join('\n')
+    assert.deepEqual(verdicts(text), [
+      { line: 7, read: 'reads second.error', verdict: 'check-by-hand' },
+    ])
+  })
+
   it('asks for a hand check when the options may set errorPolicy where it cannot see', () => {
     const text = [
       'export function useGuarded(doc: any, options: any) {',

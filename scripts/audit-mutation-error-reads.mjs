@@ -22,9 +22,8 @@
 // awaits the executor and returns the result to its callers) is listed where it reads the result,
 // not at each caller: audit the wrapper's callers for how they use what it returns.
 
-import { execFileSync } from 'node:child_process'
-import { readFileSync } from 'node:fs'
-import { dirname, join } from 'node:path'
+import { existsSync, readdirSync, readFileSync } from 'node:fs'
+import { dirname, join, relative, sep } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import ts from 'typescript'
 
@@ -32,8 +31,17 @@ const workspaceRoot = dirname(dirname(fileURLToPath(import.meta.url)))
 const ERROR_FIELDS = new Set(['error', 'errors'])
 // A helper handed the whole result is taken to read its error when its name says so.
 const ERROR_HELPER = /error|fail|refus/i
-const SKIPPED_PATH =
-  /(^|\/)(node_modules|generated|__generated__)\/|\.(spec|test|stories)\.[cm]?tsx?$|\.d\.ts$/
+const SKIPPED_FOLDERS = new Set([
+  'node_modules',
+  'generated',
+  '__generated__',
+  'dist',
+  'build',
+  'coverage',
+  '.nx',
+  '.react-router',
+])
+const SKIPPED_FILE = /\.(spec|test|stories)\.[cm]?tsx?$|\.d\.ts$/
 
 /** `errorPolicy` in an options argument: 'set', 'unset', or 'unknown' (not a plain literal). */
 function errorPolicyIn(options) {
@@ -42,7 +50,7 @@ function errorPolicyIn(options) {
   let spread = false
   for (const property of options.properties) {
     if (ts.isSpreadAssignment(property)) spread = true
-    else if (property.name && property.name.getText() === 'errorPolicy') return 'set'
+    else if (property.name?.getText() === 'errorPolicy') return 'set'
   }
   return spread ? 'unknown' : 'unset'
 }
@@ -73,18 +81,26 @@ function enclosingFunction(node) {
   return current
 }
 
-/** Whether a rejection of `node` reaches a catch: a `try` with a `catch` around it, or a `.catch`. */
+function isCatchCall(node, child) {
+  return (
+    ts.isPropertyAccessExpression(node) && node.expression === child && node.name.text === 'catch'
+  )
+}
+
+/**
+ * Whether a rejection of `node` reaches a catch within its function: a `.catch` on its chain, or a
+ * `try` with a `catch` around it that it is awaited in. A promise only started in a `try` (not
+ * awaited there) rejects after the `try` has finished, so that `catch` never sees it.
+ */
 function isCaught(node) {
+  let awaited = false
   let child = node
   let current = node.parent
   while (current && !ts.isFunctionLike(current) && !ts.isSourceFile(current)) {
-    if (ts.isTryStatement(current) && current.catchClause && current.tryBlock === child) return true
-    if (
-      ts.isPropertyAccessExpression(current) &&
-      current.expression === child &&
-      current.name.text === 'catch'
-    ) {
-      return true
+    if (isCatchCall(current, child)) return true
+    if (ts.isAwaitExpression(current)) awaited = true
+    if (ts.isTryStatement(current) && current.catchClause && current.tryBlock === child) {
+      return awaited
     }
     child = current
     current = current.parent
@@ -139,29 +155,36 @@ function unwrap(node) {
   return current
 }
 
+/** A read off `result.<member>`: `.error` itself, or the result handed to a `.then` callback. */
+function memberRead(member) {
+  if (ERROR_FIELDS.has(member.name.text)) return `reads .${member.name.text}`
+  if (member.name.text !== 'then') return null
+  const callback = member.parent?.arguments?.[0]
+  const param = callback && ts.isFunctionLike(callback) ? callback.parameters?.[0] : undefined
+  if (!param) return null
+  if (bindsErrorField(param.name)) return 'destructures error in .then'
+  const read = ts.isIdentifier(param.name) && errorReadOf(callback, param.name.text)
+  return read ? `${read} in .then` : null
+}
+
+function declarationRead(declaration) {
+  if (bindsErrorField(declaration.name)) return 'destructures error'
+  return ts.isIdentifier(declaration.name)
+    ? errorReadOf(enclosingFunction(declaration), declaration.name.text)
+    : null
+}
+
 /** How the result of the executor call `call` is read for a refusal, or null when it is not. */
 function errorRead(call) {
   let result = unwrap(call)
   if (result.parent && ts.isAwaitExpression(result.parent)) result = unwrap(result.parent)
   const parent = result.parent
   if (!parent) return null
-
   if (ts.isPropertyAccessExpression(parent) && parent.expression === result) {
-    if (ERROR_FIELDS.has(parent.name.text)) return `reads .${parent.name.text}`
-    if (parent.name.text === 'then') {
-      const callback = parent.parent?.arguments?.[0]
-      const param = callback && ts.isFunctionLike(callback) ? callback.parameters?.[0] : undefined
-      if (param && bindsErrorField(param.name)) return 'destructures error in .then'
-      const read = param && ts.isIdentifier(param.name) && errorReadOf(callback, param.name.text)
-      if (read) return `${read} in .then`
-    }
-    return null
+    return memberRead(parent)
   }
   if (ts.isVariableDeclaration(parent) && parent.initializer === result) {
-    if (bindsErrorField(parent.name)) return 'destructures error'
-    return ts.isIdentifier(parent.name)
-      ? errorReadOf(enclosingFunction(parent), parent.name.text)
-      : null
+    return declarationRead(parent)
   }
   if (
     ts.isBinaryExpression(parent) &&
@@ -202,29 +225,51 @@ function functionsByName(source) {
   return functions
 }
 
+/** The helper of this file `call` hands the executor `name` to, and the parameter it lands in. */
+function helperTakingExecutor(call, name, functions) {
+  const helper = functions.get(call.expression.text)
+  const index = call.arguments.findIndex(
+    argument => ts.isIdentifier(argument) && argument.text === name,
+  )
+  const param = helper && index >= 0 ? helper.parameters[index] : undefined
+  return param && ts.isIdentifier(param.name) ? { helper, param: param.name.text } : null
+}
+
 /**
- * The calls of the executor `name` in `scope`, following it one level into a helper of the same
- * file it is handed to (`runUpdate(updateMutation, ...)`, called there as its parameter).
+ * The calls of the executor `name` in `scope`, each with `via`: the helper calls it was reached
+ * through. It follows the executor into a helper of the same file it is handed to
+ * (`runUpdate(updateMutation, ...)`, called there as its parameter); a catch around that helper
+ * call sees what the helper lets through.
  */
-function callsTo(scope, name, functions, followed = new Set()) {
+function callsTo(scope, name, functions, via = [], followed = new Set()) {
   const calls = []
   const visit = node => {
     if (ts.isCallExpression(node) && ts.isIdentifier(node.expression)) {
-      if (node.expression.text === name) calls.push(node)
-      const helper = functions.get(node.expression.text)
-      const index = node.arguments.findIndex(
-        argument => ts.isIdentifier(argument) && argument.text === name,
-      )
-      const param = helper && index >= 0 ? helper.parameters[index] : undefined
-      if (param && ts.isIdentifier(param.name) && !followed.has(helper)) {
-        followed.add(helper)
-        calls.push(...callsTo(helper, param.name.text, functions, followed))
+      if (node.expression.text === name) calls.push({ call: node, via })
+      const taken = helperTakingExecutor(node, name, functions)
+      if (taken && !followed.has(taken.helper)) {
+        followed.add(taken.helper)
+        calls.push(...callsTo(taken.helper, taken.param, functions, [...via, node], followed))
       }
     }
     ts.forEachChild(node, visit)
   }
   visit(scope)
   return calls
+}
+
+/**
+ * The errorPolicy that applies to one executor call: one passed to the executor itself
+ * (`save({ errorPolicy })`) wins over the hook's.
+ */
+function effectivePolicy(hookPolicy, executorCall) {
+  const own = errorPolicyIn(executorCall.arguments[0])
+  return own === 'unset' ? hookPolicy : own
+}
+
+function verdictFor(policy, executorCall, via) {
+  if (policy === 'unknown') return 'check-by-hand'
+  return isCaught(executorCall) || via.some(isCaught) ? 'dead-read' : 'uncaught'
 }
 
 /** The findings in one source text. */
@@ -235,46 +280,61 @@ export function auditSource(fileName, text) {
   const functions = functionsByName(source)
   const line = node => source.getLineAndCharacterOfPosition(node.getStart(source)).line + 1
 
-  const report = (site, executorCall, read, policy) => {
+  const report = (site, executorCall, policy, via = []) => {
+    if (policy === 'set') return
+    const read = errorRead(executorCall)
+    if (!read) return
     findings.push({
       file: fileName,
       line: line(executorCall),
       siteLine: line(site),
       read,
-      verdict:
-        policy === 'unknown' ? 'check-by-hand' : isCaught(executorCall) ? 'dead-read' : 'uncaught',
+      verdict: verdictFor(policy, executorCall, via),
     })
   }
 
-  const visit = node => {
-    if (ts.isCallExpression(node)) {
-      const site = mutationSite(node)
-      const policy = site && errorPolicyIn(site.options)
-      if (site && policy !== 'set') {
-        if (site.kind === 'direct') {
-          const read = errorRead(node)
-          if (read) report(node, node, read, policy)
-        } else {
-          const name = executorName(node)
-          const scope = name && enclosingFunction(node)
-          for (const call of scope ? callsTo(scope, name, functions) : []) {
-            const read = errorRead(call)
-            if (read) report(node, call, read, policy)
-          }
-        }
-      }
+  const auditHook = (hookCall, hookPolicy) => {
+    const name = executorName(hookCall)
+    const scope = name && enclosingFunction(hookCall)
+    if (!scope) return
+    for (const { call, via } of callsTo(scope, name, functions)) {
+      report(hookCall, call, effectivePolicy(hookPolicy, call), via)
     }
+  }
+
+  const visit = node => {
+    const site = ts.isCallExpression(node) ? mutationSite(node) : null
+    if (site?.kind === 'direct') report(node, node, errorPolicyIn(site.options))
+    else if (site) auditHook(node, errorPolicyIn(site.options))
     ts.forEachChild(node, visit)
   }
   visit(source)
   return findings
 }
 
-/** The tracked TypeScript files under `dirs` that can hold application mutation sites. */
+function walk(folder, files) {
+  for (const entry of readdirSync(folder, { withFileTypes: true })) {
+    const path = join(folder, entry.name)
+    if (entry.isDirectory()) {
+      if (!SKIPPED_FOLDERS.has(entry.name)) walk(path, files)
+    } else if (/\.tsx?$/.test(entry.name) && !SKIPPED_FILE.test(entry.name)) {
+      files.push(path)
+    }
+  }
+  return files
+}
+
+/**
+ * The TypeScript source files under `dirs` that can hold application mutation sites, relative to
+ * `root` (build output, dependencies, generated code, specs and stories left out).
+ */
 export function sourceFiles(root, dirs) {
-  return execFileSync('git', ['ls-files', '--', ...dirs], { cwd: root, encoding: 'utf8' })
-    .split('\n')
-    .filter(path => /\.tsx?$/.test(path) && !SKIPPED_PATH.test(path))
+  return dirs
+    .map(dir => join(root, dir))
+    .filter(folder => existsSync(folder))
+    .flatMap(folder => walk(folder, []))
+    .map(path => relative(root, path).split(sep).join('/'))
+    .sort((left, right) => left.localeCompare(right))
 }
 
 export function auditFiles(root, dirs) {
