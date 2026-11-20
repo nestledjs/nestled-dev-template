@@ -54,9 +54,14 @@ describe('Login Component', () => {
       await expect(runLoader('http://localhost/login', verdict)).resolves.toEqual({})
     })
 
-    it('shows the form after a sign-out (expired=1), whatever the cookie says', async () => {
+    it.each([
+      ['a rejected session', REJECTED],
+      // A parent-domain cookie that survived /force-logout and still authenticates: the form must
+      // still render, so the page's expired=1 cleanup (forget the stored organization) runs.
+      ['a surviving cookie the middleware judged signed in', SIGNED_IN],
+    ])('shows the form after a sign-out (expired=1) for %s', async (_label, verdict) => {
       vi.mocked(getJsonCookie).mockReturnValue(null)
-      await expect(runLoader('http://localhost/login?expired=1', REJECTED)).resolves.toEqual({})
+      await expect(runLoader('http://localhost/login?expired=1', verdict)).resolves.toEqual({})
     })
 
     it('should return remembered email data', async () => {

@@ -26,8 +26,16 @@ import { useMutation } from '@apollo/client/react'
 // A request the session middleware judged signed in goes straight on; any other verdict (signed
 // out, or unknown during an outage) renders the form. The verdict is the API's own answer, so this
 // cannot loop with a sign-out the way a cookie check could.
+//
+// Except after a sign-out: /force-logout appends `expired=1`, and then the form always renders,
+// whatever the verdict. Clearing the session cookie can fail (a parent-domain cookie the web
+// host cannot expire); if that cookie still authenticates, redirecting would skip the form and
+// the stored-organization cleanup the page does for `expired=1`.
 export async function loader({ request, context }: LoaderFunctionArgs) {
-  if (getSession(context).kind === 'signed-in') throw redirect('/members/dashboard')
+  const afterSignOut = new URL(request.url).searchParams.has('expired')
+  if (!afterSignOut && getSession(context).kind === 'signed-in') {
+    throw redirect('/members/dashboard')
+  }
   const isRemembered = getJsonCookie<{ email: string }>(request.headers, '_nestled_remember')
   return isRemembered ?? {}
 }

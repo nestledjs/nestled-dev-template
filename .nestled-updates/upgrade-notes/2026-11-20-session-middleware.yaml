@@ -111,7 +111,9 @@ intent: >
     to the header. libs/web-ui's `WebUiHeader` takes `sessionUnknown` and then shows only the
     theme toggle.
   - routes/_public/login.tsx, routes/auth/oauth-success.tsx: read `getSession(context)` instead of
-    the cookie.
+    the cookie. Keep login's `expired=1` override: with it the form always renders, even for a
+    signed-in verdict (a parent-domain cookie that survived /force-logout), so the page's
+    stored-organization cleanup runs.
   - entry.server.tsx: `handleError` only logs; the shell error path serves 503 for an outage,
     `refusedCallResponse()` for a 401 and the organization picker for ORGANIZATION_CONTEXT_REQUIRED.
     It never signs out.
