@@ -86,7 +86,11 @@ intent: >
   `getSession(context)`, `requireUser(context)`), session-middleware.server.ts (`sessionMiddleware`
   for the root, `requireSession` for signed-in layouts, `resolveSession`, `sessionRejectedPath`,
   `forwardedSessionCookie`, `refusedCallResponse`), session-revalidator.tsx, session-unknown.tsx,
-  and session-cookie.ts (moved from apps/web/app/session-cookie.ts; update its importers).
+  boundary-recovery.ts (`useBoundaryRecoveringRevalidate`: a revalidation from an error screen that
+  also clears React Router's error boundary once the route recovers, since the boundary stays up
+  when React batches away the revalidation's loading render; the reset is a replace navigation to
+  the same URL, hash and history state kept, and never runs after the user navigated or while the
+  route still fails), and session-cookie.ts (moved from apps/web/app/session-cookie.ts; update its importers).
   `SESSION_REJECTED_PATH` (optional, web env) sets where a rejected session lands; it defaults to
   /force-logout, must be a local path, and that route must expire the cookie as /force-logout does.
   Paths the middleware must not judge (the web health check, the sitemap) are in
@@ -109,7 +113,8 @@ intent: >
     no session logic of its own (no Me re-check, no `<Navigate to="/login">`, no outage check).
   - routes/_public/_layout.tsx: no loader; passes `sessionUnknown` (the root verdict is `unknown`)
     to the header. libs/web-ui's `WebUiHeader` takes `sessionUnknown` and then shows only the
-    theme toggle.
+    theme toggle, on desktop and in the mobile menu (no account details, account links, Logout or
+    "Get Started"), whatever `isAuthenticated` says.
   - routes/_public/login.tsx, routes/auth/oauth-success.tsx: read `getSession(context)` instead of
     the cookie. Keep login's `expired=1` override: with it the form always renders, even for a
     signed-in verdict (a parent-domain cookie that survived /force-logout), so the page's
@@ -189,6 +194,7 @@ affectedPaths:
   - apps/web/app/session/session-middleware.server.ts
   - apps/web/app/session/session-revalidator.tsx
   - apps/web/app/session/session-unknown.tsx
+  - apps/web/app/session/boundary-recovery.ts
   - apps/web/app/session/session-cookie.ts
   - apps/web/app/session/index.ts
   - apps/web/app/root.tsx

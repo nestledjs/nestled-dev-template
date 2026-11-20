@@ -99,30 +99,81 @@ describe('SessionOutageScreen', () => {
     expect(revalidations()).toBe(0)
   })
 
-  it.each([
+  const screens: Array<[string, () => React.ReactElement]> = [
     [
       'the outage screen',
       () => <SessionOutageScreen probe={async () => true} initialReason="server" />,
     ],
     ['the "couldn’t load your account" screen', () => <SessionUnknownScreen />],
-  ])('%s gives way to the page once the loader recovers', async (_label, Screen) => {
-    // A root loader that answers SESSION_UNKNOWN three times, then succeeds: the error boundary
-    // must clear and the page render, with no reload.
+  ]
+  // `slow`: a loader that takes 50 ms, like a `.data` request on the wire. `instant`: one that
+  // settles at once, where React can batch away the revalidation's loading render and React
+  // Router's boundary would never reset by itself.
+  const loaderTimings: Array<[string, number]> = [
+    ['slow', 50],
+    ['instant', 0],
+  ]
+  const cases = screens.flatMap(([name, Screen]) =>
+    loaderTimings.map(([timing, delayMs]) => [name, timing, Screen, delayMs] as const),
+  )
+
+  it.each(cases)(
+    '%s gives way to the page once a %s loader recovers, and stops',
+    async (_name, _timing, Screen, delayMs) => {
+      // A loader that answers SESSION_UNKNOWN three times, then succeeds: the error boundary must
+      // clear and the page render, with no reload.
+      let calls = 0
+      const router = createMemoryRouter(
+        [
+          {
+            path: '/',
+            loader: async () => {
+              calls += 1
+              if (delayMs > 0) await new Promise(resolve => setTimeout(resolve, delayMs))
+              if (calls <= 3) throw data({ code: 'SESSION_UNKNOWN' }, { status: 503 })
+              return { ok: true }
+            },
+            element: <p>the page</p>,
+            ErrorBoundary: Screen,
+          },
+        ],
+        { initialEntries: ['/?tab=a#section'] },
+      )
+      await act(async () => {
+        render(<RouterProvider router={router} />)
+      })
+      expect(screen.queryByText('the page')).not.toBeInTheDocument()
+
+      await advance(60_000)
+
+      expect(screen.getByText('the page')).toBeInTheDocument()
+      expect(reload).not.toHaveBeenCalled()
+      // The URL, fragment included, is kept.
+      expect(router.state.location).toMatchObject({
+        pathname: '/',
+        search: '?tab=a',
+        hash: '#section',
+      })
+
+      // And it stops: no revalidation keeps running behind the recovered page.
+      const settled = calls
+      await advance(120_000)
+      expect(calls).toBe(settled)
+    },
+  )
+
+  it('does not reset the boundary while the route still fails', async () => {
     let calls = 0
     const router = createMemoryRouter(
       [
         {
           path: '/',
-          loader: async () => {
+          loader: () => {
             calls += 1
-            // A `.data` request takes time on the wire; a synchronous loader would hide the
-            // revalidation's loading state, which the boundary needs to see to reset.
-            await new Promise(resolve => setTimeout(resolve, 50))
-            if (calls <= 3) throw data({ code: 'SESSION_UNKNOWN' }, { status: 503 })
-            return { ok: true }
+            throw data({ code: 'SESSION_UNKNOWN' }, { status: 503 })
           },
           element: <p>the page</p>,
-          ErrorBoundary: Screen,
+          ErrorBoundary: () => <SessionUnknownScreen />,
         },
       ],
       { initialEntries: ['/'] },
@@ -130,16 +181,13 @@ describe('SessionOutageScreen', () => {
     await act(async () => {
       render(<RouterProvider router={router} />)
     })
+    const startKey = router.state.location.key
+
+    await advance(20_000)
+
+    expect(calls).toBeGreaterThan(2)
     expect(screen.queryByText('the page')).not.toBeInTheDocument()
-
-    await advance(60_000)
-
-    expect(calls).toBe(4)
-    expect(screen.getByText('the page')).toBeInTheDocument()
-    expect(reload).not.toHaveBeenCalled()
-
-    // And it stops: no revalidation keeps running behind the recovered page.
-    await advance(120_000)
-    expect(calls).toBe(4)
+    // Only revalidations: no navigation was made to reset the boundary.
+    expect(router.state.location.key).toBe(startKey)
   })
 })
