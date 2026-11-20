@@ -32,7 +32,7 @@ import {
 } from './session'
 import { sessionMiddleware } from './session/session-middleware.server'
 import { SESSION_UNKNOWN_CODE } from './session/session-context'
-import { SessionUnknownScreen } from './session/session-unknown'
+import { SessionOutageScreen, SessionUnknownScreen } from './session/session-unknown'
 
 export const meta: MetaFunction = () => [
   {
@@ -132,8 +132,9 @@ function routeErrorCode(error: unknown): unknown {
  * The root error boundary. It never navigates to /login, /logout or /force-logout: only the
  * session middleware decides a session.
  * - `SESSION_UNKNOWN` (503 from `requireSession`): the session is kept; an outage or a timeout gets
- *   the self-recovering screen, an answered error or an empty Me gets "We couldn't load your
- *   account", which retries by itself.
+ *   the outage screen, which probes the API and then revalidates with backoff until the verdict is
+ *   known; an answered error or an empty Me gets "We couldn't load your account", which retries by
+ *   itself.
  * - a route 401 (`API_UNAUTHENTICATED`: a call refused after the session was judged signed in):
  *   one revalidation, so the middleware judges the session afresh, then the route's error screen.
  * - 403: access denied, or the organization picker.
@@ -146,7 +147,7 @@ export function ErrorBoundary({ error }: Readonly<{ error: unknown }>) {
   if (routeErrorCode(error) === SESSION_UNKNOWN_CODE) {
     const reason = (error as { data?: { reason?: unknown } }).data?.reason
     if (reason === 'answered-error' || reason === 'empty') return <SessionUnknownScreen />
-    return <RecoveringApiUnavailable initialReason="server" />
+    return <SessionOutageScreen initialReason="server" />
   }
 
   if (isUnauthenticatedRouteError(error)) {

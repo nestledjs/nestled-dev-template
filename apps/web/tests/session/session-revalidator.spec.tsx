@@ -97,7 +97,7 @@ describe('SessionRevalidator: a browser 401 only triggers a revalidation', () =>
     expect(navigations()).toEqual([])
   })
 
-  it('answers five 401s within the cooldown with one revalidation, and the next after it', async () => {
+  it('answers five 401s within the cooldown with one revalidation now and one after it', async () => {
     const { revalidations } = await renderWith(<SessionRevalidator />)
 
     await suspect(5)
@@ -106,25 +106,81 @@ describe('SessionRevalidator: a browser 401 only triggers a revalidation', () =>
     await act(async () => {
       await vi.advanceTimersByTimeAsync(SESSION_REVALIDATE_COOLDOWN_MS - 10)
     })
-    await suspect()
     expect(revalidations()).toBe(1)
 
     await act(async () => {
       await vi.advanceTimersByTimeAsync(20)
     })
-    await suspect()
+    // The held suspicions are coalesced into one revalidation when the cooldown ends.
+    expect(revalidations()).toBe(2)
+
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(SESSION_REVALIDATE_COOLDOWN_MS * 3)
+    })
     expect(revalidations()).toBe(2)
   })
 
-  it('does nothing while the browser is offline', async () => {
-    vi.spyOn(navigator, 'onLine', 'get').mockReturnValue(false)
+  it('keeps a 401 that arrives during the cooldown: a session revoked seconds later is still judged', async () => {
+    const { revalidations } = await renderWith(<SessionRevalidator />)
+
+    await suspect()
+    expect(revalidations()).toBe(1)
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(1_000)
+    })
+    await suspect()
+    expect(revalidations()).toBe(1)
+
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(SESSION_REVALIDATE_COOLDOWN_MS)
+    })
+    expect(revalidations()).toBe(2)
+  })
+
+  it('sends nothing while offline, and one revalidation once the browser reconnects', async () => {
+    const onLine = vi.spyOn(navigator, 'onLine', 'get').mockReturnValue(false)
     const navigations = watchLocation()
     const { revalidations } = await renderWith(<SessionRevalidator />)
 
     await suspect(3)
-
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(SESSION_REVALIDATE_COOLDOWN_MS * 2)
+    })
     expect(revalidations()).toBe(0)
+
+    onLine.mockReturnValue(true)
+    await act(async () => {
+      globalThis.dispatchEvent(new Event('online'))
+    })
+    expect(revalidations()).toBe(1)
+
+    await act(async () => {
+      globalThis.dispatchEvent(new Event('online'))
+      await vi.advanceTimersByTimeAsync(SESSION_REVALIDATE_COOLDOWN_MS * 2)
+    })
+    expect(revalidations()).toBe(1)
     expect(navigations()).toEqual([])
+  })
+
+  it('waits out the cooldown when the browser reconnects inside it', async () => {
+    const onLine = vi.spyOn(navigator, 'onLine', 'get')
+    const { revalidations } = await renderWith(<SessionRevalidator />)
+
+    await suspect()
+    expect(revalidations()).toBe(1)
+
+    onLine.mockReturnValue(false)
+    await suspect()
+    onLine.mockReturnValue(true)
+    await act(async () => {
+      globalThis.dispatchEvent(new Event('online'))
+    })
+    expect(revalidations()).toBe(1)
+
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(SESSION_REVALIDATE_COOLDOWN_MS)
+    })
+    expect(revalidations()).toBe(2)
   })
 
   it('never touches location, whatever arrives', async () => {

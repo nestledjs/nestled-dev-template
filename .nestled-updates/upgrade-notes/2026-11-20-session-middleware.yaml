@@ -38,13 +38,17 @@ intent: >
   session cookies (the cookie-domain one and the host-only one) in place.
   (c) An outage keeps the session: no answer, a 502/503/504, a GraphQL 503, Me taking longer than
   3 s, or any server-side API call of this web instance finding the API down in the last 30 s. A
-  private page shows the self-recovering "server trouble" screen (503); a public page renders with
+  private page shows the "server trouble" (or "you're offline") screen (503), which probes the API
+  and, once it answers, revalidates with backoff until the verdict is known, never reloading; a
+  public page renders with
   a neutral header (no account menu and no "Log in") and recovers silently.
   (d) Me answering anything else (a 500, `me: null` with no error, an error with no code) keeps the
   session and shows "We couldn't load your account" on a private page, retrying by itself.
   (e) In the browser a 401 or UNAUTHENTICATED (from the error link, or a loader's route error) only
-  asks the server to judge again: one revalidation, at most one per 5 s, never while offline. The
-  browser never navigates to /logout, /login or /force-logout on its own.
+  asks the server to judge again: one revalidation, at most one per 5 s, never while offline. A 401
+  that arrives during the 5 s cooldown or while offline is held, not dropped: one coalesced
+  revalidation runs when the cooldown ends or the browser reconnects. The browser never navigates
+  to /logout, /login or /force-logout on its own.
   (f) The Me query is no longer preloaded by the root loader: the verdict carries the user, which the
   app writes into the Apollo cache as Me's answer, so pages reading Me through Apollo get it with no
   second request and profile edits still show.
@@ -92,8 +96,9 @@ intent: >
   - root.tsx: `export const middleware = [sessionMiddleware]`; the loader returns
     `{ session: getSession(context), theme }` and nothing else about the session (no cookie read, no
     Me preload, no redirect). The ErrorBoundary shows `SessionUnknownScreen` for a 503
-    `SESSION_UNKNOWN` route error with reason `answered-error` or `empty`, the recovering screen for
-    the other unknown reasons, and for a 401 route error renders `RevalidateSessionOnMount` (one
+    `SESSION_UNKNOWN` route error with reason `answered-error` or `empty`, `SessionOutageScreen`
+    (from session-unknown.tsx; not `RecoveringApiUnavailable`, whose rate-limited reload can stick
+    inside the 30 s outage memory) for the other unknown reasons, and for a 401 route error renders `RevalidateSessionOnMount` (one
     revalidation) beside the route error screen; it no longer signs out.
   - app.tsx: reads `session` from the root loader data; writes the verdict's user into the cache as
     Me and renders the cached Me (`useSessionUser`); revalidates quietly with backoff while the

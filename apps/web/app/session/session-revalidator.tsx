@@ -8,9 +8,45 @@ import {
 // When the browser last asked the server to judge the session again. Module-level, so the App's
 // listener and the root ErrorBoundary (which renders with App unmounted) share one cooldown.
 let lastRequestedAt = Number.NEGATIVE_INFINITY
+// A suspicion that arrived during the cooldown or while offline. It is kept, not dropped: one
+// coalesced revalidation runs when the cooldown ends or the browser comes back online, so a
+// session revoked seconds after a transient 401 is still judged.
+let pendingRevalidate: (() => unknown) | undefined
+let pendingTimer: ReturnType<typeof setTimeout> | undefined
+let waitingForOnline = false
 
-/** For specs: forget the last request, so the cooldown starts afresh. */
+function clearPending(): void {
+  pendingRevalidate = undefined
+  if (pendingTimer !== undefined) clearTimeout(pendingTimer)
+  pendingTimer = undefined
+  if (waitingForOnline) globalThis.removeEventListener('online', flushPending)
+  waitingForOnline = false
+}
+
+function flushPending(): void {
+  const revalidate = pendingRevalidate
+  clearPending()
+  if (revalidate) requestSessionRevalidation(revalidate)
+}
+
+/** Keep the suspicion and run it once, after `delayMs` or (offline) when the browser reconnects. */
+function holdPending(revalidate: () => unknown, delayMs: number | 'online'): void {
+  pendingRevalidate = revalidate
+  if (delayMs === 'online') {
+    if (pendingTimer !== undefined) clearTimeout(pendingTimer)
+    pendingTimer = undefined
+    if (!waitingForOnline) globalThis.addEventListener('online', flushPending)
+    waitingForOnline = true
+    return
+  }
+  if (waitingForOnline) globalThis.removeEventListener('online', flushPending)
+  waitingForOnline = false
+  pendingTimer ??= setTimeout(flushPending, delayMs)
+}
+
+/** For specs: forget the last request and any held suspicion, so the cooldown starts afresh. */
 export function __resetSessionRevalidation(): void {
+  clearPending()
   lastRequestedAt = Number.NEGATIVE_INFINITY
 }
 
@@ -23,15 +59,26 @@ function browserIsOffline(): boolean {
  * at most once per `SESSION_REVALIDATE_COOLDOWN_MS` and only while the browser is online. The
  * revalidation request runs the session middleware, which decides: a rejected session comes back
  * as a full document load of the sign-out route; any other verdict re-renders the page. The
- * browser never navigates to a sign-out by itself. Offline, nothing is asked and nothing happens.
- * Returns whether a revalidation was started.
+ * browser never navigates to a sign-out by itself.
+ *
+ * A suspicion that arrives during the cooldown, or while offline, is held: one coalesced
+ * revalidation runs when the cooldown ends, or when the browser reconnects. Nothing is sent while
+ * offline. Returns whether a revalidation was started now.
  */
 export function requestSessionRevalidation(
   revalidate: () => unknown,
   now: number = Date.now(),
 ): boolean {
-  if (browserIsOffline()) return false
-  if (now - lastRequestedAt < SESSION_REVALIDATE_COOLDOWN_MS) return false
+  if (browserIsOffline()) {
+    holdPending(revalidate, 'online')
+    return false
+  }
+  const remaining = SESSION_REVALIDATE_COOLDOWN_MS - (now - lastRequestedAt)
+  if (remaining > 0) {
+    holdPending(revalidate, remaining)
+    return false
+  }
+  clearPending()
   lastRequestedAt = now
   void revalidate()
   return true
