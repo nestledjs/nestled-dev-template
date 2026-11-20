@@ -1,7 +1,11 @@
 // @vitest-environment node
 import type { LoaderFunctionArgs } from 'react-router'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { expiredSessionCookies, sessionCookieDomain } from '../app/session-cookie'
+import {
+  cookieDomainFromSetting,
+  expiredSessionCookies,
+  sessionCookieDomain,
+} from '../app/session-cookie'
 import { loader as forceLogoutLoader } from '../app/routes/force-logout'
 import { loader as rootLoader } from '../app/root'
 
@@ -51,6 +55,22 @@ describe('expiring the session cookie on sign-out', () => {
     expect(sessionCookieDomain()).toBe('.web.example.com')
   })
 
+  it('reads a comma-separated API_COOKIE_DOMAIN as the API does: its first entry', () => {
+    vi.stubEnv('API_COOKIE_DOMAIN', '.example.com,.example.org')
+
+    expect(expiredSessionCookies(SESSION)).toEqual([
+      `${SESSION}=; Path=/; ${EXPIRED}; HttpOnly; SameSite=Lax; Domain=.example.com`,
+      `${SESSION}=; Path=/; ${EXPIRED}; HttpOnly; SameSite=Lax`,
+    ])
+  })
+
+  it('keeps the domain of a host that only starts with 127.', () => {
+    vi.stubEnv('API_COOKIE_DOMAIN', '127.example.com')
+
+    expect(sessionCookieDomain()).toBe('127.example.com')
+    expect(expiredSessionCookies(SESSION)).toHaveLength(2)
+  })
+
   it.each(['', 'localhost', '127.0.0.1', '[::1]'])(
     'expires only the host-only cookie for %j, which the API never uses as a domain',
     domain => {
@@ -87,5 +107,142 @@ describe('expiring the session cookie on sign-out', () => {
 
     expect(response.status).toBe(302)
     expect(sessionClears(response)).toHaveLength(2)
+  })
+})
+
+// The rule the API sets its session cookie's `Domain` with (libs/api/config cookie-domain.ts).
+// libs/api/config/src/lib/cookie-domain.spec.ts runs the same table against the API's copy; keep
+// the two tables identical.
+const SETTING_CASES: ReadonlyArray<[string | undefined, string | undefined]> = [
+  [undefined, undefined],
+  ['', undefined],
+  ['   ', undefined],
+  ['localhost', undefined],
+  [' localhost ', undefined],
+  ['127.0.0.1', undefined],
+  ['[::1]', undefined],
+  ['127.example.com', '127.example.com'],
+  ['.127.example.com', '.127.example.com'],
+  ['example.com', 'example.com'],
+  ['.example.com', '.example.com'],
+  ['app.example.com', 'app.example.com'],
+  [' .example.com ', '.example.com'],
+  ['.example.com,.example.org', '.example.com'],
+  ['.example.com, .example.org', '.example.com'],
+  [' , .example.com', '.example.com'],
+  ['localhost,.example.com', undefined],
+]
+
+describe('cookieDomainFromSetting: the API rule', () => {
+  it.each(SETTING_CASES)('API_COOKIE_DOMAIN=%j sets Domain %j', (value, expected) => {
+    expect(cookieDomainFromSetting(value)).toBe(expected)
+  })
+})
+
+describe('sessionCookieDomain: which setting decides', () => {
+  type Case = {
+    name: string
+    runtime?: Record<string, string>
+    buildTime?: Record<string, string>
+    hostDerivedDomain?: string
+    expected: string | undefined
+  }
+
+  const cases: Case[] = [
+    { name: 'nothing set', expected: undefined },
+    {
+      name: 'runtime VITE_COOKIE_DOMAIN',
+      runtime: { VITE_COOKIE_DOMAIN: '.example.com' },
+      expected: '.example.com',
+    },
+    {
+      name: 'runtime API_COOKIE_DOMAIN',
+      runtime: { API_COOKIE_DOMAIN: '.example.com' },
+      expected: '.example.com',
+    },
+    {
+      name: 'build-time VITE_COOKIE_DOMAIN when the runtime has neither',
+      buildTime: { VITE_COOKIE_DOMAIN: '.example.com' },
+      expected: '.example.com',
+    },
+    {
+      name: 'runtime VITE_COOKIE_DOMAIN over build-time',
+      runtime: { VITE_COOKIE_DOMAIN: '.web.example.com' },
+      buildTime: { VITE_COOKIE_DOMAIN: '.example.com' },
+      expected: '.web.example.com',
+    },
+    {
+      name: 'build-time VITE_COOKIE_DOMAIN over runtime API_COOKIE_DOMAIN',
+      runtime: { API_COOKIE_DOMAIN: '.example.com' },
+      buildTime: { VITE_COOKIE_DOMAIN: '.web.example.com' },
+      expected: '.web.example.com',
+    },
+    {
+      name: 'a blank VITE_COOKIE_DOMAIN falls through to API_COOKIE_DOMAIN',
+      runtime: { VITE_COOKIE_DOMAIN: '  ', API_COOKIE_DOMAIN: '.example.com' },
+      expected: '.example.com',
+    },
+    {
+      name: 'a comma-separated VITE_COOKIE_DOMAIN, by the same rule',
+      runtime: { VITE_COOKIE_DOMAIN: '.example.com,.example.org' },
+      expected: '.example.com',
+    },
+    {
+      name: 'a loopback setting is host-only',
+      runtime: { API_COOKIE_DOMAIN: '[::1]' },
+      expected: undefined,
+    },
+    {
+      name: 'the host-derived domain when nothing is set',
+      hostDerivedDomain: '.example.com',
+      expected: '.example.com',
+    },
+    {
+      name: 'a host-derived subdomain when nothing is set',
+      hostDerivedDomain: 'app.example.com',
+      expected: 'app.example.com',
+    },
+    {
+      name: 'a setting over the host-derived domain',
+      runtime: { API_COOKIE_DOMAIN: '.example.com' },
+      hostDerivedDomain: '.other.example',
+      expected: '.example.com',
+    },
+    {
+      name: 'a loopback setting over the host-derived domain (still host-only)',
+      runtime: { API_COOKIE_DOMAIN: 'localhost' },
+      hostDerivedDomain: '.example.com',
+      expected: undefined,
+    },
+    { name: 'a host-derived localhost', hostDerivedDomain: 'localhost', expected: undefined },
+    { name: 'a host-derived 127.0.0.1', hostDerivedDomain: '127.0.0.1', expected: undefined },
+    { name: 'a host-derived [::1]', hostDerivedDomain: '[::1]', expected: undefined },
+    {
+      name: 'a host-derived 127.example.com',
+      hostDerivedDomain: '127.example.com',
+      expected: '127.example.com',
+    },
+  ]
+
+  it.each(cases)('$name → $expected', ({ runtime, buildTime, hostDerivedDomain, expected }) => {
+    expect(
+      sessionCookieDomain(
+        { hostDerivedDomain },
+        { runtime: runtime ?? {}, buildTime: buildTime ?? {} },
+      ),
+    ).toBe(expected)
+  })
+
+  it('expiredSessionCookies expires the host-derived domain cookie and the host-only one', () => {
+    expect(
+      expiredSessionCookies(
+        SESSION,
+        { hostDerivedDomain: '.example.com' },
+        { runtime: {}, buildTime: {} },
+      ),
+    ).toEqual([
+      `${SESSION}=; Path=/; ${EXPIRED}; HttpOnly; SameSite=Lax; Domain=.example.com`,
+      `${SESSION}=; Path=/; ${EXPIRED}; HttpOnly; SameSite=Lax`,
+    ])
   })
 })
