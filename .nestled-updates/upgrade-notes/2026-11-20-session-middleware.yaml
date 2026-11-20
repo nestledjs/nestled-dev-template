@@ -118,7 +118,10 @@ intent: >
   - libs/shared/apollo: the error link dispatches `APOLLO_SESSION_SUSPECT_EVENT` for a 401 in the
     browser and records the outage memory on the server; `apolloLoader` throws `narrowApiError(e)`,
     so a loader's 401 reaches the browser as a 401 `API_UNAUTHENTICATED` route error and an outage
-    as a 503 `API_UNAVAILABLE` one, whatever React Router's production sanitization does.
+    as a 503 `API_UNAVAILABLE` one, whatever React Router's production sanitization does. Its
+    precedence is outage, then 401, then the organization-required 403: a combined GraphQL response
+    carrying ORGANIZATION_CONTEXT_REQUIRED beside a 503 or UNAUTHENTICATED is the outage or the 401,
+    never the organization picker. An app that narrowed errors itself checks the same order.
 
   5. Delete the old paths (each is replaced above): apps/web/app/session-recheck.tsx,
   deferred-auth-recovery.tsx, loader-outage.ts, app-code-error-marker.tsx, app-load-context.d.ts;

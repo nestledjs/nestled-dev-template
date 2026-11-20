@@ -21,7 +21,8 @@ export const API_UNAUTHENTICATED_CODE = 'API_UNAUTHENTICATED'
  *   after the session middleware judged the request signed in". It is NOT a sign-out: the root
  *   ErrorBoundary asks the server to judge the session again (one revalidation), and only the
  *   session middleware may sign anyone out;
- * - `ORGANIZATION_CONTEXT_REQUIRED`: the 403 carrying that code, shown as the organization picker;
+ * - `ORGANIZATION_CONTEXT_REQUIRED`, when neither of the above is present: the 403 carrying that
+ *   code, shown as the organization picker;
  * - anything else (a Response, a route error response, a bug) passes through unchanged.
  *
  * `apolloLoader` applies it to whatever its loader throws. A loader that calls the API without
@@ -29,18 +30,21 @@ export const API_UNAUTHENTICATED_CODE = 'API_UNAUTHENTICATED'
  */
 export function narrowApiError(error: unknown): unknown {
   if (error instanceof Response || isRouteErrorResponse(error)) return error
-  if (isOrganizationContextRequiredError(error)) {
-    return data(
-      { code: ORGANIZATION_CONTEXT_REQUIRED_CODE },
-      { status: 403, statusText: 'Forbidden' },
-    )
-  }
+  // Outage first, then authentication, then the organization picker: a combined GraphQL response
+  // can carry ORGANIZATION_CONTEXT_REQUIRED beside a 503 or UNAUTHENTICATED, and the picker would
+  // hide the outage screen or the session re-check.
   const cause = classifyApiFailure(error)
   if (cause === 'unavailable') {
     return data({ code: API_UNAVAILABLE_CODE }, { status: 503, statusText: 'Service Unavailable' })
   }
   if (cause === 'unauthenticated') {
     return data({ code: API_UNAUTHENTICATED_CODE }, { status: 401, statusText: 'Unauthorized' })
+  }
+  if (isOrganizationContextRequiredError(error)) {
+    return data(
+      { code: ORGANIZATION_CONTEXT_REQUIRED_CODE },
+      { status: 403, statusText: 'Forbidden' },
+    )
   }
   return error
 }
