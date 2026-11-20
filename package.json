@@ -73,6 +73,8 @@
     "verify:selects": "nestled-verify-selects",
     "verify:select-coverage": "nestled-verify-select-coverage",
     "verify:fragments": "nestled-verify-fragments",
+    "verify:session-decisions": "node scripts/audit-session-decisions.mjs",
+    "codemod:v8-middleware-context": "node scripts/codemod-v8-middleware-context.mjs",
     "prisma:seed": "tsx libs/api/prisma/src/lib/seed/seed.ts",
     "prisma:studio": "pnpm nx prisma:studio api",
     "prisma:reset": "pnpm prisma migrate reset && pnpm prisma:seed",
