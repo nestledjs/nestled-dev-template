@@ -1,9 +1,9 @@
 import { act, render, screen } from '@testing-library/react'
-import { createMemoryRouter, RouterProvider } from 'react-router'
+import { createMemoryRouter, data, RouterProvider } from 'react-router'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { retryDelayMs } from '../../app/api-availability'
 import { OFFLINE_TITLE, SERVER_TROUBLE_TITLE } from '../../app/api-unavailable'
-import { SessionOutageScreen } from '../../app/session/session-unknown'
+import { SessionOutageScreen, SessionUnknownScreen } from '../../app/session/session-unknown'
 
 // The screen for an `unknown` verdict caused by an outage. The middleware remembers an outage for
 // a short while, so a revalidation straight after the API answers can still come back unknown. The
@@ -97,5 +97,49 @@ describe('SessionOutageScreen', () => {
 
     expect(screen.getByText(OFFLINE_TITLE)).toBeInTheDocument()
     expect(revalidations()).toBe(0)
+  })
+
+  it.each([
+    [
+      'the outage screen',
+      () => <SessionOutageScreen probe={async () => true} initialReason="server" />,
+    ],
+    ['the "couldn’t load your account" screen', () => <SessionUnknownScreen />],
+  ])('%s gives way to the page once the loader recovers', async (_label, Screen) => {
+    // A root loader that answers SESSION_UNKNOWN three times, then succeeds: the error boundary
+    // must clear and the page render, with no reload.
+    let calls = 0
+    const router = createMemoryRouter(
+      [
+        {
+          path: '/',
+          loader: async () => {
+            calls += 1
+            // A `.data` request takes time on the wire; a synchronous loader would hide the
+            // revalidation's loading state, which the boundary needs to see to reset.
+            await new Promise(resolve => setTimeout(resolve, 50))
+            if (calls <= 3) throw data({ code: 'SESSION_UNKNOWN' }, { status: 503 })
+            return { ok: true }
+          },
+          element: <p>the page</p>,
+          ErrorBoundary: Screen,
+        },
+      ],
+      { initialEntries: ['/'] },
+    )
+    await act(async () => {
+      render(<RouterProvider router={router} />)
+    })
+    expect(screen.queryByText('the page')).not.toBeInTheDocument()
+
+    await advance(60_000)
+
+    expect(calls).toBe(4)
+    expect(screen.getByText('the page')).toBeInTheDocument()
+    expect(reload).not.toHaveBeenCalled()
+
+    // And it stops: no revalidation keeps running behind the recovered page.
+    await advance(120_000)
+    expect(calls).toBe(4)
   })
 })
