@@ -246,35 +246,43 @@ describe('root ErrorBoundary with a route 401', () => {
     expect(navigations()).toEqual([])
   })
 
-  it('gives way to the page once the revalidation succeeds, even when it settles at once', async () => {
-    let calls = 0
-    const router = createMemoryRouter(
-      [
-        {
-          path: '/settings',
-          loader: () => {
-            calls += 1
-            if (calls === 1) throw data({ code: API_UNAUTHENTICATED_CODE }, { status: 401 })
-            return {}
+  it.each(['/settings', '/settings#security'])(
+    'gives way to the page once the retry succeeds, even when it settles at once (%s)',
+    async url => {
+      let calls = 0
+      const router = createMemoryRouter(
+        [
+          {
+            path: '/settings',
+            loader: () => {
+              calls += 1
+              if (calls === 1) throw data({ code: API_UNAUTHENTICATED_CODE }, { status: 401 })
+              return {}
+            },
+            element: <p>the page</p>,
+            ErrorBoundary: () => (
+              <RevalidateSessionOnMount>
+                <p>401 screen</p>
+              </RevalidateSessionOnMount>
+            ),
           },
-          element: <p>the page</p>,
-          ErrorBoundary: () => (
-            <RevalidateSessionOnMount>
-              <p>401 screen</p>
-            </RevalidateSessionOnMount>
-          ),
-        },
-      ],
-      { initialEntries: ['/settings#security'] },
-    )
-    await act(async () => {
-      render(<RouterProvider router={router} />)
-    })
-    await act(async () => {
-      await vi.advanceTimersByTimeAsync(100)
-    })
+        ],
+        { initialEntries: [url] },
+      )
+      await act(async () => {
+        render(<RouterProvider router={router} />)
+      })
+      await act(async () => {
+        await vi.advanceTimersByTimeAsync(100)
+      })
 
-    expect(screen.getByText('the page')).toBeInTheDocument()
-    expect(router.state.location).toMatchObject({ pathname: '/settings', hash: '#security' })
-  })
+      expect(screen.getByText('the page')).toBeInTheDocument()
+      // One failed load, one retry: no extra load to reset the boundary.
+      expect(calls).toBe(2)
+      expect(router.state.location).toMatchObject({
+        pathname: '/settings',
+        hash: new URL(url, 'http://localhost').hash,
+      })
+    },
+  )
 })

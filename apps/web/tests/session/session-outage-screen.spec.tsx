@@ -113,20 +113,24 @@ describe('SessionOutageScreen', () => {
     ['slow', 50],
     ['instant', 0],
   ]
+  // A fragment-free URL retries by navigating; one with a fragment retries by revalidating.
+  const urls = ['/settings?tab=a', '/settings?tab=a#section']
   const cases = screens.flatMap(([name, Screen]) =>
-    loaderTimings.map(([timing, delayMs]) => [name, timing, Screen, delayMs] as const),
+    loaderTimings.flatMap(([timing, delayMs]) =>
+      urls.map(url => [name, timing, url, Screen, delayMs] as const),
+    ),
   )
 
   it.each(cases)(
-    '%s gives way to the page once a %s loader recovers, and stops',
-    async (_name, _timing, Screen, delayMs) => {
+    '%s gives way to the page once a %s loader recovers (%s), loading once per retry',
+    async (_name, _timing, url, Screen, delayMs) => {
       // A loader that answers SESSION_UNKNOWN three times, then succeeds: the error boundary must
       // clear and the page render, with no reload.
       let calls = 0
       const router = createMemoryRouter(
         [
           {
-            path: '/',
+            path: '/settings',
             loader: async () => {
               calls += 1
               if (delayMs > 0) await new Promise(resolve => setTimeout(resolve, delayMs))
@@ -137,7 +141,7 @@ describe('SessionOutageScreen', () => {
             ErrorBoundary: Screen,
           },
         ],
-        { initialEntries: ['/?tab=a#section'] },
+        { initialEntries: [url] },
       )
       await act(async () => {
         render(<RouterProvider router={router} />)
@@ -148,11 +152,15 @@ describe('SessionOutageScreen', () => {
 
       expect(screen.getByText('the page')).toBeInTheDocument()
       expect(reload).not.toHaveBeenCalled()
+      // The first load and two retries failed, the third retry recovered: four loads, no extra one
+      // to reset the boundary.
+      expect(calls).toBe(4)
       // The URL, fragment included, is kept.
+      const kept = new URL(url, 'http://localhost')
       expect(router.state.location).toMatchObject({
-        pathname: '/',
-        search: '?tab=a',
-        hash: '#section',
+        pathname: kept.pathname,
+        search: kept.search,
+        hash: kept.hash,
       })
 
       // And it stops: no revalidation keeps running behind the recovered page.
@@ -162,32 +170,34 @@ describe('SessionOutageScreen', () => {
     },
   )
 
-  it('does not reset the boundary while the route still fails', async () => {
-    let calls = 0
-    const router = createMemoryRouter(
-      [
-        {
-          path: '/',
-          loader: () => {
-            calls += 1
-            throw data({ code: 'SESSION_UNKNOWN' }, { status: 503 })
+  it.each(['/settings', '/settings#section'])(
+    'while the route still fails (%s), keeps the screen and loads once per retry',
+    async url => {
+      let calls = 0
+      const router = createMemoryRouter(
+        [
+          {
+            path: '/settings',
+            loader: () => {
+              calls += 1
+              throw data({ code: 'SESSION_UNKNOWN' }, { status: 503 })
+            },
+            element: <p>the page</p>,
+            ErrorBoundary: () => <SessionUnknownScreen />,
           },
-          element: <p>the page</p>,
-          ErrorBoundary: () => <SessionUnknownScreen />,
-        },
-      ],
-      { initialEntries: ['/'] },
-    )
-    await act(async () => {
-      render(<RouterProvider router={router} />)
-    })
-    const startKey = router.state.location.key
+        ],
+        { initialEntries: [url] },
+      )
+      await act(async () => {
+        render(<RouterProvider router={router} />)
+      })
 
-    await advance(20_000)
+      // Retries at 2 s, 6 s and 14 s after the first load (2 s doubling): three in 20 s.
+      await advance(20_000)
 
-    expect(calls).toBeGreaterThan(2)
-    expect(screen.queryByText('the page')).not.toBeInTheDocument()
-    // Only revalidations: no navigation was made to reset the boundary.
-    expect(router.state.location.key).toBe(startKey)
-  })
+      expect(calls).toBe(4)
+      expect(screen.queryByText('the page')).not.toBeInTheDocument()
+      expect(router.state.location.hash).toBe(new URL(url, 'http://localhost').hash)
+    },
+  )
 })

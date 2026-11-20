@@ -86,11 +86,13 @@ intent: >
   `getSession(context)`, `requireUser(context)`), session-middleware.server.ts (`sessionMiddleware`
   for the root, `requireSession` for signed-in layouts, `resolveSession`, `sessionRejectedPath`,
   `forwardedSessionCookie`, `refusedCallResponse`), session-revalidator.tsx, session-unknown.tsx,
-  boundary-recovery.ts (`useBoundaryRecoveringRevalidate`: a revalidation from an error screen that
-  also clears React Router's error boundary once the route recovers, since the boundary stays up
-  when React batches away the revalidation's loading render; the reset is a replace navigation to
-  the same URL, hash and history state kept, and never runs after the user navigated or while the
-  route still fails), and session-cookie.ts (moved from apps/web/app/session-cookie.ts; update its importers).
+  boundary-recovery.ts (`useBoundaryRecoveringRevalidate`: the error screens' retry, which loads
+  the route exactly once and makes sure React Router's error boundary clears once the route
+  recovers, since the boundary stays up when React batches away a revalidation's loading render.
+  On a URL with no fragment the retry is a replace navigation to the same URL; with a fragment it
+  is a revalidation followed, only if the boundary is stale, by a hash-only navigation that loads
+  nothing. It never navigates while another navigation runs or after the user moved on), and
+  session-cookie.ts (moved from apps/web/app/session-cookie.ts; update its importers).
   `SESSION_REJECTED_PATH` (optional, web env) sets where a rejected session lands; it defaults to
   /force-logout, must be a local path, and that route must expire the cookie as /force-logout does.
   Paths the middleware must not judge (the web health check, the sitemap) are in

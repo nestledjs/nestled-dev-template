@@ -8,20 +8,21 @@ import {
 } from 'react-router'
 
 /**
- * A revalidation for a screen rendered by a route ErrorBoundary, that also clears the boundary once
- * the route recovers.
+ * A retry for a screen rendered by a route ErrorBoundary: it runs the route's middleware and
+ * loaders again, exactly once, and makes sure the boundary clears once the route recovers.
  *
  * React Router's boundary keeps showing its error until it sees the location change, or until it
- * has rendered the revalidation going from `loading` back to `idle`. When the revalidation settles
+ * has rendered a revalidation going from `loading` back to `idle`. When a revalidation settles
  * quickly, React can batch both updates into one render: the router's state has no error any more,
- * the loaders' data is back, and the boundary still shows the error screen (with its retry timers
- * still running). So once the revalidation settles, this reads the router's own state: if the
- * boundary's route no longer has an error and this screen is still mounted, it resets the boundary
- * with a replace navigation to the same URL (path, search, hash and history state kept, scroll
- * position kept). It does nothing if the user navigated meanwhile, if the route still fails, or
- * if it was not rendered by an error boundary at all (the App's 401 listener uses plain
- * `revalidate`). The router state is read from `UNSAFE_DataRouterContext` because no public hook
- * exposes another route's live error.
+ * and the boundary still shows the error screen (with its retry timers still running). So:
+ * - on a URL with no fragment, the retry is a replace navigation to the same URL (search and
+ *   history state kept, scroll kept): one load, and its location change always resets the boundary;
+ * - on a URL with a fragment, where a same-URL navigation is a hash-only change that loads nothing,
+ *   the retry is a revalidation; if the route recovered and this screen is still mounted, that
+ *   load-free navigation then resets the boundary.
+ * It does nothing while another navigation is running, and never navigates after the user moved
+ * on. Outside an error boundary (the App's 401 listener) it is a plain revalidation. The live
+ * router state is read from `UNSAFE_DataRouterContext` because no public hook exposes it.
  */
 export function useBoundaryRecoveringRevalidate(): () => Promise<void> {
   const revalidator = useRevalidator()
@@ -57,12 +58,36 @@ export function useBoundaryRecoveringRevalidate(): () => Promise<void> {
   }, [])
 
   return useCallback(async () => {
-    const startedAt = latest.current.router?.state.location.key
+    const { router: current, inErrorBoundary: inBoundary } = latest.current
+    if (!inBoundary || !current) {
+      await latest.current.revalidate()
+      return
+    }
+    const startedAt = current.state.location
+    // A navigation the user (or anything else) started is already reloading the route, and its
+    // location change will reset the boundary: nothing to add.
+    if (current.state.navigation.state !== 'idle') return
+
+    if (startedAt.hash === '') {
+      // No fragment: retry as a replace navigation to the same URL. It loads once, like a
+      // revalidation, and its location change resets the boundary whether the route recovers or
+      // fails again, so no second load is ever needed.
+      const { pathname, search, state } = startedAt
+      await latest.current.navigate(
+        { pathname, search },
+        { replace: true, preventScrollReset: true, state },
+      )
+      return
+    }
+
+    // With a fragment a same-URL navigation is a hash-only change, which loads nothing: retry with
+    // a revalidation, then, only if the boundary is stale (the route recovered but the boundary did
+    // not see it), reset it with that load-free navigation.
     await latest.current.revalidate()
-    const { router: current, routeId: id, inErrorBoundary: stale, navigate: go } = latest.current
-    if (!stale || !mounted.current || !current || id === undefined) return
+    const { routeId: id, navigate: go } = latest.current
+    if (!mounted.current || id === undefined) return
     const { location, navigation, errors } = current.state
-    if (location.key !== startedAt || navigation.state !== 'idle') return
+    if (location.key !== startedAt.key || navigation.state !== 'idle') return
     if (errors?.[id] !== undefined) return
     const { pathname, search, hash, state } = location
     void go({ pathname, search, hash }, { replace: true, preventScrollReset: true, state })
