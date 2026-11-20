@@ -19,29 +19,6 @@ import {
 } from '../utils/graphql-utils'
 import { BreadcrumbChevron } from '../components/BreadcrumbChevron'
 
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === 'object' && value !== null
-}
-
-function mutationErrorMessage(result: unknown): string | null {
-  if (!isRecord(result)) {
-    return null
-  }
-
-  if (isRecord(result.error) && typeof result.error.message === 'string') {
-    return result.error.message
-  }
-
-  if (!Array.isArray(result.errors) || result.errors.length === 0) {
-    return null
-  }
-
-  return result.errors
-    .map(error => (isRecord(error) && typeof error.message === 'string' ? error.message : null))
-    .filter((message): message is string => message !== null)
-    .join(', ')
-}
-
 // Validation functions moved into component to access databaseModels from context
 
 // Check if user has access to this data type (basic implementation)
@@ -235,7 +212,9 @@ function AdminDataCreatePageContent({
     }
   }, [documents])
 
-  // Create mutation - call BEFORE any early returns to maintain hook order
+  // Create mutation - call BEFORE any early returns to maintain hook order. `errorPolicy: 'none'`
+  // so a refusal rejects into handleSubmit's catch whatever the host client's default is: under a
+  // host default of 'all' it resolved, and the page reported success.
   const [createMutation] = useMutation(
     CREATE_MUTATION ||
       gql`
@@ -243,6 +222,7 @@ function AdminDataCreatePageContent({
           __typename
         }
       `,
+    { errorPolicy: 'none' },
   )
 
   // Navigate to list after successful create
@@ -310,21 +290,12 @@ function AdminDataCreatePageContent({
       // Clean the form input
       const cleanedInput = cleanFormInput(formData, model)
 
-      // Execute mutation
-      const result = await createMutation({
+      // Execute mutation; a refusal rejects (errorPolicy 'none') and the catch shows its message.
+      await createMutation({
         variables: {
           input: cleanedInput,
         },
       })
-
-      const mutationError = mutationErrorMessage(result)
-      if (mutationError) {
-        setSubmissionState({
-          status: 'error',
-          message: mutationError,
-        })
-        return
-      }
 
       setSubmissionState({
         status: 'success',
