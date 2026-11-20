@@ -59,7 +59,10 @@ export function useBoundaryRecoveringRevalidate(): () => Promise<void> {
 
   return useCallback(async () => {
     const { router: current, inErrorBoundary: inBoundary } = latest.current
-    if (!inBoundary || !current) {
+    // Outside an error boundary, or after the screen that asked has unmounted (a 401 retry held
+    // through the cooldown or an offline spell can run once the user has moved on): a plain
+    // revalidation, never a navigation of whatever page is showing now.
+    if (!inBoundary || !current || !mounted.current) {
       await latest.current.revalidate()
       return
     }

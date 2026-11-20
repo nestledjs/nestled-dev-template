@@ -285,4 +285,59 @@ describe('root ErrorBoundary with a route 401', () => {
       })
     },
   )
+
+  it('a retry held through the cooldown runs as a plain revalidation once the user has left the error screen', async () => {
+    let settingsCalls = 0
+    let otherCalls = 0
+    const router = createMemoryRouter(
+      [
+        {
+          path: '/settings',
+          loader: () => {
+            settingsCalls += 1
+            throw data({ code: API_UNAUTHENTICATED_CODE }, { status: 401 })
+          },
+          element: <p>settings</p>,
+          ErrorBoundary: () => (
+            <RevalidateSessionOnMount>
+              <p>401 screen</p>
+            </RevalidateSessionOnMount>
+          ),
+        },
+        {
+          path: '/other',
+          loader: () => {
+            otherCalls += 1
+            return {}
+          },
+          element: <p>other page</p>,
+        },
+      ],
+      { initialEntries: ['/settings'] },
+    )
+    // A revalidation just happened elsewhere, so the 401 screen's request is held for the cooldown.
+    requestSessionRevalidation(() => undefined)
+    await act(async () => {
+      render(<RouterProvider router={router} />)
+    })
+    expect(screen.getByText('401 screen')).toBeInTheDocument()
+
+    // The user leaves the error screen before the cooldown ends.
+    await act(async () => {
+      await router.navigate('/other')
+    })
+    expect(screen.getByText('other page')).toBeInTheDocument()
+    const left = router.state.location
+    const otherBefore = otherCalls
+
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(SESSION_REVALIDATE_COOLDOWN_MS + 100)
+    })
+
+    // The held retry revalidated the page now showing, and did not navigate it.
+    expect(otherCalls).toBe(otherBefore + 1)
+    expect(router.state.location.key).toBe(left.key)
+    expect(router.state.location.pathname).toBe('/other')
+    expect(settingsCalls).toBe(1)
+  })
 })
