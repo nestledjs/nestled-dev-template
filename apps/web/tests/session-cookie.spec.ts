@@ -1,13 +1,13 @@
 // @vitest-environment node
-import type { LoaderFunctionArgs } from 'react-router'
+import { RouterContextProvider } from 'react-router'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   cookieDomainFromSetting,
   expiredSessionCookies,
   sessionCookieDomain,
-} from '../app/session-cookie'
+} from '../app/session/session-cookie'
 import { loader as forceLogoutLoader } from '../app/routes/force-logout'
-import { loader as rootLoader } from '../app/root'
+import { createSessionMiddleware } from '../app/session/session-middleware.server'
 
 // Every sign-out the web server performs expires the session cookie wherever the API may have set
 // it: for the cookie domain (API_COOKIE_DOMAIN on the API) and host-only. A cookie the API set for
@@ -96,16 +96,28 @@ describe('expiring the session cookie on sign-out', () => {
     )
   })
 
-  it('the root loader expires both when it sends a signed-out visitor to /login', async () => {
+  it('the session middleware expires both on a rejected session, in place', async () => {
     vi.stubEnv('API_COOKIE_DOMAIN', '.example.com')
+    const payload = Buffer.from(
+      JSON.stringify({ exp: Math.floor(Date.now() / 1000) + 3600 }),
+    ).toString('base64url')
+    const middleware = createSessionMiddleware({
+      fetchMe: async () => ({ kind: 'error', cause: 'unauthenticated' }),
+    })
 
-    const response = (await rootLoader({
-      request: new Request('https://app.example.com/members/dashboard'),
-      params: {},
-      context: {},
-    } as unknown as LoaderFunctionArgs)) as Response
+    const response = (await middleware(
+      {
+        request: new Request('https://app.example.com/pricing', {
+          headers: { cookie: `__session=h.${payload}.s` },
+        }),
+        context: new RouterContextProvider(),
+        params: {},
+        pattern: '/pricing',
+      } as never,
+      async () => new Response('page'),
+    )) as Response
 
-    expect(response.status).toBe(302)
+    expect(response.status).toBe(200)
     expect(sessionClears(response)).toHaveLength(2)
   })
 })
