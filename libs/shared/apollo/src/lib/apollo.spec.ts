@@ -14,8 +14,10 @@ import {
   APOLLO_DEFERRED_AUTH_FAILURE_EVENT,
   APOLLO_ORGANIZATION_REQUIRED_EVENT,
   APOLLO_SERVICE_UNAVAILABLE_EVENT,
+  __resetActiveOrganizationSessionChange,
   activeOrganizationSession,
   classifyApiFailure,
+  clearActiveOrganizationForSessionChange,
   clearApiOutage,
   createOutageRetryLink,
   getStoredActiveOrganizationId,
@@ -27,6 +29,7 @@ import {
   isRetryableConnectivityError,
   makeClient,
   ORGANIZATION_CONTEXT_REQUIRED_CODE,
+  rememberActiveOrganization,
   resolveActiveOrganization,
   signalApiOutage,
   storeActiveOrganizationId,
@@ -1811,7 +1814,49 @@ describe('the stored active organization', () => {
   afterEach(() => {
     vi.restoreAllMocks()
     vi.unstubAllGlobals()
+    __resetActiveOrganizationSessionChange()
     localStorage.clear()
+  })
+
+  it('before a session change (emulation), forgets the organization and stores none until the reload', async () => {
+    const fetchMock = vi.fn().mockImplementation(
+      async () =>
+        new Response(JSON.stringify({ data: { ping: 'pong' } }), {
+          status: 200,
+          headers: { 'content-type': 'application/json' },
+        }),
+    )
+    vi.stubGlobal('fetch', fetchMock)
+    const client = makeClient(undefined, { apiUrl: 'https://api.example.com/graphql' })
+    const ping = gql`
+      query Ping {
+        ping
+      }
+    `
+    storeActiveOrganizationId('previous-users-org')
+    const before = activeOrganizationSession()
+
+    clearActiveOrganizationForSessionChange()
+
+    expect(getStoredActiveOrganizationId()).toBeNull()
+    // A switch still in flight for the previous session stores nothing.
+    expect(activeOrganizationSession()).not.toBe(before)
+    // The still-mounted shell re-renders while the reload is pending, and a late write arrives.
+    rememberActiveOrganization('previous-users-org')
+    storeActiveOrganizationId('previous-users-org')
+    expect(localStorage.getItem('activeOrganizationId')).toBeNull()
+    // Another tab storing one meanwhile is not sent from this document either.
+    localStorage.setItem('activeOrganizationId', 'other-tabs-org')
+    expect(getStoredActiveOrganizationId()).toBeNull()
+    await client.query({ query: ping, fetchPolicy: 'no-cache' })
+    expect(fetchMock.mock.calls[0][1].headers['x-organization-id']).toBeUndefined()
+  })
+
+  it('a plain forget (a sign-in in this document) lets the new session store its own organization', () => {
+    storeActiveOrganizationId('previous-users-org')
+    storeActiveOrganizationId(null)
+    rememberActiveOrganization('new-users-org')
+    expect(getStoredActiveOrganizationId()).toBe('new-users-org')
   })
 
   it('ends the organization session when forgotten (a logout), not when another is stored', () => {

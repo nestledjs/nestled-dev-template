@@ -75,6 +75,31 @@ import UploadHttpLink from 'apollo-upload-client/UploadHttpLink.mjs'
 import { decodeCookieValue, isFetchFailure, pickNewestJwt } from '@nestled-template/shared/utils'
 import { createCache } from './cache-config'
 
+/**
+ * The `errorPolicy` defaults `makeClient` sets, declared to TypeScript. From Apollo Client 4.2 a
+ * default `errorPolicy` that is not declared here fails to type-check (TS2322, "A default option
+ * for mutate.errorPolicy must be declared in ApolloClient.DeclareDefaultOptions before usage"),
+ * because the result types of `client.query`, `client.mutate` and the hooks depend on it. Keep
+ * these two in step with `defaultOptions` in `makeClient`: change one, change the other. On Apollo
+ * Client 4.1 the interfaces are not read yet and the declaration is harmless.
+ * See https://www.apollographql.com/docs/react/data/typescript#declaring-default-options-for-type-safety
+ */
+// Apollo declares these as namespaces; an augmentation has to use the same shape.
+/* eslint-disable @typescript-eslint/no-namespace */
+declare module '@apollo/client' {
+  export namespace ApolloClient {
+    export namespace DeclareDefaultOptions {
+      interface Query {
+        errorPolicy: 'all'
+      }
+      interface Mutate {
+        errorPolicy: 'none'
+      }
+    }
+  }
+}
+/* eslint-enable @typescript-eslint/no-namespace */
+
 export type ClientOptions = {
   token?: string
   webToken?: string
@@ -716,6 +741,9 @@ export const ACTIVE_ORGANIZATION_STORAGE_KEY = 'activeOrganizationId'
  */
 export function getStoredActiveOrganizationId(): string | null {
   if (globalThis.window === undefined) return null
+  // This document is leaving for another user's session: it sends no organization, whatever
+  // another tab may have stored meanwhile (`clearActiveOrganizationForSessionChange`).
+  if (activeOrganizationSessionChanging) return null
   // Inside the try: where storage is blocked, reading `localStorage` itself throws.
   try {
     if (typeof localStorage === 'undefined') return null
@@ -728,6 +756,9 @@ export function getStoredActiveOrganizationId(): string | null {
 // Advanced each time the stored organization is forgotten (a logout); see
 // `activeOrganizationSession`.
 let activeOrganizationSessionGeneration = 0
+
+// Set by `clearActiveOrganizationForSessionChange`; nothing in this document clears it again.
+let activeOrganizationSessionChanging = false
 
 /**
  * The browser's current organization session: a number that changes each time the stored
@@ -750,6 +781,8 @@ export function activeOrganizationSession(): number {
  */
 export function storeActiveOrganizationId(organizationId: string | null): void {
   if (globalThis.window === undefined) return
+  // Leaving for another user's session: an organization stored now is the previous user's.
+  if (organizationId && activeOrganizationSessionChanging) return
   if (!organizationId) activeOrganizationSessionGeneration += 1
   try {
     if (typeof localStorage === 'undefined') return
@@ -758,6 +791,37 @@ export function storeActiveOrganizationId(organizationId: string | null): void {
   } catch {
     // Storage blocked: requests fall back to the user's active organization on the API.
   }
+}
+
+/**
+ * Forgets the stored organization because this document is about to load another user's session,
+ * and stores none for the rest of this document. For starting or ending an emulation, which then
+ * sets `location.href`: the next document is the other user's.
+ *
+ * `storeActiveOrganizationId(null)` alone is not enough there. The signed-in shell is still mounted
+ * while the navigation is pending, and it stores the organization it shows on every render
+ * (`rememberActiveOrganization`): any re-render in that window (the mutation's answer reaching the
+ * cache, a query settling) wrote the previous user's organization back, so the next session's
+ * first requests carried it and its shell could restore it as the user's choice. From here on,
+ * every non-null `storeActiveOrganizationId` is ignored and `getStoredActiveOrganizationId`
+ * answers null, so this document sends no organization either; the next document starts clean.
+ *
+ * Only before a document navigation. A sign-in that stays in this document (the login form, an
+ * invitation) uses `storeActiveOrganizationId(null)`, so the new session's shell can store its own
+ * organization. It never signs anyone out and does not touch the session cookie.
+ */
+export function clearActiveOrganizationForSessionChange(): void {
+  if (globalThis.window === undefined) return
+  activeOrganizationSessionChanging = true
+  storeActiveOrganizationId(null)
+}
+
+/**
+ * Test-only: undoes `clearActiveOrganizationForSessionChange` for the next test in the same module
+ * instance. A browser never needs it: the document it latched is gone.
+ */
+export function __resetActiveOrganizationSessionChange(): void {
+  activeOrganizationSessionChanging = false
 }
 
 /**

@@ -492,19 +492,13 @@ async function executeUpdateMutation(
 ): Promise<{ success: boolean; message: string }> {
   try {
     const cleanedInput = cleanFormInput(formData, model)
-    const result = await updateMutation({
+    // A refusal rejects (the hook sets errorPolicy 'none'); the catch below reports it.
+    await updateMutation({
       variables: {
         input: cleanedInput,
         [idVariableName]: id,
       },
     })
-
-    if (result.errors) {
-      return {
-        success: false,
-        message: result.errors.map((err: any) => err.message).join(', '),
-      }
-    }
 
     return {
       success: true,
@@ -525,18 +519,12 @@ async function executeDeleteMutation(
   model: any,
 ): Promise<{ success: boolean; message: string }> {
   try {
-    const result = await deleteMutation({
+    // A refusal rejects (the hook sets errorPolicy 'none'); the catch below reports it.
+    await deleteMutation({
       variables: {
         [idVariableName]: id,
       },
     })
-
-    if (result.errors) {
-      return {
-        success: false,
-        message: result.errors.map((err: any) => err.message).join(', '),
-      }
-    }
 
     return {
       success: true,
@@ -654,7 +642,10 @@ function AdminDataEditPageContent({
     },
   )
 
-  // Mutations - provide placeholder mutations to prevent hook order issues
+  // Mutations - provide placeholder mutations to prevent hook order issues. `errorPolicy: 'none'`
+  // so a refusal rejects into the helpers' catch whatever the host client's default is: under a
+  // host default of 'all' it resolved, `result.errors` never matched Apollo 4's result, and the
+  // page reported success.
   const [updateMutation] = useMutation(
     UPDATE_MUTATION ||
       gql`
@@ -662,6 +653,7 @@ function AdminDataEditPageContent({
           __typename
         }
       `,
+    { errorPolicy: 'none' },
   )
   const [deleteMutation] = useMutation(
     DELETE_MUTATION ||
@@ -670,6 +662,7 @@ function AdminDataEditPageContent({
           __typename
         }
       `,
+    { errorPolicy: 'none' },
   )
 
   // ALL useEffect hooks MUST be called before any early returns

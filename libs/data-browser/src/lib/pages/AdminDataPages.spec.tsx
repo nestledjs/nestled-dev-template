@@ -263,7 +263,8 @@ describe('admin data pages', () => {
     routeParams = { dataType: 'user' }
     const createMutation = vi
       .fn()
-      .mockResolvedValueOnce({ errors: [{ message: 'Name is required' }] })
+      // A refusal rejects: the page runs the mutation with errorPolicy 'none'.
+      .mockRejectedValueOnce(new Error('Name is required'))
       .mockResolvedValueOnce({ data: { createUser: { id: 'user-1' } } })
     useMutation.mockReturnValue([createMutation])
 
@@ -274,6 +275,8 @@ describe('admin data pages', () => {
 
     fireEvent.click(screen.getByRole('button', { name: 'Submit Form' }))
     expect(await screen.findByText('User created successfully!')).toBeInTheDocument()
+    // Whatever the host client's default is, a refusal rejects into the page's catch.
+    expect(useMutation).toHaveBeenCalledWith(expect.anything(), { errorPolicy: 'none' })
   })
 
   it('rejects invalid create and edit routes before running mutations', () => {
@@ -337,7 +340,7 @@ describe('admin data pages', () => {
 
   it('shows edit mutation errors without navigating away', async () => {
     routeParams = { dataType: 'user', id: 'user-1' }
-    const updateMutation = vi.fn().mockResolvedValue({ errors: [{ message: 'Email is invalid' }] })
+    const updateMutation = vi.fn().mockRejectedValue(new Error('Email is invalid'))
     useQuery.mockReturnValue({
       data: { user: { id: 'user-1', name: 'Ada', active: true } },
       loading: false,
@@ -351,6 +354,31 @@ describe('admin data pages', () => {
     fireEvent.click(await screen.findByRole('button', { name: 'Submit Form' }))
 
     expect(await screen.findByText('Email is invalid')).toBeInTheDocument()
+    expect(screen.queryByText('User updated successfully!')).not.toBeInTheDocument()
+    expect(navigate).not.toHaveBeenCalled()
+    // Both the update and the delete hook, on every render.
+    expect(useMutation.mock.calls.length).toBeGreaterThanOrEqual(2)
+    for (const call of useMutation.mock.calls) expect(call[1]).toEqual({ errorPolicy: 'none' })
+  })
+
+  it('shows a refused delete without navigating away', async () => {
+    routeParams = { dataType: 'user', id: 'user-1' }
+    const deleteMutation = vi.fn().mockRejectedValue(new Error('User has open invoices'))
+    useQuery.mockReturnValue({
+      data: { user: { id: 'user-1', name: 'Ada', active: true } },
+      loading: false,
+      error: null,
+      refetch: vi.fn(),
+    })
+    useMutation.mockReturnValue([deleteMutation])
+
+    renderWithProvider(<AdminDataEditPage />)
+
+    fireEvent.click(await screen.findByRole('button', { name: 'Delete' }))
+    fireEvent.click(screen.getAllByRole('button', { name: 'Delete' })[1])
+
+    expect(await screen.findByText('User has open invoices')).toBeInTheDocument()
+    expect(screen.queryByText('User deleted successfully!')).not.toBeInTheDocument()
     expect(navigate).not.toHaveBeenCalled()
   })
 
