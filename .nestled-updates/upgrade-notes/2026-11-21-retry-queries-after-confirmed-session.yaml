@@ -38,8 +38,11 @@ intent: >
   verdict (the server has already sent the browser to the sign-out route) or an unknown one
   retries nothing.
 
-  3. Once, never a loop: while the retried queries are in flight, a 401 they get still requests a
-  revalidation under the cooldown but does not arm another retry.
+  3. Once, never a loop, tracked per query: a query whose retry is in flight is not retried again,
+  and each retry records the error it ended with. A later pass skips a query while its current
+  error is that same one, so a retry that gets a 401 again only asks for one more revalidation
+  (under the cooldown). A different query's 401, or a fresh 401 on the same query after its retry
+  succeeded, is a new failure and gets its own one retry. Overlapping 401s are each retried once.
 
   4. The `refetchFailedQueries` doc comment in apps/web/app/api-availability.ts points at the new
   retry; its behaviour is unchanged.
@@ -49,7 +52,10 @@ intent: >
   query that got a 401 is refetched exactly once after a signed-in verdict and a 403 beside it is
   not; nothing is refetched after a rejected or unknown verdict; a mutation that got a 401 is never
   replayed; a retry that gets a 401 again asks for one more revalidation and is not refetched
-  again; `retryUnauthenticatedQueries` skips a 403, a 401 beside a 503 and a healthy query.
+  again; two overlapping 401s whose retries both 401 are each refetched once; a query whose first
+  401 arrives while another query's retry is in flight is still retried; a query is retried again
+  after a later, separate 401; `retryUnauthenticatedQueries` skips a 403, a 401 beside a 503 and a
+  healthy query.
 
 why: >
   After a transient 401 (a token refresh racing a request, a brief proxy hiccup) the server

@@ -26,10 +26,12 @@ let waitingForOnline = false
 // starts completes: it retries the queries that failed with that 401 if the server judged the
 // session signed in.
 let afterNextRevalidation: (() => void) | undefined
-// While the queries retried after a confirmed session are in flight. A 401 one of them gets still
-// asks for a revalidation (under the cooldown), but does not arm another retry: each 401 is
-// retried once, never in a loop.
-let retryInFlight = false
+// Each query retried after a confirmed session, while its retry is in flight, and then the error
+// the retry ended with. A query whose current error is the one its own retry produced is not
+// retried again (a 401 on the retry asks for one more revalidation, never a loop); a failure that
+// came later, on that query or any other, is a new 401 and gets its one retry.
+let retrying = new WeakSet<object>()
+let retryEndedWith = new WeakMap<object, unknown>()
 
 function clearPending(): void {
   pendingRevalidate = undefined
@@ -65,7 +67,8 @@ export function __resetSessionRevalidation(): void {
   clearPending()
   lastRequestedAt = Number.NEGATIVE_INFINITY
   afterNextRevalidation = undefined
-  retryInFlight = false
+  retrying = new WeakSet<object>()
+  retryEndedWith = new WeakMap<object, unknown>()
 }
 
 function browserIsOffline(): boolean {
@@ -110,24 +113,32 @@ export function requestSessionRevalidation(
  * an HTTP 401 or a GraphQL `UNAUTHENTICATED`, never with outage evidence beside it). Called only
  * after the server has judged the session signed in, so the 401 was transient. Only queries are
  * refetched: `getObservableQueries` holds no mutation, so a mutation is never replayed. A 403 or
- * any other error is left alone. Returns how many queries were refetched.
+ * any other error is left alone, and so is a query whose retry is still in flight or whose
+ * current error is the one its own retry ended with. Returns how many queries were refetched.
  */
 export function retryUnauthenticatedQueries(
   client: Pick<ApolloClient, 'getObservableQueries'>,
 ): number {
-  const retries: Promise<unknown>[] = []
+  let retried = 0
   for (const query of client.getObservableQueries('active')) {
-    if (classifyApiFailure(query.getCurrentResult().error) === 'unauthenticated') {
-      retries.push(Promise.resolve(query.refetch()))
-    }
+    const { error } = query.getCurrentResult()
+    if (classifyApiFailure(error) !== 'unauthenticated') continue
+    if (retrying.has(query)) continue
+    if (retryEndedWith.has(query) && retryEndedWith.get(query) === error) continue
+    retrying.add(query)
+    retried += 1
+    const settle = retrySettled(query)
+    Promise.resolve(query.refetch()).then(settle, settle)
   }
-  if (retries.length > 0) {
-    retryInFlight = true
-    Promise.allSettled(retries).then(() => {
-      retryInFlight = false
-    })
+  return retried
+}
+
+/** Records how a query's retry ended, so the error it produced is not retried again. */
+function retrySettled(query: { getCurrentResult: () => { error?: unknown } }): () => void {
+  return () => {
+    retrying.delete(query)
+    retryEndedWith.set(query, query.getCurrentResult().error)
   }
-  return retries.length
 }
 
 /** Whether the root route's loader data, after a revalidation, holds a signed-in verdict. */
@@ -177,7 +188,7 @@ export function SessionRevalidator() {
       }
     }
     const onSuspect = () => {
-      if (!retryInFlight) afterNextRevalidation = retryIfSignedIn
+      afterNextRevalidation = retryIfSignedIn
       request()
     }
     globalThis.addEventListener(APOLLO_SESSION_SUSPECT_EVENT, onSuspect)

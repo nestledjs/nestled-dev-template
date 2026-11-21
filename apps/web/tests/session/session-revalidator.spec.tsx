@@ -384,17 +384,20 @@ describe('SessionRevalidator: queries refused by a transient 401 are retried onc
   const SIGNED_IN = { kind: 'signed-in', user: { id: 'user-1' } }
 
   type Answer = 'unauthenticated' | 'forbidden' | 'ok'
+  /** An answer, or an answer that takes `delay` ms to arrive (default 5). */
+  type Step = Answer | { answer: Answer; delay: number }
 
   /**
    * A client whose link answers each operation from its script (the last answer repeats), counts
    * the requests per operation, and, for a 401, dispatches the session suspect event as the app's
    * error link does.
    */
-  function scriptedClient(scripts: Record<string, Answer[]>) {
+  function scriptedClient(scripts: Record<string, Step[]>) {
     const requests: Record<string, number> = {}
     const okResult: Record<string, unknown> = {
       Items: { items: [{ __typename: 'Item', id: 'item-1' }] },
       AdminItems: { adminItems: [{ __typename: 'Item', id: 'item-2' }] },
+      Others: { others: [{ __typename: 'Other', id: 'other-1' }] },
       Save: { save: true },
     }
     const link = new ApolloLink(
@@ -404,7 +407,8 @@ describe('SessionRevalidator: queries refused by a transient 401 are retried onc
           const index = requests[name] ?? 0
           requests[name] = index + 1
           const script = scripts[name] ?? ['ok']
-          const answer = script[Math.min(index, script.length - 1)]
+          const step = script[Math.min(index, script.length - 1)]
+          const { answer, delay } = typeof step === 'string' ? { answer: step, delay: 5 } : step
           // The API answers a moment later, as it does over the network.
           const timer = setTimeout(() => {
             if (answer === 'unauthenticated') {
@@ -416,7 +420,7 @@ describe('SessionRevalidator: queries refused by a transient 401 are retried onc
               observer.next({ data: okResult[name] as Record<string, unknown> })
             }
             observer.complete()
-          }, 5)
+          }, delay)
           return () => clearTimeout(timer)
         }),
     )
@@ -434,6 +438,20 @@ describe('SessionRevalidator: queries refused by a transient 401 are retried onc
     const { data, error } = useQuery<{ adminItems: { id: string }[] }>(ADMIN_ITEMS)
     if (data) return <p>admin items: {data.adminItems.length}</p>
     return <p>{error ? 'admin items failed' : 'admin items loading'}</p>
+  }
+
+  const OTHERS = gql`
+    query Others {
+      others {
+        id
+      }
+    }
+  `
+
+  function Others() {
+    const { data, error } = useQuery<{ others: { id: string }[] }>(OTHERS)
+    if (data) return <p>others: {data.others.length}</p>
+    return <p>{error ? 'others failed' : 'others loading'}</p>
   }
 
   function SaveButton() {
@@ -575,6 +593,93 @@ describe('SessionRevalidator: queries refused by a transient 401 are retried onc
     expect(requests('Items')).toBe(2)
     expect(screen.getByText('items failed')).toBeInTheDocument()
     expect(navigations()).toEqual([])
+  })
+
+  it('retries each of two overlapping 401s once, even when both retries get a 401 again', async () => {
+    const { client, requests } = scriptedClient({
+      Items: ['unauthenticated'],
+      Others: ['unauthenticated'],
+    })
+    const { revalidations } = await renderApp(
+      client,
+      () => SIGNED_IN,
+      <>
+        <Items />
+        <Others />
+      </>,
+    )
+
+    await settle()
+    expect(revalidations()).toBe(1)
+    expect(requests('Items')).toBe(2)
+    expect(requests('Others')).toBe(2)
+
+    // The second initial 401 armed the revalidation held for the cooldown; it retries neither
+    // query again, because each one's error is the one its own retry produced.
+    await settle(SESSION_REVALIDATE_COOLDOWN_MS * 10)
+    expect(revalidations()).toBe(2)
+    expect(requests('Items')).toBe(2)
+    expect(requests('Others')).toBe(2)
+  })
+
+  it("still retries a query whose first 401 arrives while another query's retry is in flight", async () => {
+    const { client, requests } = scriptedClient({
+      // The first query's retry is slow to answer...
+      Items: ['unauthenticated', { answer: 'ok', delay: 500 }],
+      // ...and the second query's first 401 lands while it is in flight.
+      Others: [{ answer: 'unauthenticated', delay: 200 }, 'ok'],
+    })
+    const { revalidations } = await renderApp(
+      client,
+      () => SIGNED_IN,
+      <>
+        <Items />
+        <Others />
+      </>,
+    )
+
+    await settle(1_000)
+    expect(revalidations()).toBe(1)
+    expect(requests('Items')).toBe(2)
+    expect(requests('Others')).toBe(1)
+    expect(screen.getByText('items: 1')).toBeInTheDocument()
+
+    await settle(SESSION_REVALIDATE_COOLDOWN_MS)
+    expect(revalidations()).toBe(2)
+    expect(requests('Others')).toBe(2)
+    expect(screen.getByText('others: 1')).toBeInTheDocument()
+
+    await settle(SESSION_REVALIDATE_COOLDOWN_MS * 6)
+    expect(requests('Items')).toBe(2)
+    expect(requests('Others')).toBe(2)
+  })
+
+  it('retries a query again after a later, separate 401, once its retry had succeeded', async () => {
+    let error: unknown = new CombinedGraphQLErrors(UNAUTHENTICATED)
+    let resolveRefetch: () => void = () => undefined
+    const query = {
+      getCurrentResult: () => ({ error }),
+      refetch: vi.fn(
+        () =>
+          new Promise<void>(resolve => {
+            resolveRefetch = resolve
+          }),
+      ),
+    }
+    const client = { getObservableQueries: () => new Set([query]) }
+
+    expect(retryUnauthenticatedQueries(client as never)).toBe(1)
+    // In flight: not retried twice.
+    expect(retryUnauthenticatedQueries(client as never)).toBe(0)
+
+    error = undefined
+    await act(async () => {
+      resolveRefetch()
+    })
+    // Later the same query fails with a new 401: that one gets its retry too.
+    error = new CombinedGraphQLErrors(UNAUTHENTICATED)
+    expect(retryUnauthenticatedQueries(client as never)).toBe(1)
+    expect(query.refetch).toHaveBeenCalledTimes(2)
   })
 
   it('retryUnauthenticatedQueries refetches only clean 401s: not a 403, an outage or a healthy query', () => {
