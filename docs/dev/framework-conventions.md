@@ -95,6 +95,13 @@ Weak reasons:
 - hiding unfinished code
 - avoiding local imports
 
+When you do create one, add its source folder to `sonar.sources` in `sonar-project.properties`
+and to the `include` of one of SonarCloud's two TypeScript programs: `sonar/tsconfig.api.json` for
+API-side code (Jest, CommonJS) or `sonar/tsconfig.web.json` for browser and Vite code (Vitest,
+bundler resolution). A folder in `sonar.sources` but in neither program is analysed without type
+information; `node --test scripts/sonar-tsconfig-coverage.spec.mjs` (run in CI) fails on it. Do not
+list the library's own tsconfig in `sonar.typescript.tsconfigPaths`: see the comment above it.
+
 ## Generated CRUD
 
 Normal application models should generate admin CRUD. Every handwritten application operation—at
