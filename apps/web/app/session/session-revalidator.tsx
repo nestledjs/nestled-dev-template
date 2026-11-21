@@ -1,7 +1,14 @@
-import { type ReactNode, useCallback, useEffect } from 'react'
-import { isRouteErrorResponse } from 'react-router'
+import { type ReactNode, useCallback, useContext, useEffect, useRef } from 'react'
+import {
+  isRouteErrorResponse,
+  type RouterState,
+  UNSAFE_DataRouterContext as DataRouterContext,
+} from 'react-router'
+import type { ApolloClient } from '@apollo/client'
+import { getApolloContext } from '@apollo/client/react'
 import {
   APOLLO_SESSION_SUSPECT_EVENT,
+  classifyApiFailure,
   SESSION_REVALIDATE_COOLDOWN_MS,
 } from '@nestled-template/shared/apollo'
 import { useBoundaryRecoveringRevalidate } from './boundary-recovery'
@@ -15,6 +22,14 @@ let lastRequestedAt = Number.NEGATIVE_INFINITY
 let pendingRevalidate: (() => unknown) | undefined
 let pendingTimer: ReturnType<typeof setTimeout> | undefined
 let waitingForOnline = false
+// Armed by a browser 401 (SessionRevalidator) and run once, after the next revalidation that
+// starts completes: it retries the queries that failed with that 401 if the server judged the
+// session signed in.
+let afterNextRevalidation: (() => void) | undefined
+// While the queries retried after a confirmed session are in flight. A 401 one of them gets still
+// asks for a revalidation (under the cooldown), but does not arm another retry: each 401 is
+// retried once, never in a loop.
+let retryInFlight = false
 
 function clearPending(): void {
   pendingRevalidate = undefined
@@ -49,6 +64,8 @@ function holdPending(revalidate: () => unknown, delayMs: number | 'online'): voi
 export function __resetSessionRevalidation(): void {
   clearPending()
   lastRequestedAt = Number.NEGATIVE_INFINITY
+  afterNextRevalidation = undefined
+  retryInFlight = false
 }
 
 function browserIsOffline(): boolean {
@@ -81,8 +98,44 @@ export function requestSessionRevalidation(
   }
   clearPending()
   lastRequestedAt = now
-  void revalidate()
+  const after = afterNextRevalidation
+  afterNextRevalidation = undefined
+  const revalidation = revalidate()
+  if (after) Promise.resolve(revalidation).then(after, () => undefined)
   return true
+}
+
+/**
+ * Refetch, once, every active query whose last result is a clean 401 (`classifyApiFailure`:
+ * an HTTP 401 or a GraphQL `UNAUTHENTICATED`, never with outage evidence beside it). Called only
+ * after the server has judged the session signed in, so the 401 was transient. Only queries are
+ * refetched: `getObservableQueries` holds no mutation, so a mutation is never replayed. A 403 or
+ * any other error is left alone. Returns how many queries were refetched.
+ */
+export function retryUnauthenticatedQueries(
+  client: Pick<ApolloClient, 'getObservableQueries'>,
+): number {
+  const retries: Promise<unknown>[] = []
+  for (const query of client.getObservableQueries('active')) {
+    if (classifyApiFailure(query.getCurrentResult().error) === 'unauthenticated') {
+      retries.push(Promise.resolve(query.refetch()))
+    }
+  }
+  if (retries.length > 0) {
+    retryInFlight = true
+    Promise.allSettled(retries).then(() => {
+      retryInFlight = false
+    })
+  }
+  return retries.length
+}
+
+/** Whether the root route's loader data, after a revalidation, holds a signed-in verdict. */
+function rootVerdictIsSignedIn(state: RouterState): boolean {
+  const rootId = state.matches[0]?.route.id
+  if (rootId === undefined || state.errors?.[rootId] !== undefined) return false
+  const data = state.loaderData[rootId] as { session?: { kind?: unknown } } | undefined
+  return data?.session?.kind === 'signed-in'
 }
 
 /**
@@ -99,15 +152,39 @@ export function useSessionRevalidation(): () => boolean {
 /**
  * Mounted once in App. Answers the error link's `APOLLO_SESSION_SUSPECT_EVENT` (a browser query got
  * a clean 401) with `requestSessionRevalidation`.
+ *
+ * When that revalidation completes and the root loader's verdict is signed in, the 401 was
+ * transient: the active queries that failed with it are refetched once
+ * (`retryUnauthenticatedQueries`), so a list rendered from a client query does not stay empty
+ * until the next navigation. Any other verdict retries nothing; a rejected session has already
+ * been sent to the sign-out route by the server. The router state is read from
+ * `UNSAFE_DataRouterContext` because it is current as soon as the revalidation resolves, before
+ * React has rendered the new loader data.
  */
 export function SessionRevalidator() {
   const request = useSessionRevalidation()
+  const client = useContext(getApolloContext()).client
+  const router = useContext(DataRouterContext)?.router
+  const latest = useRef({ client, router })
   useEffect(() => {
+    latest.current = { client, router }
+  })
+  useEffect(() => {
+    const retryIfSignedIn = () => {
+      const { client: current, router: data } = latest.current
+      if (current && data && rootVerdictIsSignedIn(data.state)) {
+        retryUnauthenticatedQueries(current)
+      }
+    }
     const onSuspect = () => {
+      if (!retryInFlight) afterNextRevalidation = retryIfSignedIn
       request()
     }
     globalThis.addEventListener(APOLLO_SESSION_SUSPECT_EVENT, onSuspect)
-    return () => globalThis.removeEventListener(APOLLO_SESSION_SUSPECT_EVENT, onSuspect)
+    return () => {
+      globalThis.removeEventListener(APOLLO_SESSION_SUSPECT_EVENT, onSuspect)
+      if (afterNextRevalidation === retryIfSignedIn) afterNextRevalidation = undefined
+    }
   }, [request])
   return null
 }
