@@ -1,20 +1,17 @@
 import React, { useEffect, useState } from 'react'
-import {
-  Link,
-  LoaderFunctionArgs,
-  redirect,
-  useLoaderData,
-  useNavigate,
-  useSearchParams,
-} from 'react-router'
+import { Link, LoaderFunctionArgs, redirect, useLoaderData, useSearchParams } from 'react-router'
 import { Form } from '@nestledjs/forms'
 import { FormFieldClass } from '@nestledjs/forms-core'
 import { AuthLayout } from '@nestled-template/web'
 import { getJsonCookie } from '@nestled-template/shared/utils'
 import { getSession } from '../../session'
+import { DEFAULT_POST_LOGIN, safeReturnUrl } from '../../session/return-url'
 import { LoginInput, Login, Complete2FaLogin } from '@nestled-template/shared/sdk'
 import { formTheme } from '@nestled-template/shared/styles'
-import { storeActiveOrganizationId } from '@nestled-template/shared/apollo'
+import {
+  clearActiveOrganizationForSessionChange,
+  storeActiveOrganizationId,
+} from '@nestled-template/shared/apollo'
 import { useMutation } from '@apollo/client/react'
 
 // A request the session middleware judged signed in goes straight on; any other verdict (signed
@@ -28,38 +25,13 @@ import { useMutation } from '@apollo/client/react'
 export function loader({ request, context }: LoaderFunctionArgs) {
   const afterSignOut = new URL(request.url).searchParams.has('expired')
   if (!afterSignOut && getSession(context).kind === 'signed-in') {
-    throw redirect('/members/dashboard')
+    throw redirect(DEFAULT_POST_LOGIN)
   }
   const isRemembered = getJsonCookie<{ email: string }>(request.headers, '_nestled_remember')
   return isRemembered ?? {}
 }
 
-const DEFAULT_POST_LOGIN = '/members/dashboard'
-
-// An origin-local target: a single-slash absolute path with no backslash tricks.
-// Protocol-relative (`//host`) and backslash forms (`/\host`, `\host`) are rejected
-// because browsers/routers normalize them into off-site navigations.
-function isSafeLocalPath(path: string): boolean {
-  return path.startsWith('/') && !path.startsWith('//') && !path.includes('\\')
-}
-
-// Producers pass the post-login destination as either a same-origin relative path
-// (`return_url`, most routes) or an absolute URL (`redirect`, e.g. mcp-connect passes
-// request.url). Return a path we can navigate to that can never leave our origin:
-// safe relative paths pass through; absolute/other inputs are reduced to
-// pathname+search+hash (the origin is discarded) and the derived path is re-validated
-// with the same rule — so `https://host//evil.com` (pathname `//evil.com`) is rejected.
-export function safeReturnUrl(raw: string | null): string {
-  if (!raw) return DEFAULT_POST_LOGIN
-  if (isSafeLocalPath(raw)) return raw
-  try {
-    const { pathname, search, hash } = new URL(raw)
-    const path = `${pathname}${search}${hash}`
-    return isSafeLocalPath(path) ? path : DEFAULT_POST_LOGIN
-  } catch {
-    return DEFAULT_POST_LOGIN
-  }
-}
+export { safeReturnUrl }
 
 export const ForgotPasswordWrapper = (children: React.ReactNode) => (
   <div key={'remember'} className="flex items-center justify-between">
@@ -74,7 +46,6 @@ export const ForgotPasswordWrapper = (children: React.ReactNode) => (
 
 export default function LoginPage() {
   const isRemembered = useLoaderData()
-  const navigate = useNavigate()
   const [searchParams, setSearchParams] = useSearchParams()
   const [formError, setFormError] = useState<string | null>(null)
 
@@ -115,12 +86,14 @@ export default function LoginPage() {
     errorPolicy: 'none',
   })
 
-  // A new session starts here: the organization stored for `x-organization-id` belonged to whoever
-  // was signed in before (a shared browser, a session that expired without a logout). The API
-  // refuses an organization the new user is not a member of, but the browser must not send it.
+  // A new session starts here, in a new document: a client navigation would keep this document's
+  // Apollo cache, and with it whatever it holds of whoever was signed in before (a shared browser, a
+  // session that expired without a logout). The organization stored for `x-organization-id`
+  // belonged to them too: the API refuses one the new user is not a member of, but the browser must
+  // not send it, nor store it again before the new document loads.
   function signedIn() {
-    storeActiveOrganizationId(null)
-    navigate(redirectUrl)
+    clearActiveOrganizationForSessionChange()
+    globalThis.location.assign(redirectUrl)
   }
 
   async function processLogin(input: LoginInput) {
@@ -140,7 +113,7 @@ export default function LoginPage() {
       // Normal login without 2FA
       if (loginInfo?.user?.id) {
         // The backend already sets the __session cookie via the GraphQL mutation
-        // We should not set our own cookies here, just navigate
+        // We should not set our own cookies here, just load the page
         signedIn()
       } else {
         setFormError('Invalid login credentials')

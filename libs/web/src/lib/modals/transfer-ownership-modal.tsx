@@ -10,7 +10,6 @@ import {
   TransferOrganizationOwnership,
   Me,
   type MyOrganizationsWithMembersQuery,
-  type MeQuery,
 } from '@nestled-template/shared/sdk'
 
 interface TransferOwnershipModalProps {
@@ -29,7 +28,7 @@ export default function TransferOwnershipModal({
   const [confirmText, setConfirmText] = useState('')
   const [isTransferring, setIsTransferring] = useState(false)
 
-  const { data: meData } = useQuery<MeQuery>(Me)
+  const { data: meData } = useQuery(Me)
   const { data: organizationsData, loading } = useQuery<MyOrganizationsWithMembersQuery>(
     MyOrganizationsWithMembers,
   )
