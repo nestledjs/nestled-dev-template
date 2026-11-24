@@ -81,7 +81,8 @@ agentHints:
   - >
     The web server and the API must agree on the cookie's name. The API reads `VITE_COOKIE_NAME`,
     then `API_COOKIE_NAME`; the web reads `VITE_COOKIE_NAME`. A project that sets only
-    `API_COOKIE_NAME` is already broken; set both.
+    `API_COOKIE_NAME` is already broken: apply `2026-11-24-one-session-cookie-name`, after which
+    only `VITE_COOKIE_NAME` is read.
   - >
     Grep server code for `getCookie(..., getSessionCookieName())` outside the session module: a
     loader that calls a REST endpoint itself uses `forwardedSessionCookie(request)`, and one that
