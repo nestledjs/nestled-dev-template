@@ -12,13 +12,7 @@ import { FormFieldClass } from '@nestledjs/forms-core'
 import { AuthLayout } from '@nestled-template/web'
 import { getJsonCookie } from '@nestled-template/shared/utils'
 import { getSession } from '../../session'
-import {
-  LoginInput,
-  Login,
-  Complete2FaLogin,
-  type LoginMutation,
-  type Complete2FaLoginMutation,
-} from '@nestled-template/shared/sdk'
+import { LoginInput, Login, Complete2FaLogin } from '@nestled-template/shared/sdk'
 import { formTheme } from '@nestled-template/shared/styles'
 import { storeActiveOrganizationId } from '@nestled-template/shared/apollo'
 import { useMutation } from '@apollo/client/react'
@@ -116,8 +110,8 @@ export default function LoginPage() {
   const redirectUrl = safeReturnUrl(searchParams.get('return_url') ?? searchParams.get('redirect'))
 
   // Throw on a GraphQL error so the catch below sees it (also the client default; kept explicit).
-  const [loginMutation] = useMutation<LoginMutation>(Login, { errorPolicy: 'none' })
-  const [complete2FALoginMutation] = useMutation<Complete2FaLoginMutation>(Complete2FaLogin, {
+  const [loginMutation] = useMutation(Login, { errorPolicy: 'none' })
+  const [complete2FALoginMutation] = useMutation(Complete2FaLogin, {
     errorPolicy: 'none',
   })
 

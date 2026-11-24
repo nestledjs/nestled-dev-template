@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router'
 import { Form } from '@nestledjs/forms'
 import { FormFieldClass } from '@nestledjs/forms-core'
 import { AuthLayout, TurnstileWidget, turnstileSiteKey } from '@nestled-template/web'
-import { RegisterInput, Register, type RegisterMutation } from '@nestled-template/shared/sdk'
+import { RegisterInput, Register } from '@nestled-template/shared/sdk'
 import { formTheme } from '@nestled-template/shared/styles'
 import { storeActiveOrganizationId } from '@nestled-template/shared/apollo'
 import { useMutation } from '@apollo/client/react'
@@ -21,7 +21,7 @@ export default function RegisterPage() {
   // reset the retry would fail the captcha instead of showing the real error.
   const [captchaKey, setCaptchaKey] = useState(0)
   // Throw on a GraphQL error so the catch below sees it (also the client default; kept explicit).
-  const [registerMutation, { loading }] = useMutation<RegisterMutation>(Register, {
+  const [registerMutation, { loading }] = useMutation(Register, {
     errorPolicy: 'none',
   })
   const captchaRequired = Boolean(turnstileSiteKey())
