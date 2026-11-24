@@ -1,5 +1,12 @@
 import React, { useEffect, useState } from 'react'
-import { Link, LoaderFunctionArgs, redirect, useLoaderData, useSearchParams } from 'react-router'
+import {
+  Link,
+  LoaderFunctionArgs,
+  redirect,
+  useLoaderData,
+  useLocation,
+  useSearchParams,
+} from 'react-router'
 import { Form } from '@nestledjs/forms'
 import { FormFieldClass } from '@nestledjs/forms-core'
 import { AuthLayout } from '@nestled-template/web'
@@ -8,6 +15,7 @@ import { getSession } from '../../session'
 import { DEFAULT_POST_LOGIN, safeReturnUrl } from '../../session/return-url'
 import { LoginInput, Login, Complete2FaLogin } from '@nestled-template/shared/sdk'
 import { formTheme } from '@nestled-template/shared/styles'
+import { signInNotice } from '../../session/sign-in-notice'
 import {
   clearActiveOrganizationForSessionChange,
   storeActiveOrganizationId,
@@ -46,6 +54,7 @@ export const ForgotPasswordWrapper = (children: React.ReactNode) => (
 
 export default function LoginPage() {
   const isRemembered = useLoaderData()
+  const notice = signInNotice(useLocation().state)
   const [searchParams, setSearchParams] = useSearchParams()
   const [formError, setFormError] = useState<string | null>(null)
 
@@ -233,6 +242,11 @@ export default function LoginPage() {
             Sign up
           </Link>
         </p>
+        {notice && (
+          <div className="text-center text-sky-900 dark:text-sky-100 bg-sky-50 dark:bg-sky-400/10 border border-sky-200 dark:border-sky-400/20 rounded-lg p-3 text-sm">
+            {notice}
+          </div>
+        )}
         {formError && (
           <div className="text-center text-rose-700 dark:text-rose-300 bg-rose-50 dark:bg-rose-500/10 border border-rose-200 dark:border-rose-500/20 rounded-lg p-3 text-sm">
             {formError}

@@ -14,6 +14,7 @@ import {
   Login,
   RegisterWithInvitation,
 } from '@nestled-template/shared/sdk'
+import { TWO_FACTOR_INVITATION } from '../session/sign-in-notice'
 import { useGlobalCtx } from '@nestled-template/web'
 import { Form } from '@nestledjs/forms'
 import { FormFieldClass } from '@nestledjs/forms-core'
@@ -211,6 +212,24 @@ export default function AcceptInvitation() {
       const { data } = await login({
         variables: { input },
       })
+
+      if (data?.login?.requires2FA) {
+        // No session yet: the second factor is asked for on the login page, which comes back here
+        // signed in. It sends a signed-in visitor straight on, so a second account cannot go there.
+        setIsProcessing(false)
+        if (user) {
+          setFormError(
+            'This account uses two-factor authentication. Sign out first, then open the invitation link again.',
+          )
+          return
+        }
+        const invitation = `/accept-invitation?token=${encodeURIComponent(token)}`
+        // nestled-session-allow: the user is signing in, and the second factor is collected there
+        navigate(`/login?return_url=${encodeURIComponent(invitation)}`, {
+          state: TWO_FACTOR_INVITATION,
+        })
+        return
+      }
 
       if (data?.login?.user?.id) {
         // A new session: forget an organization stored for a previous user before the invitation
