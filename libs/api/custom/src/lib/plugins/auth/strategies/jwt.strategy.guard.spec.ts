@@ -163,6 +163,14 @@ describe('JwtStrategy with several session cookies, through AuthGuard', () => {
     expect(error).toBe(401)
   })
 
+  it('reads the cookie the API sets, whatever API_COOKIE_NAME says', async () => {
+    process.env['API_COOKIE_NAME'] = 'another'
+    await expect(userFor(cookies(signed('user-1', now)))).resolves.toBe('user-1')
+
+    process.env['VITE_COOKIE_NAME'] = 'app'
+    await expect(userFor({ cookie: `app=${signed('user-2', now)}` })).resolves.toBe('user-2')
+  })
+
   it('takes the newest of several that verify', async () => {
     await expect(
       userFor(cookies(signed('user-old', now - 60), signed('user-new', now))),
