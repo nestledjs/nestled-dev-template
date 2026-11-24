@@ -13,10 +13,6 @@ import {
   AcceptOrganizationInvitation,
   Login,
   RegisterWithInvitation,
-  type GetInvitationDetailsQuery,
-  type AcceptOrganizationInvitationMutation,
-  type LoginMutation,
-  type RegisterWithInvitationMutation,
 } from '@nestled-template/shared/sdk'
 import { useGlobalCtx } from '@nestled-template/web'
 import { Form } from '@nestledjs/forms'
@@ -98,21 +94,15 @@ export default function AcceptInvitation() {
     data: inviteData,
     loading: inviteLoading,
     error: inviteError,
-  } = useQuery<GetInvitationDetailsQuery>(GetInvitationDetails, {
+  } = useQuery(GetInvitationDetails, {
     variables: { token: token || '' },
     skip: !token,
   })
 
   // Throw on a GraphQL error so the catch below sees it (also the client default; kept explicit).
-  const [acceptInvitation] = useMutation<AcceptOrganizationInvitationMutation>(
-    AcceptOrganizationInvitation,
-    { errorPolicy: 'none' },
-  )
-  const [login] = useMutation<LoginMutation>(Login, { errorPolicy: 'none' })
-  const [registerWithInvitation] = useMutation<RegisterWithInvitationMutation>(
-    RegisterWithInvitation,
-    { errorPolicy: 'none' },
-  )
+  const [acceptInvitation] = useMutation(AcceptOrganizationInvitation, { errorPolicy: 'none' })
+  const [login] = useMutation(Login, { errorPolicy: 'none' })
+  const [registerWithInvitation] = useMutation(RegisterWithInvitation, { errorPolicy: 'none' })
 
   const invitationDetails = inviteData?.getInvitationDetails
 
