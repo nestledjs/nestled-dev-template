@@ -204,7 +204,7 @@ describe('makeClient', () => {
     })
 
     const { headers } = fetchMock.mock.calls[0][1]
-    expect(headers.cookie).toBe(`__session=${older}; __session=${newer}`)
+    expect(headers.cookie).toBe(`__session=${newer}; __session=${older}`)
     expect(headers).not.toHaveProperty('authorization')
   })
 

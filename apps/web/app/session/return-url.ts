@@ -8,7 +8,7 @@ export const DEFAULT_POST_LOGIN = '/members/dashboard'
 const SIGN_OUT_PATHS: ReadonlySet<string> = new Set(['/logout', '/force-logout'])
 
 // Only resolves a path against: never fetched, and no real origin can equal it.
-const LOCAL_ORIGIN = 'http://return-url.invalid'
+const LOCAL_ORIGIN = 'https://return-url.invalid'
 
 // A path still changing after this many rounds of percent-decoding is not a real return path.
 const MAX_DECODE_ROUNDS = 5

@@ -1,15 +1,34 @@
 import { Suspense } from 'react'
 import { act, cleanup, render, screen } from '@testing-library/react'
 import { CombinedGraphQLErrors, ServerError } from '@apollo/client'
+import { ApolloProvider, useReadQuery, type QueryRef } from '@apollo/client/react'
 import { createMemoryRouter, RouterProvider, useLoaderData, useRouteError } from 'react-router'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { apolloLoader, makeClient } from '@nestled-template/shared/apollo'
+import { UserPreferences, type UserPreferencesQuery } from '@nestled-template/shared/sdk'
 import { ErrorBoundary } from '../../app/root'
 import { isRefusedRenderError } from '../../app/session'
 import {
   __resetSessionRevalidation,
   REFUSED_RENDER_INTERVAL_MS,
 } from '../../app/session/session-revalidator'
+import { UNAUTHENTICATED_RESULT } from '../helpers/api-rejection'
 import { stubLocation } from '../helpers/location'
+
+// Vitest resolves the streaming package's server build, which redacts a streamed error. The client
+// bundle gets its browser build, which sends the query again instead: use that one.
+const streaming = vi.hoisted(() => {
+  const { createRequire } = process.getBuiltinModule('node:module')
+  const integration = createRequire(import.meta.url).resolve(
+    '@apollo/client-integration-react-router',
+  )
+  const server = createRequire(integration).resolve('@apollo/client-react-streaming')
+  return {
+    server: server.replace('index.ssr.cjs', 'index.ssr.js'),
+    browser: server.replace('index.ssr.cjs', 'index.browser.js'),
+  }
+})
+vi.mock(streaming.server, () => import(/* @vite-ignore */ streaming.browser))
 
 // A preload the API refuses after the request was judged signed in reaches the browser in the
 // loader data stream: the component that reads it throws, and the browser's error link never sees
@@ -123,6 +142,103 @@ describe('a render the API refused', () => {
     await wait(REFUSED_RENDER_INTERVAL_MS / 4)
     expect(loads).toBe(3)
     expect(router.state.location.pathname).toBe('/members')
+  })
+})
+
+// The real transport: apolloLoader's preloadQuery, its stream, the browser's client and useReadQuery.
+// A GraphQL answer (HTTP 200) travels in the stream as it is. An HTTP failure travels as a bare
+// `error` event, and the browser's client sends the query again through its own links, so what the
+// component throws is the browser's own error, with its status: never a redacted one.
+describe('a preload refused in the loader data stream', () => {
+  const json = (body: unknown, status = 200) =>
+    new Response(JSON.stringify(body), {
+      status,
+      headers: { 'content-type': 'application/json' },
+    })
+  const answered = () => json({ data: { userPreferences: [] } })
+
+  function PreloadPage() {
+    const { preferences } = useLoaderData() as { preferences: QueryRef<UserPreferencesQuery> }
+    const { data } = useReadQuery(preferences)
+    return <p>{data.userPreferences?.length ?? 'no'} preferences</p>
+  }
+
+  async function renderPreload(answer: (call: number) => Response) {
+    let calls = 0
+    vi.stubGlobal('fetch', async () => {
+      calls += 1
+      return answer(calls)
+    })
+    const preload = apolloLoader()(async ({ preloadQuery }) => ({
+      preferences: preloadQuery(UserPreferences),
+    }))
+    const router = createMemoryRouter(
+      [
+        { path: '/', element: <p>Home</p> },
+        {
+          path: '/settings',
+          loader: args => {
+            loads += 1
+            return preload(args)
+          },
+          element: (
+            <Suspense fallback={<p>loading</p>}>
+              <PreloadPage />
+            </Suspense>
+          ),
+          ErrorBoundary: function Boundary() {
+            return <ErrorBoundary error={useRouteError()} />
+          },
+        },
+      ],
+      { initialEntries: ['/'] },
+    )
+    await act(async () => {
+      render(
+        <ApolloProvider
+          client={makeClient(undefined, { apiUrl: 'https://api.example.com/graphql' })}
+        >
+          <RouterProvider router={router} />
+        </ApolloProvider>,
+      )
+    })
+    await act(() => router.navigate('/settings'))
+    await wait(100)
+    return { calls: () => calls }
+  }
+
+  beforeEach(() => {
+    vi.spyOn(console, 'warn').mockImplementation(() => undefined)
+    vi.spyOn(console, 'log').mockImplementation(() => undefined)
+  })
+
+  it('a GraphQL 401: one retry, which recovers', async () => {
+    const { calls } = await renderPreload(call =>
+      call === 1 ? json(UNAUTHENTICATED_RESULT) : answered(),
+    )
+    expect(await screen.findByText('0 preferences')).toBeInTheDocument()
+    expect(loads).toBe(2)
+    expect(calls()).toBe(2)
+  })
+
+  it('an HTTP 401, refused again in the browser: one retry, which recovers', async () => {
+    const { calls } = await renderPreload(call => (call <= 2 ? json({}, 401) : answered()))
+    expect(await screen.findByText('0 preferences')).toBeInTheDocument()
+    expect(loads).toBe(2)
+    expect(calls()).toBe(3)
+  })
+
+  it('an HTTP 401 the browser does not get again needs no retry', async () => {
+    const { calls } = await renderPreload(call => (call === 1 ? json({}, 401) : answered()))
+    expect(await screen.findByText('0 preferences')).toBeInTheDocument()
+    expect(loads).toBe(1)
+    expect(calls()).toBe(2)
+  })
+
+  it('a 500 asks nothing', async () => {
+    await renderPreload(() => json({}, 500))
+    await wait(REFUSED_RENDER_INTERVAL_MS)
+    expect(loads).toBe(1)
   })
 })
 

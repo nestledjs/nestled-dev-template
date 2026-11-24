@@ -140,8 +140,9 @@ export function getCookie<T extends string = string>(
 }
 
 /**
- * Every distinct, nonempty value of the cookie `name` in a Cookie header, in header order and as
- * sent (not percent-decoded, so it can be forwarded verbatim). More than one means the browser
+ * Every distinct, nonempty value of the cookie `name` in a Cookie header, as sent (not
+ * percent-decoded, so it can be forwarded verbatim) and in the order of its last occurrence: the API
+ * breaks a tie between two issued in the same second by taking the later. More than one means the browser
  * holds duplicates (a host-only and a parent-domain cookie, say); only the API can tell which of
  * them verifies, so a caller that forwards the session forwards them all (`cookiePairs`).
  */
@@ -152,7 +153,9 @@ export function cookieCandidates(cookieHeader: string | null | undefined, name: 
     const separator = pair.indexOf('=')
     if (separator < 0 || pair.slice(0, separator).trim() !== name) continue
     const value = pair.slice(separator + 1).trim()
-    if (value) values.add(value)
+    if (!value) continue
+    values.delete(value)
+    values.add(value)
   }
   return [...values]
 }

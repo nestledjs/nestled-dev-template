@@ -231,7 +231,9 @@ export function RevalidateSessionOnMount({ children }: Readonly<{ children: Reac
  * Whether an error thrown while rendering is an API call's clean 401, by code and status only: what
  * `useReadQuery` throws for a preload the API refused after the request was judged signed in. The
  * answer reached the browser in the loader data stream, not through its error link, so no
- * `APOLLO_SESSION_SUSPECT_EVENT` was dispatched for it. Outage evidence beside the 401 outranks it
+ * `APOLLO_SESSION_SUSPECT_EVENT` was dispatched for it. (An HTTP failure does not travel that way: the
+ * browser's client sends that query again itself, and its own error is what is thrown.) Outage
+ * evidence beside the 401 outranks it
  * (`classifyApiFailure`). Never a sign-out.
  */
 export function isRefusedRenderError(error: unknown): boolean {
