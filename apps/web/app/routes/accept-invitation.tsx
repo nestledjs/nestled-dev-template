@@ -225,7 +225,7 @@ export default function AcceptInvitation() {
         }
         const invitation = `/accept-invitation?token=${encodeURIComponent(token)}`
         // nestled-session-allow: the user is signing in, and the second factor is collected there
-        navigate(`/login?return_url=${encodeURIComponent(invitation)}`, {
+        void navigate(`/login?return_url=${encodeURIComponent(invitation)}`, {
           state: TWO_FACTOR_INVITATION,
         })
         return

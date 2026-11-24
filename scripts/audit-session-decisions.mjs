@@ -177,13 +177,13 @@ function isHand401(node) {
 }
 
 // The server-side Apollo client forwards the candidates, so it has to read them.
-const READS_CANDIDATES = /^libs\/shared\/apollo\//
+const READS_CANDIDATES = 'libs/shared/apollo/'
 
 function isSessionCookieRead(node, fileName) {
   if (!ts.isCallExpression(node)) return false
   const callee = calleeName(node)
   if (callee !== 'getCookie' && callee !== 'cookieCandidates') return false
-  if (callee === 'cookieCandidates' && READS_CANDIDATES.test(fileName)) return false
+  if (callee === 'cookieCandidates' && fileName.startsWith(READS_CANDIDATES)) return false
   const name = node.arguments[1]
   return !!name && ts.isCallExpression(name) && calleeName(name) === 'getSessionCookieName'
 }
