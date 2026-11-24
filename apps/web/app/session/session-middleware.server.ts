@@ -168,18 +168,59 @@ function isRedirect(response: Response): boolean {
   return response.status >= 300 && response.status < 400
 }
 
+/** For every response to a request that carries a session: no cache may keep it. */
+export const SESSION_CACHE_CONTROL = 'private, no-store'
+
+/**
+ * A route's own Cache-Control stays, except one that lets a shared cache keep a page: every page
+ * (HTML, or React Router's `.data` answer) holds the verdict in its root loader data, so a public
+ * page's signed-in variant must never be served to anyone else.
+ */
+function keepsOwnCacheControl(headers: Headers): boolean {
+  const own = headers.get('Cache-Control')
+  if (!own) return false
+  const isPage =
+    headers.has('X-Remix-Response') || headers.get('Content-Type')?.startsWith('text/html') === true
+  return !isPage || /\b(?:private|no-store)\b/i.test(own)
+}
+
+function withSessionCacheControl(response: Response): Response {
+  if (keepsOwnCacheControl(response.headers)) return response
+  try {
+    response.headers.set('Cache-Control', SESSION_CACHE_CONTROL)
+    return response
+  } catch {
+    // A loader that returns `fetch()`'s or `Response.redirect()`'s own response: immutable headers.
+    const headers = new Headers(response.headers)
+    headers.set('Cache-Control', SESSION_CACHE_CONTROL)
+    return new Response(response.body, {
+      status: response.status,
+      statusText: response.statusText,
+      headers,
+    })
+  }
+}
+
 /**
  * The root route's middleware: judges the session once per request (document loads, client
  * navigations and revalidations alike, before any loader runs) and stores the verdict in
  * `sessionContext`. On a `signed-out/rejected` verdict it also expires both session cookie scopes
  * on the response (a public page then renders signed out with the dead cookie gone); a redirect is
  * left alone, since `/force-logout` expires them itself.
+ *
+ * Every response to a request that carries a session cookie (a document, a `.data` answer, a
+ * redirect or an error) is `SESSION_CACHE_CONTROL`, so neither the browser's history nor a shared
+ * cache can bring one user's page back for another. Anonymous responses are unchanged.
  */
 export function createSessionMiddleware(
   options: ResolveSessionOptions = {},
 ): MiddlewareFunction<Response> {
   return async ({ request, context, pattern }, next) => {
-    if (SESSIONLESS_PATTERNS.has(pattern)) return next()
+    const carriesSession = sessionCookies(request).length > 0
+    if (SESSIONLESS_PATTERNS.has(pattern)) {
+      const sessionless = await next()
+      return carriesSession ? withSessionCacheControl(sessionless) : sessionless
+    }
     const { verdict, evidence } = await resolveSession(request, options)
     context.set(sessionContext, verdict)
     if (verdict.kind === 'unknown' || (evidence.me && evidence.confirm)) {
@@ -191,7 +232,8 @@ export function createSessionMiddleware(
         outageSeenMsAgo: evidence.outageSeenMsAgo,
       })
     }
-    const response = await next()
+    const answer = await next()
+    const response = carriesSession ? withSessionCacheControl(answer) : answer
     if (verdict.kind === 'signed-out' && verdict.reason === 'rejected' && !isRedirect(response)) {
       for (const cookie of expiredSessionCookies(getSessionCookieName())) {
         response.headers.append('Set-Cookie', cookie)

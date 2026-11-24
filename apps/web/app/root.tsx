@@ -30,6 +30,7 @@ import {
   isUnauthenticatedRouteError,
   RevalidateSessionOnMount,
   RevalidateSessionOnRefusedRender,
+  SESSION_CHECK_STYLE,
   SessionUserGuard,
   type AppSessionVerdict,
 } from './session'
@@ -88,6 +89,7 @@ export function Layout({ children }: Readonly<{ children: ReactNode }>) {
         <title>Demo Site</title>
         <Meta />
         <Links />
+        <style>{SESSION_CHECK_STYLE}</style>
         <script
           dangerouslySetInnerHTML={{
             __html: `

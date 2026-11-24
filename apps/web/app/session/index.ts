@@ -18,5 +18,5 @@ export {
   SessionRevalidator,
   useSessionRevalidation,
 } from './session-revalidator'
-export { SessionUserGuard } from './session-user-guard'
+export { SESSION_CHECK_STYLE, SessionUserGuard } from './session-user-guard'
 export { expiredSessionCookies } from './session-cookie'
