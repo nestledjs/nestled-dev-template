@@ -195,10 +195,15 @@ describe('audit-session-decisions', () => {
       assert.ok(files.includes('apps/web/app/root.tsx'))
     })
 
-    it('passes on the template, with exactly the allowed sites it documents', () => {
+    // No count: how many sites a project allows is its own, and the report lists each one.
+    it('passes on this workspace: nothing found, and a reason for every allowed site', () => {
       const result = auditFiles(root)
       assert.deepEqual(result.findings, [], formatReport(result))
-      assert.equal(result.allowed.length, 8, formatReport(result))
+      assert.deepEqual(
+        result.allowed.filter(({ reason }) => !reason?.trim()),
+        [],
+        formatReport(result),
+      )
     })
   })
 })
