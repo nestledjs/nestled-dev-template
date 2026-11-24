@@ -291,11 +291,12 @@ describe('signing out, then another user', () => {
 
 describe('the root Layout', () => {
   it('guards the whole document with the root loader verdict', async () => {
-    let revalidate: () => Promise<void> = async () => undefined
     function Content() {
-      revalidate = useRevalidator().revalidate
-      return <p>of the last user</p>
+      const { revalidate } = useRevalidator()
+      return <button onClick={() => void revalidate()}>of the last user</button>
     }
+    const judgeAgain = () =>
+      act(async () => screen.getByRole('button', { name: 'of the last user' }).click())
     const Stub = createRoutesStub([
       {
         id: 'root',
@@ -316,12 +317,12 @@ describe('the root Layout', () => {
       )
     })
     expect(await screen.findByText('of the last user')).toBeInTheDocument()
-    await act(() => revalidate())
+    await judgeAgain()
     expect(screen.getByText('of the last user')).toBeInTheDocument()
 
     verdict = USER_B
-    await act(() => revalidate())
-    expect(screen.queryByText('of the last user')).not.toBeInTheDocument()
+    await judgeAgain()
+    await waitFor(() => expect(screen.queryByText('of the last user')).not.toBeInTheDocument())
     expect(location.reload).toHaveBeenCalledTimes(1)
   })
 })
