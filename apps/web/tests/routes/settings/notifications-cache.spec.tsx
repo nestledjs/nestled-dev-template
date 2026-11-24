@@ -2,7 +2,7 @@ import React from 'react'
 import { ApolloClient, ApolloLink, InMemoryCache, Observable } from '@apollo/client'
 import { ApolloProvider } from '@apollo/client/react'
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
-import { describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import { UserPreferences } from '@nestled-template/shared/sdk'
 import { createTestRouter } from '../../helpers/createTestRouter'
 import NotificationsSettings from '../../../app/routes/settings/notifications'
@@ -95,6 +95,8 @@ async function expectSwitch(title: string, checked: boolean) {
 }
 
 describe('NotificationsSettings on a real Apollo cache', () => {
+  afterEach(() => vi.restoreAllMocks())
+
   it.each([
     ['a default that is on', 'Organization Invitations', 'notif_org_invites', true],
     ['a default that is off', 'Product Updates', 'notif_product_updates', false],
@@ -175,5 +177,28 @@ describe('NotificationsSettings on a real Apollo cache', () => {
     page.release()
     expect(await screen.findByText('Preference not found')).toBeInTheDocument()
     await expectSwitch('Weekly Digest', true)
+  })
+
+  it('keeps two switches created in the same millisecond apart', async () => {
+    const page = renderPage([])
+    await page.loaded()
+    vi.spyOn(Date, 'now').mockReturnValue(1_767_225_600_000)
+    fireEvent.click(toggle('Product Updates'))
+    fireEvent.click(toggle('Newsletters'))
+    await expectSwitch('Newsletters', true)
+    await expectSwitch('Product Updates', true)
+  })
+
+  it('saves nothing until the preferences have loaded, and says so', async () => {
+    const page = renderPage([preference('row-1', 'notif_product_updates', 'true')])
+    fireEvent.click(toggle('Product Updates'))
+    expect(await screen.findByText(/preferences have not loaded/i)).toBeInTheDocument()
+    expect(page.mutations()).toEqual([])
+
+    await page.loaded()
+    await expectSwitch('Product Updates', true)
+    fireEvent.click(toggle('Product Updates'))
+    await expectSwitch('Product Updates', false)
+    expect(page.mutations().map(({ name }) => name)).toEqual(['UserUpdateUserPreference'])
   })
 })

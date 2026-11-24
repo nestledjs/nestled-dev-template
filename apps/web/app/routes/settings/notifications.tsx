@@ -147,7 +147,8 @@ export default function NotificationsSettings() {
       optimisticResponse: {
         userCreateUserPreference: {
           __typename: 'UserPreference',
-          id: `temp-${Date.now()}`,
+          // By key, so two switches saved at once stay two entities in the cache.
+          id: `temp-${key}`,
           key,
           value: String(newValue),
           createdAt: new Date().toISOString(),
@@ -169,6 +170,11 @@ export default function NotificationsSettings() {
   }
 
   const toggleNotification = async (key: string, currentValue: boolean) => {
+    // Without the saved list there is no telling a create from an update.
+    if (!preferencesData) {
+      showError('Your saved preferences have not loaded. Reload the page and try again.')
+      return
+    }
     // A preference being created has no id to update yet, so a switch saves one change at a time.
     if (savingKeys.current.has(key)) return
     savingKeys.current.add(key)

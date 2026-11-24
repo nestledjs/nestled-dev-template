@@ -217,8 +217,8 @@ describe('a web build is cached by every environment variable it inlines', () =>
     })
   }
 
-  it('checks the web app', () => {
-    if (!existsSync(join(root, 'apps/web/project.json'))) return
+  const hasWebApp = existsSync(join(root, 'apps/web/project.json'))
+  it('checks the web app', { skip: !hasWebApp && 'no apps/web here' }, () => {
     const { needed } = missingInputs(root, join(root, 'apps/web'))
     assert.ok(needed.includes('VITE_API_URL'), needed.join(', '))
   })
