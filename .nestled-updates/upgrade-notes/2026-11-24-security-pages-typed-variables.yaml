@@ -12,6 +12,8 @@ applyAfter:
   - 2026-11-20-session-middleware
   - 2026-11-20-emulation-organization-reload-race
   - 2026-11-21-sonar-rebaseline-findings
+  - 2026-11-24-session-starts-in-fresh-document
+  - 2026-11-24-session-hardening-follow-ups
 
 intent: >
   1. The loaders of apps/web/app/routes/settings/security.tsx and security.events.tsx sent

@@ -12,9 +12,10 @@ applyAfter:
   - 2026-11-20-session-cookie-domain-rule
   - 2026-11-21-retry-queries-after-confirmed-session
   - 2026-11-21-sonar-rebaseline-findings
+  - 2026-11-24-forward-duplicate-session-cookies
 
 intent: >
-  Six independent parts. No behaviour changes.
+  Seven independent parts. Nothing changes at runtime.
 
 
   1. apps/web/tests/session/session-revalidator.spec.tsx used
@@ -49,7 +50,14 @@ intent: >
   2026-11-20-session-middleware. Comments only. docs/template/README.md has the same correction.
 
 
-  6. Two corrections to earlier notes, which are not rewritten once published:
+  6. scripts/audit-session-decisions.mjs also flags
+  `cookieCandidates(..., getSessionCookieName())` outside apps/web/app/session/ and
+  libs/shared/apollo: it reads the session cookie just as `getCookie(..., getSessionCookieName())`
+  does. The finding's text now names `sessionToken(request)` for a raw bearer token that cannot be
+  avoided.
+
+
+  7. Two corrections to earlier notes, which are not rewritten once published:
   - 2026-11-21-sonar-two-typescript-programs says to expect "a few dozen" type errors from the API
     program. The template has about 50, and a larger project about 100. Both are normal; thousands
     still mean a wrong option or a missing generated file.
@@ -72,13 +80,14 @@ affectedPaths:
   - apps/web/tests/session-cookie.spec.ts
   - apps/web/app/routes/_authenticated/_layout.tsx
   - apps/web/tests/routes/authenticated-layout.spec.tsx
+  - scripts/audit-session-decisions.mjs
   - scripts/audit-session-decisions.spec.mjs
   - libs/api/config/src/lib/cookie-domain.ts
   - libs/api/config/src/lib/cookie-domain.spec.ts
 
 skipIf:
   - >-
-    Parts 1, 3, 4 and 5: the project has not taken 2026-11-20-session-middleware (it has none of
+    Parts 1, 3, 4, 5 and 6: the project has not taken 2026-11-20-session-middleware (it has none of
     these files). Part 2 applies to any project with the two loaders.
 
 verification:
@@ -103,7 +112,10 @@ agentHints:
   - >-
     Part 4: if you changed the number 8 to your own count, take the template's version of the case.
   - >-
-    Part 6: if libs/api/core/feature/src/lib/config/configuration.ts exists, check
+    Part 6: a project's own loader this flags uses `forwardedSessionCookie(request)` to call the API,
+    or `sessionToken(request)` where only a bearer token will do. Neither decides a session.
+  - >-
+    Part 7: if libs/api/core/feature/src/lib/config/configuration.ts exists, check
     `git grep -n "config/configuration" -- apps libs` and the library's index.ts. When nothing
     imports or exports it, compare it with libs/api/config/src/lib/configuration.ts, carry over any
     setting only it has, and delete it. Keep it if something uses it.
