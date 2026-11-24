@@ -10,7 +10,6 @@ import {
   TransferOrganizationOwnership,
   Me,
   type MyOrganizationsWithMembersQuery,
-  type TransferOrganizationOwnershipMutation,
 } from '@nestled-template/shared/sdk'
 
 interface TransferOwnershipModalProps {
@@ -34,10 +33,9 @@ export default function TransferOwnershipModal({
     MyOrganizationsWithMembers,
   )
   // Throw on a GraphQL error so the catch below sees it (also the client default; kept explicit).
-  const [transferOwnershipMutation] = useMutation<TransferOrganizationOwnershipMutation>(
-    TransferOrganizationOwnership,
-    { errorPolicy: 'none' },
-  )
+  const [transferOwnershipMutation] = useMutation(TransferOrganizationOwnership, {
+    errorPolicy: 'none',
+  })
 
   const currentUserId = meData?.me?.id
 

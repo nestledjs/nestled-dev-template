@@ -156,7 +156,7 @@ API_COOKIE_DOMAIN=${{api.API_COOKIE_DOMAIN}}
 both are set on the web service. A comma-separated value sets the cookie on its
 first entry; `localhost`, `127.0.0.1` and `[::1]` (exactly) mean a host-only
 cookie. The API and the web server apply the same rule
-(`cookieDomainFromSetting` in `libs/api/config` and `apps/web/app/session-cookie.ts`).
+(`cookieDomainFromSetting` in `libs/api/config` and `apps/web/app/session/session-cookie.ts`).
 
 Every sign-out the web server performs (`/force-logout`, the server render's
 sign-out on a rejected session, the root loader's redirect to `/login`) expires
