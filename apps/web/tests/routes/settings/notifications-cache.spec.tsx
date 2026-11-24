@@ -1,7 +1,7 @@
 import React from 'react'
 import { ApolloClient, ApolloLink, InMemoryCache, Observable } from '@apollo/client'
 import { ApolloProvider } from '@apollo/client/react'
-import { fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { UserPreferences } from '@nestled-template/shared/sdk'
 import { createTestRouter } from '../../helpers/createTestRouter'
@@ -220,11 +220,9 @@ describe('NotificationsSettings on a real Apollo cache', () => {
     expect(await screen.findByText(/still loading/i)).toBeInTheDocument()
     expect(page.mutations()).toEqual([])
 
-    page.refresh()
-    await waitFor(() => {
-      fireEvent.click(toggle('Product Updates'))
-      expect(page.mutations()).toHaveLength(1)
-    })
+    await act(async () => page.refresh())
+    fireEvent.click(toggle('Product Updates'))
     await expectSwitch('Product Updates', true)
+    expect(page.mutations()).toHaveLength(1)
   })
 })
