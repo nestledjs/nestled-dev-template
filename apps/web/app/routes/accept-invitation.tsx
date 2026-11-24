@@ -22,7 +22,10 @@ import { useGlobalCtx } from '@nestled-template/web'
 import { Form } from '@nestledjs/forms'
 import { FormFieldClass } from '@nestledjs/forms-core'
 import { formTheme } from '@nestled-template/shared/styles'
-import { storeActiveOrganizationId } from '@nestled-template/shared/apollo'
+import {
+  clearActiveOrganizationForSessionChange,
+  storeActiveOrganizationId,
+} from '@nestled-template/shared/apollo'
 import { useQuery, useMutation } from '@apollo/client/react'
 
 type Tab = 'login' | 'signup'
@@ -81,6 +84,16 @@ function capitalizeSentence(message: string): string {
   const trimmed = message.trim()
   if (!trimmed) return message
   return `${trimmed.charAt(0).toUpperCase()}${trimmed.slice(1)}`
+}
+
+/**
+ * Where a session started on this page goes on: in a new document, so nothing cached for a previous
+ * user is left (see login.tsx `signedIn`). An invitation accepted by a user who was already signed in
+ * starts no session, and stays a client navigation.
+ */
+function loadMembersArea() {
+  clearActiveOrganizationForSessionChange()
+  globalThis.location.replace('/members')
 }
 
 export default function AcceptInvitation() {
@@ -221,9 +234,7 @@ export default function AcceptInvitation() {
         })
 
         // Redirect to members area
-        setTimeout(() => {
-          navigate('/members', { replace: true })
-        }, 1500)
+        setTimeout(loadMembersArea, 1500)
       } else {
         setFormError('Invalid email or password')
         setIsProcessing(false)
@@ -250,9 +261,7 @@ export default function AcceptInvitation() {
         // The new account is signed in: forget an organization stored for a previous user.
         storeActiveOrganizationId(null)
         // Registration successful, redirect to members area
-        setTimeout(() => {
-          navigate('/members', { replace: true })
-        }, 1500)
+        setTimeout(loadMembersArea, 1500)
       } else {
         setFormError('Failed to create account')
         setIsProcessing(false)

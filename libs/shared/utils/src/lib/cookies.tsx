@@ -139,6 +139,29 @@ export function getCookie<T extends string = string>(
   return pickNewestJwt(values) as T
 }
 
+/**
+ * Every distinct, nonempty value of the cookie `name` in a Cookie header, in header order and as
+ * sent (not percent-decoded, so it can be forwarded verbatim). More than one means the browser
+ * holds duplicates (a host-only and a parent-domain cookie, say); only the API can tell which of
+ * them verifies, so a caller that forwards the session forwards them all (`cookiePairs`).
+ */
+export function cookieCandidates(cookieHeader: string | null | undefined, name: string): string[] {
+  if (!cookieHeader) return []
+  const values = new Set<string>()
+  for (const pair of cookieHeader.split(';')) {
+    const separator = pair.indexOf('=')
+    if (separator < 0 || pair.slice(0, separator).trim() !== name) continue
+    const value = pair.slice(separator + 1).trim()
+    if (value) values.add(value)
+  }
+  return [...values]
+}
+
+/** A Cookie header that carries `values` of the cookie `name` and nothing else. */
+export function cookiePairs(name: string, values: readonly string[]): string {
+  return values.map(value => `${name}=${value}`).join('; ')
+}
+
 // Returns cookie parsed as object or null
 export function getJsonCookie<T extends object>(
   headers: Headers | Record<string, string>,

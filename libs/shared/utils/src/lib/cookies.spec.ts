@@ -1,6 +1,8 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { decodeBase64UrlSegment } from './base64url'
 import {
+  cookieCandidates,
+  cookiePairs,
   decodeCookieValue,
   getCookie,
   getJsonCookie,
@@ -143,6 +145,24 @@ describe('session cookie picking without Buffer', () => {
     expect(pickNewestJwt(['a.%%%.c', 'x.y'])).toBe('x.y')
     expect(warn).toHaveBeenCalledWith(expect.stringContaining('Could not decode any of 2'))
   })
+})
+
+describe('cookieCandidates and cookiePairs', () => {
+  it('returns every distinct, nonempty value in order, as sent', () => {
+    const header =
+      ' __session=a%20b ; theme=dark;__session=c=d; __session=a%20b; __session=; x__session=z'
+    const candidates = cookieCandidates(header, '__session')
+
+    expect(candidates).toEqual(['a%20b', 'c=d'])
+    expect(cookiePairs('__session', candidates)).toBe('__session=a%20b; __session=c=d')
+  })
+
+  it.each([null, undefined, '', 'theme=dark', '__session', '__session='])(
+    'returns none for %s',
+    header => {
+      expect(cookieCandidates(header, '__session')).toEqual([])
+    },
+  )
 })
 
 describe('malformed cookie encoding', () => {

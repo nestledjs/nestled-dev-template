@@ -1,6 +1,5 @@
 import {
   data,
-  redirect,
   redirectDocument,
   type MiddlewareFunction,
   type RouterContextProvider,
@@ -18,8 +17,15 @@ import {
   type MeOutcome,
   type SessionEvidence,
 } from '@nestled-template/shared/apollo'
-import { Me, type MeQuery } from '@nestled-template/shared/sdk'
-import { getCookie, getSessionCookieName, isJwtExpired } from '@nestled-template/shared/utils'
+import { Me } from '@nestled-template/shared/sdk'
+import {
+  cookieCandidates,
+  cookiePairs,
+  decodeCookieValue,
+  getCookie,
+  getSessionCookieName,
+  isJwtExpired,
+} from '@nestled-template/shared/utils'
 import { expiredSessionCookies } from './session-cookie'
 import {
   getSession,
@@ -71,7 +77,7 @@ function apiUrl(): string {
 export const fetchMeWithApollo: FetchMe = async (request, signal) => {
   const client = makeClient(request, { apiUrl: apiUrl() })
   try {
-    const result = await client.query<MeQuery>({
+    const result = await client.query({
       query: Me,
       fetchPolicy: 'no-cache',
       errorPolicy: 'none',
@@ -114,6 +120,22 @@ export interface ResolveSessionOptions {
   now?: () => number
 }
 
+/** Every session cookie the request carries (several when the browser holds duplicates). */
+function sessionCookies(request: Request): string[] {
+  return cookieCandidates(request.headers.get('cookie'), getSessionCookieName())
+}
+
+/**
+ * The request's session cookie as evidence. With duplicates it is `expired` only if every one of
+ * them is, and `absent` only with none: which one counts is the API's choice (`makeClient` forwards
+ * them all), so one live candidate is enough to ask.
+ */
+function cookieEvidence(request: Request): 'absent' | 'expired' | 'present' {
+  const candidates = sessionCookies(request)
+  if (candidates.length === 0) return 'absent'
+  return candidates.every(value => isJwtExpired(decodeCookieValue(value))) ? 'expired' : 'present'
+}
+
 /**
  * Gathers the evidence for one request and judges it (`judgeSession`): the cookie, one Me call
  * (none without a live cookie), a one-shot confirmation only after a clean 401, and this
@@ -127,14 +149,13 @@ export async function resolveSession(
   const timeoutMs = options.timeoutMs ?? SESSION_TIMEOUT_MS
   const now = options.now ?? Date.now
 
-  const token = getCookie(request.headers, getSessionCookieName())
+  const cookie = cookieEvidence(request)
   let evidence: SessionEvidence<SessionUser>
-  if (!token) evidence = { cookie: 'absent' }
-  else if (isJwtExpired(token)) evidence = { cookie: 'expired' }
+  if (cookie !== 'present') evidence = { cookie }
   else {
     const me = await boundedMe(fetchMe, request, timeoutMs)
     const confirm = needsConfirmation(me) ? await boundedMe(fetchMe, request, timeoutMs) : undefined
-    evidence = { cookie: 'present', me, confirm, outageSeenMsAgo: apiOutageSeenMsAgo(now()) }
+    evidence = { cookie, me, confirm, outageSeenMsAgo: apiOutageSeenMsAgo(now()) }
   }
   return { verdict: judgeSession(evidence), evidence }
 }
@@ -207,7 +228,8 @@ function withReturnUrl(target: string, path: string): string {
  * - `signed-out/rejected`: a full document load of `sessionRejectedPath()` (a 302 on a document
  *   request, a single-fetch redirect with `reload: true` on a `.data` one), which drops the
  *   browser's in-memory state and expires both cookie scopes;
- * - `signed-out/no-session`: `/login?return_url=...`;
+ * - `signed-out/no-session`: a full document load of `/login?return_url=...` (the same two forms),
+ *   so a tab whose session ended keeps nothing of it in memory;
  * - `unknown`: a 503 `SESSION_UNKNOWN` route error, shown by the root ErrorBoundary as the
  *   self-recovering screen. The session is kept.
  */
@@ -218,7 +240,7 @@ export const requireSession: MiddlewareFunction<Response> = async ({ request, co
   if (verdict.kind === 'signed-out' && verdict.reason === 'rejected') {
     throw redirectDocument(withReturnUrl(sessionRejectedPath(), path))
   }
-  if (verdict.kind === 'signed-out') throw redirect(withReturnUrl('/login', path))
+  if (verdict.kind === 'signed-out') throw redirectDocument(withReturnUrl('/login', path))
   throw data(
     { code: SESSION_UNKNOWN_CODE, reason: verdict.reason },
     { status: 503, statusText: 'Service Unavailable' },
@@ -226,13 +248,27 @@ export const requireSession: MiddlewareFunction<Response> = async ({ request, co
 }
 
 /**
- * The session cookie to forward to the API from a server loader or action that calls a REST
- * endpoint itself (the MCP consent page). Reading the cookie is the session module's job.
+ * The Cookie header to forward to the API from a server loader or action that calls a REST endpoint
+ * itself (the MCP consent page): the session cookie and no other, every candidate of it when the
+ * browser holds duplicates, so the API can pick the one that verifies. Null with none. Reading the
+ * cookie is the session module's job.
  */
 export function forwardedSessionCookie(request: Request): string | null {
-  const name = getSessionCookieName()
-  const token = getCookie(request.headers, name)
-  return token ? `${name}=${token}` : null
+  const candidates = sessionCookies(request)
+  return candidates.length > 0 ? cookiePairs(getSessionCookieName(), candidates) : null
+}
+
+/**
+ * The raw session token, for a loader that must hand one bearer token to something that cannot be
+ * given a Cookie header (an upload widget, say). Prefer `forwardedSessionCookie`. Null with none.
+ *
+ * With duplicate session cookies it is the newest unexpired one by its unverified claims
+ * (`pickNewestJwt`), because a bearer token is a single value and this server cannot verify one. The
+ * API may be using another candidate, so a call refused with this token is never evidence that the
+ * session is dead, and the token never decides a session.
+ */
+export function sessionToken(request: Request): string | null {
+  return getCookie(request.headers, getSessionCookieName()) || null
 }
 
 /**

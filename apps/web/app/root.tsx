@@ -26,8 +26,11 @@ import { isOrganizationContextRequired, OrganizationRequired } from './organizat
 import { RecoveringApiUnavailable, RETRY_LABEL } from './api-unavailable'
 import {
   getSession,
+  isRefusedRenderError,
   isUnauthenticatedRouteError,
   RevalidateSessionOnMount,
+  RevalidateSessionOnRefusedRender,
+  SessionUserGuard,
   type AppSessionVerdict,
 } from './session'
 import { sessionMiddleware } from './session/session-middleware.server'
@@ -74,7 +77,7 @@ export function loader({ request, context }: LoaderFunctionArgs): RootLoaderData
 
 export function Layout({ children }: Readonly<{ children: ReactNode }>) {
   const gtmTrackingId = import.meta.env.VITE_GTM_TRACKING_ID
-  const data = useLoaderData() as { theme?: string }
+  const data = useLoaderData() as Partial<RootLoaderData> | undefined
   const theme = data?.theme || 'dark'
 
   return (
@@ -113,7 +116,9 @@ export function Layout({ children }: Readonly<{ children: ReactNode }>) {
       </head>
       <body>
         <GTMNoScript gtmId={gtmTrackingId} />
-        <ApolloHydrationHelper>{children}</ApolloHydrationHelper>
+        <SessionUserGuard session={data?.session}>
+          <ApolloHydrationHelper>{children}</ApolloHydrationHelper>
+        </SessionUserGuard>
         <ScrollRestoration />
         <Scripts />
       </body>
@@ -137,6 +142,8 @@ function routeErrorCode(error: unknown): unknown {
  *   itself.
  * - a route 401 (`API_UNAUTHENTICATED`: a call refused after the session was judged signed in):
  *   one revalidation, so the middleware judges the session afresh, then the route's error screen.
+ * - a render that threw an API 401 (`isRefusedRenderError`: a preload refused in the loader data
+ *   stream): the same, at most once a minute.
  * - 403: access denied, or the organization picker.
  * - 502/503/504 or no answer: the self-recovering screen.
  */
@@ -155,6 +162,14 @@ export function ErrorBoundary({ error }: Readonly<{ error: unknown }>) {
       <RevalidateSessionOnMount>
         <RouteStatusScreen status={401} statusText={routeStatusText(error) || 'Unauthorized'} />
       </RevalidateSessionOnMount>
+    )
+  }
+
+  if (isRefusedRenderError(error)) {
+    return (
+      <RevalidateSessionOnRefusedRender>
+        <RouteStatusScreen status={401} statusText="Unauthorized" />
+      </RevalidateSessionOnRefusedRender>
     )
   }
 
