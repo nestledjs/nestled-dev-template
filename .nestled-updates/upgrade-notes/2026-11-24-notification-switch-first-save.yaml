@@ -23,8 +23,9 @@ intent: >
   modifier is gone. With the optimistic preference now visible, a second click could have sent its
   temporary id, so each switch saves one change at a time and ignores clicks until the save ends. The temporary id
   is made from the preference's key, so two switches saved at once stay two entries in the cache. A
-  click before the saved list has loaded (or after it failed to) sends nothing and says why: without
-  the list a create cannot be told from an update.
+  click while the saved list is loading, or after it failed to, sends nothing and says why: without
+  the list a create cannot be told from an update, and a list fetched before the save would replace
+  it.
 
 
   apps/web/tests/routes/settings/notifications-cache.spec.tsx runs the page on a real ApolloClient

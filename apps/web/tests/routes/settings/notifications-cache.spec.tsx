@@ -30,9 +30,11 @@ function preference(id: string, key: string, value: string): Preference {
  * The page on a real client and cache, with an API that keeps the rows and answers a mutation only
  * when the test lets it, so the optimistic state can be looked at.
  */
-function renderPage(rows: Preference[]) {
+function renderPage(rows: Preference[], { cached }: { cached?: Preference[] } = {}) {
   const sent: { name: string; variables: Variables }[] = []
   const held: (() => void)[] = []
+  // The list's answer, held back when the page starts from a cached one.
+  let refresh: (() => void) | undefined
 
   function answer(name: string, variables: Variables) {
     if (name === 'UserPreferences') return { userPreferences: rows.map(row => ({ ...row })) }
@@ -63,11 +65,18 @@ function renderPage(rows: Preference[]) {
           observer.error(error)
         }
       }
-      if (name === 'UserPreferences') queueMicrotask(send)
-      else held.push(send)
+      if (name !== 'UserPreferences') held.push(send)
+      else if (cached) refresh = send
+      else queueMicrotask(send)
     })
   })
-  const client = new ApolloClient({ link, cache: new InMemoryCache() })
+  const client = new ApolloClient({
+    link,
+    cache: new InMemoryCache(),
+    // As the app's own client.
+    defaultOptions: { watchQuery: { fetchPolicy: 'cache-and-network' } },
+  })
+  if (cached) client.writeQuery({ query: UserPreferences, data: { userPreferences: cached } })
   const Router = createTestRouter([
     { path: '/settings/notifications', Component: NotificationsSettings },
   ])
@@ -80,6 +89,7 @@ function renderPage(rows: Preference[]) {
     rows,
     mutations: () => sent.filter(({ name }) => name !== 'UserPreferences'),
     queries: () => sent.filter(({ name }) => name === 'UserPreferences'),
+    refresh: () => refresh?.(),
     release: () => held.splice(0).forEach(send => send()),
     loaded: () =>
       waitFor(() =>
@@ -192,7 +202,7 @@ describe('NotificationsSettings on a real Apollo cache', () => {
   it('saves nothing until the preferences have loaded, and says so', async () => {
     const page = renderPage([preference('row-1', 'notif_product_updates', 'true')])
     fireEvent.click(toggle('Product Updates'))
-    expect(await screen.findByText(/preferences have not loaded/i)).toBeInTheDocument()
+    expect(await screen.findByText(/still loading/i)).toBeInTheDocument()
     expect(page.mutations()).toEqual([])
 
     await page.loaded()
@@ -200,5 +210,21 @@ describe('NotificationsSettings on a real Apollo cache', () => {
     fireEvent.click(toggle('Product Updates'))
     await expectSwitch('Product Updates', false)
     expect(page.mutations().map(({ name }) => name)).toEqual(['UserUpdateUserPreference'])
+  })
+
+  it('saves nothing while a cached list is being refreshed', async () => {
+    const page = renderPage([], { cached: [] })
+    await expectSwitch('Product Updates', false)
+    fireEvent.click(toggle('Product Updates'))
+    // Its answer could be older than the save, and would take the new preference out again.
+    expect(await screen.findByText(/still loading/i)).toBeInTheDocument()
+    expect(page.mutations()).toEqual([])
+
+    page.refresh()
+    await waitFor(() => {
+      fireEvent.click(toggle('Product Updates'))
+      expect(page.mutations()).toHaveLength(1)
+    })
+    await expectSwitch('Product Updates', true)
   })
 })

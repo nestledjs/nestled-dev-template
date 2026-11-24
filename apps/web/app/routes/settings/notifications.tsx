@@ -86,7 +86,7 @@ const DEFAULT_NOTIFICATIONS: NotificationSetting[] = [
 export const loader = () => ({})
 
 export default function NotificationsSettings() {
-  const { data: preferencesData } = useQuery<UserPreferencesQuery>(UserPreferences)
+  const { data: preferencesData, loading } = useQuery<UserPreferencesQuery>(UserPreferences)
   const preferences = preferencesData?.userPreferences || []
 
   const [formSuccess, setFormSuccess] = useState<string | null>(null)
@@ -170,7 +170,12 @@ export default function NotificationsSettings() {
   }
 
   const toggleNotification = async (key: string, currentValue: boolean) => {
-    // Without the saved list there is no telling a create from an update.
+    // Without the saved list there is no telling a create from an update, and a list still being
+    // fetched can be older than the save and replace it.
+    if (loading) {
+      showError('Your saved preferences are still loading. Try again in a moment.')
+      return
+    }
     if (!preferencesData) {
       showError('Your saved preferences have not loaded. Reload the page and try again.')
       return

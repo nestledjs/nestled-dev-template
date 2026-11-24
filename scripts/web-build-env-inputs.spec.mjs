@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict'
-import { existsSync, readdirSync, readFileSync } from 'node:fs'
+import { existsSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { createRequire } from 'node:module'
+import { tmpdir } from 'node:os'
 import { dirname, join, relative, sep } from 'node:path'
 import { describe, it } from 'node:test'
 import { fileURLToPath } from 'node:url'
@@ -157,7 +158,9 @@ const CONFIG = /^(vite|react-router)\.config\.[cm]?[jt]s$/
 /** Whether Vite (or React Router, which runs Vite) builds the app, by a target of its own or inferred. */
 function builtByVite(folder) {
   const { build } = readJson(join(folder, 'project.json')).targets ?? {}
-  if (build) return /vite|react-router/.test(JSON.stringify(build))
+  // An entry that names no command only adjusts the inferred target.
+  if (build?.executor ?? build?.command ?? build?.options?.command ?? build?.options?.commands)
+    return /vite|react-router/.test(JSON.stringify(build))
   return readdirSync(folder).some(name =>
     /^(index\.html|react-router\.config\.[cm]?[jt]s)$/.test(name),
   )
@@ -249,5 +252,24 @@ describe('a web build is cached by every environment variable it inlines', () =>
       plugins: [!process.env.VITEST && upload({ token: process.env.TOKEN })],
     }`
     assert.deepEqual([...configReads(config, 'vite.config.ts')], ['VITE_A', 'TOKEN'])
+  })
+
+  it('takes an app whose inferred build only lists its inputs', () => {
+    const folder = mkdtempSync(join(tmpdir(), 'web-build-'))
+    const withBuild = build =>
+      writeFileSync(join(folder, 'project.json'), JSON.stringify({ targets: { build } }))
+    try {
+      writeFileSync(join(folder, 'vite.config.ts'), '')
+      withBuild({ inputs: ['production', { env: 'VITE_A' }] })
+      assert.equal(builtByVite(folder), false, 'nothing for Vite to build')
+      writeFileSync(join(folder, 'index.html'), '')
+      assert.equal(builtByVite(folder), true)
+      withBuild({ executor: 'nx:run-commands', options: { command: 'vite build' } })
+      assert.equal(builtByVite(folder), true)
+      withBuild({ command: 'webpack' })
+      assert.equal(builtByVite(folder), false)
+    } finally {
+      rmSync(folder, { recursive: true, force: true })
+    }
   })
 })
