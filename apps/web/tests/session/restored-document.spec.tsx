@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { act, cleanup, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { ApolloProvider } from '@apollo/client/react'
@@ -34,6 +35,8 @@ let verdict: AppSessionVerdict
 let answer: () => Promise<void> | void
 let checks: number
 let location: ReturnType<typeof stubLocation>
+/** The page's own revalidation, which outlives the page. */
+let judgeAgain: () => Promise<void>
 
 function Boundary() {
   return (
@@ -45,11 +48,13 @@ function Boundary() {
 
 function Page({ name }: Readonly<{ name: string }>) {
   const { revalidate } = useRevalidator()
+  useEffect(() => {
+    judgeAgain = revalidate
+  }, [revalidate])
   return (
     <>
       <h1>{name}</h1>
       <input aria-label="draft" />
-      <button onClick={() => void revalidate()}>Judge again</button>
     </>
   )
 }
@@ -375,9 +380,24 @@ describe('a document load that is awaited', () => {
   it("another user's verdict on a document that was never restored", async () => {
     await renderApp('/public')
     verdict = USER_B
-    await userEvent.click(screen.getByRole('button', { name: 'Judge again' }))
+    await act(judgeAgain)
     await waitFor(() => expect(location.reload).toHaveBeenCalledTimes(1))
     await expectRecoveringScreenAfterTheBound()
+  })
+
+  it.each([
+    ['the first user again', USER_A],
+    ['an unknown verdict', UNKNOWN],
+    ['a signed-out verdict', NO_SESSION],
+  ])('%s after the reload was asked for does not end the wait', async (_label, later) => {
+    await renderApp('/public')
+    verdict = USER_B
+    restore()
+    await waitFor(() => expect(location.reload).toHaveBeenCalledTimes(1))
+    verdict = later
+    await act(judgeAgain)
+    await expectRecoveringScreenAfterTheBound()
+    expect(location.reload).toHaveBeenCalledTimes(1)
   })
 
   it('a verdict that comes after the bound does not hide the recovering screen', async () => {

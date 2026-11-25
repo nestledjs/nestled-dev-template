@@ -84,6 +84,8 @@ export function __resetSessionUserGuard(): void {
 function reloadDocumentOnce(): void {
   if (reloading) return
   reloading = true
+  // No later verdict may show the page again, or end the wait for the new document.
+  restoredWith = undefined
   hideDocument()
   // The stored organization is the previous user's too.
   clearActiveOrganizationForSessionChange()
