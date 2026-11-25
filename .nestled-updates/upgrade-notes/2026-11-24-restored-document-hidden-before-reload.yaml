@@ -31,13 +31,19 @@ intent: >
   The same user's restored page is shown as it was left, as before. No path signs anyone out.
 
 
+  The recovering screen itself (`RecoveringApiUnavailable`, apps/web/app/api-unavailable.tsx) probes
+  the API and reloads when it answers. If that reload did not happen, its "Try again" did nothing:
+  there was nothing left to probe, and only a reload held back by the once-a-minute limit made the
+  button reload. Now it reloads whenever the API answers.
+
+
   2. apps/web/app/routes/pricing.tsx sent a signed-out user to `/login?returnTo=/pricing`. The login
   page reads `return_url`, so the user ended on the default page. It sends
   `/login?return_url=%2Fpricing`.
 
 
-  Specs: apps/web/tests/session/restored-document.spec.tsx ("a document load that is awaited") and
-  apps/web/tests/routes/pricing.spec.tsx. They assert what is visible, not only that a reload was
+  Specs: apps/web/tests/session/restored-document.spec.tsx ("a document load that is awaited"),
+  apps/web/tests/api-availability.spec.tsx and apps/web/tests/routes/pricing.spec.tsx. They assert what is visible, not only that a reload was
   asked for.
 
 why: >
@@ -47,8 +53,10 @@ why: >
 
 affectedPaths:
   - apps/web/app/session/session-user-guard.tsx
+  - apps/web/app/api-unavailable.tsx
   - apps/web/app/routes/pricing.tsx
   - apps/web/tests/session/restored-document.spec.tsx
+  - apps/web/tests/api-availability.spec.tsx
   - apps/web/tests/routes/pricing.spec.tsx
 
 skipIf:
@@ -75,7 +83,8 @@ agentHints:
     Take session-user-guard.tsx as a whole if the project has not changed it. If it has, the parts
     that belong together are `hideDocument`, `showDocument`, `setStalled`, `reloadDocumentOnce` and
     the order at the end of `SessionUserGuard`: the recovering screen first, then nothing while
-    blocked, then the page. A project with its own recovering screen renders that one.
+    blocked, then the page. A project with its own recovering screen renders that one, and checks that
+    its button still does something after a reload that never happened.
   - >
     The login page reads `return_url`, and `redirect` for the MCP authorization redirect. Search for
     other producers with another name (`returnTo`, `redirectTo`, `next`, `from`, `callback`) in the
