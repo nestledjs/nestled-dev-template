@@ -12,7 +12,10 @@ import {
 import { AcceptOrganizationInvitation, Login } from '@nestled-template/shared/sdk'
 import { createTestRouter } from '../helpers/createTestRouter'
 import { stubLocation } from '../helpers/location'
-import AcceptInvitationPage from '../../app/routes/accept-invitation'
+import AcceptInvitationPage, {
+  __resetInvitationSessionLoad,
+} from '../../app/routes/accept-invitation'
+import { LEAVING_GRACE_MS } from '../../app/session/session-user-guard'
 
 // The invitation page's log-in tab starts a session. That session's work (accepting the invitation)
 // belongs to a new document: this one still holds whatever it held before, and a document load is
@@ -122,6 +125,7 @@ async function logInOnInvitation() {
 function newDocument() {
   cleanup()
   __resetActiveOrganizationSessionChange()
+  __resetInvitationSessionLoad()
 }
 
 beforeEach(() => {
@@ -140,6 +144,7 @@ beforeEach(() => {
 })
 
 afterEach(() => {
+  __resetInvitationSessionLoad()
   vi.useRealTimers()
   cleanup()
   vi.unstubAllGlobals()
@@ -249,7 +254,81 @@ describe('a late answer to the log-in', () => {
 
     await act(async () => release(SIGNED_IN))
     expect(accept).not.toHaveBeenCalled()
-    expect(location.replace).toHaveBeenCalledTimes(1)
-    expect(location.replace).not.toHaveBeenCalledWith(INVITATION)
+    // The current address: replacing it with itself is a reload.
+    expect(location.reload).toHaveBeenCalledTimes(1)
+    expect(location.replace).not.toHaveBeenCalled()
+  })
+
+  it('a current address with a fragment is reloaded, not replaced (which would only scroll)', async () => {
+    const release = holdLogin()
+    renderAt(INVITATION)
+    await logInOnInvitation()
+    await act(async () => goTo('/elsewhere'))
+    location.href = 'https://app.example.test/elsewhere#section'
+
+    await act(async () => release(SIGNED_IN))
+    expect(location.reload).toHaveBeenCalledTimes(1)
+    expect(location.replace).not.toHaveBeenCalled()
+  })
+
+  it('an invitation address that differs from the current one only in its fragment is a reload too', async () => {
+    location.href = `https://app.example.test${INVITATION}#form`
+    renderAt(INVITATION)
+    await logInOnInvitation()
+    await waitFor(() => expect(location.reload).toHaveBeenCalledTimes(1))
+    expect(location.replace).not.toHaveBeenCalled()
+  })
+})
+
+describe('a document load after the log-in that never happens (the user stopped it)', () => {
+  it('signed out: the document is loaded again once, after the grace', async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true })
+    renderAt(INVITATION)
+    await logInOnInvitation()
+    await waitFor(() => expect(location.replace).toHaveBeenCalledTimes(1))
+    await act(() => vi.advanceTimersByTimeAsync(LEAVING_GRACE_MS - 500))
+    expect(location.reload).not.toHaveBeenCalled()
+    await act(() => vi.advanceTimersByTimeAsync(1000))
+    expect(location.reload).toHaveBeenCalledTimes(1)
+    await act(() => vi.advanceTimersByTimeAsync(LEAVING_GRACE_MS * 3))
+    expect(location.reload).toHaveBeenCalledTimes(1)
+    expect(accept).not.toHaveBeenCalled()
+  })
+
+  it('a previous user signed in: never says the invitation was accepted, and is loaded again', async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true })
+    signedInAs('user-a')
+    accept.mockRejectedValueOnce(new Error('This invitation is for another address'))
+    renderAt(INVITATION)
+    await screen.findByText('This invitation is for another address')
+    await logInOnInvitation()
+    await waitFor(() => expect(location.replace).toHaveBeenCalledTimes(1))
+
+    expect(screen.queryByText(/successfully joined/i)).not.toBeInTheDocument()
+    expect(screen.queryByText('Welcome!')).not.toBeInTheDocument()
+    await act(() => vi.advanceTimersByTimeAsync(LEAVING_GRACE_MS + 500))
+    expect(location.reload).toHaveBeenCalledTimes(1)
+    expect(screen.queryByText(/successfully joined/i)).not.toBeInTheDocument()
+  })
+})
+
+describe('the joined screen', () => {
+  it('shows only once the acceptance has succeeded in this document', async () => {
+    let settle: () => void = () => undefined
+    accept.mockImplementation(
+      () =>
+        new Promise(resolve => {
+          settle = () => resolve({ data: { acceptOrganizationInvitation: { success: true } } })
+        }),
+    )
+    signedInAs('user-b')
+    renderAt(INVITATION)
+    await waitFor(() => expect(accept).toHaveBeenCalledTimes(1))
+    expect(screen.getByText(/accepting your invitation/i)).toBeInTheDocument()
+    expect(screen.queryByText(/successfully joined/i)).not.toBeInTheDocument()
+
+    await act(async () => settle())
+    expect(await screen.findByText(/successfully joined/i)).toBeInTheDocument()
+    expect(screen.getByText('Welcome!')).toBeInTheDocument()
   })
 })

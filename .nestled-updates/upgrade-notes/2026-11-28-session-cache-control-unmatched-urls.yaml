@@ -41,8 +41,10 @@ skipIf:
 verification:
   - pnpm exec nx test web --skip-nx-cache
   - >-
-    Against a production build: `curl -sI -H 'Cookie: __session=x' <web>/no-such-page` shows
-    `cache-control: private, no-store`, and without the cookie no Cache-Control.
+    Against a production build: `curl -sI -H 'Cookie: <name>=x' <web>/no-such-page`, where `<name>`
+    is the project's own session cookie name (`VITE_COOKIE_NAME` on the web, `API_COOKIE_NAME` on
+    the API; the template's default is `__session`), shows `cache-control: private, no-store`, and
+    without the cookie no Cache-Control.
 
 agentHints:
   - >

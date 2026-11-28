@@ -23,7 +23,16 @@ intent: >
   (`location.replace`); the new document, signed in, accepts it once through the automatic
   acceptance and goes on to /members. The old document accepts nothing from then on: the automatic
   acceptance returns early while `isLeavingForSessionChange()` is true. The invitation is accepted
-  in exactly one document.
+  in exactly one document. A target that is the current address, or differs from it only in its
+  fragment, is loaded with `location.reload()`: replacing it would only scroll, and the latched
+  document would stay, sending no `x-organization-id`. If no new document has replaced this one
+  after `LEAVING_GRACE_MS` (10 s, the user stopped the load), it is reloaded once, so the page
+  never stays on "Logging in…".
+
+
+  The page also said "You've successfully joined" while an acceptance was still pending, or while a
+  signed-in page waited for its new document after a log-in. It now shows "Accepting your
+  invitation" until the acceptance has succeeded in this document, and the joined screen only then.
 
 
   2. The log-in's answer was acted on whenever it came. A late two-factor answer navigated to
@@ -33,8 +42,10 @@ intent: >
   address, and accepts nothing.
 
 
-  Specs: apps/web/tests/routes/accept-invitation-sign-in.spec.tsx, and the invitation case of
-  apps/web/tests/routes/_public/sign-in-forgets-organization.spec.tsx.
+  Specs: apps/web/tests/routes/accept-invitation-sign-in.spec.tsx, the invitation case of
+  apps/web/tests/routes/_public/sign-in-forgets-organization.spec.tsx, and two cases of
+  apps/web/tests/routes/accept-invitation.spec.tsx that asserted the joined screen for an acceptance
+  still in flight.
 
 why: >
   Signing in with an existing account to accept an invitation failed, and could leave the invitation
@@ -44,6 +55,7 @@ affectedPaths:
   - apps/web/app/routes/accept-invitation.tsx
   - apps/web/tests/routes/accept-invitation-sign-in.spec.tsx
   - apps/web/tests/routes/_public/sign-in-forgets-organization.spec.tsx
+  - apps/web/tests/routes/accept-invitation.spec.tsx
 
 skipIf:
   - The project has no log-in form on its invitation page.

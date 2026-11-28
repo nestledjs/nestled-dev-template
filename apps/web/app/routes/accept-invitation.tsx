@@ -15,6 +15,7 @@ import {
   RegisterWithInvitation,
 } from '@nestled-template/shared/sdk'
 import { TWO_FACTOR_INVITATION } from '../session/sign-in-notice'
+import { LEAVING_GRACE_MS } from '../session/session-user-guard'
 import { useGlobalCtx } from '@nestled-template/web'
 import { Form } from '@nestledjs/forms'
 import { FormFieldClass } from '@nestledjs/forms-core'
@@ -94,16 +95,42 @@ function loadMembersArea() {
   globalThis.location.replace('/members')
 }
 
+// Set once a log-in here has asked for a new document; see `loadInvitationForNewSession`.
+let sessionLoadTimer: ReturnType<typeof setTimeout> | undefined
+
+/** For specs: forget the document load a log-in asked for, as a new document does. */
+export function __resetInvitationSessionLoad(): void {
+  clearTimeout(sessionLoadTimer)
+  sessionLoadTimer = undefined
+}
+
+/** Whether `target` is the current address, or differs from it only in its fragment. */
+function isCurrentDocument(target: string): boolean {
+  const current = new URL(globalThis.location.href)
+  const next = new URL(target, current)
+  current.hash = ''
+  next.hash = ''
+  return next.href === current.href
+}
+
 /**
  * Where a log-in on this page goes on: this same invitation, in a new document, which accepts it as
  * the user now signed in (the automatic acceptance below). This document does not accept it: it was
  * rendered for whoever was here before, and a single-use invitation accepted here and again by the
  * new document fails the second time. From here on this document accepts nothing
  * (`isLeavingForSessionChange`). A log-in answered after the user moved on loads where they are now.
+ *
+ * A target that is this document's own address, or differs from it only in its fragment, is a
+ * reload: replacing it would only scroll, and this document would stay, sending no organization.
+ * If no new document has replaced this one after `LEAVING_GRACE_MS` (the user stopped the load), it
+ * is loaded again, once, so the page never stays on its "Logging in…" state.
  */
 function loadInvitationForNewSession(invitationPath: string | null) {
   clearActiveOrganizationForSessionChange()
-  globalThis.location.replace(invitationPath ?? globalThis.location.href)
+  const target = invitationPath ?? globalThis.location.href
+  if (isCurrentDocument(target)) globalThis.location.reload()
+  else globalThis.location.replace(target)
+  sessionLoadTimer ??= setTimeout(() => globalThis.location.reload(), LEAVING_GRACE_MS)
 }
 
 export default function AcceptInvitation() {
@@ -149,6 +176,10 @@ export default function AcceptInvitation() {
   // in the same tab shows that invitation's own accepting state.
   const [failedToken, setFailedToken] = useState<string | null>(null)
   const autoAccepting = Boolean(user && token && invitationDetails) && failedToken !== token
+  // The invitation this document has seen accepted. Only then does the page say so: while the
+  // acceptance is pending, or the document is waiting for a new one after a log-in, it says it is
+  // working on it.
+  const [acceptedToken, setAcceptedToken] = useState<string | null>(null)
 
   // An invitation token is single-use, so it is accepted once per token however often the effect
   // below re-runs for it (React StrictMode replays effects, and a new `user` or `invitationDetails`
@@ -189,6 +220,7 @@ export default function AcceptInvitation() {
       return acceptance
         .then(() => {
           if (!isCurrent()) return
+          setAcceptedToken(token)
           // Redirect to members area
           onRedirectScheduled(
             setTimeout(() => {
@@ -327,7 +359,10 @@ export default function AcceptInvitation() {
     )
   }
 
-  // If user is logged in and processing, show accepting state
+  // Signed in: joined once the acceptance succeeded here, and working on it until then.
+  if (user && acceptedToken === token) {
+    return <InvitationAcceptedState organizationName={invitationDetails.organizationName} />
+  }
   if (user && (isProcessing || autoAccepting)) {
     return <InvitationAcceptingState organizationName={invitationDetails.organizationName} />
   }
@@ -508,6 +543,28 @@ function InvitationLoadingState() {
 }
 
 function InvitationAcceptingState({ organizationName }: { readonly organizationName: string }) {
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-zinc-50 to-zinc-100 dark:from-zinc-900 dark:to-zinc-950 p-4">
+      <div className="w-full max-w-md">
+        <div className="rounded-2xl border border-zinc-200 dark:border-white/10 bg-white dark:bg-white/5 p-8 backdrop-blur shadow-xl">
+          <div className="text-center">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-sky-100 dark:bg-sky-500/10 mb-4">
+              <ArrowPathIcon className="h-8 w-8 text-sky-600 dark:text-sky-400 animate-spin" />
+            </div>
+            <h1 className="text-2xl font-bold text-zinc-900 dark:text-white mb-2">
+              Accepting your invitation
+            </h1>
+            <p className="text-sm text-zinc-600 dark:text-zinc-400">
+              Joining <strong>{organizationName}</strong>…
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function InvitationAcceptedState({ organizationName }: { readonly organizationName: string }) {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-zinc-50 to-zinc-100 dark:from-zinc-900 dark:to-zinc-950 p-4">
       <div className="w-full max-w-md">
