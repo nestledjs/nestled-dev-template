@@ -21,6 +21,7 @@ import { FormFieldClass } from '@nestledjs/forms-core'
 import { formTheme } from '@nestled-template/shared/styles'
 import {
   clearActiveOrganizationForSessionChange,
+  isLeavingForSessionChange,
   storeActiveOrganizationId,
 } from '@nestled-template/shared/apollo'
 import { useQuery, useMutation } from '@apollo/client/react'
@@ -93,6 +94,18 @@ function loadMembersArea() {
   globalThis.location.replace('/members')
 }
 
+/**
+ * Where a log-in on this page goes on: this same invitation, in a new document, which accepts it as
+ * the user now signed in (the automatic acceptance below). This document does not accept it: it was
+ * rendered for whoever was here before, and a single-use invitation accepted here and again by the
+ * new document fails the second time. From here on this document accepts nothing
+ * (`isLeavingForSessionChange`). A log-in answered after the user moved on loads where they are now.
+ */
+function loadInvitationForNewSession(invitationPath: string | null) {
+  clearActiveOrganizationForSessionChange()
+  globalThis.location.replace(invitationPath ?? globalThis.location.href)
+}
+
 export default function AcceptInvitation() {
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
@@ -102,6 +115,16 @@ export default function AcceptInvitation() {
   const [isProcessing, setIsProcessing] = useState(false)
 
   const token = searchParams.get('token')
+
+  // The invitation this page shows now, or null once it is gone: a log-in's answer that arrives
+  // after the user left, or moved to another invitation link, is not acted on for this one.
+  const shownTokenRef = useRef<string | null>(token)
+  useEffect(() => {
+    shownTokenRef.current = token
+    return () => {
+      shownTokenRef.current = null
+    }
+  }, [token])
 
   // Fetch invitation details
   const {
@@ -188,6 +211,8 @@ export default function AcceptInvitation() {
   // If user is already logged in, accept the invitation automatically
   useEffect(() => {
     if (!(user && token && invitationDetails)) return
+    // A log-in on this page is loading a new document, which accepts it (`handleLogin`).
+    if (isLeavingForSessionChange()) return
     let current = true
     let redirectTimer: ReturnType<typeof setTimeout> | undefined
     void acceptInvitationAsync(
@@ -212,6 +237,18 @@ export default function AcceptInvitation() {
       const { data } = await login({
         variables: { input },
       })
+      const stillShown = shownTokenRef.current === token
+
+      if (data?.login?.user?.id && !data.login.requires2FA) {
+        // A new session: the invitation is accepted in a new document, never in this one.
+        loadInvitationForNewSession(
+          stillShown ? `/accept-invitation?token=${encodeURIComponent(token)}` : null,
+        )
+        return
+      }
+
+      // The user left, or this page shows another invitation now: nothing more to do for this one.
+      if (!stillShown) return
 
       if (data?.login?.requires2FA) {
         // No session yet: the second factor is asked for on the login page, which comes back here
@@ -231,24 +268,10 @@ export default function AcceptInvitation() {
         return
       }
 
-      if (data?.login?.user?.id) {
-        // A new session: forget an organization stored for a previous user before the invitation
-        // (or anything after it) is sent with its `x-organization-id`.
-        storeActiveOrganizationId(null)
-        // Login successful, now accept the invitation
-        await acceptInvitation({
-          variables: {
-            input: { token },
-          },
-        })
-
-        // Redirect to members area
-        setTimeout(loadMembersArea, 1500)
-      } else {
-        setFormError('Invalid email or password')
-        setIsProcessing(false)
-      }
+      setFormError('Invalid email or password')
+      setIsProcessing(false)
     } catch (error) {
+      if (shownTokenRef.current !== token) return
       setFormError(getInvitationErrorMessage(error, 'Failed to login. Please try again.'))
       setIsProcessing(false)
     }
