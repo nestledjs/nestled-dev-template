@@ -28,21 +28,38 @@ const CLIENT_LIBRARIES = [
   'libs/shared-components',
 ]
 // Every app's `app` (React Router) and `src` (React Native, Expo, Vite) folder is read as well, so an
-// app a project adds is covered without a change here. The template's server apps have no call this
-// spec refuses.
+// app a project adds is covered without a change here, but only an app with Apollo client code: one
+// of its files imports `@apollo/client` or the shared Apollo library. A server's own
+// `pool.query<Row>(sql, params)` is not an Apollo call, and reading it would fail this spec.
 const APP_SOURCE_FOLDERS = ['app', 'src']
+const CLIENT_IMPORT = /from\s+['"](@apollo\/client|[^'"]*\/shared\/apollo)/
 
-function clientFolders(workspace) {
+/**
+ * Apps never read, whatever they import: the template's API and its e2e suite. The one place for a
+ * project to add its own exclusions (`apps/<name>`), with a comment naming the reason.
+ */
+export const SKIPPED_APP_FOLDERS = new Set(['apps/api', 'apps/api-e2e'])
+
+function hasClientCode(folder) {
+  for (const file of sourceFiles(folder)) {
+    if (CLIENT_IMPORT.test(readFileSync(file, 'utf8'))) return true
+  }
+  return false
+}
+
+export function clientFolders(workspace) {
   const apps = join(workspace, 'apps')
   const appFolders = existsSync(apps)
     ? readdirSync(apps, { withFileTypes: true })
-        .filter(entry => entry.isDirectory())
+        .filter(entry => entry.isDirectory() && !SKIPPED_APP_FOLDERS.has(`apps/${entry.name}`))
         .flatMap(entry => APP_SOURCE_FOLDERS.map(folder => `apps/${entry.name}/${folder}`))
         .filter(folder => existsSync(join(workspace, folder)))
+        .filter(folder => hasClientCode(join(workspace, folder)))
         .sort()
     : []
   return [...appFolders, ...CLIENT_LIBRARIES]
 }
+
 const SKIPPED_FOLDERS = new Set(['node_modules', 'build', 'dist', 'generated', '.react-router'])
 const TESTS = /\.(spec|test|stories)\.tsx?$/
 
@@ -161,6 +178,10 @@ describe('the folders read for Apollo operations', () => {
     try {
       for (const folder of ['apps/web/app', 'apps/mobile/src', 'apps/kiosk/app', 'apps/docs']) {
         mkdirSync(join(workspace, folder), { recursive: true })
+        writeFileSync(
+          join(workspace, folder, 'client.tsx'),
+          "import { gql } from '@apollo/client'\n",
+        )
       }
       const folders = clientFolders(workspace)
       assert.ok(folders.includes('apps/web/app'))
@@ -171,6 +192,37 @@ describe('the folders read for Apollo operations', () => {
     } finally {
       rmSync(workspace, { recursive: true, force: true })
     }
+  })
+
+  it('leave out server apps, whose own query<T>(sql, params) is not an Apollo call', () => {
+    const workspace = mkdtempSync(join(tmpdir(), 'client-folders-'))
+    const server = 'export const row = pool.query<Row>(sql, [id])\n'
+    try {
+      for (const [folder, text] of [
+        ['apps/web/app', "import { useQuery } from '@apollo/client/react'\n"],
+        ['apps/api/src', server],
+        ['apps/api-e2e/src', server],
+        ['apps/worker/src', server],
+      ]) {
+        mkdirSync(join(workspace, folder), { recursive: true })
+        writeFileSync(join(workspace, folder, 'index.ts'), text)
+      }
+      // The call is one the guard refuses wherever it reads it, so reading these folders would fail.
+      assert.equal(untypedOperations('index.ts', server).length, 1)
+
+      const folders = clientFolders(workspace)
+      assert.ok(folders.includes('apps/web/app'))
+      for (const folder of ['apps/api/src', 'apps/api-e2e/src', 'apps/worker/src']) {
+        assert.ok(!folders.includes(folder), `${folder} is not client code`)
+      }
+    } finally {
+      rmSync(workspace, { recursive: true, force: true })
+    }
+  })
+
+  it('skip the server apps named in SKIPPED_APP_FOLDERS', () => {
+    assert.ok(SKIPPED_APP_FOLDERS.has('apps/api'))
+    assert.ok(SKIPPED_APP_FOLDERS.has('apps/api-e2e'))
   })
 })
 

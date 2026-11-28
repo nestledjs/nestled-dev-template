@@ -18,8 +18,12 @@ intent: >
   1. Folders. It read a fixed list, `CLIENT_FOLDERS`, whose only app folder was `apps/web/app`, so an
   app a project added (a React Native or Expo app under `apps/<name>/src`, a second React Router app)
   was never read, and its untyped calls passed. The list is now `CLIENT_LIBRARIES` (the libraries,
-  as before), and `clientFolders()` adds every `apps/<name>/app` and `apps/<name>/src` that exists.
-  The template's server apps have no call the guard refuses.
+  as before), and `clientFolders()` adds every `apps/<name>/app` and `apps/<name>/src` that exists
+  and holds Apollo client code (a file importing `@apollo/client` or the shared Apollo library).
+  Server apps are never read: a database client's `pool.query<Row>(sql, params)` has the shape the
+  guard refuses but is not an Apollo call. `SKIPPED_APP_FOLDERS`, exported from the spec, lists the
+  apps left out whatever they import (`apps/api` and `apps/api-e2e` in the template), and is the one
+  place a project adds its own.
 
 
   2. `no-cache` preloads. A loader's `preloadQuery(Doc, { fetchPolicy: 'no-cache' })` keeps its
@@ -50,8 +54,9 @@ agentHints:
   - >-
     The first run may report calls in an app that was never read before. Fix them as that note
     says (drop the single type argument; the generated document types both), never by removing the
-    folder. If an app's `src` is server code with a same-named method that is not Apollo, say so in
-    the report and leave that folder out with a comment naming the reason.
+    folder. If the project's API or another server app is not under `apps/api`, and it imports
+    `@apollo/client` (a server-side client of another API, say), add `apps/<name>` to
+    `SKIPPED_APP_FOLDERS` with a comment naming the reason. Do not skip an app that renders a UI.
   - >-
     For each `no-cache` preload it reports, change it to `network-only`, then check the page: it
     should show fresh data on every load, and the new value after a mutation. If an answer truly
